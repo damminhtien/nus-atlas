@@ -23,6 +23,8 @@ The study layer currently contains 22 normalized lessons. Assessment dates remai
 - DSA5104 browser-local SQLite/WASM SQL Studio.
 - DSA5208 Lamport/vector-clock, delivery-order, consistency, and Spark-shuffle simulations.
 - Lesson study kits with flashcards, homework prompts, and coding exercises.
+- LaTeX-rendered formulas with symbol tables, detailed reading notes, and limitation/caveat labels.
+- Critical-thinking prompts that challenge assumptions and include strong-answer comparisons.
 - General Atlas remains available at `#/atlas`.
 
 Useful routes:
@@ -78,6 +80,8 @@ node gate.js
 node prerender.js
 git diff --check
 ```
+
+`nus-gate.js` verifies that all 22 NUS lessons have a LaTeX formula model, formula explanations, source labels, and at least two critical-thinking questions. `data/nus/formula-depth.js` contains the shared formula and critique layer; lecture, textbook, and reference content remains visibly separated.
 
 The Pages workflow runs `node prerender.js` in CI, creates the static `dist/` artifact, and publishes it through GitHub Pages. `dist/` is generated and ignored.
 

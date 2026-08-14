@@ -31,6 +31,12 @@ The DSA5105 course page separates the following tracks:
 
 Textbook-backed prompts are marked in the lesson source trail and in Exam Mode review. Reference-backed prompts remain visibly optional, so a difficult reference question does not masquerade as a lecture requirement.
 
+## Formula and reasoning standard
+
+Every NUS lesson must expose at least one structured formula model. Store the expression as raw LaTeX with an explanation for how to read it, a meaning for each important symbol, and a source class. The renderer sends both block formulas and inline formulas through KaTeX; do not introduce Unicode equations such as `γ`, `Σ`, or `→` into lesson-facing formula text.
+
+Each lesson also has at least two critical-thinking prompts. A good prompt asks what the formula assumes, how it can fail, what evidence would change the conclusion, or where a textbook/reference analogy stops. The answer remains short and normalized, while the source/page pointer preserves the distinction between lecture, textbook, and reference depth.
+
 ## Recommended study loop
 
 1. Open the dashboard and select the current focus lesson.
@@ -60,3 +66,4 @@ git diff --check
 ```
 
 The NUS gate checks course allowlisting, lesson/question shape, typed DSA5105 provenance, assessment invariants, visual references, and raw/private-source markers.
+It also checks LaTeX coverage, symbol explanations, source labels, the absence of Unicode formulas, and critical-thinking coverage across all 22 lessons.
