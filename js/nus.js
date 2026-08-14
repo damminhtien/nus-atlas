@@ -43,6 +43,15 @@
   function button(label, href, cls) { return `<a class="btn ${cls || "ghost"}" href="${esc(href)}" data-route>${esc(label)}</a>`; }
   function statusPill(status) { return `<span class="pill ${status === "done" ? "sage" : status === "in-progress" ? "gold" : ""}">${esc(status === "in-progress" ? "In progress" : status === "done" ? "Done" : "To do")}</span>`; }
   function courseProgressBar(code) { const p = progress(code); return `<div class="nus-progress"><span style="width:${p.pct}%;background:${esc(course(code).color)}"></span></div><div class="nus-muted">${p.done}/${p.total} lessons complete · ${p.pct}%</div>`; }
+  function readerModeOn() { return localStorage.getItem("nus.reader-mode") === "on"; }
+  function setReaderMode(enabled) {
+    document.body.classList.toggle("nus-reading-mode", enabled);
+    localStorage.setItem("nus.reader-mode", enabled ? "on" : "off");
+  }
+  function readerButton() {
+    const enabled = readerModeOn();
+    return `<button class="btn ghost nus-reader-toggle" id="nus-reader-toggle" type="button" aria-pressed="${enabled}">${enabled ? "Exit focus reading" : "Focus reading"}</button>`;
+  }
   function allUpcoming() { return assessments().filter(a => a.date).sort((a, b) => new Date(a.date) - new Date(b.date)); }
   function firstOpenLesson() { for (const c of courses()) { const l = lessons(c.code).find(x => !window.NUS_STORE.lessonDone(x.id)); if (l) return { course: c, lesson: l }; } return null; }
   function examCountdownCards() { return courses().map(c => ({ code: c.code, exam: (schedule().courses[c.code] || {}).exam })).map(x => `<div class="nus-exam-count"><b>${esc(x.code)}</b><span>${x.exam && x.exam.date ? esc(fmtDate(x.exam.date)) : "Date pending"}</span><small>${x.exam && x.exam.date ? `${Math.max(0, dayCount(x.exam.date))} days left` : "Check course announcement"}</small></div>`).join(""); }
@@ -64,13 +73,13 @@
     const pending = assessments().filter(a => !a.date).length;
     const nearest = upcoming[0], nearestDays = nearest && dayCount(nearest.date);
     const open = firstOpenLesson(), latest = window.NUS_STORE.attempts().slice(-1)[0];
-    let body = pageHead("NUS · AY2026/27 Semester 1", "Your NUS study cockpit", "A source-backed workspace for DSA5101, DSA5104, DSA5105, and DSA5208. Dates marked pending are deliberately not guessed.");
+    let body = pageHead("NUS · AY2026/27 Semester 1", "Your NUS study desk", "A source-backed study space for DSA5101, DSA5104, DSA5105, and DSA5208. Dates marked pending are deliberately not guessed.");
     body += `<section class="nus-hero nus-study-hero reveal"><div><div class="eyebrow">Start here · today’s lesson</div><h3>${open ? esc(open.lesson.title) : "Your seeded lessons are complete"}</h3><p>${open ? `${esc(open.course.code)} · ${esc(open.lesson.summary)}` : "Use Exam Mode for maintenance or revisit a weak topic."}</p>${nearest ? `<small class="nus-hero-deadline">Next deadline: ${esc(nearest.title)} · ${nearestDays < 0 ? "overdue" : `${nearestDays} days left`}</small>` : ""}</div><div class="nus-hero-actions">${open ? button("Read lesson", `#/nus/lesson/${open.course.code}/${open.lesson.id}`, "primary") : button("Open planner", "#/nus/planner", "primary")}${button("Start exam mode", "#/nus/exam", "ghost")}</div></section>`;
     body += `<div class="nus-grid nus-grid-4">${courses().map(c => `<article class="nus-course-card reveal" style="--course:${esc(c.color)}"><div class="nus-course-top"><span class="nus-code">${esc(c.code)}</span><span class="pill">${progress(c.code).pct}%</span></div><h3>${esc(c.title)}</h3><p>${text(c.description)}</p>${courseProgressBar(c.code)}<div class="nus-card-actions">${button("Study course", `#/nus/course/${c.code}`, "ghost")}${button("Practice", `#/nus/exam/${c.code}`, "ghost")}</div></article>`).join("")}</div>`;
     body += `<div class="nus-two-col"><div>${card("Today’s focus", `<p>${open ? `Continue <b>${esc(open.lesson.title)}</b> in ${esc(open.course.code)}.` : "All seeded lessons are complete — use Exam Mode for maintenance."}</p><div class="nus-focus-clock"><b id="nus-focus-time">25:00</b><span id="nus-focus-state">Choose a focus block</span></div><div class="nus-tool-grid"><button class="btn ghost" data-nus-focus="25">25 min</button><button class="btn ghost" data-nus-focus="50">50 min</button>${open ? button("Open lesson", `#/nus/lesson/${open.course.code}/${open.lesson.id}`, "ghost") : ""}</div>`, "reveal")}</div><div>${card("Exam countdown", `<div class="nus-exam-counts">${examCountdownCards()}</div><p class="nus-muted">DSA5208 remains date pending until an official date is available.</p>`, "reveal")}</div></div>`;
-    body += card("Practice signal", latest ? `<p>Latest ${esc(latest.courseCode)} attempt: <b>${latest.score}/${latest.total}</b>. Use the review deck after each attempt to target misses.</p>${button("Practice again", `#/nus/exam/${latest.courseCode}`, "ghost")}` : `<p class="nus-muted">No NUS attempt yet. Start a short scoped run to create a personal weak-topic signal.</p>${button("Start a practice run", "#/nus/exam", "ghost")}`, "reveal");
+    body += card("Practice history", latest ? `<p>Latest ${esc(latest.courseCode)} attempt: <b>${latest.score}/${latest.total}</b>. Use the review deck after each attempt to target misses.</p>${button("Practice again", `#/nus/exam/${latest.courseCode}`, "ghost")}` : `<p class="nus-muted">No NUS attempt yet. Start a short scoped run to create a personal weak-topic signal.</p>${button("Start a practice run", "#/nus/exam", "ghost")}`, "reveal");
     body += `<div class="nus-two-col"><div>${card("Upcoming work", upcoming.length ? `<div class="nus-list">${upcoming.map(a => assessmentRow(a)).join("")}</div>` : `<div class="nus-empty">No confirmed dates.</div>`, "reveal")}</div><div>${card("What needs confirmation", `<p class="nus-muted">${pending} assessment milestone${pending === 1 ? "" : "s"} still has a date pending.</p><p class="nus-muted">Reminders are shown at 7, 3, and 1 day before a confirmed date. The app never invents a deadline.</p>${button("Review planner", "#/nus/planner", "ghost")}`, "reveal")}</div></div>`;
-    body += card("Focused tools", `<div class="nus-tool-grid">${button("SQL practice · DSA5104", "#/nus/sql", "ghost")}${button("Distributed simulations · DSA5208", "#/nus/simulations", "ghost")}${button("Mixed practice · DSA5101/5105", "#/nus/exam", "ghost")}${button("General Atlas library", "#/atlas", "ghost")}</div>`, "reveal");
+    body += card("Study spaces", `<div class="nus-tool-grid">${button("SQL practice · DSA5104", "#/nus/sql", "ghost")}${button("Distributed simulations · DSA5208", "#/nus/simulations", "ghost")}${button("Mixed practice · DSA5101/5105", "#/nus/exam", "ghost")}${button("Reference library", "#/atlas", "ghost")}</div>`, "reveal");
     root.innerHTML = body;
     bindDashboard();
   }
@@ -102,9 +111,17 @@
     root.innerHTML = body;
   }
 
+  function visualCueKind(kind) {
+    const normalized = String(kind || "").toLowerCase();
+    if (normalized.includes("table")) return "table";
+    if (normalized.includes("chart") || normalized.includes("infographic")) return "chart";
+    if (normalized.includes("screenshot")) return "screen";
+    return "diagram";
+  }
   function visualCard(id) {
     const v = visuals()[id]; if (!v) return "";
-    return `<div class="nus-visual"><div class="nus-visual-head"><span class="pill violet">${esc(v.kind)}</span><b>${esc(v.title)}</b></div><p>${text(v.observation)}</p><small>Source: ${esc(sourceLabel(v.source))}${v.source.externalUrl ? ` · <a href="${esc(v.source.externalUrl)}" target="_blank" rel="noreferrer">external attribution ↗</a>` : ""}</small></div>`;
+    const kind = visualCueKind(v.kind);
+    return `<article class="nus-visual nus-visual-${kind}"><div class="nus-visual-cue" aria-hidden="true"><i></i><i></i><i></i></div><div class="nus-visual-copy"><div class="nus-visual-head"><span class="pill violet">${esc(v.kind)}</span><b>${esc(v.title)}</b></div><p><strong>Use it to see:</strong> ${text(v.observation)}</p><small>Source: ${esc(sourceLabel(v.source))}${v.source.externalUrl ? ` · <a href="${esc(v.source.externalUrl)}" target="_blank" rel="noreferrer">external attribution ↗</a>` : ""}</small></div></article>`;
   }
   function paragraphs(value) { return String(value || "").split(/\n\s*\n/).filter(Boolean).map(p => `<p>${text(p)}</p>`).join(""); }
   function mathBlock(m) {
@@ -127,9 +144,27 @@
   function criticalThinking(l) {
     const questions = l.criticalQuestions || [];
     if (!questions.length) return "";
-    return `<section class="nus-card nus-critical reveal"><div class="nus-teach-head"><h3>Critical thinking</h3><span class="pill violet">Challenge the assumptions</span></div><p class="nus-muted">Do not only repeat the formula. Ask what it assumes, what can make it fail, and what evidence would change your conclusion.</p><div class="nus-critical-list">${questions.map((q, i) => `<details class="nus-critical-item"><summary><span>${i + 1}. ${esc(q.prompt)}</span><small>${esc(q.focus || "critique")}</small></summary><p><b>What to examine:</b> ${text(q.angle)}</p>${q.modelAnswer ? `<details><summary>Compare with a strong answer</summary><p>${text(q.modelAnswer)}</p></details>` : ""}</details>`).join("")}</div></section>`;
+    return `<section class="nus-card nus-critical reveal" id="nus-lesson-reason"><div class="nus-teach-head"><h3>Critical thinking</h3><span class="pill violet">Challenge the assumptions</span></div><p class="nus-muted">Do not only repeat the formula. Ask what it assumes, what can make it fail, and what evidence would change your conclusion.</p><div class="nus-critical-list">${questions.map((q, i) => `<details class="nus-critical-item"><summary><span>${i + 1}. ${esc(q.prompt)}</span><small>${esc(q.focus || "critique")}</small></summary><p><b>What to examine:</b> ${text(q.angle)}</p>${q.modelAnswer ? `<details><summary>Compare with a strong answer</summary><p>${text(q.modelAnswer)}</p></details>` : ""}</details>`).join("")}</div></section>`;
   }
   function typesetNus() { if (window.typeset) window.typeset(root); }
+  function studyCompass(l) {
+    const steps = [
+      ["read", "Read", `${(l.sections || []).length} source notes`],
+      ["work", "Work", `${(l.examples || []).length} worked example${(l.examples || []).length === 1 ? "" : "s"}`],
+      ["reason", "Reason", `${(l.criticalQuestions || []).length} assumption checks`],
+      ["recall", "Recall", `${(l.questions || []).length} retrieval prompts`]
+    ];
+    return `<nav class="nus-study-compass reveal" aria-label="Lesson study flow">${steps.map((step, index) => `<button type="button" class="nus-compass-step" data-nus-jump="nus-lesson-${step[0]}"><span>${index + 1}</span><b>${step[1]}</b><small>${step[2]}</small></button>`).join("")}</nav>`;
+  }
+  function bindLessonInteractions(code, id) {
+    root.querySelector("#nus-reader-toggle")?.addEventListener("click", () => {
+      setReaderMode(!readerModeOn());
+      renderLesson(code, id);
+    });
+    root.querySelectorAll("[data-nus-jump]").forEach(buttonEl => buttonEl.addEventListener("click", () => {
+      document.getElementById(buttonEl.dataset.nusJump)?.scrollIntoView({ behavior: "smooth", block: "start" });
+    }));
+  }
   function studyKit(l) {
     const flashcards = l.flashcards || [], homework = l.homework || [], codeExercises = l.codeExercises || [];
     return `<section class="nus-card reveal"><h3>Study kit</h3><div class="nus-kit-stats"><span><b>${flashcards.length}</b> flashcards</span><span><b>${homework.length}</b> homework prompts</span><span><b>${codeExercises.length}</b> coding exercises</span></div><details><summary>Homework prompts</summary><ol class="nus-prompt-list">${homework.map(h => `<li><b>${esc(h.prompt)}</b><small>${esc(h.rubric || "Show your reasoning and one validation check.")}</small>${h.solution ? `<details><summary>Reveal a solution outline</summary><p>${text(h.solution)}</p></details>` : ""}</li>`).join("")}</ol></details><details><summary>Flashcards with answers</summary><ul class="nus-prompt-list">${flashcards.map(f => `<li><b>${esc(f.front)}</b><small>${esc(f.back || "Recall the definition, assumptions, and one limitation.")}</small></li>`).join("")}</ul></details>${codeExercises.length ? `<details><summary>Coding exercises</summary>${codeExercises.map(x => `<div class="nus-code-exercise"><b>${esc(x.language)} · ${esc(x.prompt)}</b><pre>${esc(x.starter)}</pre><small>Attempt it first, then use the review notes to check the expected behavior.</small></div>`).join("")}</details>` : ""}</section>`;
@@ -141,13 +176,15 @@
     const done = window.NUS_STORE.lessonDone(l.id);
     const courseLessons = lessons(code), index = courseLessons.findIndex(x => x.id === l.id);
     const previous = courseLessons[index - 1], next = courseLessons[index + 1];
+    setReaderMode(readerModeOn());
     let body = pageHead(`${c.code} · Week ${l.week}`, l.title, l.summary);
-    body += `<div class="nus-lesson-actions">${button("← Course", `#/nus/course/${c.code}`, "ghost")}<button class="btn ${done ? "ghost" : "primary"}" id="nus-mark-lesson">${done ? "✓ Completed" : "Mark complete"}</button>${button("Exam mode", `#/nus/exam/${c.code}/${l.id}`, "ghost")}</div>`;
-    body += `<section class="nus-learning-path reveal"><div><b>1 · Read</b><span>Understand the lecture core</span></div><div><b>2 · Work</b><span>Follow the example</span></div><div><b>3 · Recall</b><span>Answer without notes</span></div><div><b>4 · Practice</b><span>Finish in Exam Mode</span></div></section>`;
-    body += `<div class="nus-lesson-grid"><main><section class="nus-card nus-objectives reveal"><div class="nus-teach-head"><h3>What you should be able to do</h3><span class="pill gold">${esc(l.minutes)} min</span></div><ul>${(l.objectives || []).map(objective => `<li>${esc(objective)}</li>`).join("")}</ul></section>${(l.sections || []).map(lessonSection).join("")}${(l.math || []).map(mathBlock).join("")}${(l.examples || []).map(workedExample).join("")}${criticalThinking(l)}<section class="nus-card nus-recall reveal"><div class="nus-teach-head"><h3>Recall before you test</h3><span class="pill">${l.questions.length} prompts</span></div><p class="nus-muted">Answer on paper first. Open each prompt only after you commit to an answer.</p><div class="nus-question-list">${l.questions.map(recallItem).join("")}</div>${button("Start this lesson in Exam Mode", `#/nus/exam/${c.code}/${l.id}`, "primary")}</section>${studyKit(l)}<div class="nus-lesson-nav">${previous ? button(`← ${previous.title}`, `#/nus/lesson/${c.code}/${previous.id}`, "ghost") : `<span></span>`}${next ? button(`Next: ${next.title} →`, `#/nus/lesson/${c.code}/${next.id}`, "primary") : button("Back to course", `#/nus/course/${c.code}`, "primary")}</div></main><aside>${l.visualIds && l.visualIds.length ? card("Slide and image evidence", l.visualIds.map(visualCard).join(""), "reveal") : ""}${card("Source trail", `<ul class="nus-source-list">${l.sourceRefs.map(r => `<li>${sourceItem(r)}</li>`).join("")}</ul><p class="nus-muted">Lecture is the exam-priority core. Textbook and reference material are clearly labeled for depth and optional support.</p>`, "reveal")}</aside></div>`;
+    body += `<div class="nus-lesson-actions">${button("← Course", `#/nus/course/${c.code}`, "ghost")}<button class="btn ${done ? "ghost" : "primary"}" id="nus-mark-lesson">${done ? "✓ Completed" : "Mark complete"}</button>${button("Exam mode", `#/nus/exam/${c.code}/${l.id}`, "ghost")}${readerButton()}</div>`;
+    body += studyCompass(l);
+    body += `<div class="nus-lesson-grid"><main><section class="nus-card nus-objectives reveal"><div class="nus-teach-head"><h3>What you should be able to do</h3><span class="pill gold">${esc(l.minutes)} min</span></div><ul>${(l.objectives || []).map(objective => `<li>${esc(objective)}</li>`).join("")}</ul></section><div id="nus-lesson-read">${(l.sections || []).map(lessonSection).join("")}${(l.math || []).map(mathBlock).join("")}</div><div id="nus-lesson-work">${(l.examples || []).map(workedExample).join("")}</div>${criticalThinking(l)}<section class="nus-card nus-recall reveal" id="nus-lesson-recall"><div class="nus-teach-head"><h3>Recall before you test</h3><span class="pill">${l.questions.length} prompts</span></div><p class="nus-muted">Answer on paper first. Open each prompt only after you commit to an answer.</p><div class="nus-question-list">${l.questions.map(recallItem).join("")}</div>${button("Start this lesson in Exam Mode", `#/nus/exam/${c.code}/${l.id}`, "primary")}</section>${studyKit(l)}<div class="nus-lesson-nav">${previous ? button(`← ${previous.title}`, `#/nus/lesson/${c.code}/${previous.id}`, "ghost") : `<span></span>`}${next ? button(`Next: ${next.title} →`, `#/nus/lesson/${c.code}/${next.id}`, "primary") : button("Back to course", `#/nus/course/${c.code}`, "primary")}</div></main><aside>${l.visualIds && l.visualIds.length ? card("Visual study cues", l.visualIds.map(visualCard).join(""), "reveal") : ""}${card("Source trail", `<ul class="nus-source-list">${l.sourceRefs.map(r => `<li>${sourceItem(r)}</li>`).join("")}</ul><p class="nus-muted">Visual cues are derived study prompts, not copies of course slides. Lecture remains the exam-priority core; textbook and reference material are labeled for depth and optional support.</p>`, "reveal")}</aside></div>`;
     root.innerHTML = body;
     typesetNus();
     root.querySelector("#nus-mark-lesson").addEventListener("click", () => { window.NUS_STORE.markLesson(l.id, !done); renderLesson(code, id); });
+    bindLessonInteractions(code, id);
   }
 
   function examQuestions(code, scope) {
@@ -281,6 +318,7 @@
   function renderRoute(parts) {
     stopExamTimer();
     const p = parts || [];
+    if (p[0] !== "lesson") setReaderMode(false);
     let result;
     if (!p.length || p[0] === "dashboard") result = renderDashboard();
     else if (p[0] === "planner") result = renderPlanner();

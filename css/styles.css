@@ -1,51 +1,54 @@
 /* ============================================================
-   ATLAS — Personal Learning Codex
-   Aesthetic: warm dark academia / digital study
+   NUS ATLAS — reading-first study studio
+   Aesthetic: NUS blue + orange editorial reader
    Fonts are loaded via a <link> in index.html <head> (faster than a chained @import here).
    ============================================================ */
 
 :root {
-  /* ink theme (default) */
-  --bg:        #141110;
-  --bg-2:      #1b1715;
-  --panel:     #211c19;
-  --panel-2:   #2a231f;
-  --line:      #3a302a;
-  --ink:       #f1e8da;
-  --ink-soft:  #cabfae;
-  --ink-mute:  #968871;
-  --gold:      #e0a458;
-  --gold-deep: #c8853a;
-  --sage:      #88a37a;
-  --sage-deep: #5f7a54;
-  --rust:      #d2715a;
-  --violet:    #9a8bc4;
-  --paper:     #efe6d4;
-  --shadow:    rgba(0,0,0,.45);
-  --radius:    14px;
-  --maxw:      1180px;
+  /* NUS Blue #003D7C and NUS Orange #EF7C00 anchor the study theme. */
+  --nus-blue:   #003d7c;
+  --nus-orange: #ef7c00;
+  --bg:        #061a33;
+  --bg-2:      #0a2545;
+  --panel:     #0e2d52;
+  --panel-2:   #153960;
+  --line:      #28517d;
+  --ink:       #f7f9fd;
+  --ink-soft:  #d4dfec;
+  --ink-mute:  #9fb5cf;
+  --gold:      #ff9a1f;
+  --gold-deep: #d86b00;
+  --sage:      #71c6a3;
+  --sage-deep: #419b7a;
+  --rust:      #ff8b72;
+  --violet:    #b9a7ff;
+  --paper:     #f7f9fd;
+  --shadow:    rgba(0, 18, 45, .52);
+  --radius:    16px;
+  --maxw:      1340px;
   --font-disp: 'Fraunces', Georgia, serif;
-  --font-body: 'Spectral', Georgia, serif;
+  --font-body: 'Source Serif 4', Georgia, serif;
+  --font-ui: 'Source Sans 3', Arial, sans-serif;
   --font-mono: 'JetBrains Mono', monospace;
 }
 
 [data-theme="parchment"] {
-  --bg:        #efe7d6;
-  --bg-2:      #e7ddc8;
-  --panel:     #f6efe0;
-  --panel-2:   #efe5d1;
-  --line:      #d8caac;
-  --ink:       #2c241b;
-  --ink-soft:  #5a4d3b;
-  --ink-mute:  #8a7a60;
-  --gold:      #b67a26;
-  --gold-deep: #9a6418;
-  --sage:      #5f7a54;
-  --sage-deep: #46603c;
-  --rust:      #b9492f;
-  --violet:    #6c5da0;
-  --paper:     #3a2f22;
-  --shadow:    rgba(80,60,30,.18);
+  --bg:        #f4f7fb;
+  --bg-2:      #eaf0f8;
+  --panel:     #ffffff;
+  --panel-2:   #eef4fb;
+  --line:      #c9d8e9;
+  --ink:       #07213f;
+  --ink-soft:  #27476a;
+  --ink-mute:  #55738f;
+  --gold:      #c96300;
+  --gold-deep: #a44f00;
+  --sage:      #19795d;
+  --sage-deep: #0d6047;
+  --rust:      #b94632;
+  --violet:    #6658a6;
+  --paper:     #082342;
+  --shadow:    rgba(0, 44, 88, .16);
 }
 
 /* ── High-contrast accessibility mode — layers on either theme (data-contrast="high") ──
@@ -53,38 +56,38 @@
    colours so low-contrast tokens (esp. --ink-mute / --line) clear comfortably. Both
    blocks redefine the SAME token set so the dark block can't leak into parchment. */
 [data-contrast="high"] {
-  --bg:        #0a0807;
-  --bg-2:      #14100d;
-  --panel:     #17120f;
-  --panel-2:   #211a14;
-  --line:      #756454;
+  --bg:        #020f20;
+  --bg-2:      #061a33;
+  --panel:     #092342;
+  --panel-2:   #12395f;
+  --line:      #7296bc;
   --ink:       #ffffff;
-  --ink-soft:  #ece3d4;
-  --ink-mute:  #ccbca0;
-  --gold:      #f6b85f;
-  --gold-deep: #e2a043;
-  --sage:      #aacb9a;
-  --sage-deep: #82a073;
-  --rust:      #f28b71;
-  --violet:    #c8b9f2;
-  --shadow:    rgba(0,0,0,.7);
+  --ink-soft:  #e3edf8;
+  --ink-mute:  #c2d4e7;
+  --gold:      #ffae45;
+  --gold-deep: #f58a08;
+  --sage:      #96e1be;
+  --sage-deep: #64b996;
+  --rust:      #ff9e89;
+  --violet:    #d3c8ff;
+  --shadow:    rgba(0, 0, 0, .72);
 }
 [data-theme="parchment"][data-contrast="high"] {
-  --bg:        #fcf8ee;
-  --bg-2:      #f0e7d3;
+  --bg:        #ffffff;
+  --bg-2:      #edf4fc;
   --panel:     #ffffff;
-  --panel-2:   #f3ead6;
-  --line:      #9a855f;
-  --ink:       #16110a;
-  --ink-soft:  #372c1d;
-  --ink-mute:  #564730;
-  --gold:      #875611;
-  --gold-deep: #6c4507;
-  --sage:      #3f5935;
-  --sage-deep: #324726;
-  --rust:      #8f3018;
-  --violet:    #483a75;
-  --shadow:    rgba(80,60,30,.3);
+  --panel-2:   #e4effb;
+  --line:      #718eab;
+  --ink:       #03172d;
+  --ink-soft:  #173e65;
+  --ink-mute:  #345c84;
+  --gold:      #a64800;
+  --gold-deep: #803700;
+  --sage:      #075d43;
+  --sage-deep: #044631;
+  --rust:      #98301f;
+  --violet:    #453584;
+  --shadow:    rgba(0, 35, 72, .28);
 }
 /* always-visible, thicker focus ring + solid (not dotted) inline links in high contrast */
 [data-contrast="high"] :focus-visible { outline-width: 3px; }
@@ -93,14 +96,14 @@
 
 * { box-sizing: border-box; margin: 0; padding: 0; }
 
-html { scroll-behavior: smooth; }
+html { scroll-behavior: smooth; scrollbar-gutter: stable; }
 
 body {
   font-family: var(--font-body);
   background: var(--bg);
   color: var(--ink);
-  line-height: 1.6;
-  font-size: 17px;
+  line-height: 1.72;
+  font-size: 18px;
   -webkit-font-smoothing: antialiased;
   min-height: 100vh;
   position: relative;
@@ -135,9 +138,9 @@ body::before {
   content: '';
   position: fixed; inset: 0; z-index: -2;
   background:
-    radial-gradient(900px 600px at 12% -5%, rgba(224,164,88,.10), transparent 60%),
-    radial-gradient(800px 700px at 100% 0%, rgba(154,139,196,.07), transparent 55%),
-    radial-gradient(700px 600px at 50% 110%, rgba(136,163,122,.06), transparent 60%);
+    radial-gradient(900px 600px at 8% -5%, color-mix(in srgb, var(--nus-orange) 19%, transparent), transparent 60%),
+    radial-gradient(860px 720px at 100% 0%, color-mix(in srgb, #1185d1 15%, transparent), transparent 57%),
+    radial-gradient(760px 620px at 50% 110%, color-mix(in srgb, var(--sage) 11%, transparent), transparent 60%);
   pointer-events: none;
 }
 body::after {
@@ -148,17 +151,23 @@ body::after {
 }
 
 ::selection { background: var(--gold); color: var(--bg); }
+html, body, .sidebar, .palette-list { scrollbar-width: thin; scrollbar-color: color-mix(in srgb, var(--gold) 62%, var(--line)) transparent; }
+::-webkit-scrollbar { width: 11px; height: 11px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: color-mix(in srgb, var(--gold) 52%, var(--line)); border: 3px solid var(--bg); border-radius: 999px; }
+::-webkit-scrollbar-thumb:hover { background: var(--gold); }
 
 /* ---------- Layout shell ---------- */
-.shell { display: grid; grid-template-columns: 264px 1fr; min-height: 100vh; }
+.shell { display: grid; grid-template-columns: 280px 1fr; min-height: 100vh; }
 
 .sidebar {
   border-right: 1px solid var(--line);
   background: linear-gradient(180deg, var(--bg-2), var(--bg));
-  padding: 26px 20px;
+  padding: 28px 18px 32px;
   position: sticky; top: 0; height: 100vh;
   display: flex; flex-direction: column; gap: 22px;
   overflow-y: auto;
+  scrollbar-gutter: stable;
 }
 
 .brand { display: flex; align-items: center; gap: 12px; cursor: pointer; text-decoration: none; color: inherit; }
@@ -166,13 +175,13 @@ body::after {
 .brand .glyph {
   width: 42px; height: 42px; flex: none;
   display: grid; place-items: center;
-  border: 1.5px solid var(--gold); border-radius: 11px;
+  border: 1.5px solid color-mix(in srgb, var(--gold) 80%, white); border-radius: 12px;
   font-family: var(--font-disp); font-weight: 600; font-size: 24px;
-  color: var(--gold);
-  background: radial-gradient(circle at 30% 25%, rgba(224,164,88,.18), transparent);
-  box-shadow: 0 0 24px -10px var(--gold);
+  color: #fff;
+  background: linear-gradient(145deg, var(--nus-orange) 0 48%, var(--nus-blue) 49% 100%);
+  box-shadow: 0 10px 28px -14px var(--nus-orange);
 }
-.brand h1 { font-family: var(--font-disp); font-size: 21px; font-weight: 600; letter-spacing: .3px; line-height: 1; }
+.brand h1 { font-family: var(--font-disp); font-size: 21px; font-weight: 600; letter-spacing: .1px; line-height: 1; }
 .brand .sub { font-size: 11px; letter-spacing: 3px; text-transform: uppercase; color: var(--ink-mute); margin-top: 4px; }
 
 .nav { display: flex; flex-direction: column; gap: 3px; }
@@ -180,11 +189,12 @@ body::after {
   display: flex; align-items: center; gap: 12px;
   padding: 10px 13px; border-radius: 10px;
   color: var(--ink-soft); text-decoration: none;
-  font-size: 15px; letter-spacing: .2px;
+  font-family: var(--font-ui); font-weight: 600; font-size: 15px; letter-spacing: .1px;
   transition: background .18s, color .18s, transform .18s;
   border: 1px solid transparent;
 }
 .nav a .i { width: 20px; text-align: center; opacity: .8; font-size: 16px; }
+.nav-icon { width: 18px; height: 18px; flex: none; fill: none; stroke: currentColor; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; opacity: .9; }
 .nav a:hover { background: var(--panel); color: var(--ink); transform: translateX(3px); }
 .nav a.active { background: var(--panel-2); color: var(--gold); border-color: var(--line); }
 
@@ -192,26 +202,38 @@ body::after {
 .theme-toggle {
   display: flex; align-items: center; gap: 8px; cursor: pointer;
   background: var(--panel); border: 1px solid var(--line); color: var(--ink-soft);
-  padding: 9px 12px; border-radius: 10px; font-family: var(--font-body); font-size: 13px;
+  padding: 9px 12px; border-radius: 10px; font-family: var(--font-ui); font-size: 13px;
   transition: .18s;
 }
 .theme-toggle:hover { color: var(--gold); border-color: var(--gold-deep); }
 
 /* nav course list */
 .nav-courses { border-top: 1px solid var(--line); padding-top: 14px; margin-top: 4px; }
-.nav-label { font-size: 10px; letter-spacing: 3px; text-transform: uppercase; color: var(--ink-mute); padding: 0 13px 8px; }
+.nav-label { font: 700 10px var(--font-ui); letter-spacing: 2px; text-transform: uppercase; color: var(--ink-mute); padding: 0 13px 8px; }
 .nav-courses a { font-size: 14px; padding: 7px 13px; }
 .nav-courses .dot { width: 8px; height: 8px; border-radius: 50%; flex: none; }
+.atlas-shelf { overflow:hidden; border:1px solid var(--line); border-radius:12px; background:color-mix(in srgb, var(--panel) 75%, transparent); }
+.atlas-shelf > summary { display:flex; align-items:center; justify-content:space-between; gap:12px; padding:11px 13px; color:var(--ink-soft); cursor:pointer; font:600 13px var(--font-ui); list-style:none; }
+.atlas-shelf > summary::-webkit-details-marker { display:none; }
+.atlas-shelf > summary::after { content:"+"; color:var(--gold); font:500 19px/1 var(--font-ui); }
+.atlas-shelf[open] > summary { border-bottom:1px solid var(--line); background:color-mix(in srgb, var(--panel-2) 72%, transparent); }
+.atlas-shelf[open] > summary::after { content:"−"; }
+.atlas-shelf > summary small { color:var(--ink-mute); font:10px var(--font-ui); letter-spacing:1px; text-transform:uppercase; }
+.atlas-shelf .nav { padding:8px; }
+.atlas-shelf .nav-courses { margin:0 8px 10px; }
 
 /* ---------- Topbar (XP / streak) ---------- */
 .main { min-width: 0; display: flex; flex-direction: column; }
 .topbar {
   display: flex; align-items: center; gap: 18px;
-  padding: 16px 34px; border-bottom: 1px solid var(--line);
+  padding: 13px clamp(24px, 4vw, 54px); border-bottom: 1px solid var(--line);
   background: color-mix(in srgb, var(--bg) 80%, transparent);
   backdrop-filter: blur(8px);
   position: sticky; top: 0; z-index: 30;
 }
+.topbar-context { display:grid; gap:1px; margin-right:4px; font-family:var(--font-ui); line-height:1.15; }
+.topbar-context b { color:var(--ink); font-size:14px; letter-spacing:.1px; }
+.topbar-context span { color:var(--ink-mute); font-size:11px; }
 .level-badge {
   display: flex; align-items: center; gap: 11px;
 }
@@ -282,6 +304,9 @@ body::after {
 
 /* ---------- Content area ---------- */
 .view { padding: 38px 34px 80px; max-width: var(--maxw); width: 100%; margin: 0 auto; }
+#app.nus-root { width:100%; max-width:1540px; margin:0 auto; padding:clamp(30px, 4vw, 62px) clamp(24px, 4.8vw, 74px) 112px; }
+#app.nus-root .page-head { max-width:860px; margin-bottom:26px; }
+#app.nus-root .page-head p { max-width:68ch; font-size:1.05rem; line-height:1.72; }
 
 .page-head { margin-bottom: 30px; }
 .eyebrow { font-size: 12px; letter-spacing: 4px; text-transform: uppercase; color: var(--gold); margin-bottom: 10px; }
@@ -1491,5 +1516,52 @@ a.gloss-item:hover .gloss-go, a.gloss-item:focus-visible .gloss-go { opacity: 1;
 .nus-critical-item details { margin-top:12px; padding:10px 12px; border-left:2px solid var(--sage); background:var(--bg); }
 .nus-critical-item details summary { color:var(--sage); font-size:13px; }
 .nus-lesson-nav { display:flex; justify-content:space-between; gap:12px; margin:20px 0 8px; }
-@media (max-width: 1050px) { .nus-grid-4 { grid-template-columns:repeat(2, minmax(0, 1fr)); } .nus-course-layout, .nus-lesson-grid, .nus-sql-layout { grid-template-columns:1fr; } }
-@media (max-width: 700px) { .nus-hero, .nus-two-col, .nus-sim-grid { grid-template-columns:1fr; display:grid; } .nus-grid-4 { grid-template-columns:1fr; } .nus-learning-path { grid-template-columns:repeat(2, minmax(0, 1fr)); } .nus-teach-card, .nus-example { padding:18px; } .nus-assessment-controls, .nus-exam-footer { align-items:flex-start; flex-direction:column; } .nus-source { text-align:left; } .nus-assessment-head { align-items:flex-start; flex-direction:column; } .nus-assessment-meta { text-align:left; } .nus-course-meta .btn { margin-left:0; } .nus-date { white-space:normal; } .nus-pipeline i { display:none; } .nus-exam-counts { grid-template-columns:1fr; } .nus-lesson-nav { align-items:stretch; flex-direction:column; } }
+/* NUS reader refinements: source-first prose, interactive landmarks, and derived visual cues. */
+#app.nus-root .nus-hero { padding:clamp(26px, 3vw, 38px); border-color:color-mix(in srgb, var(--nus-orange) 70%, var(--line)); background:linear-gradient(135deg, color-mix(in srgb, var(--nus-orange) 18%, var(--panel)), color-mix(in srgb, var(--nus-blue) 68%, var(--panel))); box-shadow:0 22px 54px -42px var(--shadow); }
+#app.nus-root .nus-card, #app.nus-root .nus-course-card, #app.nus-root .nus-assessment, #app.nus-root .nus-teach-card, #app.nus-root .nus-example { background:color-mix(in srgb, var(--panel) 93%, transparent); box-shadow:0 16px 38px -34px var(--shadow); }
+#app.nus-root .nus-card { padding:clamp(22px, 2.5vw, 30px); }
+#app.nus-root .nus-course-layout, #app.nus-root .nus-lesson-grid { gap:clamp(28px, 3.4vw, 48px); }
+#app.nus-root .nus-lesson-grid { grid-template-columns:minmax(0, 1.62fr) minmax(270px, .72fr); }
+#app.nus-root .nus-lesson-grid > main { min-width:0; }
+#app.nus-root .nus-lesson-grid > aside { align-self:start; display:grid; gap:16px; position:sticky; top:92px; }
+#app.nus-root .nus-teach-card, #app.nus-root .nus-example { padding:clamp(24px, 2.5vw, 34px); margin-bottom:22px; }
+#app.nus-root .nus-teach-card p, #app.nus-root .nus-example p, #app.nus-root .nus-math-block > p { max-width:67ch; font-size:1.04rem; line-height:1.82; }
+#app.nus-root .nus-objectives ul { max-width:67ch; gap:10px; line-height:1.7; }
+#app.nus-root .nus-muted { font-family:var(--font-ui); font-size:13px; line-height:1.55; }
+#app.nus-root .nus-lesson-actions { margin-bottom:18px; }
+.nus-reader-toggle { margin-left:auto; }
+.nus-study-compass { display:grid; grid-template-columns:repeat(4, minmax(0, 1fr)); gap:10px; margin:0 0 28px; padding:10px; border:1px solid var(--line); border-radius:var(--radius); background:color-mix(in srgb, var(--panel) 72%, transparent); }
+.nus-compass-step { display:grid; grid-template-columns:28px 1fr; column-gap:10px; row-gap:1px; align-items:center; min-width:0; padding:13px; border:1px solid transparent; border-radius:12px; background:transparent; color:var(--ink-soft); text-align:left; cursor:pointer; transition:transform .18s, background .18s, border-color .18s; }
+.nus-compass-step:hover { transform:translateY(-2px); background:color-mix(in srgb, var(--nus-orange) 8%, var(--panel-2)); border-color:color-mix(in srgb, var(--nus-orange) 54%, var(--line)); }
+.nus-compass-step > span { grid-row:span 2; display:grid; place-items:center; width:28px; height:28px; border-radius:50%; background:linear-gradient(135deg, var(--nus-orange), var(--gold)); color:#1d160b; font:700 12px var(--font-ui); }
+.nus-compass-step b { color:var(--ink); font:700 14px var(--font-ui); }
+.nus-compass-step small { overflow:hidden; color:var(--ink-mute); font:12px/1.35 var(--font-ui); text-overflow:ellipsis; white-space:nowrap; }
+.nus-visual { display:grid; grid-template-columns:56px minmax(0, 1fr); gap:14px; align-items:start; padding:15px 0; border-bottom:1px solid var(--line); }
+.nus-visual:last-child { border-bottom:0; padding-bottom:0; }
+.nus-visual:first-child { padding-top:0; }
+.nus-visual-cue { position:relative; display:grid; place-items:center; width:56px; height:56px; overflow:hidden; border:1px solid color-mix(in srgb, var(--violet) 42%, var(--line)); border-radius:13px; background:linear-gradient(145deg, color-mix(in srgb, var(--nus-blue) 66%, var(--panel)), color-mix(in srgb, var(--violet) 15%, var(--panel))); }
+.nus-visual-cue i { position:absolute; display:block; border-radius:999px; background:var(--gold); box-shadow:0 0 14px -3px var(--gold); }
+.nus-visual-diagram .nus-visual-cue i:nth-child(1) { width:13px; height:13px; left:10px; top:13px; }
+.nus-visual-diagram .nus-visual-cue i:nth-child(2) { width:13px; height:13px; right:10px; bottom:12px; }
+.nus-visual-diagram .nus-visual-cue i:nth-child(3) { width:34px; height:2px; transform:rotate(43deg); }
+.nus-visual-table .nus-visual-cue { grid-template-columns:repeat(3, 10px); grid-template-rows:repeat(3, 10px); gap:3px; }
+.nus-visual-table .nus-visual-cue i { position:static; width:10px; height:10px; box-shadow:none; }
+.nus-visual-table .nus-visual-cue i:nth-child(2) { opacity:.65; }.nus-visual-table .nus-visual-cue i:nth-child(3) { opacity:.35; }
+.nus-visual-chart .nus-visual-cue { align-items:end; grid-template-columns:repeat(3, 9px); gap:4px; padding:13px; }
+.nus-visual-chart .nus-visual-cue i { position:static; width:9px; height:16px; border-radius:3px 3px 1px 1px; box-shadow:none; }.nus-visual-chart .nus-visual-cue i:nth-child(2) { height:28px; opacity:.72; }.nus-visual-chart .nus-visual-cue i:nth-child(3) { height:21px; opacity:.45; }
+.nus-visual-screen .nus-visual-cue i:nth-child(1) { width:35px; height:25px; border:2px solid var(--gold); background:transparent; box-shadow:none; }.nus-visual-screen .nus-visual-cue i:nth-child(2) { width:18px; height:2px; bottom:11px; box-shadow:none; }.nus-visual-screen .nus-visual-cue i:nth-child(3) { width:2px; height:5px; bottom:8px; box-shadow:none; }
+.nus-visual-head { display:grid; gap:5px; }
+.nus-visual-head b { color:var(--ink); font:600 14px/1.35 var(--font-ui); }
+.nus-visual-copy p { margin:8px 0 7px; color:var(--ink-soft); font-size:14px; line-height:1.55; }
+.nus-visual-copy strong { color:var(--gold); font-family:var(--font-ui); }
+.nus-visual-copy small { color:var(--ink-mute); font:11px/1.45 var(--font-ui); }
+body.nus-reading-mode .shell { display:block; }
+body.nus-reading-mode .sidebar, body.nus-reading-mode .topbar { display:none; }
+body.nus-reading-mode .main { display:block; }
+body.nus-reading-mode #app.nus-root { max-width:980px; padding-top:46px; }
+body.nus-reading-mode #app.nus-root .nus-lesson-grid { grid-template-columns:minmax(0, 1fr); }
+body.nus-reading-mode #app.nus-root .nus-lesson-grid > aside { display:none; }
+body.nus-reading-mode .nus-study-compass { position:sticky; top:16px; z-index:20; backdrop-filter:blur(12px); }
+@media (max-width: 1050px) { #app.nus-root .nus-grid-4 { grid-template-columns:repeat(2, minmax(0, 1fr)); } #app.nus-root .nus-course-layout, #app.nus-root .nus-lesson-grid, #app.nus-root .nus-sql-layout { grid-template-columns:1fr; } #app.nus-root .nus-lesson-grid > aside { position:static; grid-template-columns:repeat(2, minmax(0, 1fr)); } }
+@media (max-width: 760px) { .topbar-context, .level-meta, .xp-wrap { display:none; } .topbar { justify-content:space-between; } #app.nus-root { padding:28px 18px 84px; } .nus-reader-toggle { margin-left:0; } .nus-study-compass { grid-template-columns:repeat(2, minmax(0, 1fr)); } #app.nus-root .nus-lesson-grid > aside { grid-template-columns:1fr; } }
+@media (max-width: 700px) { .nus-hero, .nus-two-col, .nus-sim-grid { grid-template-columns:1fr; display:grid; } .nus-grid-4 { grid-template-columns:1fr; } .nus-teach-card, .nus-example { padding:18px; } .nus-assessment-controls, .nus-exam-footer { align-items:flex-start; flex-direction:column; } .nus-source { text-align:left; } .nus-assessment-head { align-items:flex-start; flex-direction:column; } .nus-assessment-meta { text-align:left; } .nus-course-meta .btn { margin-left:0; } .nus-date { white-space:normal; } .nus-pipeline i { display:none; } .nus-exam-counts { grid-template-columns:1fr; } .nus-lesson-nav { align-items:stretch; flex-direction:column; } }

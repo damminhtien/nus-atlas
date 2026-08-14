@@ -2842,7 +2842,7 @@
   // ---------- router ----------
   // a meaningful browser-tab / history / screen-reader title per route (SPAs otherwise stay stuck on one title)
   function docTitleFor(parts) {
-    const BASE = "Atlas";
+    const BASE = "NUS Atlas";
     if (!parts.length) return "NUS Dashboard · " + BASE;
     const p = parts[0];
     if (p === "nus") {
@@ -2861,13 +2861,16 @@
     if (p === "cheatsheet") { const c = findCourse(parts[1]); return "Cheatsheet" + (c ? ": " + c.title : "") + " · " + BASE; }
     if (p === "placement") { const c = parts[1] && findCourse(parts[1]); return "Placement" + (c ? ": " + c.title : "") + " · " + BASE; }
     if (PAGES[p]) return PAGES[p] + " · " + BASE;
-    return BASE + " · Personal Learning Codex";
+    return BASE + " · Study Studio";
   }
   function router() {
     if (window.VIZUtil) window.VIZUtil.stopAll(); // kill any running animation loops
     const h = (location.hash || "#/").slice(1);
     const parts = h.split("/").filter(Boolean); // e.g. ["course","linear-algebra"]
-    try { document.title = docTitleFor(parts); } catch (e) { document.title = "Atlas · Personal Learning Codex"; }
+    const isNusRoute = parts.length === 0 || parts[0] === "nus";
+    app.classList.toggle("nus-root", isNusRoute);
+    if (!isNusRoute || parts[1] !== "lesson") document.body.classList.remove("nus-reading-mode");
+    try { document.title = docTitleFor(parts); } catch (e) { document.title = "NUS Atlas · Study Studio"; }
     clearResumePill();                                     // drop any lingering resume pill from the previous lesson
     window.scrollTo(0, 0);
     if (parts.length === 0) window.NUS_UI ? window.NUS_UI.renderRoute([]) : viewDashboard();

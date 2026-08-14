@@ -3,14 +3,14 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>NUS Atlas · Personal Learning Codex</title>
+  <title>NUS Atlas · Study Studio</title>
   <meta name="description" content="A focused study workspace for NUS DSA5101, DSA5104, DSA5105, and DSA5208: lessons, practice, deadlines, SQL, and distributed-systems simulations." />
   <link rel="manifest" href="manifest.webmanifest" />
-  <meta name="theme-color" content="#141110" />
+  <meta name="theme-color" content="#061a33" />
   <link rel="icon" href="icon.svg" type="image/svg+xml" />
   <link rel="apple-touch-icon" href="icon.svg" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
-  <meta name="apple-mobile-web-app-title" content="Atlas" />
+  <meta name="apple-mobile-web-app-title" content="NUS Atlas" />
 
   <!-- speed up the third-party connections we always make (CDN + fonts) -->
   <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin />
@@ -18,7 +18,7 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
 
   <!-- fonts: discovered immediately as a <link> (was a chained @import inside styles.css) -->
-  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300..900;1,9..144,300..900&family=Spectral:ital,wght@0,300;0,400;0,500;0,600;1,400&family=JetBrains+Mono:wght@400;500;700&display=swap" />
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300..900;1,9..144,300..900&family=JetBrains+Mono:wght@400;500;700&family=Source+Sans+3:wght@400;500;600;700&family=Source+Serif+4:ital,opsz,wght@0,8..60,400;0,8..60,500;0,8..60,600;1,8..60,400&display=swap" />
 
   <!-- KaTeX for math typesetting -->
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css" crossorigin="anonymous" />
@@ -34,35 +34,41 @@
     <!-- Sidebar -->
     <aside class="sidebar" id="sidebar" aria-label="Sidebar">
       <a class="brand" href="#/" data-route>
-        <div class="glyph" aria-hidden="true">A</div>
+        <div class="glyph" aria-hidden="true">N</div>
         <div>
-          <h1>Atlas</h1>
-          <div class="sub">Learning Codex</div>
+          <h1>NUS Atlas</h1>
+          <div class="sub">Study Studio</div>
         </div>
       </a>
 
-      <nav class="nav" aria-label="Main navigation">
-        <a href="#/" data-route><span class="i" aria-hidden="true">⌂</span> NUS Dashboard</a>
-        <a href="#/nus/planner" data-route><span class="i" aria-hidden="true">🗓️</span> NUS Planner</a>
-        <a href="#/nus/exam" data-route><span class="i" aria-hidden="true">📝</span> NUS Exam Mode</a>
-        <a href="#/nus/sql" data-route><span class="i" aria-hidden="true">🗃️</span> SQL Studio</a>
-        <a href="#/nus/simulations" data-route><span class="i" aria-hidden="true">⏱️</span> Distributed Sims</a>
-        <a href="#/atlas" data-route><span class="i" aria-hidden="true">🧭</span> General Atlas</a>
-        <a href="#/review" data-route><span class="i" aria-hidden="true">⚡</span> Daily Review</a>
-        <a href="#/test" data-route><span class="i" aria-hidden="true">📝</span> Spawn a Test</a>
-        <a href="#/lab" data-route><span class="i" aria-hidden="true">🎛️</span> Visualization Lab</a>
-        <a href="#/map" data-route><span class="i" aria-hidden="true">🗺️</span> Knowledge Map</a>
-        <a href="#/playground" data-route><span class="i" aria-hidden="true">💻</span> Code Playground</a>
-        <a href="#/glossary" data-route><span class="i" aria-hidden="true">📔</span> Glossary</a>
-        <a href="#/library" data-route><span class="i" aria-hidden="true">📚</span> Library</a>
-        <a href="#/achievements" data-route><span class="i" aria-hidden="true">🏆</span> Achievements</a>
-        <a href="#/stats" data-route><span class="i" aria-hidden="true">📊</span> Progress</a>
+      <nav class="nav nav-nus" aria-label="NUS study navigation">
+        <div class="nav-label">NUS workspace</div>
+        <a href="#/" data-route><svg class="nav-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="m3 10 9-7 9 7v10a1 1 0 0 1-1 1h-5v-6H9v6H4a1 1 0 0 1-1-1z"/></svg> Study desk</a>
+        <a href="#/nus/planner" data-route><svg class="nav-icon" viewBox="0 0 24 24" aria-hidden="true"><rect x="4" y="5" width="16" height="15" rx="2"/><path d="M8 3v4M16 3v4M4 10h16M8 14h3M8 17h6"/></svg> Planner</a>
+        <a href="#/nus/exam" data-route><svg class="nav-icon" viewBox="0 0 24 24" aria-hidden="true"><rect x="5" y="3" width="14" height="18" rx="2"/><path d="M9 8h6M9 12h6M9 16h3"/></svg> Practice mode</a>
+        <a href="#/nus/sql" data-route><svg class="nav-icon" viewBox="0 0 24 24" aria-hidden="true"><ellipse cx="12" cy="5" rx="7" ry="3"/><path d="M5 5v7c0 1.7 3.1 3 7 3s7-1.3 7-3V5M5 12v7c0 1.7 3.1 3 7 3s7-1.3 7-3v-7"/></svg> SQL studio</a>
+        <a href="#/nus/simulations" data-route><svg class="nav-icon" viewBox="0 0 24 24" aria-hidden="true"><circle cx="6" cy="7" r="2"/><circle cx="18" cy="7" r="2"/><circle cx="12" cy="17" r="2"/><path d="m7.7 8.1 2.7 6.1M16.3 8.1l-2.7 6.1M8 7h8"/></svg> Systems lab</a>
       </nav>
 
-      <div class="nav nav-courses">
-        <div class="nav-label">Topics</div>
-        <div id="nav-courses"></div>
-      </div>
+      <details class="atlas-shelf">
+        <summary><span>Atlas reference shelf</span><small>optional</small></summary>
+        <nav class="nav" aria-label="Atlas reference navigation">
+          <a href="#/atlas" data-route><span class="i" aria-hidden="true">⌘</span> Foundation library</a>
+          <a href="#/review" data-route><span class="i" aria-hidden="true">↻</span> Daily review</a>
+          <a href="#/test" data-route><span class="i" aria-hidden="true">✓</span> Custom test</a>
+          <a href="#/lab" data-route><span class="i" aria-hidden="true">◌</span> Visualization lab</a>
+          <a href="#/map" data-route><span class="i" aria-hidden="true">⌁</span> Knowledge map</a>
+          <a href="#/playground" data-route><span class="i" aria-hidden="true">›_</span> Code playground</a>
+          <a href="#/glossary" data-route><span class="i" aria-hidden="true">Aa</span> Glossary</a>
+          <a href="#/library" data-route><span class="i" aria-hidden="true">▤</span> Library</a>
+          <a href="#/achievements" data-route><span class="i" aria-hidden="true">★</span> Achievements</a>
+          <a href="#/stats" data-route><span class="i" aria-hidden="true">↗</span> Progress</a>
+        </nav>
+        <div class="nav nav-courses">
+          <div class="nav-label">Reference topics</div>
+          <div id="nav-courses"></div>
+        </div>
+      </details>
 
       <div class="side-foot">
         <button class="theme-toggle" id="guide-btn">❔ Guide / tour</button>
@@ -70,7 +76,7 @@
         <button class="theme-toggle" id="shortcuts-btn">⌨ Shortcuts <span style="margin-left:auto;opacity:.6;font-family:monospace">?</span></button>
         <button class="theme-toggle" id="theme-toggle">☾ Ink theme</button>
         <button class="theme-toggle" id="contrast-toggle" aria-pressed="false">◐ High contrast</button>
-        <span>Built for focused, lifelong study.</span>
+        <span>Built for focused NUS study.</span>
       </div>
     </aside>
 
@@ -79,6 +85,7 @@
       <header class="topbar">
         <button class="menu-btn" id="menu-btn" aria-label="Open menu" aria-controls="sidebar">☰</button>
         <button class="topbar-search" id="topbar-search" aria-label="Search lessons, concepts, and commands">🔎</button>
+        <div class="topbar-context"><b>NUS Atlas</b><span>AY2026/27 · Semester 1</span></div>
         <div class="level-badge">
           <div class="level-ring" id="ring"><span id="ring-num">1</span></div>
           <div class="level-meta">
@@ -191,8 +198,8 @@
             if (document.getElementById("sw-update")) return;
             var b = document.createElement("div");
             b.id = "sw-update";
-            b.style.cssText = "position:fixed;bottom:22px;left:50%;transform:translateX(-50%);z-index:400;background:#211c19;color:#f1e8da;border:1px solid #c8853a;border-radius:12px;padding:12px 16px;font-family:Spectral,Georgia,serif;font-size:14px;box-shadow:0 16px 44px rgba(0,0,0,.5);display:flex;gap:14px;align-items:center";
-            b.innerHTML = "✨ A new version of Atlas is available. <button id='sw-refresh' style='background:#e0a458;color:#2a1c08;border:none;border-radius:8px;padding:6px 14px;font-weight:600;cursor:pointer'>Refresh</button>";
+            b.style.cssText = "position:fixed;bottom:22px;left:50%;transform:translateX(-50%);z-index:400;background:#0e2d52;color:#f7f9fd;border:1px solid #ef7c00;border-radius:12px;padding:12px 16px;font-family:'Source Sans 3',Arial,sans-serif;font-size:14px;box-shadow:0 16px 44px rgba(0,18,45,.5);display:flex;gap:14px;align-items:center";
+            b.innerHTML = "A new NUS Atlas version is ready. <button id='sw-refresh' style='background:#ef7c00;color:#061a33;border:none;border-radius:8px;padding:6px 14px;font-weight:700;cursor:pointer'>Refresh</button>";
             document.body.appendChild(b);
             document.getElementById("sw-refresh").onclick = function () { worker.postMessage({ type: "SKIP_WAITING" }); b.remove(); };
           }
