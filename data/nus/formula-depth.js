@@ -114,7 +114,8 @@
 
   add("dsa5105-erm", [], [
     crit("If training risk falls but validation risk rises, what hypothesis about the model class becomes plausible?", "Connect the two curves to capacity, noise, and the choice of regularization.", "The model may be fitting sample-specific noise. Check leakage and split quality first, then compare a simpler class or stronger regularization.", "diagnosis"),
-    crit("When would a validation split be misleading even if it is large?", "Inspect dependence, time ordering, duplicates, and mismatch with the deployment population.", "A large but non-representative or leaked validation set can produce a precise answer to the wrong question.", "evaluation")
+    crit("When would a validation split be misleading even if it is large?", "Inspect dependence, time ordering, duplicates, and mismatch with the deployment population.", "A large but non-representative or leaked validation set can produce a precise answer to the wrong question.", "evaluation"),
+    crit("What is the difference between observing a label and knowing the oracle?", "Separate one realized training target from the unknown function or conditional distribution that generates targets.", "The dataset contains one observed y_i for each x_i. The oracle f* or p* describes the underlying relationship; a random oracle means repeated labels for the same input can differ.", "data-generating process")
   ]);
 
   add("dsa5105-linear-week1", [], [
