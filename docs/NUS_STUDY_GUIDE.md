@@ -20,6 +20,8 @@ The source label is part of the data model, not just a UI decoration. A source r
 | `textbook` | Course-textbook derivations and background | Depth; confirm examinability against lecture |
 | `ref` | Optional, advanced, draft, or historical support | Useful context, not current lecture authority |
 
+Assessment-derived material remains `ref` with `status: "assessment-derived"`. It records what past papers or public assignment previews test; it does not upgrade a textbook or third-party upload into lecture scope.
+
 For DSA5105, the local IDs are intentionally kept as references only:
 
 - `DSA5105/Ref/week1_DSA5105_lecture1_with_note.pdf` is the annotated Week 1 lecture copy used for the current deep-dive lessons. `DSA5105/Lec1.pdf` remains a local lecture source, but its cover has a DSA5102 label; the data records that anomaly instead of silently presenting it as an official title.
@@ -33,11 +35,19 @@ The raw `/Users/macbook/Desktop/NUS` folder is never copied into the repository.
 The DSA5105 course page separates the following tracks:
 
 - **Foundations:** Week 1 learning setup, data representation, ERM, OLS, Huber loss, basis models, regularization, softmax, and cross-entropy; then Week 2 generalization and PAC intuition.
-- **Linear and kernel methods:** OLS/ridge/lasso plus textbook SVM margin and support-vector derivations.
-- **Unsupervised learning:** kernels, PCA variance/reconstruction, K-means, GMM, and EM.
-- **RL and graphs:** Bellman reasoning, MDP value functions, GNN message passing, permutation invariance, and oversmoothing.
+- **Exam core:** weighted OLS and uniqueness, SVM dual/KKT/support vectors, LS-SVM and LOO, decision trees, bagging/AdaBoost, neural-network backpropagation, numerical PCA, GMM responsibilities/EM, value iteration, TD(0), replay, and dynamic programming.
+- **Unsupervised learning:** kernels, PCA variance/reconstruction/whitening, K-means, GMM, and EM.
+- **RL and graphs:** Bellman reasoning, MDP value functions, value iteration, graph kernels, PageRank, spectral clustering, GNN message passing, permutation invariance, and oversmoothing.
 
 Textbook-backed prompts are marked in the lesson source trail and in Exam Mode review. Reference-backed prompts remain visibly optional, so a difficult reference question does not masquerade as a lecture requirement.
+
+## DSA5105 assessment alignment
+
+The local AY2024/25 and AY2025/26 exam PDFs are used as primary assessment evidence for topic coverage. They cover, among other items, K-means/PCA, SVM dual and KKT, neural backpropagation, AdaBoost, MDP/value iteration, spectral clustering, GMM, dynamic programming, PageRank, graph kernels, and LS-SVM. Public previews of Fall 2025 Homework 1/2, 2023 Homework 2/3, and the 2024 midterm are stored only as `assessment-derived` topic signals; their solutions are not copied into the public bundle.
+
+The revision rule is: lecture notes define the required explanation, textbook sections deepen the derivation, and assessment-derived references determine which prompts deserve practice. A topic is marked ready only when the Atlas contains a short explanation, a worked calculation or derivation, a limitation/assumption check, and retrieval questions.
+
+See [DSA5105_ASSESSMENT_MAP.md](DSA5105_ASSESSMENT_MAP.md) for the detailed evidence-to-lesson matrix and recommended revision order.
 
 ## Formula and reasoning standard
 
@@ -74,4 +84,4 @@ git diff --check
 ```
 
 The NUS gate checks course allowlisting, lesson/question shape, typed DSA5105 provenance, assessment invariants, visual references, and raw/private-source markers.
-It also checks LaTeX coverage, symbol explanations, source labels, the absence of Unicode formulas, and critical-thinking coverage across all 23 lessons.
+It also checks LaTeX coverage, symbol explanations, source labels, the absence of Unicode formulas, and critical-thinking coverage across all 34 lessons.

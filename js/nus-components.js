@@ -43,6 +43,10 @@
     ];
     return shell(lab, `<div class="nus-lab-controls"><span class="nus-lab-step-count" data-step-count>Trace 1 of ${steps.length}</span><button class="btn primary" type="button" data-lab-next>Advance EM trace</button></div><ol class="nus-lab-stage nus-trace" data-trace>${steps.map((step, i) => `<li class="nus-lab-step ${i === 0 ? "active" : ""}" data-step="${i}" aria-current="${i === 0 ? "step" : "false"}"><b>${step[0]}</b><span>${step[1]}</span></li>`).join("")}</ol><p class="nus-lab-status-text" data-step-summary aria-live="polite">The trace begins with an initial guess, not a final cluster assignment.</p>`);
   }
+  function derivationTrace(lab) {
+    const steps = lab.steps || [];
+    return shell(lab, `<div class="nus-lab-controls"><span class="nus-lab-step-count" data-step-count>Step 1 of ${steps.length}</span><button class="btn primary" type="button" data-lab-next>Reveal next step</button></div><ol class="nus-lab-stage nus-trace nus-derivation-trace">${steps.map((step, i) => `<li class="nus-lab-step ${i === 0 ? "active" : ""}" data-step="${i}" aria-current="${i === 0 ? "step" : "false"}"><b>${esc(step[0])}</b><div class="nus-lab-formula">$${step[1]}$</div><span>${esc(step[2])}</span></li>`).join("")}</ol><p class="nus-lab-status-text" data-step-summary aria-live="polite">Reveal each transformation, then explain what assumption makes it valid.</p>`);
+  }
   function eventTimeline(lab) {
     const steps = [
       ["State s", "Choose the current state and action."],
@@ -87,7 +91,7 @@
   }
   function renderLab(lesson, lab) {
     if (!lab || !lesson) return "";
-    return lab.type === "compare" ? compare(lab) : lab.type === "geometry" ? geometry(lab) : lab.type === "math-stepper" ? mathStepper(lab) : lab.type === "algorithm-trace" ? algorithmTrace(lab) : lab.type === "event-timeline" ? eventTimeline(lab) : pipeline(lab);
+    return lab.type === "compare" ? compare(lab) : lab.type === "geometry" ? geometry(lab) : lab.type === "math-stepper" ? mathStepper(lab) : lab.type === "algorithm-trace" ? algorithmTrace(lab) : lab.type === "derivation-trace" ? derivationTrace(lab) : lab.type === "event-timeline" ? eventTimeline(lab) : pipeline(lab);
   }
   function bind(root) {
     root.querySelectorAll("[data-nus-lab]").forEach(labRoot => {

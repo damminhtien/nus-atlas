@@ -1,6 +1,6 @@
 # NUS study data
 
-This directory contains the normalized study layer for AY2026/27 Semester 1. It currently covers 22 lessons across DSA5101, DSA5104, DSA5105, and DSA5208.
+This directory contains the normalized study layer for AY2026/27 Semester 1. It currently covers 34 lessons across DSA5101, DSA5104, DSA5105, and DSA5208; DSA5105 contributes 22 of them.
 
 - `provenance.js` defines the source classes used by the study layer: `lecture`, `textbook`, and `ref`.
 - `courses.js`, `schedule.js`, and `assessments.js` hold metadata and a dated NUSMods snapshot.
@@ -11,7 +11,7 @@ Source classes:
 
 - `lecture`: current local lecture/syllabus material and exam-priority scope.
 - `textbook`: course-textbook derivations and background; confirm examinability against lecture.
-- `ref`: optional supporting or advanced reading. Mark draft/old material explicitly and never use it to invent current dates or assessment scope.
+- `ref`: optional supporting, historical, or assessment-derived reading. Mark draft/old material explicitly and never use it to invent current dates or assessment scope. `assessment-derived` is a status, not a fourth authority class.
 
 The raw `/Users/macbook/Desktop/NUS` folder is an ingestion source, not a repository input. Do not copy raw PDFs, textbooks, Canvas exports, screenshots, or personal/admissions documents into this project. Keep unknown assessment dates as `date: null` and `dateStatus: "pending"`.
 

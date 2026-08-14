@@ -10,10 +10,10 @@ NUS Atlas is a focused study workspace for AY2026/27 Semester 1. It turns normal
 | --- | --- | ---: |
 | DSA5101 | Big data foundations, frequent patterns, search, streams | 4 |
 | DSA5104 | Data management, relational design, SQL, retrieval | 4 |
-| DSA5105 | Machine learning foundations, theory, SVM, PCA, clustering, RL, GNNs | 10 |
+| DSA5105 | Machine learning foundations, OLS, SVM/KKT, trees, neural nets, PCA, clustering, RL, DP, graph methods | 22 |
 | DSA5208 | Distributed systems, ordering, consistency, Spark | 4 |
 
-The study layer currently contains 22 normalized lessons. Assessment dates remain explicitly pending when they have not been confirmed.
+The study layer currently contains 34 normalized lessons. Assessment dates remain explicitly pending when they have not been confirmed.
 
 ## Study tools
 
@@ -28,7 +28,7 @@ The study layer currently contains 22 normalized lessons. Assessment dates remai
 - Reading-first lesson pages with editorial typography, a four-step Read/Work/Reason/Recall compass, and Focus Reading mode.
 - Derived visual study cues that explain what a referenced diagram, table, chart, or screenshot is meant to teach without publishing raw course slides.
 - Evidence-based daily quests, a private DSA5105 mastery map, and recognition for retrieval and reasoning habits. Page views never award XP.
-- Reusable visual-learning labs for ERM comparison, SVM geometry, PCA derivation, GMM/EM traces, Bellman timelines, and GNN message passing.
+- Reusable visual-learning labs for ERM comparison, SVM geometry, derivation traces, PCA, GMM/EM, Bellman backups, DP tables, graph kernels, spectral clustering, and GNN message passing.
 - General Atlas remains available at `#/atlas`.
 
 Useful routes:
@@ -44,6 +44,7 @@ Useful routes:
 ```
 
 See [the gamification and visual-learning plan](docs/NUS_GAMIFICATION.md) for the event ledger, reward safeguards, component contract, and DSA5105 pilot roadmap.
+See the [DSA5105 assessment map](docs/DSA5105_ASSESSMENT_MAP.md) for the exam/homework-to-lesson coverage index.
 
 On a lesson route, use **Focus reading** to remove the sidebar, top bar, and source rail temporarily. The study compass jumps to the lecture notes, worked examples, assumption checks, or recall prompts without losing your reading position.
 
@@ -53,7 +54,7 @@ DSA5105 deliberately separates three source classes:
 
 - `lecture`: current syllabus and local lecture material; this is the exam-priority scope.
 - `textbook`: derivations and background from `Textbook.pdf`; useful for depth, but not automatically examinable.
-- `ref`: optional or advanced reading. Draft and old references are marked explicitly and must not define current dates or assessment scope.
+- `ref`: optional, historical, or assessment-derived support. Draft, old, and `assessment-derived` references are marked explicitly and must not redefine current lecture scope or dates.
 
 Every DSA5105 lesson and question uses typed `sourceRefs` with `sourceId`, page, `sourceType`, role, and status. See [the DSA5105 study guide](docs/NUS_STUDY_GUIDE.md), [the source metadata](data/nus/provenance.js), and [the normalized data policy](data/nus/README.md).
 
@@ -89,7 +90,7 @@ node prerender.js
 git diff --check
 ```
 
-`nus-gate.js` verifies that all 22 NUS lessons have a LaTeX formula model, formula explanations, source labels, and at least two critical-thinking questions. `data/nus/formula-depth.js` contains the shared formula and critique layer; lecture, textbook, and reference content remains visibly separated.
+`nus-gate.js` verifies that all 34 NUS lessons have a LaTeX formula model, formula explanations, source labels, and at least two critical-thinking questions. `data/nus/formula-depth.js` contains the shared formula and critique layer; lecture, textbook, and reference content remains visibly separated.
 
 The Pages workflow runs `node prerender.js` in CI, creates the static `dist/` artifact, and publishes it through GitHub Pages. `dist/` is generated and ignored.
 
