@@ -2837,8 +2837,15 @@
   // a meaningful browser-tab / history / screen-reader title per route (SPAs otherwise stay stuck on one title)
   function docTitleFor(parts) {
     const BASE = "Atlas";
-    if (!parts.length) return "Dashboard · " + BASE;
+    if (!parts.length) return "NUS Dashboard · " + BASE;
     const p = parts[0];
+    if (p === "nus") {
+      if (parts[1] === "course") { const c = (window.NUS_COURSES || []).find(x => x.code === parts[2]); return (c ? c.code + " · " + c.title : "NUS Course") + " · " + BASE; }
+      if (parts[1] === "lesson") { const c = (window.NUS_COURSES || []).find(x => x.code === parts[2]), ls = c && (window.NUS_CONTENT || {})[c.code]; const l = ls && ls.modules.flatMap(m => m.lessons || []).find(x => x.id === parts[3]); return (l ? l.title : "NUS Lesson") + " · " + BASE; }
+      const np = { planner: "NUS Planner", exam: "NUS Exam Mode", sql: "SQL Studio", simulations: "Distributed Simulations" };
+      return (np[parts[1]] || "NUS Dashboard") + " · " + BASE;
+    }
+    if (p === "atlas") return "General Atlas · " + BASE;
     const PAGES = { review: "Daily Review", session: "Daily Mix", test: "Spawn a Test", mistakes: "Redeem Mistakes", map: "Knowledge Map", playground: "Code Playground", library: "References", notes: "My Notes", glossary: "Glossary", achievements: "Achievements", stats: "Progress" };
     if (p === "lesson") { const f = findLesson(parts[1], parts[2]); return (f ? f.lesson.title : "Lesson") + " · " + BASE; }
     if (p === "course") { const c = findCourse(parts[1]); return (c ? c.title : "Course") + " · " + BASE; }
@@ -2857,7 +2864,9 @@
     try { document.title = docTitleFor(parts); } catch (e) { document.title = "Atlas · Personal Learning Codex"; }
     clearResumePill();                                     // drop any lingering resume pill from the previous lesson
     window.scrollTo(0, 0);
-    if (parts.length === 0) viewDashboard();
+    if (parts.length === 0) window.NUS_UI ? window.NUS_UI.renderRoute([]) : viewDashboard();
+    else if (parts[0] === "nus") window.NUS_UI ? window.NUS_UI.renderRoute(parts.slice(1)) : viewDashboard();
+    else if (parts[0] === "atlas") viewDashboard();
     else if (parts[0] === "course") viewCourse(parts[1]);
     else if (parts[0] === "lesson") viewLesson(parts[1], parts[2], parts[3]);
     else if (parts[0] === "review") viewReview();

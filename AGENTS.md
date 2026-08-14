@@ -62,3 +62,10 @@ full logs, or the entire graph into the conversation.
 
 Do not run full-corpus extraction, broad memory reflection, or large-output commands by default. Escalate only when
 the focused workflow cannot answer the question or validate the change.
+## Token-efficient study workflow
+
+- For large local NUS sources, inspect an allowlisted course folder first; do not scan or commit the whole `/Users/macbook/Desktop/NUS` tree.
+- Prefer `rg`/`rg --files` for targeted text lookup and a small `pdftotext`/`pdfimages -list` pass before rendering selected pages.
+- Use Graphify for code relationships, RTK when it is installed for compact command output, and AgentMemory only for durable study/workflow context—not as a substitute for source verification.
+- Keep raw PDFs, textbooks, Canvas exports, screenshots, and personal documents outside the repo. Commit normalized notes plus `sourceId`, page/slide, and a short derived observation.
+- Run `node nus-gate.js`, `node gate.js`, `git diff --check`, and `graphify update . --no-cluster` after content or UI changes.
