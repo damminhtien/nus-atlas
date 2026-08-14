@@ -1,6 +1,6 @@
 /* Atlas service worker — offline app shell + runtime caching.
    Bump CACHE when the asset list changes (e.g. after adding per-topic data files). */
-const CACHE = "atlas-v1134";
+const CACHE = "atlas-v1135";
 // Pre-cache ONLY the lightweight app shell at install. The heavy per-topic data files
 // (~6.4MB combined), viz.js, glossary/references/prereqs are deliberately left out:
 // the page loads them on first visit and the fetch handler below caches every
@@ -15,10 +15,11 @@ const CORE = [
   "./data/nus/artifacts.js", "./data/nus/formula-depth.js", "./data/nus/visual-labs.js",
   "./manifest.webmanifest", "./icon.svg"
 ];
+const CORE_REQUESTS = CORE.map(file => `${file}?v=${CACHE}`);
 
 self.addEventListener("install", e => {
   // pre-cache the shell, but WAIT (don't skipWaiting) so the page can offer a "refresh for new version" prompt
-  e.waitUntil(caches.open(CACHE).then(c => c.addAll(CORE)).catch(() => {}));
+  e.waitUntil(caches.open(CACHE).then(c => c.addAll(CORE_REQUESTS)).catch(() => {}));
 });
 
 // the page posts this when the user accepts an update
