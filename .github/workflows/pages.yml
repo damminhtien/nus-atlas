@@ -1,11 +1,9 @@
-name: Build & deploy (SEO prerender)
+name: Build & deploy production Pages
 
-# Runs on every push to main — including the content loop's commits — so the prerendered,
-# crawlable per-lesson pages + sitemap can never go stale relative to the content. The build
-# only happens here in CI; local dev stays zero-build (just open index.html).
+# Runs on every push so production is the verification surface. Pull requests still build
+# the prerender, but only push/workflow-dispatch events publish to the single Pages site.
 on:
-  push:
-    branches: [main]
+  push: {}
   pull_request:
     branches: [main]
   workflow_dispatch:
@@ -27,9 +25,9 @@ jobs:
       # Resolve the project-page URL from the repository running this workflow so forks do
       # not canonicalize back to the upstream repository.
       SITE_URL: https://${{ github.repository_owner }}.github.io/${{ github.event.repository.name }}
-      # PRs and non-default branches still run the prerender build. Pages deploys only from the default branch.
+      # PRs build for validation; every push publishes the latest pushed branch to Pages.
       # Each repository that deploys must have GitHub Pages enabled.
-      DEPLOY_PAGES: ${{ github.event_name != 'pull_request' && github.ref == format('refs/heads/{0}', github.event.repository.default_branch) }}
+      DEPLOY_PAGES: ${{ github.event_name == 'push' || github.event_name == 'workflow_dispatch' }}
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
@@ -46,7 +44,7 @@ jobs:
           path: dist
 
   deploy:
-    if: github.event_name != 'pull_request' && github.ref == format('refs/heads/{0}', github.event.repository.default_branch)
+    if: github.event_name == 'push' || github.event_name == 'workflow_dispatch'
     needs: build
     runs-on: ubuntu-latest
     environment:
