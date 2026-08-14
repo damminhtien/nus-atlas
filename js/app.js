@@ -422,26 +422,32 @@
     const nLessons = courses.reduce((s, c) => s + c.modules.reduce((a, m) => a + m.lessons.length, 0), 0);
     const nTopics = courses.length;
     const nViz = (window.VIZ_CATALOG || []).length;
+    const nusCourses = window.NUS_COURSES || [];
+    const nusLessons = nusCourses.reduce((sum, c) => sum + ((((window.NUS_CONTENT || {})[c.code] || {}).modules || []).reduce((n, m) => n + (m.lessons || []).length, 0)), 0);
+    const isNus = nusCourses.length > 0;
+    const firstNus = nusCourses[0] && (((window.NUS_CONTENT || {})[nusCourses[0].code] || {}).modules || [])[0];
+    const firstNusLesson = firstNus && firstNus.lessons && firstNus.lessons[0];
+    const startHash = firstNusLesson ? `#/nus/lesson/${nusCourses[0].code}/${firstNusLesson.id}` : "#/";
     const ov = document.createElement("div"); ov.className = "intro-ov";
     ov.innerHTML = `<div class="intro-card">
-      <div class="intro-eyebrow">Welcome to your codex</div>
-      <h2 class="intro-title">Atlas</h2>
-      <p class="intro-sub">A personal home for the math and ideas behind modern AI — linear algebra, calculus, probability &amp; statistics, algorithms, machine learning, deep learning, reinforcement learning, LLMs &amp; information theory — built to make hard ideas <em>click</em> and <em>stick</em>.</p>
+      <div class="intro-eyebrow">${isNus ? "Welcome to NUS Atlas" : "Welcome to your codex"}</div>
+      <h2 class="intro-title">${isNus ? "Study, then prove it" : "Atlas"}</h2>
+      <p class="intro-sub">${isNus ? `A focused study space for ${nusCourses.map(c => c.code).join(", ")}. Read the lesson, work a small example, recall the idea without notes, and finish with a timed practice run.` : "A personal home for the math and ideas behind modern AI — linear algebra, calculus, probability &amp; statistics, algorithms, machine learning, deep learning, reinforcement learning, LLMs &amp; information theory — built to make hard ideas <em>click</em> and <em>stick</em>."}</p>
       <div class="intro-grid">
-        <div class="intro-item"><span>📖</span><b>Learn</b><small>${nLessons} lessons across ${nTopics} subjects — rendered math, worked examples${nViz ? ` & ${nViz} interactive visualizations` : ""}.</small></div>
-        <div class="intro-item"><span>📝</span><b>Master</b><small>Spawn tests in <b>Mastery mode</b>, then <b>redeem every wrong answer</b> until it sticks.</small></div>
-        <div class="intro-item"><span>🗺️</span><b>Navigate</b><small>A Knowledge Constellation maps every concept; flashcards & a daily review keep it fresh.</small></div>
-        <div class="intro-item"><span>💻</span><b>Build</b><small>Run real Python & JS in the Code Playground, right in the browser.</small></div>
+        <div class="intro-item"><span>📖</span><b>Learn</b><small>${isNus ? `${nusLessons} NUS lessons across ${nusCourses.length} courses — lecture core, textbook depth, and optional references are labeled.` : `${nLessons} lessons across ${nTopics} subjects — rendered math, worked examples${nViz ? ` & ${nViz} interactive visualizations` : ""}.`}</small></div>
+        <div class="intro-item"><span>📝</span><b>Practice</b><small>${isNus ? "Recall prompts, worked solutions, flashcards, homework, and timed Exam Mode." : "Spawn tests in <b>Mastery mode</b>, then <b>redeem every wrong answer</b> until it sticks."}</small></div>
+        <div class="intro-item"><span>🗓️</span><b>Plan</b><small>${isNus ? "See assessment weights, pending dates, checklists, and reminder windows in one planner." : "A Knowledge Constellation maps every concept; flashcards & a daily review keep it fresh."}</small></div>
+        <div class="intro-item"><span>🔎</span><b>Verify</b><small>${isNus ? "Every lesson shows its source trail so you know what is lecture, textbook, or optional reference." : "Run real Python & JS in the Code Playground, right in the browser."}</small></div>
       </div>
-      <p class="intro-tip">Tip: press <kbd>⌘K</kbd> (or <kbd>Ctrl K</kbd>) to search anything — even inside lessons. Progress saves on this device.</p>
-      <button class="btn primary" id="intro-go">Start learning →</button>
+      <p class="intro-tip">${isNus ? "Start with one lesson. The dashboard is for choosing the next block; the lesson page is where learning happens." : "Tip: press <kbd>⌘K</kbd> (or <kbd>Ctrl K</kbd>) to search anything — even inside lessons. Progress saves on this device."}</p>
+      <button class="btn primary" id="intro-go">${isNus ? "Open the first lesson →" : "Start learning →"}</button>
     </div>`;
     document.body.appendChild(ov);
     let release = null;
     const onKey = (e) => { if (e.key === "Escape") close(); };
     const close = () => { try { localStorage.setItem("atlas.introSeen", "1"); } catch (e) {} if (release) release(); ov.remove(); document.removeEventListener("keydown", onKey); };
     ov.addEventListener("click", e => { if (e.target === ov) close(); });
-    ov.querySelector("#intro-go").addEventListener("click", close);
+    ov.querySelector("#intro-go").addEventListener("click", () => { close(); if (isNus) location.hash = startHash; });
     document.addEventListener("keydown", onKey);
     release = modalA11y(ov, ov.querySelector(".intro-card"), "Welcome to Atlas");
   }
