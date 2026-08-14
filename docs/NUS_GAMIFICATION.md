@@ -56,8 +56,10 @@ Every visual lab in `data/nus/visual-labs.js` declares:
 - `learningGoal`: one observable reasoning outcome.
 - `sourceRefs`: typed lecture, textbook, or reference pointers.
 - `initialState`: the safe default interaction state.
+- `check`: a small completion predicate that verifies the reasoning move before reward.
 - `type`: a reusable interaction template.
 - `explanation`: the short model of what the interaction is showing.
+- `reducedMotion`: declares that the template respects the global reduced-motion preference; native controls also provide keyboard support.
 
 `js/nus-components.js` renders the following templates:
 

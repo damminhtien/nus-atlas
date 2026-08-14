@@ -78,7 +78,7 @@ Object.entries(visuals).forEach(([id, v]) => {
 const requiredLabs = ["dsa5105-erm", "dsa5105-svm-margin", "dsa5105-pca-deep-dive", "dsa5105-cluster-gmm", "dsa5105-rl-bellman", "dsa5105-gnn"];
 requiredLabs.forEach(id => {
   const lab = visualLabs[id];
-  if (!lab || lab.courseCode !== "DSA5105" || lab.lessonId !== id || !lab.type || !lab.learningGoal || !Array.isArray(lab.sourceRefs) || !lab.sourceRefs.length) errors.push("incomplete DSA5105 visual lab: " + id);
+  if (!lab || lab.courseCode !== "DSA5105" || lab.lessonId !== id || !lab.type || !lab.learningGoal || typeof lab.check !== "function" || lab.reducedMotion !== true || !Array.isArray(lab.sourceRefs) || !lab.sourceRefs.length) errors.push("incomplete DSA5105 visual lab: " + id);
   (lab && lab.sourceRefs || []).forEach(ref => { if (!ref.sourceId || !Number.isInteger(ref.page) || ref.page < 1 || !sourceTypes.has(ref.sourceType) || !ref.role || !ref.status) errors.push("incomplete visual lab source: " + id); });
 });
 const labTypes = new Set(["compare", "geometry", "math-stepper", "algorithm-trace", "event-timeline", "pipeline-builder"]);
