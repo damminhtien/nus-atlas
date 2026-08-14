@@ -22,7 +22,7 @@ The source label is part of the data model, not just a UI decoration. A source r
 
 For DSA5105, the local IDs are intentionally kept as references only:
 
-- `DSA5105/Lec1.pdf` and `DSA5105/syllabus.pdf` are lecture/syllabus sources. The local `Lec1.pdf` cover has a DSA5102 label, so the data records that anomaly instead of silently presenting it as an official title.
+- `DSA5105/Ref/week1_DSA5105_lecture1_with_note.pdf` is the annotated Week 1 lecture copy used for the current deep-dive lessons. `DSA5105/Lec1.pdf` remains a local lecture source, but its cover has a DSA5102 label; the data records that anomaly instead of silently presenting it as an official title.
 - `DSA5105/Textbook.pdf` supplies textbook depth: PAC/risk definitions, SVM margins, PCA, mixture models, and Bellman/RL derivations.
 - `DSA5105/Ref/...` supplies optional learning theory, high-dimensional PCA, RL, and GNN reading. The Mathematics of Data Science source is marked `draft`; old or optional material must not define current assessments.
 
@@ -32,7 +32,7 @@ The raw `/Users/macbook/Desktop/NUS` folder is never copied into the repository.
 
 The DSA5105 course page separates the following tracks:
 
-- **Foundations:** ERM, loss, generalization, and PAC intuition.
+- **Foundations:** Week 1 learning setup, data representation, ERM, OLS, Huber loss, basis models, regularization, softmax, and cross-entropy; then Week 2 generalization and PAC intuition.
 - **Linear and kernel methods:** OLS/ridge/lasso plus textbook SVM margin and support-vector derivations.
 - **Unsupervised learning:** kernels, PCA variance/reconstruction, K-means, GMM, and EM.
 - **RL and graphs:** Bellman reasoning, MDP value functions, GNN message passing, permutation invariance, and oversmoothing.
@@ -43,7 +43,7 @@ Textbook-backed prompts are marked in the lesson source trail and in Exam Mode r
 
 Every NUS lesson must expose at least one structured formula model. Store the expression as raw LaTeX with an explanation for how to read it, a meaning for each important symbol, and a source class. The renderer sends both block formulas and inline formulas through KaTeX; do not introduce Unicode equations such as `γ`, `Σ`, or `→` into lesson-facing formula text.
 
-Each lesson also has at least two critical-thinking prompts. A good prompt asks what the formula assumes, how it can fail, what evidence would change the conclusion, or where a textbook/reference analogy stops. The answer remains short and normalized, while the source/page pointer preserves the distinction between lecture, textbook, and reference depth.
+Each lesson also has at least two critical-thinking prompts. A good prompt asks what the formula assumes, how it can fail, what evidence would change the conclusion, or where a textbook/reference analogy stops. The answer remains short and normalized, while the source/page pointer preserves the distinction between lecture, textbook, and reference depth. Week 1's ungraded practice sheet is kept as optional reference material; it does not silently expand the lecture exam boundary.
 
 ## Recommended study loop
 
@@ -74,4 +74,4 @@ git diff --check
 ```
 
 The NUS gate checks course allowlisting, lesson/question shape, typed DSA5105 provenance, assessment invariants, visual references, and raw/private-source markers.
-It also checks LaTeX coverage, symbol explanations, source labels, the absence of Unicode formulas, and critical-thinking coverage across all 22 lessons.
+It also checks LaTeX coverage, symbol explanations, source labels, the absence of Unicode formulas, and critical-thinking coverage across all 23 lessons.
