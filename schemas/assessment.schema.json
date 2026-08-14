@@ -1,0 +1,18 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://nus-atlas.local/schemas/assessment.schema.json",
+  "title": "NUS Atlas assessment",
+  "type": "object",
+  "required": ["id", "courseCode", "title", "kind", "checklist"],
+  "properties": {
+    "id": { "type": "string", "minLength": 1 },
+    "courseCode": { "type": "string", "minLength": 1 },
+    "title": { "type": "string", "minLength": 1 },
+    "kind": { "type": "string", "minLength": 1 },
+    "weight": { "type": "number", "minimum": 0, "maximum": 100 },
+    "date": { "type": ["string", "null"] },
+    "checklist": { "type": "array", "items": { "type": "string" } },
+    "source": { "$ref": "source.schema.json" }
+  },
+  "additionalProperties": true
+}

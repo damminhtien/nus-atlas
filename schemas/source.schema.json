@@ -1,0 +1,24 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://nus-atlas.local/schemas/source.schema.json",
+  "title": "NUS Atlas source reference",
+  "type": "object",
+  "required": ["sourceId", "sourceType", "page"],
+  "properties": {
+    "sourceId": { "type": "string", "minLength": 1 },
+    "sourceType": { "enum": ["lecture", "textbook", "ref", "assessment-derived"] },
+    "page": { "type": "integer", "minimum": 1 },
+    "blockId": { "type": "string", "minLength": 1 },
+    "blockType": { "type": "string", "minLength": 1 },
+    "bbox": {
+      "type": "array",
+      "minItems": 4,
+      "maxItems": 4,
+      "items": { "type": "number" }
+    },
+    "imageId": { "type": "string", "minLength": 1 },
+    "role": { "type": "string" },
+    "status": { "type": "string" }
+  },
+  "additionalProperties": true
+}

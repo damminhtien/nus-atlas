@@ -1,0 +1,16 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://nus-atlas.local/schemas/course.schema.json",
+  "title": "NUS Atlas course package",
+  "type": "object",
+  "required": ["code", "title", "schemaVersion"],
+  "properties": {
+    "code": { "type": "string", "minLength": 1 },
+    "title": { "type": "string", "minLength": 1 },
+    "semester": { "type": "string", "minLength": 1 },
+    "modules": { "type": "array" },
+    "sourceCatalog": { "type": "array", "items": { "$ref": "source.schema.json" } },
+    "schemaVersion": { "const": "nus.course.v1" }
+  },
+  "additionalProperties": true
+}
