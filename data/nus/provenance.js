@@ -25,6 +25,7 @@
     lecture: [
       { sourceId: "DSA5105/syllabus.pdf", sourceType: "lecture", role: "current syllabus", status: "current" },
       { sourceId: "DSA5105/Lec1.pdf", sourceType: "lecture", role: "local lecture slides", status: "current-context" },
+      { sourceId: "DSA5105/Ref/week1_DSA5105_lecture1_with_note.pdf", sourceType: "lecture", role: "annotated Week 1 lecture copy", status: "current" },
       { sourceId: "DSA5105/Exe1.pdf", sourceType: "lecture", role: "lecture exercise", status: "current" },
       { sourceId: "DSA5105/Exe1_with_solutions.pdf", sourceType: "lecture", role: "worked lecture exercise", status: "current" }
     ],

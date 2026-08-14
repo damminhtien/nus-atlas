@@ -117,6 +117,12 @@
     crit("When would a validation split be misleading even if it is large?", "Inspect dependence, time ordering, duplicates, and mismatch with the deployment population.", "A large but non-representative or leaked validation set can produce a precise answer to the wrong question.", "evaluation")
   ]);
 
+  add("dsa5105-linear-week1", [], [
+    crit("What does the OLS closed form assume about the design matrix?", "Inspect the denominator in 1D and the rank of the normal matrix in the basis-function form.", "The relevant feature directions must be identifiable. A zero denominator or singular normal matrix means the inverse formula is unavailable; use a pseudoinverse or regularization and state the choice.", "identifiability"),
+    crit("When is Huber loss a modeling decision rather than a data-cleaning shortcut?", "Compare the loss functions and ask what objective the optimizer is actually minimizing.", "Huber changes the penalty on residuals but keeps the observations in the objective. It can reduce outlier leverage, but validation must show that the altered target matches the task.", "robustness"),
+    crit("Why can a nonlinear basis model still be called linear?", "Separate linearity in the input from linearity in the trainable weights.", "The basis functions may be nonlinear in x, but the prediction is a linear combination of fixed features with weights w. The optimization remains linear in those parameters.", "representation")
+  ]);
+
   add("dsa5105-learning-theory", [], [
     crit("Does a smaller empirical risk guarantee a smaller population risk?", "State the missing assumptions rather than answering from the training score alone.", "No. The guarantee requires conditions relating the sample, hypothesis class, and distribution; flexible models can have low empirical risk and poor generalization.", "guarantee"),
     crit("What changes when train and test data are not identically distributed?", "Ask which probability distribution appears in empirical risk and which appears in deployment risk.", "The basic IID PAC interpretation no longer applies directly; the evaluation must model distribution shift or use a target-domain sample.", "distribution shift")
