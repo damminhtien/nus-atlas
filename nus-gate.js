@@ -4,13 +4,14 @@ global.window = {};
 function load(file) { new Function("window", fs.readFileSync(file, "utf8")).call(global.window, global.window); }
 [
   "data/nus/provenance.js", "data/nus/courses.js", "data/nus/schedule.js", "data/nus/assessments.js", "data/nus/visuals.js",
-  "data/nus/dsa5101.js", "data/nus/dsa5104.js", "data/nus/dsa5105.js", "data/nus/dsa5208.js", "data/nus/artifacts.js", "data/nus/formula-depth.js"
+  "data/nus/dsa5101.js", "data/nus/dsa5104.js", "data/nus/dsa5105.js", "data/nus/dsa5208.js", "data/nus/artifacts.js", "data/nus/formula-depth.js", "data/nus/visual-labs.js"
 ].forEach(load);
 
 const errors = [], allowed = new Set(["DSA5101", "DSA5104", "DSA5105", "DSA5208"]);
 const courses = global.window.NUS_COURSES || [], content = global.window.NUS_CONTENT || {};
 const assessments = global.window.NUS_ASSESSMENTS || [], schedule = global.window.NUS_SCHEDULE || {}, visuals = global.window.NUS_VISUALS || {};
 const sourceTypes = new Set(Object.keys(global.window.NUS_SOURCE_TYPES || {}));
+const visualLabs = global.window.NUS_VISUAL_LABS || {};
 const unicodeFormula = /[₀₁₂₃₄₅₆₇₈₉ᵀᵥᵢₜₐₑₘ′Σσπγλμδ̂∑≤≥∈√∞→∪]/;
 let formulaCount = 0, criticalCount = 0;
 const mathBlocks = lesson => [...(lesson.math || []), ...(lesson.sections || []).map(section => section.math).filter(Boolean)];
@@ -74,7 +75,15 @@ Object.entries(visuals).forEach(([id, v]) => {
   if (!allowed.has(v.courseCode) || !v.title || !v.kind || !v.source || !v.source.sourceId || !Number.isInteger(v.source.page) || !v.observation) errors.push("incomplete visual ref: " + id);
   if (v.source.externalUrl && !/^https:\/\//.test(v.source.externalUrl)) errors.push("external visual source must use HTTPS: " + id);
 });
-const publicFiles = fs.readdirSync("data/nus").filter(f => f.endsWith(".js")).map(f => "data/nus/" + f).concat(["js/nus.js", "js/nus-store.js"]);
+const requiredLabs = ["dsa5105-erm", "dsa5105-svm-margin", "dsa5105-pca-deep-dive", "dsa5105-cluster-gmm", "dsa5105-rl-bellman", "dsa5105-gnn"];
+requiredLabs.forEach(id => {
+  const lab = visualLabs[id];
+  if (!lab || lab.courseCode !== "DSA5105" || lab.lessonId !== id || !lab.type || !lab.learningGoal || !Array.isArray(lab.sourceRefs) || !lab.sourceRefs.length) errors.push("incomplete DSA5105 visual lab: " + id);
+  (lab && lab.sourceRefs || []).forEach(ref => { if (!ref.sourceId || !Number.isInteger(ref.page) || ref.page < 1 || !sourceTypes.has(ref.sourceType) || !ref.role || !ref.status) errors.push("incomplete visual lab source: " + id); });
+});
+const labTypes = new Set(["compare", "geometry", "math-stepper", "algorithm-trace", "event-timeline", "pipeline-builder"]);
+Object.entries(visualLabs).forEach(([id, lab]) => { if (!labTypes.has(lab.type)) errors.push("unknown visual lab type: " + id); });
+const publicFiles = fs.readdirSync("data/nus").filter(f => f.endsWith(".js")).map(f => "data/nus/" + f).concat(["js/nus.js", "js/nus-store.js", "js/nus-components.js"]);
 const publicText = publicFiles.map(file => fs.readFileSync(file, "utf8"));
 if (publicText.some(t => /\/Users\/|Desktop\/NUS|(?:passport|medical|identity)[^\n]{0,80}\.(?:pdf|docx?|png|jpe?g)/i.test(t))) errors.push("public NUS layer contains a private/raw source marker");
 if (errors.length) { console.error("NUS GATE FAILED"); errors.forEach(e => console.error("- " + e)); process.exit(1); }
