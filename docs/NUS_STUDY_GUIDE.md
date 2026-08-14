@@ -2,6 +2,14 @@
 
 NUS Atlas is the study layer for AY2026/27 Semester 1. It currently covers DSA5101, DSA5104, DSA5105, and DSA5208. The app is designed for short study loops: choose a lesson, recall the idea, attempt a prompt, then use the planner or review deck to schedule the next session.
 
+## Reader experience
+
+Lesson routes are designed as long-form study readers rather than dense dashboards. Source notes use a serif reading face and a constrained line length; controls, metadata, and source labels use a sans-serif face so they remain scannable. The NUS workspace stays in the primary sidebar, while the wider Atlas library is collapsed into an optional reference shelf.
+
+Each lesson begins with a **Read / Work / Reason / Recall** compass. It is a set of in-page landmarks: Read opens lecture notes and formula explanations, Work moves to worked examples, Reason moves to assumption checks, and Recall moves to retrieval prompts. Use **Focus reading** to hide navigation and the source rail; the preference stays local to the browser until you exit it or leave the lesson.
+
+Visual study cues are deliberately abstract mini-diagrams, tables, charts, or screen frames. They identify what a source visual is useful for and retain its source pointer. They do not reproduce raw course slides, screenshots, textbook figures, or other private material.
+
 ## Source hierarchy
 
 The source label is part of the data model, not just a UI decoration. A source reference has a `sourceId`, page, `sourceType`, role, and status.

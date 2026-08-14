@@ -25,6 +25,8 @@ The study layer currently contains 22 normalized lessons. Assessment dates remai
 - Lesson study kits with flashcards, homework prompts, and coding exercises.
 - LaTeX-rendered formulas with symbol tables, detailed reading notes, and limitation/caveat labels.
 - Critical-thinking prompts that challenge assumptions and include strong-answer comparisons.
+- Reading-first lesson pages with editorial typography, a four-step Read/Work/Reason/Recall compass, and Focus Reading mode.
+- Derived visual study cues that explain what a referenced diagram, table, chart, or screenshot is meant to teach without publishing raw course slides.
 - General Atlas remains available at `#/atlas`.
 
 Useful routes:
@@ -38,6 +40,8 @@ Useful routes:
 #/nus/sql                  DSA5104 SQL Studio
 #/nus/simulations          DSA5208 simulations
 ```
+
+On a lesson route, use **Focus reading** to remove the sidebar, top bar, and source rail temporarily. The study compass jumps to the lecture notes, worked examples, assumption checks, or recall prompts without losing your reading position.
 
 ## DSA5105 source policy
 
