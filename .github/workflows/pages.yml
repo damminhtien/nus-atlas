@@ -6,6 +6,8 @@ name: Build & deploy (SEO prerender)
 on:
   push:
     branches: [main]
+  pull_request:
+    branches: [main]
   workflow_dispatch:
 
 permissions:
@@ -19,16 +21,15 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
-  build-deploy:
+  build:
     runs-on: ubuntu-latest
-    environment:
-      name: github-pages
-      url: ${{ steps.deploy.outputs.page_url }}
     env:
-      # The URL the prerendered pages canonicalize/link to. Kept self-consistent with the
-      # current github.io project page. ► When the custom domain goes live, change this to
-      # https://atlascodex.io (and the CNAME file gets added separately).
-      SITE_URL: https://techeese.github.io/learn-atlas
+      # Resolve the project-page URL from the repository running this workflow so forks do
+      # not canonicalize back to the upstream repository.
+      SITE_URL: https://${{ github.repository_owner }}.github.io/${{ github.event.repository.name }}
+      # PRs and non-default branches still run the prerender build. Pages deploys only from the default branch.
+      # Each repository that deploys must have GitHub Pages enabled.
+      DEPLOY_PAGES: ${{ github.event_name != 'pull_request' && github.ref == format('refs/heads/{0}', github.event.repository.default_branch) }}
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
@@ -36,9 +37,21 @@ jobs:
           node-version: 20
       - name: Prerender lesson pages + sitemap + robots
         run: node prerender.js
-      - uses: actions/configure-pages@v5
+      - name: Configure GitHub Pages
+        if: env.DEPLOY_PAGES == 'true'
+        uses: actions/configure-pages@v5
       - uses: actions/upload-pages-artifact@v3
+        if: env.DEPLOY_PAGES == 'true'
         with:
           path: dist
-      - id: deploy
+
+  deploy:
+    if: github.event_name != 'pull_request' && github.ref == format('refs/heads/{0}', github.event.repository.default_branch)
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - id: deployment
         uses: actions/deploy-pages@v4
