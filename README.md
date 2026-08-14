@@ -27,6 +27,8 @@ The study layer currently contains 22 normalized lessons. Assessment dates remai
 - Critical-thinking prompts that challenge assumptions and include strong-answer comparisons.
 - Reading-first lesson pages with editorial typography, a four-step Read/Work/Reason/Recall compass, and Focus Reading mode.
 - Derived visual study cues that explain what a referenced diagram, table, chart, or screenshot is meant to teach without publishing raw course slides.
+- Evidence-based daily quests, a private DSA5105 mastery map, and recognition for retrieval and reasoning habits. Page views never award XP.
+- Reusable visual-learning labs for ERM comparison, SVM geometry, PCA derivation, GMM/EM traces, Bellman timelines, and GNN message passing.
 - General Atlas remains available at `#/atlas`.
 
 Useful routes:
@@ -40,6 +42,8 @@ Useful routes:
 #/nus/sql                  DSA5104 SQL Studio
 #/nus/simulations          DSA5208 simulations
 ```
+
+See [the gamification and visual-learning plan](docs/NUS_GAMIFICATION.md) for the event ledger, reward safeguards, component contract, and DSA5105 pilot roadmap.
 
 On a lesson route, use **Focus reading** to remove the sidebar, top bar, and source rail temporarily. The study compass jumps to the lecture notes, worked examples, assumption checks, or recall prompts without losing your reading position.
 
@@ -94,6 +98,7 @@ The Pages workflow runs `node prerender.js` in CI, creates the static `dist/` ar
 - `index.html` — app shell and navigation.
 - `js/nus.js` — NUS routes and UI.
 - `js/nus-store.js` — local study progress and attempts.
+- `js/nus-components.js` — reusable visual-learning lab templates.
 - `data/nus/` — courses, lessons, assessments, and provenance.
 - `nus-gate.js` — NUS data, privacy, and provenance gate.
 - `prerender.js` — CI static-page and sitemap build.
