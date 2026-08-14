@@ -69,3 +69,77 @@ the focused workflow cannot answer the question or validate the change.
 - Use Graphify for code relationships, RTK when it is installed for compact command output, and AgentMemory only for durable study/workflow context—not as a substitute for source verification.
 - Keep raw PDFs, textbooks, Canvas exports, screenshots, and personal documents outside the repo. Commit normalized notes plus `sourceId`, page/slide, and a short derived observation.
 - Run `node nus-gate.js`, `node gate.js`, `git diff --check`, and `graphify update . --no-cluster` after content or UI changes.
+
+## Lecture PDF extraction workflow
+
+Use this workflow when adding lecture PDFs from an allowlisted local course folder.
+Raw PDFs, Canvas exports, and personal documents stay outside this repository.
+Only normalized extraction artifacts belong under `data/extracted/`.
+
+### Tool roles
+
+1. Run `pdfinfo` and `pdftotext -layout` first to count pages and flag sparse text,
+   replacement characters, null bytes, or control-character corruption.
+2. On this Intel Mac, use PyMuPDF as the primary parser. It extracts page-aware
+   text blocks, bounding boxes, and embedded images without Transformer/PyTorch.
+3. Render flagged pages with `pdftoppm` for visual review. Use OCR only when a page
+   is genuinely image-only; do not send every formula page through OCR.
+4. Docling and MinerU remain opt-in alternatives for a compatible machine/runtime:
+   use `--primary docling` or `--use-mineru --mineru-pages ...`, never as the
+   default Intel path.
+5. Normalize parser outputs into `schemaVersion: nus-lecture.v1` JSON. Every
+   page block must retain `sourceId`, 1-based `page`, `type`, `bbox`, `imageId`, and
+   the parser `source` reference. Keep parser-specific JSON in ignored work space.
+6. Generate Markdown from the normalized JSON. Markdown is a reader view and must
+   never be edited as the source of truth.
+7. For pages with formulas, diagrams, or OCR/layout warnings, render selected pages
+   with `pdftoppm` and inspect them using the PDF skill before accepting the output.
+
+### Installation and command
+
+Keep parser environments outside the repo. The default Intel setup is lightweight:
+
+```bash
+uv venv /Users/macbook/.venvs/nus-atlas-pdf --python 3.12
+uv pip install --python /Users/macbook/.venvs/nus-atlas-pdf/bin/python \
+  'pymupdf>=1.26,<1.29'
+```
+
+Docling/MinerU are optional and isolated because their current model stacks depend
+on Transformer/PyTorch combinations that are not reliable on this Intel Mac:
+
+```bash
+uv venv /Users/macbook/.venvs/nus-atlas-docling --python 3.12
+uv pip install --python /Users/macbook/.venvs/nus-atlas-docling/bin/python 'docling==2.119.0' 'transformers==4.49.0'
+uv venv /Users/macbook/.venvs/nus-atlas-mineru --python 3.12
+uv pip install --python /Users/macbook/.venvs/nus-atlas-mineru/bin/python \
+  'mineru==2.0.0' 'torch==2.2.2' 'numpy==1.26.4'
+uv pip install --python /Users/macbook/.venvs/nus-atlas-mineru/bin/python \
+  'mineru[pipeline]==2.0.0'
+uv pip install --python /Users/macbook/.venvs/nus-atlas-mineru/bin/python 'numpy==1.26.4'
+```
+
+Run the default, non-ML pipeline from the repository root:
+
+```bash
+PYMUPDF_PYTHON=/Users/macbook/.venvs/nus-atlas-pdf/bin/python \
+python3 scripts/pdf_pipeline.py \
+  --input /Users/macbook/Desktop/NUS/DSA5102/LectureNotes_DSA5102_2021.pdf \
+  --course DSA5102 \
+  --source-id DSA5102/LectureNotes_DSA5102_2021.pdf
+```
+
+Only use the model-based alternatives deliberately:
+
+```bash
+PDF_PRIMARY=docling DOCLING_PYTHON=/Users/macbook/.venvs/nus-atlas-docling/bin/python \
+python3 scripts/pdf_pipeline.py --input <lecture.pdf> --course <COURSE> --primary docling
+
+MINERU_BIN=/Users/macbook/.venvs/nus-atlas-mineru/bin/mineru \
+python3 scripts/pdf_pipeline.py --input <lecture.pdf> --course <COURSE> \
+  --use-mineru --mineru-pages 3,7-9
+```
+
+The default command writes `data/extracted/<COURSE>/<slug>.json` as the source of truth
+and derives the matching `.md` reader view. Use `tmp/pdf-extraction/` only for parser
+intermediates; never stage it or `graphify-out/`.
