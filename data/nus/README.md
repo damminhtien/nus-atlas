@@ -1,0 +1,18 @@
+# NUS study data
+
+This directory contains a small, normalized study layer for AY2026/27 Semester 1:
+
+- `provenance.js` defines the source classes used by the study layer: `lecture`, `textbook`, and `ref`.
+- `courses.js`, `schedule.js`, and `assessments.js` hold metadata and a dated NUSMods snapshot.
+- `dsa510*.js` holds short lesson notes, practice prompts, and the DSA5104 browser-local SQL lab. DSA5105 source refs are typed so textbook depth is not confused with current lecture scope.
+- `visuals.js` stores derived observations and `sourceId + page` references for representative slide/diagram/image evidence.
+
+Source classes:
+
+- `lecture`: current local lecture/syllabus material and exam-priority scope.
+- `textbook`: course-textbook derivations and background; confirm examinability against lecture.
+- `ref`: optional supporting or advanced reading. Mark draft/old material explicitly and never use it to invent current dates or assessment scope.
+
+The raw `/Users/macbook/Desktop/NUS` folder is an ingestion source, not a repository input. Do not copy raw PDFs, textbooks, Canvas exports, screenshots, or personal/admissions documents into this project. Keep unknown assessment dates as `date: null` and `dateStatus: "pending"`.
+
+Run `node nus-gate.js` after changing these files.
