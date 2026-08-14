@@ -107,9 +107,13 @@
     return `<div class="nus-visual"><div class="nus-visual-head"><span class="pill violet">${esc(v.kind)}</span><b>${esc(v.title)}</b></div><p>${text(v.observation)}</p><small>Source: ${esc(sourceLabel(v.source))}${v.source.externalUrl ? ` · <a href="${esc(v.source.externalUrl)}" target="_blank" rel="noreferrer">external attribution ↗</a>` : ""}</small></div>`;
   }
   function paragraphs(value) { return String(value || "").split(/\n\s*\n/).filter(Boolean).map(p => `<p>${text(p)}</p>`).join(""); }
+  function mathBlock(m) {
+    const symbols = (m.symbols || []).map(item => `<tr><td>$${esc(item.latex)}$</td><td>${text(item.meaning)}</td></tr>`).join("");
+    return `<div class="nus-math-block"><div class="nus-math-label"><span>LaTeX formula</span>${m.sourceType ? sourceBadge({ sourceType: m.sourceType, status: m.status }) : ""}</div><div class="nus-latex-display">$$${esc(m.latex)}$$</div><p><b>How to read it:</b> ${text(m.explanation)}</p>${symbols ? `<table class="nus-symbol-table"><thead><tr><th>Symbol</th><th>Meaning</th></tr></thead><tbody>${symbols}</tbody></table>` : ""}${m.caveat ? `<p class="nus-formula-caveat"><b>Limitation:</b> ${text(m.caveat)}</p>` : ""}</div>`;
+  }
   function lessonSection(s) {
     const badge = s.sourceType ? sourceBadge({ sourceType: s.sourceType, status: s.status }) : "";
-    return `<section class="nus-teach-card reveal"><div class="nus-teach-head"><h3>${esc(s.title)}</h3>${badge}</div>${paragraphs(s.body)}${s.formula ? `<div class="nus-formula"><span>Key expression</span><code>${esc(s.formula)}</code></div>` : ""}</section>`;
+    return `<section class="nus-teach-card reveal"><div class="nus-teach-head"><h3>${esc(s.title)}</h3>${badge}</div>${paragraphs(s.body)}${s.math ? mathBlock(s.math) : ""}</section>`;
   }
   function workedExample(example) {
     const steps = (example.steps || []).map((step, i) => `<li><b>${i + 1}.</b><span>${text(step)}</span></li>`).join("");
@@ -120,6 +124,12 @@
     const choices = q.choices ? `<ol class="nus-recall-choices">${q.choices.map(choice => `<li>${esc(choice)}</li>`).join("")}</ol>` : `<p class="nus-muted">Write your answer before opening the check.</p>`;
     return `<details class="nus-recall-item"><summary><span>${index + 1}. ${esc(q.prompt)}</span><small>${esc(q.type || "recall")}</small></summary>${choices}<div class="nus-answer"><b>Check:</b> ${answer}</div></details>`;
   }
+  function criticalThinking(l) {
+    const questions = l.criticalQuestions || [];
+    if (!questions.length) return "";
+    return `<section class="nus-card nus-critical reveal"><div class="nus-teach-head"><h3>Critical thinking</h3><span class="pill violet">Challenge the assumptions</span></div><p class="nus-muted">Do not only repeat the formula. Ask what it assumes, what can make it fail, and what evidence would change your conclusion.</p><div class="nus-critical-list">${questions.map((q, i) => `<details class="nus-critical-item"><summary><span>${i + 1}. ${esc(q.prompt)}</span><small>${esc(q.focus || "critique")}</small></summary><p><b>What to examine:</b> ${text(q.angle)}</p>${q.modelAnswer ? `<details><summary>Compare with a strong answer</summary><p>${text(q.modelAnswer)}</p></details>` : ""}</details>`).join("")}</div></section>`;
+  }
+  function typesetNus() { if (window.typeset) window.typeset(root); }
   function studyKit(l) {
     const flashcards = l.flashcards || [], homework = l.homework || [], codeExercises = l.codeExercises || [];
     return `<section class="nus-card reveal"><h3>Study kit</h3><div class="nus-kit-stats"><span><b>${flashcards.length}</b> flashcards</span><span><b>${homework.length}</b> homework prompts</span><span><b>${codeExercises.length}</b> coding exercises</span></div><details><summary>Homework prompts</summary><ol class="nus-prompt-list">${homework.map(h => `<li><b>${esc(h.prompt)}</b><small>${esc(h.rubric || "Show your reasoning and one validation check.")}</small>${h.solution ? `<details><summary>Reveal a solution outline</summary><p>${text(h.solution)}</p></details>` : ""}</li>`).join("")}</ol></details><details><summary>Flashcards with answers</summary><ul class="nus-prompt-list">${flashcards.map(f => `<li><b>${esc(f.front)}</b><small>${esc(f.back || "Recall the definition, assumptions, and one limitation.")}</small></li>`).join("")}</ul></details>${codeExercises.length ? `<details><summary>Coding exercises</summary>${codeExercises.map(x => `<div class="nus-code-exercise"><b>${esc(x.language)} · ${esc(x.prompt)}</b><pre>${esc(x.starter)}</pre><small>Attempt it first, then use the review notes to check the expected behavior.</small></div>`).join("")}</details>` : ""}</section>`;
@@ -134,8 +144,9 @@
     let body = pageHead(`${c.code} · Week ${l.week}`, l.title, l.summary);
     body += `<div class="nus-lesson-actions">${button("← Course", `#/nus/course/${c.code}`, "ghost")}<button class="btn ${done ? "ghost" : "primary"}" id="nus-mark-lesson">${done ? "✓ Completed" : "Mark complete"}</button>${button("Exam mode", `#/nus/exam/${c.code}/${l.id}`, "ghost")}</div>`;
     body += `<section class="nus-learning-path reveal"><div><b>1 · Read</b><span>Understand the lecture core</span></div><div><b>2 · Work</b><span>Follow the example</span></div><div><b>3 · Recall</b><span>Answer without notes</span></div><div><b>4 · Practice</b><span>Finish in Exam Mode</span></div></section>`;
-    body += `<div class="nus-lesson-grid"><main><section class="nus-card nus-objectives reveal"><div class="nus-teach-head"><h3>What you should be able to do</h3><span class="pill gold">${esc(l.minutes)} min</span></div><ul>${(l.objectives || []).map(objective => `<li>${esc(objective)}</li>`).join("")}</ul></section>${(l.sections || []).map(lessonSection).join("")}${(l.examples || []).map(workedExample).join("")}<section class="nus-card nus-recall reveal"><div class="nus-teach-head"><h3>Recall before you test</h3><span class="pill">${l.questions.length} prompts</span></div><p class="nus-muted">Answer on paper first. Open each prompt only after you commit to an answer.</p><div class="nus-question-list">${l.questions.map(recallItem).join("")}</div>${button("Start this lesson in Exam Mode", `#/nus/exam/${c.code}/${l.id}`, "primary")}</section>${studyKit(l)}<div class="nus-lesson-nav">${previous ? button(`← ${previous.title}`, `#/nus/lesson/${c.code}/${previous.id}`, "ghost") : `<span></span>`}${next ? button(`Next: ${next.title} →`, `#/nus/lesson/${c.code}/${next.id}`, "primary") : button("Back to course", `#/nus/course/${c.code}`, "primary")}</div></main><aside>${l.visualIds && l.visualIds.length ? card("Slide and image evidence", l.visualIds.map(visualCard).join(""), "reveal") : ""}${card("Source trail", `<ul class="nus-source-list">${l.sourceRefs.map(r => `<li>${sourceItem(r)}</li>`).join("")}</ul><p class="nus-muted">Lecture is the exam-priority core. Textbook and reference material are clearly labeled for depth and optional support.</p>`, "reveal")}</aside></div>`;
+    body += `<div class="nus-lesson-grid"><main><section class="nus-card nus-objectives reveal"><div class="nus-teach-head"><h3>What you should be able to do</h3><span class="pill gold">${esc(l.minutes)} min</span></div><ul>${(l.objectives || []).map(objective => `<li>${esc(objective)}</li>`).join("")}</ul></section>${(l.sections || []).map(lessonSection).join("")}${(l.math || []).map(mathBlock).join("")}${(l.examples || []).map(workedExample).join("")}${criticalThinking(l)}<section class="nus-card nus-recall reveal"><div class="nus-teach-head"><h3>Recall before you test</h3><span class="pill">${l.questions.length} prompts</span></div><p class="nus-muted">Answer on paper first. Open each prompt only after you commit to an answer.</p><div class="nus-question-list">${l.questions.map(recallItem).join("")}</div>${button("Start this lesson in Exam Mode", `#/nus/exam/${c.code}/${l.id}`, "primary")}</section>${studyKit(l)}<div class="nus-lesson-nav">${previous ? button(`← ${previous.title}`, `#/nus/lesson/${c.code}/${previous.id}`, "ghost") : `<span></span>`}${next ? button(`Next: ${next.title} →`, `#/nus/lesson/${c.code}/${next.id}`, "primary") : button("Back to course", `#/nus/course/${c.code}`, "primary")}</div></main><aside>${l.visualIds && l.visualIds.length ? card("Slide and image evidence", l.visualIds.map(visualCard).join(""), "reveal") : ""}${card("Source trail", `<ul class="nus-source-list">${l.sourceRefs.map(r => `<li>${sourceItem(r)}</li>`).join("")}</ul><p class="nus-muted">Lecture is the exam-priority core. Textbook and reference material are clearly labeled for depth and optional support.</p>`, "reveal")}</aside></div>`;
     root.innerHTML = body;
+    typesetNus();
     root.querySelector("#nus-mark-lesson").addEventListener("click", () => { window.NUS_STORE.markLesson(l.id, !done); renderLesson(code, id); });
   }
 
@@ -173,6 +184,7 @@
       const options = courses().map(c => `<option value="${esc(c.code)}" ${code === c.code ? "selected" : ""}>${esc(c.code)} · ${esc(c.title)}</option>`).join("");
       const selected = code || "DSA5101";
       root.innerHTML = pageHead("NUS practice", "Exam mode", "Choose one course and an optional lesson. The timer is local, answers stay hidden until the attempt ends, and the final screen becomes a review deck.") + `<section class="nus-card nus-exam-setup reveal"><label>Course<select id="nus-exam-course">${options}</select></label><label>Scope<select id="nus-exam-scope"><option value="">All seeded lessons</option>${lessons(selected).map(l => `<option value="${esc(l.id)}" ${scope === l.id ? "selected" : ""}>${esc(l.title)}</option>`).join("")}</select></label><label>Time<select id="nus-exam-minutes"><option value="15">15 minutes</option><option value="30" selected>30 minutes</option><option value="45">45 minutes</option></select></label><div class="nus-callout"><b>Exam rules</b><span>Mixed MCQ, short answer, calculation, derivation, trace, and SQL prompts. Solutions are revealed only after submission.</span></div><button class="btn primary" id="nus-start-exam">Start attempt</button></section>`;
+      typesetNus();
       const courseSelect = root.querySelector("#nus-exam-course"), scopeSelect = root.querySelector("#nus-exam-scope");
       courseSelect.addEventListener("change", () => { location.hash = `#/nus/exam/${courseSelect.value}`; });
       scopeSelect.addEventListener("change", () => { location.hash = `#/nus/exam/${courseSelect.value}/${scopeSelect.value}`; });
@@ -185,6 +197,7 @@
     const answersSoFar = examState.answers.length;
     let input = q.type === "mcq" ? `<div class="nus-choices">${q.choices.map((choice, i) => `<label><input type="radio" name="nus-answer" value="${i}"><span>${esc(choice)}</span></label>`).join("")}</div>` : `<textarea id="nus-answer" rows="5" placeholder="Write your answer here…"></textarea>`;
     root.innerHTML = pageHead(`${esc(examState.code)} · Question ${examState.index + 1}/${examState.questions.length}`, q.type.toUpperCase(), q.lessonTitle) + `<div class="nus-exam-bar"><span>Time left <b id="nus-exam-timer">--:--</b></span><span>${answersSoFar} submitted</span></div><section class="nus-card nus-exam-question reveal"><div class="nus-question-source">${(q.sourceRefs || q.lessonSourceRefs || []).slice(0, 2).map(sourceItem).join(" ")}</div><h3>${esc(q.prompt)}</h3>${input}<div class="nus-exam-footer"><span class="nus-muted">Answer reveal is locked until the attempt ends.</span><button class="btn primary" id="nus-next-answer">${examState.index + 1 === examState.questions.length ? "Submit attempt" : "Next question"}</button></div></section>`;
+    typesetNus();
     root.querySelector("#nus-next-answer").addEventListener("click", () => {
       let raw = q.type === "mcq" ? (root.querySelector("input[name='nus-answer']:checked") || {}).value : root.querySelector("#nus-answer").value;
       if (raw == null || !String(raw).trim()) return;
@@ -198,6 +211,7 @@
     let body = pageHead(`${esc(examState.code)} · review`, "Attempt complete", `${correct}/${total} correct. Use the deck below to turn misses into the next study session.`);
     body += `<div class="nus-result-score"><b>${Math.round(correct / Math.max(1, total) * 100)}%</b><span>${correct} correct · ${total - correct} to review</span></div><div class="nus-review-deck">${examState.answers.map((a, i) => `<article class="nus-review-item ${a.correct ? "correct" : "missed"}"><div><span class="pill ${a.correct ? "sage" : ""}">${a.correct ? "Correct" : "Review"}</span><b>${i + 1}. ${esc(a.q.prompt)}</b></div><p><strong>Source:</strong> ${(a.q.sourceRefs || a.q.lessonSourceRefs || []).slice(0, 2).map(sourceItem).join(" ")}</p><p><strong>Your answer:</strong> ${esc(a.q.type === "mcq" ? (a.q.choices[Number(a.raw)] || "No choice") : a.raw)}</p><p><strong>Worked answer:</strong> ${text(a.q.solution || a.q.explanation || "Review the source lesson.")}</p></article>`).join("")}</div><div class="nus-card"><h3>Cheat sheet</h3>${lessons(examState.code).map(l => `<details><summary>${esc(l.title)}</summary>${l.sections.map(s => `<p>${text(s.body)}</p>`).join("")}</details>`).join("")}</div><div class="nus-lesson-actions">${button("Try again", `#/nus/exam/${examState.code}${examState.scope ? `/${examState.scope}` : ""}`, "primary")}${button("Back to course", `#/nus/course/${examState.code}`, "ghost")}</div>`;
     root.innerHTML = body;
+    typesetNus();
   }
 
   function renderSql() {
@@ -267,14 +281,17 @@
   function renderRoute(parts) {
     stopExamTimer();
     const p = parts || [];
-    if (!p.length || p[0] === "dashboard") return renderDashboard();
-    if (p[0] === "planner") return renderPlanner();
-    if (p[0] === "course") return renderCourse(p[1]);
-    if (p[0] === "lesson") return renderLesson(p[1], p[2]);
-    if (p[0] === "exam") return renderExam(p[1], p[2]);
-    if (p[0] === "sql") return renderSql();
-    if (p[0] === "simulations") return renderSimulations();
-    return renderNotFound();
+    let result;
+    if (!p.length || p[0] === "dashboard") result = renderDashboard();
+    else if (p[0] === "planner") result = renderPlanner();
+    else if (p[0] === "course") result = renderCourse(p[1]);
+    else if (p[0] === "lesson") result = renderLesson(p[1], p[2]);
+    else if (p[0] === "exam") result = renderExam(p[1], p[2]);
+    else if (p[0] === "sql") result = renderSql();
+    else if (p[0] === "simulations") result = renderSimulations();
+    else result = renderNotFound();
+    typesetNus();
+    return result;
   }
   window.NUS_UI = { renderRoute, courseName };
 })();
