@@ -338,6 +338,13 @@
     save();
     return state.xp;
   }
+  // NUS evidence uses its own idempotent ledger, but shares the global streak and XP UI.
+  function recordNusEvidence(evidence) {
+    const amount = num(evidence && evidence.xp);
+    touchStreak();
+    if (amount > 0) addXP(amount);
+    return { xp: amount, streak: state.streak, level: levelInfo().level };
+  }
   function levelInfo() {
     let level = 1, idx = 0;
     for (let i = 0; i < LEVELS.length; i++) {
@@ -646,7 +653,7 @@
   window.Store = {
     XP, LEVELS, ACHIEVEMENTS,
     get raw() { return state; },
-    save, addXP, levelInfo,
+    save, addXP, recordNusEvidence, levelInfo,
     completeLesson, isLessonDone, recordQuiz, recordTest, revealHomework,
     gradeCard, cardDue, cardState, projectInterval, reviewForecast,
     bumpMastery, effectiveMastery, masteryLevel, weakSpots, fadingConcepts, topicMastery, markKnown,
