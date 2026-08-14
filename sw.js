@@ -1,6 +1,6 @@
 /* Atlas service worker — offline app shell + runtime caching.
    Bump CACHE when the asset list changes (e.g. after adding per-topic data files). */
-const CACHE = "atlas-v1136";
+const CACHE = "atlas-v1137";
 // Pre-cache ONLY the lightweight app shell at install. The heavy per-topic data files
 // (~6.4MB combined), viz.js, glossary/references/prereqs are deliberately left out:
 // the page loads them on first visit and the fetch handler below caches every
