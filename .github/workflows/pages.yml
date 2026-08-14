@@ -1,7 +1,7 @@
 name: Build & deploy production Pages
 
-# Runs on every push so production is the verification surface. Pull requests still build
-# the prerender, but only push/workflow-dispatch events publish to the single Pages site.
+# Runs on every push so the CI artifact stays current. GitHub Pages accepts production
+# deployments only from the repository's default branch, so only main pushes publish.
 on:
   push: {}
   pull_request:
@@ -25,9 +25,9 @@ jobs:
       # Resolve the project-page URL from the repository running this workflow so forks do
       # not canonicalize back to the upstream repository.
       SITE_URL: https://${{ github.repository_owner }}.github.io/${{ github.event.repository.name }}
-      # PRs build for validation; every push publishes the latest pushed branch to Pages.
+      # PRs and feature-branch pushes build for validation; main pushes publish to Pages.
       # Each repository that deploys must have GitHub Pages enabled.
-      DEPLOY_PAGES: ${{ github.event_name == 'push' || github.event_name == 'workflow_dispatch' }}
+      DEPLOY_PAGES: ${{ (github.event_name == 'push' || github.event_name == 'workflow_dispatch') && github.ref == format('refs/heads/{0}', github.event.repository.default_branch) }}
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
@@ -44,7 +44,7 @@ jobs:
           path: dist
 
   deploy:
-    if: github.event_name == 'push' || github.event_name == 'workflow_dispatch'
+    if: (github.event_name == 'push' || github.event_name == 'workflow_dispatch') && github.ref == format('refs/heads/{0}', github.event.repository.default_branch)
     needs: build
     runs-on: ubuntu-latest
     environment:
