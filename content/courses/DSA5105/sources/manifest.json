@@ -1,0 +1,94 @@
+{
+  "schemaVersion": "nus.source-manifest.v1",
+  "courseId": "DSA5105",
+  "policy": {
+    "rawPdfs": "outside-repository",
+    "production": "page-renders-only-unless-authorized",
+    "lecturePriority": "annotated-lecture-is-core; textbook-and-reference-are-labeled-depth"
+  },
+  "sources": [
+    {
+      "sourceId": "DSA5105/Lec1_annotated.pdf",
+      "sourceType": "lecture",
+      "role": "canonical Week 1 annotated lecture",
+      "status": "canonical",
+      "access": "local-only",
+      "fileName": "Lec1_annotated.pdf",
+      "pageCount": 55,
+      "sha256": "2e68c13eb5aa1120dc8238583b048d1c73ef06f114ee8f92a853f2a480167ac9",
+      "renderDirectory": "assets/nus/dsa5105/week1-annotated",
+      "slideSetId": "dsa5105-week1-annotated",
+      "notes": "The printed cover says DSA5102; Atlas preserves the source label and maps this supplied Week 1 deck to DSA5105 for study review."
+    },
+    {
+      "sourceId": "DSA5105/Lec1.pdf",
+      "sourceType": "lecture",
+      "role": "unannotated comparison copy",
+      "status": "comparison",
+      "access": "local-only",
+      "fileName": "Lec1.pdf",
+      "pageCount": 55,
+      "sha256": "7709f7c089e0fe1e8efeff5387f7fa7c6d457fbf793bcdc2b7be3c34fe9b3e01",
+      "canonicalOf": "DSA5105/Lec1_annotated.pdf",
+      "notes": "Same page count and instructor metadata as the annotated copy; use for checking handwritten additions, not as the primary Week 1 teaching layer."
+    },
+    {
+      "sourceId": "DSA5105/Ref/week1_DSA5105_lecture1.pdf",
+      "sourceType": "lecture",
+      "role": "alternate Week 1 lecture export",
+      "status": "comparison",
+      "access": "local-only",
+      "fileName": "week1_DSA5105_lecture1.pdf",
+      "pageCount": 64,
+      "sha256": "e5a6f8e9d29c59b2b34ef94efdf4979c7f628f28d385dfb45613a001ee84a02e",
+      "canonicalOf": "DSA5105/Lec1_annotated.pdf",
+      "notes": "Different page count; page references must not be mixed with the 55-page annotated deck without an explicit mapping."
+    },
+    {
+      "sourceId": "DSA5105/Ref/week1_DSA5105_lecture1_with_note.pdf",
+      "sourceType": "lecture",
+      "role": "alternate annotated/reference export",
+      "status": "comparison",
+      "access": "local-only",
+      "fileName": "week1_DSA5105_lecture1_with_note.pdf",
+      "pageCount": 60,
+      "sha256": "b9da942709e17140ccf4c5b1888282e83b0ba020cb8ca80f5ec880835b6194eb",
+      "canonicalOf": "DSA5105/Lec1_annotated.pdf",
+      "notes": "Different page count; current lesson references from earlier work remain historical until remapped to the canonical 55-page deck."
+    },
+    {
+      "sourceId": "DSA5105/Lec1_exercises.pdf",
+      "sourceType": "lecture",
+      "role": "Week 1 exercise sheet",
+      "status": "companion",
+      "access": "local-only",
+      "fileName": "Lec1_exercises.pdf",
+      "pageCount": 1
+    },
+    {
+      "sourceId": "DSA5105/Lec1_exercises-solutions.pdf",
+      "sourceType": "lecture",
+      "role": "Week 1 worked solutions",
+      "status": "companion",
+      "access": "local-only",
+      "fileName": "Lec1_exercises-solutions.pdf",
+      "pageCount": 3
+    },
+    {
+      "sourceId": "DSA5105/Textbook.pdf",
+      "sourceType": "textbook",
+      "role": "course textbook index and optional depth",
+      "status": "depth",
+      "access": "local-only",
+      "fileName": "Textbook.pdf",
+      "pageCount": 129,
+      "notes": "The reader shows labeled page references and the copyright-safe index; it does not merge textbook prose into lecture extraction."
+    }
+  ],
+  "deduplication": [
+    {
+      "sourceId": "DSA5105/Ref/week1_DSA5105_lecture1_with_note.pdf",
+      "note": "The 60-page annotated/reference export is intentionally not treated as the canonical 55-slide deck."
+    }
+  ]
+}
