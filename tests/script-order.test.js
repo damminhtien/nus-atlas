@@ -20,4 +20,7 @@ test("app shell exposes a persistent collapsible left navigation", () => {
   assert.match(css, /body\.nus-sidebar-collapsed \.shell/);
   assert.match(css, /body\.nus-slide-focus-mode \.nus-slide-reader-grid[^}]*grid-template-columns:minmax\(0, 3fr\) minmax\(0, 1fr\)/);
   assert.match(css, /body\.nus-slide-focus-mode \.nus-slide-reader-page \.nus-slide-main,[\s\S]*height:clamp\(520px, 75vh, 820px\)/);
+  assert.match(css, /\.nus-socratic-modal/);
+  assert.match(css, /body\.nus-slide-focus-mode \.nus-slide-image[^}]*height:100%/);
+  assert.match(css, /body\.nus-slide-focus-mode \.nus-slide-context \.nus-slide-depth[^}]*display:none/);
 });

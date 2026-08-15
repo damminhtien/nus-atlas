@@ -37,6 +37,19 @@ test("slide reader keeps source collapsed and resolves textbook annotations", ()
         textbookRefs: [{ sourceId: "Textbook.pdf", sourceType: "textbook", page: 13, role: "depth" }],
         referenceRefs: [],
         socraticQuestions: [{ type: "recall", prompt: "What is the target relationship?", hint: "Start with x and y.", answer: "Learn a mapping from inputs to outputs." }]
+      }, {
+        slideNumber: 2,
+        pdfPage: 2,
+        title: "Hypothesis space",
+        kind: "lecture",
+        status: "reviewed",
+        assetPath: "slide-02.jpg",
+        sourceRef: { sourceId: "lecture.pdf", sourceType: "lecture", page: 2 },
+        extraction: { blocks: [] },
+        explanation: { whatYouSee: "A hypothesis space limits the functions we can choose." },
+        textbookRefs: [],
+        referenceRefs: [],
+        socraticQuestions: []
       }]
     }),
     getTextbook: () => ({
@@ -67,8 +80,10 @@ test("slide reader keeps source collapsed and resolves textbook annotations", ()
   assert.match(root.innerHTML, /Linear Models/);
   assert.match(root.innerHTML, /Dynamic Atlas annotation/);
   assert.match(root.innerHTML, /Textbook reading lens/);
-  assert.match(root.innerHTML, /nus-socratic-checkpoint/);
-  assert.match(root.innerHTML, /After this slide/);
+  assert.doesNotMatch(root.innerHTML, /nus-socratic-checkpoint/);
+  assert.match(root.innerHTML, /nus-slide-focus-bar/);
+  assert.match(root.innerHTML, /data-slide-nav="next"/);
+  assert.match(root.innerHTML, /data-slide-number="1"/);
   assert.doesNotMatch(root.innerHTML, /nus-slide-socratic/);
   assert.match(root.innerHTML, /slide 1/);
   assert.match(root.innerHTML, /Practice lesson/);

@@ -19,6 +19,8 @@
     notFound
   } = options;
   let keyboardHandler = null;
+  let checkpointOverlay = null;
+  let checkpointKeydown = null;
   const FOCUS_MODE_KEY = "nus.slide-focus-mode";
 
   function focusModeOn() {
@@ -137,17 +139,64 @@
     return (slide.socraticQuestions || []).map((question, index) => `<details class="nus-slide-question"><summary><span>${index + 1}. ${esc(question.prompt)}</span><small>${esc(question.type)}</small></summary><p><b>Hint:</b> ${text(question.hint)}</p><details><summary>Reveal a strong answer</summary><p>${text(question.answer)}</p></details></details>`).join("");
   }
 
-  function socraticCheckpoint(slide) {
-    const count = Array.isArray(slide.socraticQuestions) ? slide.socraticQuestions.length : 0;
-    if (!count) return "";
-    return `<section class="nus-card nus-socratic-checkpoint" aria-labelledby="nus-socratic-checkpoint-title"><div class="nus-slide-section-head"><div><span class="eyebrow">After this slide</span><h3 id="nus-socratic-checkpoint-title">Socratic checkpoint</h3></div><span class="pill gold">${count} prompt${count === 1 ? "" : "s"}</span></div><p class="nus-muted">Pause while the visual is fresh. Answer these before moving to the next slide.</p>${questions(slide)}</section>`;
+  function closeSocraticCheckpoint() {
+    if (checkpointKeydown && typeof document !== "undefined") document.removeEventListener("keydown", checkpointKeydown);
+    checkpointKeydown = null;
+    if (checkpointOverlay && typeof checkpointOverlay.remove === "function") checkpointOverlay.remove();
+    checkpointOverlay = null;
+  }
+
+  function showSocraticCheckpoint(slideSet, current, target) {
+    const prompts = Array.isArray(current.socraticQuestions) ? current.socraticQuestions : [];
+    if (!prompts.length || typeof document === "undefined" || !document.body) {
+      location.hash = slideLink(slideSet, target);
+      return;
+    }
+    const select = root && typeof root.querySelector === "function" ? root.querySelector("#nus-slide-select") : null;
+    if (select) select.value = String(current.slideNumber);
+    closeSocraticCheckpoint();
+    const overlay = document.createElement("div");
+    overlay.className = "nus-socratic-modal";
+    overlay.setAttribute("role", "dialog");
+    overlay.setAttribute("aria-modal", "true");
+    overlay.setAttribute("aria-labelledby", "nus-socratic-modal-title");
+    overlay.innerHTML = `<div class="nus-socratic-modal-card"><div class="nus-socratic-modal-head"><div><span class="eyebrow">Before slide ${target.slideNumber}</span><h2 id="nus-socratic-modal-title">Socratic checkpoint</h2></div><span class="pill gold">${prompts.length} prompt${prompts.length === 1 ? "" : "s"}</span></div><p class="nus-muted">Answer aloud or on paper while the current visual is fresh, then continue.</p><div class="nus-socratic-modal-questions">${questions(current)}</div><div class="nus-socratic-modal-actions"><button type="button" class="btn ghost" data-socratic-cancel>Stay on slide</button><button type="button" class="btn primary" data-socratic-continue>Continue to slide ${target.slideNumber} →</button></div></div>`;
+    document.body.appendChild(overlay);
+    checkpointOverlay = overlay;
+    const continueButton = overlay.querySelector("[data-socratic-continue]");
+    const continueToSlide = () => {
+      closeSocraticCheckpoint();
+      location.hash = slideLink(slideSet, target);
+    };
+    overlay.querySelector("[data-socratic-cancel]")?.addEventListener("click", closeSocraticCheckpoint);
+    continueButton?.addEventListener("click", continueToSlide);
+    overlay.addEventListener("click", event => { if (event.target === overlay) closeSocraticCheckpoint(); });
+    checkpointKeydown = event => {
+      if (event.key === "Escape") { event.preventDefault(); closeSocraticCheckpoint(); }
+    };
+    document.addEventListener("keydown", checkpointKeydown);
+    continueButton?.focus();
+  }
+
+  function navigateToSlide(slideSet, current, target) {
+    if (!target) return;
+    if (target.slideNumber > current.slideNumber && (current.socraticQuestions || []).length) {
+      showSocraticCheckpoint(slideSet, current, target);
+      return;
+    }
+    closeSocraticCheckpoint();
+    location.hash = slideLink(slideSet, target);
+  }
+
+  function slideNavLink(slideSet, slide, label, tone, direction) {
+    return `<a class="btn ${tone}" href="${slideLink(slideSet, slide)}" data-route data-slide-nav="${direction}" data-slide-number="${slide.slideNumber}">${label}</a>`;
   }
 
   function slideNavigation(slideSet, index) {
     const previous = slideSet.slides[index - 1];
     const next = slideSet.slides[index + 1];
     const current = slideSet.slides[index];
-    return `<div class="nus-slide-nav"><div>${previous ? button("← Previous", slideLink(slideSet, previous), "ghost") : `<span class="nus-muted">First slide</span>`}</div><label class="nus-slide-jump">Slide <select id="nus-slide-select" aria-label="Jump to slide">${slideSet.slides.map(item => `<option value="${item.slideNumber}" ${item.slideNumber === current.slideNumber ? "selected" : ""}>${item.slideNumber} · ${esc(item.title)}</option>`).join("")}</select></label><div>${next ? button("Next →", slideLink(slideSet, next), "primary") : `<span class="nus-muted">Last slide</span>`}</div></div>`;
+    return `<div class="nus-slide-nav"><div>${previous ? slideNavLink(slideSet, previous, "← Previous", "ghost", "previous") : `<span class="nus-muted">First slide</span>`}</div><label class="nus-slide-jump">Slide <select id="nus-slide-select" aria-label="Jump to slide">${slideSet.slides.map(item => `<option value="${item.slideNumber}" ${item.slideNumber === current.slideNumber ? "selected" : ""}>${item.slideNumber} · ${esc(item.title)}</option>`).join("")}</select></label><div>${next ? slideNavLink(slideSet, next, "Next →", "primary", "next") : `<span class="nus-muted">Last slide</span>`}</div></div>`;
   }
 
   function sourcePanel(slide, source) {
@@ -164,15 +213,17 @@
     if (typeof document === "undefined") return;
     const previous = slideSet.slides[index - 1];
     const next = slideSet.slides[index + 1];
+    const current = slideSet.slides[index];
     keyboardHandler = event => {
       if (!String(location.hash || "").startsWith("#/nus/slides/")) return;
+      if (checkpointOverlay) return;
       const tagName = event.target && event.target.tagName;
       if (event.metaKey || event.ctrlKey || event.altKey || /INPUT|TEXTAREA|SELECT/.test(tagName || "")) return;
       const key = String(event.key || "").toLowerCase();
       const target = ["arrowleft", "pageup", "k"].includes(key) ? previous : ["arrowright", "pagedown", "j"].includes(key) ? next : null;
       if (target) {
         event.preventDefault();
-        location.hash = slideLink(slideSet, target);
+        navigateToSlide(slideSet, current, target);
         return;
       }
       if (key === "i") {
@@ -193,6 +244,7 @@
 
   function render(courseCode, slideSetId, rawSlideNumber) {
     removeKeyboard();
+    closeSocraticCheckpoint();
     setFocusMode(focusModeOn());
     const course = getCourse(courseCode);
     const slideSet = getSlideSet(courseCode, slideSetId);
@@ -206,24 +258,34 @@
     let body = `<div class="nus-slide-reader-page">${pageHead(`${course.code} · Week 1 · slide ${slide.slideNumber}/${slideSet.slides.length}`, slide.title, slideSet.summary)}`;
     body += `<div class="nus-lesson-actions"><div class="nus-slide-study-actions">${button("← Lesson", `#/nus/lesson/${course.code}/${lessonIds[0] || "dsa5105-erm"}`, "ghost")}${button("Course map", `#/nus/course/${course.code}`, "ghost")}${button("Practice lesson", `#/nus/exam/${course.code}/${lessonIds[0] || "dsa5105-erm"}`, "primary")}<button class="btn ghost" id="nus-toggle-focus" type="button" aria-pressed="${focusModeOn()}" aria-label="${focusModeOn() ? "Exit focus reading" : "Enter focus reading"}">${focusModeOn() ? "Exit focus reading" : "Focus reading"} <kbd>F</kbd></button><button class="btn ghost" id="nus-toggle-source" type="button" aria-controls="nus-slide-source-panel">Source layer <kbd>I</kbd></button></div><span class="nus-slide-key-hint"><kbd>←</kbd><kbd>→</kbd> or <kbd>J</kbd><kbd>K</kbd> switch slides · <kbd>F</kbd> focus · <kbd>I</kbd> source</span>${slideNavigation(slideSet, index)}</div>`;
     body += sourcePanel(slide, source);
+    body += `<div class="nus-slide-focus-bar" aria-live="polite"><span class="eyebrow">Focus reading</span><strong>${esc(slide.title)}</strong><span>Slide ${slide.slideNumber}/${slideSet.slides.length}</span></div>`;
     body += `<div class="nus-slide-reader-grid">
-      <aside class="nus-slide-strip" aria-label="Week 1 slides"><div class="nus-slide-strip-head"><b>All slides</b><span>${slideSet.slides.length} pages</span></div>${slideSet.slides.map(item => `<a class="nus-slide-thumb ${item.slideNumber === slide.slideNumber ? "active" : ""}" href="${slideLink(slideSet, item)}" data-route aria-label="Slide ${item.slideNumber}: ${esc(item.title)}"><img loading="lazy" src="${esc(item.assetPath)}" alt=""><span><b>${String(item.slideNumber).padStart(2, "0")}</b><small>${esc(item.title)}</small></span></a>`).join("")}</aside>
+      <aside class="nus-slide-strip" aria-label="Week 1 slides"><div class="nus-slide-strip-head"><b>All slides</b><span>${slideSet.slides.length} pages</span></div>${slideSet.slides.map(item => `<a class="nus-slide-thumb ${item.slideNumber === slide.slideNumber ? "active" : ""}" href="${slideLink(slideSet, item)}" data-route data-slide-number="${item.slideNumber}" aria-label="Slide ${item.slideNumber}: ${esc(item.title)}"><img loading="lazy" src="${esc(item.assetPath)}" alt=""><span><b>${String(item.slideNumber).padStart(2, "0")}</b><small>${esc(item.title)}</small></span></a>`).join("")}</aside>
       <main class="nus-slide-main"><section class="nus-slide-canvas nus-card"><div class="nus-slide-canvas-head"><span>${sourceBadge(slide.sourceRef)}</span><span class="nus-muted">${esc(slide.kind)} · ${esc(slide.status)} · ${slide.slideNumber}/${slideSet.slides.length}</span></div><img src="${esc(slide.assetPath)}" alt="${esc(slide.title)} — slide ${slide.slideNumber}" class="nus-slide-image"><p class="nus-slide-caption">Rendered from <code>${esc(source.sourceId || slide.sourceRef.sourceId)}</code>, page ${slide.pdfPage}. The image is the visual reference; the source layer above can be opened when you need to audit extraction.</p></section></main>
       <aside class="nus-slide-context"><section class="nus-card nus-slide-explanation"><div class="nus-slide-section-head"><div><span class="eyebrow">Atlas layer</span><h3>Explanation</h3></div><span class="pill violet">Derived note</span></div>${explanation(slide)}</section><section class="nus-card nus-slide-depth" id="nus-slide-textbook-map"><div class="nus-slide-section-head"><div><span class="eyebrow">Parallel reading</span><h3>Textbook bridge</h3></div><span class="pill sage">${(slide.textbookRefs || []).length} mapped</span></div>${textbookMapping(slide, textbook)}${textbookReadingLens(slide, textbook)}<div class="nus-slide-reference-group"><h4>Reference layer</h4>${referenceList(slide.referenceRefs)}</div><p class="nus-muted">Lecture remains the exam-priority source. Textbook and reference material add depth; they do not rewrite the lecture.</p></section></aside>
-      ${socraticCheckpoint(slide)}
     </div>`;
     body += `<div class="nus-slide-bottom">${slideNavigation(slideSet, index)}</div></div>`;
     root.innerHTML = body;
     typeset();
     root.querySelector("#nus-slide-select")?.addEventListener("change", event => {
-      location.hash = slideLink(slideSet, slideSet.slides.find(item => String(item.slideNumber) === event.target.value) || slide);
+      navigateToSlide(slideSet, slide, slideSet.slides.find(item => String(item.slideNumber) === event.target.value) || slide);
     });
     root.querySelector("#nus-toggle-source")?.addEventListener("click", () => {
       const panel = root.querySelector("#nus-slide-source-panel");
       if (panel) panel.open = !panel.open;
     });
     root.querySelector("#nus-toggle-focus")?.addEventListener("click", () => setFocusMode(!focusModeOn()));
-    root.querySelectorAll(".nus-slide-thumb").forEach(item => item.addEventListener("click", () => window.scrollTo({ top: 0, behavior: "smooth" })));
+    root.querySelectorAll("[data-slide-nav]").forEach(item => item.addEventListener("click", event => {
+      event.preventDefault();
+      const target = slideSet.slides.find(candidate => String(candidate.slideNumber) === item.dataset.slideNumber);
+      navigateToSlide(slideSet, slide, target);
+    }));
+    root.querySelectorAll(".nus-slide-thumb").forEach(item => item.addEventListener("click", event => {
+      event.preventDefault();
+      const target = slideSet.slides.find(candidate => String(candidate.slideNumber) === item.dataset.slideNumber);
+      navigateToSlide(slideSet, slide, target);
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    }));
     bindKeyboard(slideSet, index);
   }
 

@@ -1859,3 +1859,51 @@ body.nus-slide-focus-mode .nus-slide-source-panel:not([open]) { display:none; }
   body.nus-slide-focus-mode .nus-slide-reader-page .nus-slide-context { height:auto; }
   body.nus-slide-focus-mode .nus-socratic-checkpoint { grid-column:auto; }
 }
+
+/* Focus mode is a single viewport: keep the slide dominant and the Atlas note
+ * readable, while moving retrieval prompts into a transition modal. */
+.nus-slide-focus-bar { display:none; }
+.nus-socratic-modal { position:fixed; inset:0; z-index:1000; display:grid; place-items:center; padding:20px; background:color-mix(in srgb, #061a33 76%, transparent); backdrop-filter:blur(8px); }
+.nus-socratic-modal-card { width:min(720px, 100%); max-height:min(760px, calc(100vh - 40px)); overflow:auto; padding:24px; border:1px solid color-mix(in srgb, var(--gold) 48%, var(--line)); border-radius:18px; background:var(--panel); box-shadow:0 28px 80px -28px #061a33; }
+.nus-socratic-modal-head { display:flex; align-items:flex-start; justify-content:space-between; gap:16px; margin-bottom:8px; }
+.nus-socratic-modal-head h2 { margin:4px 0 0; color:var(--ink); font-family:var(--font-disp); font-size:clamp(24px, 3vw, 34px); }
+.nus-socratic-modal-card > .nus-muted { margin:0 0 12px; }
+.nus-socratic-modal-questions { max-height:46vh; overflow:auto; padding:0 12px; border:1px solid var(--line); border-radius:12px; background:color-mix(in srgb, var(--bg) 58%, transparent); }
+.nus-socratic-modal-actions { display:flex; justify-content:flex-end; gap:9px; flex-wrap:wrap; margin-top:16px; }
+
+body.nus-slide-focus-mode { overflow:hidden; }
+body.nus-slide-focus-mode .main { height:100vh; min-height:0; overflow:hidden; }
+body.nus-slide-focus-mode #app.nus-root { height:100vh; min-height:0; padding:12px 16px; overflow:hidden; }
+body.nus-slide-focus-mode .nus-slide-reader-page { height:100%; min-height:0; display:grid; grid-template-rows:auto minmax(0, 1fr); gap:10px; overflow:hidden; }
+body.nus-slide-focus-mode .nus-slide-reader-page .page-head,
+body.nus-slide-focus-mode .nus-slide-reader-page > .nus-lesson-actions,
+body.nus-slide-focus-mode .nus-slide-source-panel,
+body.nus-slide-focus-mode .nus-slide-bottom,
+body.nus-slide-focus-mode .nus-slide-key-hint,
+body.nus-slide-focus-mode .nus-slide-nav { display:none !important; }
+body.nus-slide-focus-mode .nus-slide-focus-bar { display:flex; align-items:center; gap:10px; min-width:0; min-height:28px; color:var(--ink-mute); font:11px/1.3 var(--font-mono); }
+body.nus-slide-focus-mode .nus-slide-focus-bar .eyebrow { flex:none; margin:0; color:var(--gold); font-size:10px; }
+body.nus-slide-focus-mode .nus-slide-focus-bar strong { min-width:0; overflow:hidden; color:var(--ink); font:600 15px/1.25 var(--font-ui); text-overflow:ellipsis; white-space:nowrap; }
+body.nus-slide-focus-mode .nus-slide-focus-bar > span:last-child { flex:none; margin-left:auto; }
+body.nus-slide-focus-mode .nus-slide-reader-grid { height:100%; min-height:0; grid-template-columns:minmax(0, 3fr) minmax(260px, 1fr); grid-template-rows:minmax(0, 1fr); gap:12px; align-items:stretch; }
+body.nus-slide-focus-mode .nus-slide-main,
+body.nus-slide-focus-mode .nus-slide-context { height:100%; min-height:0; }
+body.nus-slide-focus-mode .nus-slide-main { overflow:hidden; }
+body.nus-slide-focus-mode .nus-slide-context { display:block; overflow:auto; padding-right:4px; scrollbar-gutter:stable; }
+body.nus-slide-focus-mode .nus-slide-canvas { height:100%; min-height:0; padding:10px; display:block; }
+body.nus-slide-focus-mode .nus-slide-canvas-head,
+body.nus-slide-focus-mode .nus-slide-caption,
+body.nus-slide-focus-mode .nus-slide-context .nus-slide-depth { display:none; }
+body.nus-slide-focus-mode .nus-slide-image { width:100%; height:100%; min-height:0; object-fit:contain; }
+body.nus-slide-focus-mode .nus-slide-explanation { height:100%; min-height:0; overflow:auto; padding:16px; }
+body.nus-slide-focus-mode .nus-slide-section-head h3 { font-size:20px; }
+body.nus-slide-focus-mode .nus-slide-note { padding:10px 0; }
+body.nus-slide-focus-mode .nus-slide-note p { font-size:clamp(14px, 1.05vw, 18px); line-height:1.5; }
+
+@media (max-width:760px) {
+  body.nus-slide-focus-mode #app.nus-root { padding:8px; }
+  body.nus-slide-focus-mode .nus-slide-reader-grid { grid-template-columns:1fr; }
+  body.nus-slide-focus-mode .nus-slide-context { display:none; }
+  body.nus-slide-focus-mode .nus-slide-focus-bar { gap:7px; }
+  body.nus-slide-focus-mode .nus-slide-focus-bar strong { font-size:13px; }
+}
