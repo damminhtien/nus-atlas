@@ -4,6 +4,9 @@
 (function () {
   "use strict";
   const C = () => window.COURSES;
+  const nusRepository = () => window.NUS_REPOSITORY || null;
+  const nusCourses = () => nusRepository() ? nusRepository().listCourses() : (window.NUS_COURSES || []);
+  const nusContent = code => nusRepository() ? nusRepository().getCatalog(code) : (window.NUS_CONTENT || {})[code] || { modules: [] };
   const app = document.getElementById("app");
   const esc = s => String(s == null ? "" : s);
 
@@ -422,19 +425,19 @@
     const nLessons = courses.reduce((s, c) => s + c.modules.reduce((a, m) => a + m.lessons.length, 0), 0);
     const nTopics = courses.length;
     const nViz = (window.VIZ_CATALOG || []).length;
-    const nusCourses = window.NUS_COURSES || [];
-    const nusLessons = nusCourses.reduce((sum, c) => sum + ((((window.NUS_CONTENT || {})[c.code] || {}).modules || []).reduce((n, m) => n + (m.lessons || []).length, 0)), 0);
-    const isNus = nusCourses.length > 0;
-    const firstNus = nusCourses[0] && (((window.NUS_CONTENT || {})[nusCourses[0].code] || {}).modules || [])[0];
+    const nusCourseList = nusCourses();
+    const nusLessons = nusCourseList.reduce((sum, c) => sum + (nusContent(c.code).modules || []).reduce((n, m) => n + (m.lessons || []).length, 0), 0);
+    const isNus = nusCourseList.length > 0;
+    const firstNus = nusCourseList[0] && (nusContent(nusCourseList[0].code).modules || [])[0];
     const firstNusLesson = firstNus && firstNus.lessons && firstNus.lessons[0];
-    const startHash = firstNusLesson ? `#/nus/lesson/${nusCourses[0].code}/${firstNusLesson.id}` : "#/";
+    const startHash = firstNusLesson ? `#/nus/lesson/${nusCourseList[0].code}/${firstNusLesson.id}` : "#/";
     const ov = document.createElement("div"); ov.className = "intro-ov";
     ov.innerHTML = `<div class="intro-card">
       <div class="intro-eyebrow">${isNus ? "Welcome to NUS Atlas" : "Welcome to your codex"}</div>
       <h2 class="intro-title">${isNus ? "Study, then prove it" : "Atlas"}</h2>
-      <p class="intro-sub">${isNus ? `A focused study space for ${nusCourses.map(c => c.code).join(", ")}. Read the lesson, work a small example, recall the idea without notes, and finish with a timed practice run.` : "A personal home for the math and ideas behind modern AI — linear algebra, calculus, probability &amp; statistics, algorithms, machine learning, deep learning, reinforcement learning, LLMs &amp; information theory — built to make hard ideas <em>click</em> and <em>stick</em>."}</p>
+      <p class="intro-sub">${isNus ? `A focused study space for ${nusCourseList.map(c => c.code).join(", ")}. Read the lesson, work a small example, recall the idea without notes, and finish with a timed practice run.` : "A personal home for the math and ideas behind modern AI — linear algebra, calculus, probability &amp; statistics, algorithms, machine learning, deep learning, reinforcement learning, LLMs &amp; information theory — built to make hard ideas <em>click</em> and <em>stick</em>."}</p>
       <div class="intro-grid">
-        <div class="intro-item"><span>📖</span><b>Learn</b><small>${isNus ? `${nusLessons} NUS lessons across ${nusCourses.length} courses — lecture core, textbook depth, and optional references are labeled.` : `${nLessons} lessons across ${nTopics} subjects — rendered math, worked examples${nViz ? ` & ${nViz} interactive visualizations` : ""}.`}</small></div>
+        <div class="intro-item"><span>📖</span><b>Learn</b><small>${isNus ? `${nusLessons} NUS lessons across ${nusCourseList.length} courses — lecture core, textbook depth, and optional references are labeled.` : `${nLessons} lessons across ${nTopics} subjects — rendered math, worked examples${nViz ? ` & ${nViz} interactive visualizations` : ""}.`}</small></div>
         <div class="intro-item"><span>📝</span><b>Practice</b><small>${isNus ? "Recall prompts, worked solutions, flashcards, homework, and timed Exam Mode." : "Spawn tests in <b>Mastery mode</b>, then <b>redeem every wrong answer</b> until it sticks."}</small></div>
         <div class="intro-item"><span>🗓️</span><b>Plan</b><small>${isNus ? "See assessment weights, pending dates, checklists, and reminder windows in one planner." : "A Knowledge Constellation maps every concept; flashcards & a daily review keep it fresh."}</small></div>
         <div class="intro-item"><span>🔎</span><b>Verify</b><small>${isNus ? "Every lesson shows its source trail so you know what is lecture, textbook, or optional reference." : "Run real Python & JS in the Code Playground, right in the browser."}</small></div>
@@ -2846,8 +2849,8 @@
     if (!parts.length) return "NUS Dashboard · " + BASE;
     const p = parts[0];
     if (p === "nus") {
-      if (parts[1] === "course") { const c = (window.NUS_COURSES || []).find(x => x.code === parts[2]); return (c ? c.code + " · " + c.title : "NUS Course") + " · " + BASE; }
-      if (parts[1] === "lesson") { const c = (window.NUS_COURSES || []).find(x => x.code === parts[2]), ls = c && (window.NUS_CONTENT || {})[c.code]; const l = ls && ls.modules.flatMap(m => m.lessons || []).find(x => x.id === parts[3]); return (l ? l.title : "NUS Lesson") + " · " + BASE; }
+      if (parts[1] === "course") { const c = nusRepository() ? nusRepository().getCourse(parts[2]) : nusCourses().find(x => x.code === parts[2]); return (c ? c.code + " · " + c.title : "NUS Course") + " · " + BASE; }
+      if (parts[1] === "lesson") { const l = nusRepository() ? nusRepository().getLesson(parts[2], parts[3]) : (nusContent(parts[2]).modules || []).flatMap(m => m.lessons || []).find(x => x.id === parts[3]); return (l ? l.title : "NUS Lesson") + " · " + BASE; }
       const np = { planner: "NUS Planner", exam: "NUS Exam Mode", sql: "SQL Studio", simulations: "Distributed Simulations" };
       return (np[parts[1]] || "NUS Dashboard") + " · " + BASE;
     }
