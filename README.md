@@ -102,6 +102,7 @@ The Pages workflow runs `node prerender.js` in CI, creates the static `dist/` ar
 - `index.html` — app shell and navigation.
 - `src/core/content-repository.js` — typed-compatible content boundary and legacy fallback.
 - `src/features/nus/route-table.js` — NUS route contract.
+- `src/features/nus/planner.js` / `src/features/nus/exam.js` — isolated planner and Exam Mode features.
 - `src/ui/labs/registry.js` — visual-learning lab plugin registry.
 - `js/nus.js` — NUS views using the repository boundary.
 - `js/nus-store.js` — local study progress and attempts.
@@ -113,5 +114,7 @@ The Pages workflow runs `node prerender.js` in CI, creates the static `dist/` ar
 - `prerender.js` — CI static-page and sitemap build.
 - `.github/workflows/pages.yml` — production Pages workflow.
 - `docs/` — study and production documentation.
+
+The staged refactor roadmap is in [docs/REFACTOR_PLAN.md](docs/REFACTOR_PLAN.md).
 
 For content changes, start with [data/nus/README.md](data/nus/README.md). For agent tooling and token-efficient source inspection, see [AGENTS.md](AGENTS.md).
