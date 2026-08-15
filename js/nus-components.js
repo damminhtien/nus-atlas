@@ -89,9 +89,18 @@
     const nextButton = root.querySelector("[data-lab-next]"); if (nextButton) nextButton.textContent = next === steps.length - 1 ? "Complete reasoning move" : nextButton.textContent;
     if (next === steps.length - 1) complete(lab, root);
   }
+  const registry = window.NUS_LAB_REGISTRY ? window.NUS_LAB_REGISTRY() : { register() { return this; }, get() { return null; }, types() { return []; } };
+  registry.register("compare", compare)
+    .register("geometry", geometry)
+    .register("math-stepper", mathStepper)
+    .register("algorithm-trace", algorithmTrace)
+    .register("derivation-trace", derivationTrace)
+    .register("event-timeline", eventTimeline)
+    .register("pipeline-builder", pipeline);
   function renderLab(lesson, lab) {
     if (!lab || !lesson) return "";
-    return lab.type === "compare" ? compare(lab) : lab.type === "geometry" ? geometry(lab) : lab.type === "math-stepper" ? mathStepper(lab) : lab.type === "algorithm-trace" ? algorithmTrace(lab) : lab.type === "derivation-trace" ? derivationTrace(lab) : lab.type === "event-timeline" ? eventTimeline(lab) : pipeline(lab);
+    const renderer = registry.get(lab.type);
+    return renderer ? renderer(lab) : `<div class="nus-callout"><b>Lab unavailable</b><span>No renderer is registered for ${lab.type || "this lab type"}.</span></div>`;
   }
   function bind(root) {
     root.querySelectorAll("[data-nus-lab]").forEach(labRoot => {
@@ -104,5 +113,5 @@
       labRoot.querySelector("[data-lab-next]")?.addEventListener("click", () => advance(labRoot, lab));
     });
   }
-  window.NUS_COMPONENTS = { renderLab, bind };
+  window.NUS_COMPONENTS = { renderLab, bind, labRegistry: registry };
 })();
