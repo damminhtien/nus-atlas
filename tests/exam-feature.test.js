@@ -28,4 +28,5 @@ test("exam feature keeps question selection scoped to a lesson", () => {
   assert.match(root.innerHTML, /Exam mode/);
   assert.match(root.innerHTML, /Linear models/);
   assert.match(root.innerHTML, /Start attempt/);
+  assert.match(root.innerHTML, /Mistake Clinic/);
 });

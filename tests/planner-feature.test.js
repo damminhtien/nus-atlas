@@ -32,4 +32,6 @@ test("planner renders assessment state without owning the data source", () => {
   assert.match(root.innerHTML, /DSA5105/);
   assert.match(root.innerHTML, /1\/2 checklist items/);
   assert.match(root.innerHTML, /lecture\.pdf · p\.3/);
+  assert.match(root.innerHTML, /href="#\/nus\/course\/DSA5105"/);
+  assert.match(root.innerHTML, /href="#\/nus\/exam\/DSA5105"/);
 });

@@ -13,6 +13,7 @@ test("presentation helpers escape reader content and preserve source labels", ()
   const view = presentation();
   assert.equal(view.esc("<script>"), "&lt;script&gt;");
   assert.match(view.pageHead("Week 1", "Title", "A & B"), /A &amp; B/);
+  assert.match(view.pageHead("DSA5104", "Title", ""), /href="#\/nus\/exam\/DSA5104"/);
   assert.match(view.sourceItem({ sourceId: "Textbook.pdf", sourceType: "textbook", page: 31, role: "depth" }), /Textbook\.pdf · p\.31/);
 });
 
