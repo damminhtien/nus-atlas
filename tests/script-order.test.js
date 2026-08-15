@@ -26,6 +26,7 @@ test("app shell exposes a persistent collapsible left navigation", () => {
   assert.match(css, /\.nus-derivation-trace \.nus-lab-step \{ grid-template-columns:minmax\(0, 1fr\); \}/);
   assert.match(css, /\.nus-derivation-trace \.nus-lab-step > \.nus-lab-formula[^}]*justify-content:center/);
   assert.match(css, /\.nus-derivation-trace \.nus-lab-step > \.nus-lab-formula[^}]*font-size:clamp\(16px, 1\.45vw, 20px\)/);
+  assert.match(css, /\.nus-source-disclosure:not\(\[open\]\) > :not\(summary\), \.nus-lab-foot details:not\(\[open\]\) > :not\(summary\)/);
 });
 
 test("KaTeX boundary guards against double-escaped authored commands", () => {
