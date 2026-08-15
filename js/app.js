@@ -52,6 +52,46 @@
     }
     return out;
   }
+  // A JSON authoring mistake can turn one TeX command ("\\psi") into two runtime
+  // backslashes ("\\\\psi"). Validate sources in CI, but normalize this exact
+  // failure at the last safe boundary too, before KaTeX sees the text.
+  const DOUBLE_ESCAPED_TEX_COMMAND = /(?<!\\)\\{2}(?=(?:alpha|beta|begin|mathbf|dagger|delta|ell|end|frac|ge|hat|in|infty|lambda|le|langle|mathbb|mathrm|mu|operatorname|partial|Phi|psi|rho|sim|sqrt|sum|text|theta|tilde|top|widehat)\b)/g;
+  function normalizeDoubleEscapedMath(source) {
+    return source.replace(DOUBLE_ESCAPED_TEX_COMMAND, "\\");
+  }
+  function normalizeMathText(value) {
+    if (!value || value.indexOf("$") < 0) return value;
+    let output = "", index = 0;
+    while (index < value.length) {
+      if (value[index] === "\\" && value[index + 1] === "$") {
+        output += value.slice(index, index + 2); index += 2; continue;
+      }
+      if (value[index] !== "$") { output += value[index]; index += 1; continue; }
+      const delimiter = value[index + 1] === "$" ? "$$" : "$";
+      let cursor = index + delimiter.length, closed = -1;
+      while (cursor < value.length) {
+        if (value[cursor] === "\\") { cursor += 2; continue; }
+        if (delimiter === "$$" ? value[cursor] === "$" && value[cursor + 1] === "$" : value[cursor] === "$") { closed = cursor; break; }
+        cursor += 1;
+      }
+      if (closed < 0) { output += value.slice(index); break; }
+      output += delimiter + normalizeDoubleEscapedMath(value.slice(index + delimiter.length, closed)) + delimiter;
+      index = closed + delimiter.length;
+    }
+    return output;
+  }
+  function normalizeMathTextNodes(container) {
+    if (!container || typeof document.createTreeWalker !== "function") return;
+    const walker = document.createTreeWalker(container, NodeFilter.SHOW_TEXT);
+    const nodes = [];
+    let node;
+    while ((node = walker.nextNode())) {
+      const parent = node.parentElement;
+      if (parent && parent.closest(".katex, script, style, textarea")) continue;
+      if (node.nodeValue && node.nodeValue.indexOf("$") >= 0) nodes.push(node);
+    }
+    nodes.forEach(textNode => { textNode.nodeValue = normalizeMathText(textNode.nodeValue); });
+  }
   let _mathNormalized = false;
   function normalizeMath() {
     if (_mathNormalized) return; _mathNormalized = true;
@@ -70,6 +110,7 @@
   function typeset(retries) {
     if (window.renderMathInElement) {
       try {
+        normalizeMathTextNodes(app);
         window.renderMathInElement(app, {
           delimiters: [
             { left: "$$", right: "$$", display: true },
@@ -88,6 +129,7 @@
   window.typeset = function (el) {
     if (window.renderMathInElement) {
       try {
+        normalizeMathTextNodes(el || app);
         window.renderMathInElement(el || app, {
           delimiters: [
             { left: "$$", right: "$$", display: true },

@@ -32,6 +32,7 @@ const MALFORMED_MATH_PATTERNS = [
   { pattern: /(?<!\\)\b(?:hat|tilde|widehat|bar)\s+[A-Za-z]\b/g, label: 'missing accent command' },
   { pattern: /\b(?:remains|giving|classify)\b/g, label: 'prose inside math' },
 ];
+const DOUBLE_ESCAPED_TEX_COMMAND = /(?<!\\)\\{2}(?=(?:alpha|beta|begin|mathbf|dagger|delta|ell|end|frac|ge|hat|in|infty|lambda|le|langle|mathbb|mathrm|mu|operatorname|partial|Phi|psi|rho|sim|sqrt|sum|text|theta|tilde|top|widehat)\b)/g;
 
 const RAW_MATH_PATTERNS = [
   { pattern: /\\(?:[a-zA-Z]+|[,;:!])/g, label: 'TeX command' },
@@ -133,6 +134,9 @@ function findMalformedMath(value) {
     const body = span[0]
       .replace(/^\$\$?|\$\$?$|^\\\[|\\\]$|^\\\(|\\\)$/g, '')
       .replace(/\\(?:text|mathrm|operatorname)\{[^{}]*\}/g, ' ');
+    for (const match of body.matchAll(DOUBLE_ESCAPED_TEX_COMMAND)) {
+      issues.push({ label: 'double-escaped TeX command', token: match[0], index: span.index + match.index });
+    }
     for (const { pattern, label } of MALFORMED_MATH_PATTERNS) {
       for (const match of body.matchAll(pattern)) {
         issues.push({ label, token: match[0], index: span.index + match.index });

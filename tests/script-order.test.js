@@ -27,3 +27,9 @@ test("app shell exposes a persistent collapsible left navigation", () => {
   assert.match(css, /\.nus-derivation-trace \.nus-lab-step > \.nus-lab-formula[^}]*justify-content:center/);
   assert.match(css, /\.nus-derivation-trace \.nus-lab-step > \.nus-lab-formula[^}]*font-size:clamp\(16px, 1\.45vw, 20px\)/);
 });
+
+test("KaTeX boundary guards against double-escaped authored commands", () => {
+  const app = fs.readFileSync("js/app.js", "utf8");
+  assert.match(app, /normalizeDoubleEscapedMath/);
+  assert.match(app, /normalizeMathTextNodes/);
+});

@@ -23,6 +23,11 @@ test('rejects malformed delimiters and leaked normalizer markers', () => {
   assert.ok(findMalformedMath('\u0001FORMULA0\u0001').some(match => match.label === 'normalizer placeholder'));
 });
 
+test('rejects double-escaped TeX commands without flagging matrix row breaks', () => {
+  assert.ok(findMalformedMath(String.raw`$\\psi_\\delta(r)=r$`).some(match => match.label === 'double-escaped TeX command'));
+  assert.equal(findMalformedMath(String.raw`$\begin{bmatrix}0&y^\top\\y&K\end{bmatrix}$`).some(match => match.label === 'double-escaped TeX command'), false);
+});
+
 test('normalizing authored text is idempotent and fail-closed', () => {
   const malformed = 'dL/$dw = $z = wx$.';
   assert.equal(hasMalformedDelimiters(malformed), true);
