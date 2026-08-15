@@ -15,6 +15,7 @@ labs by adding data and feature modules—not by editing the app shell.
 - A route table and lab registry with focused tests.
 - A framework-free core router that separates hash lifecycle from page rendering.
 - Shared NUS presentation helpers extracted from the route entrypoint.
+- SQL Studio and distributed simulations extracted as injected interactive features.
 - Planner and Exam Mode extracted from `js/nus.js` into independently testable
   feature modules.
 - One generated content manifest shared by browser runtime, prerender, and the

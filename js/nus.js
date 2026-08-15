@@ -12,9 +12,6 @@
   const { esc, text, sourceLabel, sourceBadge, sourceItem, sourceGroups, pageHead, card, button, statusPill,
     visualCard, mathBlock, lessonSection, workedExample, recallItem, criticalThinking, studyKit, studyCompass } = presentation;
   let focusTimer = null;
-  let sqlState = { index: 0, result: null, error: null, ran: false, reveal: false }, sqlPromise = null;
-  let clockState = { p1: 0, p2: 0, vector1: [0, 0], vector2: [0, 0], events: [] };
-  let deliveryState = { mode: "FIFO", log: [] };
 
   function course(code) { return repository() ? repository().getCourse(code) : courses().find(c => c.code === code) || null; }
   function content(code) { return repository() ? repository().getCatalog(code) : (window.NUS_CONTENT || {})[code] || { modules: [] }; }
@@ -172,69 +169,10 @@
     return examFeature ? examFeature.render(code, scope, internal) : renderNotFound();
   }
 
-  function renderSql() {
-    const spec = content("DSA5104").sqlPractice, ex = spec.exercises[sqlState.index];
-    let body = pageHead("DSA5104 · practice", "SQL studio", "A small SQLite database runs in your browser. Use it to practice schema reading, joins, grouping, aggregation, and ER constraints without sending queries to a server. Compatibility note: this is SQLite/WASM for the MVP; MySQL-specific functions and DDL may differ.");
-    body += `<div class="nus-sql-layout"><aside>${card("Schema", spec.schema.map(t => `<div class="nus-schema-table"><b>${esc(t.name)}</b>${t.columns.map(c => `<code>${esc(c)}</code>`).join("")}</div>`).join(""), "reveal")}${card("Exercises", spec.exercises.map((x, i) => `<button class="nus-exercise-link ${i === sqlState.index ? "active" : ""}" data-sql-index="${i}"><span>${i + 1}</span><div><b>${esc(x.level)}</b><small>${esc(x.prompt)}</small></div></button>`).join(""), "reveal")}</aside><main><section class="nus-card nus-sql-editor reveal"><div class="nus-assessment-line"><span>${esc(ex.level)} · Exercise ${sqlState.index + 1}/${spec.exercises.length}</span><span>${sqlState.ran ? "Query executed" : "Not run"}</span></div><h3>${esc(ex.prompt)}</h3><textarea id="nus-sql-input" rows="9">${esc(ex.starter)}</textarea><div class="nus-lesson-actions"><button class="btn primary" id="nus-run-sql">Run query</button><button class="btn ghost" id="nus-reveal-sql" ${sqlState.ran ? "" : "disabled"}>Reveal solution</button></div>${sqlState.error ? `<div class="nus-output error">${text(sqlState.error)}</div>` : ""}${sqlState.result ? `<div class="nus-output ${sqlState.result.pass ? "success" : "error"}"><b>${sqlState.result.pass ? "Looks right" : "Check the result"}</b><pre>${esc(sqlState.result.text)}</pre><p>${text(ex.explanation)}</p>${sqlState.reveal ? `<details open><summary>Solution</summary><pre>${esc(ex.solution || ex.starter)}</pre></details>` : ""}</div>` : ""}</section></main></div>`;
-    root.innerHTML = body;
-    root.querySelectorAll("[data-sql-index]").forEach(b => b.addEventListener("click", () => { sqlState = { index: Number(b.dataset.sqlIndex), result: null, error: null, ran: false, reveal: false }; renderSql(); }));
-    root.querySelector("#nus-run-sql").addEventListener("click", () => executeSql(ex));
-    root.querySelector("#nus-reveal-sql").addEventListener("click", () => { sqlState.reveal = true; renderSql(); });
-  }
-  function loadSqlJs() {
-    if (window.initSqlJs) return Promise.resolve(window.initSqlJs);
-    if (sqlPromise) return sqlPromise;
-    sqlPromise = new Promise((resolve, reject) => {
-      const s = document.createElement("script"); s.src = "https://cdn.jsdelivr.net/npm/sql.js@1.10.3/dist/sql-wasm.js"; s.onload = () => resolve(window.initSqlJs); s.onerror = () => reject(new Error("Could not load the browser SQL engine. Check your connection and try again.")); document.head.appendChild(s);
-    });
-    return sqlPromise;
-  }
-  async function executeSql(ex) {
-    const input = root.querySelector("#nus-sql-input").value.trim(); sqlState = { ...sqlState, error: null, result: null, ran: true };
-    if (ex.id === "sql-4") { const normalized = input.toLowerCase().replace(/\s+/g, " "); sqlState.result = { pass: (ex.expected || []).some(x => normalized.includes(x)), text: input || "No answer" }; renderSql(); return; }
-    try {
-      const init = await loadSqlJs(), SQL = await init({ locateFile: file => `https://cdn.jsdelivr.net/npm/sql.js@1.10.3/dist/${file}` }), db = new SQL.Database();
-      db.run("CREATE TABLE Department (id INTEGER PRIMARY KEY, name TEXT NOT NULL); CREATE TABLE Student (id INTEGER PRIMARY KEY, name TEXT NOT NULL, department_id INTEGER); CREATE TABLE Enrollment (student_id INTEGER, course_code TEXT, grade REAL, PRIMARY KEY (student_id, course_code));");
-      const spec = content("DSA5104").sqlPractice.seed;
-      Object.entries(spec).forEach(([table, rows]) => rows.forEach(row => { const marks = row.map(() => "?").join(","); db.run(`INSERT INTO ${table} VALUES (${marks})`, row); }));
-      const rows = db.exec(input)[0], values = rows ? rows.values.map(row => row.join("|")) : [];
-      sqlState.result = { pass: values.join("\n") === ex.expected.join("\n"), text: rows ? [rows.columns.join(" | "), ...values].join("\n") : "Query returned no rows" };
-      db.close();
-    } catch (e) { sqlState.error = e.message || "SQL error"; }
-    renderSql();
-  }
-
-  function renderSimulations() {
-    const s = clockState;
-    let body = pageHead("DSA5208 · interactive", "Distributed systems simulations", "Step through ordering, logical clocks, consistency choices, and a Spark-style pipeline. The state is local to this page and intentionally small enough to reason about by hand.");
-    body += `<div class="nus-sim-grid"><section class="nus-card nus-sim reveal"><div class="nus-assessment-line"><span>Lamport scalar clock</span><button class="btn ghost" id="nus-clock-reset">Reset</button></div><p>Advance local events or send a message from P1 to P2. Receive uses max(local, received)+1.</p><div class="nus-processes"><div><b>P1</b><strong>${s.p1}</strong><button class="btn ghost" id="nus-p1-event">Local event</button><button class="btn ghost" id="nus-send">Send → P2</button></div><div><b>P2</b><strong>${s.p2}</strong><button class="btn ghost" id="nus-p2-event">Local event</button><button class="btn ghost" id="nus-receive">Receive</button></div></div><div class="nus-event-log">${s.events.slice(-5).map(e => `<span>${esc(e)}</span>`).join("")}</div></section>`;
-    body += `<section class="nus-card nus-sim reveal"><div class="nus-assessment-line"><span>Vector clock</span><button class="btn ghost" id="nus-vector-reset">Reset</button></div><p>Compare vectors componentwise. If neither dominates, the events are concurrent.</p><div class="nus-vector-row"><span>P1 <b>(${s.vector1.join(", ")})</b></span><button class="btn ghost" id="nus-vector-p1">P1 event</button><span>P2 <b>(${s.vector2.join(", ")})</b></span><button class="btn ghost" id="nus-vector-p2">P2 event</button></div><p class="nus-callout" id="nus-vector-note">${vectorRelation(s.vector1, s.vector2)}</p></section>`;
-    body += `<section class="nus-card nus-sim reveal"><div class="nus-assessment-line"><span>Consistency model prompt</span><span class="pill violet">reasoning</span></div><label>Scenario<select id="nus-consistency"><option>Bank balance read-after-write</option><option>Social feed replica</option><option>Analytics dashboard</option></select></label><div id="nus-consistency-answer" class="nus-output success">Choose a scenario to see the minimum useful guarantee.</div></section>`;
-    body += `<section class="nus-card nus-sim reveal"><div class="nus-assessment-line"><span>FIFO / non-FIFO / causal delivery</span><span class="pill gold">message order</span></div><label>Delivery model<select id="nus-delivery-mode"><option>FIFO</option><option>Non-FIFO</option><option>Causal</option></select></label><button class="btn ghost" id="nus-play-delivery">Play delivery trace</button><div class="nus-delivery-trace">${deliveryState.log.map(e => `<span>${esc(e)}</span>`).join("")}</div></section>`;
-    body += `<section class="nus-card nus-sim reveal"><div class="nus-assessment-line"><span>Spark pipeline map</span><span class="pill sage">partition reasoning</span></div><div class="nus-pipeline"><span>read</span><i>→</i><span>map/filter<br><small>partition-local</small></span><i>→</i><span id="nus-shuffle-node">groupByKey<br><small>shuffle</small></span><i>→</i><span>aggregate<br><small>reduce</small></span></div><p class="nus-muted">Click the shuffle stage to explain why network movement appears.</p><button class="btn ghost" id="nus-explain-shuffle">Explain shuffle</button><div id="nus-shuffle-note"></div></section></div>`;
-    root.innerHTML = body;
-    bindSimulationEvents();
-  }
-  function vectorRelation(a, b) {
-    const le = (x, y) => x.every((v, i) => v <= y[i]), lt = (x, y) => le(x, y) && x.some((v, i) => v < y[i]);
-    return lt(a, b) ? "P1's current event happens-before P2's." : lt(b, a) ? "P2's current event happens-before P1's." : "The vectors are incomparable: treat the events as concurrent.";
-  }
-  function bindSimulationEvents() {
-    const evidence = (name, lessonId) => window.NUS_STORE.recordSimulation(name, "DSA5208", lessonId);
-    const add = (key, label) => { clockState[key]++; clockState.events.push(label); renderSimulations(); };
-    root.querySelector("#nus-p1-event").addEventListener("click", () => add("p1", "P1 local event"));
-    root.querySelector("#nus-p2-event").addEventListener("click", () => add("p2", "P2 local event"));
-    root.querySelector("#nus-send").addEventListener("click", () => { clockState.p1++; clockState.events.push(`P1 sends timestamp ${clockState.p1}`); renderSimulations(); });
-    root.querySelector("#nus-receive").addEventListener("click", () => { clockState.p2 = Math.max(clockState.p2, clockState.p1) + 1; clockState.events.push(`P2 receives → ${clockState.p2}`); evidence("lamport-receive"); renderSimulations(); });
-    root.querySelector("#nus-clock-reset").addEventListener("click", () => { clockState.p1 = 0; clockState.p2 = 0; clockState.events = []; renderSimulations(); });
-    root.querySelector("#nus-vector-reset").addEventListener("click", () => { clockState.vector1 = [0, 0]; clockState.vector2 = [0, 0]; renderSimulations(); });
-    root.querySelector("#nus-vector-p1").addEventListener("click", () => { clockState.vector1[0]++; renderSimulations(); });
-    root.querySelector("#nus-vector-p2").addEventListener("click", () => { clockState.vector2[1]++; if (clockState.vector1.some(Boolean) && clockState.vector2.some(Boolean)) evidence("vector-clock"); renderSimulations(); });
-    root.querySelector("#nus-consistency").addEventListener("change", e => { const answers = { "Bank balance read-after-write": "Use a strong/session guarantee for the writer's own read; stale replicas can show an incorrect balance.", "Social feed replica": "Eventual consistency is often acceptable if the UI tolerates a short delay and updates converge.", "Analytics dashboard": "A bounded-staleness or eventual model may be enough; state freshness and error tolerance explicitly." }; root.querySelector("#nus-consistency-answer").textContent = answers[e.target.value]; evidence(`consistency-${e.target.value}`); });
-    root.querySelector("#nus-delivery-mode").addEventListener("change", e => { deliveryState.mode = e.target.value; });
-    root.querySelector("#nus-play-delivery").addEventListener("click", () => { const traces = { FIFO: ["P1 sends m1", "P1 sends m2", "P2 delivers m1", "P2 delivers m2"], "Non-FIFO": ["P1 sends m1", "P1 sends m2", "P2 delivers m2", "P2 delivers m1"], Causal: ["P1 sends m1", "P2 receives m1", "P2 sends m2", "P3 delivers m1 before m2"] }; deliveryState.log = traces[deliveryState.mode]; evidence(`delivery-${deliveryState.mode}`); renderSimulations(); });
-    root.querySelector("#nus-explain-shuffle").addEventListener("click", () => { root.querySelector("#nus-shuffle-note").innerHTML = `<p class="nus-muted">Keys must meet on the same partition before aggregation. That exchange adds serialization, network traffic, skew risk, and a synchronization barrier.</p>`; evidence("spark-shuffle"); });
-  }
+  const sqlFeature = window.NUS_SQL_FEATURE ? window.NUS_SQL_FEATURE({ root, getContent: content, pageHead, card, esc, text, notFound: renderNotFound }) : null;
+  const simulationsFeature = window.NUS_SIMULATIONS_FEATURE ? window.NUS_SIMULATIONS_FEATURE({ root, pageHead, esc, getStore: () => window.NUS_STORE }) : null;
+  function renderSql() { return sqlFeature ? sqlFeature.render() : renderNotFound(); }
+  function renderSimulations() { return simulationsFeature ? simulationsFeature.render() : renderNotFound(); }
 
   const routeTable = window.NUS_ROUTE_TABLE ? window.NUS_ROUTE_TABLE({
     dashboard: () => renderDashboard(),
