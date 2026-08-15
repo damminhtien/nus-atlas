@@ -204,30 +204,36 @@
   <script defer src="js/nus.js?v=0.2.7"></script>
   <script defer src="js/app.js?v=0.2.7"></script>
 
-  <!-- PWA: offline app shell + graceful update prompt (only over http/https; no-op on file://) -->
+  <!-- PWA: offline app shell + automatic version refresh (only over http/https; no-op on file://) -->
   <script>
     if ("serviceWorker" in navigator && location.protocol.indexOf("http") === 0) {
       window.addEventListener("load", function () {
         var versionMeta = document.querySelector("meta[name='atlas-version']");
         var atlasVersion = versionMeta ? versionMeta.getAttribute("content") : "dev";
         navigator.serviceWorker.register("sw.js?v=" + encodeURIComponent(atlasVersion)).then(function (reg) {
-          function promptUpdate(worker) {
-            if (document.getElementById("sw-update")) return;
-            var b = document.createElement("div");
-            b.id = "sw-update";
-            b.style.cssText = "position:fixed;bottom:22px;left:50%;transform:translateX(-50%);z-index:400;background:#0e2d52;color:#f7f9fd;border:1px solid #ef7c00;border-radius:12px;padding:12px 16px;font-family:'Source Sans 3',Arial,sans-serif;font-size:14px;box-shadow:0 16px 44px rgba(0,18,45,.5);display:flex;gap:14px;align-items:center";
-            b.innerHTML = "A new NUS Atlas version is ready. <button id='sw-refresh' style='background:#ef7c00;color:#061a33;border:none;border-radius:8px;padding:6px 14px;font-weight:700;cursor:pointer'>Refresh</button>";
-            document.body.appendChild(b);
-            document.getElementById("sw-refresh").onclick = function () { worker.postMessage({ type: "SKIP_WAITING" }); b.remove(); };
+          function activateUpdate(worker) {
+            if (worker && navigator.serviceWorker.controller) worker.postMessage({ type: "SKIP_WAITING" });
           }
-          if (reg.waiting && navigator.serviceWorker.controller) promptUpdate(reg.waiting);
+          if (reg.waiting && navigator.serviceWorker.controller) activateUpdate(reg.waiting);
           reg.addEventListener("updatefound", function () {
             var nw = reg.installing;
-            if (nw) nw.addEventListener("statechange", function () { if (nw.state === "installed" && navigator.serviceWorker.controller) promptUpdate(nw); });
+            if (nw) nw.addEventListener("statechange", function () { if (nw.state === "installed") activateUpdate(nw); });
           });
+          // Check on every reload even when the registration URL itself is unchanged.
+          reg.update().catch(function () {});
         }).catch(function () {});
         var reloaded = false;
-        navigator.serviceWorker.addEventListener("controllerchange", function () { if (reloaded) return; reloaded = true; location.reload(); });
+        navigator.serviceWorker.addEventListener("controllerchange", function () {
+          if (reloaded) return;
+          reloaded = true;
+          // A broken deployment must not create an infinite reload loop in this tab.
+          var guard = "atlas.auto-refresh:" + atlasVersion;
+          try {
+            if (sessionStorage.getItem(guard) === "1") return;
+            sessionStorage.setItem(guard, "1");
+          } catch (e) {}
+          location.reload();
+        });
       });
     }
   </script>
