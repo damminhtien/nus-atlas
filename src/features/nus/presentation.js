@@ -28,7 +28,19 @@
       { label: "Reference / optional", refs: course.referenceSources || [] }
     ].filter(group => group.refs.length);
   }
-  function pageHead(kicker, title, desc) { return `<div class="page-head reveal"><div class="eyebrow">${esc(kicker)}</div><h2>${esc(title)}</h2>${desc ? `<p>${text(desc)}</p>` : ""}</div>`; }
+  function quickNav(kicker) {
+    const courseCode = String(kicker || "").match(/DSA\d{4}/)?.[0] || "DSA5105";
+    const links = [
+      ["Study desk", "#/"],
+      [courseCode, `#/nus/course/${courseCode}`],
+      ["Practice", `#/nus/exam/${courseCode}`],
+      ["Mistakes", `#/nus/mistakes/${courseCode}`],
+      ["Planner", "#/nus/planner"]
+    ];
+    if (courseCode === "DSA5105") links.push(["Week 1 slides", "#/nus/slides/DSA5105/dsa5105-week1-annotated/1"]);
+    return `<nav class="nus-quick-nav" aria-label="Quick navigation"><span>Quick nav</span>${links.map(([label, href]) => `<a href="${esc(href)}" data-route>${esc(label)}</a>`).join("")}</nav>`;
+  }
+  function pageHead(kicker, title, desc) { return `<div class="page-head reveal"><div class="eyebrow">${esc(kicker)}</div><h2>${esc(title)}</h2>${desc ? `<p>${text(desc)}</p>` : ""}${quickNav(kicker)}</div>`; }
   function card(title, body, cls) { return `<section class="nus-card ${cls || ""}"><h3>${esc(title)}</h3>${body}</section>`; }
   function button(label, href, cls) { return `<a class="btn ${cls || "ghost"}" href="${esc(href)}" data-route>${esc(label)}</a>`; }
   function statusPill(status) { return `<span class="pill ${status === "done" ? "sage" : status === "in-progress" ? "gold" : ""}">${esc(status === "in-progress" ? "In progress" : status === "done" ? "Done" : "To do")}</span>`; }
@@ -84,7 +96,7 @@
   }
 
   return Object.freeze({
-    esc, text, sourceLabel, sourceBadge, sourceItem, sourceGroups, pageHead, card,
+    esc, text, sourceLabel, sourceBadge, sourceItem, sourceGroups, quickNav, pageHead, card,
     button, statusPill, visualCard, mathBlock, lessonSection, workedExample,
     recallItem, criticalThinking, studyKit, studyCompass
   });

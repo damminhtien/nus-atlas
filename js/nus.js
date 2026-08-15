@@ -98,6 +98,7 @@
     getAssessments: assessments,
     getStore: () => window.NUS_STORE,
     pageHead,
+    button,
     dayCount,
     fmtDate,
     statusPill,
@@ -152,7 +153,7 @@
     setReaderMode(readerModeOn());
     let body = pageHead(`${c.code} · Week ${l.week}`, l.title, l.summary);
     const slideSet = slideSets(code).find(item => (item.lessonIds || []).includes(l.id));
-    body += `<div class="nus-lesson-actions">${button("← Course", `#/nus/course/${c.code}`, "ghost")}<button class="btn ${done ? "ghost" : "primary"}" id="nus-mark-lesson">${done ? "✓ Completed" : "Mark complete"}</button>${slideSet ? button("Open annotated slides", `#/nus/slides/${c.code}/${slideSet.id}/1`, "primary") : ""}${button("Exam mode", `#/nus/exam/${c.code}/${l.id}`, "ghost")}${readerButton()}</div>`;
+    body += `<div class="nus-lesson-actions">${button("← Course", `#/nus/course/${c.code}`, "ghost")}<button class="btn ${done ? "ghost" : "primary"}" id="nus-mark-lesson">${done ? "✓ Completed" : "Mark complete"}</button>${slideSet ? button("Open annotated slides", `#/nus/slides/${c.code}/${slideSet.id}/1`, "primary") : ""}${button("Exam mode", `#/nus/exam/${c.code}/${l.id}`, "ghost")}${button("Mistake Clinic", `#/nus/mistakes/${c.code}`, "ghost")}${readerButton()}</div>`;
     body += studyCompass(l);
     const lab = repository() ? repository().getLab(l.id) : window.NUS_VISUAL_LABS && window.NUS_VISUAL_LABS[l.id];
     body += `<div class="nus-lesson-grid"><main><section class="nus-card nus-objectives reveal"><div class="nus-teach-head"><h3>What you should be able to do</h3><span class="pill gold">${esc(l.minutes)} min</span></div><ul>${(l.objectives || []).map(objective => `<li>${esc(objective)}</li>`).join("")}</ul></section>${lab && window.NUS_COMPONENTS ? window.NUS_COMPONENTS.renderLab(l, lab) : ""}<div id="nus-lesson-read">${(l.sections || []).map(lessonSection).join("")}${(l.math || []).map(mathBlock).join("")}</div><div id="nus-lesson-work">${(l.examples || []).map(workedExample).join("")}</div>${criticalThinking(l)}<section class="nus-card nus-recall reveal" id="nus-lesson-recall"><div class="nus-teach-head"><h3>Recall before you test</h3><span class="pill">${l.questions.length} prompts</span></div><p class="nus-muted">Answer on paper first. Open each prompt only after you commit to an answer.</p><div class="nus-question-list">${l.questions.map(recallItem).join("")}</div>${button("Start this lesson in Exam Mode", `#/nus/exam/${c.code}/${l.id}`, "primary")}</section>${studyKit(l)}<div class="nus-lesson-nav">${previous ? button(`← ${previous.title}`, `#/nus/lesson/${c.code}/${previous.id}`, "ghost") : `<span></span>`}${next ? button(`Next: ${next.title} →`, `#/nus/lesson/${c.code}/${next.id}`, "primary") : button("Back to course", `#/nus/course/${c.code}`, "primary")}</div></main><aside>${l.visualIds && l.visualIds.length ? card("Visual study cues", l.visualIds.map(visualCard).join(""), "reveal") : ""}${card("Source trail", `<ul class="nus-source-list">${l.sourceRefs.map(r => `<li>${sourceItem(r)}</li>`).join("")}</ul><p class="nus-muted">Visual cues are derived study prompts, not copies of course slides. Lecture remains the exam-priority core; textbook and reference material are labeled for depth and optional support.</p>`, "reveal")}</aside></div>`;

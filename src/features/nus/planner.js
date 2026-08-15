@@ -9,6 +9,7 @@
     getAssessments,
     getStore,
     pageHead,
+    button,
     dayCount,
     fmtDate,
     statusPill,
@@ -30,7 +31,8 @@
       const done = checks.filter(Boolean).length;
       const days = dayCount(assessment.date);
       const urgency = days != null && days <= 7 && days >= 0 ? "urgent" : "";
-      return `<article class="nus-assessment ${urgency}"><div class="nus-assessment-head"><div><span class="nus-code">${esc(assessment.courseCode)}</span><h3>${esc(assessment.title)}</h3></div><div class="nus-assessment-meta">${assessment.date ? `<b>${esc(fmtDate(assessment.date))}</b><span>${days < 0 ? "overdue" : `${days} days left`}</span>` : `<b>Date pending</b><span>Do not guess</span>`}</div></div><div class="nus-assessment-line"><span>${esc(assessment.kind)} · ${assessment.weight}%</span><span>${statusPill(task.status)} · ${done}/${assessment.checklist.length} checklist items</span></div><div class="nus-assessment-controls"><label>Status <select data-nus-status="${esc(assessment.id)}"><option value="todo" ${task.status === "todo" ? "selected" : ""}>To do</option><option value="in-progress" ${task.status === "in-progress" ? "selected" : ""}>In progress</option><option value="done" ${task.status === "done" ? "selected" : ""}>Done</option></select></label>${assessment.source ? `<span class="nus-source">Source: ${esc(sourceLabel(assessment.source))}</span>` : ""}</div><div class="nus-checklist">${assessment.checklist.map((item, index) => `<label><input type="checkbox" data-nus-check="${esc(assessment.id)}" data-index="${index}" ${checks[index] ? "checked" : ""}><span>${esc(item)}</span></label>`).join("")}</div></article>`;
+      const routeButton = typeof button === "function" ? button : (label, href, cls) => `<a class="btn ${cls || "ghost"}" href="${esc(href)}" data-route>${esc(label)}</a>`;
+      return `<article class="nus-assessment ${urgency}"><div class="nus-assessment-head"><div><span class="nus-code">${esc(assessment.courseCode)}</span><h3>${esc(assessment.title)}</h3></div><div class="nus-assessment-meta">${assessment.date ? `<b>${esc(fmtDate(assessment.date))}</b><span>${days < 0 ? "overdue" : `${days} days left`}</span>` : `<b>Date pending</b><span>Do not guess</span>`}</div></div><div class="nus-assessment-line"><span>${esc(assessment.kind)} · ${assessment.weight}%</span><span>${statusPill(task.status)} · ${done}/${assessment.checklist.length} checklist items</span></div><div class="nus-assessment-controls"><label>Status <select data-nus-status="${esc(assessment.id)}"><option value="todo" ${task.status === "todo" ? "selected" : ""}>To do</option><option value="in-progress" ${task.status === "in-progress" ? "selected" : ""}>In progress</option><option value="done" ${task.status === "done" ? "selected" : ""}>Done</option></select></label>${assessment.source ? `<span class="nus-source">Source: ${esc(sourceLabel(assessment.source))}</span>` : ""}</div><div class="nus-assessment-links">${routeButton("Study course", `#/nus/course/${assessment.courseCode}`, "ghost")}${routeButton("Practice", `#/nus/exam/${assessment.courseCode}`, "ghost")}</div><div class="nus-checklist">${assessment.checklist.map((item, index) => `<label><input type="checkbox" data-nus-check="${esc(assessment.id)}" data-index="${index}" ${checks[index] ? "checked" : ""}><span>${esc(item)}</span></label>`).join("")}</div></article>`;
     }).join("")}</div>`;
     root.innerHTML = body;
     root.querySelectorAll("[data-nus-status]").forEach(element => element.addEventListener("change", () => {
