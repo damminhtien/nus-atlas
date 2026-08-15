@@ -3,19 +3,21 @@
   const root = document.getElementById("app");
   const esc = value => String(value == null ? "" : value).replace(/[&<>\"']/g, ch => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", "\"": "&quot;", "'": "&#39;" }[ch]));
   const text = value => esc(value).replace(/\n/g, "<br>");
-  const courses = () => window.NUS_COURSES || [];
-  const assessments = () => window.NUS_ASSESSMENTS || [];
-  const visuals = () => window.NUS_VISUALS || {};
-  const schedule = () => window.NUS_SCHEDULE || { courses: {} };
+  const repository = () => window.NUS_REPOSITORY || null;
+  const courses = () => repository() ? repository().listCourses() : (window.NUS_COURSES || []);
+  const assessments = () => repository() ? repository().listAssessments() : (window.NUS_ASSESSMENTS || []);
+  const visuals = () => repository() ? repository().listVisuals() : (window.NUS_VISUALS || {});
+  const schedule = () => repository() ? repository().getSchedule() : (window.NUS_SCHEDULE || { courses: {} });
+  const sourceTypes = () => repository() ? repository().getSourceTypes() : (window.NUS_SOURCE_TYPES || {});
   let examState = null, examTimer = null, focusTimer = null;
   let sqlState = { index: 0, result: null, error: null, ran: false, reveal: false }, sqlPromise = null;
   let clockState = { p1: 0, p2: 0, vector1: [0, 0], vector2: [0, 0], events: [] };
   let deliveryState = { mode: "FIFO", log: [] };
 
-  function course(code) { return courses().find(c => c.code === code) || null; }
-  function content(code) { return (window.NUS_CONTENT || {})[code] || { modules: [] }; }
-  function lessons(code) { return content(code).modules.flatMap(m => m.lessons || []); }
-  function lesson(code, id) { return lessons(code).find(l => l.id === id) || null; }
+  function course(code) { return repository() ? repository().getCourse(code) : courses().find(c => c.code === code) || null; }
+  function content(code) { return repository() ? repository().getCatalog(code) : (window.NUS_CONTENT || {})[code] || { modules: [] }; }
+  function lessons(code) { return repository() ? repository().listLessons(code) : content(code).modules.flatMap(m => m.lessons || []); }
+  function lesson(code, id) { return repository() ? repository().getLesson(code, id) : lessons(code).find(l => l.id === id) || null; }
   function courseName(code) { const c = course(code); return c ? c.title : code; }
   function fmtDate(value, pendingLabel) {
     if (!value) return pendingLabel || "Date pending";
@@ -29,13 +31,13 @@
   function learningSignals() {
     const quests = window.NUS_STORE.questState(), recognition = window.NUS_STORE.recognition();
     const questBody = quests.quests.map(q => `<div class="nus-quest"><div><b>${esc(q.label)}</b><span>${esc(q.hint)}</span></div><strong>${q.progress}/${q.target}</strong><div class="nus-quest-progress"><i style="width:${Math.round(q.progress / q.target * 100)}%"></i></div></div>`).join("");
-    const labItems = Object.values(window.NUS_VISUAL_LABS || {}).filter(l => l.courseCode === "DSA5105").map(l => { const m = window.NUS_STORE.masteryFor(l.lessonId), pct = Math.round(m.score * 100); return `<a class="nus-mastery-row" href="#/nus/lesson/DSA5105/${esc(l.lessonId)}" data-route><span><b>${esc(l.title)}</b><small>${m.attempts ? `${m.attempts} evidence moves` : "Not started"}</small></span><span class="nus-mini-progress"><i style="width:${pct}%"></i></span><strong>${pct}%</strong></a>`; }).join("");
+    const labItems = (repository() ? repository().listLabs("DSA5105") : Object.entries(window.NUS_VISUAL_LABS || {}).map(([id, lab]) => ({ id, ...lab }))).map(l => { const m = window.NUS_STORE.masteryFor(l.lessonId), pct = Math.round(m.score * 100); return `<a class="nus-mastery-row" href="#/nus/lesson/DSA5105/${esc(l.lessonId)}" data-route><span><b>${esc(l.title)}</b><small>${m.attempts ? `${m.attempts} evidence moves` : "Not started"}</small></span><span class="nus-mini-progress"><i style="width:${pct}%"></i></span><strong>${pct}%</strong></a>`; }).join("");
     const badgeItems = recognition.slice(0, 6).map(item => `<div class="nus-badge ${item.unlocked ? "unlocked" : "locked"}"><span>${esc(item.icon)}</span><div><b>${esc(item.name)}</b><small>${esc(item.desc)}</small></div><strong>${item.unlocked ? "✓" : `${item.progress}%`}</strong></div>`).join("");
     return `<div class="nus-two-col nus-learning-signals"><div>${card("Today’s quests", `<div class="nus-quest-summary"><b>${quests.complete ? "Daily loop complete" : "Evidence over streaks"}</b><span>${quests.quests.filter(q => q.progress >= q.target).length}/${quests.quests.length} quests · ${quests.completedDays} completed days</span></div><div class="nus-quest-list">${questBody}</div><p class="nus-muted">Opening a page never awards XP. Only a completed study move enters the ledger.</p>`, "reveal")}</div><div>${card("DSA5105 mastery map", `<div class="nus-mastery-list">${labItems}</div><p class="nus-muted">Mastery rises through lesson completion, retrieval, and lab reasoning—not page views.</p>`, "reveal")}</div></div><div>${card("Recognition", `<div class="nus-badge-list">${badgeItems}</div>`, "reveal")}</div>`;
   }
   function sourceLabel(ref) { return ref ? `${ref.sourceId}${ref.page ? ` · p.${ref.page}` : ""}` : ""; }
   function sourceBadge(ref) {
-    const meta = (window.NUS_SOURCE_TYPES || {})[ref && ref.sourceType];
+    const meta = sourceTypes()[ref && ref.sourceType];
     if (!meta) return `<span class="pill">Source</span>`;
     const status = ref.status && !["current", "course-depth"].includes(ref.status) ? ` · ${ref.status}` : "";
     return `<span class="pill ${esc(meta.tone)}">${esc(meta.shortLabel)}${esc(status)}</span>`;
@@ -115,7 +117,7 @@
     if (!c) return renderNotFound();
     let body = pageHead(c.code, c.title, c.description);
     body += `<div class="nus-course-meta"><span>${esc(c.department)} · ${esc(c.faculty)}</span><span>Workload ${esc(c.workload.join(" / "))}</span>${button("Exam mode", `#/nus/exam/${c.code}`, "primary")}</div>`;
-    body += `<div class="nus-course-layout"><div><div class="nus-course-progress"><b>Course progress</b>${courseProgressBar(c.code)}</div>${content(c.code).modules.map(m => `<section class="nus-module reveal"><div class="eyebrow">${esc(m.title)}</div>${(m.lessons || []).map(l => `<a class="nus-lesson-row" href="#/nus/lesson/${esc(c.code)}/${esc(l.id)}" data-route><span class="nus-lesson-dot ${window.NUS_STORE.lessonDone(l.id) ? "done" : ""}">${window.NUS_STORE.lessonDone(l.id) ? "✓" : ""}</span><div><b>${esc(l.title)}</b><span>Week ${esc(l.week)} · ${esc(l.minutes)} min · ${(l.questions || []).length} practice prompts${window.NUS_VISUAL_LABS && window.NUS_VISUAL_LABS[l.id] ? " · visual lab" : ""}</span></div><span>→</span></a>`).join("")}</section>`).join("")}</div><aside>${card("Assessment weight", assessments().filter(a => a.courseCode === c.code).map(a => `<div class="nus-weight"><span>${esc(a.title)}</span><b>${a.weight}%</b></div>`).join(""), "reveal")}${card("Sources", sourceGroups(c).map(g => `<div class="nus-source-group"><b>${esc(g.label)}</b><ul class="nus-source-list">${g.refs.map(r => `<li>${sourceItem(r)}</li>`).join("")}</ul></div>`).join("")+`<a class="nus-external" href="${esc(c.nusmods.url)}" target="_blank" rel="noreferrer">NUSMods course page ↗</a>`, "reveal")}</aside></div>`;
+    body += `<div class="nus-course-layout"><div><div class="nus-course-progress"><b>Course progress</b>${courseProgressBar(c.code)}</div>${content(c.code).modules.map(m => `<section class="nus-module reveal"><div class="eyebrow">${esc(m.title)}</div>${(m.lessons || []).map(l => `<a class="nus-lesson-row" href="#/nus/lesson/${esc(c.code)}/${esc(l.id)}" data-route><span class="nus-lesson-dot ${window.NUS_STORE.lessonDone(l.id) ? "done" : ""}">${window.NUS_STORE.lessonDone(l.id) ? "✓" : ""}</span><div><b>${esc(l.title)}</b><span>Week ${esc(l.week)} · ${esc(l.minutes)} min · ${(l.questions || []).length} practice prompts${(repository() ? repository().getLab(l.id) : window.NUS_VISUAL_LABS && window.NUS_VISUAL_LABS[l.id]) ? " · visual lab" : ""}</span></div><span>→</span></a>`).join("")}</section>`).join("")}</div><aside>${card("Assessment weight", assessments().filter(a => a.courseCode === c.code).map(a => `<div class="nus-weight"><span>${esc(a.title)}</span><b>${a.weight}%</b></div>`).join(""), "reveal")}${card("Sources", sourceGroups(c).map(g => `<div class="nus-source-group"><b>${esc(g.label)}</b><ul class="nus-source-list">${g.refs.map(r => `<li>${sourceItem(r)}</li>`).join("")}</ul></div>`).join("")+`<a class="nus-external" href="${esc(c.nusmods.url)}" target="_blank" rel="noreferrer">NUSMods course page ↗</a>`, "reveal")}</aside></div>`;
     root.innerHTML = body;
   }
 
@@ -188,7 +190,7 @@
     let body = pageHead(`${c.code} · Week ${l.week}`, l.title, l.summary);
     body += `<div class="nus-lesson-actions">${button("← Course", `#/nus/course/${c.code}`, "ghost")}<button class="btn ${done ? "ghost" : "primary"}" id="nus-mark-lesson">${done ? "✓ Completed" : "Mark complete"}</button>${button("Exam mode", `#/nus/exam/${c.code}/${l.id}`, "ghost")}${readerButton()}</div>`;
     body += studyCompass(l);
-    const lab = window.NUS_VISUAL_LABS && window.NUS_VISUAL_LABS[l.id];
+    const lab = repository() ? repository().getLab(l.id) : window.NUS_VISUAL_LABS && window.NUS_VISUAL_LABS[l.id];
     body += `<div class="nus-lesson-grid"><main><section class="nus-card nus-objectives reveal"><div class="nus-teach-head"><h3>What you should be able to do</h3><span class="pill gold">${esc(l.minutes)} min</span></div><ul>${(l.objectives || []).map(objective => `<li>${esc(objective)}</li>`).join("")}</ul></section>${lab && window.NUS_COMPONENTS ? window.NUS_COMPONENTS.renderLab(l, lab) : ""}<div id="nus-lesson-read">${(l.sections || []).map(lessonSection).join("")}${(l.math || []).map(mathBlock).join("")}</div><div id="nus-lesson-work">${(l.examples || []).map(workedExample).join("")}</div>${criticalThinking(l)}<section class="nus-card nus-recall reveal" id="nus-lesson-recall"><div class="nus-teach-head"><h3>Recall before you test</h3><span class="pill">${l.questions.length} prompts</span></div><p class="nus-muted">Answer on paper first. Open each prompt only after you commit to an answer.</p><div class="nus-question-list">${l.questions.map(recallItem).join("")}</div>${button("Start this lesson in Exam Mode", `#/nus/exam/${c.code}/${l.id}`, "primary")}</section>${studyKit(l)}<div class="nus-lesson-nav">${previous ? button(`← ${previous.title}`, `#/nus/lesson/${c.code}/${previous.id}`, "ghost") : `<span></span>`}${next ? button(`Next: ${next.title} →`, `#/nus/lesson/${c.code}/${next.id}`, "primary") : button("Back to course", `#/nus/course/${c.code}`, "primary")}</div></main><aside>${l.visualIds && l.visualIds.length ? card("Visual study cues", l.visualIds.map(visualCard).join(""), "reveal") : ""}${card("Source trail", `<ul class="nus-source-list">${l.sourceRefs.map(r => `<li>${sourceItem(r)}</li>`).join("")}</ul><p class="nus-muted">Visual cues are derived study prompts, not copies of course slides. Lecture remains the exam-priority core; textbook and reference material are labeled for depth and optional support.</p>`, "reveal")}</aside></div>`;
     root.innerHTML = body;
     typesetNus();
