@@ -67,6 +67,9 @@ test("slide reader keeps source collapsed and resolves textbook annotations", ()
   assert.match(root.innerHTML, /Linear Models/);
   assert.match(root.innerHTML, /Dynamic Atlas annotation/);
   assert.match(root.innerHTML, /Textbook reading lens/);
+  assert.match(root.innerHTML, /nus-socratic-checkpoint/);
+  assert.match(root.innerHTML, /After this slide/);
+  assert.doesNotMatch(root.innerHTML, /nus-slide-socratic/);
   assert.match(root.innerHTML, /slide 1/);
   assert.match(root.innerHTML, /Practice lesson/);
   assert.match(root.innerHTML, /Focus reading/);

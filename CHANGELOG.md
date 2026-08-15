@@ -6,6 +6,10 @@ and refresh first-party asset URLs so browsers and the service worker pick up th
 
 ## [Unreleased]
 
+## [0.2.6] - 2026-08-15
+
+- rebalance focus slide workspace and move Socratic checkpoint
+
 ## [0.2.5] - 2026-08-15
 
 - enforce authored math delimiters
