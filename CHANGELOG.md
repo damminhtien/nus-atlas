@@ -6,6 +6,10 @@ and refresh first-party asset URLs so browsers and the service worker pick up th
 
 ## [Unreleased]
 
+## [0.2.13] - 2026-08-15
+
+- Collapse verbose source provenance in study views
+
 ## [0.2.12] - 2026-08-15
 
 - Harden LaTeX source validation and runtime rendering
