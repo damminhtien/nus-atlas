@@ -1,0 +1,73 @@
+[
+  {
+    "id": "dsa5105-svm-q1",
+    "type": "calculation",
+    "prompt": "For a point $x$ with $y(w^\\top x+b)=2$ and $\\lVert w\\rVert_2=4$, what is its signed geometric margin?",
+    "accepted": [
+      "0.5",
+      "1/2"
+    ],
+    "solution": "The margin is $y(w^\\top x+b)/\\lVert w\\rVert_2=2/4=0.5$.",
+    "explanation": "Use the label-scaled score for a signed margin.",
+    "sourceRefs": [
+      {
+        "sourceId": "DSA5105/Textbook.pdf",
+        "page": 31,
+        "sourceType": "textbook",
+        "role": "margin formula",
+        "status": "course-depth"
+      }
+    ],
+    "courseId": "DSA5105",
+    "lessonId": "dsa5105-svm-margin",
+    "schemaVersion": "nus.question.v1"
+  },
+  {
+    "id": "dsa5105-svm-q2",
+    "type": "derivation",
+    "prompt": "Why does the hard-margin SVM use $y_i(w^\\top x_i+b)\\ge1$ while minimizing $\\lVert w\\rVert_2^2/2$?",
+    "accepted": [
+      "fix the scale and maximize margin",
+      "normalizes the closest points and minimizes norm",
+      "maximize 1 over norm"
+    ],
+    "solution": "The classifier scale is otherwise arbitrary. Fixing the closest correctly classified points at score $1$ makes the geometric margin $1/\\lVert w\\rVert_2$, so maximizing it is equivalent to minimizing $\\lVert w\\rVert_2^2/2$ under the constraints.",
+    "explanation": "Mention both scale fixing and the inverse relationship between norm and margin.",
+    "sourceRefs": [
+      {
+        "sourceId": "DSA5105/Textbook.pdf",
+        "page": 31,
+        "sourceType": "textbook",
+        "role": "hard-margin primal",
+        "status": "course-depth"
+      }
+    ],
+    "courseId": "DSA5105",
+    "lessonId": "dsa5105-svm-margin",
+    "schemaVersion": "nus.question.v1"
+  },
+  {
+    "id": "dsa5105-svm-q3",
+    "type": "short",
+    "prompt": "What makes a training example a support vector?",
+    "accepted": [
+      "it has an active margin constraint",
+      "nonzero lagrange multiplier",
+      "lies on or inside the margin"
+    ],
+    "solution": "It is a point with an active constraint in the optimum, equivalently a point with a non-zero dual multiplier; in a soft-margin model it can lie on or inside the margin.",
+    "explanation": "Support vectors, not all observations, determine the fitted boundary in the dual representation.",
+    "sourceRefs": [
+      {
+        "sourceId": "DSA5105/Textbook.pdf",
+        "page": 35,
+        "sourceType": "textbook",
+        "role": "support vectors",
+        "status": "course-depth"
+      }
+    ],
+    "courseId": "DSA5105",
+    "lessonId": "dsa5105-svm-margin",
+    "schemaVersion": "nus.question.v1"
+  }
+]

@@ -4,32 +4,29 @@ global.window = {};
 function load(file) { new Function("window", fs.readFileSync(file, "utf8")).call(global.window, global.window); }
 [
   "data/nus/provenance.js", "data/nus/courses.js", "data/nus/schedule.js", "data/nus/assessments.js", "data/nus/visuals.js",
-  "data/nus/dsa5101.js", "data/nus/dsa5104.js", "data/nus/dsa5105.js", "data/nus/dsa5208.js", "data/nus/artifacts.js", "data/nus/formula-depth.js", "data/nus/visual-labs.js"
+  "data/nus/dsa5101.js", "data/nus/dsa5104.js", "data/nus/dsa5105.js", "data/nus/generated/dsa5105.js", "data/nus/dsa5208.js", "data/nus/artifacts.js", "data/nus/formula-depth.js", "data/nus/visual-labs.js"
 ].forEach(load);
 
-const errors = [], allowed = new Set(["DSA5101", "DSA5104", "DSA5105", "DSA5208"]);
-const courses = global.window.NUS_COURSES || [], content = global.window.NUS_CONTENT || {};
+const errors = [];
+const courses = global.window.NUS_COURSES || [], allowed = new Set(courses.map(course => course.code));
+const packageContent = global.window.NUS_CONTENT_PACKAGES || {};
+const artifacts = global.window.NUS_ARTIFACTS || {};
+const content = global.window.NUS_CONTENT || {};
 const assessments = global.window.NUS_ASSESSMENTS || [], schedule = global.window.NUS_SCHEDULE || {}, visuals = global.window.NUS_VISUALS || {};
 const sourceTypes = new Set(Object.keys(global.window.NUS_SOURCE_TYPES || {}));
 const visualLabs = global.window.NUS_VISUAL_LABS || {};
 const unicodeFormula = /[₀₁₂₃₄₅₆₇₈₉ᵀᵥᵢₜₐₑₘ′Σσπγλμδ̂∑≤≥∈√∞→∪]/;
 let formulaCount = 0, criticalCount = 0;
 const mathBlocks = lesson => [...(lesson.math || []), ...(lesson.sections || []).map(section => section.math).filter(Boolean)];
-if (courses.length !== 4 || new Set(courses.map(c => c.code)).size !== 4) errors.push("must define exactly four unique NUS courses");
+if (!courses.length || new Set(courses.map(c => c.code)).size !== courses.length) errors.push("must define at least one unique NUS course");
 courses.forEach(c => {
-  if (!allowed.has(c.code)) errors.push("course outside allowlist: " + c.code);
   if (!c.title || !c.semester || !Array.isArray(c.prerequisites) || !c.nusmods || !c.nusmods.apiModule) errors.push("missing course metadata: " + c.code);
   if (c.prerequisites.some(code => !allowed.has(code))) errors.push("bad prerequisite on course: " + c.code);
-  const lessons = (content[c.code] && content[c.code].modules || []).flatMap(m => m.lessons || []);
+  const packageData = packageContent[c.code];
+  const lessons = ((packageData && packageData.content) || content[c.code] || { modules: [] }).modules.flatMap(m => m.lessons || []).map(lesson => ({ ...lesson, ...(artifacts[lesson.id] || {}) }));
   if (!lessons.length) errors.push("course has no lessons: " + c.code);
-  if (c.code === "DSA5105") {
-    ["lectureSources", "textbookSources", "referenceSources"].forEach(key => {
-      if (!Array.isArray(c[key]) || !c[key].length) errors.push("missing DSA5105 source class: " + key);
-      (c[key] || []).forEach(r => {
-        if (!r.sourceId || !sourceTypes.has(r.sourceType) || !r.role || !r.status) errors.push("incomplete DSA5105 catalog source: " + (r.sourceId || key));
-      });
-    });
-  }
+  const sourceCatalog = [c.lectureSources, c.textbookSources, c.referenceSources].flat().filter(Boolean);
+  sourceCatalog.forEach(r => { if (!r.sourceId || !sourceTypes.has(r.sourceType) || !r.role || !r.status) errors.push("incomplete course source: " + (r.sourceId || c.code)); });
   const ids = new Set();
   lessons.forEach(l => {
     if (!l.id || ids.has(l.id)) errors.push("duplicate/missing lesson id: " + c.code);
@@ -53,7 +50,7 @@ courses.forEach(c => {
       if (!q.id || !q.type || !q.prompt || !q.explanation && !q.solution) errors.push("incomplete question: " + (q.id || l.id));
       if (q.type === "mcq" && (!Array.isArray(q.choices) || typeof q.answer !== "number" || q.answer < 0 || q.answer >= q.choices.length)) errors.push("bad MCQ: " + q.id);
       if (q.type !== "mcq" && (!Array.isArray(q.accepted) || !q.accepted.length)) errors.push("missing accepted answer: " + q.id);
-      (q.sourceRefs || []).forEach(r => { if (c.code === "DSA5105" && (!sourceTypes.has(r.sourceType) || !r.role || !r.status)) errors.push("untyped DSA5105 question source ref: " + q.id); });
+      (q.sourceRefs || []).forEach(r => { if (packageData && (!sourceTypes.has(r.sourceType) || !r.role || !r.status)) errors.push("untyped question source ref: " + q.id); });
     });
     if (!Array.isArray(l.flashcards) || l.flashcards.length < 3) errors.push("missing flashcards: " + l.id);
     if (!Array.isArray(l.homework) || l.homework.length < 2) errors.push("missing homework: " + l.id);
@@ -75,10 +72,8 @@ Object.entries(visuals).forEach(([id, v]) => {
   if (!allowed.has(v.courseCode) || !v.title || !v.kind || !v.source || !v.source.sourceId || !Number.isInteger(v.source.page) || !v.observation) errors.push("incomplete visual ref: " + id);
   if (v.source.externalUrl && !/^https:\/\//.test(v.source.externalUrl)) errors.push("external visual source must use HTTPS: " + id);
 });
-const requiredLabs = ["dsa5105-erm", "dsa5105-svm-margin", "dsa5105-pca-deep-dive", "dsa5105-cluster-gmm", "dsa5105-rl-bellman", "dsa5105-gnn"];
-requiredLabs.forEach(id => {
-  const lab = visualLabs[id];
-  if (!lab || lab.courseCode !== "DSA5105" || lab.lessonId !== id || !lab.type || !lab.learningGoal || typeof lab.check !== "function" || lab.reducedMotion !== true || !Array.isArray(lab.sourceRefs) || !lab.sourceRefs.length) errors.push("incomplete DSA5105 visual lab: " + id);
+Object.entries(visualLabs).forEach(([id, lab]) => {
+  if (!lab || !allowed.has(lab.courseCode) || !lab.lessonId || !lab.type || !lab.learningGoal || typeof lab.check !== "function" || lab.reducedMotion !== true || !Array.isArray(lab.sourceRefs) || !lab.sourceRefs.length) errors.push("incomplete visual lab: " + id);
   (lab && lab.sourceRefs || []).forEach(ref => { if (!ref.sourceId || !Number.isInteger(ref.page) || ref.page < 1 || !sourceTypes.has(ref.sourceType) || !ref.role || !ref.status) errors.push("incomplete visual lab source: " + id); });
 });
 const labTypes = new Set(["compare", "geometry", "math-stepper", "algorithm-trace", "derivation-trace", "event-timeline", "pipeline-builder"]);
@@ -87,4 +82,8 @@ const publicFiles = fs.readdirSync("data/nus").filter(f => f.endsWith(".js")).ma
 const publicText = publicFiles.map(file => fs.readFileSync(file, "utf8"));
 if (publicText.some(t => /\/Users\/|Desktop\/NUS|(?:passport|medical|identity)[^\n]{0,80}\.(?:pdf|docx?|png|jpe?g)/i.test(t))) errors.push("public NUS layer contains a private/raw source marker");
 if (errors.length) { console.error("NUS GATE FAILED"); errors.forEach(e => console.error("- " + e)); process.exit(1); }
-console.log(`NUS GATE GREEN · ${courses.length} courses · ${courses.reduce((n, c) => n + (content[c.code].modules || []).reduce((m, x) => m + (x.lessons || []).length, 0), 0)} lessons · ${formulaCount} LaTeX formulas · ${criticalCount} critical questions · ${assessments.length} assessment milestones · ${Object.keys(visuals).length} visual refs`);
+const lessonCount = courses.reduce((total, course) => {
+  const catalog = (packageContent[course.code] && packageContent[course.code].content) || content[course.code] || {};
+  return total + (catalog.modules || []).reduce((count, module) => count + (module.lessons || []).length, 0);
+}, 0);
+console.log(`NUS GATE GREEN · ${courses.length} courses · ${lessonCount} lessons · ${formulaCount} LaTeX formulas · ${criticalCount} critical questions · ${assessments.length} assessment milestones · ${Object.keys(visuals).length} visual refs`);

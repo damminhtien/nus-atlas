@@ -1,0 +1,123 @@
+[
+  {
+    "id": "dsa5105-svm-dual-q1",
+    "type": "derivation",
+    "prompt": "Write the hard-margin SVM dual equality constraint.",
+    "accepted": [
+      "sum alpha i y i equals zero",
+      "sum alpha y = 0",
+      "positive alpha sum equals negative alpha sum"
+    ],
+    "solution": "$\\sum_i\\alpha_i y_i=0$.",
+    "explanation": "It comes from differentiating the Lagrangian with respect to the bias.",
+    "sourceRefs": [
+      {
+        "sourceId": "DSA5105/Textbook.pdf",
+        "page": 34,
+        "sourceType": "textbook",
+        "role": "SVM dual constraint",
+        "status": "course-depth"
+      }
+    ],
+    "courseId": "DSA5105",
+    "lessonId": "dsa5105-svm-dual-kkt",
+    "schemaVersion": "nus.question.v1"
+  },
+  {
+    "id": "dsa5105-svm-dual-q2",
+    "type": "short",
+    "prompt": "What condition identifies a hard-margin support vector through KKT?",
+    "accepted": [
+      "alpha positive and margin equals one",
+      "alpha_i>0 implies y_i f_i=1",
+      "active margin constraint"
+    ],
+    "solution": "If $\\alpha_i>0$, complementary slackness forces $y_i(w^\\top x_i+b)=1$.",
+    "explanation": "A support vector is an active constraint in the normalized margin formulation.",
+    "sourceRefs": [
+      {
+        "sourceId": "DSA5105/Textbook.pdf",
+        "page": 32,
+        "sourceType": "textbook",
+        "role": "KKT complementary slackness",
+        "status": "course-depth"
+      }
+    ],
+    "courseId": "DSA5105",
+    "lessonId": "dsa5105-svm-dual-kkt",
+    "schemaVersion": "nus.question.v1"
+  },
+  {
+    "id": "dsa5105-svm-dual-q3",
+    "type": "mcq",
+    "prompt": "Which alpha vector satisfies the hard-margin bias equality for positive labels (+1) and negative labels (-1)?",
+    "choices": [
+      "Positive alphas sum to 2 and negative alphas sum to 3",
+      "Positive alphas sum to 3 and negative alphas sum to 3",
+      "All alphas are negative",
+      "Every alpha is exactly 1"
+    ],
+    "answer": 1,
+    "explanation": "The signed sum is zero exactly when positive and negative multiplier mass balances.",
+    "sourceRefs": [
+      {
+        "sourceId": "DSA5105/Ref/document.pdf",
+        "page": 4,
+        "sourceType": "ref",
+        "role": "SVM dual feasibility alignment",
+        "status": "assessment-derived"
+      }
+    ],
+    "courseId": "DSA5105",
+    "lessonId": "dsa5105-svm-dual-kkt",
+    "schemaVersion": "nus.question.v1"
+  },
+  {
+    "id": "dsa5105-svm-dual-q4",
+    "type": "short",
+    "prompt": "How does a kernel change the dual calculation?",
+    "accepted": [
+      "replace x_i transpose x_j with k(x_i,x_j)",
+      "replace inner products by kernel values",
+      "use kernel matrix"
+    ],
+    "solution": "Replace each pairwise inner product x_i^T x_j by k(x_i,x_j), assuming the kernel is positive semidefinite.",
+    "explanation": "The algorithm stays in terms of pairwise similarities while the boundary can be nonlinear in the input space.",
+    "sourceRefs": [
+      {
+        "sourceId": "DSA5105/Textbook.pdf",
+        "page": 35,
+        "sourceType": "textbook",
+        "role": "kernel SVM",
+        "status": "course-depth"
+      }
+    ],
+    "courseId": "DSA5105",
+    "lessonId": "dsa5105-svm-dual-kkt",
+    "schemaVersion": "nus.question.v1"
+  },
+  {
+    "id": "dsa5105-svm-dual-q5",
+    "type": "short",
+    "prompt": "What new alpha bound appears in the soft-margin SVM dual?",
+    "accepted": [
+      "0 <= alpha_i <= C",
+      "alpha bounded by C",
+      "box constraint C"
+    ],
+    "solution": "Each multiplier satisfies $0\\le\\alpha_i\\le C$.",
+    "explanation": "The upper bound is tied to the slack-penalty parameter.",
+    "sourceRefs": [
+      {
+        "sourceId": "DSA5105/Ref/document.pdf",
+        "page": 4,
+        "sourceType": "ref",
+        "role": "soft-margin KKT alignment",
+        "status": "assessment-derived"
+      }
+    ],
+    "courseId": "DSA5105",
+    "lessonId": "dsa5105-svm-dual-kkt",
+    "schemaVersion": "nus.question.v1"
+  }
+]

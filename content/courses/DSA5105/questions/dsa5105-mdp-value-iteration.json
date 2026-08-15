@@ -1,0 +1,122 @@
+[
+  {
+    "id": "dsa5105-vi-q1",
+    "type": "derivation",
+    "prompt": "Write the finite-MDP value-iteration recurrence.",
+    "accepted": [
+      "max over actions sum p times reward plus gamma value",
+      "v t plus 1 equals max action expected r plus gamma v t",
+      "bellman optimality backup"
+    ],
+    "solution": "$V_{t+1}(s)=\\max_a\\sum_{s',r}p(s',r\\mid s,a)[r+\\gamma V_t(s')]$.",
+    "explanation": "Include the transition/reward expectation and the action maximum.",
+    "sourceRefs": [
+      {
+        "sourceId": "DSA5105/Textbook.pdf",
+        "page": 115,
+        "sourceType": "textbook",
+        "role": "value iteration recurrence",
+        "status": "course-depth"
+      }
+    ],
+    "courseId": "DSA5105",
+    "lessonId": "dsa5105-mdp-value-iteration",
+    "schemaVersion": "nus.question.v1"
+  },
+  {
+    "id": "dsa5105-vi-q2",
+    "type": "calculation",
+    "prompt": "In the two-sweep example, what is V2(S0) when gamma=0.9, V1(S1)=3, and action a gives immediate reward 2?",
+    "accepted": [
+      "4.7",
+      "4.70"
+    ],
+    "solution": "2 + 0.9*3 = 4.7, which beats the terminal action value 0.",
+    "explanation": "Use the previous sweep's S1 value in the second backup.",
+    "sourceRefs": [
+      {
+        "sourceId": "DSA5105/Ref/document.pdf",
+        "page": 1,
+        "sourceType": "ref",
+        "role": "value iteration table alignment",
+        "status": "assessment-derived"
+      }
+    ],
+    "courseId": "DSA5105",
+    "lessonId": "dsa5105-mdp-value-iteration",
+    "schemaVersion": "nus.question.v1"
+  },
+  {
+    "id": "dsa5105-vi-q3",
+    "type": "short",
+    "prompt": "What is the TD(0) error?",
+    "accepted": [
+      "r plus gamma v next minus v current",
+      "bootstrap target minus current value",
+      "delta equals r plus gamma v(s prime) minus v(s)"
+    ],
+    "solution": "$\\delta_t=r_{t+1}+\\gamma V(s_{t+1})-V(s_t)$.",
+    "explanation": "The update applies a fraction alpha of this error.",
+    "sourceRefs": [
+      {
+        "sourceId": "DSA5105/Ref/Reinforcement_Learning_an_Introduction.pdf",
+        "page": 98,
+        "sourceType": "ref",
+        "role": "TD error",
+        "status": "optional"
+      }
+    ],
+    "courseId": "DSA5105",
+    "lessonId": "dsa5105-mdp-value-iteration",
+    "schemaVersion": "nus.question.v1"
+  },
+  {
+    "id": "dsa5105-vi-q4",
+    "type": "mcq",
+    "prompt": "Which statement about a DQN replay buffer is false?",
+    "choices": [
+      "It can reuse past transitions",
+      "It reduces correlation in minibatches",
+      "Every stored transition must come from the current policy",
+      "It supports off-policy learning"
+    ],
+    "answer": 2,
+    "explanation": "Replay intentionally stores and reuses transitions collected under earlier behavior policies.",
+    "sourceRefs": [
+      {
+        "sourceId": "DSA5105/Ref/document.pdf",
+        "page": 1,
+        "sourceType": "ref",
+        "role": "DQN replay assessment alignment",
+        "status": "assessment-derived"
+      }
+    ],
+    "courseId": "DSA5105",
+    "lessonId": "dsa5105-mdp-value-iteration",
+    "schemaVersion": "nus.question.v1"
+  },
+  {
+    "id": "dsa5105-vi-q5",
+    "type": "short",
+    "prompt": "How do you extract a policy from a converged V*?",
+    "accepted": [
+      "choose argmax bellman action",
+      "greedy action maximizing expected reward plus gamma next value",
+      "argmax over actions"
+    ],
+    "solution": "For each state choose an action attaining the Bellman optimality maximum under V*.",
+    "explanation": "The value function and the greedy action rule are distinct outputs.",
+    "sourceRefs": [
+      {
+        "sourceId": "DSA5105/Textbook.pdf",
+        "page": 117,
+        "sourceType": "textbook",
+        "role": "greedy policy extraction",
+        "status": "course-depth"
+      }
+    ],
+    "courseId": "DSA5105",
+    "lessonId": "dsa5105-mdp-value-iteration",
+    "schemaVersion": "nus.question.v1"
+  }
+]

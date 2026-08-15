@@ -1,0 +1,351 @@
+{
+  "id": "dsa5105-spectral-clustering",
+  "title": "Spectral clustering and graph Laplacians",
+  "week": 12,
+  "minutes": 75,
+  "summary": "Move from a graph adjacency matrix to Laplacian eigenvectors, relaxed cuts, and a clustering embedding.",
+  "objectives": [
+    "Form D and L from a graph",
+    "Interpret the Laplacian quadratic form",
+    "Explain the Fiedler direction",
+    "Run the spectral-clustering pipeline"
+  ],
+  "sourceRefs": [
+    {
+      "sourceId": "DSA5105/Ref/Mathematics_of_Data_Science.pdf",
+      "page": 50,
+      "sourceType": "ref",
+      "role": "graph theory",
+      "status": "draft"
+    },
+    {
+      "sourceId": "DSA5105/Ref/Mathematics_of_Data_Science.pdf",
+      "page": 53,
+      "sourceType": "ref",
+      "role": "spectral clustering",
+      "status": "draft"
+    },
+    {
+      "sourceId": "DSA5105/Ref/document.pdf",
+      "page": 5,
+      "sourceType": "ref",
+      "role": "past-exam Laplacian alignment",
+      "status": "assessment-derived"
+    }
+  ],
+  "visualIds": [
+    "dsa5105-spectral-clustering"
+  ],
+  "sections": [
+    {
+      "title": "Reference depth · Laplacian construction",
+      "body": "For an undirected graph with adjacency matrix $A$, define degree matrix $D=\\operatorname{diag}(d_i)$ and unnormalized Laplacian $L=D-A$. The normalized variants use $D^{-1/2}LD^{-1/2}$ or a related random-walk form.",
+      "sourceType": "ref",
+      "math": {
+        "latex": "L=D-A",
+        "explanation": "The diagonal counts incident edge weight and the off-diagonal adjacency subtracts connections. Each row of L sums to zero for the unnormalized Laplacian.",
+        "symbols": [
+          {
+            "latex": "A",
+            "meaning": "adjacency matrix"
+          },
+          {
+            "latex": "D",
+            "meaning": "degree matrix"
+          },
+          {
+            "latex": "L",
+            "meaning": "graph Laplacian"
+          }
+        ],
+        "sourceType": "ref"
+      }
+    },
+    {
+      "title": "Reference depth · Smoothness and cuts",
+      "body": "For a symmetric graph, $f^\\top Lf=\\frac12\\sum_{i,j}A_{ij}(f_i-f_j)^2$. A low value means connected nodes receive similar scalar values. The constant vector is the zero-eigenvalue direction; the next eigenvector, often called the Fiedler vector for a connected graph, gives a relaxed two-way partition signal.",
+      "sourceType": "ref",
+      "math": {
+        "latex": "f^\\top Lf=\\frac12\\sum_{i,j}A_{ij}(f_i-f_j)^2",
+        "explanation": "The quadratic form turns graph connectivity into an energy. Spectral clustering relaxes a discrete cut problem into an eigenvector problem, then clusters rows of the selected eigenvector embedding.",
+        "symbols": [
+          {
+            "latex": "f",
+            "meaning": "node score vector"
+          },
+          {
+            "latex": "A_{ij}",
+            "meaning": "edge weight between i and j"
+          }
+        ],
+        "sourceType": "ref"
+      }
+    },
+    {
+      "title": "Reference depth · Spectral-clustering pipeline",
+      "body": "Build an affinity graph, choose a Laplacian, compute the smallest non-trivial eigenvectors, use their rows as an embedding, and run K-means in that embedding. The final K-means step is a separate approximation; spectral eigenvectors do not themselves assign arbitrary cluster names.",
+      "sourceType": "ref"
+    },
+    {
+      "title": "Assessment habit · Link the objects",
+      "body": "If asked for a Laplacian eigenvector, write the matrix before the eigendecomposition. If asked for a clustering interpretation, explain why smooth eigenvectors separate weakly connected groups. If asked for a numerical eigenvector, remember its sign and scale can be chosen by convention.",
+      "sourceType": "ref"
+    }
+  ],
+  "examples": [
+    {
+      "title": "Path graph with three nodes",
+      "steps": [
+        "For edges 1-2 and 2-3, A=[[0,1,0],[1,0,1],[0,1,0]] and D=diag(1,2,1).",
+        "Thus L=[[1,-1,0],[-1,2,-1],[0,-1,1]]. Multiplying by [1,1,1]^T gives zero.",
+        "The remaining eigenvectors vary across the path; the lowest non-constant one changes slowly and can be thresholded to form a two-way partition."
+      ],
+      "answer": "The Laplacian encodes disagreement across edges, not a generic dense covariance matrix.",
+      "sourceType": "ref"
+    }
+  ],
+  "criticalQuestions": [
+    {
+      "prompt": "Why does the Laplacian quadratic form encourage smoothness?",
+      "focus": "graph geometry",
+      "angle": "expand f transpose L f",
+      "modelAnswer": "It is a sum of edge-weighted squared differences. Large disagreement across a strong edge costs more, so low-energy vectors vary slowly along connected regions."
+    },
+    {
+      "prompt": "Why is K-means still present after the eigenvectors?",
+      "focus": "pipeline",
+      "angle": "separate embedding and assignment",
+      "modelAnswer": "Spectral analysis creates a geometry-aware embedding; K-means is then used to assign embedded points to clusters. These are distinct stages with distinct objectives."
+    }
+  ],
+  "courseId": "DSA5105",
+  "moduleId": "dsa5105-exam-core",
+  "blocks": [
+    {
+      "id": "dsa5105-spectral-clustering-section-1",
+      "type": "teaching-note",
+      "title": "Reference depth · Laplacian construction",
+      "body": "For an undirected graph with adjacency matrix $A$, define degree matrix $D=\\operatorname{diag}(d_i)$ and unnormalized Laplacian $L=D-A$. The normalized variants use $D^{-1/2}LD^{-1/2}$ or a related random-walk form.",
+      "sourceType": "ref",
+      "sourceRefs": [
+        {
+          "sourceId": "DSA5105/Ref/Mathematics_of_Data_Science.pdf",
+          "page": 50,
+          "sourceType": "ref",
+          "role": "graph theory",
+          "status": "draft"
+        },
+        {
+          "sourceId": "DSA5105/Ref/Mathematics_of_Data_Science.pdf",
+          "page": 53,
+          "sourceType": "ref",
+          "role": "spectral clustering",
+          "status": "draft"
+        },
+        {
+          "sourceId": "DSA5105/Ref/document.pdf",
+          "page": 5,
+          "sourceType": "ref",
+          "role": "past-exam Laplacian alignment",
+          "status": "assessment-derived"
+        }
+      ]
+    },
+    {
+      "id": "dsa5105-spectral-clustering-section-2",
+      "type": "teaching-note",
+      "title": "Reference depth · Smoothness and cuts",
+      "body": "For a symmetric graph, $f^\\top Lf=\\frac12\\sum_{i,j}A_{ij}(f_i-f_j)^2$. A low value means connected nodes receive similar scalar values. The constant vector is the zero-eigenvalue direction; the next eigenvector, often called the Fiedler vector for a connected graph, gives a relaxed two-way partition signal.",
+      "sourceType": "ref",
+      "sourceRefs": [
+        {
+          "sourceId": "DSA5105/Ref/Mathematics_of_Data_Science.pdf",
+          "page": 50,
+          "sourceType": "ref",
+          "role": "graph theory",
+          "status": "draft"
+        },
+        {
+          "sourceId": "DSA5105/Ref/Mathematics_of_Data_Science.pdf",
+          "page": 53,
+          "sourceType": "ref",
+          "role": "spectral clustering",
+          "status": "draft"
+        },
+        {
+          "sourceId": "DSA5105/Ref/document.pdf",
+          "page": 5,
+          "sourceType": "ref",
+          "role": "past-exam Laplacian alignment",
+          "status": "assessment-derived"
+        }
+      ]
+    },
+    {
+      "id": "dsa5105-spectral-clustering-section-3",
+      "type": "teaching-note",
+      "title": "Reference depth · Spectral-clustering pipeline",
+      "body": "Build an affinity graph, choose a Laplacian, compute the smallest non-trivial eigenvectors, use their rows as an embedding, and run K-means in that embedding. The final K-means step is a separate approximation; spectral eigenvectors do not themselves assign arbitrary cluster names.",
+      "sourceType": "ref",
+      "sourceRefs": [
+        {
+          "sourceId": "DSA5105/Ref/Mathematics_of_Data_Science.pdf",
+          "page": 50,
+          "sourceType": "ref",
+          "role": "graph theory",
+          "status": "draft"
+        },
+        {
+          "sourceId": "DSA5105/Ref/Mathematics_of_Data_Science.pdf",
+          "page": 53,
+          "sourceType": "ref",
+          "role": "spectral clustering",
+          "status": "draft"
+        },
+        {
+          "sourceId": "DSA5105/Ref/document.pdf",
+          "page": 5,
+          "sourceType": "ref",
+          "role": "past-exam Laplacian alignment",
+          "status": "assessment-derived"
+        }
+      ]
+    },
+    {
+      "id": "dsa5105-spectral-clustering-section-4",
+      "type": "teaching-note",
+      "title": "Assessment habit · Link the objects",
+      "body": "If asked for a Laplacian eigenvector, write the matrix before the eigendecomposition. If asked for a clustering interpretation, explain why smooth eigenvectors separate weakly connected groups. If asked for a numerical eigenvector, remember its sign and scale can be chosen by convention.",
+      "sourceType": "ref",
+      "sourceRefs": [
+        {
+          "sourceId": "DSA5105/Ref/Mathematics_of_Data_Science.pdf",
+          "page": 50,
+          "sourceType": "ref",
+          "role": "graph theory",
+          "status": "draft"
+        },
+        {
+          "sourceId": "DSA5105/Ref/Mathematics_of_Data_Science.pdf",
+          "page": 53,
+          "sourceType": "ref",
+          "role": "spectral clustering",
+          "status": "draft"
+        },
+        {
+          "sourceId": "DSA5105/Ref/document.pdf",
+          "page": 5,
+          "sourceType": "ref",
+          "role": "past-exam Laplacian alignment",
+          "status": "assessment-derived"
+        }
+      ]
+    },
+    {
+      "id": "dsa5105-spectral-clustering-example-1",
+      "type": "worked-example",
+      "title": "Path graph with three nodes",
+      "steps": [
+        "For edges 1-2 and 2-3, A=[[0,1,0],[1,0,1],[0,1,0]] and D=diag(1,2,1).",
+        "Thus L=[[1,-1,0],[-1,2,-1],[0,-1,1]]. Multiplying by [1,1,1]^T gives zero.",
+        "The remaining eigenvectors vary across the path; the lowest non-constant one changes slowly and can be thresholded to form a two-way partition."
+      ],
+      "answer": "The Laplacian encodes disagreement across edges, not a generic dense covariance matrix.",
+      "sourceType": "ref",
+      "sourceRefs": [
+        {
+          "sourceId": "DSA5105/Ref/Mathematics_of_Data_Science.pdf",
+          "page": 50,
+          "sourceType": "ref",
+          "role": "graph theory",
+          "status": "draft"
+        },
+        {
+          "sourceId": "DSA5105/Ref/Mathematics_of_Data_Science.pdf",
+          "page": 53,
+          "sourceType": "ref",
+          "role": "spectral clustering",
+          "status": "draft"
+        },
+        {
+          "sourceId": "DSA5105/Ref/document.pdf",
+          "page": 5,
+          "sourceType": "ref",
+          "role": "past-exam Laplacian alignment",
+          "status": "assessment-derived"
+        }
+      ]
+    },
+    {
+      "id": "dsa5105-spectral-clustering-critical-1",
+      "type": "critical-question",
+      "prompt": "Why does the Laplacian quadratic form encourage smoothness?",
+      "focus": "graph geometry",
+      "angle": "expand f transpose L f",
+      "modelAnswer": "It is a sum of edge-weighted squared differences. Large disagreement across a strong edge costs more, so low-energy vectors vary slowly along connected regions.",
+      "sourceRefs": [
+        {
+          "sourceId": "DSA5105/Ref/Mathematics_of_Data_Science.pdf",
+          "page": 50,
+          "sourceType": "ref",
+          "role": "graph theory",
+          "status": "draft"
+        },
+        {
+          "sourceId": "DSA5105/Ref/Mathematics_of_Data_Science.pdf",
+          "page": 53,
+          "sourceType": "ref",
+          "role": "spectral clustering",
+          "status": "draft"
+        },
+        {
+          "sourceId": "DSA5105/Ref/document.pdf",
+          "page": 5,
+          "sourceType": "ref",
+          "role": "past-exam Laplacian alignment",
+          "status": "assessment-derived"
+        }
+      ]
+    },
+    {
+      "id": "dsa5105-spectral-clustering-critical-2",
+      "type": "critical-question",
+      "prompt": "Why is K-means still present after the eigenvectors?",
+      "focus": "pipeline",
+      "angle": "separate embedding and assignment",
+      "modelAnswer": "Spectral analysis creates a geometry-aware embedding; K-means is then used to assign embedded points to clusters. These are distinct stages with distinct objectives.",
+      "sourceRefs": [
+        {
+          "sourceId": "DSA5105/Ref/Mathematics_of_Data_Science.pdf",
+          "page": 50,
+          "sourceType": "ref",
+          "role": "graph theory",
+          "status": "draft"
+        },
+        {
+          "sourceId": "DSA5105/Ref/Mathematics_of_Data_Science.pdf",
+          "page": 53,
+          "sourceType": "ref",
+          "role": "spectral clustering",
+          "status": "draft"
+        },
+        {
+          "sourceId": "DSA5105/Ref/document.pdf",
+          "page": 5,
+          "sourceType": "ref",
+          "role": "past-exam Laplacian alignment",
+          "status": "assessment-derived"
+        }
+      ]
+    }
+  ],
+  "questionIds": [
+    "dsa5105-sc-q1",
+    "dsa5105-sc-q2",
+    "dsa5105-sc-q3"
+  ],
+  "labIds": [
+    "dsa5105-spectral-clustering"
+  ],
+  "schemaVersion": "nus.lesson.v1"
+}

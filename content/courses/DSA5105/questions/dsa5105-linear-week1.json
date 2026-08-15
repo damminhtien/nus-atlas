@@ -1,0 +1,123 @@
+[
+  {
+    "id": "dsa5105-lw1-q1",
+    "type": "calculation",
+    "prompt": "For x = {0, 1, 2} and y = {1, 2, 2}, what is the OLS slope?",
+    "accepted": [
+      "0.5",
+      "1/2",
+      "0.50"
+    ],
+    "solution": "With x-bar = 1 and y-bar = 5/3, the centered numerator is 1 and denominator is 2, so w1-hat = 1/2.",
+    "explanation": "Center both variables before forming the covariance-like numerator.",
+    "sourceRefs": [
+      {
+        "sourceId": "DSA5105/Ref/week1_DSA5105_lecture1_with_note.pdf",
+        "page": 38,
+        "sourceType": "lecture",
+        "role": "OLS solution",
+        "status": "current"
+      }
+    ],
+    "courseId": "DSA5105",
+    "lessonId": "dsa5105-linear-week1",
+    "schemaVersion": "nus.question.v1"
+  },
+  {
+    "id": "dsa5105-lw1-q2",
+    "type": "mcq",
+    "prompt": "Why can Huber loss be less sensitive to an extreme residual than squared loss?",
+    "choices": [
+      "Its large-residual region grows linearly",
+      "It removes the residual from the dataset",
+      "It always gives zero gradient",
+      "It makes the hypothesis space smaller"
+    ],
+    "answer": 0,
+    "explanation": "Beyond the threshold, Huber grows linearly instead of quadratically.",
+    "sourceRefs": [
+      {
+        "sourceId": "DSA5105/Ref/week1_DSA5105_lecture1_with_note.pdf",
+        "page": 41,
+        "sourceType": "lecture",
+        "role": "Huber loss",
+        "status": "current"
+      }
+    ],
+    "courseId": "DSA5105",
+    "lessonId": "dsa5105-linear-week1",
+    "schemaVersion": "nus.question.v1"
+  },
+  {
+    "id": "dsa5105-lw1-q3",
+    "type": "short",
+    "prompt": "What does the ridge penalty do to the objective and why must lambda be selected with validation?",
+    "accepted": [
+      "adds an l2 penalty and validation chooses its strength",
+      "penalizes large weights and validation selects lambda",
+      "adds weight shrinkage and avoids using the test set for tuning"
+    ],
+    "solution": "Ridge adds a term proportional to the squared L2 norm of the weights, shrinking them. The strength is a hyperparameter, so select it on validation data and reserve the test set for the final estimate.",
+    "explanation": "Mention both the changed objective and the evaluation protocol.",
+    "sourceRefs": [
+      {
+        "sourceId": "DSA5105/Ref/week1_DSA5105_lecture1_with_note.pdf",
+        "page": 52,
+        "sourceType": "lecture",
+        "role": "regularization",
+        "status": "current"
+      }
+    ],
+    "courseId": "DSA5105",
+    "lessonId": "dsa5105-linear-week1",
+    "schemaVersion": "nus.question.v1"
+  },
+  {
+    "id": "dsa5105-lw1-q4",
+    "type": "derivation",
+    "prompt": "Reduce two-class softmax to a single logistic score.",
+    "accepted": [
+      "s=z1-z2 and p1=1/(1+exp(-s))",
+      "use the logit difference",
+      "binary softmax depends on z1 minus z2"
+    ],
+    "solution": "Let s = z1 - z2. Dividing numerator and denominator by exp(z2) gives p1 = 1/(1 + exp(-s)) and p2 = 1 - p1.",
+    "explanation": "The invariant is the difference between the two logits, not their absolute offset.",
+    "sourceRefs": [
+      {
+        "sourceId": "DSA5105/Ref/week1_DSA5105_lecture1_with_note.pdf",
+        "page": 55,
+        "sourceType": "lecture",
+        "role": "softmax to logistic",
+        "status": "current"
+      }
+    ],
+    "courseId": "DSA5105",
+    "lessonId": "dsa5105-linear-week1",
+    "schemaVersion": "nus.question.v1"
+  },
+  {
+    "id": "dsa5105-lw1-q5",
+    "type": "short",
+    "prompt": "Which optional practice problem connects input noise to ridge regularization?",
+    "accepted": [
+      "practice problem 1",
+      "problem 1",
+      "the noise and bias problem"
+    ],
+    "solution": "Practice Problem 1 shows that zero-mean input noise adds an L2 penalty on the slope; a constant non-zero mean can be absorbed by the intercept.",
+    "explanation": "This is an optional reference extension, not a replacement for the lecture derivation.",
+    "sourceRefs": [
+      {
+        "sourceId": "DSA5105/Ref/week1_DSA5105_Practice_Problems_1_Not_Graded.pdf",
+        "page": 1,
+        "sourceType": "ref",
+        "role": "optional noise-regularization problem",
+        "status": "optional"
+      }
+    ],
+    "courseId": "DSA5105",
+    "lessonId": "dsa5105-linear-week1",
+    "schemaVersion": "nus.question.v1"
+  }
+]

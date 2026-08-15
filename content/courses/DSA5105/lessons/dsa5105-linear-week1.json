@@ -1,0 +1,1163 @@
+{
+  "id": "dsa5105-linear-week1",
+  "title": "Linear models, regularization, and softmax",
+  "week": 1,
+  "minutes": 80,
+  "summary": "Work through Week 1's linear-model baseline: OLS, capacity, robust loss, basis functions, regularization, and multiclass classification.",
+  "objectives": [
+    "Derive the 1D OLS solution",
+    "Diagnose underfitting, overfitting, and outliers",
+    "Connect ridge, softmax, and cross-entropy to the linear-model template"
+  ],
+  "sourceRefs": [
+    {
+      "sourceId": "DSA5105/Ref/week1_DSA5105_lecture1_with_note.pdf",
+      "page": 34,
+      "sourceType": "lecture",
+      "role": "linear-model introduction",
+      "status": "current"
+    },
+    {
+      "sourceId": "DSA5105/Ref/week1_DSA5105_lecture1_with_note.pdf",
+      "page": 38,
+      "sourceType": "lecture",
+      "role": "OLS solution",
+      "status": "current"
+    },
+    {
+      "sourceId": "DSA5105/Ref/week1_DSA5105_lecture1_with_note.pdf",
+      "page": 40,
+      "sourceType": "lecture",
+      "role": "overfitting",
+      "status": "current"
+    },
+    {
+      "sourceId": "DSA5105/Ref/week1_DSA5105_lecture1_with_note.pdf",
+      "page": 41,
+      "sourceType": "lecture",
+      "role": "Huber loss",
+      "status": "current"
+    },
+    {
+      "sourceId": "DSA5105/Ref/week1_DSA5105_lecture1_with_note.pdf",
+      "page": 46,
+      "sourceType": "lecture",
+      "role": "matrix OLS",
+      "status": "current"
+    },
+    {
+      "sourceId": "DSA5105/Ref/week1_DSA5105_lecture1_with_note.pdf",
+      "page": 52,
+      "sourceType": "lecture",
+      "role": "regularization",
+      "status": "current"
+    },
+    {
+      "sourceId": "DSA5105/Ref/week1_DSA5105_lecture1_with_note.pdf",
+      "page": 54,
+      "sourceType": "lecture",
+      "role": "classification model",
+      "status": "current"
+    },
+    {
+      "sourceId": "DSA5105/Ref/week1_DSA5105_Practice_Problems_1_Not_Graded.pdf",
+      "page": 1,
+      "sourceType": "ref",
+      "role": "optional Week 1 practice",
+      "status": "optional"
+    }
+  ],
+  "visualIds": [],
+  "sections": [
+    {
+      "title": "Lecture core · Simple linear regression",
+      "body": "For scalar input and target, start with affine functions. The model is linear in its parameters even though later basis functions can be nonlinear in the input. The loss determines what counts as a bad fit.",
+      "sourceType": "lecture",
+      "math": {
+        "latex": "\\mathcal{H} = \\{f: f(x)=w_0+w_1x,\\;w_0,w_1\\in\\mathbb{R}\\},\\qquad \\mathcal{L}(y',y)=\\frac{1}{2}(y'-y)^2",
+        "explanation": "The hypothesis space contains every line with intercept w0 and slope w1. Squared loss penalizes a residual quadratically, so a residual twice as large contributes four times as much.",
+        "symbols": [
+          {
+            "latex": "\\mathcal{H}",
+            "meaning": "linear hypothesis space"
+          },
+          {
+            "latex": "w_0",
+            "meaning": "intercept"
+          },
+          {
+            "latex": "w_1",
+            "meaning": "slope"
+          },
+          {
+            "latex": "\\mathcal{L}",
+            "meaning": "squared loss"
+          }
+        ],
+        "sourceType": "lecture"
+      }
+    },
+    {
+      "title": "Lecture core · Ordinary least squares",
+      "body": "Setting the derivatives of the empirical squared-loss objective to zero gives the centered closed form. The slope is covariance-like: it compares how x and y move together, normalized by the spread of x. The intercept then makes the fitted line pass through the sample means.",
+      "sourceType": "lecture",
+      "math": {
+        "latex": "\\hat w_1 = \\frac{\\sum_{i=1}^{N}(x_i-\\bar{x})(y_i-\\bar{y})}{\\sum_{i=1}^{N}(x_i-\\bar{x})^2},\\qquad \\hat w_0=\\bar{y}-\\hat w_1\\bar{x}",
+        "explanation": "Compute the sample means first, then the centered numerator and denominator. If all x values are identical, the denominator is zero and the slope is not identified by this formula.",
+        "symbols": [
+          {
+            "latex": "\\bar{x},\\bar{y}",
+            "meaning": "sample means"
+          },
+          {
+            "latex": "\\hat w_1",
+            "meaning": "OLS slope"
+          },
+          {
+            "latex": "\\hat w_0",
+            "meaning": "OLS intercept"
+          }
+        ],
+        "sourceType": "lecture"
+      }
+    },
+    {
+      "title": "Lecture core · Capacity and loss",
+      "body": "A line can underfit when the hypothesis space is too small. A high-degree polynomial can overfit even without observation noise by following sample-specific wiggles. Mean-square loss is sensitive to outliers; Huber loss is quadratic near zero and linear for large residuals.",
+      "sourceType": "lecture",
+      "math": {
+        "latex": "\\rho_\\delta(r)=\\begin{cases}\\frac{1}{2}r^2,&|r|\\le\\delta,\\\\\\delta|r|-\\frac{1}{2}\\delta^2,&|r|>\\delta,\\end{cases}",
+        "explanation": "The threshold delta decides where the loss changes from quadratic to linear. Huber keeps smooth behavior around a good fit while reducing the leverage of extreme residuals compared with squared loss.",
+        "symbols": [
+          {
+            "latex": "r",
+            "meaning": "residual"
+          },
+          {
+            "latex": "\\delta",
+            "meaning": "Huber transition threshold"
+          },
+          {
+            "latex": "\\rho_\\delta",
+            "meaning": "Huber loss"
+          }
+        ],
+        "sourceType": "lecture"
+      }
+    },
+    {
+      "title": "Lecture core · Basis functions and matrix form",
+      "body": "General linear basis models replace x with features phi_j(x), including polynomial, Gaussian, or sigmoid bases. The model can be nonlinear in x while remaining linear in weights. In matrix form, OLS minimizes the squared norm of the residual vector; the inverse formula requires the feature matrix to have suitable rank.",
+      "sourceType": "lecture",
+      "math": {
+        "latex": "f(x)=\\sum_{j=1}^{M}w_j\\phi_j(x),\\qquad \\hat w=(\\Phi^\\top\\Phi)^{-1}\\Phi^\\top y",
+        "explanation": "Phi contains the basis features evaluated on the training inputs. The closed form is valid when the normal matrix is invertible; otherwise use a pseudoinverse or regularization and state the rank issue.",
+        "symbols": [
+          {
+            "latex": "\\phi_j",
+            "meaning": "j-th basis function"
+          },
+          {
+            "latex": "\\Phi",
+            "meaning": "design or feature matrix"
+          },
+          {
+            "latex": "M",
+            "meaning": "number of basis functions"
+          },
+          {
+            "latex": "\\Phi^\\top",
+            "meaning": "transpose of the design matrix"
+          }
+        ],
+        "sourceType": "lecture"
+      }
+    },
+    {
+      "title": "Lecture core · Regularization",
+      "body": "When the matrix is singular, underdetermined, or too flexible, regularization changes the objective rather than pretending the data identify one unique unregularized answer. L2 regularization prefers small weights; L1 regularization can produce exact zeros. Choose the strength with validation data.",
+      "sourceType": "lecture",
+      "math": {
+        "latex": "\\hat w_\\lambda=\\arg\\min_w\\left[\\frac{1}{2N}\\lVert\\Phi w-y\\rVert_2^2+\\frac{\\lambda}{2}\\lVert w\\rVert_2^2\\right]",
+        "explanation": "The first term measures fit and the second charges for coefficient magnitude. Increasing lambda suppresses unstable directions; it also adds bias, so its value is a model-selection decision.",
+        "symbols": [
+          {
+            "latex": "\\lambda",
+            "meaning": "regularization strength"
+          },
+          {
+            "latex": "\\lVert\\Phi w-y\\rVert_2",
+            "meaning": "residual norm"
+          },
+          {
+            "latex": "\\lVert w\\rVert_2",
+            "meaning": "weight norm"
+          }
+        ],
+        "sourceType": "lecture"
+      }
+    },
+    {
+      "title": "Lecture core · Multiclass linear classification",
+      "body": "For K classes, one-hot targets are vectors rather than ordered numbers. A linear score for each class is passed through softmax to obtain probabilities, and cross-entropy rewards probability mass assigned to the observed class. For two classes, the two logits reduce to one score difference and the loss becomes logistic loss.",
+      "sourceType": "lecture",
+      "math": {
+        "latex": "g(z)_k=\\frac{\\exp(z_k)}{\\sum_{j=1}^{K}\\exp(z_j)},\\qquad \\mathcal{L}(y',y)=-\\sum_{k=1}^{K}y_k\\log y'_k",
+        "explanation": "Softmax normalizes class scores into a probability vector. With one-hot y, only the log probability of the true class contributes to cross-entropy; do not treat class IDs as ordinal measurements.",
+        "symbols": [
+          {
+            "latex": "z_k",
+            "meaning": "score for class k"
+          },
+          {
+            "latex": "K",
+            "meaning": "number of classes"
+          },
+          {
+            "latex": "y",
+            "meaning": "one-hot target vector"
+          },
+          {
+            "latex": "y'",
+            "meaning": "predicted probability vector"
+          }
+        ],
+        "sourceType": "lecture"
+      }
+    },
+    {
+      "title": "Reference boundary · Optional practice, not lecture scope",
+      "body": "The ungraded Week 1 practice sheet extends this core with noise-induced ridge regularization, a proof that the Gaussian kernel is positive semidefinite, kernel-construction identities, and an SVM margin exercise. These are useful stretch problems, but the annotated lecture remains the authority for Week 1 scope.",
+      "sourceType": "ref"
+    }
+  ],
+  "examples": [
+    {
+      "title": "Worked example: fit a line by hand",
+      "steps": [
+        "For x = {0, 1, 2} and y = {1, 2, 2}, the means are x-bar = 1 and y-bar = 5/3.",
+        "The centered numerator is (-1)(-2/3) + 0(1/3) + (1)(1/3) = 1. The centered denominator is 1 + 0 + 1 = 2, so w1-hat = 1/2.",
+        "The intercept is y-bar - w1-hat x-bar = 5/3 - 1/2 = 7/6. The fitted line is f-hat(x) = 7/6 + x/2."
+      ],
+      "answer": "OLS separates slope from intercept by centering first; check the denominator before dividing.",
+      "sourceType": "lecture"
+    },
+    {
+      "title": "Worked example: softmax to logistic",
+      "steps": [
+        "For two logits z1 and z2, subtract z2 from both logits without changing the probability ratio.",
+        "Only s = z1 - z2 remains, giving p1 = 1/(1 + exp(-s)) and p2 = 1 - p1.",
+        "With labels y in {-1, +1}, the cross-entropy can be written as log(1 + exp(-y s)); classify as class 1 when s is positive and class 2 when s is negative."
+      ],
+      "answer": "Binary logistic regression is the two-class softmax written in terms of one score difference.",
+      "sourceType": "lecture"
+    },
+    {
+      "title": "Worked example: when to reach for Huber",
+      "steps": [
+        "If most residuals are small but one measurement is far away, squared loss makes that point's contribution grow quadratically.",
+        "Huber loss keeps the quadratic region near zero but switches to a linear contribution beyond delta.",
+        "Use validation evidence to decide whether the robustness tradeoff improves the target metric; do not assume Huber is always better."
+      ],
+      "answer": "Huber changes the loss and therefore the optimization target; it is not a free outlier-removal step.",
+      "sourceType": "lecture"
+    }
+  ],
+  "math": [],
+  "criticalQuestions": [
+    {
+      "prompt": "What does the OLS closed form assume about the design matrix?",
+      "angle": "Inspect the denominator in 1D and the rank of the normal matrix in the basis-function form.",
+      "modelAnswer": "The relevant feature directions must be identifiable. A zero denominator or singular normal matrix means the inverse formula is unavailable; use a pseudoinverse or regularization and state the choice.",
+      "focus": "identifiability"
+    },
+    {
+      "prompt": "When is Huber loss a modeling decision rather than a data-cleaning shortcut?",
+      "angle": "Compare the loss functions and ask what objective the optimizer is actually minimizing.",
+      "modelAnswer": "Huber changes the penalty on residuals but keeps the observations in the objective. It can reduce outlier leverage, but validation must show that the altered target matches the task.",
+      "focus": "robustness"
+    },
+    {
+      "prompt": "Why can a nonlinear basis model still be called linear?",
+      "angle": "Separate linearity in the input from linearity in the trainable weights.",
+      "modelAnswer": "The basis functions may be nonlinear in x, but the prediction is a linear combination of fixed features with weights w. The optimization remains linear in those parameters.",
+      "focus": "representation"
+    }
+  ],
+  "courseId": "DSA5105",
+  "moduleId": "dsa5105-foundations",
+  "blocks": [
+    {
+      "id": "dsa5105-linear-week1-section-1",
+      "type": "teaching-note",
+      "title": "Lecture core · Simple linear regression",
+      "body": "For scalar input and target, start with affine functions. The model is linear in its parameters even though later basis functions can be nonlinear in the input. The loss determines what counts as a bad fit.",
+      "sourceType": "lecture",
+      "sourceRefs": [
+        {
+          "sourceId": "DSA5105/Ref/week1_DSA5105_lecture1_with_note.pdf",
+          "page": 34,
+          "sourceType": "lecture",
+          "role": "linear-model introduction",
+          "status": "current"
+        },
+        {
+          "sourceId": "DSA5105/Ref/week1_DSA5105_lecture1_with_note.pdf",
+          "page": 38,
+          "sourceType": "lecture",
+          "role": "OLS solution",
+          "status": "current"
+        },
+        {
+          "sourceId": "DSA5105/Ref/week1_DSA5105_lecture1_with_note.pdf",
+          "page": 40,
+          "sourceType": "lecture",
+          "role": "overfitting",
+          "status": "current"
+        },
+        {
+          "sourceId": "DSA5105/Ref/week1_DSA5105_lecture1_with_note.pdf",
+          "page": 41,
+          "sourceType": "lecture",
+          "role": "Huber loss",
+          "status": "current"
+        },
+        {
+          "sourceId": "DSA5105/Ref/week1_DSA5105_lecture1_with_note.pdf",
+          "page": 46,
+          "sourceType": "lecture",
+          "role": "matrix OLS",
+          "status": "current"
+        },
+        {
+          "sourceId": "DSA5105/Ref/week1_DSA5105_lecture1_with_note.pdf",
+          "page": 52,
+          "sourceType": "lecture",
+          "role": "regularization",
+          "status": "current"
+        },
+        {
+          "sourceId": "DSA5105/Ref/week1_DSA5105_lecture1_with_note.pdf",
+          "page": 54,
+          "sourceType": "lecture",
+          "role": "classification model",
+          "status": "current"
+        },
+        {
+          "sourceId": "DSA5105/Ref/week1_DSA5105_Practice_Problems_1_Not_Graded.pdf",
+          "page": 1,
+          "sourceType": "ref",
+          "role": "optional Week 1 practice",
+          "status": "optional"
+        }
+      ]
+    },
+    {
+      "id": "dsa5105-linear-week1-section-2",
+      "type": "teaching-note",
+      "title": "Lecture core · Ordinary least squares",
+      "body": "Setting the derivatives of the empirical squared-loss objective to zero gives the centered closed form. The slope is covariance-like: it compares how x and y move together, normalized by the spread of x. The intercept then makes the fitted line pass through the sample means.",
+      "sourceType": "lecture",
+      "sourceRefs": [
+        {
+          "sourceId": "DSA5105/Ref/week1_DSA5105_lecture1_with_note.pdf",
+          "page": 34,
+          "sourceType": "lecture",
+          "role": "linear-model introduction",
+          "status": "current"
+        },
+        {
+          "sourceId": "DSA5105/Ref/week1_DSA5105_lecture1_with_note.pdf",
+          "page": 38,
+          "sourceType": "lecture",
+          "role": "OLS solution",
+          "status": "current"
+        },
+        {
+          "sourceId": "DSA5105/Ref/week1_DSA5105_lecture1_with_note.pdf",
+          "page": 40,
+          "sourceType": "lecture",
+          "role": "overfitting",
+          "status": "current"
+        },
+        {
+          "sourceId": "DSA5105/Ref/week1_DSA5105_lecture1_with_note.pdf",
+          "page": 41,
+          "sourceType": "lecture",
+          "role": "Huber loss",
+          "status": "current"
+        },
+        {
+          "sourceId": "DSA5105/Ref/week1_DSA5105_lecture1_with_note.pdf",
+          "page": 46,
+          "sourceType": "lecture",
+          "role": "matrix OLS",
+          "status": "current"
+        },
+        {
+          "sourceId": "DSA5105/Ref/week1_DSA5105_lecture1_with_note.pdf",
+          "page": 52,
+          "sourceType": "lecture",
+          "role": "regularization",
+          "status": "current"
+        },
+        {
+          "sourceId": "DSA5105/Ref/week1_DSA5105_lecture1_with_note.pdf",
+          "page": 54,
+          "sourceType": "lecture",
+          "role": "classification model",
+          "status": "current"
+        },
+        {
+          "sourceId": "DSA5105/Ref/week1_DSA5105_Practice_Problems_1_Not_Graded.pdf",
+          "page": 1,
+          "sourceType": "ref",
+          "role": "optional Week 1 practice",
+          "status": "optional"
+        }
+      ]
+    },
+    {
+      "id": "dsa5105-linear-week1-section-3",
+      "type": "teaching-note",
+      "title": "Lecture core · Capacity and loss",
+      "body": "A line can underfit when the hypothesis space is too small. A high-degree polynomial can overfit even without observation noise by following sample-specific wiggles. Mean-square loss is sensitive to outliers; Huber loss is quadratic near zero and linear for large residuals.",
+      "sourceType": "lecture",
+      "sourceRefs": [
+        {
+          "sourceId": "DSA5105/Ref/week1_DSA5105_lecture1_with_note.pdf",
+          "page": 34,
+          "sourceType": "lecture",
+          "role": "linear-model introduction",
+          "status": "current"
+        },
+        {
+          "sourceId": "DSA5105/Ref/week1_DSA5105_lecture1_with_note.pdf",
+          "page": 38,
+          "sourceType": "lecture",
+          "role": "OLS solution",
+          "status": "current"
+        },
+        {
+          "sourceId": "DSA5105/Ref/week1_DSA5105_lecture1_with_note.pdf",
+          "page": 40,
+          "sourceType": "lecture",
+          "role": "overfitting",
+          "status": "current"
+        },
+        {
+          "sourceId": "DSA5105/Ref/week1_DSA5105_lecture1_with_note.pdf",
+          "page": 41,
+          "sourceType": "lecture",
+          "role": "Huber loss",
+          "status": "current"
+        },
+        {
+          "sourceId": "DSA5105/Ref/week1_DSA5105_lecture1_with_note.pdf",
+          "page": 46,
+          "sourceType": "lecture",
+          "role": "matrix OLS",
+          "status": "current"
+        },
+        {
+          "sourceId": "DSA5105/Ref/week1_DSA5105_lecture1_with_note.pdf",
+          "page": 52,
+          "sourceType": "lecture",
+          "role": "regularization",
+          "status": "current"
+        },
+        {
+          "sourceId": "DSA5105/Ref/week1_DSA5105_lecture1_with_note.pdf",
+          "page": 54,
+          "sourceType": "lecture",
+          "role": "classification model",
+          "status": "current"
+        },
+        {
+          "sourceId": "DSA5105/Ref/week1_DSA5105_Practice_Problems_1_Not_Graded.pdf",
+          "page": 1,
+          "sourceType": "ref",
+          "role": "optional Week 1 practice",
+          "status": "optional"
+        }
+      ]
+    },
+    {
+      "id": "dsa5105-linear-week1-section-4",
+      "type": "teaching-note",
+      "title": "Lecture core · Basis functions and matrix form",
+      "body": "General linear basis models replace x with features phi_j(x), including polynomial, Gaussian, or sigmoid bases. The model can be nonlinear in x while remaining linear in weights. In matrix form, OLS minimizes the squared norm of the residual vector; the inverse formula requires the feature matrix to have suitable rank.",
+      "sourceType": "lecture",
+      "sourceRefs": [
+        {
+          "sourceId": "DSA5105/Ref/week1_DSA5105_lecture1_with_note.pdf",
+          "page": 34,
+          "sourceType": "lecture",
+          "role": "linear-model introduction",
+          "status": "current"
+        },
+        {
+          "sourceId": "DSA5105/Ref/week1_DSA5105_lecture1_with_note.pdf",
+          "page": 38,
+          "sourceType": "lecture",
+          "role": "OLS solution",
+          "status": "current"
+        },
+        {
+          "sourceId": "DSA5105/Ref/week1_DSA5105_lecture1_with_note.pdf",
+          "page": 40,
+          "sourceType": "lecture",
+          "role": "overfitting",
+          "status": "current"
+        },
+        {
+          "sourceId": "DSA5105/Ref/week1_DSA5105_lecture1_with_note.pdf",
+          "page": 41,
+          "sourceType": "lecture",
+          "role": "Huber loss",
+          "status": "current"
+        },
+        {
+          "sourceId": "DSA5105/Ref/week1_DSA5105_lecture1_with_note.pdf",
+          "page": 46,
+          "sourceType": "lecture",
+          "role": "matrix OLS",
+          "status": "current"
+        },
+        {
+          "sourceId": "DSA5105/Ref/week1_DSA5105_lecture1_with_note.pdf",
+          "page": 52,
+          "sourceType": "lecture",
+          "role": "regularization",
+          "status": "current"
+        },
+        {
+          "sourceId": "DSA5105/Ref/week1_DSA5105_lecture1_with_note.pdf",
+          "page": 54,
+          "sourceType": "lecture",
+          "role": "classification model",
+          "status": "current"
+        },
+        {
+          "sourceId": "DSA5105/Ref/week1_DSA5105_Practice_Problems_1_Not_Graded.pdf",
+          "page": 1,
+          "sourceType": "ref",
+          "role": "optional Week 1 practice",
+          "status": "optional"
+        }
+      ]
+    },
+    {
+      "id": "dsa5105-linear-week1-section-5",
+      "type": "teaching-note",
+      "title": "Lecture core · Regularization",
+      "body": "When the matrix is singular, underdetermined, or too flexible, regularization changes the objective rather than pretending the data identify one unique unregularized answer. L2 regularization prefers small weights; L1 regularization can produce exact zeros. Choose the strength with validation data.",
+      "sourceType": "lecture",
+      "sourceRefs": [
+        {
+          "sourceId": "DSA5105/Ref/week1_DSA5105_lecture1_with_note.pdf",
+          "page": 34,
+          "sourceType": "lecture",
+          "role": "linear-model introduction",
+          "status": "current"
+        },
+        {
+          "sourceId": "DSA5105/Ref/week1_DSA5105_lecture1_with_note.pdf",
+          "page": 38,
+          "sourceType": "lecture",
+          "role": "OLS solution",
+          "status": "current"
+        },
+        {
+          "sourceId": "DSA5105/Ref/week1_DSA5105_lecture1_with_note.pdf",
+          "page": 40,
+          "sourceType": "lecture",
+          "role": "overfitting",
+          "status": "current"
+        },
+        {
+          "sourceId": "DSA5105/Ref/week1_DSA5105_lecture1_with_note.pdf",
+          "page": 41,
+          "sourceType": "lecture",
+          "role": "Huber loss",
+          "status": "current"
+        },
+        {
+          "sourceId": "DSA5105/Ref/week1_DSA5105_lecture1_with_note.pdf",
+          "page": 46,
+          "sourceType": "lecture",
+          "role": "matrix OLS",
+          "status": "current"
+        },
+        {
+          "sourceId": "DSA5105/Ref/week1_DSA5105_lecture1_with_note.pdf",
+          "page": 52,
+          "sourceType": "lecture",
+          "role": "regularization",
+          "status": "current"
+        },
+        {
+          "sourceId": "DSA5105/Ref/week1_DSA5105_lecture1_with_note.pdf",
+          "page": 54,
+          "sourceType": "lecture",
+          "role": "classification model",
+          "status": "current"
+        },
+        {
+          "sourceId": "DSA5105/Ref/week1_DSA5105_Practice_Problems_1_Not_Graded.pdf",
+          "page": 1,
+          "sourceType": "ref",
+          "role": "optional Week 1 practice",
+          "status": "optional"
+        }
+      ]
+    },
+    {
+      "id": "dsa5105-linear-week1-section-6",
+      "type": "teaching-note",
+      "title": "Lecture core · Multiclass linear classification",
+      "body": "For K classes, one-hot targets are vectors rather than ordered numbers. A linear score for each class is passed through softmax to obtain probabilities, and cross-entropy rewards probability mass assigned to the observed class. For two classes, the two logits reduce to one score difference and the loss becomes logistic loss.",
+      "sourceType": "lecture",
+      "sourceRefs": [
+        {
+          "sourceId": "DSA5105/Ref/week1_DSA5105_lecture1_with_note.pdf",
+          "page": 34,
+          "sourceType": "lecture",
+          "role": "linear-model introduction",
+          "status": "current"
+        },
+        {
+          "sourceId": "DSA5105/Ref/week1_DSA5105_lecture1_with_note.pdf",
+          "page": 38,
+          "sourceType": "lecture",
+          "role": "OLS solution",
+          "status": "current"
+        },
+        {
+          "sourceId": "DSA5105/Ref/week1_DSA5105_lecture1_with_note.pdf",
+          "page": 40,
+          "sourceType": "lecture",
+          "role": "overfitting",
+          "status": "current"
+        },
+        {
+          "sourceId": "DSA5105/Ref/week1_DSA5105_lecture1_with_note.pdf",
+          "page": 41,
+          "sourceType": "lecture",
+          "role": "Huber loss",
+          "status": "current"
+        },
+        {
+          "sourceId": "DSA5105/Ref/week1_DSA5105_lecture1_with_note.pdf",
+          "page": 46,
+          "sourceType": "lecture",
+          "role": "matrix OLS",
+          "status": "current"
+        },
+        {
+          "sourceId": "DSA5105/Ref/week1_DSA5105_lecture1_with_note.pdf",
+          "page": 52,
+          "sourceType": "lecture",
+          "role": "regularization",
+          "status": "current"
+        },
+        {
+          "sourceId": "DSA5105/Ref/week1_DSA5105_lecture1_with_note.pdf",
+          "page": 54,
+          "sourceType": "lecture",
+          "role": "classification model",
+          "status": "current"
+        },
+        {
+          "sourceId": "DSA5105/Ref/week1_DSA5105_Practice_Problems_1_Not_Graded.pdf",
+          "page": 1,
+          "sourceType": "ref",
+          "role": "optional Week 1 practice",
+          "status": "optional"
+        }
+      ]
+    },
+    {
+      "id": "dsa5105-linear-week1-section-7",
+      "type": "teaching-note",
+      "title": "Reference boundary · Optional practice, not lecture scope",
+      "body": "The ungraded Week 1 practice sheet extends this core with noise-induced ridge regularization, a proof that the Gaussian kernel is positive semidefinite, kernel-construction identities, and an SVM margin exercise. These are useful stretch problems, but the annotated lecture remains the authority for Week 1 scope.",
+      "sourceType": "ref",
+      "sourceRefs": [
+        {
+          "sourceId": "DSA5105/Ref/week1_DSA5105_lecture1_with_note.pdf",
+          "page": 34,
+          "sourceType": "lecture",
+          "role": "linear-model introduction",
+          "status": "current"
+        },
+        {
+          "sourceId": "DSA5105/Ref/week1_DSA5105_lecture1_with_note.pdf",
+          "page": 38,
+          "sourceType": "lecture",
+          "role": "OLS solution",
+          "status": "current"
+        },
+        {
+          "sourceId": "DSA5105/Ref/week1_DSA5105_lecture1_with_note.pdf",
+          "page": 40,
+          "sourceType": "lecture",
+          "role": "overfitting",
+          "status": "current"
+        },
+        {
+          "sourceId": "DSA5105/Ref/week1_DSA5105_lecture1_with_note.pdf",
+          "page": 41,
+          "sourceType": "lecture",
+          "role": "Huber loss",
+          "status": "current"
+        },
+        {
+          "sourceId": "DSA5105/Ref/week1_DSA5105_lecture1_with_note.pdf",
+          "page": 46,
+          "sourceType": "lecture",
+          "role": "matrix OLS",
+          "status": "current"
+        },
+        {
+          "sourceId": "DSA5105/Ref/week1_DSA5105_lecture1_with_note.pdf",
+          "page": 52,
+          "sourceType": "lecture",
+          "role": "regularization",
+          "status": "current"
+        },
+        {
+          "sourceId": "DSA5105/Ref/week1_DSA5105_lecture1_with_note.pdf",
+          "page": 54,
+          "sourceType": "lecture",
+          "role": "classification model",
+          "status": "current"
+        },
+        {
+          "sourceId": "DSA5105/Ref/week1_DSA5105_Practice_Problems_1_Not_Graded.pdf",
+          "page": 1,
+          "sourceType": "ref",
+          "role": "optional Week 1 practice",
+          "status": "optional"
+        }
+      ]
+    },
+    {
+      "id": "dsa5105-linear-week1-example-1",
+      "type": "worked-example",
+      "title": "Worked example: fit a line by hand",
+      "steps": [
+        "For x = {0, 1, 2} and y = {1, 2, 2}, the means are x-bar = 1 and y-bar = 5/3.",
+        "The centered numerator is (-1)(-2/3) + 0(1/3) + (1)(1/3) = 1. The centered denominator is 1 + 0 + 1 = 2, so w1-hat = 1/2.",
+        "The intercept is y-bar - w1-hat x-bar = 5/3 - 1/2 = 7/6. The fitted line is f-hat(x) = 7/6 + x/2."
+      ],
+      "answer": "OLS separates slope from intercept by centering first; check the denominator before dividing.",
+      "sourceType": "lecture",
+      "sourceRefs": [
+        {
+          "sourceId": "DSA5105/Ref/week1_DSA5105_lecture1_with_note.pdf",
+          "page": 34,
+          "sourceType": "lecture",
+          "role": "linear-model introduction",
+          "status": "current"
+        },
+        {
+          "sourceId": "DSA5105/Ref/week1_DSA5105_lecture1_with_note.pdf",
+          "page": 38,
+          "sourceType": "lecture",
+          "role": "OLS solution",
+          "status": "current"
+        },
+        {
+          "sourceId": "DSA5105/Ref/week1_DSA5105_lecture1_with_note.pdf",
+          "page": 40,
+          "sourceType": "lecture",
+          "role": "overfitting",
+          "status": "current"
+        },
+        {
+          "sourceId": "DSA5105/Ref/week1_DSA5105_lecture1_with_note.pdf",
+          "page": 41,
+          "sourceType": "lecture",
+          "role": "Huber loss",
+          "status": "current"
+        },
+        {
+          "sourceId": "DSA5105/Ref/week1_DSA5105_lecture1_with_note.pdf",
+          "page": 46,
+          "sourceType": "lecture",
+          "role": "matrix OLS",
+          "status": "current"
+        },
+        {
+          "sourceId": "DSA5105/Ref/week1_DSA5105_lecture1_with_note.pdf",
+          "page": 52,
+          "sourceType": "lecture",
+          "role": "regularization",
+          "status": "current"
+        },
+        {
+          "sourceId": "DSA5105/Ref/week1_DSA5105_lecture1_with_note.pdf",
+          "page": 54,
+          "sourceType": "lecture",
+          "role": "classification model",
+          "status": "current"
+        },
+        {
+          "sourceId": "DSA5105/Ref/week1_DSA5105_Practice_Problems_1_Not_Graded.pdf",
+          "page": 1,
+          "sourceType": "ref",
+          "role": "optional Week 1 practice",
+          "status": "optional"
+        }
+      ]
+    },
+    {
+      "id": "dsa5105-linear-week1-example-2",
+      "type": "worked-example",
+      "title": "Worked example: softmax to logistic",
+      "steps": [
+        "For two logits z1 and z2, subtract z2 from both logits without changing the probability ratio.",
+        "Only s = z1 - z2 remains, giving p1 = 1/(1 + exp(-s)) and p2 = 1 - p1.",
+        "With labels y in {-1, +1}, the cross-entropy can be written as log(1 + exp(-y s)); classify as class 1 when s is positive and class 2 when s is negative."
+      ],
+      "answer": "Binary logistic regression is the two-class softmax written in terms of one score difference.",
+      "sourceType": "lecture",
+      "sourceRefs": [
+        {
+          "sourceId": "DSA5105/Ref/week1_DSA5105_lecture1_with_note.pdf",
+          "page": 34,
+          "sourceType": "lecture",
+          "role": "linear-model introduction",
+          "status": "current"
+        },
+        {
+          "sourceId": "DSA5105/Ref/week1_DSA5105_lecture1_with_note.pdf",
+          "page": 38,
+          "sourceType": "lecture",
+          "role": "OLS solution",
+          "status": "current"
+        },
+        {
+          "sourceId": "DSA5105/Ref/week1_DSA5105_lecture1_with_note.pdf",
+          "page": 40,
+          "sourceType": "lecture",
+          "role": "overfitting",
+          "status": "current"
+        },
+        {
+          "sourceId": "DSA5105/Ref/week1_DSA5105_lecture1_with_note.pdf",
+          "page": 41,
+          "sourceType": "lecture",
+          "role": "Huber loss",
+          "status": "current"
+        },
+        {
+          "sourceId": "DSA5105/Ref/week1_DSA5105_lecture1_with_note.pdf",
+          "page": 46,
+          "sourceType": "lecture",
+          "role": "matrix OLS",
+          "status": "current"
+        },
+        {
+          "sourceId": "DSA5105/Ref/week1_DSA5105_lecture1_with_note.pdf",
+          "page": 52,
+          "sourceType": "lecture",
+          "role": "regularization",
+          "status": "current"
+        },
+        {
+          "sourceId": "DSA5105/Ref/week1_DSA5105_lecture1_with_note.pdf",
+          "page": 54,
+          "sourceType": "lecture",
+          "role": "classification model",
+          "status": "current"
+        },
+        {
+          "sourceId": "DSA5105/Ref/week1_DSA5105_Practice_Problems_1_Not_Graded.pdf",
+          "page": 1,
+          "sourceType": "ref",
+          "role": "optional Week 1 practice",
+          "status": "optional"
+        }
+      ]
+    },
+    {
+      "id": "dsa5105-linear-week1-example-3",
+      "type": "worked-example",
+      "title": "Worked example: when to reach for Huber",
+      "steps": [
+        "If most residuals are small but one measurement is far away, squared loss makes that point's contribution grow quadratically.",
+        "Huber loss keeps the quadratic region near zero but switches to a linear contribution beyond delta.",
+        "Use validation evidence to decide whether the robustness tradeoff improves the target metric; do not assume Huber is always better."
+      ],
+      "answer": "Huber changes the loss and therefore the optimization target; it is not a free outlier-removal step.",
+      "sourceType": "lecture",
+      "sourceRefs": [
+        {
+          "sourceId": "DSA5105/Ref/week1_DSA5105_lecture1_with_note.pdf",
+          "page": 34,
+          "sourceType": "lecture",
+          "role": "linear-model introduction",
+          "status": "current"
+        },
+        {
+          "sourceId": "DSA5105/Ref/week1_DSA5105_lecture1_with_note.pdf",
+          "page": 38,
+          "sourceType": "lecture",
+          "role": "OLS solution",
+          "status": "current"
+        },
+        {
+          "sourceId": "DSA5105/Ref/week1_DSA5105_lecture1_with_note.pdf",
+          "page": 40,
+          "sourceType": "lecture",
+          "role": "overfitting",
+          "status": "current"
+        },
+        {
+          "sourceId": "DSA5105/Ref/week1_DSA5105_lecture1_with_note.pdf",
+          "page": 41,
+          "sourceType": "lecture",
+          "role": "Huber loss",
+          "status": "current"
+        },
+        {
+          "sourceId": "DSA5105/Ref/week1_DSA5105_lecture1_with_note.pdf",
+          "page": 46,
+          "sourceType": "lecture",
+          "role": "matrix OLS",
+          "status": "current"
+        },
+        {
+          "sourceId": "DSA5105/Ref/week1_DSA5105_lecture1_with_note.pdf",
+          "page": 52,
+          "sourceType": "lecture",
+          "role": "regularization",
+          "status": "current"
+        },
+        {
+          "sourceId": "DSA5105/Ref/week1_DSA5105_lecture1_with_note.pdf",
+          "page": 54,
+          "sourceType": "lecture",
+          "role": "classification model",
+          "status": "current"
+        },
+        {
+          "sourceId": "DSA5105/Ref/week1_DSA5105_Practice_Problems_1_Not_Graded.pdf",
+          "page": 1,
+          "sourceType": "ref",
+          "role": "optional Week 1 practice",
+          "status": "optional"
+        }
+      ]
+    },
+    {
+      "id": "dsa5105-linear-week1-critical-1",
+      "type": "critical-question",
+      "prompt": "What does the OLS closed form assume about the design matrix?",
+      "angle": "Inspect the denominator in 1D and the rank of the normal matrix in the basis-function form.",
+      "modelAnswer": "The relevant feature directions must be identifiable. A zero denominator or singular normal matrix means the inverse formula is unavailable; use a pseudoinverse or regularization and state the choice.",
+      "focus": "identifiability",
+      "sourceRefs": [
+        {
+          "sourceId": "DSA5105/Ref/week1_DSA5105_lecture1_with_note.pdf",
+          "page": 34,
+          "sourceType": "lecture",
+          "role": "linear-model introduction",
+          "status": "current"
+        },
+        {
+          "sourceId": "DSA5105/Ref/week1_DSA5105_lecture1_with_note.pdf",
+          "page": 38,
+          "sourceType": "lecture",
+          "role": "OLS solution",
+          "status": "current"
+        },
+        {
+          "sourceId": "DSA5105/Ref/week1_DSA5105_lecture1_with_note.pdf",
+          "page": 40,
+          "sourceType": "lecture",
+          "role": "overfitting",
+          "status": "current"
+        },
+        {
+          "sourceId": "DSA5105/Ref/week1_DSA5105_lecture1_with_note.pdf",
+          "page": 41,
+          "sourceType": "lecture",
+          "role": "Huber loss",
+          "status": "current"
+        },
+        {
+          "sourceId": "DSA5105/Ref/week1_DSA5105_lecture1_with_note.pdf",
+          "page": 46,
+          "sourceType": "lecture",
+          "role": "matrix OLS",
+          "status": "current"
+        },
+        {
+          "sourceId": "DSA5105/Ref/week1_DSA5105_lecture1_with_note.pdf",
+          "page": 52,
+          "sourceType": "lecture",
+          "role": "regularization",
+          "status": "current"
+        },
+        {
+          "sourceId": "DSA5105/Ref/week1_DSA5105_lecture1_with_note.pdf",
+          "page": 54,
+          "sourceType": "lecture",
+          "role": "classification model",
+          "status": "current"
+        },
+        {
+          "sourceId": "DSA5105/Ref/week1_DSA5105_Practice_Problems_1_Not_Graded.pdf",
+          "page": 1,
+          "sourceType": "ref",
+          "role": "optional Week 1 practice",
+          "status": "optional"
+        }
+      ]
+    },
+    {
+      "id": "dsa5105-linear-week1-critical-2",
+      "type": "critical-question",
+      "prompt": "When is Huber loss a modeling decision rather than a data-cleaning shortcut?",
+      "angle": "Compare the loss functions and ask what objective the optimizer is actually minimizing.",
+      "modelAnswer": "Huber changes the penalty on residuals but keeps the observations in the objective. It can reduce outlier leverage, but validation must show that the altered target matches the task.",
+      "focus": "robustness",
+      "sourceRefs": [
+        {
+          "sourceId": "DSA5105/Ref/week1_DSA5105_lecture1_with_note.pdf",
+          "page": 34,
+          "sourceType": "lecture",
+          "role": "linear-model introduction",
+          "status": "current"
+        },
+        {
+          "sourceId": "DSA5105/Ref/week1_DSA5105_lecture1_with_note.pdf",
+          "page": 38,
+          "sourceType": "lecture",
+          "role": "OLS solution",
+          "status": "current"
+        },
+        {
+          "sourceId": "DSA5105/Ref/week1_DSA5105_lecture1_with_note.pdf",
+          "page": 40,
+          "sourceType": "lecture",
+          "role": "overfitting",
+          "status": "current"
+        },
+        {
+          "sourceId": "DSA5105/Ref/week1_DSA5105_lecture1_with_note.pdf",
+          "page": 41,
+          "sourceType": "lecture",
+          "role": "Huber loss",
+          "status": "current"
+        },
+        {
+          "sourceId": "DSA5105/Ref/week1_DSA5105_lecture1_with_note.pdf",
+          "page": 46,
+          "sourceType": "lecture",
+          "role": "matrix OLS",
+          "status": "current"
+        },
+        {
+          "sourceId": "DSA5105/Ref/week1_DSA5105_lecture1_with_note.pdf",
+          "page": 52,
+          "sourceType": "lecture",
+          "role": "regularization",
+          "status": "current"
+        },
+        {
+          "sourceId": "DSA5105/Ref/week1_DSA5105_lecture1_with_note.pdf",
+          "page": 54,
+          "sourceType": "lecture",
+          "role": "classification model",
+          "status": "current"
+        },
+        {
+          "sourceId": "DSA5105/Ref/week1_DSA5105_Practice_Problems_1_Not_Graded.pdf",
+          "page": 1,
+          "sourceType": "ref",
+          "role": "optional Week 1 practice",
+          "status": "optional"
+        }
+      ]
+    },
+    {
+      "id": "dsa5105-linear-week1-critical-3",
+      "type": "critical-question",
+      "prompt": "Why can a nonlinear basis model still be called linear?",
+      "angle": "Separate linearity in the input from linearity in the trainable weights.",
+      "modelAnswer": "The basis functions may be nonlinear in x, but the prediction is a linear combination of fixed features with weights w. The optimization remains linear in those parameters.",
+      "focus": "representation",
+      "sourceRefs": [
+        {
+          "sourceId": "DSA5105/Ref/week1_DSA5105_lecture1_with_note.pdf",
+          "page": 34,
+          "sourceType": "lecture",
+          "role": "linear-model introduction",
+          "status": "current"
+        },
+        {
+          "sourceId": "DSA5105/Ref/week1_DSA5105_lecture1_with_note.pdf",
+          "page": 38,
+          "sourceType": "lecture",
+          "role": "OLS solution",
+          "status": "current"
+        },
+        {
+          "sourceId": "DSA5105/Ref/week1_DSA5105_lecture1_with_note.pdf",
+          "page": 40,
+          "sourceType": "lecture",
+          "role": "overfitting",
+          "status": "current"
+        },
+        {
+          "sourceId": "DSA5105/Ref/week1_DSA5105_lecture1_with_note.pdf",
+          "page": 41,
+          "sourceType": "lecture",
+          "role": "Huber loss",
+          "status": "current"
+        },
+        {
+          "sourceId": "DSA5105/Ref/week1_DSA5105_lecture1_with_note.pdf",
+          "page": 46,
+          "sourceType": "lecture",
+          "role": "matrix OLS",
+          "status": "current"
+        },
+        {
+          "sourceId": "DSA5105/Ref/week1_DSA5105_lecture1_with_note.pdf",
+          "page": 52,
+          "sourceType": "lecture",
+          "role": "regularization",
+          "status": "current"
+        },
+        {
+          "sourceId": "DSA5105/Ref/week1_DSA5105_lecture1_with_note.pdf",
+          "page": 54,
+          "sourceType": "lecture",
+          "role": "classification model",
+          "status": "current"
+        },
+        {
+          "sourceId": "DSA5105/Ref/week1_DSA5105_Practice_Problems_1_Not_Graded.pdf",
+          "page": 1,
+          "sourceType": "ref",
+          "role": "optional Week 1 practice",
+          "status": "optional"
+        }
+      ]
+    }
+  ],
+  "questionIds": [
+    "dsa5105-lw1-q1",
+    "dsa5105-lw1-q2",
+    "dsa5105-lw1-q3",
+    "dsa5105-lw1-q4",
+    "dsa5105-lw1-q5"
+  ],
+  "labIds": [],
+  "schemaVersion": "nus.lesson.v1"
+}

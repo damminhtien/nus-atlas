@@ -1,0 +1,97 @@
+[
+  {
+    "id": "dsa5105-pcan-q1",
+    "type": "short",
+    "prompt": "What is the first PCA direction for a centered covariance matrix?",
+    "accepted": [
+      "eigenvector of largest eigenvalue",
+      "leading eigenvector",
+      "top covariance eigenvector"
+    ],
+    "solution": "The unit eigenvector associated with the largest eigenvalue.",
+    "explanation": "It maximizes the Rayleigh quotient v^T C v.",
+    "sourceRefs": [
+      {
+        "sourceId": "DSA5105/Textbook.pdf",
+        "page": 86,
+        "sourceType": "textbook",
+        "role": "PCA eigenvector",
+        "status": "course-depth"
+      }
+    ],
+    "courseId": "DSA5105",
+    "lessonId": "dsa5105-pca-numerical",
+    "schemaVersion": "nus.question.v1"
+  },
+  {
+    "id": "dsa5105-pcan-q2",
+    "type": "calculation",
+    "prompt": "For C=[[2,1],[1,2]], what is the largest eigenvalue?",
+    "accepted": [
+      "3",
+      "three"
+    ],
+    "solution": "The eigenvalues are 3 and 1, so the largest is 3.",
+    "explanation": "The eigenvector (1,1) has eigenvalue 3.",
+    "sourceRefs": [
+      {
+        "sourceId": "DSA5105/Ref/document.pdf",
+        "page": 4,
+        "sourceType": "ref",
+        "role": "PCA numerical alignment",
+        "status": "assessment-derived"
+      }
+    ],
+    "courseId": "DSA5105",
+    "lessonId": "dsa5105-pca-numerical",
+    "schemaVersion": "nus.question.v1"
+  },
+  {
+    "id": "dsa5105-pcan-q3",
+    "type": "short",
+    "prompt": "What does a one-dimensional PCA reconstruction discard?",
+    "accepted": [
+      "the smaller eigenvalue directions",
+      "orthogonal variance",
+      "sum of remaining eigenvalues"
+    ],
+    "solution": "It discards the variance in directions orthogonal to the kept component; the reconstruction error is proportional to the sum of discarded eigenvalues.",
+    "explanation": "This is the bridge between variance maximization and low-rank reconstruction.",
+    "sourceRefs": [
+      {
+        "sourceId": "DSA5105/Textbook.pdf",
+        "page": 88,
+        "sourceType": "textbook",
+        "role": "PCA reconstruction error",
+        "status": "course-depth"
+      }
+    ],
+    "courseId": "DSA5105",
+    "lessonId": "dsa5105-pca-numerical",
+    "schemaVersion": "nus.question.v1"
+  },
+  {
+    "id": "dsa5105-pcan-q4",
+    "type": "derivation",
+    "prompt": "What scaling produces whitening after the PCA rotation?",
+    "accepted": [
+      "multiply by lambda inverse half",
+      "V Lambda^-1/2",
+      "inverse square root eigenvalues"
+    ],
+    "solution": "Rotate with V and scale each retained principal coordinate by $\\lambda_j^{-1/2}$, giving $ZV\\Lambda^{-1/2}$.",
+    "explanation": "Assume eigenvalues are non-zero or state the numerical stabilisation used.",
+    "sourceRefs": [
+      {
+        "sourceId": "DSA5105/Textbook.pdf",
+        "page": 90,
+        "sourceType": "textbook",
+        "role": "whitening",
+        "status": "course-depth"
+      }
+    ],
+    "courseId": "DSA5105",
+    "lessonId": "dsa5105-pca-numerical",
+    "schemaVersion": "nus.question.v1"
+  }
+]

@@ -1,0 +1,654 @@
+{
+  "id": "dsa5105-mdp-value-iteration",
+  "title": "MDPs, value iteration, TD(0), and replay",
+  "week": 8,
+  "minutes": 90,
+  "summary": "Compute Bellman backups, run value iteration, and connect model-based dynamic programming with TD learning and DQN replay.",
+  "objectives": [
+    "Write the optimal Bellman backup",
+    "Run the first value-iteration sweeps",
+    "Explain contraction and policy extraction",
+    "Contrast value iteration, TD(0), and replay"
+  ],
+  "sourceRefs": [
+    {
+      "sourceId": "DSA5105/Textbook.pdf",
+      "page": 105,
+      "sourceType": "textbook",
+      "role": "MDP components",
+      "status": "course-depth"
+    },
+    {
+      "sourceId": "DSA5105/Textbook.pdf",
+      "page": 108,
+      "sourceType": "textbook",
+      "role": "Bellman equations",
+      "status": "course-depth"
+    },
+    {
+      "sourceId": "DSA5105/Textbook.pdf",
+      "page": 115,
+      "sourceType": "textbook",
+      "role": "value iteration",
+      "status": "course-depth"
+    },
+    {
+      "sourceId": "DSA5105/Textbook.pdf",
+      "page": 117,
+      "sourceType": "textbook",
+      "role": "contraction and convergence",
+      "status": "course-depth"
+    },
+    {
+      "sourceId": "DSA5105/Ref/Reinforcement_Learning_an_Introduction.pdf",
+      "page": 98,
+      "sourceType": "ref",
+      "role": "TD learning",
+      "status": "optional"
+    },
+    {
+      "sourceId": "DSA5105/Ref/document.pdf",
+      "page": 1,
+      "sourceType": "ref",
+      "role": "past-exam RL and Bellman alignment",
+      "status": "assessment-derived"
+    }
+  ],
+  "visualIds": [
+    "dsa5105-mdp-value-iteration"
+  ],
+  "sections": [
+    {
+      "title": "Lecture core · Finite MDP backup",
+      "body": "For a finite MDP, value iteration applies the optimality operator repeatedly: $V_{t+1}(s)=\\max_a\\sum_{s',r}p(s',r\\mid s,a)[r+\\gamma V_t(s')]$. Start from a stated initialization such as $V_0=0$ and show each requested sweep; do not jump directly to an unverified fixed point.",
+      "sourceType": "lecture",
+      "math": {
+        "latex": "V_{t+1}=T^*V_t",
+        "explanation": "The Bellman optimality operator maps one value estimate to a one-step lookahead estimate. The max is over the current action choice; the transition model still averages over possible outcomes.",
+        "symbols": [
+          {
+            "latex": "T^*",
+            "meaning": "optimal Bellman operator"
+          },
+          {
+            "latex": "V_t",
+            "meaning": "value estimate at sweep t"
+          }
+        ],
+        "sourceType": "lecture"
+      }
+    },
+    {
+      "title": "Textbook depth · Contraction and policy extraction",
+      "body": "When $0\\le\\gamma<1$, the optimal Bellman operator is a $\\gamma$-contraction in the sup norm, so repeated updates converge to the unique fixed point $V^*$. Once values are available, extract a greedy policy by choosing the action attaining the Bellman maximum.",
+      "sourceType": "textbook",
+      "math": {
+        "latex": "\\lVert T^*V-T^*U\\rVert_\\infty\\le\\gamma\\lVert V-U\\rVert_\\infty",
+        "explanation": "The contraction explains why errors shrink geometrically under exact value iteration. It is a convergence statement for the value update, not a statement that every approximate neural optimizer is globally optimal.",
+        "symbols": [
+          {
+            "latex": "\\lVert\\cdot\\rVert_\\infty",
+            "meaning": "maximum state-wise difference"
+          },
+          {
+            "latex": "V^*",
+            "meaning": "optimal fixed-point value"
+          }
+        ],
+        "sourceType": "textbook"
+      }
+    },
+    {
+      "title": "Textbook depth · TD(0)",
+      "body": "TD(0) updates one visited state toward a sampled one-step target: $V(s_t)\\leftarrow V(s_t)+\\alpha[r_{t+1}+\\gamma V(s_{t+1})-V(s_t)]$. It does not need a complete transition model, so it is model-free and sample-based.",
+      "sourceType": "textbook",
+      "math": {
+        "latex": "\\delta_t=r_{t+1}+\\gamma V(s_{t+1})-V(s_t)",
+        "explanation": "The temporal-difference error is the gap between the one-step bootstrap target and the current estimate. The learning rate alpha controls how much of this error is applied.",
+        "symbols": [
+          {
+            "latex": "\\delta_t",
+            "meaning": "TD error"
+          },
+          {
+            "latex": "\\alpha",
+            "meaning": "TD learning rate"
+          }
+        ],
+        "sourceType": "textbook"
+      }
+    },
+    {
+      "title": "Reference boundary · DQN replay",
+      "body": "A replay buffer stores transitions sampled from past behavior so minibatches are less correlated and can be reused. The buffer is not required to contain transitions generated only by the current policy; that claim confuses replay with on-policy sampling. Target networks and replay are tools around a learned action-value function, not a replacement for the Bellman idea.",
+      "sourceType": "ref"
+    },
+    {
+      "title": "Assessment habit · Show the table",
+      "body": "For a short value-iteration problem, make a row for each state and each sweep. Mark terminal values, write the action candidates before taking the max, and state the greedy action. This prevents a correct recurrence from turning into an arithmetic or indexing mistake.",
+      "sourceType": "ref"
+    }
+  ],
+  "examples": [
+    {
+      "title": "Two-sweep value iteration",
+      "steps": [
+        "Let S1 transition to a terminal state with reward 3. From S0, action a gives reward 2 then moves to S1; action b gives reward 0 then terminates. Use gamma=0.9 and V0=0.",
+        "Sweep 1: V1(S1)=3 and V1(S0)=max(2+0.9*0,0)=2.",
+        "Sweep 2: V2(S0)=max(2+0.9*3,0)=4.7, while V2(S1)=3. Extract action a at S0."
+      ],
+      "answer": "The second sweep propagates the value of S1 backward into S0; write the initialization so the propagation is visible.",
+      "sourceType": "textbook"
+    },
+    {
+      "title": "TD(0) update",
+      "steps": [
+        "Suppose V(s)=1, observed reward r=2, next value V(s')=4, gamma=0.5, and alpha=0.1.",
+        "The target is 2+0.5*4=4 and the TD error is 4-1=3.",
+        "Update V(s) to 1+0.1*3=1.3."
+      ],
+      "answer": "TD(0) moves a visited estimate toward a sampled one-step bootstrap target.",
+      "sourceType": "textbook"
+    }
+  ],
+  "criticalQuestions": [
+    {
+      "prompt": "Why does value iteration converge for a discounted finite MDP?",
+      "focus": "fixed point",
+      "angle": "use contraction",
+      "modelAnswer": "The optimal Bellman operator is a gamma-contraction for gamma<1, so repeated exact backups converge to its unique fixed point V*."
+    },
+    {
+      "prompt": "Why is replay not automatically on-policy?",
+      "focus": "data distribution",
+      "angle": "look at stored behavior",
+      "modelAnswer": "A replay buffer contains transitions collected at earlier behavior policies and can be sampled later. Reusing them makes the update off-policy unless extra restrictions are imposed."
+    }
+  ],
+  "courseId": "DSA5105",
+  "moduleId": "dsa5105-exam-core",
+  "blocks": [
+    {
+      "id": "dsa5105-mdp-value-iteration-section-1",
+      "type": "teaching-note",
+      "title": "Lecture core · Finite MDP backup",
+      "body": "For a finite MDP, value iteration applies the optimality operator repeatedly: $V_{t+1}(s)=\\max_a\\sum_{s',r}p(s',r\\mid s,a)[r+\\gamma V_t(s')]$. Start from a stated initialization such as $V_0=0$ and show each requested sweep; do not jump directly to an unverified fixed point.",
+      "sourceType": "lecture",
+      "sourceRefs": [
+        {
+          "sourceId": "DSA5105/Textbook.pdf",
+          "page": 105,
+          "sourceType": "textbook",
+          "role": "MDP components",
+          "status": "course-depth"
+        },
+        {
+          "sourceId": "DSA5105/Textbook.pdf",
+          "page": 108,
+          "sourceType": "textbook",
+          "role": "Bellman equations",
+          "status": "course-depth"
+        },
+        {
+          "sourceId": "DSA5105/Textbook.pdf",
+          "page": 115,
+          "sourceType": "textbook",
+          "role": "value iteration",
+          "status": "course-depth"
+        },
+        {
+          "sourceId": "DSA5105/Textbook.pdf",
+          "page": 117,
+          "sourceType": "textbook",
+          "role": "contraction and convergence",
+          "status": "course-depth"
+        },
+        {
+          "sourceId": "DSA5105/Ref/Reinforcement_Learning_an_Introduction.pdf",
+          "page": 98,
+          "sourceType": "ref",
+          "role": "TD learning",
+          "status": "optional"
+        },
+        {
+          "sourceId": "DSA5105/Ref/document.pdf",
+          "page": 1,
+          "sourceType": "ref",
+          "role": "past-exam RL and Bellman alignment",
+          "status": "assessment-derived"
+        }
+      ]
+    },
+    {
+      "id": "dsa5105-mdp-value-iteration-section-2",
+      "type": "teaching-note",
+      "title": "Textbook depth · Contraction and policy extraction",
+      "body": "When $0\\le\\gamma<1$, the optimal Bellman operator is a $\\gamma$-contraction in the sup norm, so repeated updates converge to the unique fixed point $V^*$. Once values are available, extract a greedy policy by choosing the action attaining the Bellman maximum.",
+      "sourceType": "textbook",
+      "sourceRefs": [
+        {
+          "sourceId": "DSA5105/Textbook.pdf",
+          "page": 105,
+          "sourceType": "textbook",
+          "role": "MDP components",
+          "status": "course-depth"
+        },
+        {
+          "sourceId": "DSA5105/Textbook.pdf",
+          "page": 108,
+          "sourceType": "textbook",
+          "role": "Bellman equations",
+          "status": "course-depth"
+        },
+        {
+          "sourceId": "DSA5105/Textbook.pdf",
+          "page": 115,
+          "sourceType": "textbook",
+          "role": "value iteration",
+          "status": "course-depth"
+        },
+        {
+          "sourceId": "DSA5105/Textbook.pdf",
+          "page": 117,
+          "sourceType": "textbook",
+          "role": "contraction and convergence",
+          "status": "course-depth"
+        },
+        {
+          "sourceId": "DSA5105/Ref/Reinforcement_Learning_an_Introduction.pdf",
+          "page": 98,
+          "sourceType": "ref",
+          "role": "TD learning",
+          "status": "optional"
+        },
+        {
+          "sourceId": "DSA5105/Ref/document.pdf",
+          "page": 1,
+          "sourceType": "ref",
+          "role": "past-exam RL and Bellman alignment",
+          "status": "assessment-derived"
+        }
+      ]
+    },
+    {
+      "id": "dsa5105-mdp-value-iteration-section-3",
+      "type": "teaching-note",
+      "title": "Textbook depth · TD(0)",
+      "body": "TD(0) updates one visited state toward a sampled one-step target: $V(s_t)\\leftarrow V(s_t)+\\alpha[r_{t+1}+\\gamma V(s_{t+1})-V(s_t)]$. It does not need a complete transition model, so it is model-free and sample-based.",
+      "sourceType": "textbook",
+      "sourceRefs": [
+        {
+          "sourceId": "DSA5105/Textbook.pdf",
+          "page": 105,
+          "sourceType": "textbook",
+          "role": "MDP components",
+          "status": "course-depth"
+        },
+        {
+          "sourceId": "DSA5105/Textbook.pdf",
+          "page": 108,
+          "sourceType": "textbook",
+          "role": "Bellman equations",
+          "status": "course-depth"
+        },
+        {
+          "sourceId": "DSA5105/Textbook.pdf",
+          "page": 115,
+          "sourceType": "textbook",
+          "role": "value iteration",
+          "status": "course-depth"
+        },
+        {
+          "sourceId": "DSA5105/Textbook.pdf",
+          "page": 117,
+          "sourceType": "textbook",
+          "role": "contraction and convergence",
+          "status": "course-depth"
+        },
+        {
+          "sourceId": "DSA5105/Ref/Reinforcement_Learning_an_Introduction.pdf",
+          "page": 98,
+          "sourceType": "ref",
+          "role": "TD learning",
+          "status": "optional"
+        },
+        {
+          "sourceId": "DSA5105/Ref/document.pdf",
+          "page": 1,
+          "sourceType": "ref",
+          "role": "past-exam RL and Bellman alignment",
+          "status": "assessment-derived"
+        }
+      ]
+    },
+    {
+      "id": "dsa5105-mdp-value-iteration-section-4",
+      "type": "teaching-note",
+      "title": "Reference boundary · DQN replay",
+      "body": "A replay buffer stores transitions sampled from past behavior so minibatches are less correlated and can be reused. The buffer is not required to contain transitions generated only by the current policy; that claim confuses replay with on-policy sampling. Target networks and replay are tools around a learned action-value function, not a replacement for the Bellman idea.",
+      "sourceType": "ref",
+      "sourceRefs": [
+        {
+          "sourceId": "DSA5105/Textbook.pdf",
+          "page": 105,
+          "sourceType": "textbook",
+          "role": "MDP components",
+          "status": "course-depth"
+        },
+        {
+          "sourceId": "DSA5105/Textbook.pdf",
+          "page": 108,
+          "sourceType": "textbook",
+          "role": "Bellman equations",
+          "status": "course-depth"
+        },
+        {
+          "sourceId": "DSA5105/Textbook.pdf",
+          "page": 115,
+          "sourceType": "textbook",
+          "role": "value iteration",
+          "status": "course-depth"
+        },
+        {
+          "sourceId": "DSA5105/Textbook.pdf",
+          "page": 117,
+          "sourceType": "textbook",
+          "role": "contraction and convergence",
+          "status": "course-depth"
+        },
+        {
+          "sourceId": "DSA5105/Ref/Reinforcement_Learning_an_Introduction.pdf",
+          "page": 98,
+          "sourceType": "ref",
+          "role": "TD learning",
+          "status": "optional"
+        },
+        {
+          "sourceId": "DSA5105/Ref/document.pdf",
+          "page": 1,
+          "sourceType": "ref",
+          "role": "past-exam RL and Bellman alignment",
+          "status": "assessment-derived"
+        }
+      ]
+    },
+    {
+      "id": "dsa5105-mdp-value-iteration-section-5",
+      "type": "teaching-note",
+      "title": "Assessment habit · Show the table",
+      "body": "For a short value-iteration problem, make a row for each state and each sweep. Mark terminal values, write the action candidates before taking the max, and state the greedy action. This prevents a correct recurrence from turning into an arithmetic or indexing mistake.",
+      "sourceType": "ref",
+      "sourceRefs": [
+        {
+          "sourceId": "DSA5105/Textbook.pdf",
+          "page": 105,
+          "sourceType": "textbook",
+          "role": "MDP components",
+          "status": "course-depth"
+        },
+        {
+          "sourceId": "DSA5105/Textbook.pdf",
+          "page": 108,
+          "sourceType": "textbook",
+          "role": "Bellman equations",
+          "status": "course-depth"
+        },
+        {
+          "sourceId": "DSA5105/Textbook.pdf",
+          "page": 115,
+          "sourceType": "textbook",
+          "role": "value iteration",
+          "status": "course-depth"
+        },
+        {
+          "sourceId": "DSA5105/Textbook.pdf",
+          "page": 117,
+          "sourceType": "textbook",
+          "role": "contraction and convergence",
+          "status": "course-depth"
+        },
+        {
+          "sourceId": "DSA5105/Ref/Reinforcement_Learning_an_Introduction.pdf",
+          "page": 98,
+          "sourceType": "ref",
+          "role": "TD learning",
+          "status": "optional"
+        },
+        {
+          "sourceId": "DSA5105/Ref/document.pdf",
+          "page": 1,
+          "sourceType": "ref",
+          "role": "past-exam RL and Bellman alignment",
+          "status": "assessment-derived"
+        }
+      ]
+    },
+    {
+      "id": "dsa5105-mdp-value-iteration-example-1",
+      "type": "worked-example",
+      "title": "Two-sweep value iteration",
+      "steps": [
+        "Let S1 transition to a terminal state with reward 3. From S0, action a gives reward 2 then moves to S1; action b gives reward 0 then terminates. Use gamma=0.9 and V0=0.",
+        "Sweep 1: V1(S1)=3 and V1(S0)=max(2+0.9*0,0)=2.",
+        "Sweep 2: V2(S0)=max(2+0.9*3,0)=4.7, while V2(S1)=3. Extract action a at S0."
+      ],
+      "answer": "The second sweep propagates the value of S1 backward into S0; write the initialization so the propagation is visible.",
+      "sourceType": "textbook",
+      "sourceRefs": [
+        {
+          "sourceId": "DSA5105/Textbook.pdf",
+          "page": 105,
+          "sourceType": "textbook",
+          "role": "MDP components",
+          "status": "course-depth"
+        },
+        {
+          "sourceId": "DSA5105/Textbook.pdf",
+          "page": 108,
+          "sourceType": "textbook",
+          "role": "Bellman equations",
+          "status": "course-depth"
+        },
+        {
+          "sourceId": "DSA5105/Textbook.pdf",
+          "page": 115,
+          "sourceType": "textbook",
+          "role": "value iteration",
+          "status": "course-depth"
+        },
+        {
+          "sourceId": "DSA5105/Textbook.pdf",
+          "page": 117,
+          "sourceType": "textbook",
+          "role": "contraction and convergence",
+          "status": "course-depth"
+        },
+        {
+          "sourceId": "DSA5105/Ref/Reinforcement_Learning_an_Introduction.pdf",
+          "page": 98,
+          "sourceType": "ref",
+          "role": "TD learning",
+          "status": "optional"
+        },
+        {
+          "sourceId": "DSA5105/Ref/document.pdf",
+          "page": 1,
+          "sourceType": "ref",
+          "role": "past-exam RL and Bellman alignment",
+          "status": "assessment-derived"
+        }
+      ]
+    },
+    {
+      "id": "dsa5105-mdp-value-iteration-example-2",
+      "type": "worked-example",
+      "title": "TD(0) update",
+      "steps": [
+        "Suppose V(s)=1, observed reward r=2, next value V(s')=4, gamma=0.5, and alpha=0.1.",
+        "The target is 2+0.5*4=4 and the TD error is 4-1=3.",
+        "Update V(s) to 1+0.1*3=1.3."
+      ],
+      "answer": "TD(0) moves a visited estimate toward a sampled one-step bootstrap target.",
+      "sourceType": "textbook",
+      "sourceRefs": [
+        {
+          "sourceId": "DSA5105/Textbook.pdf",
+          "page": 105,
+          "sourceType": "textbook",
+          "role": "MDP components",
+          "status": "course-depth"
+        },
+        {
+          "sourceId": "DSA5105/Textbook.pdf",
+          "page": 108,
+          "sourceType": "textbook",
+          "role": "Bellman equations",
+          "status": "course-depth"
+        },
+        {
+          "sourceId": "DSA5105/Textbook.pdf",
+          "page": 115,
+          "sourceType": "textbook",
+          "role": "value iteration",
+          "status": "course-depth"
+        },
+        {
+          "sourceId": "DSA5105/Textbook.pdf",
+          "page": 117,
+          "sourceType": "textbook",
+          "role": "contraction and convergence",
+          "status": "course-depth"
+        },
+        {
+          "sourceId": "DSA5105/Ref/Reinforcement_Learning_an_Introduction.pdf",
+          "page": 98,
+          "sourceType": "ref",
+          "role": "TD learning",
+          "status": "optional"
+        },
+        {
+          "sourceId": "DSA5105/Ref/document.pdf",
+          "page": 1,
+          "sourceType": "ref",
+          "role": "past-exam RL and Bellman alignment",
+          "status": "assessment-derived"
+        }
+      ]
+    },
+    {
+      "id": "dsa5105-mdp-value-iteration-critical-1",
+      "type": "critical-question",
+      "prompt": "Why does value iteration converge for a discounted finite MDP?",
+      "focus": "fixed point",
+      "angle": "use contraction",
+      "modelAnswer": "The optimal Bellman operator is a gamma-contraction for gamma<1, so repeated exact backups converge to its unique fixed point V*.",
+      "sourceRefs": [
+        {
+          "sourceId": "DSA5105/Textbook.pdf",
+          "page": 105,
+          "sourceType": "textbook",
+          "role": "MDP components",
+          "status": "course-depth"
+        },
+        {
+          "sourceId": "DSA5105/Textbook.pdf",
+          "page": 108,
+          "sourceType": "textbook",
+          "role": "Bellman equations",
+          "status": "course-depth"
+        },
+        {
+          "sourceId": "DSA5105/Textbook.pdf",
+          "page": 115,
+          "sourceType": "textbook",
+          "role": "value iteration",
+          "status": "course-depth"
+        },
+        {
+          "sourceId": "DSA5105/Textbook.pdf",
+          "page": 117,
+          "sourceType": "textbook",
+          "role": "contraction and convergence",
+          "status": "course-depth"
+        },
+        {
+          "sourceId": "DSA5105/Ref/Reinforcement_Learning_an_Introduction.pdf",
+          "page": 98,
+          "sourceType": "ref",
+          "role": "TD learning",
+          "status": "optional"
+        },
+        {
+          "sourceId": "DSA5105/Ref/document.pdf",
+          "page": 1,
+          "sourceType": "ref",
+          "role": "past-exam RL and Bellman alignment",
+          "status": "assessment-derived"
+        }
+      ]
+    },
+    {
+      "id": "dsa5105-mdp-value-iteration-critical-2",
+      "type": "critical-question",
+      "prompt": "Why is replay not automatically on-policy?",
+      "focus": "data distribution",
+      "angle": "look at stored behavior",
+      "modelAnswer": "A replay buffer contains transitions collected at earlier behavior policies and can be sampled later. Reusing them makes the update off-policy unless extra restrictions are imposed.",
+      "sourceRefs": [
+        {
+          "sourceId": "DSA5105/Textbook.pdf",
+          "page": 105,
+          "sourceType": "textbook",
+          "role": "MDP components",
+          "status": "course-depth"
+        },
+        {
+          "sourceId": "DSA5105/Textbook.pdf",
+          "page": 108,
+          "sourceType": "textbook",
+          "role": "Bellman equations",
+          "status": "course-depth"
+        },
+        {
+          "sourceId": "DSA5105/Textbook.pdf",
+          "page": 115,
+          "sourceType": "textbook",
+          "role": "value iteration",
+          "status": "course-depth"
+        },
+        {
+          "sourceId": "DSA5105/Textbook.pdf",
+          "page": 117,
+          "sourceType": "textbook",
+          "role": "contraction and convergence",
+          "status": "course-depth"
+        },
+        {
+          "sourceId": "DSA5105/Ref/Reinforcement_Learning_an_Introduction.pdf",
+          "page": 98,
+          "sourceType": "ref",
+          "role": "TD learning",
+          "status": "optional"
+        },
+        {
+          "sourceId": "DSA5105/Ref/document.pdf",
+          "page": 1,
+          "sourceType": "ref",
+          "role": "past-exam RL and Bellman alignment",
+          "status": "assessment-derived"
+        }
+      ]
+    }
+  ],
+  "questionIds": [
+    "dsa5105-vi-q1",
+    "dsa5105-vi-q2",
+    "dsa5105-vi-q3",
+    "dsa5105-vi-q4",
+    "dsa5105-vi-q5"
+  ],
+  "labIds": [
+    "dsa5105-mdp-value-iteration"
+  ],
+  "schemaVersion": "nus.lesson.v1"
+}

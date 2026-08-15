@@ -33,6 +33,7 @@ function loadLegacyState(root = ROOT) {
     courses: window.NUS_COURSES || [],
     content: window.NUS_CONTENT || {},
     assessments: window.NUS_ASSESSMENTS || [],
+    artifacts: window.NUS_ARTIFACTS || {},
     labs: window.NUS_VISUAL_LABS || {},
     visuals: window.NUS_VISUALS || {},
     sourceTypes: window.NUS_SOURCE_TYPES || {}
@@ -101,6 +102,52 @@ function validateContentState(state) {
   return { ok: errors.length === 0, errors, counts: { courses: courseIds.size, lessons: lessonIds.size, questions: questionIds.size, assessments: assessmentIds.size, labs: Object.keys(labs).length } };
 }
 
+function readJson(file) {
+  try { return JSON.parse(fs.readFileSync(file, "utf8")); }
+  catch (error) { return { __error: `${path.relative(ROOT, file)}: ${error.message}` }; }
+}
+
+function validatePackageDirectory(root = ROOT) {
+  const errors = [];
+  const coursesRoot = path.join(root, "content", "courses");
+  if (!fs.existsSync(coursesRoot)) return { ok: true, errors, counts: { courses: 0, lessons: 0, questions: 0 } };
+  const courseDirs = fs.readdirSync(coursesRoot, { withFileTypes: true }).filter(entry => entry.isDirectory());
+  let lessonCount = 0, questionCount = 0;
+  for (const entry of courseDirs) {
+    const dir = path.join(coursesRoot, entry.name);
+    const course = readJson(path.join(dir, "course.json"));
+    if (course.__error) { errors.push(course.__error); continue; }
+    if (course.code !== entry.name) errors.push(`package directory/code mismatch: ${entry.name}`);
+    if (course.schemaVersion !== "nus.course.v1") errors.push(`invalid course schema version: ${entry.name}`);
+    const moduleFiles = fs.existsSync(path.join(dir, "modules")) ? fs.readdirSync(path.join(dir, "modules")).filter(file => file.endsWith(".json")) : [];
+    const lessonFiles = fs.existsSync(path.join(dir, "lessons")) ? fs.readdirSync(path.join(dir, "lessons")).filter(file => file.endsWith(".json")) : [];
+    const lessonIds = new Set();
+    for (const file of lessonFiles) {
+      const lesson = readJson(path.join(dir, "lessons", file));
+      if (lesson.__error) { errors.push(lesson.__error); continue; }
+      lessonCount++;
+      if (!lesson.id || lesson.id !== path.basename(file, ".json")) errors.push(`lesson filename/id mismatch: ${entry.name}/${file}`);
+      if (lesson.courseId !== entry.name || lesson.schemaVersion !== "nus.lesson.v1") errors.push(`invalid lesson identity/schema: ${lesson.id || file}`);
+      if (lessonIds.has(lesson.id)) errors.push(`duplicate package lesson id: ${lesson.id}`);
+      lessonIds.add(lesson.id);
+      if (!Array.isArray(lesson.blocks) || !lesson.blocks.length) errors.push(`package lesson has no blocks: ${lesson.id}`);
+      if (!Array.isArray(lesson.sourceRefs) || !lesson.sourceRefs.length) errors.push(`package lesson has no source refs: ${lesson.id}`);
+      (lesson.sourceRefs || []).forEach(ref => checkSourceRef(ref, { lecture: {}, textbook: {}, ref: {}, "assessment-derived": {} }, errors, `package lesson ${lesson.id}`));
+      const questionFile = path.join(dir, "questions", file);
+      const questions = fs.existsSync(questionFile) ? readJson(questionFile) : [];
+      if (!Array.isArray(questions)) errors.push(`question package must be an array: ${lesson.id}`);
+      const ids = (questions || []).map(question => question.id).filter(Boolean);
+      questionCount += ids.length;
+      if (JSON.stringify(ids) !== JSON.stringify(lesson.questionIds || [])) errors.push(`question IDs do not match lesson: ${lesson.id}`);
+      const artifactFile = path.join(dir, "artifacts", file);
+      if (!fs.existsSync(artifactFile)) errors.push(`missing artifact package: ${lesson.id}`);
+    }
+    if (course.moduleIds && course.moduleIds.length !== moduleFiles.length) errors.push(`module manifest mismatch: ${entry.name}`);
+    if (course.assessmentIds && !fs.existsSync(path.join(dir, "assessments.json"))) errors.push(`missing assessment package: ${entry.name}`);
+  }
+  return { ok: errors.length === 0, errors, counts: { courses: courseDirs.length, lessons: lessonCount, questions: questionCount } };
+}
+
 function checkSourceRef(ref, sourceTypes, errors, owner) {
   if (!ref || !ref.sourceId || !Number.isInteger(ref.page) || ref.page < 1) errors.push(`${owner} has invalid source ref`);
   if (ref && ref.sourceType && !sourceTypes[ref.sourceType]) errors.push(`${owner} has unknown source type: ${ref.sourceType}`);
@@ -108,13 +155,14 @@ function checkSourceRef(ref, sourceTypes, errors, owner) {
 
 if (require.main === module) {
   const result = validateContentState(loadLegacyState());
-  if (!result.ok) {
+  const packages = validatePackageDirectory();
+  if (!result.ok || !packages.ok) {
     console.error("CONTENT CONTRACT FAILED");
-    result.errors.forEach(error => console.error(`- ${error}`));
+    result.errors.concat(packages.errors).forEach(error => console.error(`- ${error}`));
     process.exitCode = 1;
   } else {
-    console.log(`CONTENT CONTRACT GREEN · ${result.counts.courses} courses · ${result.counts.lessons} lessons · ${result.counts.questions} questions · ${result.counts.assessments} assessments · ${result.counts.labs} labs`);
+    console.log(`CONTENT CONTRACT GREEN · ${result.counts.courses} courses · ${result.counts.lessons} lessons · ${result.counts.questions} questions · ${result.counts.assessments} assessments · ${result.counts.labs} labs · ${packages.counts.courses} package(s)`);
   }
 }
 
-module.exports = { NUS_FILES, loadLegacyState, validateContentState };
+module.exports = { NUS_FILES, loadLegacyState, validateContentState, validatePackageDirectory };

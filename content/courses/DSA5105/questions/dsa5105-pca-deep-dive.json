@@ -1,0 +1,74 @@
+[
+  {
+    "id": "dsa5105-pca-q1",
+    "type": "derivation",
+    "prompt": "What matrix and eigenvector identify the first PCA direction for centered data?",
+    "accepted": [
+      "top eigenvector of covariance matrix",
+      "leading eigenvector of the covariance",
+      "largest eigenvalue eigenvector"
+    ],
+    "solution": "Form the sample covariance matrix of centered observations and take its unit eigenvector associated with the largest eigenvalue.",
+    "explanation": "Centering and the largest-eigenvalue eigenvector are both essential.",
+    "sourceRefs": [
+      {
+        "sourceId": "DSA5105/Textbook.pdf",
+        "page": 82,
+        "sourceType": "textbook",
+        "role": "variance formulation",
+        "status": "course-depth"
+      }
+    ],
+    "courseId": "DSA5105",
+    "lessonId": "dsa5105-pca-deep-dive",
+    "schemaVersion": "nus.question.v1"
+  },
+  {
+    "id": "dsa5105-pca-q2",
+    "type": "short",
+    "prompt": "Why can PCA be described as minimizing reconstruction error?",
+    "accepted": [
+      "projection onto top k subspace minimizes squared error",
+      "best rank k linear subspace",
+      "top eigenvectors minimize squared projection error"
+    ],
+    "solution": "Among k-dimensional linear subspaces, the span of the top k principal directions minimizes total squared distance from the data to its projection.",
+    "explanation": "This is the reconstruction formulation of PCA.",
+    "sourceRefs": [
+      {
+        "sourceId": "DSA5105/Textbook.pdf",
+        "page": 88,
+        "sourceType": "textbook",
+        "role": "reconstruction formulation",
+        "status": "course-depth"
+      }
+    ],
+    "courseId": "DSA5105",
+    "lessonId": "dsa5105-pca-deep-dive",
+    "schemaVersion": "nus.question.v1"
+  },
+  {
+    "id": "dsa5105-pca-q3",
+    "type": "short",
+    "prompt": "What does whitening change after rotating into principal coordinates?",
+    "accepted": [
+      "it scales by inverse square root eigenvalues",
+      "decorrelates and unit variance",
+      "scales principal components to unit variance"
+    ],
+    "solution": "Whitening keeps the principal-coordinate rotation and rescales each component by the inverse square root of its variance/eigenvalue, when non-zero.",
+    "explanation": "Whitening is a scaling step after the PCA basis is found.",
+    "sourceRefs": [
+      {
+        "sourceId": "DSA5105/Ref/Mathematics_of_Data_Science.pdf",
+        "page": 37,
+        "sourceType": "ref",
+        "role": "PCA in high dimensions",
+        "status": "draft"
+      }
+    ],
+    "courseId": "DSA5105",
+    "lessonId": "dsa5105-pca-deep-dive",
+    "schemaVersion": "nus.question.v1"
+  }
+]

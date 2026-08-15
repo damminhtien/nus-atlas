@@ -1,0 +1,100 @@
+[
+  {
+    "id": "dsa5105-gmm-q1",
+    "type": "calculation",
+    "prompt": "With priors (0.6, 0.4) and likelihoods (0.5, 0.1), what is the responsibility of component 1?",
+    "accepted": [
+      "0.8824",
+      "0.882",
+      "15/17",
+      "about 0.88"
+    ],
+    "solution": "0.6*0.5 divided by (0.6*0.5 + 0.4*0.1) = 0.3/0.34 ≈ 0.8824.",
+    "explanation": "Use prior-weighted likelihoods, then normalize.",
+    "sourceRefs": [
+      {
+        "sourceId": "DSA5105/Ref/document.pdf",
+        "page": 5,
+        "sourceType": "ref",
+        "role": "GMM responsibility calculation",
+        "status": "assessment-derived"
+      }
+    ],
+    "courseId": "DSA5105",
+    "lessonId": "dsa5105-gmm-em-numerical",
+    "schemaVersion": "nus.question.v1"
+  },
+  {
+    "id": "dsa5105-gmm-q2",
+    "type": "short",
+    "prompt": "What must the responsibilities for one data point sum to?",
+    "accepted": [
+      "one",
+      "1",
+      "one across components"
+    ],
+    "solution": "They sum to one across all mixture components for that point.",
+    "explanation": "They are posterior probabilities over the latent component index.",
+    "sourceRefs": [
+      {
+        "sourceId": "DSA5105/Textbook.pdf",
+        "page": 100,
+        "sourceType": "textbook",
+        "role": "responsibility normalization",
+        "status": "course-depth"
+      }
+    ],
+    "courseId": "DSA5105",
+    "lessonId": "dsa5105-gmm-em-numerical",
+    "schemaVersion": "nus.question.v1"
+  },
+  {
+    "id": "dsa5105-gmm-q3",
+    "type": "derivation",
+    "prompt": "Write the GMM M-step mean update.",
+    "accepted": [
+      "sum gamma ik x i divided by sum gamma ik",
+      "weighted mean using responsibilities",
+      "mu k equals weighted average"
+    ],
+    "solution": "$\\mu_k^{new}=\\frac{\\sum_i\\gamma_{ik}x_i}{\\sum_i\\gamma_{ik}}$.",
+    "explanation": "The responsibilities become the weights in the component mean update.",
+    "sourceRefs": [
+      {
+        "sourceId": "DSA5105/Textbook.pdf",
+        "page": 102,
+        "sourceType": "textbook",
+        "role": "EM mean update",
+        "status": "course-depth"
+      }
+    ],
+    "courseId": "DSA5105",
+    "lessonId": "dsa5105-gmm-em-numerical",
+    "schemaVersion": "nus.question.v1"
+  },
+  {
+    "id": "dsa5105-gmm-q4",
+    "type": "mcq",
+    "prompt": "Which statement distinguishes GMM from K-means?",
+    "choices": [
+      "GMM returns soft posterior memberships and can model covariance shape",
+      "GMM always has one cluster",
+      "K-means is probabilistic with full covariance",
+      "K-means always finds the global optimum"
+    ],
+    "answer": 0,
+    "explanation": "GMM is probabilistic and can use component covariance; K-means uses hard nearest-centroid assignments.",
+    "sourceRefs": [
+      {
+        "sourceId": "DSA5105/Textbook.pdf",
+        "page": 98,
+        "sourceType": "textbook",
+        "role": "GMM versus K-means",
+        "status": "course-depth"
+      }
+    ],
+    "courseId": "DSA5105",
+    "lessonId": "dsa5105-gmm-em-numerical",
+    "schemaVersion": "nus.question.v1"
+  }
+]

@@ -1,0 +1,526 @@
+{
+  "id": "dsa5105-weighted-ols",
+  "title": "Basis functions, OLS uniqueness, and weighted risk",
+  "week": 2,
+  "minutes": 75,
+  "summary": "Make the linear-model assumptions explicit: linear in parameters, full-rank uniqueness, weighted empirical risk, and the bridge from noise to regularization.",
+  "objectives": [
+    "Represent nonlinear inputs with a linear basis",
+    "Prove when OLS is unique",
+    "Derive the weighted least-squares solution",
+    "Keep validation and test roles separate"
+  ],
+  "sourceRefs": [
+    {
+      "sourceId": "DSA5105/Ref/week1_DSA5105_lecture1_with_note.pdf",
+      "page": 46,
+      "sourceType": "lecture",
+      "role": "matrix OLS",
+      "status": "current"
+    },
+    {
+      "sourceId": "DSA5105/Textbook.pdf",
+      "page": 18,
+      "sourceType": "textbook",
+      "role": "basis-function regression",
+      "status": "course-depth"
+    },
+    {
+      "sourceId": "DSA5105/Textbook.pdf",
+      "page": 24,
+      "sourceType": "textbook",
+      "role": "regularized least squares",
+      "status": "course-depth"
+    },
+    {
+      "sourceId": "DSA5105/Ref/document.pdf",
+      "page": 1,
+      "sourceType": "ref",
+      "role": "past-exam dual ridge and validation alignment",
+      "status": "assessment-derived"
+    }
+  ],
+  "visualIds": [
+    "dsa5105-weighted-ols"
+  ],
+  "sections": [
+    {
+      "title": "Lecture core · Linear in parameters, not necessarily in x",
+      "body": "A basis model has $f_w(x)=w^\\top\\phi(x)$. The input transformation $phi(x)$ can contain $x^2$, Gaussian bumps, or other nonlinear features; the model is still linear in the unknown weights $w$. This is why a linear model can represent nonlinear functions when the basis is rich enough.",
+      "sourceType": "lecture",
+      "math": {
+        "latex": "f_w(x)=\\sum_{j=1}^{M}w_j\\phi_j(x)=w^\\top\\phi(x)",
+        "explanation": "The weights appear only as a linear combination. Nonlinearity in the features changes the hypothesis class without changing the least-squares algebra in the weights.",
+        "symbols": [
+          {
+            "latex": "\\phi(x)",
+            "meaning": "feature or basis vector"
+          },
+          {
+            "latex": "w",
+            "meaning": "learned coefficient vector"
+          },
+          {
+            "latex": "M",
+            "meaning": "number of basis functions"
+          }
+        ],
+        "sourceType": "lecture"
+      }
+    },
+    {
+      "title": "Textbook depth · OLS normal equations and uniqueness",
+      "body": "For design matrix $\\Phi$, the squared-loss stationary condition is $\\Phi^\\top\\Phi\\hat w=\\Phi^\\top y$. The familiar inverse formula requires $\\Phi^\\top\\Phi$ to be invertible, equivalently full column rank. Without that condition, the data may identify fitted values but not one unique coefficient vector.",
+      "sourceType": "textbook",
+      "math": {
+        "latex": "\\hat w=(\\Phi^\\top\\Phi)^{-1}\\Phi^\\top y",
+        "explanation": "The inverse is not a decorative step: it encodes the full-column-rank assumption. If two basis columns are duplicates, multiple coefficient vectors can produce the same predictions.",
+        "symbols": [
+          {
+            "latex": "\\Phi",
+            "meaning": "design matrix"
+          },
+          {
+            "latex": "\\Phi^\\top\\Phi",
+            "meaning": "normal matrix"
+          },
+          {
+            "latex": "\\operatorname{rank}(\\Phi)=M",
+            "meaning": "full-column-rank condition"
+          }
+        ],
+        "sourceType": "textbook"
+      }
+    },
+    {
+      "title": "Textbook depth · Weighted empirical risk",
+      "body": "Give example $i$ a positive weight $a_i$ and define $A=\\operatorname{diag}(a_1,\\ldots,a_N)$. The weighted objective is $\\frac{1}{2}(\\Phi w-y)^\\top A(\\Phi w-y)$. Its normal equations become $\\Phi^\\top A\\Phi\\hat w=\\Phi^\\top Ay$. Positive weights preserve strict convexity when $\\Phi$ already has full column rank because $A^{1/2}\\Phi$ has the same null-space test.",
+      "sourceType": "textbook",
+      "math": {
+        "latex": "\\hat w_A=(\\Phi^\\top A\\Phi)^{-1}\\Phi^\\top Ay",
+        "explanation": "Weighted least squares is ordinary least squares after scaling row $i$ by $sqrt{a_i}$. This interpretation is the cleanest way to reason about existence and uniqueness.",
+        "symbols": [
+          {
+            "latex": "A",
+            "meaning": "diagonal matrix of positive example weights"
+          },
+          {
+            "latex": "a_i",
+            "meaning": "importance of example $i$"
+          },
+          {
+            "latex": "A^{1/2}\\Phi",
+            "meaning": "row-scaled design matrix"
+          }
+        ],
+        "sourceType": "textbook"
+      }
+    },
+    {
+      "title": "Bridge · Noise can induce a ridge penalty",
+      "body": "If an input is perturbed by zero-mean independent noise and the expected squared loss is taken over that noise, the extra variance term penalizes sensitivity to the weights. In a simple linear model this becomes an L2-like term. The bridge is useful intuition, but it does not mean every regularizer came from noise.",
+      "sourceType": "ref"
+    },
+    {
+      "title": "Assessment habit · State the assumption before the formula",
+      "body": "When a question asks whether OLS is unique, do not answer from the existence of a closed-form expression alone. Write the rank or invertibility assumption, then give a counterexample if it is absent. When a question asks for a hyperparameter choice, say validation—not test.",
+      "sourceType": "ref"
+    }
+  ],
+  "examples": [
+    {
+      "title": "Counterexample: OLS need not be unique",
+      "steps": [
+        "Let $\\Phi=[[1,1],[2,2]]$ and $y=[1,2]^\\top$. The columns are identical, so $\\operatorname{rank}(\\Phi)=1<2$.",
+        "Every vector $w$ satisfying $w_1+w_2=1$ gives the same fitted values $\\Phi w=[1,2]^\\top$.",
+        "Therefore the predictions are fixed for this sample, but the coefficient vector is not unique. A pseudoinverse selects the minimum-norm solution; it does not restore identifiability in the original parameterization."
+      ],
+      "answer": "The statement 'OLS always has a unique solution' is false unless the normal matrix is invertible.",
+      "sourceType": "textbook"
+    },
+    {
+      "title": "Derive weighted OLS",
+      "steps": [
+        "Start from $J(w)=\\frac12(\\Phi w-y)^\\top A(\\Phi w-y)$ with symmetric diagonal $A$.",
+        "Differentiate: $\\nabla J=\\Phi^\\top A(\\Phi w-y)$, then set it to zero.",
+        "Solve $\\Phi^\\top A\\Phi w=\\Phi^\\top Ay$. If $A$ is positive definite and $\\Phi$ has full column rank, the weighted normal matrix is positive definite and invertible."
+      ],
+      "answer": "The weighted solution is $w_A=(\\Phi^\\top A\\Phi)^{-1}\\Phi^\\top Ay$.",
+      "sourceType": "textbook"
+    }
+  ],
+  "criticalQuestions": [
+    {
+      "prompt": "What exactly is unique in OLS?",
+      "focus": "parameter identifiability",
+      "angle": "separate coefficient uniqueness from fitted-value uniqueness",
+      "modelAnswer": "A unique coefficient vector needs full column rank. With rank deficiency, several coefficient vectors can give the same fitted values; the pseudoinverse chooses one convention."
+    },
+    {
+      "prompt": "Why is a positive-weight matrix safe for uniqueness?",
+      "focus": "weighted geometry",
+      "angle": "use the square-root transform",
+      "modelAnswer": "The weighted objective is ordinary least squares on A^(1/2)Phi. If A is positive definite, A^(1/2) is invertible and does not create a new null direction, so full column rank is preserved."
+    }
+  ],
+  "courseId": "DSA5105",
+  "moduleId": "dsa5105-exam-core",
+  "blocks": [
+    {
+      "id": "dsa5105-weighted-ols-section-1",
+      "type": "teaching-note",
+      "title": "Lecture core · Linear in parameters, not necessarily in x",
+      "body": "A basis model has $f_w(x)=w^\\top\\phi(x)$. The input transformation $phi(x)$ can contain $x^2$, Gaussian bumps, or other nonlinear features; the model is still linear in the unknown weights $w$. This is why a linear model can represent nonlinear functions when the basis is rich enough.",
+      "sourceType": "lecture",
+      "sourceRefs": [
+        {
+          "sourceId": "DSA5105/Ref/week1_DSA5105_lecture1_with_note.pdf",
+          "page": 46,
+          "sourceType": "lecture",
+          "role": "matrix OLS",
+          "status": "current"
+        },
+        {
+          "sourceId": "DSA5105/Textbook.pdf",
+          "page": 18,
+          "sourceType": "textbook",
+          "role": "basis-function regression",
+          "status": "course-depth"
+        },
+        {
+          "sourceId": "DSA5105/Textbook.pdf",
+          "page": 24,
+          "sourceType": "textbook",
+          "role": "regularized least squares",
+          "status": "course-depth"
+        },
+        {
+          "sourceId": "DSA5105/Ref/document.pdf",
+          "page": 1,
+          "sourceType": "ref",
+          "role": "past-exam dual ridge and validation alignment",
+          "status": "assessment-derived"
+        }
+      ]
+    },
+    {
+      "id": "dsa5105-weighted-ols-section-2",
+      "type": "teaching-note",
+      "title": "Textbook depth · OLS normal equations and uniqueness",
+      "body": "For design matrix $\\Phi$, the squared-loss stationary condition is $\\Phi^\\top\\Phi\\hat w=\\Phi^\\top y$. The familiar inverse formula requires $\\Phi^\\top\\Phi$ to be invertible, equivalently full column rank. Without that condition, the data may identify fitted values but not one unique coefficient vector.",
+      "sourceType": "textbook",
+      "sourceRefs": [
+        {
+          "sourceId": "DSA5105/Ref/week1_DSA5105_lecture1_with_note.pdf",
+          "page": 46,
+          "sourceType": "lecture",
+          "role": "matrix OLS",
+          "status": "current"
+        },
+        {
+          "sourceId": "DSA5105/Textbook.pdf",
+          "page": 18,
+          "sourceType": "textbook",
+          "role": "basis-function regression",
+          "status": "course-depth"
+        },
+        {
+          "sourceId": "DSA5105/Textbook.pdf",
+          "page": 24,
+          "sourceType": "textbook",
+          "role": "regularized least squares",
+          "status": "course-depth"
+        },
+        {
+          "sourceId": "DSA5105/Ref/document.pdf",
+          "page": 1,
+          "sourceType": "ref",
+          "role": "past-exam dual ridge and validation alignment",
+          "status": "assessment-derived"
+        }
+      ]
+    },
+    {
+      "id": "dsa5105-weighted-ols-section-3",
+      "type": "teaching-note",
+      "title": "Textbook depth · Weighted empirical risk",
+      "body": "Give example $i$ a positive weight $a_i$ and define $A=\\operatorname{diag}(a_1,\\ldots,a_N)$. The weighted objective is $\\frac{1}{2}(\\Phi w-y)^\\top A(\\Phi w-y)$. Its normal equations become $\\Phi^\\top A\\Phi\\hat w=\\Phi^\\top Ay$. Positive weights preserve strict convexity when $\\Phi$ already has full column rank because $A^{1/2}\\Phi$ has the same null-space test.",
+      "sourceType": "textbook",
+      "sourceRefs": [
+        {
+          "sourceId": "DSA5105/Ref/week1_DSA5105_lecture1_with_note.pdf",
+          "page": 46,
+          "sourceType": "lecture",
+          "role": "matrix OLS",
+          "status": "current"
+        },
+        {
+          "sourceId": "DSA5105/Textbook.pdf",
+          "page": 18,
+          "sourceType": "textbook",
+          "role": "basis-function regression",
+          "status": "course-depth"
+        },
+        {
+          "sourceId": "DSA5105/Textbook.pdf",
+          "page": 24,
+          "sourceType": "textbook",
+          "role": "regularized least squares",
+          "status": "course-depth"
+        },
+        {
+          "sourceId": "DSA5105/Ref/document.pdf",
+          "page": 1,
+          "sourceType": "ref",
+          "role": "past-exam dual ridge and validation alignment",
+          "status": "assessment-derived"
+        }
+      ]
+    },
+    {
+      "id": "dsa5105-weighted-ols-section-4",
+      "type": "teaching-note",
+      "title": "Bridge · Noise can induce a ridge penalty",
+      "body": "If an input is perturbed by zero-mean independent noise and the expected squared loss is taken over that noise, the extra variance term penalizes sensitivity to the weights. In a simple linear model this becomes an L2-like term. The bridge is useful intuition, but it does not mean every regularizer came from noise.",
+      "sourceType": "ref",
+      "sourceRefs": [
+        {
+          "sourceId": "DSA5105/Ref/week1_DSA5105_lecture1_with_note.pdf",
+          "page": 46,
+          "sourceType": "lecture",
+          "role": "matrix OLS",
+          "status": "current"
+        },
+        {
+          "sourceId": "DSA5105/Textbook.pdf",
+          "page": 18,
+          "sourceType": "textbook",
+          "role": "basis-function regression",
+          "status": "course-depth"
+        },
+        {
+          "sourceId": "DSA5105/Textbook.pdf",
+          "page": 24,
+          "sourceType": "textbook",
+          "role": "regularized least squares",
+          "status": "course-depth"
+        },
+        {
+          "sourceId": "DSA5105/Ref/document.pdf",
+          "page": 1,
+          "sourceType": "ref",
+          "role": "past-exam dual ridge and validation alignment",
+          "status": "assessment-derived"
+        }
+      ]
+    },
+    {
+      "id": "dsa5105-weighted-ols-section-5",
+      "type": "teaching-note",
+      "title": "Assessment habit · State the assumption before the formula",
+      "body": "When a question asks whether OLS is unique, do not answer from the existence of a closed-form expression alone. Write the rank or invertibility assumption, then give a counterexample if it is absent. When a question asks for a hyperparameter choice, say validation—not test.",
+      "sourceType": "ref",
+      "sourceRefs": [
+        {
+          "sourceId": "DSA5105/Ref/week1_DSA5105_lecture1_with_note.pdf",
+          "page": 46,
+          "sourceType": "lecture",
+          "role": "matrix OLS",
+          "status": "current"
+        },
+        {
+          "sourceId": "DSA5105/Textbook.pdf",
+          "page": 18,
+          "sourceType": "textbook",
+          "role": "basis-function regression",
+          "status": "course-depth"
+        },
+        {
+          "sourceId": "DSA5105/Textbook.pdf",
+          "page": 24,
+          "sourceType": "textbook",
+          "role": "regularized least squares",
+          "status": "course-depth"
+        },
+        {
+          "sourceId": "DSA5105/Ref/document.pdf",
+          "page": 1,
+          "sourceType": "ref",
+          "role": "past-exam dual ridge and validation alignment",
+          "status": "assessment-derived"
+        }
+      ]
+    },
+    {
+      "id": "dsa5105-weighted-ols-example-1",
+      "type": "worked-example",
+      "title": "Counterexample: OLS need not be unique",
+      "steps": [
+        "Let $\\Phi=[[1,1],[2,2]]$ and $y=[1,2]^\\top$. The columns are identical, so $\\operatorname{rank}(\\Phi)=1<2$.",
+        "Every vector $w$ satisfying $w_1+w_2=1$ gives the same fitted values $\\Phi w=[1,2]^\\top$.",
+        "Therefore the predictions are fixed for this sample, but the coefficient vector is not unique. A pseudoinverse selects the minimum-norm solution; it does not restore identifiability in the original parameterization."
+      ],
+      "answer": "The statement 'OLS always has a unique solution' is false unless the normal matrix is invertible.",
+      "sourceType": "textbook",
+      "sourceRefs": [
+        {
+          "sourceId": "DSA5105/Ref/week1_DSA5105_lecture1_with_note.pdf",
+          "page": 46,
+          "sourceType": "lecture",
+          "role": "matrix OLS",
+          "status": "current"
+        },
+        {
+          "sourceId": "DSA5105/Textbook.pdf",
+          "page": 18,
+          "sourceType": "textbook",
+          "role": "basis-function regression",
+          "status": "course-depth"
+        },
+        {
+          "sourceId": "DSA5105/Textbook.pdf",
+          "page": 24,
+          "sourceType": "textbook",
+          "role": "regularized least squares",
+          "status": "course-depth"
+        },
+        {
+          "sourceId": "DSA5105/Ref/document.pdf",
+          "page": 1,
+          "sourceType": "ref",
+          "role": "past-exam dual ridge and validation alignment",
+          "status": "assessment-derived"
+        }
+      ]
+    },
+    {
+      "id": "dsa5105-weighted-ols-example-2",
+      "type": "worked-example",
+      "title": "Derive weighted OLS",
+      "steps": [
+        "Start from $J(w)=\\frac12(\\Phi w-y)^\\top A(\\Phi w-y)$ with symmetric diagonal $A$.",
+        "Differentiate: $\\nabla J=\\Phi^\\top A(\\Phi w-y)$, then set it to zero.",
+        "Solve $\\Phi^\\top A\\Phi w=\\Phi^\\top Ay$. If $A$ is positive definite and $\\Phi$ has full column rank, the weighted normal matrix is positive definite and invertible."
+      ],
+      "answer": "The weighted solution is $w_A=(\\Phi^\\top A\\Phi)^{-1}\\Phi^\\top Ay$.",
+      "sourceType": "textbook",
+      "sourceRefs": [
+        {
+          "sourceId": "DSA5105/Ref/week1_DSA5105_lecture1_with_note.pdf",
+          "page": 46,
+          "sourceType": "lecture",
+          "role": "matrix OLS",
+          "status": "current"
+        },
+        {
+          "sourceId": "DSA5105/Textbook.pdf",
+          "page": 18,
+          "sourceType": "textbook",
+          "role": "basis-function regression",
+          "status": "course-depth"
+        },
+        {
+          "sourceId": "DSA5105/Textbook.pdf",
+          "page": 24,
+          "sourceType": "textbook",
+          "role": "regularized least squares",
+          "status": "course-depth"
+        },
+        {
+          "sourceId": "DSA5105/Ref/document.pdf",
+          "page": 1,
+          "sourceType": "ref",
+          "role": "past-exam dual ridge and validation alignment",
+          "status": "assessment-derived"
+        }
+      ]
+    },
+    {
+      "id": "dsa5105-weighted-ols-critical-1",
+      "type": "critical-question",
+      "prompt": "What exactly is unique in OLS?",
+      "focus": "parameter identifiability",
+      "angle": "separate coefficient uniqueness from fitted-value uniqueness",
+      "modelAnswer": "A unique coefficient vector needs full column rank. With rank deficiency, several coefficient vectors can give the same fitted values; the pseudoinverse chooses one convention.",
+      "sourceRefs": [
+        {
+          "sourceId": "DSA5105/Ref/week1_DSA5105_lecture1_with_note.pdf",
+          "page": 46,
+          "sourceType": "lecture",
+          "role": "matrix OLS",
+          "status": "current"
+        },
+        {
+          "sourceId": "DSA5105/Textbook.pdf",
+          "page": 18,
+          "sourceType": "textbook",
+          "role": "basis-function regression",
+          "status": "course-depth"
+        },
+        {
+          "sourceId": "DSA5105/Textbook.pdf",
+          "page": 24,
+          "sourceType": "textbook",
+          "role": "regularized least squares",
+          "status": "course-depth"
+        },
+        {
+          "sourceId": "DSA5105/Ref/document.pdf",
+          "page": 1,
+          "sourceType": "ref",
+          "role": "past-exam dual ridge and validation alignment",
+          "status": "assessment-derived"
+        }
+      ]
+    },
+    {
+      "id": "dsa5105-weighted-ols-critical-2",
+      "type": "critical-question",
+      "prompt": "Why is a positive-weight matrix safe for uniqueness?",
+      "focus": "weighted geometry",
+      "angle": "use the square-root transform",
+      "modelAnswer": "The weighted objective is ordinary least squares on A^(1/2)Phi. If A is positive definite, A^(1/2) is invertible and does not create a new null direction, so full column rank is preserved.",
+      "sourceRefs": [
+        {
+          "sourceId": "DSA5105/Ref/week1_DSA5105_lecture1_with_note.pdf",
+          "page": 46,
+          "sourceType": "lecture",
+          "role": "matrix OLS",
+          "status": "current"
+        },
+        {
+          "sourceId": "DSA5105/Textbook.pdf",
+          "page": 18,
+          "sourceType": "textbook",
+          "role": "basis-function regression",
+          "status": "course-depth"
+        },
+        {
+          "sourceId": "DSA5105/Textbook.pdf",
+          "page": 24,
+          "sourceType": "textbook",
+          "role": "regularized least squares",
+          "status": "course-depth"
+        },
+        {
+          "sourceId": "DSA5105/Ref/document.pdf",
+          "page": 1,
+          "sourceType": "ref",
+          "role": "past-exam dual ridge and validation alignment",
+          "status": "assessment-derived"
+        }
+      ]
+    }
+  ],
+  "questionIds": [
+    "dsa5105-wols-q1",
+    "dsa5105-wols-q2",
+    "dsa5105-wols-q3",
+    "dsa5105-wols-q4",
+    "dsa5105-wols-q5"
+  ],
+  "labIds": [
+    "dsa5105-weighted-ols"
+  ],
+  "schemaVersion": "nus.lesson.v1"
+}

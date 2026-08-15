@@ -1,0 +1,124 @@
+[
+  {
+    "id": "dsa5105-te-q1",
+    "type": "mcq",
+    "prompt": "Which statement about a deeper decision tree is most defensible?",
+    "choices": [
+      "It has more capacity and can have higher variance",
+      "It is always better",
+      "It cannot overfit",
+      "It is optimized by one global gradient step"
+    ],
+    "answer": 0,
+    "explanation": "Depth increases the number of partitions and can reduce bias while increasing variance.",
+    "sourceRefs": [
+      {
+        "sourceId": "DSA5105/Textbook.pdf",
+        "page": 36,
+        "sourceType": "textbook",
+        "role": "tree depth and pruning",
+        "status": "course-depth"
+      }
+    ],
+    "courseId": "DSA5105",
+    "lessonId": "dsa5105-trees-ensembles",
+    "schemaVersion": "nus.question.v1"
+  },
+  {
+    "id": "dsa5105-te-q2",
+    "type": "calculation",
+    "prompt": "For a balanced binary node with class proportions 0.5 and 0.5, what is Gini impurity?",
+    "accepted": [
+      "0.5",
+      "1/2",
+      "0.50"
+    ],
+    "solution": "1 - 0.5^2 - 0.5^2 = 0.5.",
+    "explanation": "Gini is one minus the squared class-proportion sum.",
+    "sourceRefs": [
+      {
+        "sourceId": "DSA5105/Textbook.pdf",
+        "page": 37,
+        "sourceType": "textbook",
+        "role": "Gini impurity",
+        "status": "course-depth"
+      }
+    ],
+    "courseId": "DSA5105",
+    "lessonId": "dsa5105-trees-ensembles",
+    "schemaVersion": "nus.question.v1"
+  },
+  {
+    "id": "dsa5105-te-q3",
+    "type": "short",
+    "prompt": "What quantity does bagging mainly reduce?",
+    "accepted": [
+      "variance",
+      "prediction variance",
+      "variance through averaging"
+    ],
+    "solution": "Bagging mainly reduces variance by averaging predictions from bootstrap learners whose errors are not perfectly correlated.",
+    "explanation": "Do not claim that bagging automatically removes bias.",
+    "sourceRefs": [
+      {
+        "sourceId": "DSA5105/Textbook.pdf",
+        "page": 41,
+        "sourceType": "textbook",
+        "role": "bagging variance",
+        "status": "course-depth"
+      }
+    ],
+    "courseId": "DSA5105",
+    "lessonId": "dsa5105-trees-ensembles",
+    "schemaVersion": "nus.question.v1"
+  },
+  {
+    "id": "dsa5105-te-q4",
+    "type": "calculation",
+    "prompt": "For AdaBoost weighted error epsilon = 0.2, is alpha positive or negative?",
+    "accepted": [
+      "positive",
+      "alpha is positive",
+      "0.693",
+      "about 0.693"
+    ],
+    "solution": "$\\alpha=\\frac12\\log((1-0.2)/0.2)\\approx0.693>0$.",
+    "explanation": "A weak learner better than random receives a positive vote coefficient.",
+    "sourceRefs": [
+      {
+        "sourceId": "DSA5105/Textbook.pdf",
+        "page": 43,
+        "sourceType": "textbook",
+        "role": "AdaBoost coefficient",
+        "status": "course-depth"
+      }
+    ],
+    "courseId": "DSA5105",
+    "lessonId": "dsa5105-trees-ensembles",
+    "schemaVersion": "nus.question.v1"
+  },
+  {
+    "id": "dsa5105-te-q5",
+    "type": "short",
+    "prompt": "Which examples receive larger relative weight after an AdaBoost round?",
+    "accepted": [
+      "misclassified examples",
+      "mistakes",
+      "incorrectly classified points"
+    ],
+    "solution": "Misclassified examples are upweighted so the next learner focuses more on them.",
+    "explanation": "Correctly classified examples are downweighted relative to mistakes before normalization.",
+    "sourceRefs": [
+      {
+        "sourceId": "DSA5105/Textbook.pdf",
+        "page": 43,
+        "sourceType": "textbook",
+        "role": "AdaBoost reweighting",
+        "status": "course-depth"
+      }
+    ],
+    "courseId": "DSA5105",
+    "lessonId": "dsa5105-trees-ensembles",
+    "schemaVersion": "nus.question.v1"
+  }
+]

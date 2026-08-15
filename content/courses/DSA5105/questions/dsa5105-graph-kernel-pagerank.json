@@ -1,0 +1,98 @@
+[
+  {
+    "id": "dsa5105-gk-q1",
+    "type": "short",
+    "prompt": "What is the key object used to prove a kernel is PSD?",
+    "accepted": [
+      "feature map",
+      "inner product feature map",
+      "nonnegative gram quadratic form"
+    ],
+    "solution": "Represent the kernel as an inner product in a feature space, or prove every Gram quadratic form is non-negative.",
+    "explanation": "The feature-map proof is the most reusable pattern.",
+    "sourceRefs": [
+      {
+        "sourceId": "DSA5105/Textbook.pdf",
+        "page": 25,
+        "sourceType": "textbook",
+        "role": "PSD kernel proof",
+        "status": "course-depth"
+      }
+    ],
+    "courseId": "DSA5105",
+    "lessonId": "dsa5105-graph-kernel-pagerank",
+    "schemaVersion": "nus.question.v1"
+  },
+  {
+    "id": "dsa5105-gk-q2",
+    "type": "calculation",
+    "prompt": "For the Gram block [[1,q],[q,1]], what range of q keeps it PSD?",
+    "accepted": [
+      "-1 <= q <= 1",
+      "[-1,1]",
+      "between negative one and one"
+    ],
+    "solution": "The eigenvalues are 1+q and 1-q, so q must lie in [-1,1].",
+    "explanation": "Both eigenvalues must be non-negative.",
+    "sourceRefs": [
+      {
+        "sourceId": "DSA5105/Ref/document.pdf",
+        "page": 2,
+        "sourceType": "ref",
+        "role": "graph kernel parameter range",
+        "status": "assessment-derived"
+      }
+    ],
+    "courseId": "DSA5105",
+    "lessonId": "dsa5105-graph-kernel-pagerank",
+    "schemaVersion": "nus.question.v1"
+  },
+  {
+    "id": "dsa5105-gk-q3",
+    "type": "derivation",
+    "prompt": "Write the damped PageRank fixed-point update for a column rank vector.",
+    "accepted": [
+      "alpha P transpose r plus 1 minus alpha uniform",
+      "r next equals alpha P transpose r plus teleportation",
+      "damped power iteration"
+    ],
+    "solution": "$r_{t+1}=\\alpha P^\\top r_t+(1-\\alpha)\\mathbf1/n$.",
+    "explanation": "State the matrix orientation and include the teleportation term.",
+    "sourceRefs": [
+      {
+        "sourceId": "DSA5105/Ref/Mathematics_of_Data_Science.pdf",
+        "page": 47,
+        "sourceType": "ref",
+        "role": "PageRank iteration",
+        "status": "draft"
+      }
+    ],
+    "courseId": "DSA5105",
+    "lessonId": "dsa5105-graph-kernel-pagerank",
+    "schemaVersion": "nus.question.v1"
+  },
+  {
+    "id": "dsa5105-gk-q4",
+    "type": "short",
+    "prompt": "What two sanity checks should a PageRank vector pass after an update?",
+    "accepted": [
+      "nonnegative and sums to one",
+      "entries nonnegative and normalized",
+      "sum one and no negative entries"
+    ],
+    "solution": "All entries should be non-negative and the vector should sum to one, up to numerical rounding.",
+    "explanation": "These follow from the probability interpretation.",
+    "sourceRefs": [
+      {
+        "sourceId": "DSA5105/Ref/Mathematics_of_Data_Science.pdf",
+        "page": 47,
+        "sourceType": "ref",
+        "role": "PageRank normalization",
+        "status": "draft"
+      }
+    ],
+    "courseId": "DSA5105",
+    "lessonId": "dsa5105-graph-kernel-pagerank",
+    "schemaVersion": "nus.question.v1"
+  }
+]

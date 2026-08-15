@@ -1,0 +1,43 @@
+{
+  "lessonId": "dsa5105-cluster-gmm",
+  "schemaVersion": "nus.study-kit.v1",
+  "flashcards": [
+    {
+      "front": "K-means versus GMM?",
+      "back": "K-means uses hard centroid assignments; GMM uses posterior responsibilities and a probabilistic density."
+    },
+    {
+      "front": "GMM E-step?",
+      "back": "Compute latent-component posterior responsibilities under current parameters."
+    },
+    {
+      "front": "EM limitation?",
+      "back": "The objective is generally non-convex, so initialization can lead to a local optimum."
+    }
+  ],
+  "homework": [
+    {
+      "prompt": "Trace one E-step and M-step for a two-component mixture using symbolic responsibilities.",
+      "rubric": "Normalize responsibilities, then update weighted means or mixture weights.",
+      "source": {
+        "sourceId": "DSA5105/Textbook.pdf",
+        "page": 102,
+        "sourceType": "textbook",
+        "role": "EM depth",
+        "status": "course-depth"
+      }
+    },
+    {
+      "prompt": "Design a small dataset where K-means and GMM should disagree, then explain why.",
+      "rubric": "Use covariance, overlap, or soft membership rather than only different random seeds.",
+      "source": {
+        "sourceId": "DSA5105/Ref/Mathematics_of_Data_Science.pdf",
+        "page": 51,
+        "sourceType": "ref",
+        "role": "clustering context",
+        "status": "draft"
+      }
+    }
+  ],
+  "codeExercises": []
+}

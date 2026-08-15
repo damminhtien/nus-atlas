@@ -1,0 +1,74 @@
+[
+  {
+    "id": "dsa5105-sc-q1",
+    "type": "derivation",
+    "prompt": "Write the unnormalized graph Laplacian.",
+    "accepted": [
+      "L=D-A",
+      "degree matrix minus adjacency",
+      "D minus A"
+    ],
+    "solution": "$L=D-A$.",
+    "explanation": "D contains weighted degrees and A contains edge weights.",
+    "sourceRefs": [
+      {
+        "sourceId": "DSA5105/Ref/Mathematics_of_Data_Science.pdf",
+        "page": 50,
+        "sourceType": "ref",
+        "role": "Laplacian construction",
+        "status": "draft"
+      }
+    ],
+    "courseId": "DSA5105",
+    "lessonId": "dsa5105-spectral-clustering",
+    "schemaVersion": "nus.question.v1"
+  },
+  {
+    "id": "dsa5105-sc-q2",
+    "type": "short",
+    "prompt": "What is the zero-eigenvalue vector for a connected unnormalized Laplacian?",
+    "accepted": [
+      "constant all ones vector",
+      "ones vector",
+      "constant vector"
+    ],
+    "solution": "The all-ones vector, because every Laplacian row sums to zero.",
+    "explanation": "For a connected graph it spans the one-dimensional nullspace.",
+    "sourceRefs": [
+      {
+        "sourceId": "DSA5105/Ref/document.pdf",
+        "page": 5,
+        "sourceType": "ref",
+        "role": "Laplacian eigenvector alignment",
+        "status": "assessment-derived"
+      }
+    ],
+    "courseId": "DSA5105",
+    "lessonId": "dsa5105-spectral-clustering",
+    "schemaVersion": "nus.question.v1"
+  },
+  {
+    "id": "dsa5105-sc-q3",
+    "type": "short",
+    "prompt": "What quantity does f transpose L f measure?",
+    "accepted": [
+      "edge smoothness energy",
+      "sum of squared differences across edges",
+      "graph variation"
+    ],
+    "solution": "It measures edge-weighted disagreement or smoothness energy: one half of the sum of Aij(fi-fj)^2.",
+    "explanation": "Low energy means neighboring nodes have similar scores.",
+    "sourceRefs": [
+      {
+        "sourceId": "DSA5105/Ref/Mathematics_of_Data_Science.pdf",
+        "page": 53,
+        "sourceType": "ref",
+        "role": "Laplacian quadratic form",
+        "status": "draft"
+      }
+    ],
+    "courseId": "DSA5105",
+    "lessonId": "dsa5105-spectral-clustering",
+    "schemaVersion": "nus.question.v1"
+  }
+]

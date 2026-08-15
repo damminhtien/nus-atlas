@@ -1,0 +1,43 @@
+{
+  "lessonId": "dsa5105-svm-margin",
+  "schemaVersion": "nus.study-kit.v1",
+  "flashcards": [
+    {
+      "front": "Geometric margin?",
+      "back": "For a point $x$, $|w^\\top x+b|/\\lVert w\\rVert_2$; use $y(w^\\top x+b)/\\lVert w\\rVert_2$ for a signed classification margin."
+    },
+    {
+      "front": "Hard-margin primal?",
+      "back": "Minimize $\\lVert w\\rVert_2^2/2$ subject to $y_i(w^\\top x_i+b)\\ge1$."
+    },
+    {
+      "front": "Support vector?",
+      "back": "A point with an active margin/slack constraint and a non-zero dual multiplier."
+    }
+  ],
+  "homework": [
+    {
+      "prompt": "Derive the hard-margin objective from the geometric margin and explain the scale convention.",
+      "rubric": "Show inverse norm, fix closest scores at 1, and state the constrained minimization.",
+      "source": {
+        "sourceId": "DSA5105/Textbook.pdf",
+        "page": 31,
+        "sourceType": "textbook",
+        "role": "SVM depth",
+        "status": "course-depth"
+      }
+    },
+    {
+      "prompt": "Compare hard-margin and soft-margin SVM on one noisy example.",
+      "rubric": "Mention infeasible separation, slack variables, and hinge-loss intuition.",
+      "source": {
+        "sourceId": "DSA5105/Textbook.pdf",
+        "page": 36,
+        "sourceType": "textbook",
+        "role": "soft-margin depth",
+        "status": "course-depth"
+      }
+    }
+  ],
+  "codeExercises": []
+}

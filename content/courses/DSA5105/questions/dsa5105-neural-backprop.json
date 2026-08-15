@@ -1,0 +1,124 @@
+[
+  {
+    "id": "dsa5105-nn-q1",
+    "type": "mcq",
+    "prompt": "What happens if every activation in a multilayer network is the identity?",
+    "choices": [
+      "The composition is still affine",
+      "It becomes a universal nonlinear approximator",
+      "Backprop stops existing",
+      "The loss becomes zero"
+    ],
+    "answer": 0,
+    "explanation": "A composition of affine maps is affine.",
+    "sourceRefs": [
+      {
+        "sourceId": "DSA5105/Lec1.pdf",
+        "page": 31,
+        "sourceType": "lecture",
+        "role": "nonlinear activation",
+        "status": "current"
+      }
+    ],
+    "courseId": "DSA5105",
+    "lessonId": "dsa5105-neural-backprop",
+    "schemaVersion": "nus.question.v1"
+  },
+  {
+    "id": "dsa5105-nn-q2",
+    "type": "short",
+    "prompt": "Write the hidden-layer backprop delta for z^l = W^l h^(l-1) + b^l.",
+    "accepted": [
+      "W next transpose delta next times sigma prime",
+      "delta l equals W l+1 transpose delta l+1 elementwise sigma prime",
+      "backprop recurrence"
+    ],
+    "solution": "$\\delta^l=(W^{l+1\\top}\\delta^{l+1})\\odot\\sigma_l'(z^l)$.",
+    "explanation": "Transport the upstream error through the next weight matrix, then gate it by the current activation derivative.",
+    "sourceRefs": [
+      {
+        "sourceId": "DSA5105/Textbook.pdf",
+        "page": 52,
+        "sourceType": "textbook",
+        "role": "backprop recurrence",
+        "status": "course-depth"
+      }
+    ],
+    "courseId": "DSA5105",
+    "lessonId": "dsa5105-neural-backprop",
+    "schemaVersion": "nus.question.v1"
+  },
+  {
+    "id": "dsa5105-nn-q3",
+    "type": "calculation",
+    "prompt": "In the scalar example u=2, ReLU(u)=2, sigmoid(2)≈0.881, t=0, x=1, what is the approximate dL/dw?",
+    "accepted": [
+      "0.0925",
+      "0.09",
+      "about 0.0925"
+    ],
+    "solution": "(0.881)(0.881(1-0.881))(1)(1) ≈ 0.0925.",
+    "explanation": "Multiply the loss, sigmoid, ReLU, and input derivatives in reverse graph order.",
+    "sourceRefs": [
+      {
+        "sourceId": "DSA5105/Ref/document.pdf",
+        "page": 3,
+        "sourceType": "ref",
+        "role": "numerical backprop alignment",
+        "status": "assessment-derived"
+      }
+    ],
+    "courseId": "DSA5105",
+    "lessonId": "dsa5105-neural-backprop",
+    "schemaVersion": "nus.question.v1"
+  },
+  {
+    "id": "dsa5105-nn-q4",
+    "type": "mcq",
+    "prompt": "Which claim is false for a general neural-network objective?",
+    "choices": [
+      "Backprop computes gradients efficiently",
+      "Gradient descent always guarantees the global optimum",
+      "The objective can be non-convex",
+      "A learning rate controls update size"
+    ],
+    "answer": 1,
+    "explanation": "Non-convexity prevents a general global-optimum guarantee.",
+    "sourceRefs": [
+      {
+        "sourceId": "DSA5105/Textbook.pdf",
+        "page": 48,
+        "sourceType": "textbook",
+        "role": "gradient descent and non-convexity",
+        "status": "course-depth"
+      }
+    ],
+    "courseId": "DSA5105",
+    "lessonId": "dsa5105-neural-backprop",
+    "schemaVersion": "nus.question.v1"
+  },
+  {
+    "id": "dsa5105-nn-q5",
+    "type": "derivation",
+    "prompt": "What extra gradient term comes from lambda/2 times the squared Frobenius norm of W?",
+    "accepted": [
+      "lambda W",
+      "lambda times W",
+      "add lambda W to data gradient"
+    ],
+    "solution": "The regularizer contributes $\\lambda W^l$ to the gradient of layer $l$.",
+    "explanation": "Add this explicit term to the backpropagated data gradient.",
+    "sourceRefs": [
+      {
+        "sourceId": "DSA5105/Textbook.pdf",
+        "page": 54,
+        "sourceType": "textbook",
+        "role": "regularized neural objective",
+        "status": "course-depth"
+      }
+    ],
+    "courseId": "DSA5105",
+    "lessonId": "dsa5105-neural-backprop",
+    "schemaVersion": "nus.question.v1"
+  }
+]

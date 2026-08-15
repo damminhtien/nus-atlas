@@ -1,0 +1,361 @@
+{
+  "id": "dsa5105-kernel-pca-cluster",
+  "title": "Kernels, PCA, K-means, and GMM",
+  "week": 7,
+  "minutes": 60,
+  "summary": "Connect geometry, dimensionality reduction, and mixture modeling instead of memorizing them as separate algorithms.",
+  "objectives": [
+    "Interpret a kernel as an inner product in a feature space",
+    "State what PCA maximizes",
+    "Contrast K-means with GMM"
+  ],
+  "sourceRefs": [
+    {
+      "sourceId": "DSA5105/Lec1.pdf",
+      "page": 31,
+      "sourceType": "lecture",
+      "role": "kernel methods",
+      "status": "current"
+    },
+    {
+      "sourceId": "DSA5105/Lec1.pdf",
+      "page": 39,
+      "sourceType": "lecture",
+      "role": "unsupervised overview",
+      "status": "current"
+    }
+  ],
+  "visualIds": [],
+  "sections": [
+    {
+      "title": "Lecture core · Three different questions",
+      "body": "PCA asks for a low-dimensional linear view that preserves variance. K-means asks which centroid is closest under squared Euclidean distance. GMM asks which latent component plausibly generated the point and returns a probability, not just a label.",
+      "sourceType": "lecture"
+    },
+    {
+      "title": "Lecture core · Kernel idea",
+      "body": "A kernel lets us compute inner products after an implicit feature map without explicitly constructing every transformed coordinate. The useful mental model is geometry in a richer space; the kernel choice controls which notion of similarity is available.",
+      "sourceType": "lecture",
+      "math": {
+        "latex": "k(x,z)=\\langle\\phi(x),\\phi(z)\\rangle",
+        "explanation": "The kernel value is the inner product of the inputs after the implicit feature map. A method can therefore use richer geometry without storing every transformed coordinate explicitly.",
+        "symbols": [
+          {
+            "latex": "k(x,z)",
+            "meaning": "kernel similarity"
+          },
+          {
+            "latex": "\\phi",
+            "meaning": "implicit feature map"
+          },
+          {
+            "latex": "\\langle\\cdot,\\cdot\\rangle",
+            "meaning": "inner product"
+          }
+        ],
+        "sourceType": "lecture"
+      }
+    },
+    {
+      "title": "Textbook depth · Do not conflate objectives",
+      "body": "PCA is not a clustering algorithm, and a high-variance direction is not automatically a predictive direction. Compare each method by its objective, output, and failure mode before choosing it for a dataset.",
+      "sourceType": "textbook"
+    }
+  ],
+  "examples": [
+    {
+      "title": "Worked example: choose a method",
+      "steps": [
+        "If the task is compressing ten correlated measurements into two coordinates, start with PCA.",
+        "If the task is assigning every point to exactly one of K groups, K-means matches that hard-assignment goal.",
+        "If points overlap and you need uncertainty such as P(cluster 1 | x), use a probabilistic mixture such as a GMM."
+      ],
+      "answer": "Method choice follows the question: compression, hard grouping, or probabilistic membership.",
+      "sourceType": "lecture"
+    }
+  ],
+  "math": [
+    {
+      "latex": "k(x,z)=\\langle\\phi(x),\\phi(z)\\rangle",
+      "explanation": "A valid kernel gives the inner product that would be obtained after mapping inputs through $phi$, without requiring us to build the transformed coordinates explicitly. The kernel changes the geometry available to a method such as a kernel SVM or kernel PCA.",
+      "symbols": [
+        {
+          "latex": "k(x,z)",
+          "meaning": "kernel similarity between inputs"
+        },
+        {
+          "latex": "\\phi",
+          "meaning": "implicit feature map"
+        },
+        {
+          "latex": "\\langle\\cdot,\\cdot\\rangle",
+          "meaning": "inner product"
+        }
+      ],
+      "sourceType": "lecture",
+      "caveat": "A kernel is not automatically a probability or a distance; its role depends on the algorithm using it."
+    },
+    {
+      "latex": "\\operatorname{Var}(v^\\top X)=v^\\top\\Sigma v",
+      "explanation": "PCA evaluates how much centered data varies after projection onto a unit direction $v$. The covariance matrix stores pairwise feature variation; the quadratic form selects the variance visible along $v$.",
+      "symbols": [
+        {
+          "latex": "v",
+          "meaning": "unit projection direction"
+        },
+        {
+          "latex": "\\Sigma",
+          "meaning": "covariance matrix"
+        },
+        {
+          "latex": "v^\\top X",
+          "meaning": "projected data"
+        }
+      ],
+      "sourceType": "lecture"
+    }
+  ],
+  "criticalQuestions": [
+    {
+      "prompt": "Why does a high-variance direction not necessarily give the best predictive feature?",
+      "angle": "Separate unsupervised reconstruction from supervised target information.",
+      "modelAnswer": "PCA optimizes variance in $X$ without looking at $Y$. A low-variance direction can contain the signal that predicts the target, while a high-variance direction can be nuisance variation.",
+      "focus": "objective mismatch"
+    },
+    {
+      "prompt": "What must be true for a kernel matrix to represent a valid inner-product geometry?",
+      "angle": "Think about symmetry and non-negative quadratic forms.",
+      "modelAnswer": "The Gram matrix should be symmetric positive semidefinite; otherwise the implicit inner-product interpretation breaks.",
+      "focus": "validity"
+    }
+  ],
+  "courseId": "DSA5105",
+  "moduleId": "dsa5105-unsupervised",
+  "blocks": [
+    {
+      "id": "dsa5105-kernel-pca-cluster-section-1",
+      "type": "teaching-note",
+      "title": "Lecture core · Three different questions",
+      "body": "PCA asks for a low-dimensional linear view that preserves variance. K-means asks which centroid is closest under squared Euclidean distance. GMM asks which latent component plausibly generated the point and returns a probability, not just a label.",
+      "sourceType": "lecture",
+      "sourceRefs": [
+        {
+          "sourceId": "DSA5105/Lec1.pdf",
+          "page": 31,
+          "sourceType": "lecture",
+          "role": "kernel methods",
+          "status": "current"
+        },
+        {
+          "sourceId": "DSA5105/Lec1.pdf",
+          "page": 39,
+          "sourceType": "lecture",
+          "role": "unsupervised overview",
+          "status": "current"
+        }
+      ]
+    },
+    {
+      "id": "dsa5105-kernel-pca-cluster-section-2",
+      "type": "teaching-note",
+      "title": "Lecture core · Kernel idea",
+      "body": "A kernel lets us compute inner products after an implicit feature map without explicitly constructing every transformed coordinate. The useful mental model is geometry in a richer space; the kernel choice controls which notion of similarity is available.",
+      "sourceType": "lecture",
+      "sourceRefs": [
+        {
+          "sourceId": "DSA5105/Lec1.pdf",
+          "page": 31,
+          "sourceType": "lecture",
+          "role": "kernel methods",
+          "status": "current"
+        },
+        {
+          "sourceId": "DSA5105/Lec1.pdf",
+          "page": 39,
+          "sourceType": "lecture",
+          "role": "unsupervised overview",
+          "status": "current"
+        }
+      ]
+    },
+    {
+      "id": "dsa5105-kernel-pca-cluster-section-3",
+      "type": "teaching-note",
+      "title": "Textbook depth · Do not conflate objectives",
+      "body": "PCA is not a clustering algorithm, and a high-variance direction is not automatically a predictive direction. Compare each method by its objective, output, and failure mode before choosing it for a dataset.",
+      "sourceType": "textbook",
+      "sourceRefs": [
+        {
+          "sourceId": "DSA5105/Lec1.pdf",
+          "page": 31,
+          "sourceType": "lecture",
+          "role": "kernel methods",
+          "status": "current"
+        },
+        {
+          "sourceId": "DSA5105/Lec1.pdf",
+          "page": 39,
+          "sourceType": "lecture",
+          "role": "unsupervised overview",
+          "status": "current"
+        }
+      ]
+    },
+    {
+      "id": "dsa5105-kernel-pca-cluster-formula-1",
+      "type": "formula",
+      "latex": "k(x,z)=\\langle\\phi(x),\\phi(z)\\rangle",
+      "explanation": "A valid kernel gives the inner product that would be obtained after mapping inputs through $phi$, without requiring us to build the transformed coordinates explicitly. The kernel changes the geometry available to a method such as a kernel SVM or kernel PCA.",
+      "symbols": [
+        {
+          "latex": "k(x,z)",
+          "meaning": "kernel similarity between inputs"
+        },
+        {
+          "latex": "\\phi",
+          "meaning": "implicit feature map"
+        },
+        {
+          "latex": "\\langle\\cdot,\\cdot\\rangle",
+          "meaning": "inner product"
+        }
+      ],
+      "sourceType": "lecture",
+      "sourceRefs": [
+        {
+          "sourceId": "DSA5105/Lec1.pdf",
+          "page": 31,
+          "sourceType": "lecture",
+          "role": "kernel methods",
+          "status": "current"
+        },
+        {
+          "sourceId": "DSA5105/Lec1.pdf",
+          "page": 39,
+          "sourceType": "lecture",
+          "role": "unsupervised overview",
+          "status": "current"
+        }
+      ]
+    },
+    {
+      "id": "dsa5105-kernel-pca-cluster-formula-2",
+      "type": "formula",
+      "latex": "\\operatorname{Var}(v^\\top X)=v^\\top\\Sigma v",
+      "explanation": "PCA evaluates how much centered data varies after projection onto a unit direction $v$. The covariance matrix stores pairwise feature variation; the quadratic form selects the variance visible along $v$.",
+      "symbols": [
+        {
+          "latex": "v",
+          "meaning": "unit projection direction"
+        },
+        {
+          "latex": "\\Sigma",
+          "meaning": "covariance matrix"
+        },
+        {
+          "latex": "v^\\top X",
+          "meaning": "projected data"
+        }
+      ],
+      "sourceType": "lecture",
+      "sourceRefs": [
+        {
+          "sourceId": "DSA5105/Lec1.pdf",
+          "page": 31,
+          "sourceType": "lecture",
+          "role": "kernel methods",
+          "status": "current"
+        },
+        {
+          "sourceId": "DSA5105/Lec1.pdf",
+          "page": 39,
+          "sourceType": "lecture",
+          "role": "unsupervised overview",
+          "status": "current"
+        }
+      ]
+    },
+    {
+      "id": "dsa5105-kernel-pca-cluster-example-1",
+      "type": "worked-example",
+      "title": "Worked example: choose a method",
+      "steps": [
+        "If the task is compressing ten correlated measurements into two coordinates, start with PCA.",
+        "If the task is assigning every point to exactly one of K groups, K-means matches that hard-assignment goal.",
+        "If points overlap and you need uncertainty such as P(cluster 1 | x), use a probabilistic mixture such as a GMM."
+      ],
+      "answer": "Method choice follows the question: compression, hard grouping, or probabilistic membership.",
+      "sourceType": "lecture",
+      "sourceRefs": [
+        {
+          "sourceId": "DSA5105/Lec1.pdf",
+          "page": 31,
+          "sourceType": "lecture",
+          "role": "kernel methods",
+          "status": "current"
+        },
+        {
+          "sourceId": "DSA5105/Lec1.pdf",
+          "page": 39,
+          "sourceType": "lecture",
+          "role": "unsupervised overview",
+          "status": "current"
+        }
+      ]
+    },
+    {
+      "id": "dsa5105-kernel-pca-cluster-critical-1",
+      "type": "critical-question",
+      "prompt": "Why does a high-variance direction not necessarily give the best predictive feature?",
+      "angle": "Separate unsupervised reconstruction from supervised target information.",
+      "modelAnswer": "PCA optimizes variance in $X$ without looking at $Y$. A low-variance direction can contain the signal that predicts the target, while a high-variance direction can be nuisance variation.",
+      "focus": "objective mismatch",
+      "sourceRefs": [
+        {
+          "sourceId": "DSA5105/Lec1.pdf",
+          "page": 31,
+          "sourceType": "lecture",
+          "role": "kernel methods",
+          "status": "current"
+        },
+        {
+          "sourceId": "DSA5105/Lec1.pdf",
+          "page": 39,
+          "sourceType": "lecture",
+          "role": "unsupervised overview",
+          "status": "current"
+        }
+      ]
+    },
+    {
+      "id": "dsa5105-kernel-pca-cluster-critical-2",
+      "type": "critical-question",
+      "prompt": "What must be true for a kernel matrix to represent a valid inner-product geometry?",
+      "angle": "Think about symmetry and non-negative quadratic forms.",
+      "modelAnswer": "The Gram matrix should be symmetric positive semidefinite; otherwise the implicit inner-product interpretation breaks.",
+      "focus": "validity",
+      "sourceRefs": [
+        {
+          "sourceId": "DSA5105/Lec1.pdf",
+          "page": 31,
+          "sourceType": "lecture",
+          "role": "kernel methods",
+          "status": "current"
+        },
+        {
+          "sourceId": "DSA5105/Lec1.pdf",
+          "page": 39,
+          "sourceType": "lecture",
+          "role": "unsupervised overview",
+          "status": "current"
+        }
+      ]
+    }
+  ],
+  "questionIds": [
+    "dsa5105-u-q1",
+    "dsa5105-u-q2"
+  ],
+  "labIds": [],
+  "schemaVersion": "nus.lesson.v1"
+}

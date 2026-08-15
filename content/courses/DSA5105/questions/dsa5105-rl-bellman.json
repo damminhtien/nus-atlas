@@ -1,0 +1,75 @@
+[
+  {
+    "id": "dsa5105-rl-q1",
+    "type": "derivation",
+    "prompt": "Write the policy Bellman equation for a state value $V^\\pi(s)$.",
+    "accepted": [
+      "expected reward plus gamma expected next value",
+      "v pi s equals expectation r plus gamma v pi s prime",
+      "sum over actions and next states"
+    ],
+    "solution": "$V^\\pi(s)=\\sum_a\\pi(a\\mid s)\\sum_{s',r}p(s',r\\mid s,a)\\left[r+\\gamma V^\\pi(s')\\right]$.",
+    "explanation": "Include policy weighting, transition/reward dynamics, immediate reward, and discounted continuation value.",
+    "sourceRefs": [
+      {
+        "sourceId": "DSA5105/Textbook.pdf",
+        "page": 108,
+        "sourceType": "textbook",
+        "role": "policy Bellman equation",
+        "status": "course-depth"
+      }
+    ],
+    "courseId": "DSA5105",
+    "lessonId": "dsa5105-rl-bellman",
+    "schemaVersion": "nus.question.v1"
+  },
+  {
+    "id": "dsa5105-rl-q2",
+    "type": "mcq",
+    "prompt": "Which approach learns a transition/reward model explicitly before planning?",
+    "choices": [
+      "Model-based RL",
+      "Purely model-free RL",
+      "Nearest-neighbor classification",
+      "PCA"
+    ],
+    "answer": 0,
+    "explanation": "Model-based methods estimate or use dynamics and rewards to plan; model-free methods learn values or policies without an explicit model.",
+    "sourceRefs": [
+      {
+        "sourceId": "DSA5105/syllabus.pdf",
+        "page": 1,
+        "sourceType": "lecture",
+        "role": "RL scope",
+        "status": "current"
+      }
+    ],
+    "courseId": "DSA5105",
+    "lessonId": "dsa5105-rl-bellman",
+    "schemaVersion": "nus.question.v1"
+  },
+  {
+    "id": "dsa5105-rl-q3",
+    "type": "short",
+    "prompt": "What happens to the weight $\\gamma^k$ of a reward $k$ steps in the future as $\\gamma$ becomes smaller?",
+    "accepted": [
+      "they are discounted more",
+      "far future rewards matter less",
+      "future rewards receive lower weight"
+    ],
+    "solution": "Far-future rewards receive less weight because $\\gamma^k$ decreases for $k>0$, so the agent becomes more short-term oriented.",
+    "explanation": "The immediate reward has exponent $0$ and weight $\\gamma^0=1$; later rewards are discounted.",
+    "sourceRefs": [
+      {
+        "sourceId": "DSA5105/Ref/Reinforcement_Learning_an_Introduction.pdf",
+        "page": 1,
+        "sourceType": "ref",
+        "role": "discounted return",
+        "status": "optional"
+      }
+    ],
+    "courseId": "DSA5105",
+    "lessonId": "dsa5105-rl-bellman",
+    "schemaVersion": "nus.question.v1"
+  }
+]

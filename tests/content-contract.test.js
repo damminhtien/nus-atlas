@@ -1,12 +1,19 @@
 const test = require("node:test");
 const assert = require("node:assert/strict");
-const { loadLegacyState, validateContentState } = require("../scripts/validate-content");
+const { loadLegacyState, validateContentState, validatePackageDirectory } = require("../scripts/validate-content");
 
 test("legacy NUS data satisfies the content contract", () => {
   const result = validateContentState(loadLegacyState());
   assert.equal(result.ok, true, result.errors.join("\n"));
   assert.ok(result.counts.lessons > 0);
   assert.ok(result.counts.questions > 0);
+});
+
+test("normalized course packages satisfy the package contract", () => {
+  const result = validatePackageDirectory();
+  assert.equal(result.ok, true, result.errors.join("\n"));
+  assert.equal(result.counts.courses, 1);
+  assert.ok(result.counts.lessons > 0);
 });
 
 test("content contract reports duplicate lesson IDs", () => {

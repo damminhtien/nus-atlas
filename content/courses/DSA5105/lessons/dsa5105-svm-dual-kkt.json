@@ -1,0 +1,673 @@
+{
+  "id": "dsa5105-svm-dual-kkt",
+  "title": "SVM duality, KKT conditions, and support vectors",
+  "week": 3,
+  "minutes": 90,
+  "summary": "Derive the hard-margin SVM dual, read support vectors from KKT, and extend the geometry to kernels and soft margins.",
+  "objectives": [
+    "Explain the margin normalization",
+    "Derive the SVM dual constraints",
+    "Use KKT to identify support vectors",
+    "Recognize the kernelized prediction rule"
+  ],
+  "sourceRefs": [
+    {
+      "sourceId": "DSA5105/Lec1.pdf",
+      "page": 31,
+      "sourceType": "lecture",
+      "role": "kernel and margin overview",
+      "status": "current"
+    },
+    {
+      "sourceId": "DSA5105/Textbook.pdf",
+      "page": 30,
+      "sourceType": "textbook",
+      "role": "SVM margin",
+      "status": "course-depth"
+    },
+    {
+      "sourceId": "DSA5105/Textbook.pdf",
+      "page": 32,
+      "sourceType": "textbook",
+      "role": "Lagrangian and KKT",
+      "status": "course-depth"
+    },
+    {
+      "sourceId": "DSA5105/Textbook.pdf",
+      "page": 34,
+      "sourceType": "textbook",
+      "role": "SVM dual",
+      "status": "course-depth"
+    },
+    {
+      "sourceId": "DSA5105/Textbook.pdf",
+      "page": 35,
+      "sourceType": "textbook",
+      "role": "kernel SVM",
+      "status": "course-depth"
+    },
+    {
+      "sourceId": "DSA5105/Ref/document.pdf",
+      "page": 4,
+      "sourceType": "ref",
+      "role": "past-exam SVM and KKT alignment",
+      "status": "assessment-derived"
+    }
+  ],
+  "visualIds": [
+    "dsa5105-svm-dual-kkt"
+  ],
+  "sections": [
+    {
+      "title": "Lecture core · Margin and scale",
+      "body": "For labels $y_i\\in\\{-1,+1\\}$, a separating hyperplane can be rescaled without changing the boundary. SVM fixes the scale by requiring $y_i(w^\\top x_i+b)\\ge1$. The closest points then have geometric margin $1/\\lVert w\\rVert$, so minimizing $\\frac12\\lVert w\\rVert^2$ maximizes the margin.",
+      "sourceType": "lecture",
+      "math": {
+        "latex": "\\min_{w,b}\\frac12\\lVert w\\rVert_2^2\\quad\\text{s.t.}\\quad y_i(w^\\top x_i+b)\\ge1",
+        "explanation": "The constraints place positive examples on or beyond one side of the normalized boundary and negative examples on the other. The objective prefers the widest feasible separator.",
+        "symbols": [
+          {
+            "latex": "w",
+            "meaning": "normal vector of the separating hyperplane"
+          },
+          {
+            "latex": "b",
+            "meaning": "bias"
+          },
+          {
+            "latex": "y_i",
+            "meaning": "signed class label"
+          }
+        ],
+        "sourceType": "lecture"
+      }
+    },
+    {
+      "title": "Textbook depth · Lagrangian and stationarity",
+      "body": "Attach a multiplier $\\alpha_i\\ge0$ to each inequality. Differentiating the Lagrangian with respect to $w$ and $b$ gives $w=\\sum_i\\alpha_i y_i x_i$ and $\\sum_i\\alpha_i y_i=0$. Substituting back removes $w$ and exposes a quadratic program in the multipliers.",
+      "sourceType": "textbook",
+      "math": {
+        "latex": "\\max_{\\alpha\\ge0}\\;\\sum_i\\alpha_i-\\frac12\\sum_{i,j}\\alpha_i\\alpha_jy_iy_jx_i^\\top x_j\\quad\\text{s.t.}\\quad\\sum_i\\alpha_iy_i=0",
+        "explanation": "The equality constraint is the bias-stationarity condition. It says the total multiplier mass on positive and negative labels must balance.",
+        "symbols": [
+          {
+            "latex": "\\alpha_i",
+            "meaning": "constraint multiplier"
+          },
+          {
+            "latex": "x_i^\\top x_j",
+            "meaning": "pairwise input inner product"
+          }
+        ],
+        "sourceType": "textbook"
+      }
+    },
+    {
+      "title": "Textbook depth · KKT and support vectors",
+      "body": "KKT combines primal feasibility, dual feasibility, stationarity, and complementary slackness. For the hard-margin problem, $\\alpha_i>0$ implies the point is active at the margin: $y_i(w^\\top x_i+b)=1$. These active points are support vectors; points strictly outside the margin have $\\alpha_i=0$.",
+      "sourceType": "textbook",
+      "math": {
+        "latex": "\\alpha_i\\left[y_i(w^\\top x_i+b)-1\\right]=0",
+        "explanation": "A non-zero multiplier can only occur when its inequality is tight. The support vectors determine the solution through the weighted expansion of $w$.",
+        "symbols": [
+          {
+            "latex": "\\alpha_i>0",
+            "meaning": "active constraint"
+          },
+          {
+            "latex": "y_i(w^\\top x_i+b)=1",
+            "meaning": "margin equality"
+          }
+        ],
+        "sourceType": "textbook"
+      }
+    },
+    {
+      "title": "Textbook depth · Kernel and soft-margin extension",
+      "body": "Replace $x_i^\\top x_j$ with a positive-semidefinite kernel $k(x_i,x_j)$ to obtain a nonlinear boundary in the original input space. With slack variables, the box constraint becomes $0\\le\\alpha_i\\le C$; $C$ controls the tradeoff between margin width and violations.",
+      "sourceType": "textbook",
+      "math": {
+        "latex": "f(x)=\\sum_i\\alpha_i y_i k(x_i,x)+b",
+        "explanation": "The prediction depends on kernel similarities to support vectors. Kernel validity matters because the dual quadratic form should preserve the intended convex geometry.",
+        "symbols": [
+          {
+            "latex": "k",
+            "meaning": "kernel function"
+          },
+          {
+            "latex": "C",
+            "meaning": "soft-margin penalty"
+          }
+        ],
+        "sourceType": "textbook"
+      }
+    },
+    {
+      "title": "Assessment habit · Read the alpha pattern",
+      "body": "If the labels are +1 and -1, the dual equality says the positive alpha sum equals the negative alpha sum. A candidate alpha vector that violates this is infeasible even if every alpha is non-negative. First check equality and bounds, then inspect which points have non-zero multipliers.",
+      "sourceType": "ref"
+    }
+  ],
+  "examples": [
+    {
+      "title": "Feasibility check",
+      "steps": [
+        "Suppose positive-label multipliers are 2 and 1, while the negative-label multipliers are 1.5 and 1.5.",
+        "All multipliers are non-negative and the positive and negative sums are both 3.",
+        "Therefore the bias equality is satisfied. If C is finite, also check that every multiplier is at most C."
+      ],
+      "answer": "The dual equality is a balance condition, not a requirement that all alpha values be equal.",
+      "sourceType": "textbook"
+    },
+    {
+      "title": "Identify support vectors",
+      "steps": [
+        "Compute or inspect each margin value m_i = y_i(w^T x_i+b).",
+        "Points with m_i=1 can carry alpha_i>0; points with m_i>1 must have alpha_i=0 in the hard-margin case.",
+        "In a soft-margin problem, points inside the margin or misclassified can also be active, subject to the box constraint."
+      ],
+      "answer": "Support vectors are active constraints, not simply the closest points by visual distance before the hyperplane is normalized.",
+      "sourceType": "textbook"
+    }
+  ],
+  "criticalQuestions": [
+    {
+      "prompt": "Why does the dual contain pairwise inner products?",
+      "focus": "kernel trick",
+      "angle": "eliminate w using stationarity",
+      "modelAnswer": "Stationarity writes w as a weighted sum of training vectors. Substituting this expansion into the norm produces x_i^T x_j terms, which can be replaced by a valid kernel."
+    },
+    {
+      "prompt": "What does complementary slackness tell you operationally?",
+      "focus": "support vectors",
+      "angle": "connect alpha to margin equality",
+      "modelAnswer": "A non-zero alpha means the corresponding margin constraint is tight. Those points remain in the prediction expansion; strictly separated points have zero alpha in the hard-margin case."
+    }
+  ],
+  "courseId": "DSA5105",
+  "moduleId": "dsa5105-exam-core",
+  "blocks": [
+    {
+      "id": "dsa5105-svm-dual-kkt-section-1",
+      "type": "teaching-note",
+      "title": "Lecture core · Margin and scale",
+      "body": "For labels $y_i\\in\\{-1,+1\\}$, a separating hyperplane can be rescaled without changing the boundary. SVM fixes the scale by requiring $y_i(w^\\top x_i+b)\\ge1$. The closest points then have geometric margin $1/\\lVert w\\rVert$, so minimizing $\\frac12\\lVert w\\rVert^2$ maximizes the margin.",
+      "sourceType": "lecture",
+      "sourceRefs": [
+        {
+          "sourceId": "DSA5105/Lec1.pdf",
+          "page": 31,
+          "sourceType": "lecture",
+          "role": "kernel and margin overview",
+          "status": "current"
+        },
+        {
+          "sourceId": "DSA5105/Textbook.pdf",
+          "page": 30,
+          "sourceType": "textbook",
+          "role": "SVM margin",
+          "status": "course-depth"
+        },
+        {
+          "sourceId": "DSA5105/Textbook.pdf",
+          "page": 32,
+          "sourceType": "textbook",
+          "role": "Lagrangian and KKT",
+          "status": "course-depth"
+        },
+        {
+          "sourceId": "DSA5105/Textbook.pdf",
+          "page": 34,
+          "sourceType": "textbook",
+          "role": "SVM dual",
+          "status": "course-depth"
+        },
+        {
+          "sourceId": "DSA5105/Textbook.pdf",
+          "page": 35,
+          "sourceType": "textbook",
+          "role": "kernel SVM",
+          "status": "course-depth"
+        },
+        {
+          "sourceId": "DSA5105/Ref/document.pdf",
+          "page": 4,
+          "sourceType": "ref",
+          "role": "past-exam SVM and KKT alignment",
+          "status": "assessment-derived"
+        }
+      ]
+    },
+    {
+      "id": "dsa5105-svm-dual-kkt-section-2",
+      "type": "teaching-note",
+      "title": "Textbook depth · Lagrangian and stationarity",
+      "body": "Attach a multiplier $\\alpha_i\\ge0$ to each inequality. Differentiating the Lagrangian with respect to $w$ and $b$ gives $w=\\sum_i\\alpha_i y_i x_i$ and $\\sum_i\\alpha_i y_i=0$. Substituting back removes $w$ and exposes a quadratic program in the multipliers.",
+      "sourceType": "textbook",
+      "sourceRefs": [
+        {
+          "sourceId": "DSA5105/Lec1.pdf",
+          "page": 31,
+          "sourceType": "lecture",
+          "role": "kernel and margin overview",
+          "status": "current"
+        },
+        {
+          "sourceId": "DSA5105/Textbook.pdf",
+          "page": 30,
+          "sourceType": "textbook",
+          "role": "SVM margin",
+          "status": "course-depth"
+        },
+        {
+          "sourceId": "DSA5105/Textbook.pdf",
+          "page": 32,
+          "sourceType": "textbook",
+          "role": "Lagrangian and KKT",
+          "status": "course-depth"
+        },
+        {
+          "sourceId": "DSA5105/Textbook.pdf",
+          "page": 34,
+          "sourceType": "textbook",
+          "role": "SVM dual",
+          "status": "course-depth"
+        },
+        {
+          "sourceId": "DSA5105/Textbook.pdf",
+          "page": 35,
+          "sourceType": "textbook",
+          "role": "kernel SVM",
+          "status": "course-depth"
+        },
+        {
+          "sourceId": "DSA5105/Ref/document.pdf",
+          "page": 4,
+          "sourceType": "ref",
+          "role": "past-exam SVM and KKT alignment",
+          "status": "assessment-derived"
+        }
+      ]
+    },
+    {
+      "id": "dsa5105-svm-dual-kkt-section-3",
+      "type": "teaching-note",
+      "title": "Textbook depth · KKT and support vectors",
+      "body": "KKT combines primal feasibility, dual feasibility, stationarity, and complementary slackness. For the hard-margin problem, $\\alpha_i>0$ implies the point is active at the margin: $y_i(w^\\top x_i+b)=1$. These active points are support vectors; points strictly outside the margin have $\\alpha_i=0$.",
+      "sourceType": "textbook",
+      "sourceRefs": [
+        {
+          "sourceId": "DSA5105/Lec1.pdf",
+          "page": 31,
+          "sourceType": "lecture",
+          "role": "kernel and margin overview",
+          "status": "current"
+        },
+        {
+          "sourceId": "DSA5105/Textbook.pdf",
+          "page": 30,
+          "sourceType": "textbook",
+          "role": "SVM margin",
+          "status": "course-depth"
+        },
+        {
+          "sourceId": "DSA5105/Textbook.pdf",
+          "page": 32,
+          "sourceType": "textbook",
+          "role": "Lagrangian and KKT",
+          "status": "course-depth"
+        },
+        {
+          "sourceId": "DSA5105/Textbook.pdf",
+          "page": 34,
+          "sourceType": "textbook",
+          "role": "SVM dual",
+          "status": "course-depth"
+        },
+        {
+          "sourceId": "DSA5105/Textbook.pdf",
+          "page": 35,
+          "sourceType": "textbook",
+          "role": "kernel SVM",
+          "status": "course-depth"
+        },
+        {
+          "sourceId": "DSA5105/Ref/document.pdf",
+          "page": 4,
+          "sourceType": "ref",
+          "role": "past-exam SVM and KKT alignment",
+          "status": "assessment-derived"
+        }
+      ]
+    },
+    {
+      "id": "dsa5105-svm-dual-kkt-section-4",
+      "type": "teaching-note",
+      "title": "Textbook depth · Kernel and soft-margin extension",
+      "body": "Replace $x_i^\\top x_j$ with a positive-semidefinite kernel $k(x_i,x_j)$ to obtain a nonlinear boundary in the original input space. With slack variables, the box constraint becomes $0\\le\\alpha_i\\le C$; $C$ controls the tradeoff between margin width and violations.",
+      "sourceType": "textbook",
+      "sourceRefs": [
+        {
+          "sourceId": "DSA5105/Lec1.pdf",
+          "page": 31,
+          "sourceType": "lecture",
+          "role": "kernel and margin overview",
+          "status": "current"
+        },
+        {
+          "sourceId": "DSA5105/Textbook.pdf",
+          "page": 30,
+          "sourceType": "textbook",
+          "role": "SVM margin",
+          "status": "course-depth"
+        },
+        {
+          "sourceId": "DSA5105/Textbook.pdf",
+          "page": 32,
+          "sourceType": "textbook",
+          "role": "Lagrangian and KKT",
+          "status": "course-depth"
+        },
+        {
+          "sourceId": "DSA5105/Textbook.pdf",
+          "page": 34,
+          "sourceType": "textbook",
+          "role": "SVM dual",
+          "status": "course-depth"
+        },
+        {
+          "sourceId": "DSA5105/Textbook.pdf",
+          "page": 35,
+          "sourceType": "textbook",
+          "role": "kernel SVM",
+          "status": "course-depth"
+        },
+        {
+          "sourceId": "DSA5105/Ref/document.pdf",
+          "page": 4,
+          "sourceType": "ref",
+          "role": "past-exam SVM and KKT alignment",
+          "status": "assessment-derived"
+        }
+      ]
+    },
+    {
+      "id": "dsa5105-svm-dual-kkt-section-5",
+      "type": "teaching-note",
+      "title": "Assessment habit · Read the alpha pattern",
+      "body": "If the labels are +1 and -1, the dual equality says the positive alpha sum equals the negative alpha sum. A candidate alpha vector that violates this is infeasible even if every alpha is non-negative. First check equality and bounds, then inspect which points have non-zero multipliers.",
+      "sourceType": "ref",
+      "sourceRefs": [
+        {
+          "sourceId": "DSA5105/Lec1.pdf",
+          "page": 31,
+          "sourceType": "lecture",
+          "role": "kernel and margin overview",
+          "status": "current"
+        },
+        {
+          "sourceId": "DSA5105/Textbook.pdf",
+          "page": 30,
+          "sourceType": "textbook",
+          "role": "SVM margin",
+          "status": "course-depth"
+        },
+        {
+          "sourceId": "DSA5105/Textbook.pdf",
+          "page": 32,
+          "sourceType": "textbook",
+          "role": "Lagrangian and KKT",
+          "status": "course-depth"
+        },
+        {
+          "sourceId": "DSA5105/Textbook.pdf",
+          "page": 34,
+          "sourceType": "textbook",
+          "role": "SVM dual",
+          "status": "course-depth"
+        },
+        {
+          "sourceId": "DSA5105/Textbook.pdf",
+          "page": 35,
+          "sourceType": "textbook",
+          "role": "kernel SVM",
+          "status": "course-depth"
+        },
+        {
+          "sourceId": "DSA5105/Ref/document.pdf",
+          "page": 4,
+          "sourceType": "ref",
+          "role": "past-exam SVM and KKT alignment",
+          "status": "assessment-derived"
+        }
+      ]
+    },
+    {
+      "id": "dsa5105-svm-dual-kkt-example-1",
+      "type": "worked-example",
+      "title": "Feasibility check",
+      "steps": [
+        "Suppose positive-label multipliers are 2 and 1, while the negative-label multipliers are 1.5 and 1.5.",
+        "All multipliers are non-negative and the positive and negative sums are both 3.",
+        "Therefore the bias equality is satisfied. If C is finite, also check that every multiplier is at most C."
+      ],
+      "answer": "The dual equality is a balance condition, not a requirement that all alpha values be equal.",
+      "sourceType": "textbook",
+      "sourceRefs": [
+        {
+          "sourceId": "DSA5105/Lec1.pdf",
+          "page": 31,
+          "sourceType": "lecture",
+          "role": "kernel and margin overview",
+          "status": "current"
+        },
+        {
+          "sourceId": "DSA5105/Textbook.pdf",
+          "page": 30,
+          "sourceType": "textbook",
+          "role": "SVM margin",
+          "status": "course-depth"
+        },
+        {
+          "sourceId": "DSA5105/Textbook.pdf",
+          "page": 32,
+          "sourceType": "textbook",
+          "role": "Lagrangian and KKT",
+          "status": "course-depth"
+        },
+        {
+          "sourceId": "DSA5105/Textbook.pdf",
+          "page": 34,
+          "sourceType": "textbook",
+          "role": "SVM dual",
+          "status": "course-depth"
+        },
+        {
+          "sourceId": "DSA5105/Textbook.pdf",
+          "page": 35,
+          "sourceType": "textbook",
+          "role": "kernel SVM",
+          "status": "course-depth"
+        },
+        {
+          "sourceId": "DSA5105/Ref/document.pdf",
+          "page": 4,
+          "sourceType": "ref",
+          "role": "past-exam SVM and KKT alignment",
+          "status": "assessment-derived"
+        }
+      ]
+    },
+    {
+      "id": "dsa5105-svm-dual-kkt-example-2",
+      "type": "worked-example",
+      "title": "Identify support vectors",
+      "steps": [
+        "Compute or inspect each margin value m_i = y_i(w^T x_i+b).",
+        "Points with m_i=1 can carry alpha_i>0; points with m_i>1 must have alpha_i=0 in the hard-margin case.",
+        "In a soft-margin problem, points inside the margin or misclassified can also be active, subject to the box constraint."
+      ],
+      "answer": "Support vectors are active constraints, not simply the closest points by visual distance before the hyperplane is normalized.",
+      "sourceType": "textbook",
+      "sourceRefs": [
+        {
+          "sourceId": "DSA5105/Lec1.pdf",
+          "page": 31,
+          "sourceType": "lecture",
+          "role": "kernel and margin overview",
+          "status": "current"
+        },
+        {
+          "sourceId": "DSA5105/Textbook.pdf",
+          "page": 30,
+          "sourceType": "textbook",
+          "role": "SVM margin",
+          "status": "course-depth"
+        },
+        {
+          "sourceId": "DSA5105/Textbook.pdf",
+          "page": 32,
+          "sourceType": "textbook",
+          "role": "Lagrangian and KKT",
+          "status": "course-depth"
+        },
+        {
+          "sourceId": "DSA5105/Textbook.pdf",
+          "page": 34,
+          "sourceType": "textbook",
+          "role": "SVM dual",
+          "status": "course-depth"
+        },
+        {
+          "sourceId": "DSA5105/Textbook.pdf",
+          "page": 35,
+          "sourceType": "textbook",
+          "role": "kernel SVM",
+          "status": "course-depth"
+        },
+        {
+          "sourceId": "DSA5105/Ref/document.pdf",
+          "page": 4,
+          "sourceType": "ref",
+          "role": "past-exam SVM and KKT alignment",
+          "status": "assessment-derived"
+        }
+      ]
+    },
+    {
+      "id": "dsa5105-svm-dual-kkt-critical-1",
+      "type": "critical-question",
+      "prompt": "Why does the dual contain pairwise inner products?",
+      "focus": "kernel trick",
+      "angle": "eliminate w using stationarity",
+      "modelAnswer": "Stationarity writes w as a weighted sum of training vectors. Substituting this expansion into the norm produces x_i^T x_j terms, which can be replaced by a valid kernel.",
+      "sourceRefs": [
+        {
+          "sourceId": "DSA5105/Lec1.pdf",
+          "page": 31,
+          "sourceType": "lecture",
+          "role": "kernel and margin overview",
+          "status": "current"
+        },
+        {
+          "sourceId": "DSA5105/Textbook.pdf",
+          "page": 30,
+          "sourceType": "textbook",
+          "role": "SVM margin",
+          "status": "course-depth"
+        },
+        {
+          "sourceId": "DSA5105/Textbook.pdf",
+          "page": 32,
+          "sourceType": "textbook",
+          "role": "Lagrangian and KKT",
+          "status": "course-depth"
+        },
+        {
+          "sourceId": "DSA5105/Textbook.pdf",
+          "page": 34,
+          "sourceType": "textbook",
+          "role": "SVM dual",
+          "status": "course-depth"
+        },
+        {
+          "sourceId": "DSA5105/Textbook.pdf",
+          "page": 35,
+          "sourceType": "textbook",
+          "role": "kernel SVM",
+          "status": "course-depth"
+        },
+        {
+          "sourceId": "DSA5105/Ref/document.pdf",
+          "page": 4,
+          "sourceType": "ref",
+          "role": "past-exam SVM and KKT alignment",
+          "status": "assessment-derived"
+        }
+      ]
+    },
+    {
+      "id": "dsa5105-svm-dual-kkt-critical-2",
+      "type": "critical-question",
+      "prompt": "What does complementary slackness tell you operationally?",
+      "focus": "support vectors",
+      "angle": "connect alpha to margin equality",
+      "modelAnswer": "A non-zero alpha means the corresponding margin constraint is tight. Those points remain in the prediction expansion; strictly separated points have zero alpha in the hard-margin case.",
+      "sourceRefs": [
+        {
+          "sourceId": "DSA5105/Lec1.pdf",
+          "page": 31,
+          "sourceType": "lecture",
+          "role": "kernel and margin overview",
+          "status": "current"
+        },
+        {
+          "sourceId": "DSA5105/Textbook.pdf",
+          "page": 30,
+          "sourceType": "textbook",
+          "role": "SVM margin",
+          "status": "course-depth"
+        },
+        {
+          "sourceId": "DSA5105/Textbook.pdf",
+          "page": 32,
+          "sourceType": "textbook",
+          "role": "Lagrangian and KKT",
+          "status": "course-depth"
+        },
+        {
+          "sourceId": "DSA5105/Textbook.pdf",
+          "page": 34,
+          "sourceType": "textbook",
+          "role": "SVM dual",
+          "status": "course-depth"
+        },
+        {
+          "sourceId": "DSA5105/Textbook.pdf",
+          "page": 35,
+          "sourceType": "textbook",
+          "role": "kernel SVM",
+          "status": "course-depth"
+        },
+        {
+          "sourceId": "DSA5105/Ref/document.pdf",
+          "page": 4,
+          "sourceType": "ref",
+          "role": "past-exam SVM and KKT alignment",
+          "status": "assessment-derived"
+        }
+      ]
+    }
+  ],
+  "questionIds": [
+    "dsa5105-svm-dual-q1",
+    "dsa5105-svm-dual-q2",
+    "dsa5105-svm-dual-q3",
+    "dsa5105-svm-dual-q4",
+    "dsa5105-svm-dual-q5"
+  ],
+  "labIds": [
+    "dsa5105-svm-dual-kkt"
+  ],
+  "schemaVersion": "nus.lesson.v1"
+}

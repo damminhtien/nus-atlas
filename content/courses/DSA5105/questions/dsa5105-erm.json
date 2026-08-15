@@ -1,0 +1,99 @@
+[
+  {
+    "id": "dsa5105-e-q1",
+    "type": "mcq",
+    "prompt": "Which split should be used to choose a polynomial degree or regularization strength?",
+    "choices": [
+      "Validation",
+      "Test",
+      "Only the first training example",
+      "A split chosen after looking at the final score"
+    ],
+    "answer": 0,
+    "explanation": "Validation data supports model selection; the test set should remain untouched until the final estimate.",
+    "sourceRefs": [
+      {
+        "sourceId": "DSA5105/Ref/week1_DSA5105_lecture1_with_note.pdf",
+        "page": 23,
+        "sourceType": "lecture",
+        "role": "evaluation split",
+        "status": "current"
+      }
+    ],
+    "courseId": "DSA5105",
+    "lessonId": "dsa5105-erm",
+    "schemaVersion": "nus.question.v1"
+  },
+  {
+    "id": "dsa5105-e-q2",
+    "type": "derivation",
+    "prompt": "Write the empirical risk minimization objective in words.",
+    "accepted": [
+      "minimize average loss over training examples",
+      "minimize empirical risk",
+      "minimize the average training loss"
+    ],
+    "solution": "Choose a hypothesis that minimizes the average loss over the observed training examples, optionally with a separate regularization term.",
+    "explanation": "The essential phrase is average loss on the observed sample; it is not the same as a population-risk guarantee.",
+    "sourceRefs": [
+      {
+        "sourceId": "DSA5105/Ref/week1_DSA5105_lecture1_with_note.pdf",
+        "page": 29,
+        "sourceType": "lecture",
+        "role": "ERM framing",
+        "status": "current"
+      }
+    ],
+    "courseId": "DSA5105",
+    "lessonId": "dsa5105-erm",
+    "schemaVersion": "nus.question.v1"
+  },
+  {
+    "id": "dsa5105-e-q3",
+    "type": "short",
+    "prompt": "Name the three questions in the Week 1 supervised-learning paradigm.",
+    "accepted": [
+      "approximation optimization generalization",
+      "approximation, optimization, and generalization",
+      "can the class represent it, can we optimize it, does it generalize"
+    ],
+    "solution": "Ask whether the hypothesis space is expressive enough, whether the optimization finds a good hypothesis, and whether that hypothesis works on unseen examples.",
+    "explanation": "The three labels separate modeling capacity, computation, and statistical reliability.",
+    "sourceRefs": [
+      {
+        "sourceId": "DSA5105/Ref/week1_DSA5105_lecture1_with_note.pdf",
+        "page": 31,
+        "sourceType": "lecture",
+        "role": "three paradigms",
+        "status": "current"
+      }
+    ],
+    "courseId": "DSA5105",
+    "lessonId": "dsa5105-erm",
+    "schemaVersion": "nus.question.v1"
+  },
+  {
+    "id": "dsa5105-e-q4",
+    "type": "short",
+    "prompt": "What is the difference between a deterministic and a random oracle?",
+    "accepted": [
+      "deterministic maps x to one y; random samples y from p star given x",
+      "deterministic y=f star x and random y sampled conditionally",
+      "random oracle allows noisy labels"
+    ],
+    "solution": "A deterministic oracle assigns y_i = f*(x_i). A random oracle describes a conditional distribution p*(· | x_i), or equivalently a target function plus noise in a regression view.",
+    "explanation": "The oracle is the unknown data-generating relationship; the observed label is one sample from it.",
+    "sourceRefs": [
+      {
+        "sourceId": "DSA5105/Ref/week1_DSA5105_lecture1_with_note.pdf",
+        "page": 26,
+        "sourceType": "lecture",
+        "role": "deterministic and random oracle",
+        "status": "current"
+      }
+    ],
+    "courseId": "DSA5105",
+    "lessonId": "dsa5105-erm",
+    "schemaVersion": "nus.question.v1"
+  }
+]

@@ -1,0 +1,51 @@
+[
+  {
+    "id": "dsa5105-gnn-q1",
+    "type": "short",
+    "prompt": "Why should neighbor aggregation be permutation invariant?",
+    "accepted": [
+      "node order has no meaning in a graph",
+      "reordering neighbors should not change output",
+      "graphs are not ordered sequences"
+    ],
+    "solution": "Neighbor order is arbitrary, so reordering the same neighborhood should produce the same updated node representation.",
+    "explanation": "The property makes the layer compatible with graph sets rather than sequence positions.",
+    "sourceRefs": [
+      {
+        "sourceId": "DSA5105/Ref/Chapter3_Graph_Neural_Networks.pdf",
+        "page": 1,
+        "sourceType": "ref",
+        "role": "permutation invariance",
+        "status": "optional"
+      }
+    ],
+    "courseId": "DSA5105",
+    "lessonId": "dsa5105-gnn",
+    "schemaVersion": "nus.question.v1"
+  },
+  {
+    "id": "dsa5105-gnn-q2",
+    "type": "mcq",
+    "prompt": "What is a common risk of stacking many message-passing layers?",
+    "choices": [
+      "Oversmoothing",
+      "Guaranteed perfect separation",
+      "Removal of all graph edges",
+      "No trainable parameters"
+    ],
+    "answer": 0,
+    "explanation": "Repeated local mixing can make node embeddings indistinguishable, a phenomenon commonly called oversmoothing.",
+    "sourceRefs": [
+      {
+        "sourceId": "DSA5105/Ref/Chapter3_Graph_Neural_Networks.pdf",
+        "page": 1,
+        "sourceType": "ref",
+        "role": "depth risk",
+        "status": "optional"
+      }
+    ],
+    "courseId": "DSA5105",
+    "lessonId": "dsa5105-gnn",
+    "schemaVersion": "nus.question.v1"
+  }
+]

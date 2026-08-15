@@ -1,0 +1,266 @@
+{
+  "id": "dsa5105-rl-gnn",
+  "title": "Bellman reasoning and graph learning",
+  "week": 10,
+  "minutes": 60,
+  "summary": "Use Bellman recursion to make sequential decisions and message passing to exploit graph structure.",
+  "objectives": [
+    "Write a one-step Bellman backup",
+    "Distinguish model-based and model-free RL",
+    "Explain neighborhood aggregation in a GNN"
+  ],
+  "sourceRefs": [
+    {
+      "sourceId": "DSA5105/syllabus.pdf",
+      "page": 1,
+      "sourceType": "lecture",
+      "role": "current scope",
+      "status": "current"
+    },
+    {
+      "sourceId": "DSA5105/Ref/Chapter3_Graph_Neural_Networks.pdf",
+      "page": 1,
+      "sourceType": "ref",
+      "role": "optional GNN reading",
+      "status": "optional"
+    }
+  ],
+  "visualIds": [],
+  "sections": [
+    {
+      "title": "Lecture core · Bellman backup",
+      "body": "A one-step backup combines the reward received now with a discounted estimate of what can be achieved from the next state. The optimality version chooses the best next action; the policy version averages according to the current policy.",
+      "sourceType": "lecture",
+      "math": {
+        "latex": "Q^*(s,a)=r+\\gamma\\max_{a'}Q^*(s',a')",
+        "explanation": "Start with the immediate reward $r$. Then look at the next state and take the largest available action value. The discount $gamma$ controls how much that future estimate contributes to the target.",
+        "symbols": [
+          {
+            "latex": "Q^*(s,a)",
+            "meaning": "optimal value of taking action $a$ in state $s$"
+          },
+          {
+            "latex": "r",
+            "meaning": "immediate reward"
+          },
+          {
+            "latex": "\\gamma",
+            "meaning": "discount factor"
+          }
+        ],
+        "sourceType": "lecture"
+      }
+    },
+    {
+      "title": "Reference depth · Message passing",
+      "body": "A GNN updates a node by transforming neighboring representations, aggregating that summary with a permutation-invariant operation, and combining it with the node’s own state. The graph edge structure is the source of locality.",
+      "sourceType": "ref",
+      "math": {
+        "latex": "h_v'=\\sigma\\!\\left(W_0h_v+\\operatorname{AGG}_{u\\in N(v)}W_1h_u\\right)",
+        "explanation": "The self-state contribution and the aggregated neighbor message are combined, then passed through a learnable nonlinearity. The aggregator must not depend on the arbitrary order in which neighbors are listed.",
+        "symbols": [
+          {
+            "latex": "h_v",
+            "meaning": "current representation of node $v$"
+          },
+          {
+            "latex": "N(v)",
+            "meaning": "neighbors of $v$"
+          },
+          {
+            "latex": "\\operatorname{AGG}",
+            "meaning": "permutation-invariant aggregation"
+          }
+        ],
+        "sourceType": "ref"
+      }
+    },
+    {
+      "title": "Bridge, not equivalence",
+      "body": "RL propagates values over possible state transitions; a GNN propagates representations over observed graph edges. The shared pattern is local information flow, not a claim that the two algorithms solve the same objective.",
+      "sourceType": "lecture"
+    }
+  ],
+  "examples": [
+    {
+      "title": "Worked example: one-step Q backup",
+      "steps": [
+        "A transition gives reward $r=2$, discount $\\gamma=0.9$, and the next-state action values are $4$ and $1$.",
+        "Choose the larger next value: $\\max(4,1)=4$.",
+        "The target is $2+0.9\\times4=5.6$. A Q-learning update moves the current estimate toward this target."
+      ],
+      "answer": "The backup is immediate reward plus discounted best continuation value.",
+      "sourceType": "lecture"
+    }
+  ],
+  "math": [],
+  "criticalQuestions": [
+    {
+      "prompt": "What is the common structure between a Bellman backup and a GNN layer, and where does the analogy stop?",
+      "angle": "Identify local information propagation without claiming identical objectives.",
+      "modelAnswer": "Both propagate information from a local neighborhood: next states for RL, graph neighbors for GNNs. RL optimizes expected return; a GNN optimizes a task loss over representations.",
+      "focus": "analogy"
+    },
+    {
+      "prompt": "What evidence would show that the analogy is misleading for a design decision?",
+      "angle": "Compare the data source, optimization target, and update semantics instead of matching equations by shape.",
+      "modelAnswer": "If the task needs a policy over actions and delayed rewards, a GNN layer alone is not an RL solution. Similar local aggregation does not supply the reward objective or control loop.",
+      "focus": "boundary"
+    }
+  ],
+  "courseId": "DSA5105",
+  "moduleId": "dsa5105-advanced",
+  "blocks": [
+    {
+      "id": "dsa5105-rl-gnn-section-1",
+      "type": "teaching-note",
+      "title": "Lecture core · Bellman backup",
+      "body": "A one-step backup combines the reward received now with a discounted estimate of what can be achieved from the next state. The optimality version chooses the best next action; the policy version averages according to the current policy.",
+      "sourceType": "lecture",
+      "sourceRefs": [
+        {
+          "sourceId": "DSA5105/syllabus.pdf",
+          "page": 1,
+          "sourceType": "lecture",
+          "role": "current scope",
+          "status": "current"
+        },
+        {
+          "sourceId": "DSA5105/Ref/Chapter3_Graph_Neural_Networks.pdf",
+          "page": 1,
+          "sourceType": "ref",
+          "role": "optional GNN reading",
+          "status": "optional"
+        }
+      ]
+    },
+    {
+      "id": "dsa5105-rl-gnn-section-2",
+      "type": "teaching-note",
+      "title": "Reference depth · Message passing",
+      "body": "A GNN updates a node by transforming neighboring representations, aggregating that summary with a permutation-invariant operation, and combining it with the node’s own state. The graph edge structure is the source of locality.",
+      "sourceType": "ref",
+      "sourceRefs": [
+        {
+          "sourceId": "DSA5105/syllabus.pdf",
+          "page": 1,
+          "sourceType": "lecture",
+          "role": "current scope",
+          "status": "current"
+        },
+        {
+          "sourceId": "DSA5105/Ref/Chapter3_Graph_Neural_Networks.pdf",
+          "page": 1,
+          "sourceType": "ref",
+          "role": "optional GNN reading",
+          "status": "optional"
+        }
+      ]
+    },
+    {
+      "id": "dsa5105-rl-gnn-section-3",
+      "type": "teaching-note",
+      "title": "Bridge, not equivalence",
+      "body": "RL propagates values over possible state transitions; a GNN propagates representations over observed graph edges. The shared pattern is local information flow, not a claim that the two algorithms solve the same objective.",
+      "sourceType": "lecture",
+      "sourceRefs": [
+        {
+          "sourceId": "DSA5105/syllabus.pdf",
+          "page": 1,
+          "sourceType": "lecture",
+          "role": "current scope",
+          "status": "current"
+        },
+        {
+          "sourceId": "DSA5105/Ref/Chapter3_Graph_Neural_Networks.pdf",
+          "page": 1,
+          "sourceType": "ref",
+          "role": "optional GNN reading",
+          "status": "optional"
+        }
+      ]
+    },
+    {
+      "id": "dsa5105-rl-gnn-example-1",
+      "type": "worked-example",
+      "title": "Worked example: one-step Q backup",
+      "steps": [
+        "A transition gives reward $r=2$, discount $\\gamma=0.9$, and the next-state action values are $4$ and $1$.",
+        "Choose the larger next value: $\\max(4,1)=4$.",
+        "The target is $2+0.9\\times4=5.6$. A Q-learning update moves the current estimate toward this target."
+      ],
+      "answer": "The backup is immediate reward plus discounted best continuation value.",
+      "sourceType": "lecture",
+      "sourceRefs": [
+        {
+          "sourceId": "DSA5105/syllabus.pdf",
+          "page": 1,
+          "sourceType": "lecture",
+          "role": "current scope",
+          "status": "current"
+        },
+        {
+          "sourceId": "DSA5105/Ref/Chapter3_Graph_Neural_Networks.pdf",
+          "page": 1,
+          "sourceType": "ref",
+          "role": "optional GNN reading",
+          "status": "optional"
+        }
+      ]
+    },
+    {
+      "id": "dsa5105-rl-gnn-critical-1",
+      "type": "critical-question",
+      "prompt": "What is the common structure between a Bellman backup and a GNN layer, and where does the analogy stop?",
+      "angle": "Identify local information propagation without claiming identical objectives.",
+      "modelAnswer": "Both propagate information from a local neighborhood: next states for RL, graph neighbors for GNNs. RL optimizes expected return; a GNN optimizes a task loss over representations.",
+      "focus": "analogy",
+      "sourceRefs": [
+        {
+          "sourceId": "DSA5105/syllabus.pdf",
+          "page": 1,
+          "sourceType": "lecture",
+          "role": "current scope",
+          "status": "current"
+        },
+        {
+          "sourceId": "DSA5105/Ref/Chapter3_Graph_Neural_Networks.pdf",
+          "page": 1,
+          "sourceType": "ref",
+          "role": "optional GNN reading",
+          "status": "optional"
+        }
+      ]
+    },
+    {
+      "id": "dsa5105-rl-gnn-critical-2",
+      "type": "critical-question",
+      "prompt": "What evidence would show that the analogy is misleading for a design decision?",
+      "angle": "Compare the data source, optimization target, and update semantics instead of matching equations by shape.",
+      "modelAnswer": "If the task needs a policy over actions and delayed rewards, a GNN layer alone is not an RL solution. Similar local aggregation does not supply the reward objective or control loop.",
+      "focus": "boundary",
+      "sourceRefs": [
+        {
+          "sourceId": "DSA5105/syllabus.pdf",
+          "page": 1,
+          "sourceType": "lecture",
+          "role": "current scope",
+          "status": "current"
+        },
+        {
+          "sourceId": "DSA5105/Ref/Chapter3_Graph_Neural_Networks.pdf",
+          "page": 1,
+          "sourceType": "ref",
+          "role": "optional GNN reading",
+          "status": "optional"
+        }
+      ]
+    }
+  ],
+  "questionIds": [
+    "dsa5105-rg-q1",
+    "dsa5105-rg-q2"
+  ],
+  "labIds": [],
+  "schemaVersion": "nus.lesson.v1"
+}
