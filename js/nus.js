@@ -17,6 +17,7 @@
   function content(code) { return repository() ? repository().getCatalog(code) : (window.NUS_CONTENT || {})[code] || { modules: [] }; }
   function lessons(code) { return repository() ? repository().listLessons(code) : content(code).modules.flatMap(m => m.lessons || []); }
   function lesson(code, id) { return repository() ? repository().getLesson(code, id) : lessons(code).find(l => l.id === id) || null; }
+  function slideSets(code) { return repository() && typeof repository().getSlideSets === "function" ? repository().getSlideSets(code) : []; }
   function courseName(code) { const c = course(code); return c ? c.title : code; }
   function fmtDate(value, pendingLabel) {
     if (!value) return pendingLabel || "Date pending";
@@ -140,7 +141,8 @@
     const previous = courseLessons[index - 1], next = courseLessons[index + 1];
     setReaderMode(readerModeOn());
     let body = pageHead(`${c.code} · Week ${l.week}`, l.title, l.summary);
-    body += `<div class="nus-lesson-actions">${button("← Course", `#/nus/course/${c.code}`, "ghost")}<button class="btn ${done ? "ghost" : "primary"}" id="nus-mark-lesson">${done ? "✓ Completed" : "Mark complete"}</button>${button("Exam mode", `#/nus/exam/${c.code}/${l.id}`, "ghost")}${readerButton()}</div>`;
+    const slideSet = slideSets(code).find(item => (item.lessonIds || []).includes(l.id));
+    body += `<div class="nus-lesson-actions">${button("← Course", `#/nus/course/${c.code}`, "ghost")}<button class="btn ${done ? "ghost" : "primary"}" id="nus-mark-lesson">${done ? "✓ Completed" : "Mark complete"}</button>${slideSet ? button("Open annotated slides", `#/nus/slides/${c.code}/${slideSet.id}/1`, "primary") : ""}${button("Exam mode", `#/nus/exam/${c.code}/${l.id}`, "ghost")}${readerButton()}</div>`;
     body += studyCompass(l);
     const lab = repository() ? repository().getLab(l.id) : window.NUS_VISUAL_LABS && window.NUS_VISUAL_LABS[l.id];
     body += `<div class="nus-lesson-grid"><main><section class="nus-card nus-objectives reveal"><div class="nus-teach-head"><h3>What you should be able to do</h3><span class="pill gold">${esc(l.minutes)} min</span></div><ul>${(l.objectives || []).map(objective => `<li>${esc(objective)}</li>`).join("")}</ul></section>${lab && window.NUS_COMPONENTS ? window.NUS_COMPONENTS.renderLab(l, lab) : ""}<div id="nus-lesson-read">${(l.sections || []).map(lessonSection).join("")}${(l.math || []).map(mathBlock).join("")}</div><div id="nus-lesson-work">${(l.examples || []).map(workedExample).join("")}</div>${criticalThinking(l)}<section class="nus-card nus-recall reveal" id="nus-lesson-recall"><div class="nus-teach-head"><h3>Recall before you test</h3><span class="pill">${l.questions.length} prompts</span></div><p class="nus-muted">Answer on paper first. Open each prompt only after you commit to an answer.</p><div class="nus-question-list">${l.questions.map(recallItem).join("")}</div>${button("Start this lesson in Exam Mode", `#/nus/exam/${c.code}/${l.id}`, "primary")}</section>${studyKit(l)}<div class="nus-lesson-nav">${previous ? button(`← ${previous.title}`, `#/nus/lesson/${c.code}/${previous.id}`, "ghost") : `<span></span>`}${next ? button(`Next: ${next.title} →`, `#/nus/lesson/${c.code}/${next.id}`, "primary") : button("Back to course", `#/nus/course/${c.code}`, "primary")}</div></main><aside>${l.visualIds && l.visualIds.length ? card("Visual study cues", l.visualIds.map(visualCard).join(""), "reveal") : ""}${card("Source trail", `<ul class="nus-source-list">${l.sourceRefs.map(r => `<li>${sourceItem(r)}</li>`).join("")}</ul><p class="nus-muted">Visual cues are derived study prompts, not copies of course slides. Lecture remains the exam-priority core; textbook and reference material are labeled for depth and optional support.</p>`, "reveal")}</aside></div>`;
@@ -173,6 +175,23 @@
   const simulationsFeature = window.NUS_SIMULATIONS_FEATURE ? window.NUS_SIMULATIONS_FEATURE({ root, pageHead, esc, getStore: () => window.NUS_STORE }) : null;
   function renderSql() { return sqlFeature ? sqlFeature.render() : renderNotFound(); }
   function renderSimulations() { return simulationsFeature ? simulationsFeature.render() : renderNotFound(); }
+  const slideReaderFeature = window.NUS_SLIDE_READER_FEATURE ? window.NUS_SLIDE_READER_FEATURE({
+    root,
+    getCourse: course,
+    getSlideSet: (code, setId) => repository() && repository().getSlideSet ? repository().getSlideSet(code, setId) : null,
+    pageHead,
+    sourceBadge,
+    sourceItem,
+    button,
+    text,
+    esc,
+    typeset: typesetNus,
+    notFound: renderNotFound
+  }) : null;
+  function renderSlides(code, setId, slideNumber) {
+    if (ensureCourseLoaded(code, () => renderSlides(code, setId, slideNumber))) return;
+    return slideReaderFeature ? slideReaderFeature.render(code, setId, slideNumber) : renderNotFound();
+  }
 
   const routeTable = window.NUS_ROUTE_TABLE ? window.NUS_ROUTE_TABLE({
     dashboard: () => renderDashboard(),
@@ -180,6 +199,7 @@
     course: parts => renderCourse(parts[1]),
     lesson: parts => renderLesson(parts[1], parts[2]),
     exam: parts => renderExam(parts[1], parts[2]),
+    slides: parts => renderSlides(parts[1], parts[2], parts[3]),
     sql: () => renderSql(),
     simulations: () => renderSimulations()
   }) : null;
