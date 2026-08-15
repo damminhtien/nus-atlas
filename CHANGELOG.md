@@ -6,6 +6,10 @@ and refresh first-party asset URLs so browsers and the service worker pick up th
 
 ## [Unreleased]
 
+## [0.2.11] - 2026-08-15
+
+- harden authored math rendering and validation
+
 ## [0.2.10] - 2026-08-15
 
 - fix linear reasoning trace formula layout
