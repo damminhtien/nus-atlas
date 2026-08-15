@@ -6,6 +6,10 @@ and refresh first-party asset URLs so browsers and the service worker pick up th
 
 ## [Unreleased]
 
+## [0.2.9] - 2026-08-15
+
+- restore production slide assets and streamline focus reading
+
 ## [0.2.8] - 2026-08-15
 
 - auto-refresh deployed versions without manual cache clearing
