@@ -6,6 +6,10 @@ and refresh first-party asset URLs so browsers and the service worker pick up th
 
 ## [Unreleased]
 
+## [0.2.4] - 2026-08-15
+
+- Reduce slide focus reading height
+
 ## [0.2.3] - 2026-08-15
 
 - Harden slide focus route cleanup

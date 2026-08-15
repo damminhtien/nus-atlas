@@ -18,4 +18,5 @@ test("app shell exposes a persistent collapsible left navigation", () => {
   assert.match(app, /atlas\.sidebarCollapsed/);
   assert.match(app, /e\.key === "\\\\"/);
   assert.match(css, /body\.nus-sidebar-collapsed \.shell/);
+  assert.match(css, /body\.nus-slide-focus-mode \.nus-slide-reader-page \.nus-slide-reader-grid[^}]*height:clamp\(380px, 68vh, 560px\)/);
 });
