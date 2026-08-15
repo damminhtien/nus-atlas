@@ -91,13 +91,14 @@ function blockRefs(lesson) {
 
 function lessonBlocks(lesson) {
   const blocks = [];
+  const refsFor = block => Array.isArray(block && block.sourceRefs) && block.sourceRefs.length ? block.sourceRefs : blockRefs(lesson);
   (lesson.sections || []).forEach((section, index) => blocks.push({
     id: `${lesson.id}-section-${index + 1}`,
     type: "teaching-note",
     title: section.title,
     body: section.body,
     sourceType: section.sourceType,
-    sourceRefs: blockRefs(lesson)
+    sourceRefs: refsFor(section)
   }));
   (lesson.math || []).forEach((formula, index) => blocks.push({
     id: `${lesson.id}-formula-${index + 1}`,
@@ -106,19 +107,19 @@ function lessonBlocks(lesson) {
     explanation: formula.explanation,
     symbols: formula.symbols || [],
     sourceType: formula.sourceType,
-    sourceRefs: blockRefs(lesson)
+    sourceRefs: refsFor(formula)
   }));
   (lesson.examples || []).forEach((example, index) => blocks.push({
     id: `${lesson.id}-example-${index + 1}`,
     type: "worked-example",
     ...example,
-    sourceRefs: blockRefs(lesson)
+    sourceRefs: refsFor(example)
   }));
   (lesson.criticalQuestions || []).forEach((question, index) => blocks.push({
     id: `${lesson.id}-critical-${index + 1}`,
     type: "critical-question",
     ...question,
-    sourceRefs: blockRefs(lesson)
+    sourceRefs: refsFor(question)
   }));
   return blocks;
 }

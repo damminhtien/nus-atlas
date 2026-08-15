@@ -14,13 +14,13 @@
       }
     },
     {
-      "front": "Why is Huber influence bounded?",
-      "back": "Its derivative is linear inside the threshold and capped at plus or minus $\\delta$ outside, so an extreme residual cannot dominate the stationarity equation.",
+      "front": "What is bounded in Huber's score equation?",
+      "back": "The Huber $\\psi$-function is linear inside the threshold and capped at plus or minus $\\delta$ outside, so each residual has a bounded score contribution.",
       "source": {
         "sourceId": "DSA5105/Lec1_annotated.pdf",
         "page": 35,
         "sourceType": "lecture",
-        "role": "Huber influence",
+        "role": "Huber psi-function",
         "status": "current"
       }
     },
@@ -28,10 +28,10 @@
       "front": "What does the ridge spectral filter do?",
       "back": "In an eigen-direction with eigenvalue $\\mu$, the coefficient is multiplied by $\\mu$ divided by $\\mu$ plus $\\lambda$; weak directions shrink most.",
       "source": {
-        "sourceId": "DSA5105/Lec1_annotated.pdf",
-        "page": 48,
+        "sourceId": "DSA5105/Lec1_exercises-solutions.pdf",
+        "page": 2,
         "sourceType": "lecture",
-        "role": "ridge spectrum",
+        "role": "ridge spectral filter",
         "status": "current"
       }
     },
@@ -39,8 +39,8 @@
       "front": "Why is binary logistic loss convex in the score?",
       "back": "Its second derivative is non-negative everywhere, so the score-level objective is convex.",
       "source": {
-        "sourceId": "DSA5105/Lec1_annotated.pdf",
-        "page": 54,
+        "sourceId": "DSA5105/Lec1_exercises-solutions.pdf",
+        "page": 3,
         "sourceType": "lecture",
         "role": "logistic convexity",
         "status": "current"
@@ -50,25 +50,34 @@
   "homework": [
     {
       "prompt": "Derive the stationarity equation for Huber location and explain why an extreme residual cannot dominate it.",
-      "rubric": "Differentiate the two regions, write the sum of $\\psi$ terms as zero, and connect the capped derivative to bounded influence.",
+      "rubric": "Differentiate the two regions, write the sum of $\\psi$ terms as zero, and connect the capped derivative to a bounded score contribution.",
       "source": {
-        "sourceId": "DSA5105/Lec1_annotated.pdf",
-        "page": 35,
+        "sourceId": "DSA5105/Lec1_exercises-solutions.pdf",
+        "page": 1,
         "sourceType": "lecture",
-        "role": "Huber derivation",
+        "role": "Huber derivative",
         "status": "current"
       }
     },
     {
       "prompt": "Show the null-space family of singular least-squares solutions and compare it with ridge in the eigenbasis.",
       "rubric": "Use the pseudoinverse plus a null-space component, then derive the $\\mu$ divided by $\\mu$ plus $\\lambda$ shrinkage factor and interpret weak directions.",
-      "source": {
-        "sourceId": "DSA5105/Lec1_exercises-solutions.pdf",
-        "page": 2,
-        "sourceType": "lecture",
-        "role": "official exercise alignment",
-        "status": "current"
-      }
+      "sourceRefs": [
+        {
+          "sourceId": "DSA5105/Lec1_annotated.pdf",
+          "page": 47,
+          "sourceType": "lecture",
+          "role": "singular OLS",
+          "status": "current"
+        },
+        {
+          "sourceId": "DSA5105/Lec1_exercises-solutions.pdf",
+          "page": 2,
+          "sourceType": "lecture",
+          "role": "ridge spectral filter",
+          "status": "current"
+        }
+      ]
     }
   ],
   "codeExercises": []

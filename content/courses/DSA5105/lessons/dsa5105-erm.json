@@ -14,7 +14,21 @@
       "sourceId": "DSA5105/Lec1_annotated.pdf",
       "page": 9,
       "sourceType": "lecture",
-      "role": "learning definition and motivation",
+      "role": "Mitchell E-T-P definition",
+      "status": "current"
+    },
+    {
+      "sourceId": "DSA5105/Lec1_annotated.pdf",
+      "page": 14,
+      "sourceType": "lecture",
+      "role": "ordinal and nominal representation",
+      "status": "current"
+    },
+    {
+      "sourceId": "DSA5105/Lec1_annotated.pdf",
+      "page": 15,
+      "sourceType": "lecture",
+      "role": "one-hot encoding",
       "status": "current"
     },
     {
@@ -86,7 +100,49 @@
           }
         ],
         "sourceType": "lecture"
-      }
+      },
+      "sourceRefs": [
+        {
+          "sourceId": "DSA5105/Lec1_annotated.pdf",
+          "page": 9,
+          "sourceType": "lecture",
+          "role": "learning definition and motivation",
+          "status": "current"
+        }
+      ]
+    },
+    {
+      "title": "Lecture core · Mitchell's E–T–P definition",
+      "body": "A program learns from experience $E$ with respect to a task $T$ and a performance measure $P$ if its performance on $T$, as measured by $P$, improves with $E$. The tuple is a contract: without $T$ there is no behavior to improve, without $P$ there is no meaning of better, and without $E$ there is no source of learning.",
+      "sourceType": "lecture",
+      "math": {
+        "latex": "(E,T,P)=\\text{experience, task, performance measure}",
+        "explanation": "This is the lecture's operational definition of learning, not a claim that every model is supervised.",
+        "symbols": [
+          {
+            "latex": "E",
+            "meaning": "experience or data"
+          },
+          {
+            "latex": "T",
+            "meaning": "task"
+          },
+          {
+            "latex": "P",
+            "meaning": "performance measure"
+          }
+        ],
+        "sourceType": "lecture"
+      },
+      "sourceRefs": [
+        {
+          "sourceId": "DSA5105/Lec1_annotated.pdf",
+          "page": 9,
+          "sourceType": "lecture",
+          "role": "Mitchell E-T-P definition",
+          "status": "current"
+        }
+      ]
     },
     {
       "title": "Lecture core · Training set and oracle",
@@ -94,7 +150,7 @@
       "sourceType": "lecture",
       "math": {
         "latex": "\\mathcal{D}=\\{(x_i,y_i)\\}_{i=1}^{N},\\qquad y_i=f^*(x_i)\\quad\\text{or}\\quad y_i\\sim p^*(\\cdot\\mid x_i)",
-        "explanation": "The first case is a deterministic oracle. A noisy regression view writes $y_i = f^*(x_i) + \\epsilon_i$; the second case makes the randomness explicit through a conditional target distribution. Do not confuse an observed label with the unknown oracle itself.",
+        "explanation": "The first case is a deterministic oracle. A noisy regression view writes $y_i=f^*(x_i)+\\epsilon_i$; the second case makes randomness explicit through a conditional target distribution. Do not confuse an observed label with the unknown oracle itself.",
         "symbols": [
           {
             "latex": "\\mathcal{D}",
@@ -122,12 +178,37 @@
           }
         ],
         "sourceType": "lecture"
-      }
+      },
+      "sourceRefs": [
+        {
+          "sourceId": "DSA5105/Lec1_annotated.pdf",
+          "page": 20,
+          "sourceType": "lecture",
+          "role": "deterministic and random oracle",
+          "status": "current"
+        }
+      ]
     },
     {
       "title": "Lecture core · Data representation",
       "body": "Ordinal values have meaningful order, such as a level or rating. Nominal labels are categories without a meaningful distance, so one-hot or another categorical representation is safer than treating the label names as numbers.",
-      "sourceType": "lecture"
+      "sourceType": "lecture",
+      "sourceRefs": [
+        {
+          "sourceId": "DSA5105/Lec1_annotated.pdf",
+          "page": 14,
+          "sourceType": "lecture",
+          "role": "ordinal and nominal representation",
+          "status": "current"
+        },
+        {
+          "sourceId": "DSA5105/Lec1_annotated.pdf",
+          "page": 15,
+          "sourceType": "lecture",
+          "role": "one-hot encoding",
+          "status": "current"
+        }
+      ]
     },
     {
       "title": "Lecture core · Empirical risk",
@@ -151,22 +232,96 @@
           }
         ],
         "sourceType": "lecture"
-      }
+      },
+      "sourceRefs": [
+        {
+          "sourceId": "DSA5105/Lec1_annotated.pdf",
+          "page": 23,
+          "sourceType": "lecture",
+          "role": "empirical risk",
+          "status": "current"
+        }
+      ]
     },
     {
       "title": "Lecture core · Train, validation, test",
       "body": "Use training data to fit parameters, validation data to choose settings such as $\\lambda$ or model size, and test data once for the final estimate. Reusing the test set for decisions quietly turns it into another validation set.",
-      "sourceType": "lecture"
+      "sourceType": "lecture",
+      "sourceRefs": [
+        {
+          "sourceId": "DSA5105/Lec1_annotated.pdf",
+          "page": 17,
+          "sourceType": "lecture",
+          "role": "evaluation split",
+          "status": "current"
+        }
+      ]
     },
     {
-      "title": "Lecture core · Approximation, optimization, generalization",
-      "body": "The Week 1 notes separate three questions: is the hypothesis space expressive enough, can an algorithm find a good member of it, and does that fitted member remain useful on unseen examples? Keep these questions separate when diagnosing a model.",
-      "sourceType": "lecture"
+      "title": "Lecture core · Three sources of error",
+      "body": "The current lecture names three sources of error: approximation, estimation, and optimization. Keep this lecture decomposition separate from the textbook's broader three paradigms.",
+      "sourceType": "lecture",
+      "math": {
+        "latex": "\\text{Approximation}+\\text{Estimation}+\\text{Optimization}",
+        "explanation": "Approximation compares the oracle $f^*$ with the best population-risk member $\tilde f$ in $mathcal H$. Estimation is the finite-sample move from $\tilde f$ to $hat f$, where $hat finargmin_{finmathcal H}widehat R(f)$. Optimization is the algorithmic move from initialization $f_0$ toward $hat f$.",
+        "symbols": [
+          {
+            "latex": "f^*",
+            "meaning": "oracle"
+          },
+          {
+            "latex": "\\tilde f",
+            "meaning": "population-risk minimizer in the hypothesis class"
+          },
+          {
+            "latex": "\\hat f",
+            "meaning": "empirical-risk minimizer or fitted model"
+          },
+          {
+            "latex": "f_0",
+            "meaning": "optimization initialization"
+          }
+        ],
+        "sourceType": "lecture"
+      },
+      "sourceRefs": [
+        {
+          "sourceId": "DSA5105/Lec1_annotated.pdf",
+          "page": 25,
+          "sourceType": "lecture",
+          "role": "three sources of error",
+          "status": "current"
+        }
+      ]
     },
     {
-      "title": "Textbook depth · Why the gap appears",
-      "body": "A flexible hypothesis class can memorize sample-specific noise. That makes empirical risk small while population risk stays large. The lecture introduces this generalization concern; textbook depth supplies the formal risk vocabulary.",
-      "sourceType": "textbook"
+      "title": "Textbook depth · Three broader paradigms",
+      "body": "The textbook uses a different organizing frame: approximation, optimization, and generalization. It is a useful broader discussion, but it must not be merged with the lecture's slide-25 label “Three sources of error.”",
+      "sourceType": "textbook",
+      "math": {
+        "latex": "\\text{Approximation}+\\text{Optimization}+\\text{Generalization}",
+        "explanation": "This textbook note is supporting context; the lecture-aligned decomposition remains approximation, estimation, and optimization.",
+        "symbols": [
+          {
+            "latex": "mathcal H",
+            "meaning": "hypothesis class"
+          },
+          {
+            "latex": "R_{\\mathrm{pop}}",
+            "meaning": "population risk"
+          }
+        ],
+        "sourceType": "textbook"
+      },
+      "sourceRefs": [
+        {
+          "sourceId": "DSA5105/Textbook.pdf",
+          "page": 11,
+          "sourceType": "textbook",
+          "role": "Three Paradigms of Supervised Learning",
+          "status": "course-depth"
+        }
+      ]
     }
   ],
   "examples": [
@@ -218,105 +373,21 @@
           "sourceType": "lecture",
           "role": "learning definition and motivation",
           "status": "current"
-        },
-        {
-          "sourceId": "DSA5105/Lec1_annotated.pdf",
-          "page": 16,
-          "sourceType": "lecture",
-          "role": "learning problem classes",
-          "status": "current"
-        },
-        {
-          "sourceId": "DSA5105/Lec1_annotated.pdf",
-          "page": 17,
-          "sourceType": "lecture",
-          "role": "evaluation split",
-          "status": "current"
-        },
-        {
-          "sourceId": "DSA5105/Lec1_annotated.pdf",
-          "page": 20,
-          "sourceType": "lecture",
-          "role": "training set and oracle",
-          "status": "current"
-        },
-        {
-          "sourceId": "DSA5105/Lec1_annotated.pdf",
-          "page": 23,
-          "sourceType": "lecture",
-          "role": "empirical risk",
-          "status": "current"
-        },
-        {
-          "sourceId": "DSA5105/Lec1_annotated.pdf",
-          "page": 24,
-          "sourceType": "lecture",
-          "role": "generalization gap",
-          "status": "current"
-        },
-        {
-          "sourceId": "DSA5105/Lec1_annotated.pdf",
-          "page": 25,
-          "sourceType": "lecture",
-          "role": "three sources of error",
-          "status": "current"
         }
       ]
     },
     {
       "id": "dsa5105-erm-section-2",
       "type": "teaching-note",
-      "title": "Lecture core · Training set and oracle",
-      "body": "The training set contains N observed input-target pairs. The input $x_{i}$ is what the model receives; $y_{i}$ is the output or label it should predict. Learning means using the sample to approximate the relationship from x to y. The oracle $f^*$ names the unknown target relationship: it can be deterministic, or the target can be sampled from a conditional distribution when the same input may have multiple plausible outputs.",
+      "title": "Lecture core · Mitchell's E–T–P definition",
+      "body": "A program learns from experience $E$ with respect to a task $T$ and a performance measure $P$ if its performance on $T$, as measured by $P$, improves with $E$. The tuple is a contract: without $T$ there is no behavior to improve, without $P$ there is no meaning of better, and without $E$ there is no source of learning.",
       "sourceType": "lecture",
       "sourceRefs": [
         {
           "sourceId": "DSA5105/Lec1_annotated.pdf",
           "page": 9,
           "sourceType": "lecture",
-          "role": "learning definition and motivation",
-          "status": "current"
-        },
-        {
-          "sourceId": "DSA5105/Lec1_annotated.pdf",
-          "page": 16,
-          "sourceType": "lecture",
-          "role": "learning problem classes",
-          "status": "current"
-        },
-        {
-          "sourceId": "DSA5105/Lec1_annotated.pdf",
-          "page": 17,
-          "sourceType": "lecture",
-          "role": "evaluation split",
-          "status": "current"
-        },
-        {
-          "sourceId": "DSA5105/Lec1_annotated.pdf",
-          "page": 20,
-          "sourceType": "lecture",
-          "role": "training set and oracle",
-          "status": "current"
-        },
-        {
-          "sourceId": "DSA5105/Lec1_annotated.pdf",
-          "page": 23,
-          "sourceType": "lecture",
-          "role": "empirical risk",
-          "status": "current"
-        },
-        {
-          "sourceId": "DSA5105/Lec1_annotated.pdf",
-          "page": 24,
-          "sourceType": "lecture",
-          "role": "generalization gap",
-          "status": "current"
-        },
-        {
-          "sourceId": "DSA5105/Lec1_annotated.pdf",
-          "page": 25,
-          "sourceType": "lecture",
-          "role": "three sources of error",
+          "role": "Mitchell E-T-P definition",
           "status": "current"
         }
       ]
@@ -324,57 +395,15 @@
     {
       "id": "dsa5105-erm-section-3",
       "type": "teaching-note",
-      "title": "Lecture core · Data representation",
-      "body": "Ordinal values have meaningful order, such as a level or rating. Nominal labels are categories without a meaningful distance, so one-hot or another categorical representation is safer than treating the label names as numbers.",
+      "title": "Lecture core · Training set and oracle",
+      "body": "The training set contains N observed input-target pairs. The input $x_{i}$ is what the model receives; $y_{i}$ is the output or label it should predict. Learning means using the sample to approximate the relationship from x to y. The oracle $f^*$ names the unknown target relationship: it can be deterministic, or the target can be sampled from a conditional distribution when the same input may have multiple plausible outputs.",
       "sourceType": "lecture",
       "sourceRefs": [
         {
           "sourceId": "DSA5105/Lec1_annotated.pdf",
-          "page": 9,
-          "sourceType": "lecture",
-          "role": "learning definition and motivation",
-          "status": "current"
-        },
-        {
-          "sourceId": "DSA5105/Lec1_annotated.pdf",
-          "page": 16,
-          "sourceType": "lecture",
-          "role": "learning problem classes",
-          "status": "current"
-        },
-        {
-          "sourceId": "DSA5105/Lec1_annotated.pdf",
-          "page": 17,
-          "sourceType": "lecture",
-          "role": "evaluation split",
-          "status": "current"
-        },
-        {
-          "sourceId": "DSA5105/Lec1_annotated.pdf",
           "page": 20,
           "sourceType": "lecture",
-          "role": "training set and oracle",
-          "status": "current"
-        },
-        {
-          "sourceId": "DSA5105/Lec1_annotated.pdf",
-          "page": 23,
-          "sourceType": "lecture",
-          "role": "empirical risk",
-          "status": "current"
-        },
-        {
-          "sourceId": "DSA5105/Lec1_annotated.pdf",
-          "page": 24,
-          "sourceType": "lecture",
-          "role": "generalization gap",
-          "status": "current"
-        },
-        {
-          "sourceId": "DSA5105/Lec1_annotated.pdf",
-          "page": 25,
-          "sourceType": "lecture",
-          "role": "three sources of error",
+          "role": "deterministic and random oracle",
           "status": "current"
         }
       ]
@@ -382,57 +411,22 @@
     {
       "id": "dsa5105-erm-section-4",
       "type": "teaching-note",
-      "title": "Lecture core · Empirical risk",
-      "body": "Empirical risk is the average loss on the examples we observed. It is a training measurement, not a guarantee about future data. A regularizer can be added when we want to prefer simpler or smoother hypotheses.",
+      "title": "Lecture core · Data representation",
+      "body": "Ordinal values have meaningful order, such as a level or rating. Nominal labels are categories without a meaningful distance, so one-hot or another categorical representation is safer than treating the label names as numbers.",
       "sourceType": "lecture",
       "sourceRefs": [
         {
           "sourceId": "DSA5105/Lec1_annotated.pdf",
-          "page": 9,
+          "page": 14,
           "sourceType": "lecture",
-          "role": "learning definition and motivation",
+          "role": "ordinal and nominal representation",
           "status": "current"
         },
         {
           "sourceId": "DSA5105/Lec1_annotated.pdf",
-          "page": 16,
+          "page": 15,
           "sourceType": "lecture",
-          "role": "learning problem classes",
-          "status": "current"
-        },
-        {
-          "sourceId": "DSA5105/Lec1_annotated.pdf",
-          "page": 17,
-          "sourceType": "lecture",
-          "role": "evaluation split",
-          "status": "current"
-        },
-        {
-          "sourceId": "DSA5105/Lec1_annotated.pdf",
-          "page": 20,
-          "sourceType": "lecture",
-          "role": "training set and oracle",
-          "status": "current"
-        },
-        {
-          "sourceId": "DSA5105/Lec1_annotated.pdf",
-          "page": 23,
-          "sourceType": "lecture",
-          "role": "empirical risk",
-          "status": "current"
-        },
-        {
-          "sourceId": "DSA5105/Lec1_annotated.pdf",
-          "page": 24,
-          "sourceType": "lecture",
-          "role": "generalization gap",
-          "status": "current"
-        },
-        {
-          "sourceId": "DSA5105/Lec1_annotated.pdf",
-          "page": 25,
-          "sourceType": "lecture",
-          "role": "three sources of error",
+          "role": "one-hot encoding",
           "status": "current"
         }
       ]
@@ -440,57 +434,15 @@
     {
       "id": "dsa5105-erm-section-5",
       "type": "teaching-note",
-      "title": "Lecture core · Train, validation, test",
-      "body": "Use training data to fit parameters, validation data to choose settings such as $\\lambda$ or model size, and test data once for the final estimate. Reusing the test set for decisions quietly turns it into another validation set.",
+      "title": "Lecture core · Empirical risk",
+      "body": "Empirical risk is the average loss on the examples we observed. It is a training measurement, not a guarantee about future data. A regularizer can be added when we want to prefer simpler or smoother hypotheses.",
       "sourceType": "lecture",
       "sourceRefs": [
-        {
-          "sourceId": "DSA5105/Lec1_annotated.pdf",
-          "page": 9,
-          "sourceType": "lecture",
-          "role": "learning definition and motivation",
-          "status": "current"
-        },
-        {
-          "sourceId": "DSA5105/Lec1_annotated.pdf",
-          "page": 16,
-          "sourceType": "lecture",
-          "role": "learning problem classes",
-          "status": "current"
-        },
-        {
-          "sourceId": "DSA5105/Lec1_annotated.pdf",
-          "page": 17,
-          "sourceType": "lecture",
-          "role": "evaluation split",
-          "status": "current"
-        },
-        {
-          "sourceId": "DSA5105/Lec1_annotated.pdf",
-          "page": 20,
-          "sourceType": "lecture",
-          "role": "training set and oracle",
-          "status": "current"
-        },
         {
           "sourceId": "DSA5105/Lec1_annotated.pdf",
           "page": 23,
           "sourceType": "lecture",
           "role": "empirical risk",
-          "status": "current"
-        },
-        {
-          "sourceId": "DSA5105/Lec1_annotated.pdf",
-          "page": 24,
-          "sourceType": "lecture",
-          "role": "generalization gap",
-          "status": "current"
-        },
-        {
-          "sourceId": "DSA5105/Lec1_annotated.pdf",
-          "page": 25,
-          "sourceType": "lecture",
-          "role": "three sources of error",
           "status": "current"
         }
       ]
@@ -498,52 +450,26 @@
     {
       "id": "dsa5105-erm-section-6",
       "type": "teaching-note",
-      "title": "Lecture core · Approximation, optimization, generalization",
-      "body": "The Week 1 notes separate three questions: is the hypothesis space expressive enough, can an algorithm find a good member of it, and does that fitted member remain useful on unseen examples? Keep these questions separate when diagnosing a model.",
+      "title": "Lecture core · Train, validation, test",
+      "body": "Use training data to fit parameters, validation data to choose settings such as $\\lambda$ or model size, and test data once for the final estimate. Reusing the test set for decisions quietly turns it into another validation set.",
       "sourceType": "lecture",
       "sourceRefs": [
-        {
-          "sourceId": "DSA5105/Lec1_annotated.pdf",
-          "page": 9,
-          "sourceType": "lecture",
-          "role": "learning definition and motivation",
-          "status": "current"
-        },
-        {
-          "sourceId": "DSA5105/Lec1_annotated.pdf",
-          "page": 16,
-          "sourceType": "lecture",
-          "role": "learning problem classes",
-          "status": "current"
-        },
         {
           "sourceId": "DSA5105/Lec1_annotated.pdf",
           "page": 17,
           "sourceType": "lecture",
           "role": "evaluation split",
           "status": "current"
-        },
-        {
-          "sourceId": "DSA5105/Lec1_annotated.pdf",
-          "page": 20,
-          "sourceType": "lecture",
-          "role": "training set and oracle",
-          "status": "current"
-        },
-        {
-          "sourceId": "DSA5105/Lec1_annotated.pdf",
-          "page": 23,
-          "sourceType": "lecture",
-          "role": "empirical risk",
-          "status": "current"
-        },
-        {
-          "sourceId": "DSA5105/Lec1_annotated.pdf",
-          "page": 24,
-          "sourceType": "lecture",
-          "role": "generalization gap",
-          "status": "current"
-        },
+        }
+      ]
+    },
+    {
+      "id": "dsa5105-erm-section-7",
+      "type": "teaching-note",
+      "title": "Lecture core · Three sources of error",
+      "body": "The current lecture names three sources of error: approximation, estimation, and optimization. Keep this lecture decomposition separate from the textbook's broader three paradigms.",
+      "sourceType": "lecture",
+      "sourceRefs": [
         {
           "sourceId": "DSA5105/Lec1_annotated.pdf",
           "page": 25,
@@ -554,60 +480,18 @@
       ]
     },
     {
-      "id": "dsa5105-erm-section-7",
+      "id": "dsa5105-erm-section-8",
       "type": "teaching-note",
-      "title": "Textbook depth · Why the gap appears",
-      "body": "A flexible hypothesis class can memorize sample-specific noise. That makes empirical risk small while population risk stays large. The lecture introduces this generalization concern; textbook depth supplies the formal risk vocabulary.",
+      "title": "Textbook depth · Three broader paradigms",
+      "body": "The textbook uses a different organizing frame: approximation, optimization, and generalization. It is a useful broader discussion, but it must not be merged with the lecture's slide-25 label “Three sources of error.”",
       "sourceType": "textbook",
       "sourceRefs": [
         {
-          "sourceId": "DSA5105/Lec1_annotated.pdf",
-          "page": 9,
-          "sourceType": "lecture",
-          "role": "learning definition and motivation",
-          "status": "current"
-        },
-        {
-          "sourceId": "DSA5105/Lec1_annotated.pdf",
-          "page": 16,
-          "sourceType": "lecture",
-          "role": "learning problem classes",
-          "status": "current"
-        },
-        {
-          "sourceId": "DSA5105/Lec1_annotated.pdf",
-          "page": 17,
-          "sourceType": "lecture",
-          "role": "evaluation split",
-          "status": "current"
-        },
-        {
-          "sourceId": "DSA5105/Lec1_annotated.pdf",
-          "page": 20,
-          "sourceType": "lecture",
-          "role": "training set and oracle",
-          "status": "current"
-        },
-        {
-          "sourceId": "DSA5105/Lec1_annotated.pdf",
-          "page": 23,
-          "sourceType": "lecture",
-          "role": "empirical risk",
-          "status": "current"
-        },
-        {
-          "sourceId": "DSA5105/Lec1_annotated.pdf",
-          "page": 24,
-          "sourceType": "lecture",
-          "role": "generalization gap",
-          "status": "current"
-        },
-        {
-          "sourceId": "DSA5105/Lec1_annotated.pdf",
-          "page": 25,
-          "sourceType": "lecture",
-          "role": "three sources of error",
-          "status": "current"
+          "sourceId": "DSA5105/Textbook.pdf",
+          "page": 11,
+          "sourceType": "textbook",
+          "role": "Three Paradigms of Supervised Learning",
+          "status": "course-depth"
         }
       ]
     },
@@ -627,7 +511,21 @@
           "sourceId": "DSA5105/Lec1_annotated.pdf",
           "page": 9,
           "sourceType": "lecture",
-          "role": "learning definition and motivation",
+          "role": "Mitchell E-T-P definition",
+          "status": "current"
+        },
+        {
+          "sourceId": "DSA5105/Lec1_annotated.pdf",
+          "page": 14,
+          "sourceType": "lecture",
+          "role": "ordinal and nominal representation",
+          "status": "current"
+        },
+        {
+          "sourceId": "DSA5105/Lec1_annotated.pdf",
+          "page": 15,
+          "sourceType": "lecture",
+          "role": "one-hot encoding",
           "status": "current"
         },
         {
@@ -686,7 +584,21 @@
           "sourceId": "DSA5105/Lec1_annotated.pdf",
           "page": 9,
           "sourceType": "lecture",
-          "role": "learning definition and motivation",
+          "role": "Mitchell E-T-P definition",
+          "status": "current"
+        },
+        {
+          "sourceId": "DSA5105/Lec1_annotated.pdf",
+          "page": 14,
+          "sourceType": "lecture",
+          "role": "ordinal and nominal representation",
+          "status": "current"
+        },
+        {
+          "sourceId": "DSA5105/Lec1_annotated.pdf",
+          "page": 15,
+          "sourceType": "lecture",
+          "role": "one-hot encoding",
           "status": "current"
         },
         {
@@ -745,7 +657,21 @@
           "sourceId": "DSA5105/Lec1_annotated.pdf",
           "page": 9,
           "sourceType": "lecture",
-          "role": "learning definition and motivation",
+          "role": "Mitchell E-T-P definition",
+          "status": "current"
+        },
+        {
+          "sourceId": "DSA5105/Lec1_annotated.pdf",
+          "page": 14,
+          "sourceType": "lecture",
+          "role": "ordinal and nominal representation",
+          "status": "current"
+        },
+        {
+          "sourceId": "DSA5105/Lec1_annotated.pdf",
+          "page": 15,
+          "sourceType": "lecture",
+          "role": "one-hot encoding",
           "status": "current"
         },
         {
@@ -804,7 +730,21 @@
           "sourceId": "DSA5105/Lec1_annotated.pdf",
           "page": 9,
           "sourceType": "lecture",
-          "role": "learning definition and motivation",
+          "role": "Mitchell E-T-P definition",
+          "status": "current"
+        },
+        {
+          "sourceId": "DSA5105/Lec1_annotated.pdf",
+          "page": 14,
+          "sourceType": "lecture",
+          "role": "ordinal and nominal representation",
+          "status": "current"
+        },
+        {
+          "sourceId": "DSA5105/Lec1_annotated.pdf",
+          "page": 15,
+          "sourceType": "lecture",
+          "role": "one-hot encoding",
           "status": "current"
         },
         {
@@ -856,6 +796,7 @@
     "dsa5105-e-q1",
     "dsa5105-e-q2",
     "dsa5105-e-q3",
+    "dsa5105-e-q5",
     "dsa5105-e-q4",
     "dsa5105-bank-001",
     "dsa5105-bank-002"

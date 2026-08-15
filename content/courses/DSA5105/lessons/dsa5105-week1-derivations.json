@@ -3,18 +3,25 @@
   "title": "Week 1 derivation studio",
   "week": 1,
   "minutes": 110,
-  "summary": "Turn the Week 1 slogans into proofs: population risk, robust influence, singular OLS, ridge spectral filtering, and logistic convexity.",
+  "summary": "Turn the Week 1 lecture into proofs: population risk, the three lecture error sources, robust score contributions, singular OLS, ridge filtering, and classification losses.",
   "objectives": [
     "Separate empirical risk from population risk under iid sampling",
-    "Derive Huber influence and the ridge spectral filter",
-    "Explain null-space solutions, surrogate loss, and logistic convexity"
+    "Distinguish approximation, estimation, and optimization",
+    "Derive the Huber score, ridge spectral filter, and logistic convexity"
   ],
   "sourceRefs": [
     {
       "sourceId": "DSA5105/Lec1_annotated.pdf",
       "page": 23,
       "sourceType": "lecture",
-      "role": "empirical and population risk",
+      "role": "empirical risk",
+      "status": "current"
+    },
+    {
+      "sourceId": "DSA5105/Lec1_annotated.pdf",
+      "page": 24,
+      "sourceType": "lecture",
+      "role": "population risk and generalization gap",
       "status": "current"
     },
     {
@@ -28,14 +35,21 @@
       "sourceId": "DSA5105/Lec1_annotated.pdf",
       "page": 35,
       "sourceType": "lecture",
-      "role": "Huber loss",
+      "role": "Huber definition",
       "status": "current"
     },
     {
       "sourceId": "DSA5105/Lec1_annotated.pdf",
       "page": 46,
       "sourceType": "lecture",
-      "role": "matrix OLS",
+      "role": "general OLS",
+      "status": "current"
+    },
+    {
+      "sourceId": "DSA5105/Lec1_annotated.pdf",
+      "page": 47,
+      "sourceType": "lecture",
+      "role": "singular OLS",
       "status": "current"
     },
     {
@@ -47,28 +61,77 @@
     },
     {
       "sourceId": "DSA5105/Lec1_annotated.pdf",
+      "page": 49,
+      "sourceType": "lecture",
+      "role": "regularization and generalization",
+      "status": "current"
+    },
+    {
+      "sourceId": "DSA5105/Lec1_annotated.pdf",
+      "page": 50,
+      "sourceType": "lecture",
+      "role": "one-hot classification",
+      "status": "current"
+    },
+    {
+      "sourceId": "DSA5105/Lec1_annotated.pdf",
+      "page": 51,
+      "sourceType": "lecture",
+      "role": "multiclass setup",
+      "status": "current"
+    },
+    {
+      "sourceId": "DSA5105/Lec1_annotated.pdf",
+      "page": 52,
+      "sourceType": "lecture",
+      "role": "least-squares classification",
+      "status": "current"
+    },
+    {
+      "sourceId": "DSA5105/Lec1_annotated.pdf",
+      "page": 53,
+      "sourceType": "lecture",
+      "role": "classification error and surrogate",
+      "status": "current"
+    },
+    {
+      "sourceId": "DSA5105/Lec1_annotated.pdf",
       "page": 54,
       "sourceType": "lecture",
-      "role": "classification model",
+      "role": "softmax and cross-entropy",
+      "status": "current"
+    },
+    {
+      "sourceId": "DSA5105/Lec1_exercises-solutions.pdf",
+      "page": 1,
+      "sourceType": "lecture",
+      "role": "Huber derivative",
       "status": "current"
     },
     {
       "sourceId": "DSA5105/Lec1_exercises-solutions.pdf",
       "page": 2,
       "sourceType": "lecture",
-      "role": "official Week 1 exercise solutions",
+      "role": "ridge spectral filter and logistic setup",
+      "status": "current"
+    },
+    {
+      "sourceId": "DSA5105/Lec1_exercises-solutions.pdf",
+      "page": 3,
+      "sourceType": "lecture",
+      "role": "logistic convexity",
       "status": "current"
     }
   ],
   "visualIds": [],
   "sections": [
     {
-      "title": "P0 · ERM versus population risk",
+      "title": "Core derivation · ERM versus population risk",
       "body": "ERM is the quantity we can compute from the finite sample. Population risk is the quantity we actually care about for future draws. A small training objective is not yet a claim about deployment performance.",
       "sourceType": "lecture",
       "math": {
         "latex": "\\widehat{R}(h)=\\frac{1}{N}\\sum_{i=1}^{N}\\ell(h(x_i),y_i),\\qquad R_{\\mathrm{pop}}(h)=\\mathbb{E}_{x\\sim\\mu}\\left[\\ell(h(x),f^*(x))\\right]",
-        "explanation": "The hat marks a sample average. The population risk is an expectation over the data distribution. Learning tries to use the first to choose a hypothesis that is good for the second.",
+        "explanation": "The lecture now specializes to a deterministic oracle. For a random oracle, the clarification/extension is $R_{\\mathrm{pop}}(h)=\\mathbb E_{x\\sim\\mu}\\mathbb E_{y\\sim p^*(\\cdot\\mid x)}[\\ell(h(x),y)]$.",
         "symbols": [
           {
             "latex": "\\widehat{R}",
@@ -84,14 +147,30 @@
           },
           {
             "latex": "f^*",
-            "meaning": "oracle or target relationship"
+            "meaning": "deterministic oracle"
           }
         ],
         "sourceType": "lecture"
-      }
+      },
+      "sourceRefs": [
+        {
+          "sourceId": "DSA5105/Lec1_annotated.pdf",
+          "page": 23,
+          "sourceType": "lecture",
+          "role": "empirical risk",
+          "status": "current"
+        },
+        {
+          "sourceId": "DSA5105/Lec1_annotated.pdf",
+          "page": 24,
+          "sourceType": "lecture",
+          "role": "population risk and generalization gap",
+          "status": "current"
+        }
+      ]
     },
     {
-      "title": "P0 · Why iid matters",
+      "title": "Lecture bridge · Why iid matters",
       "body": "The usual generalization story treats inputs as independent draws from the same distribution. Independence limits duplicated evidence; identical distribution makes the validation sample relevant to the population we claim to measure. Time drift, leakage, and distribution shift break this interpretation even when the split is large.",
       "sourceType": "lecture",
       "math": {
@@ -108,15 +187,24 @@
           }
         ],
         "sourceType": "lecture"
-      }
+      },
+      "sourceRefs": [
+        {
+          "sourceId": "DSA5105/Lec1_annotated.pdf",
+          "page": 24,
+          "sourceType": "lecture",
+          "role": "generalization gap",
+          "status": "current"
+        }
+      ]
     },
     {
-      "title": "Mental model · Three sources of error",
-      "body": "Use this as a diagnostic decomposition rather than a strict equality of distances. First ask whether the class can express a useful target, then whether optimization finds a good member, then whether the fitted member survives the move from sample to population.",
+      "title": "Lecture core · Three sources of error",
+      "body": "The slide-25 decomposition is lecture-aligned: approximation, estimation, and optimization. It is not a strict equality of scalar distances; it is a diagnostic map with distinct objects and failure modes.",
       "sourceType": "lecture",
       "math": {
-        "latex": "f^*\\longleftrightarrow\\tilde f\\longleftrightarrow f_{\\mathrm{opt}}\\longleftrightarrow\\hat f",
-        "explanation": "The links represent approximation, optimization, and generalization/sample error. They are different failure modes, so a lower training loss cannot repair a misspecified class or a broken evaluation split.",
+        "latex": "\\tilde f\\in\\arg\\min_{f\\in\\mathcal H}R_{\\mathrm{pop}}(f),\\qquad \\hat f\\in\\arg\\min_{f\\in\\mathcal H}\\widehat R(f),\\qquad f^*\\to\\tilde f\\;(\\text{approximation}),\\quad \\tilde f\\to\\hat f\\;(\\text{estimation}),\\quad f_0\\to\\hat f\\;(\\text{optimization})",
+        "explanation": "Approximation compares the oracle $f^*$ with the best population-risk member $\tilde f$. Estimation is the finite-sample move from $\tilde f$ to $hat f$. Optimization is the algorithmic move from initialization $f_0$ toward the empirical minimizer $hat f$. The lecture diagram has no $f_{\\mathrm{opt}}$.",
         "symbols": [
           {
             "latex": "f^*",
@@ -124,27 +212,36 @@
           },
           {
             "latex": "\\tilde f",
-            "meaning": "best available approximation in the class"
-          },
-          {
-            "latex": "f_{\\mathrm{opt}}",
-            "meaning": "best member found by the optimizer"
+            "meaning": "population-risk minimizer in the class"
           },
           {
             "latex": "\\hat f",
-            "meaning": "fitted model from the sample"
+            "meaning": "empirical-risk minimizer or fitted model"
+          },
+          {
+            "latex": "f_0",
+            "meaning": "optimization initialization"
           }
         ],
         "sourceType": "lecture"
-      }
+      },
+      "sourceRefs": [
+        {
+          "sourceId": "DSA5105/Lec1_annotated.pdf",
+          "page": 25,
+          "sourceType": "lecture",
+          "role": "three sources of error",
+          "status": "current"
+        }
+      ]
     },
     {
-      "title": "Official exercise · Huber influence",
-      "body": "Differentiate the Huber loss instead of stopping at the phrase linear tails. The derivative is the influence function entering the first-order condition. Once the residual is outside the quadratic region, its magnitude no longer increases the point's pull on the optimum.",
+      "title": "Official exercise · Huber ψ-function",
+      "body": "Differentiate the Huber loss instead of stopping at the phrase linear tails. Call $\\psi_\\delta=\\rho_\\delta'$ the Huber $\\psi$-function or score contribution. Its per-observation contribution to the stationarity equation is bounded by $\\delta$ outside the quadratic region.",
       "sourceType": "lecture",
       "math": {
         "latex": "\\psi_\\delta(r)=\\rho_\\delta'(r)=\\begin{cases}r,&|r|\\le\\delta\\\\\\delta\\operatorname{sign}(r),&|r|>\\delta\\end{cases},\\qquad\\sum_{i=1}^{N}\\psi_\\delta(\\hat m-y_i)=0",
-        "explanation": "For squared loss, $\\psi(r)=r, so a residual of magnitude one million has one million times the signed influence of a residual of magnitude one$. Huber caps that influence at plus or minus $\\delta$.",
+        "explanation": "For squared loss, $\\psi(r)=r$. Huber caps the first-order contribution at plus or minus $\\delta$; this is a bounded score contribution, not a claim about the full statistical influence function.",
         "symbols": [
           {
             "latex": "\\rho_\\delta",
@@ -152,7 +249,7 @@
           },
           {
             "latex": "\\psi_\\delta",
-            "meaning": "Huber influence function"
+            "meaning": "Huber $\\psi$-function / score contribution"
           },
           {
             "latex": "\\hat m",
@@ -164,15 +261,31 @@
           }
         ],
         "sourceType": "lecture"
-      }
+      },
+      "sourceRefs": [
+        {
+          "sourceId": "DSA5105/Lec1_annotated.pdf",
+          "page": 35,
+          "sourceType": "lecture",
+          "role": "Huber definition",
+          "status": "current"
+        },
+        {
+          "sourceId": "DSA5105/Lec1_exercises-solutions.pdf",
+          "page": 1,
+          "sourceType": "lecture",
+          "role": "Huber derivative",
+          "status": "current"
+        }
+      ]
     },
     {
-      "title": "P0 · Singular OLS and the null space",
-      "body": "When the design matrix is rank deficient, the normal equation can have infinitely many parameter solutions. The pseudoinverse gives one particular solution; the null-space term changes parameters without changing the fitted training vector. This is why identical training predictions do not imply identical parameter risk.",
+      "title": "Official exercise · Singular OLS and the null space",
+      "body": "When the design matrix is rank deficient, the normal equation can have infinitely many parameter solutions. The pseudoinverse gives one particular solution; the null-space term changes parameters without changing the fitted training vector. This is why identical training predictions do not imply identical parameter behavior off-sample.",
       "sourceType": "lecture",
       "math": {
         "latex": "\\hat w(u)=\\Phi^\\dagger y+\\left(I-\\Phi^\\dagger\\Phi\\right)u,\\qquad u\\in\\mathbb{R}^{M}",
-        "explanation": "The matrix $I-\\Phi^\\dagger\\Phi$ Phi projects onto the null space of Phi. Every choice of u adds a component invisible to the training design, but a large coefficient vector can be unstable away from the observed rows.",
+        "explanation": "The matrix $I-\\Phi^\\dagger\\Phi$ Phi projects onto the null space of Phi. The exact family is on lecture page 47; page 46 supplies the full-rank OLS context.",
         "symbols": [
           {
             "latex": "\\Phi^\\dagger y",
@@ -192,15 +305,31 @@
           }
         ],
         "sourceType": "lecture"
-      }
+      },
+      "sourceRefs": [
+        {
+          "sourceId": "DSA5105/Lec1_annotated.pdf",
+          "page": 46,
+          "sourceType": "lecture",
+          "role": "general OLS",
+          "status": "current"
+        },
+        {
+          "sourceId": "DSA5105/Lec1_annotated.pdf",
+          "page": 47,
+          "sourceType": "lecture",
+          "role": "singular OLS",
+          "status": "current"
+        }
+      ]
     },
     {
-      "title": "P0 · Ridge as a spectral filter",
-      "body": "Start from the normalized design covariance A and response vector b. The first-order condition gives the closed form. Diagonalizing A then reveals exactly why small-eigenvalue directions are shrunk more: they are the directions in which the data provide weak identification.",
+      "title": "Official exercise · Ridge as a spectral filter",
+      "body": "Use the exercise-sheet convention $\\frac{\\lambda}{2}\\lVert w\\rVert^2$. The lecture writes the more general $\\lambda C(w)$ with $C(w)=\\lVert w\\rVert^2$, so the numerical definition of $\\lambda$ can differ by a constant factor between the two conventions.",
       "sourceType": "lecture",
       "math": {
-        "latex": "A=\\frac{1}{N}\\Phi^\\top\\Phi,\\quad b=\\frac{1}{N}\\Phi^\\top y,\\quad\\hat w_\\lambda=(A+\\lambda I)^{-1}b",
-        "explanation": "If $Av_j=\\mu_j v_j$, then the ridge coefficient along $v_{j}$ is multiplied relative to OLS by $\\mu_{j}$/($\\mu_{j}$+$\\lambda$). Large-eigenvalue, data-confident directions survive; small-eigenvalue, unstable directions are suppressed.",
+        "latex": "A=\\frac{1}{N}\\Phi^\\top\\Phi,\\quad b=\\frac{1}{N}\\Phi^\\top y,\\quad (A+\\lambda I)\\hat w_\\lambda=b,\\quad A v_j=\\mu_jv_j",
+        "explanation": "For comparison with the unique OLS solution, assume $Asucc0$, equivalently $\\mu_j>0$ for every $j$. Then $langlehat w_lambda,v_j\rangle/langlehat w_0,v_j\rangle=\\mu_j/(\\mu_j+\\lambda)$. If $A$ is singular, OLS can be non-unique, but $A+\\lambda Isucc0$ for $\\lambda>0$, so ridge remains unique. The bridge is rank deficiency $\to$ non-identifiability $\to$ ridge $\to$ positive definiteness.",
         "symbols": [
           {
             "latex": "A",
@@ -220,14 +349,98 @@
           }
         ],
         "sourceType": "lecture"
-      }
+      },
+      "sourceRefs": [
+        {
+          "sourceId": "DSA5105/Lec1_annotated.pdf",
+          "page": 48,
+          "sourceType": "lecture",
+          "role": "regularization",
+          "status": "current"
+        },
+        {
+          "sourceId": "DSA5105/Lec1_annotated.pdf",
+          "page": 49,
+          "sourceType": "lecture",
+          "role": "regularization and generalization",
+          "status": "current"
+        },
+        {
+          "sourceId": "DSA5105/Lec1_exercises-solutions.pdf",
+          "page": 2,
+          "sourceType": "lecture",
+          "role": "ridge spectral filter",
+          "status": "current"
+        }
+      ]
     },
     {
-      "title": "P1 · From 0–1 loss to a surrogate",
-      "body": "Classification error is the metric we ultimately care about, but 0–1 loss is flat almost everywhere and discontinuous at the decision boundary. Least squares gives an unnatural numeric target for class IDs. A smooth surrogate such as cross-entropy makes score-based optimization possible while keeping the decision rule explicit.",
+      "title": "Lecture bridge · One-hot least squares to cross-entropy",
+      "body": "The lecturer does not regress scalar class IDs. First encode class $k_i$ as $y_i=e_{k_i}inmathbb R^K$, then compare vector scores with one-hot targets. Least-squares classification is mathematically convenient and convex, but squared Euclidean distance is not itself the classification-error measure.",
       "sourceType": "lecture",
       "math": {
-        "latex": "\\text{least-square targets}\\;\\longrightarrow\\;\\mathbf{1}\\{\\hat y\\ne y\\}\\;\\longrightarrow\\;\\text{smooth surrogate}\\;\\longrightarrow\\;\\text{cross-entropy}",
+        "latex": "\\phi(x)=(\\phi_0(x),\\ldots,\\phi_{M-1}(x))^\\top\\in\\mathbb R^M,\\quad W\\in\\mathbb R^{M\\times K},\\quad z=W^\\top\\phi(x)\\in\\mathbb R^K,\\quad \\min_W\\frac{1}{N}\\sum_i\\lVert W^\\top\\phi(x_i)-e_{k_i}\\rVert_2^2",
+        "explanation": "The reasoning chain is one-hot labels $\to$ vector-valued linear scores $\to$ least-squares baseline $\to$ 0–1 loss $\to$ smooth surrogate $\to$ softmax and cross-entropy.",
+        "symbols": [
+          {
+            "latex": "e_{k_i}",
+            "meaning": "$one-hot target for class k_i$"
+          },
+          {
+            "latex": "W",
+            "meaning": "M by K score matrix"
+          },
+          {
+            "latex": "z",
+            "meaning": "K-dimensional logit vector"
+          }
+        ],
+        "sourceType": "lecture"
+      },
+      "sourceRefs": [
+        {
+          "sourceId": "DSA5105/Lec1_annotated.pdf",
+          "page": 50,
+          "sourceType": "lecture",
+          "role": "one-hot classification",
+          "status": "current"
+        },
+        {
+          "sourceId": "DSA5105/Lec1_annotated.pdf",
+          "page": 51,
+          "sourceType": "lecture",
+          "role": "multiclass setup",
+          "status": "current"
+        },
+        {
+          "sourceId": "DSA5105/Lec1_annotated.pdf",
+          "page": 52,
+          "sourceType": "lecture",
+          "role": "least-squares classification",
+          "status": "current"
+        },
+        {
+          "sourceId": "DSA5105/Lec1_annotated.pdf",
+          "page": 53,
+          "sourceType": "lecture",
+          "role": "classification error and surrogate",
+          "status": "current"
+        },
+        {
+          "sourceId": "DSA5105/Lec1_annotated.pdf",
+          "page": 54,
+          "sourceType": "lecture",
+          "role": "softmax and cross-entropy",
+          "status": "current"
+        }
+      ]
+    },
+    {
+      "title": "Lecture bridge · From 0–1 loss to a surrogate",
+      "body": "Classification error is the metric we ultimately care about, but 0–1 loss is flat almost everywhere and discontinuous at the decision boundary. A smooth surrogate such as cross-entropy makes score-based optimization possible while keeping the decision rule explicit.",
+      "sourceType": "lecture",
+      "math": {
+        "latex": "\\mathbf{1}\\{\\hat y\\ne y\\}\\;\\longrightarrow\\;\\text{smooth surrogate}\\;\\longrightarrow\\;\\text{cross-entropy}",
         "explanation": "The arrows are a reasoning chain, not an equivalence claim. The surrogate is chosen for optimization geometry; the final classification metric remains a separate evaluation question.",
         "symbols": [
           {
@@ -244,15 +457,31 @@
           }
         ],
         "sourceType": "lecture"
-      }
+      },
+      "sourceRefs": [
+        {
+          "sourceId": "DSA5105/Lec1_annotated.pdf",
+          "page": 53,
+          "sourceType": "lecture",
+          "role": "classification error and surrogate",
+          "status": "current"
+        },
+        {
+          "sourceId": "DSA5105/Lec1_annotated.pdf",
+          "page": 54,
+          "sourceType": "lecture",
+          "role": "softmax and cross-entropy",
+          "status": "current"
+        }
+      ]
     },
     {
       "title": "Official exercise · Logistic loss and convexity",
-      "body": "For a binary score s and label y in {-1,+1}, the logistic loss is softplus(-ys). Its second derivative is non-negative, which gives a convex one-dimensional loss in the score. The decision rule is still sign(s), so optimization and evaluation remain conceptually separate.",
+      "body": "For a binary score s and label y in {-1,+1}, the logistic loss is softplus(-ys). Its second derivative is non-negative, which gives a convex one-dimensional loss in the score. The decision rule is piecewise for $s>0$ and $s<0$; the tie case $s=0$ must be resolved separately.",
       "sourceType": "lecture",
       "math": {
-        "latex": "\\ell(s,y)=\\log(1+e^{-ys}),\\qquad\\hat y=\\operatorname{sign}(s),\\qquad\\frac{\\partial^2\\ell}{\\partial s^2}=\\frac{e^{ys}}{(1+e^{ys})^2}\\ge0",
-        "explanation": "The Hessian is non-negative for either label because the numerator and denominator are positive. This is why logistic loss has a much friendlier optimization shape than 0–1 loss.",
+        "latex": "\\ell(s,y)=\\log(1+e^{-ys}),\\qquad\\hat y=\\begin{cases}+1,&s>0\\\\-1,&s<0\\end{cases},\\qquad\\frac{\\partial^2\\ell}{\\partial s^2}=\\frac{e^{ys}}{(1+e^{ys})^2}\\ge0",
+        "explanation": "The tie at $s=0$ is a convention, not a hidden third class. The second derivative is non-negative for either label, so the score-level logistic loss is convex.",
         "symbols": [
           {
             "latex": "s",
@@ -263,8 +492,8 @@
             "meaning": "binary label encoding"
           },
           {
-            "latex": "\\operatorname{sign}(s)",
-            "meaning": "classification decision"
+            "latex": "s=0",
+            "meaning": "tie requiring an explicit rule"
           },
           {
             "latex": "\\ell",
@@ -272,11 +501,27 @@
           }
         ],
         "sourceType": "lecture"
-      }
+      },
+      "sourceRefs": [
+        {
+          "sourceId": "DSA5105/Lec1_exercises-solutions.pdf",
+          "page": 2,
+          "sourceType": "lecture",
+          "role": "binary logistic setup",
+          "status": "current"
+        },
+        {
+          "sourceId": "DSA5105/Lec1_exercises-solutions.pdf",
+          "page": 3,
+          "sourceType": "lecture",
+          "role": "logistic convexity",
+          "status": "current"
+        }
+      ]
     },
     {
       "title": "Week 1 synthesis map",
-      "body": "The complete story is a controlled sequence: define the data-generating relationship, choose a hypothesis class and loss, fit on the sample, diagnose approximation/optimization/generalization, then use rank-aware regularization when the data do not identify a stable solution.",
+      "body": "The complete story is a controlled sequence: define the data-generating relationship, choose a hypothesis class and loss, fit on the sample, diagnose approximation/estimation/optimization, then use rank-aware regularization when the data do not identify a stable solution.",
       "sourceType": "lecture",
       "math": {
         "latex": "\\mathcal{D}\\;\\longrightarrow\\;(\\mathcal{H},\\ell)\\;\\longrightarrow\\;\\widehat{R}\\;\\longrightarrow\\;\\hat f\\;\\longrightarrow\\;R_{\\mathrm{pop}}",
@@ -315,7 +560,7 @@
         "Write the objective and name the quantity it measures.",
         "Differentiate or state the stationarity condition before quoting a closed form.",
         "State the rank, iid, convexity, or evaluation assumption that makes the next step valid.",
-        "Interpret the result in a direction, influence, or generalization language—not only as a formula."
+        "Interpret the result in a direction, score-contribution, or generalization language—not only as a formula."
       ],
       "answer": "A complete Week 1 answer connects algebra to the assumption and then to the modeling consequence.",
       "sourceType": "lecture"
@@ -336,14 +581,14 @@
     },
     {
       "prompt": "Why is a low empirical risk not enough to claim a good learner?",
-      "angle": "Name the expectation, the iid bridge, and the three possible error sources.",
-      "modelAnswer": "Empirical risk is a sample average. It informs population risk only under a relevant sampling assumption and a suitable class/optimization process; it can be low while approximation, optimization, or generalization is still poor.",
+      "angle": "Name the expectation, the iid bridge, and the three lecture sources of error.",
+      "modelAnswer": "Empirical risk is a sample average. It informs population risk only under a relevant sampling assumption and a suitable class/optimization process; it can be low while approximation, estimation, or optimization is still poor.",
       "focus": "generalization"
     },
     {
       "prompt": "What exactly is bounded in the Huber argument?",
       "angle": "Differentiate with respect to the residual and compare it with squared loss.",
-      "modelAnswer": "The derivative $\\psi_delta(r)$, which is the residual's influence on the first-order condition, is capped at plus or minus $\\delta$ outside the quadratic region.",
+      "modelAnswer": "The derivative $\\psi_delta(r)$, which is the residual's score contribution to the first-order condition, is capped at plus or minus $\\delta$ outside the quadratic region.",
       "focus": "robustness"
     }
   ],
@@ -353,7 +598,7 @@
     {
       "id": "dsa5105-week1-derivations-section-1",
       "type": "teaching-note",
-      "title": "P0 · ERM versus population risk",
+      "title": "Core derivation · ERM versus population risk",
       "body": "ERM is the quantity we can compute from the finite sample. Population risk is the quantity we actually care about for future draws. A small training objective is not yet a claim about deployment performance.",
       "sourceType": "lecture",
       "sourceRefs": [
@@ -361,49 +606,14 @@
           "sourceId": "DSA5105/Lec1_annotated.pdf",
           "page": 23,
           "sourceType": "lecture",
-          "role": "empirical and population risk",
+          "role": "empirical risk",
           "status": "current"
         },
         {
           "sourceId": "DSA5105/Lec1_annotated.pdf",
-          "page": 25,
+          "page": 24,
           "sourceType": "lecture",
-          "role": "three sources of error",
-          "status": "current"
-        },
-        {
-          "sourceId": "DSA5105/Lec1_annotated.pdf",
-          "page": 35,
-          "sourceType": "lecture",
-          "role": "Huber loss",
-          "status": "current"
-        },
-        {
-          "sourceId": "DSA5105/Lec1_annotated.pdf",
-          "page": 46,
-          "sourceType": "lecture",
-          "role": "matrix OLS",
-          "status": "current"
-        },
-        {
-          "sourceId": "DSA5105/Lec1_annotated.pdf",
-          "page": 48,
-          "sourceType": "lecture",
-          "role": "regularization",
-          "status": "current"
-        },
-        {
-          "sourceId": "DSA5105/Lec1_annotated.pdf",
-          "page": 54,
-          "sourceType": "lecture",
-          "role": "classification model",
-          "status": "current"
-        },
-        {
-          "sourceId": "DSA5105/Lec1_exercises-solutions.pdf",
-          "page": 2,
-          "sourceType": "lecture",
-          "role": "official Week 1 exercise solutions",
+          "role": "population risk and generalization gap",
           "status": "current"
         }
       ]
@@ -411,57 +621,15 @@
     {
       "id": "dsa5105-week1-derivations-section-2",
       "type": "teaching-note",
-      "title": "P0 · Why iid matters",
+      "title": "Lecture bridge · Why iid matters",
       "body": "The usual generalization story treats inputs as independent draws from the same distribution. Independence limits duplicated evidence; identical distribution makes the validation sample relevant to the population we claim to measure. Time drift, leakage, and distribution shift break this interpretation even when the split is large.",
       "sourceType": "lecture",
       "sourceRefs": [
         {
           "sourceId": "DSA5105/Lec1_annotated.pdf",
-          "page": 23,
+          "page": 24,
           "sourceType": "lecture",
-          "role": "empirical and population risk",
-          "status": "current"
-        },
-        {
-          "sourceId": "DSA5105/Lec1_annotated.pdf",
-          "page": 25,
-          "sourceType": "lecture",
-          "role": "three sources of error",
-          "status": "current"
-        },
-        {
-          "sourceId": "DSA5105/Lec1_annotated.pdf",
-          "page": 35,
-          "sourceType": "lecture",
-          "role": "Huber loss",
-          "status": "current"
-        },
-        {
-          "sourceId": "DSA5105/Lec1_annotated.pdf",
-          "page": 46,
-          "sourceType": "lecture",
-          "role": "matrix OLS",
-          "status": "current"
-        },
-        {
-          "sourceId": "DSA5105/Lec1_annotated.pdf",
-          "page": 48,
-          "sourceType": "lecture",
-          "role": "regularization",
-          "status": "current"
-        },
-        {
-          "sourceId": "DSA5105/Lec1_annotated.pdf",
-          "page": 54,
-          "sourceType": "lecture",
-          "role": "classification model",
-          "status": "current"
-        },
-        {
-          "sourceId": "DSA5105/Lec1_exercises-solutions.pdf",
-          "page": 2,
-          "sourceType": "lecture",
-          "role": "official Week 1 exercise solutions",
+          "role": "generalization gap",
           "status": "current"
         }
       ]
@@ -469,57 +637,15 @@
     {
       "id": "dsa5105-week1-derivations-section-3",
       "type": "teaching-note",
-      "title": "Mental model · Three sources of error",
-      "body": "Use this as a diagnostic decomposition rather than a strict equality of distances. First ask whether the class can express a useful target, then whether optimization finds a good member, then whether the fitted member survives the move from sample to population.",
+      "title": "Lecture core · Three sources of error",
+      "body": "The slide-25 decomposition is lecture-aligned: approximation, estimation, and optimization. It is not a strict equality of scalar distances; it is a diagnostic map with distinct objects and failure modes.",
       "sourceType": "lecture",
       "sourceRefs": [
-        {
-          "sourceId": "DSA5105/Lec1_annotated.pdf",
-          "page": 23,
-          "sourceType": "lecture",
-          "role": "empirical and population risk",
-          "status": "current"
-        },
         {
           "sourceId": "DSA5105/Lec1_annotated.pdf",
           "page": 25,
           "sourceType": "lecture",
           "role": "three sources of error",
-          "status": "current"
-        },
-        {
-          "sourceId": "DSA5105/Lec1_annotated.pdf",
-          "page": 35,
-          "sourceType": "lecture",
-          "role": "Huber loss",
-          "status": "current"
-        },
-        {
-          "sourceId": "DSA5105/Lec1_annotated.pdf",
-          "page": 46,
-          "sourceType": "lecture",
-          "role": "matrix OLS",
-          "status": "current"
-        },
-        {
-          "sourceId": "DSA5105/Lec1_annotated.pdf",
-          "page": 48,
-          "sourceType": "lecture",
-          "role": "regularization",
-          "status": "current"
-        },
-        {
-          "sourceId": "DSA5105/Lec1_annotated.pdf",
-          "page": 54,
-          "sourceType": "lecture",
-          "role": "classification model",
-          "status": "current"
-        },
-        {
-          "sourceId": "DSA5105/Lec1_exercises-solutions.pdf",
-          "page": 2,
-          "sourceType": "lecture",
-          "role": "official Week 1 exercise solutions",
           "status": "current"
         }
       ]
@@ -527,57 +653,22 @@
     {
       "id": "dsa5105-week1-derivations-section-4",
       "type": "teaching-note",
-      "title": "Official exercise · Huber influence",
-      "body": "Differentiate the Huber loss instead of stopping at the phrase linear tails. The derivative is the influence function entering the first-order condition. Once the residual is outside the quadratic region, its magnitude no longer increases the point's pull on the optimum.",
+      "title": "Official exercise · Huber ψ-function",
+      "body": "Differentiate the Huber loss instead of stopping at the phrase linear tails. Call $\\psi_\\delta=\\rho_\\delta'$ the Huber $\\psi$-function or score contribution. Its per-observation contribution to the stationarity equation is bounded by $\\delta$ outside the quadratic region.",
       "sourceType": "lecture",
       "sourceRefs": [
         {
           "sourceId": "DSA5105/Lec1_annotated.pdf",
-          "page": 23,
-          "sourceType": "lecture",
-          "role": "empirical and population risk",
-          "status": "current"
-        },
-        {
-          "sourceId": "DSA5105/Lec1_annotated.pdf",
-          "page": 25,
-          "sourceType": "lecture",
-          "role": "three sources of error",
-          "status": "current"
-        },
-        {
-          "sourceId": "DSA5105/Lec1_annotated.pdf",
           "page": 35,
           "sourceType": "lecture",
-          "role": "Huber loss",
-          "status": "current"
-        },
-        {
-          "sourceId": "DSA5105/Lec1_annotated.pdf",
-          "page": 46,
-          "sourceType": "lecture",
-          "role": "matrix OLS",
-          "status": "current"
-        },
-        {
-          "sourceId": "DSA5105/Lec1_annotated.pdf",
-          "page": 48,
-          "sourceType": "lecture",
-          "role": "regularization",
-          "status": "current"
-        },
-        {
-          "sourceId": "DSA5105/Lec1_annotated.pdf",
-          "page": 54,
-          "sourceType": "lecture",
-          "role": "classification model",
+          "role": "Huber definition",
           "status": "current"
         },
         {
           "sourceId": "DSA5105/Lec1_exercises-solutions.pdf",
-          "page": 2,
+          "page": 1,
           "sourceType": "lecture",
-          "role": "official Week 1 exercise solutions",
+          "role": "Huber derivative",
           "status": "current"
         }
       ]
@@ -585,57 +676,22 @@
     {
       "id": "dsa5105-week1-derivations-section-5",
       "type": "teaching-note",
-      "title": "P0 · Singular OLS and the null space",
-      "body": "When the design matrix is rank deficient, the normal equation can have infinitely many parameter solutions. The pseudoinverse gives one particular solution; the null-space term changes parameters without changing the fitted training vector. This is why identical training predictions do not imply identical parameter risk.",
+      "title": "Official exercise · Singular OLS and the null space",
+      "body": "When the design matrix is rank deficient, the normal equation can have infinitely many parameter solutions. The pseudoinverse gives one particular solution; the null-space term changes parameters without changing the fitted training vector. This is why identical training predictions do not imply identical parameter behavior off-sample.",
       "sourceType": "lecture",
       "sourceRefs": [
         {
           "sourceId": "DSA5105/Lec1_annotated.pdf",
-          "page": 23,
-          "sourceType": "lecture",
-          "role": "empirical and population risk",
-          "status": "current"
-        },
-        {
-          "sourceId": "DSA5105/Lec1_annotated.pdf",
-          "page": 25,
-          "sourceType": "lecture",
-          "role": "three sources of error",
-          "status": "current"
-        },
-        {
-          "sourceId": "DSA5105/Lec1_annotated.pdf",
-          "page": 35,
-          "sourceType": "lecture",
-          "role": "Huber loss",
-          "status": "current"
-        },
-        {
-          "sourceId": "DSA5105/Lec1_annotated.pdf",
           "page": 46,
           "sourceType": "lecture",
-          "role": "matrix OLS",
+          "role": "general OLS",
           "status": "current"
         },
         {
           "sourceId": "DSA5105/Lec1_annotated.pdf",
-          "page": 48,
+          "page": 47,
           "sourceType": "lecture",
-          "role": "regularization",
-          "status": "current"
-        },
-        {
-          "sourceId": "DSA5105/Lec1_annotated.pdf",
-          "page": 54,
-          "sourceType": "lecture",
-          "role": "classification model",
-          "status": "current"
-        },
-        {
-          "sourceId": "DSA5105/Lec1_exercises-solutions.pdf",
-          "page": 2,
-          "sourceType": "lecture",
-          "role": "official Week 1 exercise solutions",
+          "role": "singular OLS",
           "status": "current"
         }
       ]
@@ -643,38 +699,10 @@
     {
       "id": "dsa5105-week1-derivations-section-6",
       "type": "teaching-note",
-      "title": "P0 · Ridge as a spectral filter",
-      "body": "Start from the normalized design covariance A and response vector b. The first-order condition gives the closed form. Diagonalizing A then reveals exactly why small-eigenvalue directions are shrunk more: they are the directions in which the data provide weak identification.",
+      "title": "Official exercise · Ridge as a spectral filter",
+      "body": "Use the exercise-sheet convention $\\frac{\\lambda}{2}\\lVert w\\rVert^2$. The lecture writes the more general $\\lambda C(w)$ with $C(w)=\\lVert w\\rVert^2$, so the numerical definition of $\\lambda$ can differ by a constant factor between the two conventions.",
       "sourceType": "lecture",
       "sourceRefs": [
-        {
-          "sourceId": "DSA5105/Lec1_annotated.pdf",
-          "page": 23,
-          "sourceType": "lecture",
-          "role": "empirical and population risk",
-          "status": "current"
-        },
-        {
-          "sourceId": "DSA5105/Lec1_annotated.pdf",
-          "page": 25,
-          "sourceType": "lecture",
-          "role": "three sources of error",
-          "status": "current"
-        },
-        {
-          "sourceId": "DSA5105/Lec1_annotated.pdf",
-          "page": 35,
-          "sourceType": "lecture",
-          "role": "Huber loss",
-          "status": "current"
-        },
-        {
-          "sourceId": "DSA5105/Lec1_annotated.pdf",
-          "page": 46,
-          "sourceType": "lecture",
-          "role": "matrix OLS",
-          "status": "current"
-        },
         {
           "sourceId": "DSA5105/Lec1_annotated.pdf",
           "page": 48,
@@ -684,16 +712,16 @@
         },
         {
           "sourceId": "DSA5105/Lec1_annotated.pdf",
-          "page": 54,
+          "page": 49,
           "sourceType": "lecture",
-          "role": "classification model",
+          "role": "regularization and generalization",
           "status": "current"
         },
         {
           "sourceId": "DSA5105/Lec1_exercises-solutions.pdf",
           "page": 2,
           "sourceType": "lecture",
-          "role": "official Week 1 exercise solutions",
+          "role": "ridge spectral filter",
           "status": "current"
         }
       ]
@@ -701,57 +729,43 @@
     {
       "id": "dsa5105-week1-derivations-section-7",
       "type": "teaching-note",
-      "title": "P1 · From 0–1 loss to a surrogate",
-      "body": "Classification error is the metric we ultimately care about, but 0–1 loss is flat almost everywhere and discontinuous at the decision boundary. Least squares gives an unnatural numeric target for class IDs. A smooth surrogate such as cross-entropy makes score-based optimization possible while keeping the decision rule explicit.",
+      "title": "Lecture bridge · One-hot least squares to cross-entropy",
+      "body": "The lecturer does not regress scalar class IDs. First encode class $k_i$ as $y_i=e_{k_i}inmathbb R^K$, then compare vector scores with one-hot targets. Least-squares classification is mathematically convenient and convex, but squared Euclidean distance is not itself the classification-error measure.",
       "sourceType": "lecture",
       "sourceRefs": [
         {
           "sourceId": "DSA5105/Lec1_annotated.pdf",
-          "page": 23,
+          "page": 50,
           "sourceType": "lecture",
-          "role": "empirical and population risk",
+          "role": "one-hot classification",
           "status": "current"
         },
         {
           "sourceId": "DSA5105/Lec1_annotated.pdf",
-          "page": 25,
+          "page": 51,
           "sourceType": "lecture",
-          "role": "three sources of error",
+          "role": "multiclass setup",
           "status": "current"
         },
         {
           "sourceId": "DSA5105/Lec1_annotated.pdf",
-          "page": 35,
+          "page": 52,
           "sourceType": "lecture",
-          "role": "Huber loss",
+          "role": "least-squares classification",
           "status": "current"
         },
         {
           "sourceId": "DSA5105/Lec1_annotated.pdf",
-          "page": 46,
+          "page": 53,
           "sourceType": "lecture",
-          "role": "matrix OLS",
-          "status": "current"
-        },
-        {
-          "sourceId": "DSA5105/Lec1_annotated.pdf",
-          "page": 48,
-          "sourceType": "lecture",
-          "role": "regularization",
+          "role": "classification error and surrogate",
           "status": "current"
         },
         {
           "sourceId": "DSA5105/Lec1_annotated.pdf",
           "page": 54,
           "sourceType": "lecture",
-          "role": "classification model",
-          "status": "current"
-        },
-        {
-          "sourceId": "DSA5105/Lec1_exercises-solutions.pdf",
-          "page": 2,
-          "sourceType": "lecture",
-          "role": "official Week 1 exercise solutions",
+          "role": "softmax and cross-entropy",
           "status": "current"
         }
       ]
@@ -759,57 +773,22 @@
     {
       "id": "dsa5105-week1-derivations-section-8",
       "type": "teaching-note",
-      "title": "Official exercise · Logistic loss and convexity",
-      "body": "For a binary score s and label y in {-1,+1}, the logistic loss is softplus(-ys). Its second derivative is non-negative, which gives a convex one-dimensional loss in the score. The decision rule is still sign(s), so optimization and evaluation remain conceptually separate.",
+      "title": "Lecture bridge · From 0–1 loss to a surrogate",
+      "body": "Classification error is the metric we ultimately care about, but 0–1 loss is flat almost everywhere and discontinuous at the decision boundary. A smooth surrogate such as cross-entropy makes score-based optimization possible while keeping the decision rule explicit.",
       "sourceType": "lecture",
       "sourceRefs": [
         {
           "sourceId": "DSA5105/Lec1_annotated.pdf",
-          "page": 23,
+          "page": 53,
           "sourceType": "lecture",
-          "role": "empirical and population risk",
-          "status": "current"
-        },
-        {
-          "sourceId": "DSA5105/Lec1_annotated.pdf",
-          "page": 25,
-          "sourceType": "lecture",
-          "role": "three sources of error",
-          "status": "current"
-        },
-        {
-          "sourceId": "DSA5105/Lec1_annotated.pdf",
-          "page": 35,
-          "sourceType": "lecture",
-          "role": "Huber loss",
-          "status": "current"
-        },
-        {
-          "sourceId": "DSA5105/Lec1_annotated.pdf",
-          "page": 46,
-          "sourceType": "lecture",
-          "role": "matrix OLS",
-          "status": "current"
-        },
-        {
-          "sourceId": "DSA5105/Lec1_annotated.pdf",
-          "page": 48,
-          "sourceType": "lecture",
-          "role": "regularization",
+          "role": "classification error and surrogate",
           "status": "current"
         },
         {
           "sourceId": "DSA5105/Lec1_annotated.pdf",
           "page": 54,
           "sourceType": "lecture",
-          "role": "classification model",
-          "status": "current"
-        },
-        {
-          "sourceId": "DSA5105/Lec1_exercises-solutions.pdf",
-          "page": 2,
-          "sourceType": "lecture",
-          "role": "official Week 1 exercise solutions",
+          "role": "softmax and cross-entropy",
           "status": "current"
         }
       ]
@@ -817,15 +796,45 @@
     {
       "id": "dsa5105-week1-derivations-section-9",
       "type": "teaching-note",
+      "title": "Official exercise · Logistic loss and convexity",
+      "body": "For a binary score s and label y in {-1,+1}, the logistic loss is softplus(-ys). Its second derivative is non-negative, which gives a convex one-dimensional loss in the score. The decision rule is piecewise for $s>0$ and $s<0$; the tie case $s=0$ must be resolved separately.",
+      "sourceType": "lecture",
+      "sourceRefs": [
+        {
+          "sourceId": "DSA5105/Lec1_exercises-solutions.pdf",
+          "page": 2,
+          "sourceType": "lecture",
+          "role": "binary logistic setup",
+          "status": "current"
+        },
+        {
+          "sourceId": "DSA5105/Lec1_exercises-solutions.pdf",
+          "page": 3,
+          "sourceType": "lecture",
+          "role": "logistic convexity",
+          "status": "current"
+        }
+      ]
+    },
+    {
+      "id": "dsa5105-week1-derivations-section-10",
+      "type": "teaching-note",
       "title": "Week 1 synthesis map",
-      "body": "The complete story is a controlled sequence: define the data-generating relationship, choose a hypothesis class and loss, fit on the sample, diagnose approximation/optimization/generalization, then use rank-aware regularization when the data do not identify a stable solution.",
+      "body": "The complete story is a controlled sequence: define the data-generating relationship, choose a hypothesis class and loss, fit on the sample, diagnose approximation/estimation/optimization, then use rank-aware regularization when the data do not identify a stable solution.",
       "sourceType": "lecture",
       "sourceRefs": [
         {
           "sourceId": "DSA5105/Lec1_annotated.pdf",
           "page": 23,
           "sourceType": "lecture",
-          "role": "empirical and population risk",
+          "role": "empirical risk",
+          "status": "current"
+        },
+        {
+          "sourceId": "DSA5105/Lec1_annotated.pdf",
+          "page": 24,
+          "sourceType": "lecture",
+          "role": "population risk and generalization gap",
           "status": "current"
         },
         {
@@ -839,14 +848,21 @@
           "sourceId": "DSA5105/Lec1_annotated.pdf",
           "page": 35,
           "sourceType": "lecture",
-          "role": "Huber loss",
+          "role": "Huber definition",
           "status": "current"
         },
         {
           "sourceId": "DSA5105/Lec1_annotated.pdf",
           "page": 46,
           "sourceType": "lecture",
-          "role": "matrix OLS",
+          "role": "general OLS",
+          "status": "current"
+        },
+        {
+          "sourceId": "DSA5105/Lec1_annotated.pdf",
+          "page": 47,
+          "sourceType": "lecture",
+          "role": "singular OLS",
           "status": "current"
         },
         {
@@ -858,22 +874,71 @@
         },
         {
           "sourceId": "DSA5105/Lec1_annotated.pdf",
+          "page": 49,
+          "sourceType": "lecture",
+          "role": "regularization and generalization",
+          "status": "current"
+        },
+        {
+          "sourceId": "DSA5105/Lec1_annotated.pdf",
+          "page": 50,
+          "sourceType": "lecture",
+          "role": "one-hot classification",
+          "status": "current"
+        },
+        {
+          "sourceId": "DSA5105/Lec1_annotated.pdf",
+          "page": 51,
+          "sourceType": "lecture",
+          "role": "multiclass setup",
+          "status": "current"
+        },
+        {
+          "sourceId": "DSA5105/Lec1_annotated.pdf",
+          "page": 52,
+          "sourceType": "lecture",
+          "role": "least-squares classification",
+          "status": "current"
+        },
+        {
+          "sourceId": "DSA5105/Lec1_annotated.pdf",
+          "page": 53,
+          "sourceType": "lecture",
+          "role": "classification error and surrogate",
+          "status": "current"
+        },
+        {
+          "sourceId": "DSA5105/Lec1_annotated.pdf",
           "page": 54,
           "sourceType": "lecture",
-          "role": "classification model",
+          "role": "softmax and cross-entropy",
+          "status": "current"
+        },
+        {
+          "sourceId": "DSA5105/Lec1_exercises-solutions.pdf",
+          "page": 1,
+          "sourceType": "lecture",
+          "role": "Huber derivative",
           "status": "current"
         },
         {
           "sourceId": "DSA5105/Lec1_exercises-solutions.pdf",
           "page": 2,
           "sourceType": "lecture",
-          "role": "official Week 1 exercise solutions",
+          "role": "ridge spectral filter and logistic setup",
+          "status": "current"
+        },
+        {
+          "sourceId": "DSA5105/Lec1_exercises-solutions.pdf",
+          "page": 3,
+          "sourceType": "lecture",
+          "role": "logistic convexity",
           "status": "current"
         }
       ]
     },
     {
-      "id": "dsa5105-week1-derivations-section-10",
+      "id": "dsa5105-week1-derivations-section-11",
       "type": "teaching-note",
       "title": "Source boundary · Lecture first, exercise depth second",
       "body": "The annotated lecture supplies the Week 1 scope. The official exercise sheet and its solutions are used here for derivation depth; textbook material is labeled as supporting context. These proofs deepen the lecture rather than silently changing the examinable source boundary.",
@@ -883,7 +948,14 @@
           "sourceId": "DSA5105/Lec1_annotated.pdf",
           "page": 23,
           "sourceType": "lecture",
-          "role": "empirical and population risk",
+          "role": "empirical risk",
+          "status": "current"
+        },
+        {
+          "sourceId": "DSA5105/Lec1_annotated.pdf",
+          "page": 24,
+          "sourceType": "lecture",
+          "role": "population risk and generalization gap",
           "status": "current"
         },
         {
@@ -897,14 +969,21 @@
           "sourceId": "DSA5105/Lec1_annotated.pdf",
           "page": 35,
           "sourceType": "lecture",
-          "role": "Huber loss",
+          "role": "Huber definition",
           "status": "current"
         },
         {
           "sourceId": "DSA5105/Lec1_annotated.pdf",
           "page": 46,
           "sourceType": "lecture",
-          "role": "matrix OLS",
+          "role": "general OLS",
+          "status": "current"
+        },
+        {
+          "sourceId": "DSA5105/Lec1_annotated.pdf",
+          "page": 47,
+          "sourceType": "lecture",
+          "role": "singular OLS",
           "status": "current"
         },
         {
@@ -916,16 +995,65 @@
         },
         {
           "sourceId": "DSA5105/Lec1_annotated.pdf",
+          "page": 49,
+          "sourceType": "lecture",
+          "role": "regularization and generalization",
+          "status": "current"
+        },
+        {
+          "sourceId": "DSA5105/Lec1_annotated.pdf",
+          "page": 50,
+          "sourceType": "lecture",
+          "role": "one-hot classification",
+          "status": "current"
+        },
+        {
+          "sourceId": "DSA5105/Lec1_annotated.pdf",
+          "page": 51,
+          "sourceType": "lecture",
+          "role": "multiclass setup",
+          "status": "current"
+        },
+        {
+          "sourceId": "DSA5105/Lec1_annotated.pdf",
+          "page": 52,
+          "sourceType": "lecture",
+          "role": "least-squares classification",
+          "status": "current"
+        },
+        {
+          "sourceId": "DSA5105/Lec1_annotated.pdf",
+          "page": 53,
+          "sourceType": "lecture",
+          "role": "classification error and surrogate",
+          "status": "current"
+        },
+        {
+          "sourceId": "DSA5105/Lec1_annotated.pdf",
           "page": 54,
           "sourceType": "lecture",
-          "role": "classification model",
+          "role": "softmax and cross-entropy",
+          "status": "current"
+        },
+        {
+          "sourceId": "DSA5105/Lec1_exercises-solutions.pdf",
+          "page": 1,
+          "sourceType": "lecture",
+          "role": "Huber derivative",
           "status": "current"
         },
         {
           "sourceId": "DSA5105/Lec1_exercises-solutions.pdf",
           "page": 2,
           "sourceType": "lecture",
-          "role": "official Week 1 exercise solutions",
+          "role": "ridge spectral filter and logistic setup",
+          "status": "current"
+        },
+        {
+          "sourceId": "DSA5105/Lec1_exercises-solutions.pdf",
+          "page": 3,
+          "sourceType": "lecture",
+          "role": "logistic convexity",
           "status": "current"
         }
       ]
@@ -938,7 +1066,7 @@
         "Write the objective and name the quantity it measures.",
         "Differentiate or state the stationarity condition before quoting a closed form.",
         "State the rank, iid, convexity, or evaluation assumption that makes the next step valid.",
-        "Interpret the result in a direction, influence, or generalization language—not only as a formula."
+        "Interpret the result in a direction, score-contribution, or generalization language—not only as a formula."
       ],
       "answer": "A complete Week 1 answer connects algebra to the assumption and then to the modeling consequence.",
       "sourceType": "lecture",
@@ -947,7 +1075,14 @@
           "sourceId": "DSA5105/Lec1_annotated.pdf",
           "page": 23,
           "sourceType": "lecture",
-          "role": "empirical and population risk",
+          "role": "empirical risk",
+          "status": "current"
+        },
+        {
+          "sourceId": "DSA5105/Lec1_annotated.pdf",
+          "page": 24,
+          "sourceType": "lecture",
+          "role": "population risk and generalization gap",
           "status": "current"
         },
         {
@@ -961,14 +1096,21 @@
           "sourceId": "DSA5105/Lec1_annotated.pdf",
           "page": 35,
           "sourceType": "lecture",
-          "role": "Huber loss",
+          "role": "Huber definition",
           "status": "current"
         },
         {
           "sourceId": "DSA5105/Lec1_annotated.pdf",
           "page": 46,
           "sourceType": "lecture",
-          "role": "matrix OLS",
+          "role": "general OLS",
+          "status": "current"
+        },
+        {
+          "sourceId": "DSA5105/Lec1_annotated.pdf",
+          "page": 47,
+          "sourceType": "lecture",
+          "role": "singular OLS",
           "status": "current"
         },
         {
@@ -980,16 +1122,65 @@
         },
         {
           "sourceId": "DSA5105/Lec1_annotated.pdf",
+          "page": 49,
+          "sourceType": "lecture",
+          "role": "regularization and generalization",
+          "status": "current"
+        },
+        {
+          "sourceId": "DSA5105/Lec1_annotated.pdf",
+          "page": 50,
+          "sourceType": "lecture",
+          "role": "one-hot classification",
+          "status": "current"
+        },
+        {
+          "sourceId": "DSA5105/Lec1_annotated.pdf",
+          "page": 51,
+          "sourceType": "lecture",
+          "role": "multiclass setup",
+          "status": "current"
+        },
+        {
+          "sourceId": "DSA5105/Lec1_annotated.pdf",
+          "page": 52,
+          "sourceType": "lecture",
+          "role": "least-squares classification",
+          "status": "current"
+        },
+        {
+          "sourceId": "DSA5105/Lec1_annotated.pdf",
+          "page": 53,
+          "sourceType": "lecture",
+          "role": "classification error and surrogate",
+          "status": "current"
+        },
+        {
+          "sourceId": "DSA5105/Lec1_annotated.pdf",
           "page": 54,
           "sourceType": "lecture",
-          "role": "classification model",
+          "role": "softmax and cross-entropy",
+          "status": "current"
+        },
+        {
+          "sourceId": "DSA5105/Lec1_exercises-solutions.pdf",
+          "page": 1,
+          "sourceType": "lecture",
+          "role": "Huber derivative",
           "status": "current"
         },
         {
           "sourceId": "DSA5105/Lec1_exercises-solutions.pdf",
           "page": 2,
           "sourceType": "lecture",
-          "role": "official Week 1 exercise solutions",
+          "role": "ridge spectral filter and logistic setup",
+          "status": "current"
+        },
+        {
+          "sourceId": "DSA5105/Lec1_exercises-solutions.pdf",
+          "page": 3,
+          "sourceType": "lecture",
+          "role": "logistic convexity",
           "status": "current"
         }
       ]
@@ -1006,7 +1197,14 @@
           "sourceId": "DSA5105/Lec1_annotated.pdf",
           "page": 23,
           "sourceType": "lecture",
-          "role": "empirical and population risk",
+          "role": "empirical risk",
+          "status": "current"
+        },
+        {
+          "sourceId": "DSA5105/Lec1_annotated.pdf",
+          "page": 24,
+          "sourceType": "lecture",
+          "role": "population risk and generalization gap",
           "status": "current"
         },
         {
@@ -1020,14 +1218,21 @@
           "sourceId": "DSA5105/Lec1_annotated.pdf",
           "page": 35,
           "sourceType": "lecture",
-          "role": "Huber loss",
+          "role": "Huber definition",
           "status": "current"
         },
         {
           "sourceId": "DSA5105/Lec1_annotated.pdf",
           "page": 46,
           "sourceType": "lecture",
-          "role": "matrix OLS",
+          "role": "general OLS",
+          "status": "current"
+        },
+        {
+          "sourceId": "DSA5105/Lec1_annotated.pdf",
+          "page": 47,
+          "sourceType": "lecture",
+          "role": "singular OLS",
           "status": "current"
         },
         {
@@ -1039,16 +1244,65 @@
         },
         {
           "sourceId": "DSA5105/Lec1_annotated.pdf",
+          "page": 49,
+          "sourceType": "lecture",
+          "role": "regularization and generalization",
+          "status": "current"
+        },
+        {
+          "sourceId": "DSA5105/Lec1_annotated.pdf",
+          "page": 50,
+          "sourceType": "lecture",
+          "role": "one-hot classification",
+          "status": "current"
+        },
+        {
+          "sourceId": "DSA5105/Lec1_annotated.pdf",
+          "page": 51,
+          "sourceType": "lecture",
+          "role": "multiclass setup",
+          "status": "current"
+        },
+        {
+          "sourceId": "DSA5105/Lec1_annotated.pdf",
+          "page": 52,
+          "sourceType": "lecture",
+          "role": "least-squares classification",
+          "status": "current"
+        },
+        {
+          "sourceId": "DSA5105/Lec1_annotated.pdf",
+          "page": 53,
+          "sourceType": "lecture",
+          "role": "classification error and surrogate",
+          "status": "current"
+        },
+        {
+          "sourceId": "DSA5105/Lec1_annotated.pdf",
           "page": 54,
           "sourceType": "lecture",
-          "role": "classification model",
+          "role": "softmax and cross-entropy",
+          "status": "current"
+        },
+        {
+          "sourceId": "DSA5105/Lec1_exercises-solutions.pdf",
+          "page": 1,
+          "sourceType": "lecture",
+          "role": "Huber derivative",
           "status": "current"
         },
         {
           "sourceId": "DSA5105/Lec1_exercises-solutions.pdf",
           "page": 2,
           "sourceType": "lecture",
-          "role": "official Week 1 exercise solutions",
+          "role": "ridge spectral filter and logistic setup",
+          "status": "current"
+        },
+        {
+          "sourceId": "DSA5105/Lec1_exercises-solutions.pdf",
+          "page": 3,
+          "sourceType": "lecture",
+          "role": "logistic convexity",
           "status": "current"
         }
       ]
@@ -1065,7 +1319,14 @@
           "sourceId": "DSA5105/Lec1_annotated.pdf",
           "page": 23,
           "sourceType": "lecture",
-          "role": "empirical and population risk",
+          "role": "empirical risk",
+          "status": "current"
+        },
+        {
+          "sourceId": "DSA5105/Lec1_annotated.pdf",
+          "page": 24,
+          "sourceType": "lecture",
+          "role": "population risk and generalization gap",
           "status": "current"
         },
         {
@@ -1079,14 +1340,21 @@
           "sourceId": "DSA5105/Lec1_annotated.pdf",
           "page": 35,
           "sourceType": "lecture",
-          "role": "Huber loss",
+          "role": "Huber definition",
           "status": "current"
         },
         {
           "sourceId": "DSA5105/Lec1_annotated.pdf",
           "page": 46,
           "sourceType": "lecture",
-          "role": "matrix OLS",
+          "role": "general OLS",
+          "status": "current"
+        },
+        {
+          "sourceId": "DSA5105/Lec1_annotated.pdf",
+          "page": 47,
+          "sourceType": "lecture",
+          "role": "singular OLS",
           "status": "current"
         },
         {
@@ -1098,16 +1366,65 @@
         },
         {
           "sourceId": "DSA5105/Lec1_annotated.pdf",
+          "page": 49,
+          "sourceType": "lecture",
+          "role": "regularization and generalization",
+          "status": "current"
+        },
+        {
+          "sourceId": "DSA5105/Lec1_annotated.pdf",
+          "page": 50,
+          "sourceType": "lecture",
+          "role": "one-hot classification",
+          "status": "current"
+        },
+        {
+          "sourceId": "DSA5105/Lec1_annotated.pdf",
+          "page": 51,
+          "sourceType": "lecture",
+          "role": "multiclass setup",
+          "status": "current"
+        },
+        {
+          "sourceId": "DSA5105/Lec1_annotated.pdf",
+          "page": 52,
+          "sourceType": "lecture",
+          "role": "least-squares classification",
+          "status": "current"
+        },
+        {
+          "sourceId": "DSA5105/Lec1_annotated.pdf",
+          "page": 53,
+          "sourceType": "lecture",
+          "role": "classification error and surrogate",
+          "status": "current"
+        },
+        {
+          "sourceId": "DSA5105/Lec1_annotated.pdf",
           "page": 54,
           "sourceType": "lecture",
-          "role": "classification model",
+          "role": "softmax and cross-entropy",
+          "status": "current"
+        },
+        {
+          "sourceId": "DSA5105/Lec1_exercises-solutions.pdf",
+          "page": 1,
+          "sourceType": "lecture",
+          "role": "Huber derivative",
           "status": "current"
         },
         {
           "sourceId": "DSA5105/Lec1_exercises-solutions.pdf",
           "page": 2,
           "sourceType": "lecture",
-          "role": "official Week 1 exercise solutions",
+          "role": "ridge spectral filter and logistic setup",
+          "status": "current"
+        },
+        {
+          "sourceId": "DSA5105/Lec1_exercises-solutions.pdf",
+          "page": 3,
+          "sourceType": "lecture",
+          "role": "logistic convexity",
           "status": "current"
         }
       ]
@@ -1116,15 +1433,22 @@
       "id": "dsa5105-week1-derivations-critical-3",
       "type": "critical-question",
       "prompt": "Why is a low empirical risk not enough to claim a good learner?",
-      "angle": "Name the expectation, the iid bridge, and the three possible error sources.",
-      "modelAnswer": "Empirical risk is a sample average. It informs population risk only under a relevant sampling assumption and a suitable class/optimization process; it can be low while approximation, optimization, or generalization is still poor.",
+      "angle": "Name the expectation, the iid bridge, and the three lecture sources of error.",
+      "modelAnswer": "Empirical risk is a sample average. It informs population risk only under a relevant sampling assumption and a suitable class/optimization process; it can be low while approximation, estimation, or optimization is still poor.",
       "focus": "generalization",
       "sourceRefs": [
         {
           "sourceId": "DSA5105/Lec1_annotated.pdf",
           "page": 23,
           "sourceType": "lecture",
-          "role": "empirical and population risk",
+          "role": "empirical risk",
+          "status": "current"
+        },
+        {
+          "sourceId": "DSA5105/Lec1_annotated.pdf",
+          "page": 24,
+          "sourceType": "lecture",
+          "role": "population risk and generalization gap",
           "status": "current"
         },
         {
@@ -1138,14 +1462,21 @@
           "sourceId": "DSA5105/Lec1_annotated.pdf",
           "page": 35,
           "sourceType": "lecture",
-          "role": "Huber loss",
+          "role": "Huber definition",
           "status": "current"
         },
         {
           "sourceId": "DSA5105/Lec1_annotated.pdf",
           "page": 46,
           "sourceType": "lecture",
-          "role": "matrix OLS",
+          "role": "general OLS",
+          "status": "current"
+        },
+        {
+          "sourceId": "DSA5105/Lec1_annotated.pdf",
+          "page": 47,
+          "sourceType": "lecture",
+          "role": "singular OLS",
           "status": "current"
         },
         {
@@ -1157,16 +1488,65 @@
         },
         {
           "sourceId": "DSA5105/Lec1_annotated.pdf",
+          "page": 49,
+          "sourceType": "lecture",
+          "role": "regularization and generalization",
+          "status": "current"
+        },
+        {
+          "sourceId": "DSA5105/Lec1_annotated.pdf",
+          "page": 50,
+          "sourceType": "lecture",
+          "role": "one-hot classification",
+          "status": "current"
+        },
+        {
+          "sourceId": "DSA5105/Lec1_annotated.pdf",
+          "page": 51,
+          "sourceType": "lecture",
+          "role": "multiclass setup",
+          "status": "current"
+        },
+        {
+          "sourceId": "DSA5105/Lec1_annotated.pdf",
+          "page": 52,
+          "sourceType": "lecture",
+          "role": "least-squares classification",
+          "status": "current"
+        },
+        {
+          "sourceId": "DSA5105/Lec1_annotated.pdf",
+          "page": 53,
+          "sourceType": "lecture",
+          "role": "classification error and surrogate",
+          "status": "current"
+        },
+        {
+          "sourceId": "DSA5105/Lec1_annotated.pdf",
           "page": 54,
           "sourceType": "lecture",
-          "role": "classification model",
+          "role": "softmax and cross-entropy",
+          "status": "current"
+        },
+        {
+          "sourceId": "DSA5105/Lec1_exercises-solutions.pdf",
+          "page": 1,
+          "sourceType": "lecture",
+          "role": "Huber derivative",
           "status": "current"
         },
         {
           "sourceId": "DSA5105/Lec1_exercises-solutions.pdf",
           "page": 2,
           "sourceType": "lecture",
-          "role": "official Week 1 exercise solutions",
+          "role": "ridge spectral filter and logistic setup",
+          "status": "current"
+        },
+        {
+          "sourceId": "DSA5105/Lec1_exercises-solutions.pdf",
+          "page": 3,
+          "sourceType": "lecture",
+          "role": "logistic convexity",
           "status": "current"
         }
       ]
@@ -1176,14 +1556,21 @@
       "type": "critical-question",
       "prompt": "What exactly is bounded in the Huber argument?",
       "angle": "Differentiate with respect to the residual and compare it with squared loss.",
-      "modelAnswer": "The derivative $\\psi_delta(r)$, which is the residual's influence on the first-order condition, is capped at plus or minus $\\delta$ outside the quadratic region.",
+      "modelAnswer": "The derivative $\\psi_delta(r)$, which is the residual's score contribution to the first-order condition, is capped at plus or minus $\\delta$ outside the quadratic region.",
       "focus": "robustness",
       "sourceRefs": [
         {
           "sourceId": "DSA5105/Lec1_annotated.pdf",
           "page": 23,
           "sourceType": "lecture",
-          "role": "empirical and population risk",
+          "role": "empirical risk",
+          "status": "current"
+        },
+        {
+          "sourceId": "DSA5105/Lec1_annotated.pdf",
+          "page": 24,
+          "sourceType": "lecture",
+          "role": "population risk and generalization gap",
           "status": "current"
         },
         {
@@ -1197,14 +1584,21 @@
           "sourceId": "DSA5105/Lec1_annotated.pdf",
           "page": 35,
           "sourceType": "lecture",
-          "role": "Huber loss",
+          "role": "Huber definition",
           "status": "current"
         },
         {
           "sourceId": "DSA5105/Lec1_annotated.pdf",
           "page": 46,
           "sourceType": "lecture",
-          "role": "matrix OLS",
+          "role": "general OLS",
+          "status": "current"
+        },
+        {
+          "sourceId": "DSA5105/Lec1_annotated.pdf",
+          "page": 47,
+          "sourceType": "lecture",
+          "role": "singular OLS",
           "status": "current"
         },
         {
@@ -1216,16 +1610,65 @@
         },
         {
           "sourceId": "DSA5105/Lec1_annotated.pdf",
+          "page": 49,
+          "sourceType": "lecture",
+          "role": "regularization and generalization",
+          "status": "current"
+        },
+        {
+          "sourceId": "DSA5105/Lec1_annotated.pdf",
+          "page": 50,
+          "sourceType": "lecture",
+          "role": "one-hot classification",
+          "status": "current"
+        },
+        {
+          "sourceId": "DSA5105/Lec1_annotated.pdf",
+          "page": 51,
+          "sourceType": "lecture",
+          "role": "multiclass setup",
+          "status": "current"
+        },
+        {
+          "sourceId": "DSA5105/Lec1_annotated.pdf",
+          "page": 52,
+          "sourceType": "lecture",
+          "role": "least-squares classification",
+          "status": "current"
+        },
+        {
+          "sourceId": "DSA5105/Lec1_annotated.pdf",
+          "page": 53,
+          "sourceType": "lecture",
+          "role": "classification error and surrogate",
+          "status": "current"
+        },
+        {
+          "sourceId": "DSA5105/Lec1_annotated.pdf",
           "page": 54,
           "sourceType": "lecture",
-          "role": "classification model",
+          "role": "softmax and cross-entropy",
+          "status": "current"
+        },
+        {
+          "sourceId": "DSA5105/Lec1_exercises-solutions.pdf",
+          "page": 1,
+          "sourceType": "lecture",
+          "role": "Huber derivative",
           "status": "current"
         },
         {
           "sourceId": "DSA5105/Lec1_exercises-solutions.pdf",
           "page": 2,
           "sourceType": "lecture",
-          "role": "official Week 1 exercise solutions",
+          "role": "ridge spectral filter and logistic setup",
+          "status": "current"
+        },
+        {
+          "sourceId": "DSA5105/Lec1_exercises-solutions.pdf",
+          "page": 3,
+          "sourceType": "lecture",
+          "role": "logistic convexity",
           "status": "current"
         }
       ]

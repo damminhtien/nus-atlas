@@ -33,9 +33,37 @@
     },
     {
       "sourceId": "DSA5105/Lec1_annotated.pdf",
+      "page": 34,
+      "sourceType": "lecture",
+      "role": "Goodhart and overfitting",
+      "status": "current"
+    },
+    {
+      "sourceId": "DSA5105/Lec1_annotated.pdf",
       "page": 35,
       "sourceType": "lecture",
       "role": "Huber loss",
+      "status": "current"
+    },
+    {
+      "sourceId": "DSA5105/Lec1_annotated.pdf",
+      "page": 37,
+      "sourceType": "lecture",
+      "role": "correlation caution",
+      "status": "current"
+    },
+    {
+      "sourceId": "DSA5105/Lec1_annotated.pdf",
+      "page": 39,
+      "sourceType": "lecture",
+      "role": "basis model indexing",
+      "status": "current"
+    },
+    {
+      "sourceId": "DSA5105/Lec1_annotated.pdf",
+      "page": 41,
+      "sourceType": "lecture",
+      "role": "basis function examples",
       "status": "current"
     },
     {
@@ -47,6 +75,13 @@
     },
     {
       "sourceId": "DSA5105/Lec1_annotated.pdf",
+      "page": 47,
+      "sourceType": "lecture",
+      "role": "singular OLS",
+      "status": "current"
+    },
+    {
+      "sourceId": "DSA5105/Lec1_annotated.pdf",
       "page": 48,
       "sourceType": "lecture",
       "role": "regularization",
@@ -54,9 +89,44 @@
     },
     {
       "sourceId": "DSA5105/Lec1_annotated.pdf",
+      "page": 49,
+      "sourceType": "lecture",
+      "role": "regularization and generalization",
+      "status": "current"
+    },
+    {
+      "sourceId": "DSA5105/Lec1_annotated.pdf",
+      "page": 50,
+      "sourceType": "lecture",
+      "role": "one-hot classification",
+      "status": "current"
+    },
+    {
+      "sourceId": "DSA5105/Lec1_annotated.pdf",
+      "page": 51,
+      "sourceType": "lecture",
+      "role": "multiclass score model",
+      "status": "current"
+    },
+    {
+      "sourceId": "DSA5105/Lec1_annotated.pdf",
+      "page": 52,
+      "sourceType": "lecture",
+      "role": "least-squares classification",
+      "status": "current"
+    },
+    {
+      "sourceId": "DSA5105/Lec1_annotated.pdf",
+      "page": 53,
+      "sourceType": "lecture",
+      "role": "classification error and surrogate",
+      "status": "current"
+    },
+    {
+      "sourceId": "DSA5105/Lec1_annotated.pdf",
       "page": 54,
       "sourceType": "lecture",
-      "role": "classification model",
+      "role": "softmax and cross-entropy",
       "status": "current"
     },
     {
@@ -143,35 +213,121 @@
           }
         ],
         "sourceType": "lecture"
-      }
+      },
+      "sourceRefs": [
+        {
+          "sourceId": "DSA5105/Lec1_annotated.pdf",
+          "page": 35,
+          "sourceType": "lecture",
+          "role": "Huber loss",
+          "status": "current"
+        }
+      ]
+    },
+    {
+      "title": "Lecture bridge · Goodhart's Law and overfitting",
+      "body": "Low training loss is a target, not proof of generalization. When a proxy becomes the sole target, a flexible model can optimize the proxy in a way that does not improve the population objective.",
+      "sourceType": "lecture",
+      "sourceRefs": [
+        {
+          "sourceId": "DSA5105/Lec1_annotated.pdf",
+          "page": 34,
+          "sourceType": "lecture",
+          "role": "Goodhart and overfitting",
+          "status": "current"
+        }
+      ]
+    },
+    {
+      "title": "Lecture bridge · Correlation is not causal evidence",
+      "body": "Statistical association need not imply a meaningful predictive or causal relationship. Spurious trends can look convincing in-sample, so use a task-aligned, time-aware or held-out evaluation before trusting a feature.",
+      "sourceType": "lecture",
+      "sourceRefs": [
+        {
+          "sourceId": "DSA5105/Lec1_annotated.pdf",
+          "page": 37,
+          "sourceType": "lecture",
+          "role": "correlation caution",
+          "status": "current"
+        }
+      ]
     },
     {
       "title": "Lecture core · Basis functions and matrix form",
-      "body": "General linear basis models replace x with features $\\phi_j(x)$, including polynomial, Gaussian, or sigmoid bases. The model can be nonlinear in x while remaining linear in weights. In matrix form, OLS minimizes the squared norm of the residual vector; the inverse formula requires the feature matrix to have suitable rank.",
+      "body": "General linear basis models use an indexed feature map with $\\phi_0(x)=1$ for an intercept. The model can be nonlinear in x while remaining linear in weights. In matrix form, $Phiinmathbb{R}^{N\times M}$ stores the basis values; the inverse formula requires the feature matrix to have suitable rank.",
       "sourceType": "lecture",
       "math": {
-        "latex": "f(x)=\\sum_{j=1}^{M}w_j\\phi_j(x),\\qquad \\hat w=(\\Phi^\\top\\Phi)^{-1}\\Phi^\\top y",
-        "explanation": "Phi contains the basis features evaluated on the training inputs. The closed form is valid when the normal matrix is invertible; otherwise use a pseudoinverse or regularization and state the rank issue.",
+        "latex": "f(x)=\\sum_{j=0}^{M-1}w_j\\phi_j(x),\\qquad \\phi(x)=(\\phi_0(x),\\ldots,\\phi_{M-1}(x))^\\top\\in\\mathbb R^M,\\qquad \\Phi\\in\\mathbb R^{N\\times M}",
+        "explanation": "The lecture indexes basis functions from 0, so $\\phi_0(x)=1$ and $\\phi_1(x)=x$ recover simple linear regression. The closed form is valid when the normal matrix is invertible; otherwise use a pseudoinverse or regularization and state the rank issue.",
         "symbols": [
           {
             "latex": "\\phi_j",
-            "meaning": "j-th basis function"
+            "meaning": "j-th basis function, indexed from 0"
           },
           {
             "latex": "\\Phi",
-            "meaning": "design or feature matrix"
+            "meaning": "N by M design matrix"
           },
           {
             "latex": "M",
             "meaning": "number of basis functions"
           },
           {
-            "latex": "\\Phi^\\top",
-            "meaning": "transpose of the design matrix"
+            "latex": "\\phi_0(x)=1",
+            "meaning": "intercept basis"
           }
         ],
         "sourceType": "lecture"
-      }
+      },
+      "sourceRefs": [
+        {
+          "sourceId": "DSA5105/Lec1_annotated.pdf",
+          "page": 39,
+          "sourceType": "lecture",
+          "role": "basis model indexing",
+          "status": "current"
+        },
+        {
+          "sourceId": "DSA5105/Lec1_annotated.pdf",
+          "page": 46,
+          "sourceType": "lecture",
+          "role": "matrix OLS",
+          "status": "current"
+        }
+      ]
+    },
+    {
+      "title": "Lecture bridge · Basis-function families",
+      "body": "The lecture's examples are explicit: polynomial bases use powers, Gaussian bases use localized bumps, and sigmoid bases use smooth steps. The center $m_j$ and scale $s$ control where and how sharply a feature responds.",
+      "sourceType": "lecture",
+      "math": {
+        "latex": "\\phi_j(x)=x^j\\;\\text{(polynomial)},\\qquad \\phi_j(x)=\\exp\\!\\left(-\\frac{(x-m_j)^2}{2s^2}\\right)\\;\\text{(Gaussian)},\\qquad \\phi_j(x)=\\sigma\\!\\left(\\frac{x-m_j}{s}\\right)\\;\\text{(sigmoid)}",
+        "explanation": "The feature family changes the geometry of the hypothesis space. More features can reduce approximation error, but rank deficiency and generalization still require explicit checks.",
+        "symbols": [
+          {
+            "latex": "m_j",
+            "meaning": "center of a localized basis"
+          },
+          {
+            "latex": "s",
+            "meaning": "scale or width"
+          },
+          {
+            "latex": "\\sigma",
+            "meaning": "sigmoid function"
+          }
+        ],
+        "sourceType": "lecture"
+      },
+      "sourceRefs": [
+        {
+          "sourceId": "DSA5105/Lec1_annotated.pdf",
+          "page": 41,
+          "sourceType": "lecture",
+          "role": "basis function examples",
+          "status": "current"
+        }
+      ]
     },
     {
       "title": "Lecture core · Regularization",
@@ -317,9 +473,37 @@
         },
         {
           "sourceId": "DSA5105/Lec1_annotated.pdf",
+          "page": 34,
+          "sourceType": "lecture",
+          "role": "Goodhart and overfitting",
+          "status": "current"
+        },
+        {
+          "sourceId": "DSA5105/Lec1_annotated.pdf",
           "page": 35,
           "sourceType": "lecture",
           "role": "Huber loss",
+          "status": "current"
+        },
+        {
+          "sourceId": "DSA5105/Lec1_annotated.pdf",
+          "page": 37,
+          "sourceType": "lecture",
+          "role": "correlation caution",
+          "status": "current"
+        },
+        {
+          "sourceId": "DSA5105/Lec1_annotated.pdf",
+          "page": 39,
+          "sourceType": "lecture",
+          "role": "basis model indexing",
+          "status": "current"
+        },
+        {
+          "sourceId": "DSA5105/Lec1_annotated.pdf",
+          "page": 41,
+          "sourceType": "lecture",
+          "role": "basis function examples",
           "status": "current"
         },
         {
@@ -331,6 +515,13 @@
         },
         {
           "sourceId": "DSA5105/Lec1_annotated.pdf",
+          "page": 47,
+          "sourceType": "lecture",
+          "role": "singular OLS",
+          "status": "current"
+        },
+        {
+          "sourceId": "DSA5105/Lec1_annotated.pdf",
           "page": 48,
           "sourceType": "lecture",
           "role": "regularization",
@@ -338,9 +529,44 @@
         },
         {
           "sourceId": "DSA5105/Lec1_annotated.pdf",
+          "page": 49,
+          "sourceType": "lecture",
+          "role": "regularization and generalization",
+          "status": "current"
+        },
+        {
+          "sourceId": "DSA5105/Lec1_annotated.pdf",
+          "page": 50,
+          "sourceType": "lecture",
+          "role": "one-hot classification",
+          "status": "current"
+        },
+        {
+          "sourceId": "DSA5105/Lec1_annotated.pdf",
+          "page": 51,
+          "sourceType": "lecture",
+          "role": "multiclass score model",
+          "status": "current"
+        },
+        {
+          "sourceId": "DSA5105/Lec1_annotated.pdf",
+          "page": 52,
+          "sourceType": "lecture",
+          "role": "least-squares classification",
+          "status": "current"
+        },
+        {
+          "sourceId": "DSA5105/Lec1_annotated.pdf",
+          "page": 53,
+          "sourceType": "lecture",
+          "role": "classification error and surrogate",
+          "status": "current"
+        },
+        {
+          "sourceId": "DSA5105/Lec1_annotated.pdf",
           "page": 54,
           "sourceType": "lecture",
-          "role": "classification model",
+          "role": "softmax and cross-entropy",
           "status": "current"
         },
         {
@@ -382,9 +608,37 @@
         },
         {
           "sourceId": "DSA5105/Lec1_annotated.pdf",
+          "page": 34,
+          "sourceType": "lecture",
+          "role": "Goodhart and overfitting",
+          "status": "current"
+        },
+        {
+          "sourceId": "DSA5105/Lec1_annotated.pdf",
           "page": 35,
           "sourceType": "lecture",
           "role": "Huber loss",
+          "status": "current"
+        },
+        {
+          "sourceId": "DSA5105/Lec1_annotated.pdf",
+          "page": 37,
+          "sourceType": "lecture",
+          "role": "correlation caution",
+          "status": "current"
+        },
+        {
+          "sourceId": "DSA5105/Lec1_annotated.pdf",
+          "page": 39,
+          "sourceType": "lecture",
+          "role": "basis model indexing",
+          "status": "current"
+        },
+        {
+          "sourceId": "DSA5105/Lec1_annotated.pdf",
+          "page": 41,
+          "sourceType": "lecture",
+          "role": "basis function examples",
           "status": "current"
         },
         {
@@ -396,6 +650,13 @@
         },
         {
           "sourceId": "DSA5105/Lec1_annotated.pdf",
+          "page": 47,
+          "sourceType": "lecture",
+          "role": "singular OLS",
+          "status": "current"
+        },
+        {
+          "sourceId": "DSA5105/Lec1_annotated.pdf",
           "page": 48,
           "sourceType": "lecture",
           "role": "regularization",
@@ -403,9 +664,44 @@
         },
         {
           "sourceId": "DSA5105/Lec1_annotated.pdf",
+          "page": 49,
+          "sourceType": "lecture",
+          "role": "regularization and generalization",
+          "status": "current"
+        },
+        {
+          "sourceId": "DSA5105/Lec1_annotated.pdf",
+          "page": 50,
+          "sourceType": "lecture",
+          "role": "one-hot classification",
+          "status": "current"
+        },
+        {
+          "sourceId": "DSA5105/Lec1_annotated.pdf",
+          "page": 51,
+          "sourceType": "lecture",
+          "role": "multiclass score model",
+          "status": "current"
+        },
+        {
+          "sourceId": "DSA5105/Lec1_annotated.pdf",
+          "page": 52,
+          "sourceType": "lecture",
+          "role": "least-squares classification",
+          "status": "current"
+        },
+        {
+          "sourceId": "DSA5105/Lec1_annotated.pdf",
+          "page": 53,
+          "sourceType": "lecture",
+          "role": "classification error and surrogate",
+          "status": "current"
+        },
+        {
+          "sourceId": "DSA5105/Lec1_annotated.pdf",
           "page": 54,
           "sourceType": "lecture",
-          "role": "classification model",
+          "role": "softmax and cross-entropy",
           "status": "current"
         },
         {
@@ -426,95 +722,57 @@
       "sourceRefs": [
         {
           "sourceId": "DSA5105/Lec1_annotated.pdf",
-          "page": 27,
-          "sourceType": "lecture",
-          "role": "linear-model introduction",
-          "status": "current"
-        },
-        {
-          "sourceId": "DSA5105/Lec1_annotated.pdf",
-          "page": 31,
-          "sourceType": "lecture",
-          "role": "OLS solution",
-          "status": "current"
-        },
-        {
-          "sourceId": "DSA5105/Lec1_annotated.pdf",
-          "page": 33,
-          "sourceType": "lecture",
-          "role": "overfitting",
-          "status": "current"
-        },
-        {
-          "sourceId": "DSA5105/Lec1_annotated.pdf",
           "page": 35,
           "sourceType": "lecture",
           "role": "Huber loss",
           "status": "current"
-        },
-        {
-          "sourceId": "DSA5105/Lec1_annotated.pdf",
-          "page": 46,
-          "sourceType": "lecture",
-          "role": "matrix OLS",
-          "status": "current"
-        },
-        {
-          "sourceId": "DSA5105/Lec1_annotated.pdf",
-          "page": 48,
-          "sourceType": "lecture",
-          "role": "regularization",
-          "status": "current"
-        },
-        {
-          "sourceId": "DSA5105/Lec1_annotated.pdf",
-          "page": 54,
-          "sourceType": "lecture",
-          "role": "classification model",
-          "status": "current"
-        },
-        {
-          "sourceId": "DSA5105/Ref/week1_DSA5105_Practice_Problems_1_Not_Graded.pdf",
-          "page": 1,
-          "sourceType": "ref",
-          "role": "optional Week 1 practice",
-          "status": "optional"
         }
       ]
     },
     {
       "id": "dsa5105-linear-week1-section-4",
       "type": "teaching-note",
-      "title": "Lecture core · Basis functions and matrix form",
-      "body": "General linear basis models replace x with features $\\phi_j(x)$, including polynomial, Gaussian, or sigmoid bases. The model can be nonlinear in x while remaining linear in weights. In matrix form, OLS minimizes the squared norm of the residual vector; the inverse formula requires the feature matrix to have suitable rank.",
+      "title": "Lecture bridge · Goodhart's Law and overfitting",
+      "body": "Low training loss is a target, not proof of generalization. When a proxy becomes the sole target, a flexible model can optimize the proxy in a way that does not improve the population objective.",
       "sourceType": "lecture",
       "sourceRefs": [
         {
           "sourceId": "DSA5105/Lec1_annotated.pdf",
-          "page": 27,
+          "page": 34,
           "sourceType": "lecture",
-          "role": "linear-model introduction",
+          "role": "Goodhart and overfitting",
           "status": "current"
-        },
+        }
+      ]
+    },
+    {
+      "id": "dsa5105-linear-week1-section-5",
+      "type": "teaching-note",
+      "title": "Lecture bridge · Correlation is not causal evidence",
+      "body": "Statistical association need not imply a meaningful predictive or causal relationship. Spurious trends can look convincing in-sample, so use a task-aligned, time-aware or held-out evaluation before trusting a feature.",
+      "sourceType": "lecture",
+      "sourceRefs": [
         {
           "sourceId": "DSA5105/Lec1_annotated.pdf",
-          "page": 31,
+          "page": 37,
           "sourceType": "lecture",
-          "role": "OLS solution",
+          "role": "correlation caution",
           "status": "current"
-        },
+        }
+      ]
+    },
+    {
+      "id": "dsa5105-linear-week1-section-6",
+      "type": "teaching-note",
+      "title": "Lecture core · Basis functions and matrix form",
+      "body": "General linear basis models use an indexed feature map with $\\phi_0(x)=1$ for an intercept. The model can be nonlinear in x while remaining linear in weights. In matrix form, $Phiinmathbb{R}^{N\times M}$ stores the basis values; the inverse formula requires the feature matrix to have suitable rank.",
+      "sourceType": "lecture",
+      "sourceRefs": [
         {
           "sourceId": "DSA5105/Lec1_annotated.pdf",
-          "page": 33,
+          "page": 39,
           "sourceType": "lecture",
-          "role": "overfitting",
-          "status": "current"
-        },
-        {
-          "sourceId": "DSA5105/Lec1_annotated.pdf",
-          "page": 35,
-          "sourceType": "lecture",
-          "role": "Huber loss",
+          "role": "basis model indexing",
           "status": "current"
         },
         {
@@ -523,32 +781,27 @@
           "sourceType": "lecture",
           "role": "matrix OLS",
           "status": "current"
-        },
-        {
-          "sourceId": "DSA5105/Lec1_annotated.pdf",
-          "page": 48,
-          "sourceType": "lecture",
-          "role": "regularization",
-          "status": "current"
-        },
-        {
-          "sourceId": "DSA5105/Lec1_annotated.pdf",
-          "page": 54,
-          "sourceType": "lecture",
-          "role": "classification model",
-          "status": "current"
-        },
-        {
-          "sourceId": "DSA5105/Ref/week1_DSA5105_Practice_Problems_1_Not_Graded.pdf",
-          "page": 1,
-          "sourceType": "ref",
-          "role": "optional Week 1 practice",
-          "status": "optional"
         }
       ]
     },
     {
-      "id": "dsa5105-linear-week1-section-5",
+      "id": "dsa5105-linear-week1-section-7",
+      "type": "teaching-note",
+      "title": "Lecture bridge · Basis-function families",
+      "body": "The lecture's examples are explicit: polynomial bases use powers, Gaussian bases use localized bumps, and sigmoid bases use smooth steps. The center $m_j$ and scale $s$ control where and how sharply a feature responds.",
+      "sourceType": "lecture",
+      "sourceRefs": [
+        {
+          "sourceId": "DSA5105/Lec1_annotated.pdf",
+          "page": 41,
+          "sourceType": "lecture",
+          "role": "basis function examples",
+          "status": "current"
+        }
+      ]
+    },
+    {
+      "id": "dsa5105-linear-week1-section-8",
       "type": "teaching-note",
       "title": "Lecture core · Regularization",
       "body": "When the matrix is singular, underdetermined, or too flexible, regularization changes the objective rather than pretending the data identify one unique unregularized answer. L2 regularization prefers small weights; L1 regularization can produce exact zeros. Choose the strength with validation data.",
@@ -577,9 +830,37 @@
         },
         {
           "sourceId": "DSA5105/Lec1_annotated.pdf",
+          "page": 34,
+          "sourceType": "lecture",
+          "role": "Goodhart and overfitting",
+          "status": "current"
+        },
+        {
+          "sourceId": "DSA5105/Lec1_annotated.pdf",
           "page": 35,
           "sourceType": "lecture",
           "role": "Huber loss",
+          "status": "current"
+        },
+        {
+          "sourceId": "DSA5105/Lec1_annotated.pdf",
+          "page": 37,
+          "sourceType": "lecture",
+          "role": "correlation caution",
+          "status": "current"
+        },
+        {
+          "sourceId": "DSA5105/Lec1_annotated.pdf",
+          "page": 39,
+          "sourceType": "lecture",
+          "role": "basis model indexing",
+          "status": "current"
+        },
+        {
+          "sourceId": "DSA5105/Lec1_annotated.pdf",
+          "page": 41,
+          "sourceType": "lecture",
+          "role": "basis function examples",
           "status": "current"
         },
         {
@@ -591,6 +872,13 @@
         },
         {
           "sourceId": "DSA5105/Lec1_annotated.pdf",
+          "page": 47,
+          "sourceType": "lecture",
+          "role": "singular OLS",
+          "status": "current"
+        },
+        {
+          "sourceId": "DSA5105/Lec1_annotated.pdf",
           "page": 48,
           "sourceType": "lecture",
           "role": "regularization",
@@ -598,9 +886,44 @@
         },
         {
           "sourceId": "DSA5105/Lec1_annotated.pdf",
+          "page": 49,
+          "sourceType": "lecture",
+          "role": "regularization and generalization",
+          "status": "current"
+        },
+        {
+          "sourceId": "DSA5105/Lec1_annotated.pdf",
+          "page": 50,
+          "sourceType": "lecture",
+          "role": "one-hot classification",
+          "status": "current"
+        },
+        {
+          "sourceId": "DSA5105/Lec1_annotated.pdf",
+          "page": 51,
+          "sourceType": "lecture",
+          "role": "multiclass score model",
+          "status": "current"
+        },
+        {
+          "sourceId": "DSA5105/Lec1_annotated.pdf",
+          "page": 52,
+          "sourceType": "lecture",
+          "role": "least-squares classification",
+          "status": "current"
+        },
+        {
+          "sourceId": "DSA5105/Lec1_annotated.pdf",
+          "page": 53,
+          "sourceType": "lecture",
+          "role": "classification error and surrogate",
+          "status": "current"
+        },
+        {
+          "sourceId": "DSA5105/Lec1_annotated.pdf",
           "page": 54,
           "sourceType": "lecture",
-          "role": "classification model",
+          "role": "softmax and cross-entropy",
           "status": "current"
         },
         {
@@ -613,7 +936,7 @@
       ]
     },
     {
-      "id": "dsa5105-linear-week1-section-6",
+      "id": "dsa5105-linear-week1-section-9",
       "type": "teaching-note",
       "title": "Lecture core · Multiclass linear classification",
       "body": "For K classes, one-hot targets are vectors rather than ordered numbers. A linear score for each class is passed through softmax to obtain probabilities, and cross-entropy rewards probability mass assigned to the observed class. For two classes, the two logits reduce to one score difference and the loss becomes logistic loss.",
@@ -642,9 +965,37 @@
         },
         {
           "sourceId": "DSA5105/Lec1_annotated.pdf",
+          "page": 34,
+          "sourceType": "lecture",
+          "role": "Goodhart and overfitting",
+          "status": "current"
+        },
+        {
+          "sourceId": "DSA5105/Lec1_annotated.pdf",
           "page": 35,
           "sourceType": "lecture",
           "role": "Huber loss",
+          "status": "current"
+        },
+        {
+          "sourceId": "DSA5105/Lec1_annotated.pdf",
+          "page": 37,
+          "sourceType": "lecture",
+          "role": "correlation caution",
+          "status": "current"
+        },
+        {
+          "sourceId": "DSA5105/Lec1_annotated.pdf",
+          "page": 39,
+          "sourceType": "lecture",
+          "role": "basis model indexing",
+          "status": "current"
+        },
+        {
+          "sourceId": "DSA5105/Lec1_annotated.pdf",
+          "page": 41,
+          "sourceType": "lecture",
+          "role": "basis function examples",
           "status": "current"
         },
         {
@@ -656,6 +1007,13 @@
         },
         {
           "sourceId": "DSA5105/Lec1_annotated.pdf",
+          "page": 47,
+          "sourceType": "lecture",
+          "role": "singular OLS",
+          "status": "current"
+        },
+        {
+          "sourceId": "DSA5105/Lec1_annotated.pdf",
           "page": 48,
           "sourceType": "lecture",
           "role": "regularization",
@@ -663,9 +1021,44 @@
         },
         {
           "sourceId": "DSA5105/Lec1_annotated.pdf",
+          "page": 49,
+          "sourceType": "lecture",
+          "role": "regularization and generalization",
+          "status": "current"
+        },
+        {
+          "sourceId": "DSA5105/Lec1_annotated.pdf",
+          "page": 50,
+          "sourceType": "lecture",
+          "role": "one-hot classification",
+          "status": "current"
+        },
+        {
+          "sourceId": "DSA5105/Lec1_annotated.pdf",
+          "page": 51,
+          "sourceType": "lecture",
+          "role": "multiclass score model",
+          "status": "current"
+        },
+        {
+          "sourceId": "DSA5105/Lec1_annotated.pdf",
+          "page": 52,
+          "sourceType": "lecture",
+          "role": "least-squares classification",
+          "status": "current"
+        },
+        {
+          "sourceId": "DSA5105/Lec1_annotated.pdf",
+          "page": 53,
+          "sourceType": "lecture",
+          "role": "classification error and surrogate",
+          "status": "current"
+        },
+        {
+          "sourceId": "DSA5105/Lec1_annotated.pdf",
           "page": 54,
           "sourceType": "lecture",
-          "role": "classification model",
+          "role": "softmax and cross-entropy",
           "status": "current"
         },
         {
@@ -678,7 +1071,7 @@
       ]
     },
     {
-      "id": "dsa5105-linear-week1-section-7",
+      "id": "dsa5105-linear-week1-section-10",
       "type": "teaching-note",
       "title": "Reference boundary · Optional practice, not lecture scope",
       "body": "The ungraded Week 1 practice sheet extends this core with noise-induced ridge regularization, a proof that the Gaussian kernel is positive semidefinite, kernel-construction identities, and an SVM margin exercise. These are useful stretch problems, but the annotated lecture remains the authority for Week 1 scope.",
@@ -707,9 +1100,37 @@
         },
         {
           "sourceId": "DSA5105/Lec1_annotated.pdf",
+          "page": 34,
+          "sourceType": "lecture",
+          "role": "Goodhart and overfitting",
+          "status": "current"
+        },
+        {
+          "sourceId": "DSA5105/Lec1_annotated.pdf",
           "page": 35,
           "sourceType": "lecture",
           "role": "Huber loss",
+          "status": "current"
+        },
+        {
+          "sourceId": "DSA5105/Lec1_annotated.pdf",
+          "page": 37,
+          "sourceType": "lecture",
+          "role": "correlation caution",
+          "status": "current"
+        },
+        {
+          "sourceId": "DSA5105/Lec1_annotated.pdf",
+          "page": 39,
+          "sourceType": "lecture",
+          "role": "basis model indexing",
+          "status": "current"
+        },
+        {
+          "sourceId": "DSA5105/Lec1_annotated.pdf",
+          "page": 41,
+          "sourceType": "lecture",
+          "role": "basis function examples",
           "status": "current"
         },
         {
@@ -721,6 +1142,13 @@
         },
         {
           "sourceId": "DSA5105/Lec1_annotated.pdf",
+          "page": 47,
+          "sourceType": "lecture",
+          "role": "singular OLS",
+          "status": "current"
+        },
+        {
+          "sourceId": "DSA5105/Lec1_annotated.pdf",
           "page": 48,
           "sourceType": "lecture",
           "role": "regularization",
@@ -728,9 +1156,44 @@
         },
         {
           "sourceId": "DSA5105/Lec1_annotated.pdf",
+          "page": 49,
+          "sourceType": "lecture",
+          "role": "regularization and generalization",
+          "status": "current"
+        },
+        {
+          "sourceId": "DSA5105/Lec1_annotated.pdf",
+          "page": 50,
+          "sourceType": "lecture",
+          "role": "one-hot classification",
+          "status": "current"
+        },
+        {
+          "sourceId": "DSA5105/Lec1_annotated.pdf",
+          "page": 51,
+          "sourceType": "lecture",
+          "role": "multiclass score model",
+          "status": "current"
+        },
+        {
+          "sourceId": "DSA5105/Lec1_annotated.pdf",
+          "page": 52,
+          "sourceType": "lecture",
+          "role": "least-squares classification",
+          "status": "current"
+        },
+        {
+          "sourceId": "DSA5105/Lec1_annotated.pdf",
+          "page": 53,
+          "sourceType": "lecture",
+          "role": "classification error and surrogate",
+          "status": "current"
+        },
+        {
+          "sourceId": "DSA5105/Lec1_annotated.pdf",
           "page": 54,
           "sourceType": "lecture",
-          "role": "classification model",
+          "role": "softmax and cross-entropy",
           "status": "current"
         },
         {
@@ -777,9 +1240,37 @@
         },
         {
           "sourceId": "DSA5105/Lec1_annotated.pdf",
+          "page": 34,
+          "sourceType": "lecture",
+          "role": "Goodhart and overfitting",
+          "status": "current"
+        },
+        {
+          "sourceId": "DSA5105/Lec1_annotated.pdf",
           "page": 35,
           "sourceType": "lecture",
           "role": "Huber loss",
+          "status": "current"
+        },
+        {
+          "sourceId": "DSA5105/Lec1_annotated.pdf",
+          "page": 37,
+          "sourceType": "lecture",
+          "role": "correlation caution",
+          "status": "current"
+        },
+        {
+          "sourceId": "DSA5105/Lec1_annotated.pdf",
+          "page": 39,
+          "sourceType": "lecture",
+          "role": "basis model indexing",
+          "status": "current"
+        },
+        {
+          "sourceId": "DSA5105/Lec1_annotated.pdf",
+          "page": 41,
+          "sourceType": "lecture",
+          "role": "basis function examples",
           "status": "current"
         },
         {
@@ -791,6 +1282,13 @@
         },
         {
           "sourceId": "DSA5105/Lec1_annotated.pdf",
+          "page": 47,
+          "sourceType": "lecture",
+          "role": "singular OLS",
+          "status": "current"
+        },
+        {
+          "sourceId": "DSA5105/Lec1_annotated.pdf",
           "page": 48,
           "sourceType": "lecture",
           "role": "regularization",
@@ -798,9 +1296,44 @@
         },
         {
           "sourceId": "DSA5105/Lec1_annotated.pdf",
+          "page": 49,
+          "sourceType": "lecture",
+          "role": "regularization and generalization",
+          "status": "current"
+        },
+        {
+          "sourceId": "DSA5105/Lec1_annotated.pdf",
+          "page": 50,
+          "sourceType": "lecture",
+          "role": "one-hot classification",
+          "status": "current"
+        },
+        {
+          "sourceId": "DSA5105/Lec1_annotated.pdf",
+          "page": 51,
+          "sourceType": "lecture",
+          "role": "multiclass score model",
+          "status": "current"
+        },
+        {
+          "sourceId": "DSA5105/Lec1_annotated.pdf",
+          "page": 52,
+          "sourceType": "lecture",
+          "role": "least-squares classification",
+          "status": "current"
+        },
+        {
+          "sourceId": "DSA5105/Lec1_annotated.pdf",
+          "page": 53,
+          "sourceType": "lecture",
+          "role": "classification error and surrogate",
+          "status": "current"
+        },
+        {
+          "sourceId": "DSA5105/Lec1_annotated.pdf",
           "page": 54,
           "sourceType": "lecture",
-          "role": "classification model",
+          "role": "softmax and cross-entropy",
           "status": "current"
         },
         {
@@ -847,9 +1380,37 @@
         },
         {
           "sourceId": "DSA5105/Lec1_annotated.pdf",
+          "page": 34,
+          "sourceType": "lecture",
+          "role": "Goodhart and overfitting",
+          "status": "current"
+        },
+        {
+          "sourceId": "DSA5105/Lec1_annotated.pdf",
           "page": 35,
           "sourceType": "lecture",
           "role": "Huber loss",
+          "status": "current"
+        },
+        {
+          "sourceId": "DSA5105/Lec1_annotated.pdf",
+          "page": 37,
+          "sourceType": "lecture",
+          "role": "correlation caution",
+          "status": "current"
+        },
+        {
+          "sourceId": "DSA5105/Lec1_annotated.pdf",
+          "page": 39,
+          "sourceType": "lecture",
+          "role": "basis model indexing",
+          "status": "current"
+        },
+        {
+          "sourceId": "DSA5105/Lec1_annotated.pdf",
+          "page": 41,
+          "sourceType": "lecture",
+          "role": "basis function examples",
           "status": "current"
         },
         {
@@ -861,6 +1422,13 @@
         },
         {
           "sourceId": "DSA5105/Lec1_annotated.pdf",
+          "page": 47,
+          "sourceType": "lecture",
+          "role": "singular OLS",
+          "status": "current"
+        },
+        {
+          "sourceId": "DSA5105/Lec1_annotated.pdf",
           "page": 48,
           "sourceType": "lecture",
           "role": "regularization",
@@ -868,9 +1436,44 @@
         },
         {
           "sourceId": "DSA5105/Lec1_annotated.pdf",
+          "page": 49,
+          "sourceType": "lecture",
+          "role": "regularization and generalization",
+          "status": "current"
+        },
+        {
+          "sourceId": "DSA5105/Lec1_annotated.pdf",
+          "page": 50,
+          "sourceType": "lecture",
+          "role": "one-hot classification",
+          "status": "current"
+        },
+        {
+          "sourceId": "DSA5105/Lec1_annotated.pdf",
+          "page": 51,
+          "sourceType": "lecture",
+          "role": "multiclass score model",
+          "status": "current"
+        },
+        {
+          "sourceId": "DSA5105/Lec1_annotated.pdf",
+          "page": 52,
+          "sourceType": "lecture",
+          "role": "least-squares classification",
+          "status": "current"
+        },
+        {
+          "sourceId": "DSA5105/Lec1_annotated.pdf",
+          "page": 53,
+          "sourceType": "lecture",
+          "role": "classification error and surrogate",
+          "status": "current"
+        },
+        {
+          "sourceId": "DSA5105/Lec1_annotated.pdf",
           "page": 54,
           "sourceType": "lecture",
-          "role": "classification model",
+          "role": "softmax and cross-entropy",
           "status": "current"
         },
         {
@@ -917,9 +1520,37 @@
         },
         {
           "sourceId": "DSA5105/Lec1_annotated.pdf",
+          "page": 34,
+          "sourceType": "lecture",
+          "role": "Goodhart and overfitting",
+          "status": "current"
+        },
+        {
+          "sourceId": "DSA5105/Lec1_annotated.pdf",
           "page": 35,
           "sourceType": "lecture",
           "role": "Huber loss",
+          "status": "current"
+        },
+        {
+          "sourceId": "DSA5105/Lec1_annotated.pdf",
+          "page": 37,
+          "sourceType": "lecture",
+          "role": "correlation caution",
+          "status": "current"
+        },
+        {
+          "sourceId": "DSA5105/Lec1_annotated.pdf",
+          "page": 39,
+          "sourceType": "lecture",
+          "role": "basis model indexing",
+          "status": "current"
+        },
+        {
+          "sourceId": "DSA5105/Lec1_annotated.pdf",
+          "page": 41,
+          "sourceType": "lecture",
+          "role": "basis function examples",
           "status": "current"
         },
         {
@@ -931,6 +1562,13 @@
         },
         {
           "sourceId": "DSA5105/Lec1_annotated.pdf",
+          "page": 47,
+          "sourceType": "lecture",
+          "role": "singular OLS",
+          "status": "current"
+        },
+        {
+          "sourceId": "DSA5105/Lec1_annotated.pdf",
           "page": 48,
           "sourceType": "lecture",
           "role": "regularization",
@@ -938,9 +1576,44 @@
         },
         {
           "sourceId": "DSA5105/Lec1_annotated.pdf",
+          "page": 49,
+          "sourceType": "lecture",
+          "role": "regularization and generalization",
+          "status": "current"
+        },
+        {
+          "sourceId": "DSA5105/Lec1_annotated.pdf",
+          "page": 50,
+          "sourceType": "lecture",
+          "role": "one-hot classification",
+          "status": "current"
+        },
+        {
+          "sourceId": "DSA5105/Lec1_annotated.pdf",
+          "page": 51,
+          "sourceType": "lecture",
+          "role": "multiclass score model",
+          "status": "current"
+        },
+        {
+          "sourceId": "DSA5105/Lec1_annotated.pdf",
+          "page": 52,
+          "sourceType": "lecture",
+          "role": "least-squares classification",
+          "status": "current"
+        },
+        {
+          "sourceId": "DSA5105/Lec1_annotated.pdf",
+          "page": 53,
+          "sourceType": "lecture",
+          "role": "classification error and surrogate",
+          "status": "current"
+        },
+        {
+          "sourceId": "DSA5105/Lec1_annotated.pdf",
           "page": 54,
           "sourceType": "lecture",
-          "role": "classification model",
+          "role": "softmax and cross-entropy",
           "status": "current"
         },
         {
@@ -983,9 +1656,37 @@
         },
         {
           "sourceId": "DSA5105/Lec1_annotated.pdf",
+          "page": 34,
+          "sourceType": "lecture",
+          "role": "Goodhart and overfitting",
+          "status": "current"
+        },
+        {
+          "sourceId": "DSA5105/Lec1_annotated.pdf",
           "page": 35,
           "sourceType": "lecture",
           "role": "Huber loss",
+          "status": "current"
+        },
+        {
+          "sourceId": "DSA5105/Lec1_annotated.pdf",
+          "page": 37,
+          "sourceType": "lecture",
+          "role": "correlation caution",
+          "status": "current"
+        },
+        {
+          "sourceId": "DSA5105/Lec1_annotated.pdf",
+          "page": 39,
+          "sourceType": "lecture",
+          "role": "basis model indexing",
+          "status": "current"
+        },
+        {
+          "sourceId": "DSA5105/Lec1_annotated.pdf",
+          "page": 41,
+          "sourceType": "lecture",
+          "role": "basis function examples",
           "status": "current"
         },
         {
@@ -997,6 +1698,13 @@
         },
         {
           "sourceId": "DSA5105/Lec1_annotated.pdf",
+          "page": 47,
+          "sourceType": "lecture",
+          "role": "singular OLS",
+          "status": "current"
+        },
+        {
+          "sourceId": "DSA5105/Lec1_annotated.pdf",
           "page": 48,
           "sourceType": "lecture",
           "role": "regularization",
@@ -1004,9 +1712,44 @@
         },
         {
           "sourceId": "DSA5105/Lec1_annotated.pdf",
+          "page": 49,
+          "sourceType": "lecture",
+          "role": "regularization and generalization",
+          "status": "current"
+        },
+        {
+          "sourceId": "DSA5105/Lec1_annotated.pdf",
+          "page": 50,
+          "sourceType": "lecture",
+          "role": "one-hot classification",
+          "status": "current"
+        },
+        {
+          "sourceId": "DSA5105/Lec1_annotated.pdf",
+          "page": 51,
+          "sourceType": "lecture",
+          "role": "multiclass score model",
+          "status": "current"
+        },
+        {
+          "sourceId": "DSA5105/Lec1_annotated.pdf",
+          "page": 52,
+          "sourceType": "lecture",
+          "role": "least-squares classification",
+          "status": "current"
+        },
+        {
+          "sourceId": "DSA5105/Lec1_annotated.pdf",
+          "page": 53,
+          "sourceType": "lecture",
+          "role": "classification error and surrogate",
+          "status": "current"
+        },
+        {
+          "sourceId": "DSA5105/Lec1_annotated.pdf",
           "page": 54,
           "sourceType": "lecture",
-          "role": "classification model",
+          "role": "softmax and cross-entropy",
           "status": "current"
         },
         {
@@ -1049,9 +1792,37 @@
         },
         {
           "sourceId": "DSA5105/Lec1_annotated.pdf",
+          "page": 34,
+          "sourceType": "lecture",
+          "role": "Goodhart and overfitting",
+          "status": "current"
+        },
+        {
+          "sourceId": "DSA5105/Lec1_annotated.pdf",
           "page": 35,
           "sourceType": "lecture",
           "role": "Huber loss",
+          "status": "current"
+        },
+        {
+          "sourceId": "DSA5105/Lec1_annotated.pdf",
+          "page": 37,
+          "sourceType": "lecture",
+          "role": "correlation caution",
+          "status": "current"
+        },
+        {
+          "sourceId": "DSA5105/Lec1_annotated.pdf",
+          "page": 39,
+          "sourceType": "lecture",
+          "role": "basis model indexing",
+          "status": "current"
+        },
+        {
+          "sourceId": "DSA5105/Lec1_annotated.pdf",
+          "page": 41,
+          "sourceType": "lecture",
+          "role": "basis function examples",
           "status": "current"
         },
         {
@@ -1063,6 +1834,13 @@
         },
         {
           "sourceId": "DSA5105/Lec1_annotated.pdf",
+          "page": 47,
+          "sourceType": "lecture",
+          "role": "singular OLS",
+          "status": "current"
+        },
+        {
+          "sourceId": "DSA5105/Lec1_annotated.pdf",
           "page": 48,
           "sourceType": "lecture",
           "role": "regularization",
@@ -1070,9 +1848,44 @@
         },
         {
           "sourceId": "DSA5105/Lec1_annotated.pdf",
+          "page": 49,
+          "sourceType": "lecture",
+          "role": "regularization and generalization",
+          "status": "current"
+        },
+        {
+          "sourceId": "DSA5105/Lec1_annotated.pdf",
+          "page": 50,
+          "sourceType": "lecture",
+          "role": "one-hot classification",
+          "status": "current"
+        },
+        {
+          "sourceId": "DSA5105/Lec1_annotated.pdf",
+          "page": 51,
+          "sourceType": "lecture",
+          "role": "multiclass score model",
+          "status": "current"
+        },
+        {
+          "sourceId": "DSA5105/Lec1_annotated.pdf",
+          "page": 52,
+          "sourceType": "lecture",
+          "role": "least-squares classification",
+          "status": "current"
+        },
+        {
+          "sourceId": "DSA5105/Lec1_annotated.pdf",
+          "page": 53,
+          "sourceType": "lecture",
+          "role": "classification error and surrogate",
+          "status": "current"
+        },
+        {
+          "sourceId": "DSA5105/Lec1_annotated.pdf",
           "page": 54,
           "sourceType": "lecture",
-          "role": "classification model",
+          "role": "softmax and cross-entropy",
           "status": "current"
         },
         {
@@ -1115,9 +1928,37 @@
         },
         {
           "sourceId": "DSA5105/Lec1_annotated.pdf",
+          "page": 34,
+          "sourceType": "lecture",
+          "role": "Goodhart and overfitting",
+          "status": "current"
+        },
+        {
+          "sourceId": "DSA5105/Lec1_annotated.pdf",
           "page": 35,
           "sourceType": "lecture",
           "role": "Huber loss",
+          "status": "current"
+        },
+        {
+          "sourceId": "DSA5105/Lec1_annotated.pdf",
+          "page": 37,
+          "sourceType": "lecture",
+          "role": "correlation caution",
+          "status": "current"
+        },
+        {
+          "sourceId": "DSA5105/Lec1_annotated.pdf",
+          "page": 39,
+          "sourceType": "lecture",
+          "role": "basis model indexing",
+          "status": "current"
+        },
+        {
+          "sourceId": "DSA5105/Lec1_annotated.pdf",
+          "page": 41,
+          "sourceType": "lecture",
+          "role": "basis function examples",
           "status": "current"
         },
         {
@@ -1129,6 +1970,13 @@
         },
         {
           "sourceId": "DSA5105/Lec1_annotated.pdf",
+          "page": 47,
+          "sourceType": "lecture",
+          "role": "singular OLS",
+          "status": "current"
+        },
+        {
+          "sourceId": "DSA5105/Lec1_annotated.pdf",
           "page": 48,
           "sourceType": "lecture",
           "role": "regularization",
@@ -1136,9 +1984,44 @@
         },
         {
           "sourceId": "DSA5105/Lec1_annotated.pdf",
+          "page": 49,
+          "sourceType": "lecture",
+          "role": "regularization and generalization",
+          "status": "current"
+        },
+        {
+          "sourceId": "DSA5105/Lec1_annotated.pdf",
+          "page": 50,
+          "sourceType": "lecture",
+          "role": "one-hot classification",
+          "status": "current"
+        },
+        {
+          "sourceId": "DSA5105/Lec1_annotated.pdf",
+          "page": 51,
+          "sourceType": "lecture",
+          "role": "multiclass score model",
+          "status": "current"
+        },
+        {
+          "sourceId": "DSA5105/Lec1_annotated.pdf",
+          "page": 52,
+          "sourceType": "lecture",
+          "role": "least-squares classification",
+          "status": "current"
+        },
+        {
+          "sourceId": "DSA5105/Lec1_annotated.pdf",
+          "page": 53,
+          "sourceType": "lecture",
+          "role": "classification error and surrogate",
+          "status": "current"
+        },
+        {
+          "sourceId": "DSA5105/Lec1_annotated.pdf",
           "page": 54,
           "sourceType": "lecture",
-          "role": "classification model",
+          "role": "softmax and cross-entropy",
           "status": "current"
         },
         {
