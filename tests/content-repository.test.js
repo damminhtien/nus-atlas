@@ -18,7 +18,7 @@ function repository() {
 function generatedPackage() {
   const context = { window: {} };
   context.window = context;
-  vm.runInNewContext(fs.readFileSync(path.join(__dirname, "../data/nus/generated/dsa5105.js"), "utf8"), context);
+  vm.runInNewContext(fs.readFileSync(path.join(__dirname, "../data/nus/generated/content-manifest.js"), "utf8"), context);
   return context.NUS_CONTENT_PACKAGES;
 }
 
@@ -68,7 +68,7 @@ test("browser script order installs the same repository boundary", () => {
   const files = [
     "data/nus/provenance.js", "data/nus/courses.js", "data/nus/schedule.js", "data/nus/assessments.js",
     "data/nus/visuals.js", "data/nus/dsa5101.js", "data/nus/dsa5104.js", "data/nus/dsa5105.js",
-    "data/nus/generated/dsa5105.js", "data/nus/dsa5208.js", "data/nus/artifacts.js", "data/nus/formula-depth.js",
+    "data/nus/generated/content-manifest.js", "data/nus/dsa5208.js", "data/nus/artifacts.js", "data/nus/formula-depth.js",
     "data/nus/visual-labs.js", "src/core/content-repository.js"
   ];
   const context = { console };
@@ -81,4 +81,18 @@ test("browser script order installs the same repository boundary", () => {
   assert.equal(stats.assessments, 12);
   assert.equal(stats.labs, 17);
   assert.equal(context.NUS_REPOSITORY.getLesson("DSA5105", "dsa5105-erm").flashcards.length, 4);
+});
+
+test("a package-only course is discoverable without changing the app shell", () => {
+  const legacy = loadLegacyState();
+  const packageOnly = {
+    NEW5100: {
+      course: { code: "NEW5100", title: "New package course", semester: "AY2026/27", schemaVersion: "nus.course.v1" },
+      content: { modules: [{ id: "new-module", title: "Module", lessons: [{ id: "new-lesson", title: "New lesson", sourceRefs: [{ sourceId: "new.pdf", page: 1 }], blocks: [{ type: "note" }], questionIds: [], labIds: [], schemaVersion: "nus.lesson.v1" }] }] },
+      assessments: [], sources: [], visuals: {}, labs: {}
+    }
+  };
+  const repo = createContentRepository({ ...legacy, packages: packageOnly });
+  assert.ok(repo.listCourses().some(course => course.code === "NEW5100"));
+  assert.equal(repo.getLesson("NEW5100", "new-lesson").courseId, "NEW5100");
 });
