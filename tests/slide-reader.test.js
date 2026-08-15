@@ -65,5 +65,7 @@ test("slide reader keeps source collapsed and resolves textbook annotations", ()
   assert.match(root.innerHTML, /Supervised Learning/);
   assert.match(root.innerHTML, /Linear Models/);
   assert.match(root.innerHTML, /Dynamic Atlas annotation/);
+  assert.match(root.innerHTML, /Textbook reading lens/);
+  assert.match(root.innerHTML, /slide 1/);
   assert.match(root.innerHTML, /Practice lesson/);
 });
