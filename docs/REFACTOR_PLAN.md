@@ -56,10 +56,12 @@ from generated metadata rather than maintaining course allowlists.
 
 ### 4. Separate package metadata from payload
 
-The next build step should emit a small manifest containing course metadata and
-asset URLs, then load lesson/question payloads on demand when a course or lesson
-opens. Prerender must use the same loader contract. Keep a legacy fallback until
-all four current courses are migrated.
+The build now emits a metadata-only manifest containing course metadata, counts,
+content hashes, and asset URLs. `content-loader.js` loads lesson/question
+payloads on demand when a course, lesson, or scoped exam opens. Prerender loads
+all generated bundles through the same package shape, while the service worker
+does not eagerly cache course payloads. Keep a legacy fallback until all four
+current courses are migrated.
 
 ### 5. Expand ingestion safely
 

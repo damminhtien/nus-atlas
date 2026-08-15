@@ -34,6 +34,8 @@ const COURSES = global.window.COURSES || [];
   "data/nus/dsa5101.js", "data/nus/dsa5104.js", "data/nus/dsa5105.js", "data/nus/generated/content-manifest.js", "data/nus/dsa5208.js",
   "data/nus/artifacts.js", "data/nus/formula-depth.js", "data/nus/visual-labs.js"
 ].forEach(load);
+const generatedRoot = path.join(__dirname, "data", "nus", "generated");
+if (fs.existsSync(generatedRoot)) fs.readdirSync(generatedRoot).filter(file => file.endsWith(".js") && file !== "content-manifest.js").sort().forEach(file => load(path.join("data/nus/generated", file)));
 const NUS_REPOSITORY = createContentRepository({
   courses: global.window.NUS_COURSES,
   content: global.window.NUS_CONTENT,
@@ -241,7 +243,7 @@ function walkFiles(dir, prefix = "") {
     return [relative.split(path.sep).join("/")];
   });
 }
-const assets = walkFiles(OUT).filter(file => !file.startsWith("l/") && !file.startsWith("nus/") && !["sw.js", "asset-manifest.json", "sitemap.xml", "robots.txt"].includes(file));
+const assets = walkFiles(OUT).filter(file => !file.startsWith("l/") && !file.startsWith("nus/") && !["sw.js", "asset-manifest.json", "sitemap.xml", "robots.txt"].includes(file) && !(file.startsWith("data/nus/generated/") && file !== "data/nus/generated/content-manifest.js"));
 const manifest = { schemaVersion: "atlas.asset-manifest.v1", assets: assets.map(file => `./${file}`) };
 fs.writeFileSync(path.join(OUT, "asset-manifest.json"), `${JSON.stringify(manifest, null, 2)}\n`);
 const cache = `atlas-${crypto.createHash("sha1").update(JSON.stringify(manifest)).digest("hex").slice(0, 12)}`;

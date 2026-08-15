@@ -18,9 +18,22 @@
   const schedule = state.schedule && typeof state.schedule === "object" ? state.schedule : { courses: {} };
   const provenance = state.provenance && typeof state.provenance === "object" ? state.provenance : {};
   const packages = state.packages && typeof state.packages === "object" ? state.packages : {};
+  const packageLoader = typeof state.packageLoader === "function" ? state.packageLoader : null;
 
   function coursePackage(courseId) { return packages[courseId] || null; }
   function packageCourses() { return Object.values(packages).map(packageData => packageData.course).filter(Boolean); }
+  function packageLoaded(courseId) { const packageData = coursePackage(courseId); return !!(packageData && packageData.content); }
+  function needsLoad(courseId) { const packageData = coursePackage(courseId); return !!(packageData && packageData.asset && !packageLoaded(courseId)); }
+  function registerPackage(courseId, packageData) {
+    if (!courseId || !packageData || typeof packageData !== "object") throw new TypeError("A content package needs an id and object");
+    packages[courseId] = packageData;
+    return packageData;
+  }
+  function loadCourse(courseId) {
+    if (packageLoaded(courseId)) return Promise.resolve(coursePackage(courseId));
+    if (!packageLoader) return Promise.resolve(null);
+    return Promise.resolve(packageLoader(courseId)).then(packageData => packageData ? registerPackage(courseId, packageData) : null);
+  }
   function catalog(courseId) { return (coursePackage(courseId) && coursePackage(courseId).content) || content[courseId] || { modules: [] }; }
   function lessonRecord(courseId, module, lesson) {
     const kit = artifacts[lesson.id] || {};
@@ -94,6 +107,10 @@
     getVisual,
     getSchedule,
     getSourceCatalog,
+    packageLoaded,
+    needsLoad,
+    registerPackage,
+    loadCourse,
     getSourceTypes: () => state.sourceTypes && typeof state.sourceTypes === "object" ? state.sourceTypes : {},
     listCourses: () => {
       const merged = new Map(courses.map(course => [course.code, getCourse(course.code) || course]));
@@ -120,6 +137,7 @@ if (typeof window === "object" && window.NUS_CONTENT_REPOSITORY) {
     schedule: window.NUS_SCHEDULE,
     sourceTypes: window.NUS_SOURCE_TYPES,
     packages: window.NUS_CONTENT_PACKAGES,
-    provenance: window.NUS_SOURCE_POLICY
+    provenance: window.NUS_SOURCE_POLICY,
+    packageLoader: window.NUS_CONTENT_PACKAGE_LOADER && window.NUS_CONTENT_PACKAGE_LOADER.load
   });
 }
