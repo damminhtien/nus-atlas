@@ -63,13 +63,13 @@
   {
     "id": "dsa5105-nn-q3",
     "type": "calculation",
-    "prompt": "$In the scalar example u=2, ReLU(u)=2, \\sigmoid(2)\\approx0.881, t=0, x=1, what is the approximate dL/dw?$",
+    "prompt": "In the scalar example $u=2$, $\\operatorname{ReLU}(u)=2$, $\\sigma(2)\\approx0.881$, $t=0$, and $x=1$, what is the approximate $\\frac{dL}{dw}$?",
     "accepted": [
       "0.0925",
       "0.09",
       "about 0.0925"
     ],
-    "solution": "(0.881)(0.881($1-0.881$))$(1)(1) \\approx 0$.0925.",
+    "solution": "$(0.881)\\bigl(0.881(1-0.881)\\bigr)(1)(1)\\approx0.0925$.",
     "explanation": "Multiply the loss, sigmoid, ReLU, and input derivatives in reverse graph order.",
     "sourceRefs": [
       {
