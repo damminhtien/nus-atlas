@@ -61,6 +61,7 @@ test("slide reader keeps source collapsed and resolves textbook annotations", ()
   feature.render("DSA5105", "week1", 1);
 
   assert.match(root.innerHTML, /nus-slide-source-panel/);
+  assert.match(root.innerHTML, /nus-slide-reader-page/);
   assert.doesNotMatch(root.innerHTML, /<details[^>]+open/);
   assert.match(root.innerHTML, /Supervised Learning/);
   assert.match(root.innerHTML, /Linear Models/);
