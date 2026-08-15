@@ -254,7 +254,7 @@
     },
     {
       "title": "Lecture core · Basis functions and matrix form",
-      "body": "General linear basis models use an indexed feature map with $\\phi_0(x)=1$ for an intercept. The model can be nonlinear in x while remaining linear in weights. In matrix form, $Phiinmathbb{R}^{N\times M}$ stores the basis values; the inverse formula requires the feature matrix to have suitable rank.",
+      "body": "General linear basis models use an indexed feature map with $\\phi_0(x)=1$ for an intercept. The model can be nonlinear in x while remaining linear in weights. In matrix form, $\\Phi\\in\\mathbb{R}^{N\\times M}$ stores the basis values; the inverse formula requires the feature matrix to have suitable rank.",
       "sourceType": "lecture",
       "math": {
         "latex": "f(x)=\\sum_{j=0}^{M-1}w_j\\phi_j(x),\\qquad \\phi(x)=(\\phi_0(x),\\ldots,\\phi_{M-1}(x))^\\top\\in\\mathbb R^M,\\qquad \\Phi\\in\\mathbb R^{N\\times M}",
@@ -401,9 +401,9 @@
     {
       "title": "Worked example: softmax to logistic",
       "steps": [
-        "For two logits z1 and z2, subtract z2 from both logits without changing the probability ratio.",
-        "Only $s = z1 - z2 remains$, giving $p1 = 1/(1 + \\exp(-s))$ and $p2 = 1 - p1$.",
-        "With labels y in {-1, +1}, the cross-entropy can be written as $\\log(1 + \\exp(-y s)$); classify as class 1 when s is positive and class 2 when s is negative."
+        "For two logits $z_1$ and $z_2$, subtract $z_2$ from both logits without changing the probability ratio.",
+        "Only $s=z_1-z_2$ remains, giving $p_1=1/(1+\\exp(-s))$ and $p_2=1-p_1$.",
+        "With labels $y\\in\\{-1,+1\\}$, the cross-entropy can be written as $\\log(1+\\exp(-ys))$; classify as class 1 when $s>0$ and class 2 when $s<0$."
       ],
       "answer": "Binary logistic regression is the two-class softmax written in terms of one score difference.",
       "sourceType": "lecture"
@@ -765,7 +765,7 @@
       "id": "dsa5105-linear-week1-section-6",
       "type": "teaching-note",
       "title": "Lecture core · Basis functions and matrix form",
-      "body": "General linear basis models use an indexed feature map with $\\phi_0(x)=1$ for an intercept. The model can be nonlinear in x while remaining linear in weights. In matrix form, $Phiinmathbb{R}^{N\times M}$ stores the basis values; the inverse formula requires the feature matrix to have suitable rank.",
+      "body": "General linear basis models use an indexed feature map with $\\phi_0(x)=1$ for an intercept. The model can be nonlinear in x while remaining linear in weights. In matrix form, $\\Phi\\in\\mathbb{R}^{N\\times M}$ stores the basis values; the inverse formula requires the feature matrix to have suitable rank.",
       "sourceType": "lecture",
       "sourceRefs": [
         {
@@ -1350,9 +1350,9 @@
       "type": "worked-example",
       "title": "Worked example: softmax to logistic",
       "steps": [
-        "For two logits z1 and z2, subtract z2 from both logits without changing the probability ratio.",
-        "Only $s = z1 - z2 remains$, giving $p1 = 1/(1 + \\exp(-s))$ and $p2 = 1 - p1$.",
-        "With labels y in {-1, +1}, the cross-entropy can be written as $\\log(1 + \\exp(-y s)$); classify as class 1 when s is positive and class 2 when s is negative."
+        "For two logits $z_1$ and $z_2$, subtract $z_2$ from both logits without changing the probability ratio.",
+        "Only $s=z_1-z_2$ remains, giving $p_1=1/(1+\\exp(-s))$ and $p_2=1-p_1$.",
+        "With labels $y\\in\\{-1,+1\\}$, the cross-entropy can be written as $\\log(1+\\exp(-ys))$; classify as class 1 when $s>0$ and class 2 when $s<0$."
       ],
       "answer": "Binary logistic regression is the two-class softmax written in terms of one score difference.",
       "sourceType": "lecture",

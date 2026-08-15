@@ -33,7 +33,7 @@
       "id": "dsa5105-bank-004", "lessonId": "dsa5105-linear-week1", "type": "calculation", "difficulty": "medium", "skill": "ols-uniqueness", "cognitiveLevel": "apply", "estimatedSeconds": 120,
       "prompt": "For X with full column rank, what property makes the least-squares minimizer unique?",
       "accepted": ["X transpose X is invertible", "full column rank", "positive definite X^T X"],
-      "solution": "$Full column rank makes X^\\top X positive definite and invertible, giving w_hat = (X^\\top X)^(-1)X^\\top y as the unique minimizer.$", "hint": "Look at the Hessian of the quadratic objective.", "explanation": "Rank deficiency creates flat directions and multiple minimizers; full rank removes them.", "misconception": "Confusing existence of a minimizer with uniqueness.", "visualHook": "Show a bowl becoming a flat valley as rank is lost.",
+      "solution": "Full column rank makes $X^\\top X$ positive definite and invertible, giving $\\hat w=(X^\\top X)^{-1}X^\\top y$ as the unique minimizer.", "hint": "Look at the Hessian of the quadratic objective.", "explanation": "Rank deficiency creates flat directions and multiple minimizers; full rank removes them.", "misconception": "Confusing existence of a minimizer with uniqueness.", "visualHook": "Show a bowl becoming a flat valley as rank is lost.",
       "sourceRefs": [{"sourceId": "DSA5105/Lec1_annotated.pdf", "page": 33, "sourceType": "lecture", "role": "OLS uniqueness", "status": "current"}, {"sourceId": "DSA5105/Textbook.pdf", "page": 25, "sourceType": "textbook", "role": "least squares", "status": "supporting"}]
     },
     {
@@ -166,7 +166,7 @@
       "id": "dsa5105-bank-023", "lessonId": "dsa5105-neural-backprop", "type": "derivation", "difficulty": "medium", "skill": "backpropagation", "cognitiveLevel": "apply", "estimatedSeconds": 140,
       "prompt": "For $z = wx$ and loss $L(z)$, express $\\frac{dL}{dw}$ using the chain rule.",
       "accepted": ["dL/dz times x", "(dL/dz)x", "chain rule"],
-      "solution": "dL/$dw = \u0001FORMULA0\u0001$.", "hint": "Differentiate the affine node with respect to its weight.", "explanation": "Backpropagation is repeated local chain-rule composition on a computation graph.", "misconception": "Dropping the input x from the gradient.", "visualHook": "Highlight the two edges in the computation graph.",
+      "solution": "The chain rule gives $\\frac{dL}{dw}=\\frac{dL}{dz}x$.", "hint": "Differentiate the affine node with respect to its weight.", "explanation": "Backpropagation is repeated local chain-rule composition on a computation graph.", "misconception": "Dropping the input x from the gradient.", "visualHook": "Highlight the two edges in the computation graph.",
       "sourceRefs": [{"sourceId": "DSA5105/Lec5_annotated.pdf", "page": 46, "sourceType": "lecture", "role": "backprop chain rule", "status": "current"}, {"sourceId": "DSA5105/Textbook.pdf", "page": 112, "sourceType": "textbook", "role": "neural gradients", "status": "supporting"}]
     },
     {

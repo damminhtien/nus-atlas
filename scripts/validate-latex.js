@@ -11,7 +11,7 @@
 
 const fs = require('node:fs');
 const path = require('node:path');
-const { AUTHORED_TEXT_KEYS, SKIP_KEYS } = require('./latex-utils');
+const { AUTHORED_TEXT_KEYS, SKIP_KEYS, hasMalformedDelimiters } = require('./latex-utils');
 
 const ROOT = path.resolve(__dirname, '..', 'content', 'courses');
 
@@ -22,6 +22,16 @@ const MATH_DELIMITERS = [
   /\\\[[\s\S]*?\\\]/g,
 ];
 const UNICODE_MATH = /[≈≤≥∑∫∂∇±×÷∞→←∈≠]/g;
+const CONTROL_CHARS = /[\u0000-\u0008\u000B\u000C\u000E-\u001F\u007F]/g;
+const MALFORMED_MATH_PATTERNS = [
+  { pattern: /(?<!\\)\b[A-Za-z]+inmathbb\b/g, label: 'missing mathbb command' },
+  { pattern: /(?<!\\)\b[A-Za-z]+inargmin\b/g, label: 'missing argmin command' },
+  { pattern: /(?<!\\)\b[A-Za-z]+succ\d+\b/g, label: 'missing succ command' },
+  { pattern: /(?<!\\)\b[A-Za-z]+imes[A-Z]\b/g, label: 'missing times command' },
+  { pattern: /(?<!\\)\b(?:mathcal|mathbb|mathrm|mathbf|operatorname|langle|rangle)\b/g, label: 'missing TeX command' },
+  { pattern: /(?<!\\)\b(?:hat|tilde|widehat|bar)\s+[A-Za-z]\b/g, label: 'missing accent command' },
+  { pattern: /\b(?:remains|giving|classify)\b/g, label: 'prose inside math' },
+];
 
 const RAW_MATH_PATTERNS = [
   { pattern: /\\(?:[a-zA-Z]+|[,;:!])/g, label: 'TeX command' },
@@ -73,6 +83,65 @@ function findUnicodeMath(value) {
   return matches.sort((left, right) => left.index - right.index);
 }
 
+function findDelimiterIssues(value) {
+  const issues = [];
+  let mode = null;
+  for (let index = 0; index < value.length; index += 1) {
+    if (value[index] === '\\' && value[index + 1] === '$') {
+      index += 1;
+      continue;
+    }
+    if (value[index] !== '$') continue;
+    const display = value[index + 1] === '$';
+    if (display) index += 1;
+    if (!mode) {
+      mode = display ? 'display' : 'inline';
+      continue;
+    }
+    if (mode === 'display' && display) {
+      mode = null;
+      continue;
+    }
+    if (mode === 'inline' && !display) {
+      mode = null;
+      continue;
+    }
+    issues.push({ label: 'nested or mixed math delimiter', token: display ? '$$' : '$', index });
+  }
+  if (mode) issues.push({ label: 'unclosed math delimiter', token: mode === 'display' ? '$$' : '$', index: value.length });
+  for (const [open, close] of [['\\(', '\\)'], ['\\[', '\\]']]) {
+    const opens = value.split(open).length - 1;
+    const closes = value.split(close).length - 1;
+    if (opens !== closes) issues.push({ label: 'unclosed math delimiter', token: opens > closes ? open : close, index: value.length });
+  }
+  if (!issues.length && hasMalformedDelimiters(value)) {
+    issues.push({ label: 'mixed math delimiter families', token: 'mixed delimiters', index: 0 });
+  }
+  return issues;
+}
+
+function findMalformedMath(value) {
+  const issues = [];
+  for (const match of value.matchAll(CONTROL_CHARS)) {
+    issues.push({ label: 'control character in authored math', token: 'U+' + match[0].charCodeAt(0).toString(16).padStart(4, '0'), index: match.index });
+  }
+  for (const match of value.matchAll(/\u0001FORMULA\d+\u0001/g)) {
+    issues.push({ label: 'normalizer placeholder', token: match[0], index: match.index });
+  }
+  const spans = MATH_DELIMITERS.flatMap(delimiter => [...value.matchAll(delimiter)]);
+  for (const span of spans) {
+    const body = span[0]
+      .replace(/^\$\$?|\$\$?$|^\\\[|\\\]$|^\\\(|\\\)$/g, '')
+      .replace(/\\(?:text|mathrm|operatorname)\{[^{}]*\}/g, ' ');
+    for (const { pattern, label } of MALFORMED_MATH_PATTERNS) {
+      for (const match of body.matchAll(pattern)) {
+        issues.push({ label, token: match[0], index: span.index + match.index });
+      }
+    }
+  }
+  return issues;
+}
+
 function displayPath(filePath, propertyPath) {
   return `${path.relative(process.cwd(), filePath)}${propertyPath}`;
 }
@@ -80,7 +149,15 @@ function displayPath(filePath, propertyPath) {
 function validateValue(value, filePath, propertyPath, key, skipped, errors) {
   if (typeof value === 'string') {
     if (!skipped && AUTHORED_TEXT_KEYS.has(key)) {
-      const matches = [...findRawMath(value), ...findUnicodeMath(value)];
+      const matches = [...findRawMath(value), ...findUnicodeMath(value), ...findDelimiterIssues(value), ...findMalformedMath(value)];
+      if (matches.length) errors.push({
+        location: displayPath(filePath, propertyPath),
+        label: matches.map((match) => match.label).join(', '),
+        token: matches.map((match) => match.token).join(', '),
+        value,
+      });
+    } else if (key === 'latex') {
+      const matches = findMalformedMath(value);
       if (matches.length) errors.push({
         location: displayPath(filePath, propertyPath),
         label: matches.map((match) => match.label).join(', '),
@@ -127,6 +204,12 @@ function validateAll() {
   return errors;
 }
 
+function validateDocument(document, filePath = path.join(ROOT, 'normalized-source.json')) {
+  const errors = [];
+  validateValue(document, filePath, '', '', false, errors);
+  return errors;
+}
+
 if (require.main === module) {
   const errors = validateAll();
   if (errors.length) {
@@ -141,4 +224,4 @@ if (require.main === module) {
   }
 }
 
-module.exports = { findRawMath, findUnicodeMath, validateAll };
+module.exports = { findRawMath, findUnicodeMath, findDelimiterIssues, findMalformedMath, validateDocument, validateAll };

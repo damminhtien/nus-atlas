@@ -1,6 +1,15 @@
 (function () {
   "use strict";
   const esc = value => String(value == null ? "" : value).replace(/[&<>"']/g, ch => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", "\"": "&quot;", "'": "&#39;" }[ch]));
+  function mathSource(value) {
+    const source = String(value == null ? "" : value).trim();
+    if (source.startsWith("$$") && source.endsWith("$$")) return source.slice(2, -2).trim();
+    if (source.startsWith("$") && source.endsWith("$")) return source.slice(1, -1).trim();
+    if (source.startsWith("\\[") && source.endsWith("\\]")) return source.slice(2, -2).trim();
+    if (source.startsWith("\\(") && source.endsWith("\\)")) return source.slice(2, -2).trim();
+    return source;
+  }
+  const mathMarkup = value => `$${esc(mathSource(value))}$`;
   const sourceLabel = ref => `${ref.sourceId}${ref.page ? ` · p.${ref.page}` : ""}`;
   const routeLink = (label, href, cls = "ghost") => `<a class="btn ${cls}" href="${esc(href)}" data-route>${esc(label)}</a>`;
   const sourceRefs = lab => (lab.sourceRefs || []).map(ref => `<span class="nus-lab-source-ref"><b>${esc((window.NUS_SOURCE_TYPES && window.NUS_SOURCE_TYPES[ref.sourceType] || {}).shortLabel || ref.sourceType)}</b> ${esc(sourceLabel(ref))}</span>`).join("");
@@ -34,7 +43,7 @@
       ["2 · Find directions", String.raw`C=\frac{1}{n}X_c^\top X_c`, "The covariance structure identifies directions with large projected variance."],
       ["3 · Project", String.raw`z=W_k^\top x_c`, "Keep the selected principal directions and represent each centered point there."]
     ];
-    return shell(lab, `<div class="nus-lab-controls"><span class="nus-lab-step-count" data-step-count>Step 1 of ${steps.length}</span><button class="btn primary" type="button" data-lab-next>Next derivation step</button></div><div class="nus-lab-stage nus-stepper-stage" id="${id}-stage">${steps.map((step, i) => `<article class="nus-lab-step ${i === 0 ? "active" : ""}" data-step="${i}" aria-hidden="${i === 0 ? "false" : "true"}"><span class="eyebrow">${step[0]}</span><div class="nus-lab-formula">$${step[1]}$</div><p>${step[2]}</p></article>`).join("")}<p class="nus-lab-status-text" data-step-summary aria-live="polite">Start by separating the mean from the directions.</p></div>`);
+    return shell(lab, `<div class="nus-lab-controls"><span class="nus-lab-step-count" data-step-count>Step 1 of ${steps.length}</span><button class="btn primary" type="button" data-lab-next>Next derivation step</button></div><div class="nus-lab-stage nus-stepper-stage" id="${id}-stage">${steps.map((step, i) => `<article class="nus-lab-step ${i === 0 ? "active" : ""}" data-step="${i}" aria-hidden="${i === 0 ? "false" : "true"}"><span class="eyebrow">${step[0]}</span><div class="nus-lab-formula">${mathMarkup(step[1])}</div><p>${step[2]}</p></article>`).join("")}<p class="nus-lab-status-text" data-step-summary aria-live="polite">Start by separating the mean from the directions.</p></div>`);
   }
   function algorithmTrace(lab) {
     const steps = [
@@ -47,7 +56,7 @@
   }
   function derivationTrace(lab) {
     const steps = lab.steps || [];
-    return shell(lab, `<div class="nus-lab-controls"><span class="nus-lab-step-count" data-step-count>Step 1 of ${steps.length}</span><button class="btn primary" type="button" data-lab-next>Reveal next step</button></div><ol class="nus-lab-stage nus-trace nus-derivation-trace">${steps.map((step, i) => `<li class="nus-lab-step ${i === 0 ? "active" : ""}" data-step="${i}" aria-current="${i === 0 ? "step" : "false"}"><b>${esc(step[0])}</b><div class="nus-lab-formula">$${step[1]}$</div><span>${esc(step[2])}</span></li>`).join("")}</ol><p class="nus-lab-status-text" data-step-summary aria-live="polite">Reveal each transformation, then explain what assumption makes it valid.</p>`);
+    return shell(lab, `<div class="nus-lab-controls"><span class="nus-lab-step-count" data-step-count>Step 1 of ${steps.length}</span><button class="btn primary" type="button" data-lab-next>Reveal next step</button></div><ol class="nus-lab-stage nus-trace nus-derivation-trace">${steps.map((step, i) => `<li class="nus-lab-step ${i === 0 ? "active" : ""}" data-step="${i}" aria-current="${i === 0 ? "step" : "false"}"><b>${esc(step[0])}</b><div class="nus-lab-formula">${mathMarkup(step[1])}</div><span>${esc(step[2])}</span></li>`).join("")}</ol><p class="nus-lab-status-text" data-step-summary aria-live="polite">Reveal each transformation, then explain what assumption makes it valid.</p>`);
   }
   function eventTimeline(lab) {
     const steps = [
@@ -77,7 +86,7 @@
   function deepDive(lab) {
     const exercises = lab.exercises || [], id = "nus-lab-" + lab.lessonId;
     const tabs = exercises.map((exercise, index) => "<button class=\"nus-deep-tab " + (index === 0 ? "is-selected" : "") + "\" type=\"button\" role=\"tab\" data-deep-tab=\"" + esc(exercise.id) + "\" aria-selected=\"" + (index === 0 ? "true" : "false") + "\">" + esc(exercise.label) + "</button>").join("");
-    const panels = exercises.map((exercise, index) => "<article class=\"nus-deep-panel " + (index === 0 ? "is-selected" : "") + "\" id=\"" + id + "-" + esc(exercise.id) + "\" data-deep-panel=\"" + esc(exercise.id) + "\" role=\"tabpanel\" aria-hidden=\"" + (index === 0 ? "false" : "true") + "\"><div class=\"nus-deep-panel-head\"><span class=\"eyebrow\">" + esc(exercise.label) + "</span><p>" + esc(exercise.prompt) + "</p></div><ol class=\"nus-deep-steps\">" + (exercise.steps || []).map((step, stepIndex) => "<li class=\"nus-deep-step " + (stepIndex === 0 ? "active" : "") + "\" data-deep-step=\"" + stepIndex + "\" aria-current=\"" + (stepIndex === 0 ? "step" : "false") + "\"><b>" + esc(step[0]) + "</b><div class=\"nus-lab-formula\">$" + step[1] + "$</div><span>" + esc(step[2]) + "</span></li>").join("") + "</ol><p class=\"nus-deep-takeaway\"><b>Interpretation</b> " + esc(exercise.takeaway || "") + "</p></article>").join("");
+    const panels = exercises.map((exercise, index) => "<article class=\"nus-deep-panel " + (index === 0 ? "is-selected" : "") + "\" id=\"" + id + "-" + esc(exercise.id) + "\" data-deep-panel=\"" + esc(exercise.id) + "\" role=\"tabpanel\" aria-hidden=\"" + (index === 0 ? "false" : "true") + "\"><div class=\"nus-deep-panel-head\"><span class=\"eyebrow\">" + esc(exercise.label) + "</span><p>" + esc(exercise.prompt) + "</p></div><ol class=\"nus-deep-steps\">" + (exercise.steps || []).map((step, stepIndex) => "<li class=\"nus-deep-step " + (stepIndex === 0 ? "active" : "") + "\" data-deep-step=\"" + stepIndex + "\" aria-current=\"" + (stepIndex === 0 ? "step" : "false") + "\"><b>" + esc(step[0]) + "</b><div class=\"nus-lab-formula\">" + mathMarkup(step[1]) + "</div><span>" + esc(step[2]) + "</span></li>").join("") + "</ol><p class=\"nus-deep-takeaway\"><b>Interpretation</b> " + esc(exercise.takeaway || "") + "</p></article>").join("");
     return shell(lab, "<div class=\"nus-lab-deep-tabs\" role=\"tablist\" aria-label=\"Week 1 derivation exercises\">" + tabs + "</div><div class=\"nus-lab-stage nus-deep-dive-stage\">" + panels + "</div><div class=\"nus-lab-controls\"><span class=\"nus-lab-step-count\" data-deep-count>Risk gap · step 1</span><button class=\"btn primary\" type=\"button\" data-deep-next>Reveal next step</button><button class=\"btn ghost\" type=\"button\" data-deep-complete>Commit current proof</button></div><p class=\"nus-lab-status-text\" data-deep-status aria-live=\"polite\">Reveal each transformation, then explain the assumption behind it.</p>");
   }
   function selectDeepDive(root, exerciseId) {

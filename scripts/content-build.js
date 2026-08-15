@@ -9,6 +9,7 @@ const path = require("path");
 const crypto = require("crypto");
 const { loadLegacyState } = require("./validate-content");
 const { normalizeDocument } = require("./latex-utils");
+const { validateDocument } = require("./validate-latex");
 
 const ROOT = path.resolve(__dirname, "..");
 const DEFAULT_COURSE = "DSA5105";
@@ -258,6 +259,11 @@ function packageCourse(state, courseId) {
 
 function build(courseId = DEFAULT_COURSE) {
   const state = loadLegacyState(ROOT);
+  const sourceErrors = validateDocument(normalizeDocument(state), path.join(ROOT, "data", "nus", "normalized-source.json"));
+  if (sourceErrors.length) {
+    const detail = sourceErrors.slice(0, 10).map(error => error.location + " [" + error.label + ": " + error.token + "]").join("\n- ");
+    throw new Error("Normalized authored math contract failed:\n- " + detail);
+  }
   const packageData = normalizeDocument(packageCourse(state, courseId));
   const output = path.join(ROOT, "data", "nus", "generated", `${courseId.toLowerCase()}.js`);
   const serialized = JSON.stringify(packageData);

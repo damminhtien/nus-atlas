@@ -28,3 +28,11 @@ test("every DSA5105 lesson has a source-backed visual lab", () => {
   assert.equal(lessons.filter(lesson => labs.has(lesson.id)).length, 23);
   assert.ok(["concept-map", "decision-tree", "deep-dive"].every(type => Object.values(window.NUS_VISUAL_LABS).some(lab => lab.type === type)));
 });
+
+test("formula-bearing labs use exactly-once math wrapping", () => {
+  const source = fs.readFileSync("js/nus-components.js", "utf8");
+  assert.match(source, /function mathSource\(value\)/);
+  assert.match(source, /const mathMarkup = value =>/);
+  assert.match(source, /mathMarkup\(step\[1\]\)/);
+  assert.doesNotMatch(source, /\$\\?\$\{step\[1\]\}\\?\$/);
+});

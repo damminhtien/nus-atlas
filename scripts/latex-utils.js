@@ -214,8 +214,40 @@ function isFormulaOnly(value) {
   return /(?:\\[A-Za-z]+|[A-Za-z]+[_^][A-Za-z0-9{]|\|\||\b[A-Za-z]\s*=)/.test(text);
 }
 
+function hasMalformedDelimiters(value) {
+  let dollarMode = null;
+  for (let index = 0; index < value.length; index += 1) {
+    if (value[index] === '\\' && value[index + 1] === '$') {
+      index += 1;
+      continue;
+    }
+    if (value[index] !== '$') continue;
+    const display = value[index + 1] === '$';
+    if (display) index += 1;
+    if (!dollarMode) {
+      dollarMode = display ? 'display' : 'inline';
+      continue;
+    }
+    if (dollarMode === (display ? 'display' : 'inline')) {
+      dollarMode = null;
+      continue;
+    }
+    return true;
+  }
+  if (dollarMode) return true;
+
+  const pairedDelimiters = [['\\(', '\\)'], ['\\[', '\\]']];
+  for (const [open, close] of pairedDelimiters) {
+    if ((value.split(open).length - 1) !== (value.split(close).length - 1)) return true;
+  }
+  const hasDollar = /(?<!\\)\$/.test(value);
+  const hasPaired = /\\(?:\(|\[|\)|\])/.test(value);
+  return hasDollar && hasPaired;
+}
+
 function normalizeText(value) {
   if (!value || typeof value !== 'string') return value;
+  if (hasMalformedDelimiters(value) || /\u0001FORMULA\d+\u0001/.test(value)) return value;
   if (!/\$\$[\s\S]*\$\$|\$(?:\\.|[^$])*\$|\\\(|\\\[/.test(value) && isFormulaOnly(value)) {
     return `$${normalizeFormula(value.trim())}$`;
   }
@@ -264,4 +296,4 @@ function normalizeDocument(value, key = '', skipped = false) {
   ]));
 }
 
-module.exports = { AUTHORED_TEXT_KEYS, SKIP_KEYS, normalizeDocument, normalizeText };
+module.exports = { AUTHORED_TEXT_KEYS, SKIP_KEYS, hasMalformedDelimiters, normalizeDocument, normalizeText };
