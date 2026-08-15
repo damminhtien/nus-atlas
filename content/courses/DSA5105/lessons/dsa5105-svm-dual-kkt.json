@@ -144,7 +144,7 @@
     },
     {
       "title": "Assessment habit · Read the alpha pattern",
-      "body": "If the labels are +1 and -1, the dual equality says the positive alpha sum equals the negative alpha sum. A candidate alpha vector that violates this is infeasible even if every alpha is non-negative. First check equality and bounds, then inspect which points have non-zero multipliers.",
+      "body": "If the labels are +1 and -1, the dual equality says the positive $\\alpha$ sum equals the negative $\\alpha$ sum. A candidate $\\alpha$ vector that violates this is infeasible even if every $\\alpha$ is non-negative. First check equality and bounds, then inspect which points have non-zero multipliers.",
       "sourceType": "ref"
     }
   ],
@@ -156,14 +156,14 @@
         "All multipliers are non-negative and the positive and negative sums are both 3.",
         "Therefore the bias equality is satisfied. If C is finite, also check that every multiplier is at most C."
       ],
-      "answer": "The dual equality is a balance condition, not a requirement that all alpha values be equal.",
+      "answer": "The dual equality is a balance condition, not a requirement that all $\\alpha$ values be equal.",
       "sourceType": "textbook"
     },
     {
       "title": "Identify support vectors",
       "steps": [
-        "Compute or inspect each margin value m_i = y_i(w^T x_i+b).",
-        "Points with m_i=1 can carry alpha_i>0; points with m_i>1 must have alpha_i=0 in the hard-margin case.",
+        "Compute or inspect each margin value $m_i = y_i(w^\\top x_i+b)$.",
+        "$Points with m_i=1 can carry \\alpha_i>0; points with m_i>1 must have \\alpha_i=0 in the hard-margin case.$",
         "In a soft-margin problem, points inside the margin or misclassified can also be active, subject to the box constraint."
       ],
       "answer": "Support vectors are active constraints, not simply the closest points by visual distance before the hyperplane is normalized.",
@@ -175,13 +175,13 @@
       "prompt": "Why does the dual contain pairwise inner products?",
       "focus": "kernel trick",
       "angle": "eliminate w using stationarity",
-      "modelAnswer": "Stationarity writes w as a weighted sum of training vectors. Substituting this expansion into the norm produces x_i^T x_j terms, which can be replaced by a valid kernel."
+      "modelAnswer": "Stationarity writes w as a weighted sum of training vectors. Substituting this expansion into the norm produces $x_{i}$^T $x_{j}$ terms, which can be replaced by a valid kernel."
     },
     {
       "prompt": "What does complementary slackness tell you operationally?",
       "focus": "support vectors",
       "angle": "connect alpha to margin equality",
-      "modelAnswer": "A non-zero alpha means the corresponding margin constraint is tight. Those points remain in the prediction expansion; strictly separated points have zero alpha in the hard-margin case."
+      "modelAnswer": "A non-zero $\\alpha$ means the corresponding margin constraint is tight. Those points remain in the prediction expansion; strictly separated points have zero $\\alpha$ in the hard-margin case."
     }
   ],
   "courseId": "DSA5105",
@@ -395,7 +395,7 @@
       "id": "dsa5105-svm-dual-kkt-section-5",
       "type": "teaching-note",
       "title": "Assessment habit · Read the alpha pattern",
-      "body": "If the labels are +1 and -1, the dual equality says the positive alpha sum equals the negative alpha sum. A candidate alpha vector that violates this is infeasible even if every alpha is non-negative. First check equality and bounds, then inspect which points have non-zero multipliers.",
+      "body": "If the labels are +1 and -1, the dual equality says the positive $\\alpha$ sum equals the negative $\\alpha$ sum. A candidate $\\alpha$ vector that violates this is infeasible even if every $\\alpha$ is non-negative. First check equality and bounds, then inspect which points have non-zero multipliers.",
       "sourceType": "ref",
       "sourceRefs": [
         {
@@ -451,7 +451,7 @@
         "All multipliers are non-negative and the positive and negative sums are both 3.",
         "Therefore the bias equality is satisfied. If C is finite, also check that every multiplier is at most C."
       ],
-      "answer": "The dual equality is a balance condition, not a requirement that all alpha values be equal.",
+      "answer": "The dual equality is a balance condition, not a requirement that all $\\alpha$ values be equal.",
       "sourceType": "textbook",
       "sourceRefs": [
         {
@@ -503,8 +503,8 @@
       "type": "worked-example",
       "title": "Identify support vectors",
       "steps": [
-        "Compute or inspect each margin value m_i = y_i(w^T x_i+b).",
-        "Points with m_i=1 can carry alpha_i>0; points with m_i>1 must have alpha_i=0 in the hard-margin case.",
+        "Compute or inspect each margin value $m_i = y_i(w^\\top x_i+b)$.",
+        "$Points with m_i=1 can carry \\alpha_i>0; points with m_i>1 must have \\alpha_i=0 in the hard-margin case.$",
         "In a soft-margin problem, points inside the margin or misclassified can also be active, subject to the box constraint."
       ],
       "answer": "Support vectors are active constraints, not simply the closest points by visual distance before the hyperplane is normalized.",
@@ -560,7 +560,7 @@
       "prompt": "Why does the dual contain pairwise inner products?",
       "focus": "kernel trick",
       "angle": "eliminate w using stationarity",
-      "modelAnswer": "Stationarity writes w as a weighted sum of training vectors. Substituting this expansion into the norm produces x_i^T x_j terms, which can be replaced by a valid kernel.",
+      "modelAnswer": "Stationarity writes w as a weighted sum of training vectors. Substituting this expansion into the norm produces $x_{i}$^T $x_{j}$ terms, which can be replaced by a valid kernel.",
       "sourceRefs": [
         {
           "sourceId": "DSA5105/Lec1.pdf",
@@ -612,7 +612,7 @@
       "prompt": "What does complementary slackness tell you operationally?",
       "focus": "support vectors",
       "angle": "connect alpha to margin equality",
-      "modelAnswer": "A non-zero alpha means the corresponding margin constraint is tight. Those points remain in the prediction expansion; strictly separated points have zero alpha in the hard-margin case.",
+      "modelAnswer": "A non-zero $\\alpha$ means the corresponding margin constraint is tight. Those points remain in the prediction expansion; strictly separated points have zero $\\alpha$ in the hard-margin case.",
       "sourceRefs": [
         {
           "sourceId": "DSA5105/Lec1.pdf",

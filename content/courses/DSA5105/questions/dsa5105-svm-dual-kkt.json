@@ -62,12 +62,12 @@
   {
     "id": "dsa5105-svm-dual-q3",
     "type": "mcq",
-    "prompt": "Which alpha vector satisfies the hard-margin bias equality for positive labels (+1) and negative labels (-1)?",
+    "prompt": "Which $\\alpha$ vector satisfies the hard-margin bias equality for positive labels (+1) and negative labels (-1)?",
     "choices": [
       "Positive alphas sum to 2 and negative alphas sum to 3",
       "Positive alphas sum to 3 and negative alphas sum to 3",
       "All alphas are negative",
-      "Every alpha is exactly 1"
+      "Every $\\alpha$ is exactly 1"
     ],
     "answer": 1,
     "explanation": "The signed sum is zero exactly when positive and negative multiplier mass balances.",
@@ -99,7 +99,7 @@
       "replace inner products by kernel values",
       "use kernel matrix"
     ],
-    "solution": "Replace each pairwise inner product x_i^T x_j by k(x_i,x_j), assuming the kernel is positive semidefinite.",
+    "solution": "$Replace each pairwise inner product x_i^\\top x_j by k(x_i,x_j), assuming the kernel is positive semidefinite.$",
     "explanation": "The algorithm stays in terms of pairwise similarities while the boundary can be nonlinear in the input space.",
     "sourceRefs": [
       {
@@ -123,7 +123,7 @@
   {
     "id": "dsa5105-svm-dual-q5",
     "type": "short",
-    "prompt": "What new alpha bound appears in the soft-margin SVM dual?",
+    "prompt": "What new $\\alpha$ bound appears in the soft-margin SVM dual?",
     "accepted": [
       "0 <= alpha_i <= C",
       "alpha bounded by C",
@@ -158,17 +158,17 @@
     "skill": "svm-dual",
     "cognitiveLevel": "analyze",
     "estimatedSeconds": 180,
-    "prompt": "In the SVM dual, what is the constraint on each alpha_i for a soft-margin model with C?",
+    "prompt": "$In the SVM dual, what is the constraint on each \\alpha_i for a soft-margin model with C?$",
     "accepted": [
       "0 <= alpha_i <= C",
       "alpha_i is between zero and C",
       "box constraint"
     ],
-    "solution": "The dual variables satisfy 0 <= alpha_i <= C and sum_i alpha_i y_i = 0.",
+    "solution": "The dual variables satisfy 0 <= $\\alpha_{i}$ <= C and $\\sum_{i}$ $\\alpha_{i}$ $y_i = 0$.",
     "hint": "The slack penalty creates an upper bound.",
     "explanation": "The box constraint distinguishes soft-margin dual variables from the hard-margin case.",
-    "misconception": "Using alpha_i >= C or omitting the equality constraint.",
-    "visualHook": "Move alpha values along a bounded KKT slider.",
+    "misconception": "$Using \\alpha_i \\ge  C or omitting the equality constraint.$",
+    "visualHook": "Move $\\alpha$ values along a bounded KKT slider.",
     "sourceRefs": [
       {
         "sourceId": "DSA5105/Lec4_annotated.pdf",
@@ -196,16 +196,16 @@
     "skill": "kkt",
     "cognitiveLevel": "analyze",
     "estimatedSeconds": 150,
-    "prompt": "What does 0 < alpha_i < C typically tell you about a soft-margin training point?",
+    "prompt": "$What does 0 < \\alpha_i < C typically tell you about a soft-margin training point?$",
     "accepted": [
       "it lies on the margin",
       "the point is a support vector with active margin",
       "complementary slackness gives equality"
     ],
-    "solution": "An interior alpha usually corresponds to a point satisfying y_i f(x_i)=1, so it lies on the margin and can help determine the bias.",
+    "solution": "An interior $\\alpha$ usually corresponds to a point satisfying $y_{i}$ $f(x_i)=1, so it lies on the margin and can help determine the bias$.",
     "hint": "Use complementary slackness and the stationarity conditions.",
     "explanation": "Alpha at zero, interior, or C encodes different KKT cases.",
-    "misconception": "Assuming every support vector must have alpha exactly C.",
+    "misconception": "Assuming every support vector must have $\\alpha$ exactly C.",
     "visualHook": "Click KKT cases and highlight point position.",
     "sourceRefs": [
       {

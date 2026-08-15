@@ -8,13 +8,14 @@ const fs = require("fs");
 const path = require("path");
 const crypto = require("crypto");
 const { loadLegacyState } = require("./validate-content");
+const { normalizeDocument } = require("./latex-utils");
 
 const ROOT = path.resolve(__dirname, "..");
 const DEFAULT_COURSE = "DSA5105";
 
 function writeJson(file, value) {
   fs.mkdirSync(path.dirname(file), { recursive: true });
-  fs.writeFileSync(file, `${JSON.stringify(value, null, 2)}\n`);
+  fs.writeFileSync(file, `${JSON.stringify(normalizeDocument(value), null, 2)}\n`);
 }
 
 function readJsonIfExists(file) {
@@ -256,7 +257,7 @@ function packageCourse(state, courseId) {
 
 function build(courseId = DEFAULT_COURSE) {
   const state = loadLegacyState(ROOT);
-  const packageData = packageCourse(state, courseId);
+  const packageData = normalizeDocument(packageCourse(state, courseId));
   const output = path.join(ROOT, "data", "nus", "generated", `${courseId.toLowerCase()}.js`);
   const serialized = JSON.stringify(packageData);
   fs.mkdirSync(path.dirname(output), { recursive: true });

@@ -7,7 +7,7 @@
       "0.5",
       "1/2"
     ],
-    "solution": "The margin is $y(w^\\top x+b)/\\lVert w\\rVert_2=2/4=0.5$.",
+    "solution": "The margin is $y(w^\\top x+b)/\\lVert w\\rVert_2=\\frac{2}{4}=0.5$.",
     "explanation": "Use the label-scaled score for a signed margin.",
     "sourceRefs": [
       {
@@ -31,13 +31,13 @@
   {
     "id": "dsa5105-svm-q2",
     "type": "derivation",
-    "prompt": "Why does the hard-margin SVM use $y_i(w^\\top x_i+b)\\ge1$ while minimizing $\\lVert w\\rVert_2^2/2$?",
+    "prompt": "Why does the hard-margin SVM use $y_i(w^\\top x_i+b)\\ge1$ while minimizing $\\lVert w\\rVert_2^\\frac{2}{2}$?",
     "accepted": [
       "fix the scale and maximize margin",
       "normalizes the closest points and minimizes norm",
       "maximize 1 over norm"
     ],
-    "solution": "The classifier scale is otherwise arbitrary. Fixing the closest correctly classified points at score $1$ makes the geometric margin $1/\\lVert w\\rVert_2$, so maximizing it is equivalent to minimizing $\\lVert w\\rVert_2^2/2$ under the constraints.",
+    "solution": "The classifier scale is otherwise arbitrary. Fixing the closest correctly classified points at score $1$ makes the geometric margin $1/\\lVert w\\rVert_2$, so maximizing it is equivalent to minimizing $\\lVert w\\rVert_2^\\frac{2}{2}$ under the constraints.",
     "explanation": "Mention both scale fixing and the inverse relationship between norm and margin.",
     "sourceRefs": [
       {
@@ -141,10 +141,10 @@
       "geometric margin is inversely proportional to norm w",
       "margin equals 1 over ||w||"
     ],
-    "solution": "With y_i(w^T x_i+b) >= 1, the geometric margin is 1/||w|| (or 2/||w|| for the full slab). Scaling is fixed by the canonical constraint.",
+    "solution": "With $y_i(w^\\top x_i+b) \\ge  1$, the geometric margin is 1/||w|| (or 2/||w|| for the full slab). Scaling is fixed by the canonical constraint.",
     "hint": "Separate functional margin from distance in input space.",
     "explanation": "The SVM objective minimizes ||w|| because that maximizes geometric separation under the chosen scaling.",
-    "misconception": "Treating w^T x+b itself as a scale-invariant distance.",
+    "misconception": "$Treating w^\\top x+b itself as a scale-invariant distance.$",
     "visualHook": "Normalize the same hyperplane and compare raw scores with distances.",
     "sourceRefs": [
       {

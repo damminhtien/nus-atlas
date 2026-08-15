@@ -32,12 +32,12 @@
   {
     "id": "dsa5105-vi-q2",
     "type": "calculation",
-    "prompt": "In the two-sweep example, what is V2(S0) when gamma=0.9, V1(S1)=3, and action a gives immediate reward 2?",
+    "prompt": "In the two-sweep example, what is V2(S0) when $\\gamma=0.9$, $V1(S1)=3$, and action a gives immediate reward 2?",
     "accepted": [
       "4.7",
       "4.70"
     ],
-    "solution": "2 + 0.9*3 = 4.7, which beats the terminal action value 0.",
+    "solution": "$2 + 0.9*3 = 4.7$, which beats the terminal action value 0.",
     "explanation": "Use the previous sweep's S1 value in the second backup.",
     "sourceRefs": [
       {
@@ -68,7 +68,7 @@
       "delta equals r plus gamma v(s prime) minus v(s)"
     ],
     "solution": "$\\delta_t=r_{t+1}+\\gamma V(s_{t+1})-V(s_t)$.",
-    "explanation": "The update applies a fraction alpha of this error.",
+    "explanation": "The update applies a fraction $\\alpha$ of this error.",
     "sourceRefs": [
       {
         "sourceId": "DSA5105/Ref/Reinforcement_Learning_an_Introduction.pdf",
@@ -163,7 +163,7 @@
       "r(s,a)+gamma V(s')",
       "bellman backup"
     ],
-    "solution": "The backup is Q(s,a) = r(s,a) + gamma V(s'), and value iteration takes the maximum over available actions.",
+    "solution": "The backup is $Q(s,a) = r(s,a) + \\gamma V(s'), and value iteration takes the maximum over available actions$.",
     "hint": "Follow one transition and discount the future.",
     "explanation": "The Bellman operator recursively relates current value to immediate reward and successor value.",
     "misconception": "Discounting the immediate reward instead of the future value.",

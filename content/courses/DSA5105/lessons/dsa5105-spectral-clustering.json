@@ -39,7 +39,7 @@
   "sections": [
     {
       "title": "Reference depth · Laplacian construction",
-      "body": "For an undirected graph with adjacency matrix $A$, define degree matrix $D=\\operatorname{diag}(d_i)$ and unnormalized Laplacian $L=D-A$. The normalized variants use $D^{-1/2}LD^{-1/2}$ or a related random-walk form.",
+      "body": "For an undirected graph with adjacency matrix $A$, define degree matrix $D=\\operatorname{diag}(d_i)$ and unnormalized Laplacian $L=D-A$. The normalized variants use $D^{-\\frac{1}{2}}LD^{-\\frac{1}{2}}$ or a related random-walk form.",
       "sourceType": "ref",
       "math": {
         "latex": "L=D-A",
@@ -96,8 +96,8 @@
     {
       "title": "Path graph with three nodes",
       "steps": [
-        "For edges 1-2 and 2-3, A=[[0,1,0],[1,0,1],[0,1,0]] and D=diag(1,2,1).",
-        "Thus L=[[1,-1,0],[-1,2,-1],[0,-1,1]]. Multiplying by [1,1,1]^T gives zero.",
+        "For edges $1-2 $and $2-3$, $A=[[0,1,0],[1,0,1],[0,1,0]]$ and $D=diag(1$,2,1).",
+        "Thus $L=[[1,-1,0],[-1,2,-1],[0,-1,1]]$. Multiplying by [1,1,1]^T gives zero.",
         "The remaining eigenvectors vary across the path; the lowest non-constant one changes slowly and can be thresholded to form a two-way partition."
       ],
       "answer": "The Laplacian encodes disagreement across edges, not a generic dense covariance matrix.",
@@ -125,7 +125,7 @@
       "id": "dsa5105-spectral-clustering-section-1",
       "type": "teaching-note",
       "title": "Reference depth · Laplacian construction",
-      "body": "For an undirected graph with adjacency matrix $A$, define degree matrix $D=\\operatorname{diag}(d_i)$ and unnormalized Laplacian $L=D-A$. The normalized variants use $D^{-1/2}LD^{-1/2}$ or a related random-walk form.",
+      "body": "For an undirected graph with adjacency matrix $A$, define degree matrix $D=\\operatorname{diag}(d_i)$ and unnormalized Laplacian $L=D-A$. The normalized variants use $D^{-\\frac{1}{2}}LD^{-\\frac{1}{2}}$ or a related random-walk form.",
       "sourceType": "ref",
       "sourceRefs": [
         {
@@ -246,8 +246,8 @@
       "type": "worked-example",
       "title": "Path graph with three nodes",
       "steps": [
-        "For edges 1-2 and 2-3, A=[[0,1,0],[1,0,1],[0,1,0]] and D=diag(1,2,1).",
-        "Thus L=[[1,-1,0],[-1,2,-1],[0,-1,1]]. Multiplying by [1,1,1]^T gives zero.",
+        "For edges $1-2 $and $2-3$, $A=[[0,1,0],[1,0,1],[0,1,0]]$ and $D=diag(1$,2,1).",
+        "Thus $L=[[1,-1,0],[-1,2,-1],[0,-1,1]]$. Multiplying by [1,1,1]^T gives zero.",
         "The remaining eigenvectors vary across the path; the lowest non-constant one changes slowly and can be thresholded to form a two-way partition."
       ],
       "answer": "The Laplacian encodes disagreement across edges, not a generic dense covariance matrix.",

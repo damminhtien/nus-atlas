@@ -59,22 +59,22 @@
     "steps": [
       [
         "Hypothesis",
-        "f(x)=w_0+w_1x",
+        "$f(x)=w_0+w_1x$",
         "Start by naming the function class and its parameters."
       ],
       [
         "Loss",
-        "R_hat(w)=1/N sum_i l(f_w(x_i),y_i)",
+        "$R_hat(w)=1/N \\sum_{i} l(f_w(x_i),y_i)$",
         "ERM averages the observed losses; it does not directly reveal population risk."
       ],
       [
         "OLS",
-        "w_hat=(X^T X)^-1 X^T y",
+        "$w_hat=(X^\\top X)^-1 X^\\top y$",
         "Full column rank is the assumption behind uniqueness."
       ],
       [
         "Ridge",
-        "w_hat=(X^T X+lambda I)^-1 X^T y",
+        "$w_hat=(X^\\top X+\\lambda I)^-1 X^\\top y$",
         "The penalty stabilizes directions that OLS cannot identify well."
       ]
     ],
@@ -136,22 +136,22 @@
         "steps": [
           [
             "Empirical",
-            "\\widehat R(h)=\\frac{1}{N}\\sum_i\\ell(h(x_i),y_i)",
+            "$\\widehat R(h)=\\frac{1}{N}\\sum_i\\ell(h(x_i),y_i)$",
             "Compute the average loss on the examples we actually observed."
           ],
           [
             "Population",
-            "R_{\\mathrm{pop}}(h)=\\mathbb E_{x\\sim\\mu}[\\ell(h(x),f^*(x))]",
+            "$R_{\\mathrm{pop}}(h)=\\mathbb E_{x\\sim\\mu}[\\ell(h(x),f^*(x))]$",
             "The target quantity averages over future draws from the population."
           ],
           [
             "Assumption",
-            "x_i\\overset{\\mathrm{iid}}{\\sim}\\mu",
+            "$x_i\\overset{\\mathrm{iid}}{\\sim}\\mu$",
             "Independent, same-distribution draws make the sample representative in the intended sense."
           ],
           [
             "Diagnosis",
-            "\\widehat R\\text{ small}\\not\\Rightarrow R_{\\mathrm{pop}}\\text{ small}",
+            "$\\widehat R\\text{ small}\\not\\Rightarrow R_{\\mathrm{pop}}\\text{ small}$",
             "A flexible class, leakage, shift, or a broken split can leave a large generalization gap."
           ]
         ]
@@ -160,27 +160,27 @@
         "id": "huber",
         "label": "Huber influence",
         "prompt": "Why does Huber reduce the pull of an extreme residual?",
-        "takeaway": "The loss grows linearly outside delta, so its derivative—and therefore the point influence—is bounded.",
+        "takeaway": "The loss grows linearly outside $\\delta$, so its derivative—and therefore the point influence—is bounded.",
         "steps": [
           [
             "Loss",
-            "\\rho_\\delta(r)=\\begin{cases}\\frac12r^2&|r|\\le\\delta\\\\\\delta|r|-\\frac12\\delta^2&|r|>\\delta\\end{cases}",
+            "$\\rho_\\delta(r)=\\begin{cases}\\frac12r^2&|r|\\le\\delta\\\\\\delta|r|-\\frac12\\delta^2&|r|>\\delta\\end{cases}$",
             "Keep the quadratic region near a good fit and switch to a linear tail."
           ],
           [
             "Derivative",
-            "\\psi_\\delta(r)=\\rho_\\delta'(r)",
+            "$\\psi_\\delta(r)=\\rho_\\delta'(r)$",
             "The derivative is the signal that enters the first-order condition."
           ],
           [
             "Piecewise",
-            "\\psi_\\delta(r)=r\\;\\text{or}\\;\\delta\\operatorname{sign}(r)",
+            "$\\psi_\\delta(r)=r\\;\\text{or}\\;\\delta\\operatorname{sign}(r)$",
             "Outside the threshold, the derivative stops growing with the residual magnitude."
           ],
           [
             "Optimality",
-            "\\sum_i\\psi_\\delta(\\hat m-y_i)=0",
-            "An outlier can contribute only plus or minus delta to the location equation."
+            "$\\sum_i\\psi_\\delta(\\hat m-y_i)=0$",
+            "An outlier can contribute only plus or minus $\\delta$ to the location equation."
           ]
         ]
       },
@@ -192,22 +192,22 @@
         "steps": [
           [
             "Normal equation",
-            "\\Phi^\\top\\Phi w=\\Phi^\\top y",
+            "$\\Phi^\\top\\Phi w=\\Phi^\\top y$",
             "Stationarity gives the equation, but rank deficiency prevents a unique inverse formula."
           ],
           [
             "Particular",
-            "w_0=\\Phi^\\dagger y",
+            "$w_0=\\Phi^\\dagger y$",
             "The pseudoinverse returns a canonical minimum-norm solution."
           ],
           [
             "Null space",
-            "w(u)=\\Phi^\\dagger y+(I-\\Phi^\\dagger\\Phi)u",
+            "$w(u)=\\Phi^\\dagger y+(I-\\Phi^\\dagger\\Phi)u$",
             "The added component is invisible to the observed rows of Phi."
           ],
           [
             "Risk",
-            "\\Phi w(u)=\\Phi\\Phi^\\dagger y",
+            "$\\Phi w(u)=\\Phi\\Phi^\\dagger y$",
             "Training predictions can match while coefficient size and off-sample behavior differ."
           ]
         ]
@@ -216,31 +216,31 @@
         "id": "ridge",
         "label": "Ridge spectrum",
         "prompt": "Which eigen-directions does ridge suppress, and why?",
-        "takeaway": "The filter mu/(mu+lambda) preserves data-confident directions and suppresses weakly identified directions.",
+        "takeaway": "The filter $\\mu/(\\mu+\\lambda)$ preserves data-confident directions and suppresses weakly identified directions.",
         "steps": [
           [
             "Objective",
-            "\\min_w\\frac{1}{2N}\\|\\Phi w-y\\|^2+\\frac\\lambda2\\|w\\|^2",
+            "$\\min_w\\frac{1}{2N}\\|\\Phi w-y\\|^2+\\frac\\lambda2\\|w\\|^2$",
             "Combine fit with a cost for large coefficients."
           ],
           [
             "Stationarity",
-            "(A+\\lambda I)\\hat w_\\lambda=b",
-            "Differentiate with A=Phi^T Phi/N and b=Phi^T y/N."
+            "$(A+\\lambda I)\\hat w_\\lambda=b$",
+            "Differentiate with $A=\\Phi^\\top \\Phi/N$ and $b=\\Phi^\\top y/N$."
           ],
           [
             "Eigenbasis",
-            "Av_j=\\mu_jv_j",
-            "In an eigen-direction, the normal matrix acts like scalar curvature mu_j."
+            "$Av_j=\\mu_jv_j$",
+            "$In an eigen-direction, the normal matrix acts like scalar curvature \\mu_j.$"
           ],
           [
             "Filter",
-            "\\frac{\\langle\\hat w_\\lambda,v_j\\rangle}{\\langle\\hat w_0,v_j\\rangle}=\\frac{\\mu_j}{\\mu_j+\\lambda}",
-            "Small mu_j receives strong shrinkage; large mu_j survives when it dominates lambda."
+            "$\\frac{\\langle\\hat w_\\lambda,v_j\\rangle}{\\langle\\hat w_0,v_j\\rangle}=\\frac{\\mu_j}{\\mu_j+\\lambda}$",
+            "Small $\\mu_{j}$ receives strong shrinkage; large $\\mu_{j}$ survives when it dominates $\\lambda$."
           ],
           [
             "Interpret",
-            "\\mu_j\\ll\\lambda\\Rightarrow0;\\quad\\mu_j\\gg\\lambda\\Rightarrow1",
+            "$\\mu_j\\ll\\lambda\\Rightarrow0;\\quad\\mu_j\\gg\\lambda\\Rightarrow1$",
             "Ridge is a spectral filter, not merely a penalty slogan."
           ]
         ]
@@ -253,22 +253,22 @@
         "steps": [
           [
             "Target metric",
-            "\\mathbf 1\\{\\hat y\\ne y\\}",
+            "$\\mathbf 1\\{\\hat y\\ne y\\}$",
             "This is what we ultimately report for classification correctness."
           ],
           [
             "Problem",
-            "\\text{0--1 loss is discontinuous}",
+            "$\\text{0--1 loss is discontinuous}$",
             "Small score changes usually do nothing until the decision boundary is crossed."
           ],
           [
             "Surrogate",
-            "\\text{smooth loss}\\;\\approx\\;\\text{optimization signal}",
+            "$\\text{smooth loss}\\;\\approx\\;\\text{optimization signal}$",
             "Use a differentiable objective while keeping the final metric distinct."
           ],
           [
             "Softmax",
-            "p_k=\\frac{e^{z_k}}{\\sum_j e^{z_j}}",
+            "$p_k=\\frac{e^{z_k}}{\\sum_j e^{z_j}}$",
             "Cross-entropy turns class scores into a probability-aware training objective."
           ]
         ]
@@ -281,22 +281,22 @@
         "steps": [
           [
             "Score",
-            "s=z_1-z_2",
+            "$s=z_1-z_2$",
             "Two-class softmax depends only on the relative logit difference."
           ],
           [
             "Decision",
-            "\\hat y=\\operatorname{sign}(s)",
+            "$\\hat y=\\operatorname{sign}(s)$",
             "The sign is the final class decision, separate from the training surrogate."
           ],
           [
             "Loss",
-            "\\ell(s,y)=\\log(1+e^{-ys})",
+            "$\\ell(s,y)=\\log(1+e^{-ys})$",
             "Use y in {-1,+1} to write binary cross-entropy compactly."
           ],
           [
             "Curvature",
-            "\\frac{\\partial^2\\ell}{\\partial s^2}=\\frac{e^{ys}}{(1+e^{ys})^2}\\ge0",
+            "$\\frac{\\partial^2\\ell}{\\partial s^2}=\\frac{e^{ys}}{(1+e^{ys})^2}\\ge0$",
             "Positive curvature everywhere means the score-level loss is convex."
           ]
         ]
@@ -305,26 +305,26 @@
         "id": "synthesis",
         "label": "Synthesis map",
         "prompt": "Can you connect data, fitting, diagnosis, and stabilization?",
-        "takeaway": "The equations are one pipeline: sample → objective → fitted model → generalization diagnosis → rank-aware regularization.",
+        "takeaway": "The equations are one pipeline: sample $\\to$ objective $\\to$ fitted model $\\to$ generalization diagnosis $\\to$ rank-aware regularization.",
         "steps": [
           [
             "Data",
-            "\\mathcal D=\\{(x_i,y_i)\\}_{i=1}^{N}",
+            "$\\mathcal D=\\{(x_i,y_i)\\}_{i=1}^{N}$",
             "Name the observed sample and the oracle it approximates."
           ],
           [
             "Fit",
-            "(\\mathcal H,\\ell)\\to\\widehat R\\to\\hat f",
+            "$(\\mathcal H,\\ell)\\to\\widehat R\\to\\hat f$",
             "Choose a hypothesis class and loss before optimizing."
           ],
           [
             "Diagnose",
-            "\\text{approximation}+\\text{optimization}+\\text{generalization}",
+            "$\\text{approximation}+\\text{optimization}+\\text{generalization}$",
             "Separate model capacity, algorithmic failure, and sample-to-population failure."
           ],
           [
             "Stabilize",
-            "\\text{rank deficiency}\\to\\text{regularization}\\to\\text{spectral filtering}",
+            "$\\text{rank deficiency}\\to\\text{regularization}\\to\\text{spectral filtering}$",
             "Ridge suppresses weak directions instead of pretending they are well identified."
           ]
         ]
@@ -609,22 +609,22 @@
     "steps": [
       [
         "Model",
-        "f_w(x)=w^T phi(x)",
+        "$f_w(x)=w^\\top \\phi(x)$",
         "A nonlinear basis can still be linear in the unknown weights."
       ],
       [
         "Normal equation",
-        "Phi^T Phi w=Phi^T y",
+        "$\\Phi^\\top \\Phi w=\\Phi^\\top y$",
         "Stationarity gives the equation; uniqueness needs full column rank."
       ],
       [
         "Weights",
-        "J(w)=1/2(Phi w-y)^T A(Phi w-y)",
+        "$J(w)=\\frac{1}{2}(\\Phi w-y)^\\top A(\\Phi w-y)$",
         "Positive example weights change the geometry of the residual."
       ],
       [
         "Solution",
-        "w_A=(Phi^T A Phi)^-1 Phi^T A y",
+        "$w_A=(\\Phi^\\top A \\Phi)^-1 \\Phi^\\top A y$",
         "The inverse is valid only when the weighted normal matrix is nonsingular."
       ]
     ],
@@ -639,7 +639,7 @@
     "lessonId": "dsa5105-svm-dual-kkt",
     "type": "derivation-trace",
     "title": "SVM KKT-to-dual trace",
-    "learningGoal": "Follow the path from the margin constraints to alpha balance and support vectors.",
+    "learningGoal": "Follow the path from the margin constraints to $\\alpha$ balance and support vectors.",
     "sourceRefs": [
       {
         "sourceId": "DSA5105/Textbook.pdf",
@@ -673,22 +673,22 @@
     "steps": [
       [
         "Primal",
-        "min 1/2 ||w||^2 s.t. y_i(w^T x_i+b)>=1",
+        "$min \\frac{1}{2} \\lVert w \\rVert^2 s.t. y_i(w^\\top x_i+b)\\ge 1$",
         "Normalize the separator so the closest feasible points define the margin."
       ],
       [
         "Stationarity",
-        "w=sum_i alpha_i y_i x_i",
+        "$w=\\sum_{i} \\alpha_i y_i x_i$",
         "The weight vector becomes a combination of training examples."
       ],
       [
         "Bias balance",
-        "sum_i alpha_i y_i=0",
+        "$\\sum_{i} \\alpha_i y_i=0$",
         "Positive and negative multiplier mass must balance."
       ],
       [
         "KKT",
-        "alpha_i[y_i f(x_i)-1]=0",
+        "$\\alpha_i[y_i f(x_i)-1]=0$",
         "Non-zero multipliers identify active margin constraints: the support vectors."
       ]
     ],
@@ -730,22 +730,22 @@
     "steps": [
       [
         "Split",
-        "Delta I=I(parent)-sum_c (n_c/n)I(c)",
+        "$Delta I=I(parent)-\\sum_{c} (n_c/n)I(c)$",
         "Compare weighted child impurity with the parent."
       ],
       [
         "Capacity",
-        "depth up => variance up",
+        "depth $up => variance up$",
         "Depth controls the number of regions and can overfit."
       ],
       [
         "Bagging",
-        "f_bag(x)=1/B sum_b f_b(x)",
+        "$f_bag(x)=1/B \\sum_{b} f_b(x)$",
         "Averaging partially uncorrelated errors mainly reduces variance."
       ],
       [
         "Boosting",
-        "alpha_t=1/2 log((1-epsilon_t)/epsilon_t)",
+        "$\\alpha_t=\\frac{1}{2} \\log((1-\\epsilon_t)/\\epsilon_t)$",
         "AdaBoost gives more influence to a weak learner that is better than random and reweights its mistakes."
       ]
     ],
@@ -787,22 +787,22 @@
     "steps": [
       [
         "Forward",
-        "u=wx; h=ReLU(u); p=sigma(h)",
+        "$u=wx; h=ReLU(u); p=\\sigma(h)$",
         "Store the intermediate values before differentiating."
       ],
       [
         "Loss",
-        "L=1/2(p-t)^2",
-        "The loss contributes dL/dp=p-t."
+        "$L=\\frac{1}{2}(p-t)^2$",
+        "The loss contributes dL/$dp=p-t$."
       ],
       [
         "Activation",
-        "dL/dh=(dL/dp)sigma'(h)",
+        "dL/$dh=(dL/dp)\\sigma'(h)$",
         "Multiply the upstream signal by the sigmoid local derivative."
       ],
       [
         "Parameter",
-        "dL/dw=(dL/dh)ReLU'(u)x",
+        "dL/$dw=(dL/dh)ReLU'(u)x$",
         "The final local factors give the parameter gradient; this is efficient, not a global-optimum proof."
       ]
     ],
@@ -851,22 +851,22 @@
     "steps": [
       [
         "Center",
-        "Z=X-1 mu^T",
+        "$Z=X-1 \\mu^\\top$",
         "Remove the feature-wise mean before measuring variation."
       ],
       [
         "Covariance",
-        "C=1/N Z^T Z",
+        "$C=1/N Z^\\top Z$",
         "The symmetric covariance matrix contains the directional variance."
       ],
       [
         "Direction",
-        "v_1=argmax_{||v||=1} v^T C v",
+        "$v_1=argmax_{\\lVert v \\rVert=1} v^\\top C v$",
         "The top eigenvector maximizes projected variance."
       ],
       [
         "Scale",
-        "X_white=Z V Lambda^{-1/2}",
+        "$X_white=Z V Lambda^{-\\frac{1}{2}}$",
         "Whitening rescales principal coordinates and can amplify tiny-eigenvalue noise."
       ]
     ],
@@ -915,17 +915,17 @@
     "steps": [
       [
         "Prior",
-        "pi_k p(x|theta_k)",
+        "$\\pi_k p(x|\\theta_k)$",
         "Combine how common the component is with how likely it makes the point."
       ],
       [
         "Normalize",
-        "gamma_ik = numerator / sum_j numerator_j",
+        "$\\gamma_ik = numerator / \\sum_{j} numerator_j$",
         "Responsibilities form a probability distribution over components."
       ],
       [
         "Mean",
-        "mu_k=sum_i gamma_ik x_i / sum_i gamma_ik",
+        "$\\mu_k=\\sum_{i} \\gamma_ik x_i / \\sum_{i} \\gamma_ik$",
         "Use responsibilities as soft weights in the M-step."
       ],
       [
@@ -979,22 +979,22 @@
     "steps": [
       [
         "Initialize",
-        "V_0(s)=0",
+        "$V_0(s)=0$",
         "State the starting estimate so every sweep is auditable."
       ],
       [
         "Candidates",
-        "Q_t(s,a)=sum p(r+gamma V_t(s'))",
+        "$Q_t(s,a)=sum p(r+\\gamma V_t(s'))$",
         "Compute one action's expected immediate plus continuation value."
       ],
       [
         "Max",
-        "V_{t+1}(s)=max_a Q_t(s,a)",
+        "$V_{t+1}(s)=\\max_{a} Q_t(s,a)$",
         "Choose the best action after comparing candidates."
       ],
       [
         "Extract",
-        "pi(s)=argmax_a Q^*(s,a)",
+        "$\\pi(s)=\\argmax_{a} Q^*(s,a)$",
         "After convergence, convert the value fixed point into a greedy policy."
       ]
     ],
@@ -1044,7 +1044,7 @@
       ],
       [
         "Complexity",
-        "time O(n), space O(n) or O(1)",
+        "time $O(n)$, space $O(n)$ or $O(1)$",
         "Each state is computed once; rolling storage is possible when only two predecessors are needed."
       ]
     ],
@@ -1086,13 +1086,13 @@
     "steps": [
       [
         "Feature map",
-        "K(G,G')=<Psi(G),Psi(G')>",
+        "$K(G,G')=<Psi(G),Psi(G')>$",
         "An inner product representation gives a PSD Gram matrix."
       ],
       [
         "Parameter",
-        "eig([[1,q],[q,1]])=1 +/- q",
-        "Both eigenvalues non-negative gives -1 <= q <= 1."
+        "$eig([[1,q],[q,1]])=1 +/- q$",
+        "Both eigenvalues non-negative gives -1 <= $q \\le  1$."
       ],
       [
         "Transition",
@@ -1101,7 +1101,7 @@
       ],
       [
         "Power",
-        "r_next=alpha P^T r +(1-alpha)1/n",
+        "$r_next=\\alpha P^\\top r +(1-\\alpha)1/n$",
         "Damping and repeated multiplication approach the stationary ranking."
       ]
     ],
@@ -1136,17 +1136,17 @@
     "steps": [
       [
         "Graph",
-        "A -> D=diag(d_i)",
+        "$A \\to  D=diag(d_i)$",
         "Convert edge weights into node degrees."
       ],
       [
         "Laplacian",
-        "L=D-A",
+        "$L=D-A$",
         "The matrix penalizes disagreement across connected nodes."
       ],
       [
         "Eigenvector",
-        "f^T L f=1/2 sum A_ij(f_i-f_j)^2",
+        "$f^\\top L f=\\frac{1}{2} sum A_ij(f_i-f_j)^2$",
         "Low-energy non-constant eigenvectors describe smooth graph partitions."
       ],
       [
@@ -1186,22 +1186,22 @@
     "steps": [
       [
         "Ridge",
-        "(Phi^T Phi+lambda I)w=Phi^T y",
+        "$(\\Phi^\\top \\Phi+\\lambda I)w=\\Phi^\\top y$",
         "Regularization shifts the normal-matrix spectrum."
       ],
       [
         "KKT",
-        "[0 y^T; y K+gamma^-1 I][b;alpha]=[0;1]",
+        "$[0 y^\\top; y K+\\gamma^-1 I][b;\\alpha]=[0;1]$",
         "LS-SVM equality constraints produce a block linear system."
       ],
       [
         "Hat matrix",
-        "y_hat=Hy",
-        "The diagonal H_ii measures self-influence or leverage."
+        "$y_hat=Hy$",
+        "The diagonal $H_{ii}$ measures self-influence or leverage."
       ],
       [
         "LOO",
-        "e_i^LOO=(y_i-y_hat_i)/(1-H_ii)",
+        "$e_i^LOO=(y_i-y_hat_i)/(1-H_ii)$",
         "Correct the in-sample residual without refitting N separate models."
       ]
     ],

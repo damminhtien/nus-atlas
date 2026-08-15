@@ -127,7 +127,7 @@
       "sourceType": "lecture",
       "math": {
         "latex": "\\rho_\\delta(r)=\\begin{cases}\\frac{1}{2}r^2,&|r|\\le\\delta,\\\\\\delta|r|-\\frac{1}{2}\\delta^2,&|r|>\\delta,\\end{cases}",
-        "explanation": "The threshold delta decides where the loss changes from quadratic to linear. Huber keeps smooth behavior around a good fit while reducing the leverage of extreme residuals compared with squared loss.",
+        "explanation": "The threshold $\\delta$ decides where the loss changes from quadratic to linear. Huber keeps smooth behavior around a good fit while reducing the leverage of extreme residuals compared with squared loss.",
         "symbols": [
           {
             "latex": "r",
@@ -147,7 +147,7 @@
     },
     {
       "title": "Lecture core · Basis functions and matrix form",
-      "body": "General linear basis models replace x with features phi_j(x), including polynomial, Gaussian, or sigmoid bases. The model can be nonlinear in x while remaining linear in weights. In matrix form, OLS minimizes the squared norm of the residual vector; the inverse formula requires the feature matrix to have suitable rank.",
+      "body": "General linear basis models replace x with features $\\phi_j(x)$, including polynomial, Gaussian, or sigmoid bases. The model can be nonlinear in x while remaining linear in weights. In matrix form, OLS minimizes the squared norm of the residual vector; the inverse formula requires the feature matrix to have suitable rank.",
       "sourceType": "lecture",
       "math": {
         "latex": "f(x)=\\sum_{j=1}^{M}w_j\\phi_j(x),\\qquad \\hat w=(\\Phi^\\top\\Phi)^{-1}\\Phi^\\top y",
@@ -179,7 +179,7 @@
       "sourceType": "lecture",
       "math": {
         "latex": "\\hat w_\\lambda=\\arg\\min_w\\left[\\frac{1}{2N}\\lVert\\Phi w-y\\rVert_2^2+\\frac{\\lambda}{2}\\lVert w\\rVert_2^2\\right]",
-        "explanation": "The first term measures fit and the second charges for coefficient magnitude. Increasing lambda suppresses unstable directions; it also adds bias, so its value is a model-selection decision.",
+        "explanation": "The first term measures fit and the second charges for coefficient magnitude. Increasing $\\lambda$ suppresses unstable directions; it also adds bias, so its value is a model-selection decision.",
         "symbols": [
           {
             "latex": "\\lambda",
@@ -235,9 +235,9 @@
     {
       "title": "Worked example: fit a line by hand",
       "steps": [
-        "For x = {0, 1, 2} and y = {1, 2, 2}, the means are x-bar = 1 and y-bar = 5/3.",
-        "The centered numerator is (-1)(-2/3) + 0(1/3) + (1)(1/3) = 1. The centered denominator is 1 + 0 + 1 = 2, so w1-hat = 1/2.",
-        "The intercept is y-bar - w1-hat x-bar = 5/3 - 1/2 = 7/6. The fitted line is f-hat(x) = 7/6 + x/2."
+        "For $x = {0, 1, 2}$ and $y = {1, 2, 2}$, the means are x-$bar = 1$ and y-$bar = \\frac{5}{3}$.",
+        "The centered numerator is $(-1)(-\\frac{2}{3}) + 0(\\frac{1}{3}) + (1)(\\frac{1}{3}) = 1$. The centered denominator is $1 + 0 + 1 = 2$, so w1-$hat = \\frac{1}{2}$.",
+        "The intercept is $\\bar{y}$ - w1-hat x-$bar = \\frac{5}{3} - \\frac{1}{2} = \\frac{7}{6}$. The fitted line is f-$hat(x) = \\frac{7}{6} + x/2$."
       ],
       "answer": "OLS separates slope from intercept by centering first; check the denominator before dividing.",
       "sourceType": "lecture"
@@ -246,8 +246,8 @@
       "title": "Worked example: softmax to logistic",
       "steps": [
         "For two logits z1 and z2, subtract z2 from both logits without changing the probability ratio.",
-        "Only s = z1 - z2 remains, giving p1 = 1/(1 + exp(-s)) and p2 = 1 - p1.",
-        "With labels y in {-1, +1}, the cross-entropy can be written as log(1 + exp(-y s)); classify as class 1 when s is positive and class 2 when s is negative."
+        "Only $s = z1 - z2 remains$, giving $p1 = 1/(1 + \\exp(-s))$ and $p2 = 1 - p1$.",
+        "With labels y in {-1, +1}, the cross-entropy can be written as $\\log(1 + \\exp(-y s)$); classify as class 1 when s is positive and class 2 when s is negative."
       ],
       "answer": "Binary logistic regression is the two-class softmax written in terms of one score difference.",
       "sourceType": "lecture"
@@ -256,7 +256,7 @@
       "title": "Worked example: when to reach for Huber",
       "steps": [
         "If most residuals are small but one measurement is far away, squared loss makes that point's contribution grow quadratically.",
-        "Huber loss keeps the quadratic region near zero but switches to a linear contribution beyond delta.",
+        "Huber loss keeps the quadratic region near zero but switches to a linear contribution beyond $\\delta$.",
         "Use validation evidence to decide whether the robustness tradeoff improves the target metric; do not assume Huber is always better."
       ],
       "answer": "Huber changes the loss and therefore the optimization target; it is not a free outlier-removal step.",
@@ -486,7 +486,7 @@
       "id": "dsa5105-linear-week1-section-4",
       "type": "teaching-note",
       "title": "Lecture core · Basis functions and matrix form",
-      "body": "General linear basis models replace x with features phi_j(x), including polynomial, Gaussian, or sigmoid bases. The model can be nonlinear in x while remaining linear in weights. In matrix form, OLS minimizes the squared norm of the residual vector; the inverse formula requires the feature matrix to have suitable rank.",
+      "body": "General linear basis models replace x with features $\\phi_j(x)$, including polynomial, Gaussian, or sigmoid bases. The model can be nonlinear in x while remaining linear in weights. In matrix form, OLS minimizes the squared norm of the residual vector; the inverse formula requires the feature matrix to have suitable rank.",
       "sourceType": "lecture",
       "sourceRefs": [
         {
@@ -747,9 +747,9 @@
       "type": "worked-example",
       "title": "Worked example: fit a line by hand",
       "steps": [
-        "For x = {0, 1, 2} and y = {1, 2, 2}, the means are x-bar = 1 and y-bar = 5/3.",
-        "The centered numerator is (-1)(-2/3) + 0(1/3) + (1)(1/3) = 1. The centered denominator is 1 + 0 + 1 = 2, so w1-hat = 1/2.",
-        "The intercept is y-bar - w1-hat x-bar = 5/3 - 1/2 = 7/6. The fitted line is f-hat(x) = 7/6 + x/2."
+        "For $x = {0, 1, 2}$ and $y = {1, 2, 2}$, the means are x-$bar = 1$ and y-$bar = \\frac{5}{3}$.",
+        "The centered numerator is $(-1)(-\\frac{2}{3}) + 0(\\frac{1}{3}) + (1)(\\frac{1}{3}) = 1$. The centered denominator is $1 + 0 + 1 = 2$, so w1-$hat = \\frac{1}{2}$.",
+        "The intercept is $\\bar{y}$ - w1-hat x-$bar = \\frac{5}{3} - \\frac{1}{2} = \\frac{7}{6}$. The fitted line is f-$hat(x) = \\frac{7}{6} + x/2$."
       ],
       "answer": "OLS separates slope from intercept by centering first; check the denominator before dividing.",
       "sourceType": "lecture",
@@ -818,8 +818,8 @@
       "title": "Worked example: softmax to logistic",
       "steps": [
         "For two logits z1 and z2, subtract z2 from both logits without changing the probability ratio.",
-        "Only s = z1 - z2 remains, giving p1 = 1/(1 + exp(-s)) and p2 = 1 - p1.",
-        "With labels y in {-1, +1}, the cross-entropy can be written as log(1 + exp(-y s)); classify as class 1 when s is positive and class 2 when s is negative."
+        "Only $s = z1 - z2 remains$, giving $p1 = 1/(1 + \\exp(-s))$ and $p2 = 1 - p1$.",
+        "With labels y in {-1, +1}, the cross-entropy can be written as $\\log(1 + \\exp(-y s)$); classify as class 1 when s is positive and class 2 when s is negative."
       ],
       "answer": "Binary logistic regression is the two-class softmax written in terms of one score difference.",
       "sourceType": "lecture",
@@ -888,7 +888,7 @@
       "title": "Worked example: when to reach for Huber",
       "steps": [
         "If most residuals are small but one measurement is far away, squared loss makes that point's contribution grow quadratically.",
-        "Huber loss keeps the quadratic region near zero but switches to a linear contribution beyond delta.",
+        "Huber loss keeps the quadratic region near zero but switches to a linear contribution beyond $\\delta$.",
         "Use validation evidence to decide whether the robustness tradeoff improves the target metric; do not assume Huber is always better."
       ],
       "answer": "Huber changes the loss and therefore the optimization target; it is not a free outlier-removal step.",

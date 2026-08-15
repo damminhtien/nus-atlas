@@ -46,7 +46,7 @@
   "sections": [
     {
       "title": "Lecture core · Linear in parameters, not necessarily in x",
-      "body": "A basis model has $f_w(x)=w^\\top\\phi(x)$. The input transformation $phi(x)$ can contain $x^2$, Gaussian bumps, or other nonlinear features; the model is still linear in the unknown weights $w$. This is why a linear model can represent nonlinear functions when the basis is rich enough.",
+      "body": "A basis model has $f_w(x)=w^\\top\\phi(x)$. The input transformation $\\phi(x)$ can contain $x^2$, Gaussian bumps, or other nonlinear features; the model is still linear in the unknown weights $w$. This is why a linear model can represent nonlinear functions when the basis is rich enough.",
       "sourceType": "lecture",
       "math": {
         "latex": "f_w(x)=\\sum_{j=1}^{M}w_j\\phi_j(x)=w^\\top\\phi(x)",
@@ -94,7 +94,7 @@
     },
     {
       "title": "Textbook depth · Weighted empirical risk",
-      "body": "Give example $i$ a positive weight $a_i$ and define $A=\\operatorname{diag}(a_1,\\ldots,a_N)$. The weighted objective is $\\frac{1}{2}(\\Phi w-y)^\\top A(\\Phi w-y)$. Its normal equations become $\\Phi^\\top A\\Phi\\hat w=\\Phi^\\top Ay$. Positive weights preserve strict convexity when $\\Phi$ already has full column rank because $A^{1/2}\\Phi$ has the same null-space test.",
+      "body": "Give example $i$ a positive weight $a_i$ and define $A=\\operatorname{diag}(a_1,\\ldots,a_N)$. The weighted objective is $\\frac{1}{2}(\\Phi w-y)^\\top A(\\Phi w-y)$. Its normal equations become $\\Phi^\\top A\\Phi\\hat w=\\Phi^\\top Ay$. Positive weights preserve strict convexity when $\\Phi$ already has full column rank because $A^{\\frac{1}{2}}\\Phi$ has the same null-space test.",
       "sourceType": "textbook",
       "math": {
         "latex": "\\hat w_A=(\\Phi^\\top A\\Phi)^{-1}\\Phi^\\top Ay",
@@ -160,7 +160,7 @@
       "prompt": "Why is a positive-weight matrix safe for uniqueness?",
       "focus": "weighted geometry",
       "angle": "use the square-root transform",
-      "modelAnswer": "The weighted objective is ordinary least squares on A^(1/2)Phi. If A is positive definite, A^(1/2) is invertible and does not create a new null direction, so full column rank is preserved."
+      "modelAnswer": "The weighted objective is ordinary least squares on $\\mathrm{A}^{\\frac{1}{2}}\\Phi$. If A is positive definite, $\\mathrm{A}^{\\frac{1}{2}}$ is invertible and does not create a new null direction, so full column rank is preserved."
     }
   ],
   "courseId": "DSA5105",
@@ -170,7 +170,7 @@
       "id": "dsa5105-weighted-ols-section-1",
       "type": "teaching-note",
       "title": "Lecture core · Linear in parameters, not necessarily in x",
-      "body": "A basis model has $f_w(x)=w^\\top\\phi(x)$. The input transformation $phi(x)$ can contain $x^2$, Gaussian bumps, or other nonlinear features; the model is still linear in the unknown weights $w$. This is why a linear model can represent nonlinear functions when the basis is rich enough.",
+      "body": "A basis model has $f_w(x)=w^\\top\\phi(x)$. The input transformation $\\phi(x)$ can contain $x^2$, Gaussian bumps, or other nonlinear features; the model is still linear in the unknown weights $w$. This is why a linear model can represent nonlinear functions when the basis is rich enough.",
       "sourceType": "lecture",
       "sourceRefs": [
         {
@@ -244,7 +244,7 @@
       "id": "dsa5105-weighted-ols-section-3",
       "type": "teaching-note",
       "title": "Textbook depth · Weighted empirical risk",
-      "body": "Give example $i$ a positive weight $a_i$ and define $A=\\operatorname{diag}(a_1,\\ldots,a_N)$. The weighted objective is $\\frac{1}{2}(\\Phi w-y)^\\top A(\\Phi w-y)$. Its normal equations become $\\Phi^\\top A\\Phi\\hat w=\\Phi^\\top Ay$. Positive weights preserve strict convexity when $\\Phi$ already has full column rank because $A^{1/2}\\Phi$ has the same null-space test.",
+      "body": "Give example $i$ a positive weight $a_i$ and define $A=\\operatorname{diag}(a_1,\\ldots,a_N)$. The weighted objective is $\\frac{1}{2}(\\Phi w-y)^\\top A(\\Phi w-y)$. Its normal equations become $\\Phi^\\top A\\Phi\\hat w=\\Phi^\\top Ay$. Positive weights preserve strict convexity when $\\Phi$ already has full column rank because $A^{\\frac{1}{2}}\\Phi$ has the same null-space test.",
       "sourceType": "textbook",
       "sourceRefs": [
         {
@@ -479,7 +479,7 @@
       "prompt": "Why is a positive-weight matrix safe for uniqueness?",
       "focus": "weighted geometry",
       "angle": "use the square-root transform",
-      "modelAnswer": "The weighted objective is ordinary least squares on A^(1/2)Phi. If A is positive definite, A^(1/2) is invertible and does not create a new null direction, so full column rank is preserved.",
+      "modelAnswer": "The weighted objective is ordinary least squares on $\\mathrm{A}^{\\frac{1}{2}}\\Phi$. If A is positive definite, $\\mathrm{A}^{\\frac{1}{2}}$ is invertible and does not create a new null direction, so full column rank is preserved.",
       "sourceRefs": [
         {
           "sourceId": "DSA5105/Ref/week1_DSA5105_lecture1_with_note.pdf",

@@ -90,11 +90,11 @@
     },
     {
       "title": "Lecture core · Training set and oracle",
-      "body": "The training set contains N observed input-target pairs. The input x_i is what the model receives; y_i is the output or label it should predict. Learning means using the sample to approximate the relationship from x to y. The oracle f* names the unknown target relationship: it can be deterministic, or the target can be sampled from a conditional distribution when the same input may have multiple plausible outputs.",
+      "body": "The training set contains N observed input-target pairs. The input $x_{i}$ is what the model receives; $y_{i}$ is the output or label it should predict. Learning means using the sample to approximate the relationship from x to y. The oracle $f^*$ names the unknown target relationship: it can be deterministic, or the target can be sampled from a conditional distribution when the same input may have multiple plausible outputs.",
       "sourceType": "lecture",
       "math": {
         "latex": "\\mathcal{D}=\\{(x_i,y_i)\\}_{i=1}^{N},\\qquad y_i=f^*(x_i)\\quad\\text{or}\\quad y_i\\sim p^*(\\cdot\\mid x_i)",
-        "explanation": "The first case is a deterministic oracle. A noisy regression view writes y_i = f*(x_i) + epsilon_i; the second case makes the randomness explicit through a conditional target distribution. Do not confuse an observed label with the unknown oracle itself.",
+        "explanation": "The first case is a deterministic oracle. A noisy regression view writes $y_i = f^*(x_i) + \\epsilon_i$; the second case makes the randomness explicit through a conditional target distribution. Do not confuse an observed label with the unknown oracle itself.",
         "symbols": [
           {
             "latex": "\\mathcal{D}",
@@ -173,7 +173,7 @@
     {
       "title": "Worked example: choose the right measurement",
       "steps": [
-        "Suppose a classifier makes 2 errors on a training sample of 10 points. Its empirical 0–1 risk is 2/10 = 0.2.",
+        "Suppose a classifier makes 2 errors on a training sample of 10 points. Its empirical 0–1 risk is $\\frac{2}{10} = 0.2$.",
         "A second model makes 0 training errors but has enough flexibility to memorize IDs. Training risk prefers the second model, but validation risk may prefer the first.",
         "The decision is not 'lowest training error wins'; it is 'choose using validation evidence, then report test performance once.'"
       ],
@@ -198,7 +198,7 @@
     {
       "prompt": "What is the difference between observing a label and knowing the oracle?",
       "angle": "Separate one realized training target from the unknown function or conditional distribution that generates targets.",
-      "modelAnswer": "The dataset contains one observed y_i for each x_i. The oracle f* or p* describes the underlying relationship; a random oracle means repeated labels for the same input can differ.",
+      "modelAnswer": "The dataset contains one observed $y_{i}$ for each $x_{i}$. The oracle $f^*$ or $p^*$ describes the underlying relationship; a random oracle means repeated labels for the same input can differ.",
       "focus": "data-generating process"
     }
   ],
@@ -267,7 +267,7 @@
       "id": "dsa5105-erm-section-2",
       "type": "teaching-note",
       "title": "Lecture core · Training set and oracle",
-      "body": "The training set contains N observed input-target pairs. The input x_i is what the model receives; y_i is the output or label it should predict. Learning means using the sample to approximate the relationship from x to y. The oracle f* names the unknown target relationship: it can be deterministic, or the target can be sampled from a conditional distribution when the same input may have multiple plausible outputs.",
+      "body": "The training set contains N observed input-target pairs. The input $x_{i}$ is what the model receives; $y_{i}$ is the output or label it should predict. Learning means using the sample to approximate the relationship from x to y. The oracle $f^*$ names the unknown target relationship: it can be deterministic, or the target can be sampled from a conditional distribution when the same input may have multiple plausible outputs.",
       "sourceType": "lecture",
       "sourceRefs": [
         {
@@ -616,7 +616,7 @@
       "type": "worked-example",
       "title": "Worked example: choose the right measurement",
       "steps": [
-        "Suppose a classifier makes 2 errors on a training sample of 10 points. Its empirical 0–1 risk is 2/10 = 0.2.",
+        "Suppose a classifier makes 2 errors on a training sample of 10 points. Its empirical 0–1 risk is $\\frac{2}{10} = 0.2$.",
         "A second model makes 0 training errors but has enough flexibility to memorize IDs. Training risk prefers the second model, but validation risk may prefer the first.",
         "The decision is not 'lowest training error wins'; it is 'choose using validation evidence, then report test performance once.'"
       ],
@@ -797,7 +797,7 @@
       "type": "critical-question",
       "prompt": "What is the difference between observing a label and knowing the oracle?",
       "angle": "Separate one realized training target from the unknown function or conditional distribution that generates targets.",
-      "modelAnswer": "The dataset contains one observed y_i for each x_i. The oracle f* or p* describes the underlying relationship; a random oracle means repeated labels for the same input can differ.",
+      "modelAnswer": "The dataset contains one observed $y_{i}$ for each $x_{i}$. The oracle $f^*$ or $p^*$ describes the underlying relationship; a random oracle means repeated labels for the same input can differ.",
       "focus": "data-generating process",
       "sourceRefs": [
         {

@@ -9,7 +9,7 @@
       "top covariance eigenvector"
     ],
     "solution": "The unit eigenvector associated with the largest eigenvalue.",
-    "explanation": "It maximizes the Rayleigh quotient v^T C v.",
+    "explanation": "$It maximizes the Rayleigh quotient v^\\top C v.$",
     "sourceRefs": [
       {
         "sourceId": "DSA5105/Textbook.pdf",
@@ -32,7 +32,7 @@
   {
     "id": "dsa5105-pcan-q2",
     "type": "calculation",
-    "prompt": "For C=[[2,1],[1,2]], what is the largest eigenvalue?",
+    "prompt": "For $C=[[2,1],[1,2]]$, what is the largest eigenvalue?",
     "accepted": [
       "3",
       "three"
@@ -97,7 +97,7 @@
       "V Lambda^-1/2",
       "inverse square root eigenvalues"
     ],
-    "solution": "Rotate with V and scale each retained principal coordinate by $\\lambda_j^{-1/2}$, giving $ZV\\Lambda^{-1/2}$.",
+    "solution": "Rotate with V and scale each retained principal coordinate by $\\lambda_j^{-\\frac{1}{2}}$, giving $ZV\\Lambda^{-\\frac{1}{2}}$.",
     "explanation": "Assume eigenvalues are non-zero or state the numerical stabilisation used.",
     "sourceRefs": [
       {
@@ -170,8 +170,8 @@
       "singular values squared give variance up to normalization",
       "SVD gives PCA"
     ],
-    "solution": "If X = U Sigma V^T, the eigenvalues of X^T X are sigma_j^2; divide by N (or N-1, by convention) for covariance eigenvalues.",
-    "hint": "Multiply X^T X using the SVD.",
+    "solution": "$If X = U Sigma V^\\top, the eigenvalues of X^\\top X are \\sigma_j^2; divide by N (or N-1, by convention) for covariance eigenvalues.$",
+    "hint": "$Multiply X^\\top X using the SVD.$",
     "explanation": "SVD is often numerically preferable and provides the same principal directions in V.",
     "misconception": "Using singular values without squaring them for variance.",
     "visualHook": "Link singular-value bars to explained-variance bars.",

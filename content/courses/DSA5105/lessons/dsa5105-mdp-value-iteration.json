@@ -104,7 +104,7 @@
       "sourceType": "textbook",
       "math": {
         "latex": "\\delta_t=r_{t+1}+\\gamma V(s_{t+1})-V(s_t)",
-        "explanation": "The temporal-difference error is the gap between the one-step bootstrap target and the current estimate. The learning rate alpha controls how much of this error is applied.",
+        "explanation": "The temporal-difference error is the gap between the one-step bootstrap target and the current estimate. The learning rate $\\alpha$ controls how much of this error is applied.",
         "symbols": [
           {
             "latex": "\\delta_t",
@@ -133,9 +133,9 @@
     {
       "title": "Two-sweep value iteration",
       "steps": [
-        "Let S1 transition to a terminal state with reward 3. From S0, action a gives reward 2 then moves to S1; action b gives reward 0 then terminates. Use gamma=0.9 and V0=0.",
-        "Sweep 1: V1(S1)=3 and V1(S0)=max(2+0.9*0,0)=2.",
-        "Sweep 2: V2(S0)=max(2+0.9*3,0)=4.7, while V2(S1)=3. Extract action a at S0."
+        "Let S1 transition to a terminal state with reward 3. From S0, action a gives reward 2 then moves to S1; action b gives reward 0 then terminates. Use $\\gamma=0.9$ and $V0=0$.",
+        "Sweep 1: $V1(S1)=3$ and $V1(S0)=\u0001FORMULA0\u0001$.",
+        "Sweep 2: $V2(S0)=\u0001FORMULA0\u0001.7$, while $V2(S1)=3$. Extract action a at S0."
       ],
       "answer": "The second sweep propagates the value of S1 backward into S0; write the initialization so the propagation is visible.",
       "sourceType": "textbook"
@@ -143,9 +143,9 @@
     {
       "title": "TD(0) update",
       "steps": [
-        "Suppose V(s)=1, observed reward r=2, next value V(s')=4, gamma=0.5, and alpha=0.1.",
-        "The target is 2+0.5*4=4 and the TD error is 4-1=3.",
-        "Update V(s) to 1+0.1*3=1.3."
+        "Suppose $V(s)=1, observed reward r=2, next value V(s')=4, \\gamma=0$.5, and $\\alpha=0.1$.",
+        "The target is $2+0.5*4=4$ and the TD error is $4-1=3$.",
+        "Update $V(s)$ to $1+0.1*3=1.3$."
       ],
       "answer": "TD(0) moves a visited estimate toward a sampled one-step bootstrap target.",
       "sourceType": "textbook"
@@ -156,7 +156,7 @@
       "prompt": "Why does value iteration converge for a discounted finite MDP?",
       "focus": "fixed point",
       "angle": "use contraction",
-      "modelAnswer": "The optimal Bellman operator is a gamma-contraction for gamma<1, so repeated exact backups converge to its unique fixed point V*."
+      "modelAnswer": "The optimal Bellman operator is a $\\gamma$-contraction for $\\gamma<1$, so repeated exact backups converge to its unique fixed point V*."
     },
     {
       "prompt": "Why is replay not automatically on-policy?",
@@ -428,9 +428,9 @@
       "type": "worked-example",
       "title": "Two-sweep value iteration",
       "steps": [
-        "Let S1 transition to a terminal state with reward 3. From S0, action a gives reward 2 then moves to S1; action b gives reward 0 then terminates. Use gamma=0.9 and V0=0.",
-        "Sweep 1: V1(S1)=3 and V1(S0)=max(2+0.9*0,0)=2.",
-        "Sweep 2: V2(S0)=max(2+0.9*3,0)=4.7, while V2(S1)=3. Extract action a at S0."
+        "Let S1 transition to a terminal state with reward 3. From S0, action a gives reward 2 then moves to S1; action b gives reward 0 then terminates. Use $\\gamma=0.9$ and $V0=0$.",
+        "Sweep 1: $V1(S1)=3$ and $V1(S0)=\u0001FORMULA0\u0001$.",
+        "Sweep 2: $V2(S0)=\u0001FORMULA0\u0001.7$, while $V2(S1)=3$. Extract action a at S0."
       ],
       "answer": "The second sweep propagates the value of S1 backward into S0; write the initialization so the propagation is visible.",
       "sourceType": "textbook",
@@ -484,9 +484,9 @@
       "type": "worked-example",
       "title": "TD(0) update",
       "steps": [
-        "Suppose V(s)=1, observed reward r=2, next value V(s')=4, gamma=0.5, and alpha=0.1.",
-        "The target is 2+0.5*4=4 and the TD error is 4-1=3.",
-        "Update V(s) to 1+0.1*3=1.3."
+        "Suppose $V(s)=1, observed reward r=2, next value V(s')=4, \\gamma=0$.5, and $\\alpha=0.1$.",
+        "The target is $2+0.5*4=4$ and the TD error is $4-1=3$.",
+        "Update $V(s)$ to $1+0.1*3=1.3$."
       ],
       "answer": "TD(0) moves a visited estimate toward a sampled one-step bootstrap target.",
       "sourceType": "textbook",
@@ -541,7 +541,7 @@
       "prompt": "Why does value iteration converge for a discounted finite MDP?",
       "focus": "fixed point",
       "angle": "use contraction",
-      "modelAnswer": "The optimal Bellman operator is a gamma-contraction for gamma<1, so repeated exact backups converge to its unique fixed point V*.",
+      "modelAnswer": "The optimal Bellman operator is a $\\gamma$-contraction for $\\gamma<1$, so repeated exact backups converge to its unique fixed point V*.",
       "sourceRefs": [
         {
           "sourceId": "DSA5105/Textbook.pdf",

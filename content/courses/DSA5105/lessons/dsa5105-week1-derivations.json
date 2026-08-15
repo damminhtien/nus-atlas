@@ -144,7 +144,7 @@
       "sourceType": "lecture",
       "math": {
         "latex": "\\psi_\\delta(r)=\\rho_\\delta'(r)=\\begin{cases}r,&|r|\\le\\delta\\\\\\delta\\operatorname{sign}(r),&|r|>\\delta\\end{cases},\\qquad\\sum_{i=1}^{N}\\psi_\\delta(\\hat m-y_i)=0",
-        "explanation": "For squared loss, psi(r)=r, so a residual of magnitude one million has one million times the signed influence of a residual of magnitude one. Huber caps that influence at plus or minus delta.",
+        "explanation": "For squared loss, $\\psi(r)=r, so a residual of magnitude one million has one million times the signed influence of a residual of magnitude one$. Huber caps that influence at plus or minus $\\delta$.",
         "symbols": [
           {
             "latex": "\\rho_\\delta",
@@ -172,7 +172,7 @@
       "sourceType": "lecture",
       "math": {
         "latex": "\\hat w(u)=\\Phi^\\dagger y+\\left(I-\\Phi^\\dagger\\Phi\\right)u,\\qquad u\\in\\mathbb{R}^{M}",
-        "explanation": "The matrix I-Phi-dagger Phi projects onto the null space of Phi. Every choice of u adds a component invisible to the training design, but a large coefficient vector can be unstable away from the observed rows.",
+        "explanation": "The matrix $I-\\Phi^\\dagger\\Phi$ Phi projects onto the null space of Phi. Every choice of u adds a component invisible to the training design, but a large coefficient vector can be unstable away from the observed rows.",
         "symbols": [
           {
             "latex": "\\Phi^\\dagger y",
@@ -200,7 +200,7 @@
       "sourceType": "lecture",
       "math": {
         "latex": "A=\\frac{1}{N}\\Phi^\\top\\Phi,\\quad b=\\frac{1}{N}\\Phi^\\top y,\\quad\\hat w_\\lambda=(A+\\lambda I)^{-1}b",
-        "explanation": "If Av_j=mu_j v_j, then the ridge coefficient along v_j is multiplied relative to OLS by mu_j/(mu_j+lambda). Large-eigenvalue, data-confident directions survive; small-eigenvalue, unstable directions are suppressed.",
+        "explanation": "If $Av_j=\\mu_j v_j$, then the ridge coefficient along $v_{j}$ is multiplied relative to OLS by $\\mu_{j}$/($\\mu_{j}$+$\\lambda$). Large-eigenvalue, data-confident directions survive; small-eigenvalue, unstable directions are suppressed.",
         "symbols": [
           {
             "latex": "A",
@@ -212,7 +212,7 @@
           },
           {
             "latex": "\\mu_j",
-            "meaning": "eigenvalue in direction v_j"
+            "meaning": "$eigenvalue in direction v_j$"
           },
           {
             "latex": "\\lambda",
@@ -331,7 +331,7 @@
     {
       "prompt": "Why does a small eigenvalue create a direction that ridge should suppress?",
       "angle": "Inspect how much the empirical design changes when the parameter moves along that eigenvector.",
-      "modelAnswer": "A small eigenvalue means the sample objective has weak curvature in that direction, so noise can cause a large OLS coefficient change. Ridge multiplies that component by mu/(mu+lambda).",
+      "modelAnswer": "A small eigenvalue means the sample objective has weak curvature in that direction, so noise can cause a large OLS coefficient change. Ridge multiplies that component by $\\mu/(\\mu+\\lambda)$.",
       "focus": "spectral regularization"
     },
     {
@@ -343,7 +343,7 @@
     {
       "prompt": "What exactly is bounded in the Huber argument?",
       "angle": "Differentiate with respect to the residual and compare it with squared loss.",
-      "modelAnswer": "The derivative psi_delta(r), which is the residual's influence on the first-order condition, is capped at plus or minus delta outside the quadratic region.",
+      "modelAnswer": "The derivative $\\psi_delta(r)$, which is the residual's influence on the first-order condition, is capped at plus or minus $\\delta$ outside the quadratic region.",
       "focus": "robustness"
     }
   ],
@@ -1058,7 +1058,7 @@
       "type": "critical-question",
       "prompt": "Why does a small eigenvalue create a direction that ridge should suppress?",
       "angle": "Inspect how much the empirical design changes when the parameter moves along that eigenvector.",
-      "modelAnswer": "A small eigenvalue means the sample objective has weak curvature in that direction, so noise can cause a large OLS coefficient change. Ridge multiplies that component by mu/(mu+lambda).",
+      "modelAnswer": "A small eigenvalue means the sample objective has weak curvature in that direction, so noise can cause a large OLS coefficient change. Ridge multiplies that component by $\\mu/(\\mu+\\lambda)$.",
       "focus": "spectral regularization",
       "sourceRefs": [
         {
@@ -1176,7 +1176,7 @@
       "type": "critical-question",
       "prompt": "What exactly is bounded in the Huber argument?",
       "angle": "Differentiate with respect to the residual and compare it with squared loss.",
-      "modelAnswer": "The derivative psi_delta(r), which is the residual's influence on the first-order condition, is capped at plus or minus delta outside the quadratic region.",
+      "modelAnswer": "The derivative $\\psi_delta(r)$, which is the residual's influence on the first-order condition, is capped at plus or minus $\\delta$ outside the quadratic region.",
       "focus": "robustness",
       "sourceRefs": [
         {

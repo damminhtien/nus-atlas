@@ -2,13 +2,13 @@
   {
     "id": "dsa5105-lw1-q1",
     "type": "calculation",
-    "prompt": "For x = {0, 1, 2} and y = {1, 2, 2}, what is the OLS slope?",
+    "prompt": "For $x = {0, 1, 2}$ and $y = {1, 2, 2}$, what is the OLS slope?",
     "accepted": [
       "0.5",
       "1/2",
       "0.50"
     ],
-    "solution": "With x-bar = 1 and y-bar = 5/3, the centered numerator is 1 and denominator is 2, so w1-hat = 1/2.",
+    "solution": "With x-$bar = 1$ and y-$bar = \\frac{5}{3}$, the centered numerator is 1 and denominator is 2, so w1-$hat = \\frac{1}{2}$.",
     "explanation": "Center both variables before forming the covariance-like numerator.",
     "sourceRefs": [
       {
@@ -63,7 +63,7 @@
   {
     "id": "dsa5105-lw1-q3",
     "type": "short",
-    "prompt": "What does the ridge penalty do to the objective and why must lambda be selected with validation?",
+    "prompt": "What does the ridge penalty do to the objective and why must $\\lambda$ be selected with validation?",
     "accepted": [
       "adds an l2 penalty and validation chooses its strength",
       "penalizes large weights and validation selects lambda",
@@ -99,7 +99,7 @@
       "use the logit difference",
       "binary softmax depends on z1 minus z2"
     ],
-    "solution": "Let s = z1 - z2. Dividing numerator and denominator by exp(z2) gives p1 = 1/(1 + exp(-s)) and p2 = 1 - p1.",
+    "solution": "Let $s = z1 - z2$. Dividing numerator and denominator by $\\exp(z2)$ gives $p1 = 1/(1 + \\exp(-s))$ and $p2 = 1 - p1$.",
     "explanation": "The invariant is the difference between the two logits, not their absolute offset.",
     "sourceRefs": [
       {
@@ -164,7 +164,7 @@
       "linear in parameters but nonlinear in x",
       "basis expansion"
     ],
-    "solution": "A model can be linear in its parameters while using nonlinear features such as x^2 or sin(x). The feature map carries the nonlinearity.",
+    "solution": "A model can be linear in its parameters while using nonlinear features such as $x^{2}$ or $\\sin(x)$. The feature map carries the nonlinearity.",
     "hint": "Ask what the word linear refers to.",
     "explanation": "Linearity in parameters is different from linearity in the original input coordinate.",
     "misconception": "Assuming every linear model must be a straight line in raw input space.",
@@ -202,7 +202,7 @@
       "full column rank",
       "positive definite X^T X"
     ],
-    "solution": "Full column rank makes X^T X positive definite and invertible, giving w_hat = (X^T X)^(-1)X^T y as the unique minimizer.",
+    "solution": "$Full column rank makes X^\\top X positive definite and invertible, giving w_hat = (X^\\top X)^(-1)X^\\top y as the unique minimizer.$",
     "hint": "Look at the Hessian of the quadratic objective.",
     "explanation": "Rank deficiency creates flat directions and multiple minimizers; full rank removes them.",
     "misconception": "Confusing existence of a minimizer with uniqueness.",

@@ -1916,7 +1916,7 @@
       "socraticQuestions": [
         {
           "type": "diagnose",
-          "prompt": "If cat=1, dog=2, and horse=3 are used as class labels, what false assumption might a squared loss make?",
+          "prompt": "If $cat=1$, $dog=2$, and $horse=3$ are used as class labels, what false assumption might a squared loss make?",
           "answer": "It can treat dog as numerically between cat and horse and penalize cat-to-horse mistakes differently from cat-to-dog mistakes.",
           "hint": "Ask whether class IDs have distance."
         },
@@ -2071,7 +2071,7 @@
         "whatYouSee": "The slide maps ordered star levels to real numbers and maps nominal categories such as apple, orange, and pear to one-hot vectors.",
         "whyItMatters": "It shows that the embedding is a modeling decision: preserve order when it exists and avoid inventing order when it does not.",
         "intuition": "One-hot vectors give each category its own coordinate; the label name is not interpreted as a magnitude.",
-        "technicalDetail": "For K categories, the one-hot target e_k has a single 1 in the class position and zeros elsewhere. The representation is compatible with vector-valued scores and cross-entropy.",
+        "technicalDetail": "For K categories, the one-hot target $e_{k}$ has a single 1 in the class position and zeros elsewhere. The representation is compatible with vector-valued scores and cross-entropy.",
         "pitfall": "One-hot encoding does not solve every representation problem: it can be high-dimensional and sparse, and the choice of loss still matters.",
         "connection": "This slide is the prerequisite for the cat/dog target vectors on slide 20 and the vector targets on slide 50."
       },
@@ -2527,7 +2527,7 @@
         "whatYouSee": "A section divider starts the formal supervised-learning part of the lecture.",
         "whyItMatters": "From here the lecture introduces the dataset, oracle, hypothesis space, loss, ERM, population risk, and three sources of error.",
         "intuition": "The learner is given examples with answers and tries to infer a reusable relationship.",
-        "technicalDetail": "The next slides define the symbols used later in every objective: D, x_i, y_i, N, f*, H, and L.",
+        "technicalDetail": "The next slides define the symbols used later in every objective: D, $x_{i}$, $y_{i}$, N, $f^*$, H, and L.",
         "pitfall": "Do not skip the definitions; later derivations depend on keeping the observed sample separate from the unknown data-generating relationship.",
         "connection": "Slide 20 is the key source for the oracle notation; slides 21–25 turn it into an optimization and generalization problem."
       },
@@ -3036,11 +3036,11 @@
         ]
       },
       "explanation": {
-        "whatYouSee": "The slide defines D = {(x_i,y_i)} from i=1 to N, names inputs, outputs/labels, and data size, then shows cat/dog images mapped through an unknown oracle f*. It explicitly includes deterministic and random oracle cases.",
+        "whatYouSee": "The slide defines $D = {(x_i,y_i)}$ from $i=1 to N$, names inputs, outputs/labels, and data size, then shows cat/dog images mapped through an unknown oracle $f^*$. It explicitly includes deterministic and random oracle cases.",
         "whyItMatters": "This is the core supervised-learning contract: infer x to y from finite observations while acknowledging that the target relationship may be noisy or probabilistic.",
-        "intuition": "The oracle is the hidden teacher or data-generating relationship. We see only sampled pairs, never the complete f*.",
-        "technicalDetail": "Deterministic labels satisfy y_i=f*(x_i). A random target satisfies y_i~p*(·|x_i), with y_i=f*(x_i)+epsilon_i as a regression example. The observed label is not the oracle itself.",
-        "pitfall": "Do not replace p*(·|x) with an arbitrary error term in classification, and do not assume every label is deterministic just because the dataset stores one value.",
+        "intuition": "The oracle is the hidden teacher or data-generating relationship. We see only sampled pairs, never the complete $f^*$.",
+        "technicalDetail": "Deterministic labels satisfy $y_i=f^*(x_i)$. A random target satisfies $y_{i}$~$p^*(·|x_i)$, with $y_i=f^*(x_i)+epsilon_i$ as a regression example. The observed label is not the oracle itself.",
+        "pitfall": "Do not replace $p^*(·|x)$ with an arbitrary error term in classification, and do not assume every label is deterministic just because the dataset stores one value.",
         "connection": "This slide is the source for the dataset notation used in ERM, OLS, and classification. It also aligns with the textbook's supervised-learning overview."
       },
       "textbookRefs": [
@@ -3061,13 +3061,13 @@
       "socraticQuestions": [
         {
           "type": "explain",
-          "prompt": "What is the difference between an observed label y_i and the oracle f*?",
-          "answer": "y_i is one observed output for x_i; f* is the unknown relationship that would determine or distribute outputs for inputs more generally.",
+          "prompt": "$What is the difference between an observed label y_i and the oracle f^*?$",
+          "answer": "$y_i is one observed output for x_i; f^* is the unknown relationship that would determine or distribute outputs for inputs more generally.$",
           "hint": "A sample is not the whole rule."
         },
         {
           "type": "compare",
-          "prompt": "When is the random-oracle view more realistic than y=f*(x)?",
+          "prompt": "When is the random-oracle view more realistic than $y=f^*(x)$?",
           "answer": "When labels contain measurement noise, ambiguity, or multiple plausible outcomes conditioned on the same input.",
           "hint": "Think noisy regression or ambiguous classification."
         }
@@ -3247,8 +3247,8 @@
       "explanation": {
         "whatYouSee": "The slide says the oracle is unknown except through D and proposes a three-step supervised-learning approach: define a hypothesis space H, define a training objective F, and optimize F over H.",
         "whyItMatters": "It separates modeling choice, statistical objective, and computation. These are the three decisions behind a trained model.",
-        "intuition": "H is the menu of functions we are willing to consider. We cannot choose a function outside the menu, even if it would match f* perfectly.",
-        "technicalDetail": "For a line, H={f:f(x)=w_0+w_1x}. The objective uses only the training set because the population distribution is not directly available.",
+        "intuition": "H is the menu of functions we are willing to consider. We cannot choose a function outside the menu, even if it would match $f^*$ perfectly.",
+        "technicalDetail": "For a line, $H={f:f(x)=w_0+w_1x}$. The objective uses only the training set because the population distribution is not directly available.",
         "pitfall": "Do not say optimization alone defines learning. If H is wrong or the objective is misaligned, a perfect optimizer can still give a poor predictor.",
         "connection": "Slides 22–25 show what changes when H changes, how loss defines F, and why training risk differs from population risk."
       },
@@ -3270,8 +3270,8 @@
       "socraticQuestions": [
         {
           "type": "predict",
-          "prompt": "If f* is nonlinear but H contains only affine functions, which error source appears first?",
-          "answer": "Approximation error, because the best function available inside H may still be far from f*.",
+          "prompt": "If $f^*$ is nonlinear but H contains only affine functions, which error source appears first?",
+          "answer": "Approximation error, because the best function available inside H may still be far from $f^*$.",
           "hint": "Ask whether the menu contains a good candidate."
         },
         {
@@ -3673,10 +3673,10 @@
         ]
       },
       "explanation": {
-        "whatYouSee": "The slide defines a loss L(y',y) that is small for close predictions and large otherwise, then averages the loss over N training examples to define empirical risk minimization.",
+        "whatYouSee": "The slide defines a loss $L(y',y)$ that is small for close predictions and large otherwise, then averages the loss over N training examples to define empirical risk minimization.",
         "whyItMatters": "ERM is the bridge from an informal learning task to a mathematical objective that can be optimized.",
         "intuition": "Each example casts a vote through its loss; empirical risk is the average pain experienced on the observed sample.",
-        "technicalDetail": "The objective is min_{f in H} R_emp(f) = (1/N) sum_i L(f(x_i), y_i). The loss determines what kinds of mistakes are expensive.",
+        "technicalDetail": "The objective is $min_{f in H}$ $R_emp(f) = (1/N) \\sum_{i} L(f(x_i)$, $y_{i}$). The loss determines what kinds of mistakes are expensive.",
         "pitfall": "Do not call empirical risk a guarantee of future performance. It only summarizes the chosen loss on the observed sample.",
         "connection": "Slide 24 adds population risk and the generalization gap; slides 28–31 instantiate ERM with squared loss and derive OLS."
       },
@@ -4122,12 +4122,12 @@
         ]
       },
       "explanation": {
-        "whatYouSee": "The slide contrasts empirical risk on the observed sample with population risk under x~mu, labels the latter as what we really want, and shows a generalization gap between the fitted functions.",
+        "whatYouSee": "The slide contrasts empirical risk on the observed sample with population risk under x~$\\mu$, labels the latter as what we really want, and shows a generalization gap between the fitted functions.",
         "whyItMatters": "It states the fundamental distinction between solving a finite optimization problem and building a predictor for unseen data.",
-        "intuition": "ERM is a practical proxy because the data distribution mu is hidden. Generalization asks when that proxy is reliable.",
-        "technicalDetail": "R_pop(f)=E_{x~mu}[L(f(x),f*(x))], while R_emp averages over the finite sample. The iid assumption x_i~iid mu is a convenient theoretical starting point, not a universal truth.",
+        "intuition": "ERM is a practical proxy because the data distribution $\\mu$ is hidden. Generalization asks when that proxy is reliable.",
+        "technicalDetail": "$R_pop(f)=E_{x~\\mu}[L(f(x)$,$f^*(x)$)], while $R_{emp}$ averages over the finite sample. The iid assumption $x_{i}$~iid $\\mu$ is a convenient theoretical starting point, not a universal truth.",
         "pitfall": "Do not claim that minimizing empirical risk automatically minimizes population risk, especially under distribution shift or an overly flexible H.",
-        "connection": "Slide 25 decomposes the route from f* to the fitted f-hat; the textbook gives the population/empirical distinction and memorization example."
+        "connection": "Slide 25 decomposes the route from $f^*$ to the fitted f-hat; the textbook gives the population/empirical distinction and memorization example."
       },
       "textbookRefs": [
         {
@@ -4148,7 +4148,7 @@
         {
           "type": "explain",
           "prompt": "Why cannot we directly minimize population risk in ordinary supervised learning?",
-          "answer": "The data distribution mu and oracle f* are unknown; we only observe a finite sample, so we use empirical risk as a proxy.",
+          "answer": "The data distribution $\\mu$ and oracle $f^*$ are unknown; we only observe a finite sample, so we use empirical risk as a proxy.",
           "hint": "What information is missing?"
         },
         {
@@ -4347,10 +4347,10 @@
         ]
       },
       "explanation": {
-        "whatYouSee": "The diagram places the oracle f* outside the hypothesis space H, marks a best approximation inside H, shows an optimization path from f0 to f-hat using D_train, and labels approximation, estimation/generalization, and optimization relationships.",
+        "whatYouSee": "The diagram places the oracle $f^*$ outside the hypothesis space H, marks a best approximation inside H, shows an optimization path from f0 to f-hat using $D_{train}$, and labels approximation, estimation/generalization, and optimization relationships.",
         "whyItMatters": "It prevents a common debugging mistake: attributing every failure to the optimizer when the model class or data regime may be responsible.",
-        "intuition": "There are three questions: can H get near f*; did the algorithm find a good member of H; and does the finite-sample fitted member behave on new data?",
-        "technicalDetail": "Approximation error comes from the distance between f* and the best element in H. Optimization error comes from failing to reach that element. Estimation/generalization error comes from using finite training data to choose f-hat.",
+        "intuition": "There are three questions: can H get near $f^*$; did the algorithm find a good member of H; and does the finite-sample fitted member behave on new data?",
+        "technicalDetail": "Approximation error comes from the distance between $f^*$ and the best element in H. Optimization error comes from failing to reach that element. Estimation/generalization error comes from using finite training data to choose f-hat.",
         "pitfall": "Do not use a larger H to fix an optimization bug, or more optimization steps to fix a missing feature representation.",
         "connection": "This is the conceptual center of Week 1 and connects directly to underfitting, overfitting, basis functions, and regularization."
       },
@@ -4445,7 +4445,7 @@
           "type": "predict",
           "prompt": "What should be specified before deriving a linear-model solution?",
           "answer": "The input/target type, hypothesis space, loss, and training objective.",
-          "hint": "A model is more than a formula for f(x)."
+          "hint": "A model is more than a formula for $f(x)$."
         }
       ],
       "lecturePriority": "core",
@@ -4541,10 +4541,10 @@
         ]
       },
       "explanation": {
-        "whatYouSee": "The slide states that x_i and y_i are scalars and introduces the simplest regression setting.",
+        "whatYouSee": "The slide states that $x_{i}$ and $y_{i}$ are scalars and introduces the simplest regression setting.",
         "whyItMatters": "Scalar regression lets us derive the closed-form OLS solution by hand and see the roles of intercept, slope, centering, and residuals.",
         "intuition": "We approximate a numeric target with a line, accepting that the line may not capture every relationship in the data.",
-        "technicalDetail": "The affine hypothesis f(x)=w_0+w_1x has two parameters. The following slides choose squared loss and minimize the average squared residual.",
+        "technicalDetail": "The affine hypothesis $f(x)=w_0+w_1x has two parameters$. The following slides choose squared loss and minimize the average squared residual.",
         "pitfall": "Do not call the model 'linear' in x if the intercept is included without explanation; it is affine in x but linear in the parameters.",
         "connection": "Slide 28 defines H and the square-loss ERM; slide 31 gives the centered OLS formula."
       },
@@ -4560,9 +4560,9 @@
       "socraticQuestions": [
         {
           "type": "predict",
-          "prompt": "What does w_0 control and what does w_1 control in f(x)=w_0+w_1x?",
-          "answer": "w_0 is the intercept at x=0; w_1 is the change in prediction per unit increase in x.",
-          "hint": "Read the line at x=0 and its slope."
+          "prompt": "$What does w_0 control and what does w_1 control in f(x)=w_0+w_1x?$",
+          "answer": "$w_0 is the intercept at x=0; w_1 is the change in prediction per unit increase in x.$",
+          "hint": "$Read the line at x=0 and its slope.$"
         },
         {
           "type": "critique",
@@ -4891,7 +4891,7 @@
         "whatYouSee": "The slide defines the affine hypothesis space and the squared loss, then writes the ERM objective for the line.",
         "whyItMatters": "It makes the modeling choices explicit: H defines candidate lines and L decides how residuals are penalized.",
         "intuition": "Squared loss is smooth and punishes a large residual disproportionately, so fitting is pulled toward outlying points.",
-        "technicalDetail": "L(y',y)=1/2(y'-y)^2 and R_emp(w_0,w_1)=1/(2N) sum_i(w_0+w_1x_i-y_i)^2. The 1/2 simplifies derivatives without changing the minimizer.",
+        "technicalDetail": "$L(y',y)=1/2(y'-y)^2 and R_emp(w_0,w_1)=1/(2N) \\sum_{i}(w_0+w_1x_i-y_i)^2$. The $1/2 $simplifies derivatives without changing the minimizer.",
         "pitfall": "Do not forget the intercept or the factor that comes from the chosen convention when taking derivatives.",
         "connection": "Slide 29 expands the same objective with the lecturer's handwritten derivative plan; slides 35–36 show what changes under robust losses."
       },
@@ -4907,7 +4907,7 @@
       "socraticQuestions": [
         {
           "type": "derive",
-          "prompt": "Why is the factor 1/2 included in squared loss?",
+          "prompt": "Why is the factor $1/2 $included in squared loss?",
           "answer": "It cancels the factor 2 produced by differentiating a square, making gradients cleaner without changing the minimizer.",
           "hint": "It is a convenience factor."
         },
@@ -5046,7 +5046,7 @@
         "whatYouSee": "The full empirical risk is written as a sum of squared residuals. Handwritten annotations identify convexity, the gradient conditions, sample means, and the route to the centered solution.",
         "whyItMatters": "This is the worked derivation behind the OLS formula rather than a formula to memorize without understanding.",
         "intuition": "Set the gradient to zero: the intercept condition centers the residuals, and the slope condition makes residuals orthogonal to centered inputs.",
-        "technicalDetail": "For w_0, the derivative gives w_0 = y-bar - w_1 x-bar. Substituting this into the w_1 derivative yields the covariance-like numerator over the variance-like denominator.",
+        "technicalDetail": "For $w_{0}$, the derivative gives $w_0 = y-bar - w_1 x-bar$. Substituting this into the $w_{1}$ derivative yields the covariance-like numerator over the variance-like denominator.",
         "pitfall": "Do not divide by zero when all x values are identical. Also distinguish the sample covariance-like sums from a probability covariance unless the normalization and sampling assumptions are stated.",
         "connection": "Slide 31 collects the result; the textbook's simple-linear-regression section supplies the surrounding derivation."
       },
@@ -5068,13 +5068,13 @@
       "socraticQuestions": [
         {
           "type": "derive",
-          "prompt": "Why does the optimal intercept satisfy w-hat_0 = y-bar - w-hat_1 x-bar?",
-          "answer": "The derivative with respect to w_0 makes the average residual zero, so the fitted line passes through (x-bar,y-bar).",
+          "prompt": "$Why does the optimal intercept satisfy w-hat_0 = y-bar - w-hat_1 x-bar?$",
+          "answer": "The derivative with respect to $w_{0}$ makes the average residual zero, so the fitted line passes through ($\\bar{x}$,$\\bar{y}$).",
           "hint": "Set the sum of residuals to zero."
         },
         {
           "type": "diagnose",
-          "prompt": "What happens to the slope formula if all x_i are equal?",
+          "prompt": "$What happens to the slope formula if all x_i are equal?$",
           "answer": "The denominator is zero, so the slope is not identified by OLS; only the mean prediction is determined.",
           "hint": "Check the centered spread of x."
         }
@@ -5129,13 +5129,13 @@
         {
           "type": "recall",
           "prompt": "Without looking back, what two gradient equations must hold at the OLS solution?",
-          "answer": "The partial derivatives of empirical risk with respect to w_0 and w_1 are both zero.",
+          "answer": "The partial derivatives of empirical risk with respect to $w_{0}$ and $w_{1}$ are both zero.",
           "hint": "State both parameters explicitly."
         },
         {
           "type": "check",
           "prompt": "What should you verify before using the closed-form slope?",
-          "answer": "That the centered denominator sum_i(x_i-x-bar)^2 is nonzero.",
+          "answer": "$That the centered denominator \\sum_{i}(x_i-x-bar)^2 is nonzero.$",
           "hint": "Check identifiability first."
         }
       ],
@@ -5584,12 +5584,12 @@
         ]
       },
       "explanation": {
-        "whatYouSee": "The slide displays the ERM problem, sets both partial derivatives to zero, defines x-bar and y-bar, and gives w-hat_0, w-hat_1, and the fitted line.",
+        "whatYouSee": "The slide displays the ERM problem, sets both partial derivatives to zero, defines $\\bar{x}$ and $\\bar{y}$, and gives $\\hat{w}$_0, $\\hat{w}$_1, and the fitted line.",
         "whyItMatters": "It is the main calculation target for simple linear regression and a frequent source of algebra and interpretation questions.",
         "intuition": "Center first, measure how x and y move together, divide by how much x varies, then choose the intercept so the line passes through the means.",
-        "technicalDetail": "w-hat_1 = sum_i(x_i-x-bar)(y_i-y-bar) / sum_i(x_i-x-bar)^2 and w-hat_0=y-bar-w-hat_1x-bar. The denominator encodes uniqueness of the slope.",
-        "pitfall": "Do not confuse the slope numerator with sum x_i y_i when an intercept is present; centering is essential.",
-        "connection": "The formula is the scalar precursor of w-hat=(Phi^T Phi)^(-1)Phi^T y on slide 46."
+        "technicalDetail": "w-$hat_1 = \\sum_{i}(x_i-x-bar)(y_i-y-bar) / \\sum_{i}(x_i-x-bar)^2$ and w-$hat_0=y-bar-w-hat_1x-bar$. The denominator encodes uniqueness of the slope.",
+        "pitfall": "$Do not confuse the slope numerator with sum x_i y_i when an intercept is present; centering is essential.$",
+        "connection": "The formula is the scalar precursor of w-$hat=(\\Phi^\\top \\Phi)^(-1)\\Phi^\\top y on slide 46$."
       },
       "textbookRefs": [
         {
@@ -5609,15 +5609,15 @@
       "socraticQuestions": [
         {
           "type": "calculate",
-          "prompt": "For x={0,1,2} and y={1,2,2}, compute the OLS slope and intercept.",
-          "answer": "x-bar=1, y-bar=5/3, slope=1/2, intercept=7/6.",
+          "prompt": "For $x={0,1,2}$ and $y={1,2,2}$, compute the OLS slope and intercept.",
+          "answer": "x-$bar=1$, y-$bar=5/3$, $slope=1/2$, $intercept=7/6$.",
           "hint": "Compute centered numerator and denominator."
         },
         {
           "type": "explain",
-          "prompt": "Why must the fitted line pass through (x-bar,y-bar)?",
+          "prompt": "Why must the fitted line pass through ($\\bar{x}$,$\\bar{y}$)?",
           "answer": "The intercept gradient condition forces the average residual to be zero, which means the prediction at the mean input equals the mean target.",
-          "hint": "Use the w_0 derivative."
+          "hint": "Use the $w_{0}$ derivative."
         }
       ],
       "lecturePriority": "core",
@@ -6359,7 +6359,7 @@
         "whatYouSee": "The slide contrasts mean-square loss with Huber loss and L1 loss for one-dimensional regression.",
         "whyItMatters": "The loss is not a cosmetic choice: it changes which residuals dominate optimization and what 'good fit' means.",
         "intuition": "Squared loss treats a very large residual as disproportionately important; L1 treats residual magnitude linearly; Huber combines a smooth quadratic core with a linear tail.",
-        "technicalDetail": "Huber uses a threshold delta: quadratic behavior for |r|<=delta and linear behavior beyond it. The exact additive constant makes the pieces meet continuously.",
+        "technicalDetail": "Huber uses a threshold $\\delta$: quadratic behavior for |r|<=$\\delta$ and linear behavior beyond it. The exact additive constant makes the pieces meet continuously.",
         "pitfall": "Do not say Huber removes outliers. It reduces their leverage in the objective; the data point remains and its residual still matters.",
         "connection": "Slide 36 visualizes the difference on noisy data with outliers; slide 23 provides the general loss-to-risk template."
       },
@@ -6842,7 +6842,7 @@
         "whatYouSee": "The slide explains that simple linear regression is limited to one-dimensional inputs and linear relationships, motivating linearly parameterized basis models.",
         "whyItMatters": "It introduces the central trick of linear models: transform the input into features while retaining tractable linear dependence on parameters.",
         "intuition": "We can bend the function by changing the coordinate system, while keeping the weights in a weighted sum.",
-        "technicalDetail": "A basis function phi_j maps x in R^d to a scalar feature. The model is linear in w even if phi_j is nonlinear in x.",
+        "technicalDetail": "A basis function $\\phi_{j}$ maps x in $R^{d}$ to a scalar feature. The model is linear in w even if $\\phi_{j}$ is nonlinear in x.",
         "pitfall": "Do not call a basis model nonlinear in the parameters. Its features may be nonlinear in x, but the weights still enter linearly.",
         "connection": "Slide 39 defines the hypothesis space; slide 41 gives polynomial, Gaussian, and sigmoid examples."
       },
@@ -6859,7 +6859,7 @@
         {
           "type": "compare",
           "prompt": "What is the difference between making f nonlinear in x and nonlinear in w?",
-          "answer": "A basis model can be nonlinear in the input through phi_j(x) while remaining linear in the weights; nonlinear parameters change optimization substantially.",
+          "answer": "A basis model can be nonlinear in the input through $phi_j(x)$ while remaining linear in the weights; nonlinear parameters change optimization substantially.",
           "hint": "Inspect where the weights appear."
         },
         {
@@ -7090,10 +7090,10 @@
         ]
       },
       "explanation": {
-        "whatYouSee": "The slide defines H_M={f:f(x)=sum_{j=0}^{M-1} w_j phi_j(x)} for x in R^d and explains that simple linear regression is the special case d=1, M=2, phi_0=1, phi_1=x.",
+        "whatYouSee": "The slide defines $H_M={f:\u0001FORMULA0\u0001$.",
         "whyItMatters": "It gives a reusable notation for polynomial regression, radial features, sigmoid features, and later classification models.",
-        "intuition": "The feature map phi(x) is a coordinate expansion. The same weighted-sum machinery can work on a richer representation.",
-        "technicalDetail": "There are M basis functions and M weights. Increasing M increases capacity; changing phi changes the geometry of the hypotheses. The model remains affine if the constant basis phi_0=1 is included.",
+        "intuition": "The feature map $\\phi$(x) is a coordinate expansion. The same weighted-sum machinery can work on a richer representation.",
+        "technicalDetail": "There are M basis functions and M weights. Increasing M increases capacity; changing $\\phi$ changes the geometry of the hypotheses. The model remains affine if the constant basis $phi_0=1$ is included.",
         "pitfall": "Do not forget the constant feature when you need an intercept, and do not assume a large M automatically improves generalization.",
         "connection": "Slide 40 provides a handwritten quadratic example; slides 42–47 put the basis model into matrix OLS."
       },
@@ -7109,8 +7109,8 @@
       "socraticQuestions": [
         {
           "type": "derive",
-          "prompt": "What basis functions reproduce f(x)=w_0+w_1x?",
-          "answer": "phi_0(x)=1 and phi_1(x)=x with M=2.",
+          "prompt": "$What basis functions reproduce f(x)=w_0+w_1x?$",
+          "answer": "$phi_0(x)=1 and phi_1(x)=x with M=2.$",
           "hint": "Match each term in the sum."
         },
         {
@@ -7150,11 +7150,11 @@
         "blocks": []
       },
       "explanation": {
-        "whatYouSee": "The annotated page contains a handwritten example x in R with phi(x)=(1,x,x^2), identifying H as the space of quadratic functions.",
+        "whatYouSee": "The annotated page contains a handwritten example x in R with $\\phi(x)=(1,x,x^2), identifying H as the space of quadratic functions$.",
         "whyItMatters": "It demonstrates concretely how a nonlinear curve arises from a model that is still linear in its weights.",
         "intuition": "The feature map changes one scalar x into three coordinates; the weight vector then chooses an intercept, slope, and curvature coefficient.",
-        "technicalDetail": "The model is f(x)=w_0+w_1x+w_2x^2. It is linear in (w_0,w_1,w_2), so least squares remains a quadratic optimization in the parameters.",
-        "pitfall": "Do not confuse the superscript x^2 in a feature with a nonlinear optimization problem; the parameterization is what matters for closed-form OLS.",
+        "technicalDetail": "The model is $f(x)=w_0+w_1x+w_2x^2$. It is linear in ($w_{0}$,$w_{1}$,$w_{2}$), so least squares remains a quadratic optimization in the parameters.",
+        "pitfall": "$Do not confuse the superscript x^2 in a feature with a nonlinear optimization problem; the parameterization is what matters for closed-form OLS.$",
         "connection": "This example bridges the abstract basis notation on slide 39 and the design matrix on slide 43."
       },
       "textbookRefs": [
@@ -7169,8 +7169,8 @@
       "socraticQuestions": [
         {
           "type": "derive",
-          "prompt": "Write the prediction for phi(x)=(1,x,x^2) and weights (w_0,w_1,w_2).",
-          "answer": "f(x)=w_0+w_1x+w_2x^2.",
+          "prompt": "$Write the prediction for \\phi(x)=(1,x,x^2) and weights (w_0,w_1,w_2).$",
+          "answer": "$f(x)=w_0+w_1x+w_2x^2.$",
           "hint": "Expand the dot product."
         },
         {
@@ -7451,8 +7451,8 @@
       "explanation": {
         "whatYouSee": "The slide lists polynomial, Gaussian, and sigmoid basis functions for one-dimensional inputs.",
         "whyItMatters": "Different basis families encode different notions of similarity and locality: global powers, localized bumps, and smooth step-like transitions.",
-        "intuition": "Polynomial features let every point influence every coefficient globally; Gaussian features respond near centers m_j; sigmoid features transition around a location/scale.",
-        "technicalDetail": "The three forms are phi_j(x)=x^j, exp(-(x-m_j)^2/(2s^2)), and sigma((x-m_j)/s) with sigma(b)=1/(1+e^{-b}). Their numerical scales affect conditioning and regularization.",
+        "intuition": "$Polynomial features let every point influence every coefficient globally; Gaussian features respond near centers m_j; \\sigmoid features transition around a location/scale.$",
+        "technicalDetail": "The three forms are $\\phi_j(x)=x^j$, $\\exp\\left(-\\frac{(x-m_j)^2}{2s^2}\\right)$, and $\\sigma\\left(\\frac{x-m_j}{s}\\right)$ with $\\sigma(b)=\\frac{1}{1+e^{-b}}$. Their numerical scales affect conditioning and regularization.",
         "pitfall": "Do not compare basis functions only by visual flexibility. Scaling, centers, widths, and number of features affect optimization and generalization.",
         "connection": "Slide 42 writes ERM over weights; slide 48 shows why coefficient control matters when the basis is rich."
       },
@@ -7473,14 +7473,14 @@
       "socraticQuestions": [
         {
           "type": "compare",
-          "prompt": "Which basis is naturally localized around a center m_j?",
-          "answer": "The Gaussian basis, because it decays as x moves away from m_j.",
-          "hint": "Inspect dependence on x-m_j."
+          "prompt": "$Which basis is naturally localized around a center m_j?$",
+          "answer": "The Gaussian basis, because it decays as x moves away from $m_{j}$.",
+          "hint": "$Inspect dependence on x-m_j.$"
         },
         {
           "type": "predict",
           "prompt": "What happens to a Gaussian basis as s becomes very small?",
-          "answer": "It becomes sharply localized near m_j and can create highly variable fits if the centers are numerous.",
+          "answer": "$It becomes sharply localized near m_j and can create highly variable fits if the centers are numerous.$",
           "hint": "Width controls locality."
         }
       ],
@@ -7929,11 +7929,11 @@
         ]
       },
       "explanation": {
-        "whatYouSee": "The slide rewrites ERM over functions in H_M as an optimization over the M-dimensional weight vector and expands the weighted basis sum.",
+        "whatYouSee": "The slide rewrites ERM over functions in $H_{M}$ as an optimization over the M-dimensional weight vector and expands the weighted basis sum.",
         "whyItMatters": "It shows that the original prediction problem becomes a familiar quadratic optimization once the feature map is fixed.",
         "intuition": "The complicated-looking function is still just a linear combination of columns of a design matrix.",
-        "technicalDetail": "The objective is 1/(2N) sum_i((sum_j w_j phi_j(x_i))-y_i)^2. The next slide packages the same expression as ||Phi w-y||^2.",
-        "pitfall": "Do not treat changing phi as the same thing as changing the optimizer; feature design determines the matrix before optimization begins.",
+        "technicalDetail": "The objective is 1/(2N) $\\sum_{i}((\\sum_{j} w_j phi_j(x_i)$)-$y_{i}$)^2. The next slide packages the same expression as ||Phi w-y||^2.",
+        "pitfall": "Do not treat changing $\\phi$ as the same thing as changing the optimizer; feature design determines the matrix before optimization begins.",
         "connection": "Slides 43–46 derive the matrix normal equations and state the rank condition for the closed form."
       },
       "textbookRefs": [
@@ -7955,7 +7955,7 @@
         {
           "type": "derive",
           "prompt": "What is the optimization variable after the basis functions are fixed?",
-          "answer": "The weight vector w in R^M.",
+          "answer": "The weight vector w in $R^{M}$.",
           "hint": "The features are now fixed columns."
         },
         {
@@ -8442,10 +8442,10 @@
         ]
       },
       "explanation": {
-        "whatYouSee": "The slide turns the expanded basis objective into min_w 1/(2N)||Phi w-y||^2 and displays Phi, w, and y with their dimensions.",
+        "whatYouSee": "The slide turns the expanded basis objective into $\\min_{w}$ $1/(2N)||\\Phi w-y||^2 and displays \\Phi, w, and y with their dimensions$.",
         "whyItMatters": "This is the notational compression needed to derive normal equations and reason about rank, null spaces, and pseudoinverses.",
         "intuition": "Each training example becomes a row of Phi; each basis function becomes a column. Multiplying Phi w produces all N predictions at once.",
-        "technicalDetail": "Phi is N x M, w is M x 1, and y is N x 1. Entry Phi_{ij}=phi_j(x_i). Dimension checks catch many transpose mistakes.",
+        "technicalDetail": "Phi is N x M, w is M x 1, and y is N x 1. Entry Phi_{ij}=$phi_j(x_i)$. Dimension checks catch many transpose mistakes.",
         "pitfall": "Do not write Phi as M x N when using the displayed convention, and do not multiply matrices without checking dimensions.",
         "connection": "Slide 44 uses this matrix form to derive the gradient and solution cases; slide 46 states the standard formula."
       },
@@ -8467,14 +8467,14 @@
       "socraticQuestions": [
         {
           "type": "check",
-          "prompt": "If N=10 and M=3, what are the dimensions of Phi, w, and Phi w?",
+          "prompt": "$If N=10 and M=3, what are the dimensions of \\Phi, w, and \\Phi w?$",
           "answer": "Phi is 10x3, w is 3x1, and Phi w is 10x1.",
           "hint": "Rows are examples; columns are features."
         },
         {
           "type": "derive",
           "prompt": "What does the i-th row of Phi represent?",
-          "answer": "The values of all M basis functions evaluated at x_i.",
+          "answer": "The values of all M basis functions evaluated at $x_{i}$.",
           "hint": "Read across one example."
         }
       ],
@@ -8525,11 +8525,11 @@
         ]
       },
       "explanation": {
-        "whatYouSee": "The annotated page contains handwritten expansion of R(w), its gradient, the normal equation Phi^T Phi w=Phi^T y, and a split between full-rank and singular cases.",
+        "whatYouSee": "The annotated page contains handwritten expansion of $R(w)$, its gradient, the normal equation $\\Phi^{\\top}$ Phi $w=\\Phi^\\top y$, and a split between full-rank and singular cases.",
         "whyItMatters": "It is the bridge between the geometric least-squares problem and the algebraic solution, including the uniqueness condition emphasized by the lecturer.",
         "intuition": "At the optimum, the residual is orthogonal to every feature direction. The normal equations express that residual orthogonality in matrix form.",
-        "technicalDetail": "Expanding R(w)=1/(2N)||Phi w-y||^2 gives gradient (1/N)Phi^T(Phi w-y). Setting it to zero yields Phi^T Phi w=Phi^T y. If Phi has full column rank, Phi^T Phi is invertible and the solution is unique.",
-        "pitfall": "Do not claim Phi^T Phi is invertible merely because Phi has entries. Check rank; duplicated or redundant basis columns can make it singular.",
+        "technicalDetail": "Expanding $R(w)=1/(2N)||\\Phi w-y||^2 gives gradient (1/N)\\Phi^\\top(\\Phi w-y)$. Setting it to zero yields $\\Phi^{\\top}$ Phi $w=\\Phi^\\top y$. If Phi has full column rank, $\\Phi^{\\top}$ Phi is invertible and the solution is unique.",
+        "pitfall": "Do not claim $\\Phi^{\\top}$ Phi is invertible merely because Phi has entries. Check rank; duplicated or redundant basis columns can make it singular.",
         "connection": "Page 44 is a handwritten companion to slides 46–47 and directly supports OLS uniqueness questions."
       },
       "textbookRefs": [
@@ -8550,13 +8550,13 @@
       "socraticQuestions": [
         {
           "type": "derive",
-          "prompt": "What geometric statement is encoded by Phi^T(Phi w-hat-y)=0?",
-          "answer": "The residual vector y-Phi w-hat is orthogonal to the column space of Phi.",
+          "prompt": "$What geometric statement is encoded by \\Phi^\\top(\\Phi w-hat-y)=0?$",
+          "answer": "The residual vector y-Phi $\\hat{w}$ is orthogonal to the column space of Phi.",
           "hint": "Multiply out the inner products with every feature column."
         },
         {
           "type": "diagnose",
-          "prompt": "What can make Phi^T Phi singular?",
+          "prompt": "$What can make \\Phi^\\top \\Phi singular?$",
           "answer": "Linearly dependent feature columns, too many features relative to independent observations, or redundant basis functions.",
           "hint": "Rank, not just matrix size, determines invertibility."
         }
@@ -8615,8 +8615,8 @@
       "socraticQuestions": [
         {
           "type": "check",
-          "prompt": "What condition must hold before writing (Phi^T Phi)^(-1)?",
-          "answer": "Phi^T Phi must be invertible, equivalently Phi must have full column rank under the displayed convention.",
+          "prompt": "$What condition must hold before writing (\\Phi^\\top \\Phi)^(-1)?$",
+          "answer": "$\\Phi^\\top \\Phi must be invertible, equivalently \\Phi must have full column rank under the displayed convention.$",
           "hint": "Check rank before inversion."
         },
         {
@@ -8895,7 +8895,7 @@
         ]
       },
       "explanation": {
-        "whatYouSee": "The slide minimizes ||Phi w-y||^2, sets the gradient to zero, derives Phi^T(Phi w-hat-y)=0, and states w-hat=(Phi^T Phi)^(-1)Phi^T y when Phi^T Phi is invertible.",
+        "whatYouSee": "The slide minimizes $\\lVert\\Phi w-y\\rVert^2$, sets the gradient to zero, derives $\\Phi^\\top(\\Phi\\hat{w}-y)=0$, and states $\\hat{w}=(\\Phi^\\top \\Phi)^{-1}\\Phi^\\top y$ when $\\Phi^\\top \\Phi$ is invertible.",
         "whyItMatters": "It is the multivariate/general-basis analogue of the 1D OLS formula and a core derivation target.",
         "intuition": "Project y onto the column space of Phi. The coefficient vector is the coordinate representation of that projection when the columns are independent.",
         "technicalDetail": "The inverse formula requires full column rank. With the normalization 1/(2N), the constant does not change the optimizer. The solution is unique under invertibility.",
@@ -8927,7 +8927,7 @@
         {
           "type": "check",
           "prompt": "Under what condition is the displayed OLS solution unique?",
-          "answer": "When Phi^T Phi is invertible, equivalently when Phi has full column rank.",
+          "answer": "When $\\Phi^{\\top}$ Phi is invertible, equivalently when Phi has full column rank.",
           "hint": "State the rank condition."
         }
       ],
@@ -9088,10 +9088,10 @@
         ]
       },
       "explanation": {
-        "whatYouSee": "The slide gives the family w-hat(u)=Phi^†y+(I-Phi^†Phi)u, states that all solutions have the same empirical risk, and warns that some have arbitrarily large coefficients and wiggly functions.",
+        "whatYouSee": "The slide gives the family w-$hat(u)=\\Phi^†y+(I-\\Phi^†\\Phi)u, states that all solutions have the same empirical risk, and warns that some have arbitrarily large coefficients and wiggly functions$.",
         "whyItMatters": "It explains why rank deficiency is not merely a computational nuisance: non-unique coefficients can correspond to very different functions outside the observed data.",
         "intuition": "The null-space component changes the weights without changing the fitted training predictions. The pseudoinverse selects the minimum-norm member when used alone.",
-        "technicalDetail": "Phi^† is the Moore–Penrose pseudoinverse. I-Phi^†Phi projects u onto directions invisible to Phi. All members produce the same projection Phi w, but norms and extrapolations can differ.",
+        "technicalDetail": "$\\Phi^†$ is the Moore–Penrose pseudoinverse. I-$\\Phi^†\\Phi$ projects u onto directions invisible to Phi. All members produce the same projection Phi w, but norms and extrapolations can differ.",
         "pitfall": "Do not say the singular problem has one 'correct' coefficient vector, and do not interpret a zero training residual as proof that a particular solution generalizes.",
         "connection": "This slide motivates regularization as a principled way to prefer stable coefficients and reduce the generalization gap."
       },
@@ -9113,7 +9113,7 @@
         {
           "type": "explain",
           "prompt": "Why can two different weight vectors have the same training predictions?",
-          "answer": "Their difference can lie in the null space of Phi, so Phi(w_1-w_2)=0.",
+          "answer": "$Their difference can lie in the null space of \\Phi, so \\Phi(w_1-w_2)=0.$",
           "hint": "Look for directions invisible to the design matrix."
         },
         {
@@ -9328,11 +9328,11 @@
         ]
       },
       "explanation": {
-        "whatYouSee": "The slide adds lambda C(w) to the squared residual objective and lists L2/ridge and L1/lasso penalties.",
+        "whatYouSee": "The slide adds $\\lambda$ $C(w)$ to the squared residual objective and lists L2/ridge and L1/lasso penalties.",
         "whyItMatters": "Regularization controls coefficient magnitude, resolves unstable directions, and trades training fit for a smaller generalization gap.",
         "intuition": "Among similarly fitting functions, prefer the one with smaller or simpler coefficients. Lambda controls how strongly that preference competes with data fit.",
-        "technicalDetail": "The objective is 1/(2N)||Phi w-y||^2+lambda C(w). L2 uses ||w||_2^2 and gives smooth shrinkage; L1 uses sum_j|w_j| and can produce exact zeros.",
-        "pitfall": "Do not choose lambda from the test set, and do not assume L1/L2 have the same geometry or feature-selection behavior.",
+        "technicalDetail": "The objective is $1/(2N)||\\Phi w-y||^2+\\lambda C(w)$. L2 uses ||w||_2^2 and gives smooth shrinkage; L1 uses $\\sum_{j}$|$w_{j}$| and can produce exact zeros.",
+        "pitfall": "Do not choose $\\lambda$ from the test set, and do not assume L1/L2 have the same geometry or feature-selection behavior.",
         "connection": "Slide 49 shows L2 stabilizing high-degree fits; slides 35–36 show a different use of robustness through the loss rather than the parameter penalty."
       },
       "textbookRefs": [
@@ -9359,7 +9359,7 @@
         },
         {
           "type": "predict",
-          "prompt": "What happens as lambda becomes very large?",
+          "prompt": "What happens as $\\lambda$ becomes very large?",
           "answer": "The optimizer prioritizes a small penalty over close fit, increasing bias and shrinking coefficients strongly.",
           "hint": "Consider the two terms in the objective."
         }
@@ -9569,11 +9569,11 @@
         ]
       },
       "explanation": {
-        "whatYouSee": "The slide revisits a degree-99 model with M=100 and N=10, comparing unregularized and L2-regularized fits on noisy and quadratic examples.",
+        "whatYouSee": "The slide revisits a degree-99 model with $M=100$ and $N=10$, comparing unregularized and L2-regularized fits on noisy and quadratic examples.",
         "whyItMatters": "It visually demonstrates how regularization suppresses explosive coefficient combinations while preserving a useful trend.",
         "intuition": "The penalty discourages the model from using large, canceling weights to create sharp wiggles supported by very few data points.",
         "technicalDetail": "Ridge changes the optimization landscape and makes the solution stable even when features are correlated or numerous. It usually reduces variance at the cost of bias.",
-        "pitfall": "Do not interpret smoother-looking curves as automatic proof of lower test error; lambda still requires validation and the target metric still matters.",
+        "pitfall": "Do not interpret smoother-looking curves as automatic proof of lower test error; $\\lambda$ still requires validation and the target metric still matters.",
         "connection": "This is the practical response to the singular/unstable solutions in slides 46–47 and the overfit examples in slide 33."
       },
       "textbookRefs": [
@@ -9601,7 +9601,7 @@
         {
           "type": "diagnose",
           "prompt": "If the regularized model underfits badly, which hyperparameter or design choice should you inspect first?",
-          "answer": "The regularization strength lambda, the basis scale, or the feature family; use validation rather than training fit alone.",
+          "answer": "The regularization strength $\\lambda$, the basis scale, or the feature family; use validation rather than training fit alone.",
           "hint": "Regularization has a bias tradeoff."
         }
       ],
@@ -9826,10 +9826,10 @@
         ]
       },
       "explanation": {
-        "whatYouSee": "The slide switches from scalar regression targets to K-class labels and represents the class k_i target as the canonical one-hot vector e_{k_i} in R^K.",
+        "whatYouSee": "The slide switches from scalar regression targets to K-class labels and represents the class $k_{i}$ target as the canonical one-hot vector e_{$k_{i}$} in $R^{K}$.",
         "whyItMatters": "It prevents the model from treating class names as ordered numbers and prepares a vector-valued prediction for multiclass losses.",
         "intuition": "A class label is an identity, so the target vector says which coordinate is correct rather than how large a label number is.",
-        "technicalDetail": "For K classes, e_k has a 1 at coordinate k and 0 elsewhere. The linear basis model will output a K-dimensional score vector for each x.",
+        "technicalDetail": "For K classes, $e_{k}$ has a 1 at coordinate k and 0 elsewhere. The linear basis model will output a K-dimensional score vector for each x.",
         "pitfall": "Do not fit one scalar to arbitrary class IDs and call the resulting squared distance a meaningful classification loss without justifying the encoding.",
         "connection": "Slide 15 introduced one-hot encoding; slides 51–54 define the vector model, 0–1 error, softmax, and cross-entropy."
       },
@@ -9851,8 +9851,8 @@
       "socraticQuestions": [
         {
           "type": "derive",
-          "prompt": "For K=3 and class 2, what is y_i?",
-          "answer": "e_2=(0,1,0)^T.",
+          "prompt": "For $K=3$ and class 2, what is $y_{i}$?",
+          "answer": "$e_2=(0,1,0)^\\top.$",
           "hint": "The class index selects the coordinate."
         },
         {
@@ -10179,11 +10179,11 @@
         ]
       },
       "explanation": {
-        "whatYouSee": "The slide defines a K-dimensional output using the same basis functions, with w_j in R^K and W in R^{M x K}, then writes a general ERM and asks which loss to choose.",
+        "whatYouSee": "The slide defines a $K$-dimensional output using the same basis functions, with $w_j$ in $\\mathbb{R}^{K}$ and $W$ in $\\mathbb{R}^{M\\times K}$, then writes a general ERM and asks which loss to choose.",
         "whyItMatters": "It shows that the model template survives the change from regression to classification; the central design decision becomes the loss over score vectors and class targets.",
         "intuition": "Each feature contributes a K-vector of class scores. W combines basis features into logits or raw scores for the K classes.",
-        "technicalDetail": "With the displayed convention, phi(x) is an M-vector and W^T phi(x) is K-dimensional. The loss receives this score vector and the one-hot or class-index target.",
-        "pitfall": "Do not confuse W's row/column convention across derivations. Check whether scores are W^T Phi(x) or W Phi(x) before multiplying.",
+        "technicalDetail": "With the displayed convention, $\\phi$(x) is an M-vector and $W^{\\top}$ $\\phi$(x) is K-dimensional. The loss receives this score vector and the one-hot or class-index target.",
+        "pitfall": "Do not confuse W's row/column convention across derivations. Check whether scores are $W^{\\top}$ Phi(x) or W Phi(x) before multiplying.",
         "connection": "Slide 52 evaluates least-squares classification; slide 53 gives direct 0–1 loss; slide 54 introduces the smooth cross-entropy surrogate."
       },
       "textbookRefs": [
@@ -10204,7 +10204,7 @@
       "socraticQuestions": [
         {
           "type": "check",
-          "prompt": "If W is MxK and Phi(x) is Mx1, what is the dimension of W^T Phi(x)?",
+          "prompt": "$If W is MxK and \\Phi(x) is Mx1, what is the dimension of W^\\top \\Phi(x)?$",
           "answer": "Kx1, one score per class.",
           "hint": "Transpose W before multiplying."
         },
@@ -10407,7 +10407,7 @@
         "whatYouSee": "The slide applies multivariate least squares to the vector target and lists its benefits (convex, closed form) and drawbacks (treats labels as regression targets and is not a direct classification-error measure). Handwritten annotations highlight a predicted class example.",
         "whyItMatters": "It is a useful baseline and a clean optimization problem, but its convenience does not make it the best loss for nominal labels.",
         "intuition": "The model tries to make the whole score vector numerically close to a one-hot vector, even though only the winning class and probability calibration may matter.",
-        "technicalDetail": "The objective averages ||W^T Phi(x_i)-y_i||^2. Because the target is one-hot, a wrong score geometry can be penalized in ways unrelated to decision correctness.",
+        "technicalDetail": "The objective averages ||$W^{\\top}$ Phi($x_{i}$)-$y_{i}$||^2. Because the target is one-hot, a wrong score geometry can be penalized in ways unrelated to decision correctness.",
         "pitfall": "Do not say least squares cannot classify. It can produce a classifier, but its training target and error geometry may be misaligned with the classification task.",
         "connection": "Slide 53 presents the direct 0–1 loss and its optimization problem; slide 54 replaces it with a smooth surrogate."
       },
@@ -10600,7 +10600,7 @@
         "whatYouSee": "The slide defines 0–1 loss as an indicator that the argmax score is not the true class, then notes that it directly measures classification performance but has an uninformative or undefined gradient.",
         "whyItMatters": "It explains why the loss used for evaluation may differ from the loss used for training.",
         "intuition": "A small change in scores that does not change the winning class has zero 0–1 loss change, while a boundary crossing changes the loss abruptly.",
-        "technicalDetail": "L(z,k)=1{argmax_j z_j != k}. The argmax creates a piecewise-constant objective, so gradient-based optimization cannot use a useful local direction in most regions.",
+        "technicalDetail": "$L(z,k)=1{\\argmax_{j} z_j$!= k}. The argmax creates a piecewise-constant objective, so gradient-based optimization cannot use a useful local direction in most regions.",
         "pitfall": "Do not claim that a non-differentiable loss is invalid for evaluation; the problem is direct gradient-based optimization, not measurement.",
         "connection": "This motivates smooth, convex surrogate losses such as cross-entropy on slide 54."
       },
@@ -10936,7 +10936,7 @@
         "whatYouSee": "The slide maps K logits through softmax to a probability vector, notes that argmax order is preserved, and defines cross-entropy as -log of the probability assigned to the true class. Handwritten notes identify logits and the log-sum-exp form.",
         "whyItMatters": "It supplies the standard smooth surrogate used for multiclass classification and connects the Week 1 linear model to modern neural language-model training.",
         "intuition": "Softmax turns relative scores into probabilities. Cross-entropy strongly penalizes assigning tiny probability to the true class and rewards increasing its score relative to the others.",
-        "technicalDetail": "g(z)_k=exp(z_k)/sum_j exp(z_j), and L(z,k)=-log g(z)_k=log(sum_j exp(z_j))-z_k. Softmax is shift-invariant in argmax: adding the same constant to all logits does not change probabilities.",
+        "technicalDetail": "$g(z)_k=\\exp(z_k)/\\sum_{j} \\exp(z_j)$, and $L(z,k)=-\\log g(z)_k=\\log(\\sum_{j} \\exp(z_j))-z_k$. Softmax is shift-invariant in argmax: adding the same constant to all logits does not change probabilities.",
         "pitfall": "Do not confuse logits with probabilities, and do not compute exp naively for very large scores; use a stable log-sum-exp implementation in code.",
         "connection": "This closes the loop from one-hot encoding (15, 50), vector-valued linear models (51), and direct classification error (53) to a differentiable objective."
       },
@@ -10966,12 +10966,12 @@
           "type": "explain",
           "prompt": "Why does cross-entropy punish a confident wrong prediction more than a mildly wrong one?",
           "answer": "The negative log grows as the true-class probability approaches zero, so assigning tiny probability to the true class incurs a large penalty.",
-          "hint": "Inspect -log p_true."
+          "hint": "$Inspect -\\log p_true.$"
         },
         {
           "type": "check",
-          "prompt": "What is a numerically stable way to evaluate log(sum_j exp(z_j))?",
-          "answer": "Subtract the maximum logit before exponentiating, then add it back: m+log(sum_j exp(z_j-m)).",
+          "prompt": "$What is a numerically stable way to evaluate \\log(\\sum_{j} \\exp(z_j))?$",
+          "answer": "$Subtract the maximum logit before exponentiating, then add it back: m+\\log(\\sum_{j} \\exp(z_j-m)).$",
           "hint": "Use the log-sum-exp trick."
         }
       ],

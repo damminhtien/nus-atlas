@@ -10,30 +10,30 @@
   "questions": [
     {
       "id": "dsa5105-bank-001", "lessonId": "dsa5105-erm", "type": "mcq", "difficulty": "easy", "skill": "concept-map", "cognitiveLevel": "understand", "estimatedSeconds": 60,
-      "prompt": "A random oracle generates y from p*(·|x). What does one observed pair (x_i, y_i) represent?",
+      "prompt": "A random oracle generates y from $p^*(·|x)$. What does one observed pair ($x_{i}$, $y_{i}$) represent?",
       "choices": ["One draw from the conditional label distribution", "The exact complete oracle", "A validation score", "A regularizer"], "answer": 0,
-      "hint": "Separate the data-generating process from one sample.", "explanation": "The pair is one sample drawn at x_i; it does not reveal the full conditional distribution.", "misconception": "Treating an observed label as proof that the oracle is deterministic.", "visualHook": "Trace one x into several possible noisy labels.",
+      "hint": "Separate the data-generating process from one sample.", "explanation": "The pair is one sample drawn at $x_{i}$; it does not reveal the full conditional distribution.", "misconception": "Treating an observed label as proof that the oracle is deterministic.", "visualHook": "Trace one x into several possible noisy labels.",
       "sourceRefs": [{"sourceId": "DSA5105/Lec1_annotated.pdf", "page": 20, "sourceType": "lecture", "role": "random oracle", "status": "current"}]
     },
     {
       "id": "dsa5105-bank-002", "lessonId": "dsa5105-erm", "type": "derivation", "difficulty": "medium", "skill": "objective-reading", "cognitiveLevel": "analyze", "estimatedSeconds": 120,
       "prompt": "Write the supervised-learning objective using a hypothesis h, loss l, and training set D.",
       "accepted": ["minimize 1/N sum loss h(x_i),y_i", "argmin h average loss over D", "minimize empirical risk"],
-      "solution": "Choose h to minimize R_hat(h) = (1/N) sum_i l(h(x_i), y_i), optionally adding a regularization penalty.", "hint": "Use the average over the N observed pairs.", "explanation": "ERM is an optimization statement over observed data; regularization changes the objective but not the role of the sample average.", "misconception": "Writing a population expectation as if all future data were available.", "visualHook": "Slider from individual losses to their mean empirical risk.",
+      "solution": "$Choose h to minimize R_hat(h) = (1/N) \\sum_{i} l(h(x_i), y_i), optionally adding a regularization penalty.$", "hint": "Use the average over the N observed pairs.", "explanation": "ERM is an optimization statement over observed data; regularization changes the objective but not the role of the sample average.", "misconception": "Writing a population expectation as if all future data were available.", "visualHook": "Slider from individual losses to their mean empirical risk.",
       "sourceRefs": [{"sourceId": "DSA5105/Lec1_annotated.pdf", "page": 23, "sourceType": "lecture", "role": "ERM objective", "status": "current"}, {"sourceId": "DSA5105/Textbook.pdf", "page": 18, "sourceType": "textbook", "role": "empirical risk", "status": "supporting"}]
     },
     {
       "id": "dsa5105-bank-003", "lessonId": "dsa5105-linear-week1", "type": "short", "difficulty": "easy", "skill": "linear-basis", "cognitiveLevel": "understand", "estimatedSeconds": 75,
       "prompt": "Why can a linear model still represent a nonlinear curve in x?",
       "accepted": ["because it is linear in features or basis functions", "linear in parameters but nonlinear in x", "basis expansion"],
-      "solution": "A model can be linear in its parameters while using nonlinear features such as x^2 or sin(x). The feature map carries the nonlinearity.", "hint": "Ask what the word linear refers to.", "explanation": "Linearity in parameters is different from linearity in the original input coordinate.", "misconception": "Assuming every linear model must be a straight line in raw input space.", "visualHook": "Toggle raw x and a polynomial feature map.",
+      "solution": "A model can be linear in its parameters while using nonlinear features such as $x^{2}$ or $\\sin(x)$. The feature map carries the nonlinearity.", "hint": "Ask what the word linear refers to.", "explanation": "Linearity in parameters is different from linearity in the original input coordinate.", "misconception": "Assuming every linear model must be a straight line in raw input space.", "visualHook": "Toggle raw x and a polynomial feature map.",
       "sourceRefs": [{"sourceId": "DSA5105/Lec1_annotated.pdf", "page": 31, "sourceType": "lecture", "role": "linear models", "status": "current"}, {"sourceId": "DSA5105/Textbook.pdf", "page": 24, "sourceType": "textbook", "role": "basis functions", "status": "supporting"}]
     },
     {
       "id": "dsa5105-bank-004", "lessonId": "dsa5105-linear-week1", "type": "calculation", "difficulty": "medium", "skill": "ols-uniqueness", "cognitiveLevel": "apply", "estimatedSeconds": 120,
       "prompt": "For X with full column rank, what property makes the least-squares minimizer unique?",
       "accepted": ["X transpose X is invertible", "full column rank", "positive definite X^T X"],
-      "solution": "Full column rank makes X^T X positive definite and invertible, giving w_hat = (X^T X)^(-1)X^T y as the unique minimizer.", "hint": "Look at the Hessian of the quadratic objective.", "explanation": "Rank deficiency creates flat directions and multiple minimizers; full rank removes them.", "misconception": "Confusing existence of a minimizer with uniqueness.", "visualHook": "Show a bowl becoming a flat valley as rank is lost.",
+      "solution": "$Full column rank makes X^\\top X positive definite and invertible, giving w_hat = (X^\\top X)^(-1)X^\\top y as the unique minimizer.$", "hint": "Look at the Hessian of the quadratic objective.", "explanation": "Rank deficiency creates flat directions and multiple minimizers; full rank removes them.", "misconception": "Confusing existence of a minimizer with uniqueness.", "visualHook": "Show a bowl becoming a flat valley as rank is lost.",
       "sourceRefs": [{"sourceId": "DSA5105/Lec1_annotated.pdf", "page": 33, "sourceType": "lecture", "role": "OLS uniqueness", "status": "current"}, {"sourceId": "DSA5105/Textbook.pdf", "page": 25, "sourceType": "textbook", "role": "least squares", "status": "supporting"}]
     },
     {
@@ -52,16 +52,16 @@
     },
     {
       "id": "dsa5105-bank-007", "lessonId": "dsa5105-linear-regularization", "type": "calculation", "difficulty": "medium", "skill": "regularization", "cognitiveLevel": "apply", "estimatedSeconds": 120,
-      "prompt": "In ridge regression, what happens to the objective when lambda increases?",
+      "prompt": "In ridge regression, what happens to the objective when $\\lambda$ increases?",
       "accepted": ["the squared norm penalty receives more weight", "weights are penalized more strongly", "larger regularization penalty"],
-      "solution": "The objective adds lambda ||w||^2, so increasing lambda makes large coefficients more costly and usually shrinks the fitted weights.", "hint": "Inspect the coefficient multiplying the norm.", "explanation": "Regularization trades some training fit for a constrained or smoother hypothesis.", "misconception": "Thinking lambda changes the labels rather than the optimization preference.", "visualHook": "Show contours changing from elongated to round as lambda grows.",
+      "solution": "The objective adds $\\lambda$ ||w||^2, so increasing $\\lambda$ makes large coefficients more costly and usually shrinks the fitted weights.", "hint": "Inspect the coefficient multiplying the norm.", "explanation": "Regularization trades some training fit for a constrained or smoother hypothesis.", "misconception": "Thinking $\\lambda$ changes the labels rather than the optimization preference.", "visualHook": "Show contours changing from elongated to round as $\\lambda$ grows.",
       "sourceRefs": [{"sourceId": "DSA5105/Lec1_annotated.pdf", "page": 46, "sourceType": "lecture", "role": "ridge objective", "status": "current"}, {"sourceId": "DSA5105/Textbook.pdf", "page": 29, "sourceType": "textbook", "role": "regularization", "status": "supporting"}]
     },
     {
       "id": "dsa5105-bank-008", "lessonId": "dsa5105-linear-regularization", "type": "derivation", "difficulty": "hard", "skill": "regularized-ols", "cognitiveLevel": "analyze", "estimatedSeconds": 150,
-      "prompt": "State the closed-form ridge solution and identify the matrix that is made invertible by lambda > 0.",
+      "prompt": "State the closed-form ridge solution and identify the matrix that is made invertible by $\\lambda > 0$.",
       "accepted": ["(X^T X + lambda I)^-1 X^T y", "X transpose X plus lambda I", "ridge solution"],
-      "solution": "w_hat_ridge = (X^T X + lambda I)^(-1) X^T y. For lambda > 0, the added positive diagonal term removes zero-eigenvalue directions.", "hint": "Start from the gradient of the squared loss plus lambda||w||^2.", "explanation": "Ridge stabilizes ill-conditioned or rank-deficient least squares.", "misconception": "Adding lambda I to X rather than to the normal-equation matrix.", "visualHook": "Highlight eigenvalues lifted away from zero.",
+      "solution": "$w_hat_ridge = (X^\\top X + \\lambda I)^(-1) X^\\top y$. For $\\lambda > 0$, the added positive diagonal term removes zero-eigenvalue directions.", "hint": "$Start from the gradient of the squared loss plus \\lambda||w||^2.$", "explanation": "Ridge stabilizes ill-conditioned or rank-deficient least squares.", "misconception": "Adding $\\lambda$ I to X rather than to the normal-equation matrix.", "visualHook": "Highlight eigenvalues lifted away from zero.",
       "sourceRefs": [{"sourceId": "DSA5105/Lec1_annotated.pdf", "page": 48, "sourceType": "lecture", "role": "ridge solution", "status": "current"}, {"sourceId": "DSA5105/Textbook.pdf", "page": 30, "sourceType": "textbook", "role": "closed form", "status": "supporting"}]
     },
     {
@@ -75,28 +75,28 @@
       "id": "dsa5105-bank-010", "lessonId": "dsa5105-svm-margin", "type": "short", "difficulty": "medium", "skill": "geometric-margin", "cognitiveLevel": "apply", "estimatedSeconds": 100,
       "prompt": "How does scaling w affect the geometric margin in a canonical SVM constraint?",
       "accepted": ["the canonical scaling fixes functional margin and geometric margin is 1 over norm w", "geometric margin is inversely proportional to norm w", "margin equals 1 over ||w||"],
-      "solution": "With y_i(w^T x_i+b) >= 1, the geometric margin is 1/||w|| (or 2/||w|| for the full slab). Scaling is fixed by the canonical constraint.", "hint": "Separate functional margin from distance in input space.", "explanation": "The SVM objective minimizes ||w|| because that maximizes geometric separation under the chosen scaling.", "misconception": "Treating w^T x+b itself as a scale-invariant distance.", "visualHook": "Normalize the same hyperplane and compare raw scores with distances.",
+      "solution": "With $y_i(w^\\top x_i+b) >= 1$, the geometric margin is 1/||w|| (or 2/||w|| for the full slab). Scaling is fixed by the canonical constraint.", "hint": "Separate functional margin from distance in input space.", "explanation": "The SVM objective minimizes ||w|| because that maximizes geometric separation under the chosen scaling.", "misconception": "$Treating w^\\top x+b itself as a scale-invariant distance.$", "visualHook": "Normalize the same hyperplane and compare raw scores with distances.",
       "sourceRefs": [{"sourceId": "DSA5105/Lec2_annotated.pdf", "page": 35, "sourceType": "lecture", "role": "geometric margin", "status": "current"}, {"sourceId": "DSA5105/Textbook.pdf", "page": 36, "sourceType": "textbook", "role": "margin geometry", "status": "supporting"}]
     },
     {
       "id": "dsa5105-bank-011", "lessonId": "dsa5105-kernel-pca-cluster", "type": "short", "difficulty": "medium", "skill": "kernel-trick", "cognitiveLevel": "understand", "estimatedSeconds": 90,
       "prompt": "What must a kernel function provide so that it can be treated as an inner product in a feature space?",
       "accepted": ["a positive semidefinite Gram matrix", "PSD Gram matrix", "valid Mercer kernel"],
-      "solution": "For every finite sample, the Gram matrix K_ij = k(x_i,x_j) must be positive semidefinite.", "hint": "Check the quadratic form a^T K a.", "explanation": "Positive semidefiniteness is what makes the implicit feature-space inner product consistent.", "misconception": "Assuming symmetry alone is sufficient.", "visualHook": "Build a Gram matrix and inspect its eigenvalues.",
+      "solution": "For every finite sample, the Gram matrix $K_ij = k(x_i$,$x_{j}$) must be positive semidefinite.", "hint": "$Check the quadratic form a^\\top K a.$", "explanation": "Positive semidefiniteness is what makes the implicit feature-space inner product consistent.", "misconception": "Assuming symmetry alone is sufficient.", "visualHook": "Build a Gram matrix and inspect its eigenvalues.",
       "sourceRefs": [{"sourceId": "DSA5105/Lec2_annotated.pdf", "page": 39, "sourceType": "lecture", "role": "kernel validity", "status": "current"}, {"sourceId": "DSA5105/Textbook.pdf", "page": 41, "sourceType": "textbook", "role": "kernel trick", "status": "supporting"}]
     },
     {
       "id": "dsa5105-bank-012", "lessonId": "dsa5105-kernel-pca-cluster", "type": "calculation", "difficulty": "hard", "skill": "kernel-pca", "cognitiveLevel": "analyze", "estimatedSeconds": 150,
       "prompt": "Why is the kernel matrix centered before kernel PCA, and what operation performs that centering?",
       "accepted": ["to center feature vectors in feature space; H K H", "H K H with H=I-11^T/N", "double centering"],
-      "solution": "Use H = I - (1/N)11^T and replace K by K_c = H K H so the implicit feature vectors have zero mean.", "hint": "Centering in feature space has a matrix analogue.", "explanation": "The centered Gram matrix yields covariance directions around the feature-space mean rather than the origin.", "misconception": "Subtracting the scalar mean of all kernel entries only.", "visualHook": "Compare the kernel embedding before and after centering.",
+      "solution": "Use $H = I - (1/N)11^\\top$ and replace K by $K_c = H K H so the implicit feature vectors have zero mean$.", "hint": "Centering in feature space has a matrix analogue.", "explanation": "The centered Gram matrix yields covariance directions around the feature-space mean rather than the origin.", "misconception": "Subtracting the scalar mean of all kernel entries only.", "visualHook": "Compare the kernel embedding before and after centering.",
       "sourceRefs": [{"sourceId": "DSA5105/Lec2_annotated.pdf", "page": 39, "sourceType": "lecture", "role": "kernel PCA", "status": "current"}, {"sourceId": "DSA5105/Textbook.pdf", "page": 43, "sourceType": "textbook", "role": "kernel centering", "status": "supporting"}]
     },
     {
       "id": "dsa5105-bank-013", "lessonId": "dsa5105-pca-deep-dive", "type": "calculation", "difficulty": "medium", "skill": "pca-eigenvectors", "cognitiveLevel": "apply", "estimatedSeconds": 140,
       "prompt": "For a centered data matrix X, which matrix supplies the principal directions in the covariance formulation?",
       "accepted": ["the eigenvectors of X^T X or the covariance matrix", "eigenvectors of covariance", "principal eigenvectors"],
-      "solution": "The top eigenvectors of (1/N)X^T X are the principal directions; equivalently use the right singular vectors of X.", "hint": "PCA finds directions of maximum projected variance.", "explanation": "The eigenvalue orders the variance captured by each direction.", "misconception": "Using eigenvectors of X itself when X is rectangular.", "visualHook": "Rotate an axis and plot captured variance.",
+      "solution": "The top eigenvectors of (1/N)$X^{\\top}$ X are the principal directions; equivalently use the right singular vectors of X.", "hint": "PCA finds directions of maximum projected variance.", "explanation": "The eigenvalue orders the variance captured by each direction.", "misconception": "Using eigenvectors of X itself when X is rectangular.", "visualHook": "Rotate an axis and plot captured variance.",
       "sourceRefs": [{"sourceId": "DSA5105/Lec3_annotated.pdf", "page": 46, "sourceType": "lecture", "role": "PCA directions", "status": "current"}, {"sourceId": "DSA5105/Textbook.pdf", "page": 82, "sourceType": "textbook", "role": "PCA", "status": "supporting"}]
     },
     {
@@ -117,14 +117,14 @@
       "id": "dsa5105-bank-016", "lessonId": "dsa5105-cluster-gmm", "type": "derivation", "difficulty": "hard", "skill": "gmm-em", "cognitiveLevel": "analyze", "estimatedSeconds": 150,
       "prompt": "What quantity does the E-step compute in a Gaussian mixture model?",
       "accepted": ["posterior responsibilities for each component", "p(z_i=k given x_i)", "component posterior probabilities"],
-      "solution": "The E-step computes r_ik = p(z_i=k|x_i, parameters), the soft responsibility of component k for observation i.", "hint": "Replace hard cluster membership with a conditional probability.", "explanation": "The M-step then re-estimates mixture parameters using these responsibilities as weights.", "misconception": "Updating means and covariances in the E-step.", "visualHook": "Show soft responsibility bars beside each data point.",
+      "solution": "The E-step computes $r_ik = p(z_i=k|x_i$, parameters), the soft responsibility of component k for observation i.", "hint": "Replace hard cluster membership with a conditional probability.", "explanation": "The M-step then re-estimates mixture parameters using these responsibilities as weights.", "misconception": "Updating means and covariances in the E-step.", "visualHook": "Show soft responsibility bars beside each data point.",
       "sourceRefs": [{"sourceId": "DSA5105/Lec3_annotated.pdf", "page": 54, "sourceType": "lecture", "role": "GMM EM", "status": "current"}, {"sourceId": "DSA5105/Textbook.pdf", "page": 98, "sourceType": "textbook", "role": "EM responsibilities", "status": "supporting"}]
     },
     {
       "id": "dsa5105-bank-017", "lessonId": "dsa5105-weighted-ols", "type": "calculation", "difficulty": "medium", "skill": "weighted-risk", "cognitiveLevel": "apply", "estimatedSeconds": 120,
-      "prompt": "In weighted least squares, what does a larger weight w_i do to example i?",
+      "prompt": "$In weighted least squares, what does a larger weight w_i do to example i?$",
       "accepted": ["gives its squared error more influence", "weights its loss more heavily", "increases contribution to objective"],
-      "solution": "The objective contains sum_i w_i (y_i - x_i^T beta)^2, so a larger w_i makes fitting example i more important.", "hint": "Look at the coefficient multiplying its residual squared.", "explanation": "Weights change the empirical measure being optimized; they are not automatically class probabilities.", "misconception": "Thinking a larger weight changes the feature value.", "visualHook": "Resize loss bars as individual weights change.",
+      "solution": "The objective contains $\\sum_{i}$ $w_{i}$ ($y_{i}$ - $x_{i}$^T $\\beta$)^2, so a larger $w_{i}$ makes fitting example i more important.", "hint": "Look at the coefficient multiplying its residual squared.", "explanation": "Weights change the empirical measure being optimized; they are not automatically class probabilities.", "misconception": "Thinking a larger weight changes the feature value.", "visualHook": "Resize loss bars as individual weights change.",
       "sourceRefs": [{"sourceId": "DSA5105/Lec4_annotated.pdf", "page": 17, "sourceType": "lecture", "role": "weighted risk", "status": "current"}, {"sourceId": "DSA5105/Textbook.pdf", "page": 100, "sourceType": "textbook", "role": "weighted least squares", "status": "supporting"}]
     },
     {
@@ -136,16 +136,16 @@
     },
     {
       "id": "dsa5105-bank-019", "lessonId": "dsa5105-svm-dual-kkt", "type": "derivation", "difficulty": "hard", "skill": "svm-dual", "cognitiveLevel": "analyze", "estimatedSeconds": 180,
-      "prompt": "In the SVM dual, what is the constraint on each alpha_i for a soft-margin model with C?",
+      "prompt": "$In the SVM dual, what is the constraint on each alpha_i for a soft-margin model with C?$",
       "accepted": ["0 <= alpha_i <= C", "alpha_i is between zero and C", "box constraint"],
-      "solution": "The dual variables satisfy 0 <= alpha_i <= C and sum_i alpha_i y_i = 0.", "hint": "The slack penalty creates an upper bound.", "explanation": "The box constraint distinguishes soft-margin dual variables from the hard-margin case.", "misconception": "Using alpha_i >= C or omitting the equality constraint.", "visualHook": "Move alpha values along a bounded KKT slider.",
+      "solution": "The dual variables satisfy 0 <= $\\alpha_{i}$ <= C and $\\sum_{i}$ $\\alpha_{i}$ $y_i = 0$.", "hint": "The slack penalty creates an upper bound.", "explanation": "The box constraint distinguishes soft-margin dual variables from the hard-margin case.", "misconception": "$Using alpha_i >= C or omitting the equality constraint.$", "visualHook": "Move $\\alpha$ values along a bounded KKT slider.",
       "sourceRefs": [{"sourceId": "DSA5105/Lec4_annotated.pdf", "page": 23, "sourceType": "lecture", "role": "SVM dual", "status": "current"}, {"sourceId": "DSA5105/Textbook.pdf", "page": 103, "sourceType": "textbook", "role": "dual constraints", "status": "supporting"}]
     },
     {
       "id": "dsa5105-bank-020", "lessonId": "dsa5105-svm-dual-kkt", "type": "short", "difficulty": "hard", "skill": "kkt", "cognitiveLevel": "analyze", "estimatedSeconds": 150,
-      "prompt": "What does 0 < alpha_i < C typically tell you about a soft-margin training point?",
+      "prompt": "$What does 0 < alpha_i < C typically tell you about a soft-margin training point?$",
       "accepted": ["it lies on the margin", "the point is a support vector with active margin", "complementary slackness gives equality"],
-      "solution": "An interior alpha usually corresponds to a point satisfying y_i f(x_i)=1, so it lies on the margin and can help determine the bias.", "hint": "Use complementary slackness and the stationarity conditions.", "explanation": "Alpha at zero, interior, or C encodes different KKT cases.", "misconception": "Assuming every support vector must have alpha exactly C.", "visualHook": "Click KKT cases and highlight point position.",
+      "solution": "An interior $\\alpha$ usually corresponds to a point satisfying $y_{i}$ $f(x_i)=1, so it lies on the margin and can help determine the bias$.", "hint": "Use complementary slackness and the stationarity conditions.", "explanation": "Alpha at zero, interior, or C encodes different KKT cases.", "misconception": "Assuming every support vector must have $\\alpha$ exactly C.", "visualHook": "Click KKT cases and highlight point position.",
       "sourceRefs": [{"sourceId": "DSA5105/Lec4_annotated.pdf", "page": 25, "sourceType": "lecture", "role": "KKT cases", "status": "current"}, {"sourceId": "DSA5105/Textbook.pdf", "page": 107, "sourceType": "textbook", "role": "support vectors", "status": "supporting"}]
     },
     {
@@ -164,16 +164,16 @@
     },
     {
       "id": "dsa5105-bank-023", "lessonId": "dsa5105-neural-backprop", "type": "derivation", "difficulty": "medium", "skill": "backpropagation", "cognitiveLevel": "apply", "estimatedSeconds": 140,
-      "prompt": "For z = wx and loss L(z), express dL/dw using the chain rule.",
+      "prompt": "For $z = wx$ and loss $L(z)$, express $\\frac{dL}{dw}$ using the chain rule.",
       "accepted": ["dL/dz times x", "(dL/dz)x", "chain rule"],
-      "solution": "dL/dw = (dL/dz)(dz/dw) = (dL/dz)x.", "hint": "Differentiate the affine node with respect to its weight.", "explanation": "Backpropagation is repeated local chain-rule composition on a computation graph.", "misconception": "Dropping the input x from the gradient.", "visualHook": "Highlight the two edges in the computation graph.",
+      "solution": "dL/$dw = \u0001FORMULA0\u0001$.", "hint": "Differentiate the affine node with respect to its weight.", "explanation": "Backpropagation is repeated local chain-rule composition on a computation graph.", "misconception": "Dropping the input x from the gradient.", "visualHook": "Highlight the two edges in the computation graph.",
       "sourceRefs": [{"sourceId": "DSA5105/Lec5_annotated.pdf", "page": 46, "sourceType": "lecture", "role": "backprop chain rule", "status": "current"}, {"sourceId": "DSA5105/Textbook.pdf", "page": 112, "sourceType": "textbook", "role": "neural gradients", "status": "supporting"}]
     },
     {
       "id": "dsa5105-bank-024", "lessonId": "dsa5105-neural-backprop", "type": "short", "difficulty": "hard", "skill": "gradient-descent", "cognitiveLevel": "analyze", "estimatedSeconds": 120,
       "prompt": "Why can a small learning rate make neural-network training appear stuck?",
       "accepted": ["updates are too small", "gradient steps make little progress", "slow optimization"],
-      "solution": "Each parameter update is proportional to the learning rate. If it is too small relative to the loss landscape, progress is extremely slow.", "hint": "Inspect the update rule theta <- theta - eta gradient.", "explanation": "A small rate can be stable but inefficient; a large rate can overshoot or diverge.", "misconception": "Thinking a small learning rate changes the target function.", "visualHook": "Run the same contour descent with three learning rates.",
+      "solution": "Each parameter update is proportional to the learning rate. If it is too small relative to the loss landscape, progress is extremely slow.", "hint": "Inspect the update rule $\\theta$ <- $\\theta$ - eta gradient.", "explanation": "A small rate can be stable but inefficient; a large rate can overshoot or diverge.", "misconception": "Thinking a small learning rate changes the target function.", "visualHook": "Run the same contour descent with three learning rates.",
       "sourceRefs": [{"sourceId": "DSA5105/Lec5_annotated.pdf", "page": 48, "sourceType": "lecture", "role": "gradient descent", "status": "current"}, {"sourceId": "DSA5105/Textbook.pdf", "page": 114, "sourceType": "textbook", "role": "optimization", "status": "supporting"}]
     },
     {
@@ -187,14 +187,14 @@
       "id": "dsa5105-bank-026", "lessonId": "dsa5105-pca-numerical", "type": "short", "difficulty": "hard", "skill": "singular-values", "cognitiveLevel": "analyze", "estimatedSeconds": 130,
       "prompt": "How are the singular values of centered X related to PCA variance?",
       "accepted": ["squared singular values are proportional to eigenvalues of X transpose X", "singular values squared give variance up to normalization", "SVD gives PCA"],
-      "solution": "If X = U Sigma V^T, the eigenvalues of X^T X are sigma_j^2; divide by N (or N-1, by convention) for covariance eigenvalues.", "hint": "Multiply X^T X using the SVD.", "explanation": "SVD is often numerically preferable and provides the same principal directions in V.", "misconception": "Using singular values without squaring them for variance.", "visualHook": "Link singular-value bars to explained-variance bars.",
+      "solution": "$If X = U Sigma V^\\top, the eigenvalues of X^\\top X are sigma_j^2; divide by N (or N-1, by convention) for covariance eigenvalues.$", "hint": "$Multiply X^\\top X using the SVD.$", "explanation": "SVD is often numerically preferable and provides the same principal directions in V.", "misconception": "Using singular values without squaring them for variance.", "visualHook": "Link singular-value bars to explained-variance bars.",
       "sourceRefs": [{"sourceId": "DSA5105/Textbook.pdf", "page": 86, "sourceType": "textbook", "role": "SVD and PCA", "status": "supporting"}, {"sourceId": "DSA5105/Ref/Mathematics_of_Data_Science.pdf", "page": 31, "sourceType": "ref", "role": "SVD", "status": "supporting"}]
     },
     {
       "id": "dsa5105-bank-027", "lessonId": "dsa5105-gmm-em-numerical", "type": "calculation", "difficulty": "hard", "skill": "em-responsibility", "cognitiveLevel": "apply", "estimatedSeconds": 170,
-      "prompt": "For two equally likely Gaussian components, what determines whether r_i1 exceeds r_i2?",
+      "prompt": "For two equally likely Gaussian components, what determines whether $r_{i1}$ exceeds $r_{i2}$?",
       "accepted": ["which component has higher likelihood at x_i", "compare the two component densities", "posterior responsibility follows likelihood"],
-      "solution": "With equal priors, the component with larger density at x_i receives the larger posterior responsibility; unequal priors multiply those likelihoods.", "hint": "Write Bayes' rule and cancel the common denominator.", "explanation": "Responsibilities combine mixture weights and component likelihoods.", "misconception": "Choosing the nearest mean regardless of covariance or prior.", "visualHook": "Change covariance and watch responsibilities shift.",
+      "solution": "$With equal priors, the component with larger density at x_i receives the larger posterior responsibility; unequal priors multiply those likelihoods.$", "hint": "Write Bayes' rule and cancel the common denominator.", "explanation": "Responsibilities combine mixture weights and component likelihoods.", "misconception": "Choosing the nearest mean regardless of covariance or prior.", "visualHook": "Change covariance and watch responsibilities shift.",
       "sourceRefs": [{"sourceId": "DSA5105/Lec3_annotated.pdf", "page": 54, "sourceType": "lecture", "role": "GMM responsibility", "status": "current"}, {"sourceId": "DSA5105/Textbook.pdf", "page": 98, "sourceType": "textbook", "role": "Bayesian assignment", "status": "supporting"}]
     },
     {
@@ -208,7 +208,7 @@
       "id": "dsa5105-bank-029", "lessonId": "dsa5105-mdp-value-iteration", "type": "calculation", "difficulty": "medium", "skill": "bellman-backup", "cognitiveLevel": "apply", "estimatedSeconds": 140,
       "prompt": "In a deterministic one-step MDP, what is the value backup for action a from state s?",
       "accepted": ["reward plus gamma times value of next state", "r(s,a)+gamma V(s')", "bellman backup"],
-      "solution": "The backup is Q(s,a) = r(s,a) + gamma V(s'), and value iteration takes the maximum over available actions.", "hint": "Follow one transition and discount the future.", "explanation": "The Bellman operator recursively relates current value to immediate reward and successor value.", "misconception": "Discounting the immediate reward instead of the future value.", "visualHook": "Animate reward and discounted value flowing along an edge.",
+      "solution": "The backup is $Q(s,a) = r(s,a) + \\gamma V(s'), and value iteration takes the maximum over available actions$.", "hint": "Follow one transition and discount the future.", "explanation": "The Bellman operator recursively relates current value to immediate reward and successor value.", "misconception": "Discounting the immediate reward instead of the future value.", "visualHook": "Animate reward and discounted value flowing along an edge.",
       "sourceRefs": [{"sourceId": "DSA5105/Lec6_annotated.pdf", "page": 17, "sourceType": "lecture", "role": "value iteration", "status": "current"}, {"sourceId": "DSA5105/Textbook.pdf", "page": 103, "sourceType": "textbook", "role": "Bellman backup", "status": "supporting"}]
     },
     {
@@ -250,14 +250,14 @@
       "id": "dsa5105-bank-035", "lessonId": "dsa5105-spectral-clustering", "type": "mcq", "difficulty": "medium", "skill": "graph-laplacian", "cognitiveLevel": "understand", "estimatedSeconds": 70,
       "prompt": "What does the graph Laplacian encode for a node signal?",
       "choices": ["Differences between a node and its neighbors", "Only the node labels", "The SVM margin", "A neural-network loss derivative"], "answer": 0,
-      "hint": "Look at the quadratic form f^T L f.", "explanation": "The Laplacian penalizes disagreement across edges and exposes smooth graph structure.", "misconception": "Treating L as another adjacency matrix with the same semantics.", "visualHook": "Color a graph signal and display edge disagreement.",
+      "hint": "$Look at the quadratic form f^\\top L f.$", "explanation": "The Laplacian penalizes disagreement across edges and exposes smooth graph structure.", "misconception": "Treating L as another adjacency matrix with the same semantics.", "visualHook": "Color a graph signal and display edge disagreement.",
       "sourceRefs": [{"sourceId": "DSA5105/Lec7_annotated.pdf", "page": 39, "sourceType": "lecture", "role": "graph Laplacian", "status": "current"}, {"sourceId": "DSA5105/Textbook.pdf", "page": 118, "sourceType": "textbook", "role": "spectral graph theory", "status": "supporting"}]
     },
     {
       "id": "dsa5105-bank-036", "lessonId": "dsa5105-spectral-clustering", "type": "short", "difficulty": "hard", "skill": "spectral-embedding", "cognitiveLevel": "analyze", "estimatedSeconds": 130,
       "prompt": "Why can the first nontrivial Laplacian eigenvectors help reveal clusters?",
       "accepted": ["they provide a low-dimensional smooth embedding that separates weakly connected groups", "small eigenvectors encode clusters", "spectral embedding separates communities"],
-      "solution": "Low-eigenvalue eigenvectors vary little within well-connected groups but change across weak cuts, making them useful coordinates for clustering.", "hint": "Relate smoothness to a small f^T L f.", "explanation": "Spectral clustering turns graph connectivity into coordinates before applying a conventional clustering method.", "misconception": "Using the largest eigenvectors because they always contain the clusters.", "visualHook": "Project graph nodes onto the first two eigenvectors.",
+      "solution": "Low-eigenvalue eigenvectors vary little within well-connected groups but change across weak cuts, making them useful coordinates for clustering.", "hint": "$Relate smoothness to a small f^\\top L f.$", "explanation": "Spectral clustering turns graph connectivity into coordinates before applying a conventional clustering method.", "misconception": "Using the largest eigenvectors because they always contain the clusters.", "visualHook": "Project graph nodes onto the first two eigenvectors.",
       "sourceRefs": [{"sourceId": "DSA5105/Lec7_annotated.pdf", "page": 46, "sourceType": "lecture", "role": "spectral clustering", "status": "current"}, {"sourceId": "DSA5105/Textbook.pdf", "page": 120, "sourceType": "textbook", "role": "spectral embedding", "status": "supporting"}]
     },
     {
@@ -271,7 +271,7 @@
       "id": "dsa5105-bank-038", "lessonId": "dsa5105-ls-svm-loo", "type": "derivation", "difficulty": "hard", "skill": "model-selection", "cognitiveLevel": "evaluate", "estimatedSeconds": 140,
       "prompt": "Why should the final test score not be used to select the best regularization parameter?",
       "accepted": ["it leaks test information and makes the estimate optimistic", "test leakage", "selection bias"],
-      "solution": "Using the test score to choose lambda makes the test set part of training/model selection, so the reported score is no longer an unbiased final estimate.", "hint": "Ask what information influenced the chosen model.", "explanation": "A clean evaluation requires the test set to remain unseen until all choices are fixed.", "misconception": "Thinking only parameter gradients count as training information.", "visualHook": "Show a data-leakage path from test results back into selection.",
+      "solution": "Using the test score to choose $\\lambda$ makes the test set part of training/model selection, so the reported score is no longer an unbiased final estimate.", "hint": "Ask what information influenced the chosen model.", "explanation": "A clean evaluation requires the test set to remain unseen until all choices are fixed.", "misconception": "Thinking only parameter gradients count as training information.", "visualHook": "Show a data-leakage path from test results back into selection.",
       "sourceRefs": [{"sourceId": "DSA5105/Lec1_annotated.pdf", "page": 17, "sourceType": "lecture", "role": "test leakage", "status": "current"}, {"sourceId": "DSA5105/Textbook.pdf", "page": 70, "sourceType": "textbook", "role": "model selection", "status": "supporting"}]
     },
     {
@@ -292,21 +292,21 @@
       "id": "dsa5105-bank-041", "lessonId": "dsa5105-rl-bellman", "type": "calculation", "difficulty": "medium", "skill": "bellman-optimality", "cognitiveLevel": "apply", "estimatedSeconds": 140,
       "prompt": "Write the optimal Bellman equation for Q*(s,a) in a finite MDP.",
       "accepted": ["expected reward plus gamma max over next actions Q star", "Q star equals expected r plus gamma max Q star", "optimal Bellman equation"],
-      "solution": "Q*(s,a) = E[r + gamma max_a' Q*(s',a') | s,a]. The expectation is over the transition and reward model.", "hint": "After taking a, optimize the next action.", "explanation": "The max distinguishes the optimality equation from policy evaluation under a fixed policy.", "misconception": "Using max over the current action before the transition.", "visualHook": "Expand one stochastic transition into successor action branches.",
+      "solution": "Q*$(s,a) = E[r + \\gamma \\max_{a}' Q^*(s',a') | s,a]$. The expectation is over the transition and reward model.", "hint": "After taking a, optimize the next action.", "explanation": "The max distinguishes the optimality equation from policy evaluation under a fixed policy.", "misconception": "Using max over the current action before the transition.", "visualHook": "Expand one stochastic transition into successor action branches.",
       "sourceRefs": [{"sourceId": "DSA5105/Lec8_annotated.pdf", "page": 46, "sourceType": "lecture", "role": "Bellman optimality", "status": "current"}, {"sourceId": "DSA5105/Textbook.pdf", "page": 103, "sourceType": "textbook", "role": "Q iteration", "status": "supporting"}]
     },
     {
       "id": "dsa5105-bank-042", "lessonId": "dsa5105-rl-bellman", "type": "short", "difficulty": "hard", "skill": "discounting", "cognitiveLevel": "analyze", "estimatedSeconds": 100,
-      "prompt": "What is the effect of gamma approaching zero in a discounted return?",
+      "prompt": "What is the effect of $\\gamma$ approaching zero in a discounted return?",
       "accepted": ["the agent becomes myopic and emphasizes immediate reward", "future rewards matter less", "only near-term reward dominates"],
-      "solution": "As gamma approaches zero, future rewards are heavily discounted and the decision becomes increasingly myopic.", "hint": "Look at gamma to the power of each future time step.", "explanation": "Gamma controls the planning horizon, not the immediate reward itself.", "misconception": "Thinking gamma rescales all rewards equally.", "visualHook": "Compare return contributions for gamma 0.1, 0.8, and 0.99.",
+      "solution": "As $\\gamma$ approaches zero, future rewards are heavily discounted and the decision becomes increasingly myopic.", "hint": "Look at $\\gamma$ to the power of each future time step.", "explanation": "Gamma controls the planning horizon, not the immediate reward itself.", "misconception": "Thinking $\\gamma$ rescales all rewards equally.", "visualHook": "Compare return contributions for $\\gamma$ 0.1, 0.8, and 0.99.",
       "sourceRefs": [{"sourceId": "DSA5105/Lec8_annotated.pdf", "page": 48, "sourceType": "lecture", "role": "discounting", "status": "current"}, {"sourceId": "DSA5105/Textbook.pdf", "page": 108, "sourceType": "textbook", "role": "discounted return", "status": "supporting"}]
     },
     {
       "id": "dsa5105-bank-043", "lessonId": "dsa5105-gnn", "type": "derivation", "difficulty": "medium", "skill": "message-passing", "cognitiveLevel": "apply", "estimatedSeconds": 140,
       "prompt": "Give a generic one-layer message-passing update for node v.",
       "accepted": ["h_v next equals update h_v and aggregate neighbor messages", "h_v' = phi(h_v, aggregate psi(h_v,h_u))", "aggregate neighbors then update node"],
-      "solution": "A generic layer is h_v' = phi(h_v, AGG_{u in N(v)} psi(h_v,h_u)), where AGG is permutation invariant.", "hint": "Separate message, aggregation, and update.", "explanation": "Permutation-invariant aggregation makes the representation insensitive to the ordering of neighbors.", "misconception": "Using a sequence-sensitive sum order as part of the graph definition.", "visualHook": "Show messages arriving, aggregating, and updating a node.",
+      "solution": "A generic layer is $h_{v}$' = $\\phi$($h_{v}$, AGG_{u in $N(v)$} $\\psi$($h_{v}$,$h_{u}$)), where AGG is permutation invariant.", "hint": "Separate message, aggregation, and update.", "explanation": "Permutation-invariant aggregation makes the representation insensitive to the ordering of neighbors.", "misconception": "Using a sequence-sensitive sum order as part of the graph definition.", "visualHook": "Show messages arriving, aggregating, and updating a node.",
       "sourceRefs": [{"sourceId": "DSA5105/Ref/Chapter3_Graph_Neural_Networks.pdf", "page": 1, "sourceType": "ref", "role": "message passing", "status": "supporting"}, {"sourceId": "DSA5105/Lec8_annotated.pdf", "page": 54, "sourceType": "lecture", "role": "GNN layer", "status": "current"}]
     },
     {

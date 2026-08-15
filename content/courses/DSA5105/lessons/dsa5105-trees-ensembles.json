@@ -8,7 +8,7 @@
     "Compute a split impurity",
     "Explain depth and pruning",
     "Contrast bagging with boosting",
-    "Update AdaBoost weights and alpha"
+    "Update AdaBoost weights and $\\alpha$"
   ],
   "sourceRefs": [
     {
@@ -121,7 +121,7 @@
       "sourceType": "textbook",
       "math": {
         "latex": "D_{t+1}(i)\\propto D_t(i)\\exp\\{-\\alpha_t y_i h_t(x_i)\\}",
-        "explanation": "When the weak learner is correct, $y_i h_t(x_i)=1$ and the weight is multiplied by $e^{-alpha_t}$. When it is wrong, the sign flips and the weight is multiplied by $e^{alpha_t}$. A learner better than random has $epsilon_t<0.5$ and non-negative alpha.",
+        "explanation": "When the weak learner is correct, $y_i h_t(x_i)=1$ and the weight is multiplied by $e^{-\\alpha_t}$. When it is wrong, the sign flips and the weight is multiplied by $e^{\\alpha_t}$. A learner better than random has $\\epsilon_t<0.5$ and non-negative $\\alpha$.",
         "symbols": [
           {
             "latex": "\\epsilon_t",
@@ -149,7 +149,7 @@
     {
       "title": "Compute a Gini split",
       "steps": [
-        "A parent node has labels +,+,-,-, so Gini(parent)=1-(1/2)^2-(1/2)^2=0.5.",
+        "A parent node has labels +,+,-,-, so $Gini(parent)=1-(\\frac{1}{2})^2-(\\frac{1}{2})^2=0$.5.",
         "A candidate split creates two pure children, each with Gini 0.",
         "The weighted child impurity is 0, so the impurity decrease is 0.5."
       ],
@@ -159,9 +159,9 @@
     {
       "title": "One AdaBoost coefficient",
       "steps": [
-        "If the weighted error is $\\epsilon=0.2$, then $\\alpha=\\frac12\\log(0.8/0.2)=\\frac12\\log4\\approx0.693$.",
-        "Examples classified incorrectly receive a multiplicative factor exp(alpha), while correct examples receive exp(-alpha), before normalization.",
-        "Because epsilon is below 0.5, alpha is positive and the learner receives a positive vote weight."
+        "If the weighted error is $\\epsilon=0.2$, then $\\alpha=\\frac12\\log(0.\\frac{8}{0}.2)=\\frac12\\log4\\approx0.693$.",
+        "Examples classified incorrectly receive a multiplicative factor $\\exp(\\alpha)$, while correct examples receive $\\exp(-\\alpha)$, before normalization.",
+        "Because $\\epsilon$ is below 0.5, $\\alpha$ is positive and the learner receives a positive vote weight."
       ],
       "answer": "AdaBoost turns weighted accuracy into both a vote coefficient and a reweighting signal.",
       "sourceType": "textbook"
@@ -409,7 +409,7 @@
       "type": "worked-example",
       "title": "Compute a Gini split",
       "steps": [
-        "A parent node has labels +,+,-,-, so Gini(parent)=1-(1/2)^2-(1/2)^2=0.5.",
+        "A parent node has labels +,+,-,-, so $Gini(parent)=1-(\\frac{1}{2})^2-(\\frac{1}{2})^2=0$.5.",
         "A candidate split creates two pure children, each with Gini 0.",
         "The weighted child impurity is 0, so the impurity decrease is 0.5."
       ],
@@ -458,9 +458,9 @@
       "type": "worked-example",
       "title": "One AdaBoost coefficient",
       "steps": [
-        "If the weighted error is $\\epsilon=0.2$, then $\\alpha=\\frac12\\log(0.8/0.2)=\\frac12\\log4\\approx0.693$.",
-        "Examples classified incorrectly receive a multiplicative factor exp(alpha), while correct examples receive exp(-alpha), before normalization.",
-        "Because epsilon is below 0.5, alpha is positive and the learner receives a positive vote weight."
+        "If the weighted error is $\\epsilon=0.2$, then $\\alpha=\\frac12\\log(0.\\frac{8}{0}.2)=\\frac12\\log4\\approx0.693$.",
+        "Examples classified incorrectly receive a multiplicative factor $\\exp(\\alpha)$, while correct examples receive $\\exp(-\\alpha)$, before normalization.",
+        "Because $\\epsilon$ is below 0.5, $\\alpha$ is positive and the learner receives a positive vote weight."
       ],
       "answer": "AdaBoost turns weighted accuracy into both a vote coefficient and a reweighting signal.",
       "sourceType": "textbook",
