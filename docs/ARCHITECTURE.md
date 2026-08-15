@@ -26,6 +26,7 @@ src/core/content-repository.js
         ├── src/core/study-store.js
         ├── src/core/router.js
         ├── src/features/nus/route-table.js
+        ├── src/features/nus/presentation.js
         ├── src/features/nus/planner.js
         ├── src/features/nus/exam.js
         ├── src/ui/labs/registry.js
@@ -46,6 +47,11 @@ content files directly, which keeps course and textbook changes data-driven.
 `src/core/router.js` owns only hash parsing and the route lifecycle hooks. The
 app shell supplies route rendering and chrome behavior; feature route tables
 resolve their own page handlers.
+
+`src/features/nus/presentation.js` contains the escaped HTML presenters for
+source badges, formulas, lesson blocks, visual cues, and study-kit sections.
+It receives source/visual accessors as dependencies and does not own course
+data or learner state.
 
 `src/core/study-store.js` owns the browser-local evidence ledger, mastery,
 planner tasks, and attempts. The legacy `js/nus-store.js` file is now only a
