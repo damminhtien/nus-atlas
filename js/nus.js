@@ -9,7 +9,7 @@
   const visuals = () => repository() ? repository().listVisuals() : (window.NUS_VISUALS || {});
   const schedule = () => repository() ? repository().getSchedule() : (window.NUS_SCHEDULE || { courses: {} });
   const sourceTypes = () => repository() ? repository().getSourceTypes() : (window.NUS_SOURCE_TYPES || {});
-  let examState = null, examTimer = null, focusTimer = null;
+  let focusTimer = null;
   let sqlState = { index: 0, result: null, error: null, ran: false, reveal: false }, sqlPromise = null;
   let clockState = { p1: 0, p2: 0, vector1: [0, 0], vector2: [0, 0], events: [] };
   let deliveryState = { mode: "FIFO", log: [] };
@@ -99,18 +99,18 @@
     return `<a class="nus-list-row" href="#/nus/planner" data-route><div><b>${esc(a.title)}</b><span>${esc(courseName(a.courseCode))} · ${esc(a.kind)} · ${a.weight}%</span></div><div class="nus-date">${esc(fmtDate(a.date))}<small>${days < 0 ? "overdue" : `${Math.max(0, days)}d left`}${reminder}</small></div></a>`;
   }
 
-  function renderPlanner() {
-    let body = pageHead("NUS planner", "Deadlines, checklists, and reminders", "Use status and checklist items to turn each assessment into a reverse study plan. Dates come from local course sources or the NUSMods snapshot.");
-    body += `<div class="nus-callout"><b>Reminder policy</b><span>Confirmed dates surface at 7, 3, and 1 day. “Date pending” stays visible until you confirm it yourself.</span></div>`;
-    body += `<div class="nus-planner-list">${assessments().map(a => {
-      const task = window.NUS_STORE.task(a.id), checks = Array.isArray(task.checks) ? task.checks : [], done = checks.filter(Boolean).length;
-      const days = dayCount(a.date), urgency = days != null && days <= 7 && days >= 0 ? "urgent" : "";
-      return `<article class="nus-assessment ${urgency}"><div class="nus-assessment-head"><div><span class="nus-code">${esc(a.courseCode)}</span><h3>${esc(a.title)}</h3></div><div class="nus-assessment-meta">${a.date ? `<b>${esc(fmtDate(a.date))}</b><span>${days < 0 ? "overdue" : `${days} days left`}</span>` : `<b>Date pending</b><span>Do not guess</span>`}</div></div><div class="nus-assessment-line"><span>${esc(a.kind)} · ${a.weight}%</span><span>${statusPill(task.status)} · ${done}/${a.checklist.length} checklist items</span></div><div class="nus-assessment-controls"><label>Status <select data-nus-status="${esc(a.id)}"><option value="todo" ${task.status === "todo" ? "selected" : ""}>To do</option><option value="in-progress" ${task.status === "in-progress" ? "selected" : ""}>In progress</option><option value="done" ${task.status === "done" ? "selected" : ""}>Done</option></select></label>${a.source ? `<span class="nus-source">Source: ${esc(sourceLabel(a.source))}</span>` : ""}</div><div class="nus-checklist">${a.checklist.map((item, i) => `<label><input type="checkbox" data-nus-check="${esc(a.id)}" data-index="${i}" ${checks[i] ? "checked" : ""}><span>${esc(item)}</span></label>`).join("")}</div></article>`;
-    }).join("")}</div>`;
-    root.innerHTML = body;
-    root.querySelectorAll("[data-nus-status]").forEach(el => el.addEventListener("change", () => { window.NUS_STORE.setTask(el.dataset.nusStatus, { status: el.value }); renderPlanner(); }));
-    root.querySelectorAll("[data-nus-check]").forEach(el => el.addEventListener("change", () => { window.NUS_STORE.toggleCheck(el.dataset.nusCheck, Number(el.dataset.index)); renderPlanner(); }));
-  }
+  const plannerFeature = window.NUS_PLANNER_FEATURE ? window.NUS_PLANNER_FEATURE({
+    root,
+    getAssessments: assessments,
+    getStore: () => window.NUS_STORE,
+    pageHead,
+    dayCount,
+    fmtDate,
+    statusPill,
+    sourceLabel,
+    esc
+  }) : null;
+  function renderPlanner() { return plannerFeature ? plannerFeature.render() : renderNotFound(); }
 
   function renderCourse(code) {
     const c = course(code);
@@ -199,70 +199,20 @@
     bindLessonInteractions(code, id);
   }
 
-  function examQuestions(code, scope) {
-    let qs = lessons(code).flatMap(l => (l.questions || []).map(q => ({ ...q, lessonId: l.id, lessonTitle: l.title, lessonSourceRefs: l.sourceRefs || [] })));
-    if (scope) qs = qs.filter(q => q.lessonId === scope);
-    return qs;
-  }
-  function answerKey(q, raw) {
-    if (q.type === "mcq") return Number(raw) === q.answer;
-    const value = String(raw || "").toLowerCase().trim().replace(/[.$,()]/g, "").replace(/\s+/g, " ");
-    return value.length > 0 && (q.accepted || []).some(a => value === String(a).toLowerCase().trim().replace(/[.$,()]/g, "").replace(/\s+/g, " ") || value.includes(String(a).toLowerCase().trim()));
-  }
-  function stopExamTimer() { if (examTimer) { clearInterval(examTimer); examTimer = null; } }
-  function startExamTimer() {
-    stopExamTimer();
-    examTimer = setInterval(() => {
-      if (!examState || examState.finished) return stopExamTimer();
-      const left = Math.max(0, (examState.limitMinutes * 60) - Math.floor((Date.now() - examState.startedAt) / 1000));
-      const el = document.getElementById("nus-exam-timer"); if (el) el.textContent = `${Math.floor(left / 60)}:${String(left % 60).padStart(2, "0")}`;
-      if (left <= 0) finishExam();
-    }, 1000);
-  }
-  function finishExam() {
-    if (!examState) return;
-    examState.finished = true; stopExamTimer();
-    const score = examState.answers.filter(a => a.correct).length;
-    examState.answers.filter(a => a.correct).forEach(a => window.NUS_STORE.recordEvidence({ eventId: `recall:${examState.attemptId}:${a.q.id}`, type: "recall_correct", courseCode: examState.code, lessonId: a.q.lessonId, xp: 5, meta: { questionId: a.q.id } }));
-    window.NUS_STORE.recordAttempt({ attemptId: examState.attemptId, mode: "exam", courseCode: examState.code, lessonId: examState.scope || null, score, total: examState.questions.length });
-    renderExam(null, null, true);
-  }
-  function renderExam(code, scope, internal) {
-    const routed = !internal;
-    if (!examState || (routed && (examState.code !== (code || "all") || examState.scope !== (scope || "")))) examState = null;
-    if (!examState) {
-      const options = courses().map(c => `<option value="${esc(c.code)}" ${code === c.code ? "selected" : ""}>${esc(c.code)} · ${esc(c.title)}</option>`).join("");
-      const selected = code || "DSA5101";
-      root.innerHTML = pageHead("NUS practice", "Exam mode", "Choose one course and an optional lesson. The timer is local, answers stay hidden until the attempt ends, and the final screen becomes a review deck.") + `<section class="nus-card nus-exam-setup reveal"><label>Course<select id="nus-exam-course">${options}</select></label><label>Scope<select id="nus-exam-scope"><option value="">All seeded lessons</option>${lessons(selected).map(l => `<option value="${esc(l.id)}" ${scope === l.id ? "selected" : ""}>${esc(l.title)}</option>`).join("")}</select></label><label>Time<select id="nus-exam-minutes"><option value="15">15 minutes</option><option value="30" selected>30 minutes</option><option value="45">45 minutes</option></select></label><div class="nus-callout"><b>Exam rules</b><span>Mixed MCQ, short answer, calculation, derivation, trace, and SQL prompts. Solutions are revealed only after submission.</span></div><button class="btn primary" id="nus-start-exam">Start attempt</button></section>`;
-      typesetNus();
-      const courseSelect = root.querySelector("#nus-exam-course"), scopeSelect = root.querySelector("#nus-exam-scope");
-      courseSelect.addEventListener("change", () => { location.hash = `#/nus/exam/${courseSelect.value}`; });
-      scopeSelect.addEventListener("change", () => { location.hash = `#/nus/exam/${courseSelect.value}/${scopeSelect.value}`; });
-      root.querySelector("#nus-start-exam").addEventListener("click", () => { examState = { attemptId: `nus-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`, code: selected, scope: scope || "", questions: examQuestions(selected, scope), index: 0, answers: [], startedAt: Date.now(), limitMinutes: Number(root.querySelector("#nus-exam-minutes").value), finished: false }; renderExam(null, null, true); });
-      return;
-    }
-    if (examState.finished) return renderExamResult();
-    const q = examState.questions[examState.index];
-    if (!q) return finishExam();
-    const answersSoFar = examState.answers.length;
-    let input = q.type === "mcq" ? `<div class="nus-choices">${q.choices.map((choice, i) => `<label><input type="radio" name="nus-answer" value="${i}"><span>${esc(choice)}</span></label>`).join("")}</div>` : `<textarea id="nus-answer" rows="5" placeholder="Write your answer here…"></textarea>`;
-    root.innerHTML = pageHead(`${esc(examState.code)} · Question ${examState.index + 1}/${examState.questions.length}`, q.type.toUpperCase(), q.lessonTitle) + `<div class="nus-exam-bar"><span>Time left <b id="nus-exam-timer">--:--</b></span><span>${answersSoFar} submitted</span></div><section class="nus-card nus-exam-question reveal"><div class="nus-question-source">${(q.sourceRefs || q.lessonSourceRefs || []).slice(0, 2).map(sourceItem).join(" ")}</div><h3>${esc(q.prompt)}</h3>${input}<div class="nus-exam-footer"><span class="nus-muted">Answer reveal is locked until the attempt ends.</span><button class="btn primary" id="nus-next-answer">${examState.index + 1 === examState.questions.length ? "Submit attempt" : "Next question"}</button></div></section>`;
-    typesetNus();
-    root.querySelector("#nus-next-answer").addEventListener("click", () => {
-      let raw = q.type === "mcq" ? (root.querySelector("input[name='nus-answer']:checked") || {}).value : root.querySelector("#nus-answer").value;
-      if (raw == null || !String(raw).trim()) return;
-      examState.answers.push({ q, raw, correct: answerKey(q, raw) }); examState.index++;
-      if (examState.index >= examState.questions.length) finishExam(); else renderExam(null, null, true);
-    });
-    startExamTimer();
-  }
-  function renderExamResult() {
-    const correct = examState.answers.filter(a => a.correct).length, total = examState.questions.length;
-    let body = pageHead(`${esc(examState.code)} · review`, "Attempt complete", `${correct}/${total} correct. Use the deck below to turn misses into the next study session.`);
-    body += `<div class="nus-result-score"><b>${Math.round(correct / Math.max(1, total) * 100)}%</b><span>${correct} correct · ${total - correct} to review</span></div><div class="nus-review-deck">${examState.answers.map((a, i) => `<article class="nus-review-item ${a.correct ? "correct" : "missed"}"><div><span class="pill ${a.correct ? "sage" : ""}">${a.correct ? "Correct" : "Review"}</span><b>${i + 1}. ${esc(a.q.prompt)}</b></div><p><strong>Source:</strong> ${(a.q.sourceRefs || a.q.lessonSourceRefs || []).slice(0, 2).map(sourceItem).join(" ")}</p><p><strong>Your answer:</strong> ${esc(a.q.type === "mcq" ? (a.q.choices[Number(a.raw)] || "No choice") : a.raw)}</p><p><strong>Worked answer:</strong> ${text(a.q.solution || a.q.explanation || "Review the source lesson.")}</p></article>`).join("")}</div><div class="nus-card"><h3>Cheat sheet</h3>${lessons(examState.code).map(l => `<details><summary>${esc(l.title)}</summary>${l.sections.map(s => `<p>${text(s.body)}</p>`).join("")}</details>`).join("")}</div><div class="nus-lesson-actions">${button("Try again", `#/nus/exam/${examState.code}${examState.scope ? `/${examState.scope}` : ""}`, "primary")}${button("Back to course", `#/nus/course/${examState.code}`, "ghost")}</div>`;
-    root.innerHTML = body;
-    typesetNus();
-  }
+  const examFeature = window.NUS_EXAM_FEATURE ? window.NUS_EXAM_FEATURE({
+    root,
+    getCourses: courses,
+    getLessons: lessons,
+    getStore: () => window.NUS_STORE,
+    pageHead,
+    sourceItem,
+    text,
+    esc,
+    button,
+    typeset: typesetNus
+  }) : null;
+  function stopExamTimer() { if (examFeature) examFeature.stopTimer(); }
+  function renderExam(code, scope, internal) { return examFeature ? examFeature.render(code, scope, internal) : renderNotFound(); }
 
   function renderSql() {
     const spec = content("DSA5104").sqlPractice, ex = spec.exercises[sqlState.index];
