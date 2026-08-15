@@ -1662,6 +1662,11 @@ body.nus-reading-mode .nus-study-compass { position:sticky; top:16px; z-index:20
 .nus-trace .nus-lab-step, .nus-timeline .nus-lab-step { display:grid; grid-template-columns:auto minmax(0, 1fr); gap:12px; align-items:start; padding:12px; border:1px solid var(--line); border-radius:10px; opacity:.55; }
 .nus-trace .nus-lab-step.active, .nus-timeline .nus-lab-step.active { display:grid; opacity:1; border-color:color-mix(in srgb, var(--gold) 55%, var(--line)); background:color-mix(in srgb, var(--gold) 7%, transparent); }
 .nus-trace .nus-lab-step b, .nus-timeline .nus-lab-step b { color:var(--gold); }
+.nus-derivation-trace .nus-lab-step { grid-template-columns:minmax(0, 1fr); }
+.nus-derivation-trace .nus-lab-step > b,
+.nus-derivation-trace .nus-lab-step > .nus-lab-formula,
+.nus-derivation-trace .nus-lab-step > span { grid-column:1; min-width:0; }
+.nus-derivation-trace .nus-lab-step > .nus-lab-formula { display:flex; align-items:center; justify-content:center; width:100%; min-height:32px; margin:10px 0 12px; padding:0 8px 4px; overflow-x:auto; color:var(--gold); font-size:clamp(16px, 1.45vw, 20px); line-height:1.4; text-align:center; }
 .nus-lab-deep-dive { border-color:color-mix(in srgb, var(--violet) 42%, var(--line)); }
 .nus-lab-deep-tabs { display:flex; gap:7px; overflow-x:auto; margin:16px 0 12px; padding-bottom:4px; scrollbar-width:thin; }
 .nus-deep-tab { flex:none; padding:8px 11px; border:1px solid var(--line); border-radius:8px; background:var(--panel); color:var(--ink-mute); cursor:pointer; font:11px var(--font-ui); }

@@ -23,4 +23,7 @@ test("app shell exposes a persistent collapsible left navigation", () => {
   assert.match(css, /\.nus-socratic-modal/);
   assert.match(css, /body\.nus-slide-focus-mode \.nus-slide-image[^}]*height:100%/);
   assert.match(css, /body\.nus-slide-focus-mode \.nus-slide-context \.nus-slide-depth[^}]*display:none/);
+  assert.match(css, /\.nus-derivation-trace \.nus-lab-step \{ grid-template-columns:minmax\(0, 1fr\); \}/);
+  assert.match(css, /\.nus-derivation-trace \.nus-lab-step > \.nus-lab-formula[^}]*justify-content:center/);
+  assert.match(css, /\.nus-derivation-trace \.nus-lab-step > \.nus-lab-formula[^}]*font-size:clamp\(16px, 1\.45vw, 20px\)/);
 });
