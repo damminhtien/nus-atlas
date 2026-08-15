@@ -2866,16 +2866,7 @@
     if (PAGES[p]) return PAGES[p] + " · " + BASE;
     return BASE + " · Study Studio";
   }
-  function router() {
-    if (window.VIZUtil) window.VIZUtil.stopAll(); // kill any running animation loops
-    const h = (location.hash || "#/").slice(1);
-    const parts = h.split("/").filter(Boolean); // e.g. ["course","linear-algebra"]
-    const isNusRoute = parts.length === 0 || parts[0] === "nus";
-    app.classList.toggle("nus-root", isNusRoute);
-    if (!isNusRoute || parts[1] !== "lesson") document.body.classList.remove("nus-reading-mode");
-    try { document.title = docTitleFor(parts); } catch (e) { document.title = "NUS Atlas · Study Studio"; }
-    clearResumePill();                                     // drop any lingering resume pill from the previous lesson
-    window.scrollTo(0, 0);
+  function renderRoute(parts) {
     if (parts.length === 0) window.NUS_UI ? window.NUS_UI.renderRoute([]) : viewDashboard();
     else if (parts[0] === "nus") window.NUS_UI ? window.NUS_UI.renderRoute(parts.slice(1)) : viewDashboard();
     else if (parts[0] === "atlas") viewDashboard();
@@ -2898,17 +2889,36 @@
     else if (parts[0] === "achievements") viewAchievements();
     else if (parts[0] === "stats") viewStats();
     else view404();
-    renderChrome();
-    closeSidebar();
-    // SPA focus management (a11y): move keyboard/screen-reader focus to the new view's heading so navigation is
-    // announced and the focus point isn't stranded on the removed element. Skip while a modal owns focus.
-    if (!document.querySelector(".intro-ov, .palette-scrim, .levelup-ov, .sc-ov")) {
-      const fh = app.querySelector(".page-head h2") || app.querySelector("h2") || app;
-      if (fh !== app) fh.setAttribute("tabindex", "-1");
-      try { fh.focus({ preventScroll: true }); } catch (e) { try { fh.focus(); } catch (e2) {} }
+  }
+  const atlasRouter = window.ATLAS_ROUTER ? window.ATLAS_ROUTER({
+    location: window.location,
+    beforeRoute(parts) {
+      if (window.VIZUtil) window.VIZUtil.stopAll(); // kill any running animation loops
+      const isNusRoute = parts.length === 0 || parts[0] === "nus";
+      app.classList.toggle("nus-root", isNusRoute);
+      if (!isNusRoute || parts[1] !== "lesson") document.body.classList.remove("nus-reading-mode");
+      try { document.title = docTitleFor(parts); } catch (e) { document.title = "NUS Atlas · Study Studio"; }
+      clearResumePill();
+      window.scrollTo(0, 0);
+    },
+    renderRoute,
+    afterRoute() {
+      renderChrome();
+      closeSidebar();
+      // SPA focus management (a11y): move keyboard/screen-reader focus to the new view's heading so navigation is
+      // announced and the focus point isn't stranded on the removed element. Skip while a modal owns focus.
+      if (!document.querySelector(".intro-ov, .palette-scrim, .levelup-ov, .sc-ov")) {
+        const fh = app.querySelector(".page-head h2") || app.querySelector("h2") || app;
+        if (fh !== app) fh.setAttribute("tabindex", "-1");
+        try { fh.focus({ preventScroll: true }); } catch (e) { try { fh.focus(); } catch (e2) {} }
+      }
+      updateReadProgress(); updateToTop();
+      setTimeout(updateReadProgress, 200);
     }
-    updateReadProgress(); updateToTop();                   // recompute bar + hide back-to-top for the new (top-scrolled) page
-    setTimeout(updateReadProgress, 200);                   // ...and again once KaTeX/viz settle the height
+  }) : null;
+  function router() {
+    if (atlasRouter) return atlasRouter.navigate();
+    return renderRoute((location.hash || "#/").slice(1).split("/").filter(Boolean));
   }
 
   // ---------- theme ----------

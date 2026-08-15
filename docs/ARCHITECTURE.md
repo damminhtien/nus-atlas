@@ -24,6 +24,7 @@ data/nus/generated/content-manifest.js
 src/core/content-repository.js
         │
         ├── src/core/study-store.js
+        ├── src/core/router.js
         ├── src/features/nus/route-table.js
         ├── src/features/nus/planner.js
         ├── src/features/nus/exam.js
@@ -41,6 +42,10 @@ The NUS entrypoint injects repository and study-store helpers into feature
 modules. Planner owns assessment checklists and reminders; Exam Mode owns
 question selection, timer, scoring, and review. Neither feature reads the
 content files directly, which keeps course and textbook changes data-driven.
+
+`src/core/router.js` owns only hash parsing and the route lifecycle hooks. The
+app shell supplies route rendering and chrome behavior; feature route tables
+resolve their own page handlers.
 
 `src/core/study-store.js` owns the browser-local evidence ledger, mastery,
 planner tasks, and attempts. The legacy `js/nus-store.js` file is now only a
