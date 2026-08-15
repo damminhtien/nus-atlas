@@ -6,6 +6,10 @@ and refresh first-party asset URLs so browsers and the service worker pick up th
 
 ## [Unreleased]
 
+## [0.2.15] - 2026-08-15
+
+- enforce KaTeX formula rendering
+
 ## [0.2.14] - 2026-08-15
 
 - Hide closed provenance content from study layout
