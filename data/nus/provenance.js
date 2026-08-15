@@ -24,8 +24,9 @@
   window.NUS_DSA5105_SOURCES = {
     lecture: [
       { sourceId: "DSA5105/syllabus.pdf", sourceType: "lecture", role: "current syllabus", status: "current" },
-      { sourceId: "DSA5105/Lec1.pdf", sourceType: "lecture", role: "local lecture slides", status: "current-context" },
-      { sourceId: "DSA5105/Ref/week1_DSA5105_lecture1_with_note.pdf", sourceType: "lecture", role: "annotated Week 1 lecture copy", status: "current" },
+      { sourceId: "DSA5105/Lec1_annotated.pdf", sourceType: "lecture", role: "canonical annotated Week 1 lecture", status: "current" },
+      { sourceId: "DSA5105/Lec1.pdf", sourceType: "lecture", role: "unannotated Week 1 comparison copy", status: "comparison" },
+      { sourceId: "DSA5105/Ref/week1_DSA5105_lecture1_with_note.pdf", sourceType: "lecture", role: "alternate Week 1 annotated export", status: "comparison" },
       { sourceId: "DSA5105/Lec1_exercises.pdf", sourceType: "lecture", role: "Week 1 exercise sheet", status: "current-context" },
       { sourceId: "DSA5105/Lec1_exercises-solutions.pdf", sourceType: "lecture", role: "Week 1 worked solutions", status: "current-context" }
     ],

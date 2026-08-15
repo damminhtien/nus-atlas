@@ -99,6 +99,21 @@
     const packageData = courseId && coursePackage(courseId);
     return packageData && packageData.textbook ? packageData.textbook : null;
   }
+  function getSourceManifest(courseId) {
+    const packageData = courseId && coursePackage(courseId);
+    return packageData && packageData.sourceManifest ? packageData.sourceManifest : null;
+  }
+  function getSlideSets(courseId) {
+    const packageData = courseId && coursePackage(courseId);
+    return packageData && Array.isArray(packageData.slideSets) ? packageData.slideSets.slice() : [];
+  }
+  function getSlideSet(courseId, slideSetId) {
+    return getSlideSets(courseId).find(slideSet => slideSet.id === slideSetId) || null;
+  }
+  function getSlide(courseId, slideSetId, slideNumber) {
+    const slideSet = getSlideSet(courseId, slideSetId);
+    return slideSet ? slideSet.slides.find(slide => slide.slideNumber === Number(slideNumber)) || null : null;
+  }
 
   return Object.freeze({
     getCourse,
@@ -112,6 +127,10 @@
     getSchedule,
     getSourceCatalog,
     getTextbook,
+    getSourceManifest,
+    getSlideSets,
+    getSlideSet,
+    getSlide,
     packageLoaded,
     needsLoad,
     registerPackage,

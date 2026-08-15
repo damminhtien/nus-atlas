@@ -17,6 +17,19 @@ function writeJson(file, value) {
   fs.writeFileSync(file, `${JSON.stringify(value, null, 2)}\n`);
 }
 
+function readJsonIfExists(file) {
+  return fs.existsSync(file) ? JSON.parse(fs.readFileSync(file, "utf8")) : null;
+}
+
+function loadSlideSets(packageRoot) {
+  const slidesRoot = path.join(packageRoot, "slides");
+  if (!fs.existsSync(slidesRoot)) return [];
+  return fs.readdirSync(slidesRoot)
+    .filter(file => file.endsWith(".json"))
+    .sort()
+    .map(file => JSON.parse(fs.readFileSync(path.join(slidesRoot, file), "utf8")));
+}
+
 function cleanObject(value) {
   return JSON.parse(JSON.stringify(value));
 }
@@ -121,6 +134,8 @@ function packageCourse(state, courseId) {
   const textbook = fs.existsSync(textbookFile)
     ? JSON.parse(fs.readFileSync(textbookFile, "utf8"))
     : null;
+  const sourceManifest = readJsonIfExists(path.join(packageRoot, "sources", "manifest.json"));
+  const slideSets = loadSlideSets(packageRoot);
   const modules = [];
   const joinedModules = [];
   const questions = [];
@@ -157,6 +172,8 @@ function packageCourse(state, courseId) {
     moduleIds: modules.map(module => module.id),
     assessmentIds: state.assessments.filter(item => item.courseCode === courseId).map(item => item.id),
     sourceCatalog: collectSources(course, catalog),
+    slideSetIds: slideSets.map(slideSet => slideSet.id),
+    sourcePolicy: sourceManifest ? cleanObject(sourceManifest.policy || {}) : {},
     visualIds: [...visualIds],
     labIds: [...labIds]
   };
@@ -171,10 +188,12 @@ function packageCourse(state, courseId) {
     content: { modules: joinedModules },
     assessments: state.assessments.filter(item => item.courseCode === courseId),
     sources: packageCourse.sourceCatalog,
+    ...(sourceManifest ? { sourceManifest: cleanObject(sourceManifest) } : {}),
+    slideSets: cleanObject(slideSets),
     ...(textbook ? { textbook } : {}),
     visuals: Object.fromEntries([...visualIds].filter(id => state.visuals[id]).map(id => [id, cleanObject(state.visuals[id])])),
     labs: Object.fromEntries([...labIds].filter(id => state.labs[id]).map(id => [id, cleanObject(state.labs[id])])),
-    counts: { modules: modules.length, lessons: joinedModules.reduce((n, module) => n + module.lessons.length, 0), questions: questions.length, artifacts: artifacts.length }
+    counts: { modules: modules.length, lessons: joinedModules.reduce((n, module) => n + module.lessons.length, 0), questions: questions.length, artifacts: artifacts.length, slideSets: slideSets.length, slides: slideSets.reduce((total, slideSet) => total + (slideSet.slides || []).length, 0) }
   };
 }
 
