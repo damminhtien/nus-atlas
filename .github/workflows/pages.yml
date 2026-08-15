@@ -33,6 +33,8 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: 20
+      - name: Check release metadata and cache-busting version
+        run: npm run version:check
       - name: Build normalized course packages
         run: node scripts/content-build.js --all
       - name: Validate content contracts, extraction provenance, and gates

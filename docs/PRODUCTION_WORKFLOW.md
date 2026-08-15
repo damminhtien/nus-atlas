@@ -13,6 +13,20 @@ git commit -m "docs: describe the change"
 git push origin main
 ```
 
+For a release or any change that must force-refresh the production app shell, bump first:
+
+```bash
+npm run version:check
+npm run version:bump -- patch -m "Describe the change"
+git add VERSION package.json CHANGELOG.md index.html
+git commit -m "release: bump Atlas version"
+git push origin main
+```
+
+Use `minor` for a new user-facing capability and `major` for a breaking change. The helper updates the canonical
+`VERSION`, package metadata, dated changelog entry, app metadata, and all first-party JS/CSS cache keys. CI then
+uses that version in the service-worker cache namespace, so the deployed app can detect and refresh itself.
+
 The workflow in `.github/workflows/pages.yml` behaves as follows:
 
 | Event | Prerender build | Pages deploy |
@@ -45,3 +59,4 @@ The CI build runs `node prerender.js`, which copies the app shell into `dist/` a
 - **Deploy is skipped:** confirm the push is on `main`; feature-branch and pull-request runs intentionally build only.
 - **Deploy is rejected:** check the repository’s `github-pages` environment and keep its deployment branch policy aligned with `main`.
 - **Production looks stale:** confirm the latest successful run’s SHA matches `main`, then hard-refresh the Pages URL. The service worker cache is versioned in `sw.js` when app assets change.
+- **Version check fails:** run `npm run version:check`; do not hand-edit one asset query in isolation. Re-run `npm run version:bump -- patch -m "..."` from the current `VERSION`.

@@ -11,6 +11,17 @@ Rules:
 - Read graphify-out/GRAPH_REPORT.md only for broad architecture review or when query/path/explain do not surface enough context.
 - After modifying code, run `graphify update . --no-cluster` to keep the graph current (AST-only, no API cost).
 
+## Version and release workflow
+
+- `VERSION` is the canonical semantic version and must match `package.json`.
+- Run `npm run version:check` before committing release work.
+- Bump through `npm run version:bump -- patch -m "..."` (or `minor`/`major`); do not edit `VERSION`, release headings, or
+  first-party asset query strings by hand.
+- The bump helper updates `VERSION`, `package.json`, `CHANGELOG.md`, the app metadata, and all local JS/CSS `?v=` URLs.
+  The service-worker registration and `prerender.js` consume the same version, so a production deploy gets a new cache
+  namespace and the browser can refresh automatically.
+- CI should run `npm run version:check` before content build; a mismatch is a release-blocking error.
+
 ## Token-efficient agent workflow
 
 Use the smallest useful context. Prefer targeted queries and compact command output over dumping whole files,

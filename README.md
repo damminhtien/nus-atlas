@@ -79,6 +79,20 @@ Every push runs the Pages prerender build. GitHub Pages accepts production deplo
 
 See [docs/PRODUCTION_WORKFLOW.md](docs/PRODUCTION_WORKFLOW.md) for the complete release and troubleshooting flow.
 
+### Version and release notes
+
+`VERSION` is the canonical semantic version. Keep it synchronized with `package.json`; the release helper checks this
+along with the current `CHANGELOG.md` entry and every first-party JavaScript/CSS cache-busting query in `index.html`.
+
+```bash
+npm run version:check
+npm run version:bump -- patch -m "Describe the change"
+# or: npm run version:bump -- minor -m "Describe the feature"
+```
+
+The bump command updates `VERSION`, `package.json`, `CHANGELOG.md`, the app version metadata, and local asset query
+strings. The Pages workflow then rebuilds the service-worker cache and deploys `main` automatically.
+
 ## Validation
 
 The same checks used by CI can be run locally when needed:
@@ -117,6 +131,8 @@ The Pages workflow runs `node prerender.js` in CI, creates the static `dist/` ar
 - `scripts/content-build.js` — joins package IDs into the browser compatibility bundle.
 - `nus-gate.js` — NUS data, privacy, and provenance gate.
 - `prerender.js` — CI static-page and sitemap build.
+- `VERSION` / `CHANGELOG.md` — canonical release version and dated release history.
+- `scripts/version.js` — version check, semantic bump, changelog entry, and cache-busting helper.
 - `.github/workflows/pages.yml` — production Pages workflow.
 - `docs/` — study and production documentation.
 

@@ -1,6 +1,19 @@
-# Atlas — Changelog
+# NUS Atlas — Changelog
 
-Prepend new entries under this header. Include the loop-iteration number in the heading.
+All notable releases are recorded here. The canonical release number lives in [`VERSION`](VERSION).
+Use `npm run version:bump -- patch -m "What changed"` to increment the version, add a dated release entry,
+and refresh first-party asset URLs so browsers and the service worker pick up the new build.
+
+## [Unreleased]
+
+## [0.2.0] - 2026-08-15
+
+- Add canonical release metadata and automatic cache refresh
+
+## [Legacy iteration history]
+
+The entries below predate semantic release versions and are retained for research traceability. New work belongs
+under a semantic version heading above, not under an iteration-only heading.
 
 ## iter 1223 — ★★ ALL 193 LESSONS VERIFIED — final sweep (ML+IT+TS+GT): 16 agents, 489 recomputations, 23 edits (holistic-phase / review-sweep)
 **The lesson-verification backlog is CLEARED.** The final 30 lessons across four topics verified in one sweep (16 paired agents · 489 recomputations · zero failures); 14 fully clean, 23 adjudicated edits across 16. Standouts:

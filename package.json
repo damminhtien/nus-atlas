@@ -1,13 +1,15 @@
 {
   "name": "nus-atlas",
   "private": true,
-  "version": "0.1.0",
+  "version": "0.2.0",
   "scripts": {
     "content:build": "node scripts/content-build.js --all",
     "validate": "node scripts/validate-content.js && node scripts/validate-question-bank.js && node scripts/validate-extracted.js && node scripts/validate-textbook.js && node scripts/validate-slides.js && node nus-gate.js && node gate.js",
     "test": "node --test tests/*.test.js",
     "typecheck": "tsc --noEmit",
-    "build:vite": "vite build --outDir dist-vite"
+    "build:vite": "vite build --outDir dist-vite",
+    "version:check": "node scripts/version.js check",
+    "version:bump": "node scripts/version.js bump"
   },
   "devDependencies": {
     "typescript": "^5.9.3",
