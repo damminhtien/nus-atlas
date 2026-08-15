@@ -159,7 +159,7 @@ function copyInto(src, dst) {
 // ---- build ----
 fs.rmSync(OUT, { recursive: true, force: true });
 fs.mkdirSync(OUT, { recursive: true });
-for (const item of ["index.html", "sw.js", "manifest.webmanifest", "icon.svg", "css", "js", "data"]) {
+for (const item of ["index.html", "sw.js", "manifest.webmanifest", "icon.svg", "css", "js", "src", "data"]) {
   const p = path.join(__dirname, item);
   if (fs.existsSync(p)) copyInto(p, path.join(OUT, item));
 }
