@@ -6,6 +6,10 @@ and refresh first-party asset URLs so browsers and the service worker pick up th
 
 ## [Unreleased]
 
+## [0.2.10] - 2026-08-15
+
+- fix linear reasoning trace formula layout
+
 ## [0.2.9] - 2026-08-15
 
 - restore production slide assets and streamline focus reading
