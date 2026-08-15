@@ -14,6 +14,7 @@ labs by adding data and feature modules—not by editing the app shell.
   visuals, and labs are joined by IDs; artifacts do not mutate lessons.
 - A route table and lab registry with focused tests.
 - A framework-free core router that separates hash lifecycle from page rendering.
+- Shared NUS presentation helpers extracted from the route entrypoint.
 - Planner and Exam Mode extracted from `js/nus.js` into independently testable
   feature modules.
 - One generated content manifest shared by browser runtime, prerender, and the
