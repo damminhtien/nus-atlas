@@ -194,6 +194,7 @@
     root,
     getCourse: course,
     getSlideSet: (code, setId) => repository() && repository().getSlideSet ? repository().getSlideSet(code, setId) : null,
+    getTextbook: code => repository() && repository().getTextbook ? repository().getTextbook(code) : null,
     pageHead,
     sourceBadge,
     sourceItem,
