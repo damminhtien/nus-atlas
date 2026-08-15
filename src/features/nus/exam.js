@@ -62,11 +62,38 @@
     return `${question.difficulty || "medium"} · ${question.skill || "explain"} · ${question.estimatedSeconds || 90}s`;
   }
 
+  function normalizeAnswer(raw) {
+    return String(raw || "")
+      .toLowerCase()
+      .replace(/\\(?:mathrm|operatorname|text)\s*\{([^{}]*)\}/g, "$1")
+      .replace(/\\(lambda|mu|psi|ell|phi|dagger|sign)\b/g, "$1")
+      .replace(/[λμψϕφ]/g, symbol => ({ "λ": "lambda", "μ": "mu", "ψ": "psi", "ϕ": "phi", "φ": "phi" }[symbol]))
+      .replace(/[^a-z0-9]+/g, " ")
+      .replace(/\s+/g, " ")
+      .trim();
+  }
+
+  function termMatches(value, term) {
+    return String(term || "").split("|").some(candidate => {
+      const normalized = normalizeAnswer(candidate);
+      return normalized && value.includes(normalized);
+    });
+  }
+
+  function rubricPasses(question, raw) {
+    const rubric = Array.isArray(question.rubric) ? question.rubric : [];
+    if (!rubric.length) return null;
+    const value = normalizeAnswer(raw);
+    return value.length > 0 && rubric.every(item => (item.required || []).every(term => termMatches(value, term)));
+  }
+
   function answerKey(question, raw) {
     if (question.type === "mcq") return Number(raw) === question.answer;
-    const value = String(raw || "").toLowerCase().trim().replace(/[.$,()]/g, "").replace(/\s+/g, " ");
+    const rubricResult = rubricPasses(question, raw);
+    if (rubricResult !== null) return rubricResult;
+    const value = normalizeAnswer(raw);
     return value.length > 0 && (question.accepted || []).some(answer => {
-      const normalized = String(answer).toLowerCase().trim().replace(/[.$,()]/g, "").replace(/\s+/g, " ");
+      const normalized = normalizeAnswer(answer);
       return value === normalized || value.includes(normalized);
     });
   }
@@ -177,7 +204,10 @@
     const input = question.type === "mcq"
       ? `<div class="nus-choices">${question.choices.map((choice, index) => `<label><input type="radio" name="nus-answer" value="${index}"><span>${esc(choice)}</span></label>`).join("")}</div>`
       : `<textarea id="nus-answer" rows="5" placeholder="Write your answer here…"></textarea>`;
-    root.innerHTML = pageHead(`${esc(state.code)} · Question ${state.index + 1}/${state.questions.length}`, question.type.toUpperCase(), question.lessonTitle) + `<div class="nus-exam-bar"><span>Time left <b id="nus-exam-timer">--:--</b></span><span>${answersSoFar} submitted</span><span>${esc(state.focus || "smart")} · ${state.questions.length} questions</span></div><section class="nus-card nus-exam-question reveal"><div class="nus-question-source">${(question.sourceRefs || question.lessonSourceRefs || []).slice(0, 2).map(sourceItem).join(" ")}</div><div class="nus-question-meta"><span>${esc(questionLabel(question))}</span><span>${esc(question.cognitiveLevel || "understand")}</span></div><h3>${esc(question.prompt)}</h3>${input}<div class="nus-exam-footer"><span class="nus-muted">Answer reveal is locked until the attempt ends.</span><div class="nus-exam-footer-actions">${question.lessonId ? button("Review lesson", `#/nus/lesson/${esc(state.code)}/${esc(question.lessonId)}`, "ghost") : ""}${button("Mistakes", `#/nus/mistakes/${esc(state.code)}`, "ghost")}<button class="btn primary" id="nus-next-answer">${state.index + 1 === state.questions.length ? "Submit attempt" : "Next question"}</button></div></div></section>`;
+    const rubricHint = question.type === "derivation" && Array.isArray(question.rubric) && question.rubric.length
+      ? `<p class="nus-muted nus-rubric-hint"><b>Required derivation components:</b> ${question.rubric.map(item => esc(item.label)).join(" · ")}</p>`
+      : "";
+    root.innerHTML = pageHead(`${esc(state.code)} · Question ${state.index + 1}/${state.questions.length}`, question.type.toUpperCase(), question.lessonTitle) + `<div class="nus-exam-bar"><span>Time left <b id="nus-exam-timer">--:--</b></span><span>${answersSoFar} submitted</span><span>${esc(state.focus || "smart")} · ${state.questions.length} questions</span></div><section class="nus-card nus-exam-question reveal"><div class="nus-question-source">${(question.sourceRefs || question.lessonSourceRefs || []).slice(0, 2).map(sourceItem).join(" ")}</div><div class="nus-question-meta"><span>${esc(questionLabel(question))}</span><span>${esc(question.cognitiveLevel || "understand")}</span></div><h3>${esc(question.prompt)}</h3>${rubricHint}${input}<div class="nus-exam-footer"><span class="nus-muted">Answer reveal is locked until the attempt ends.</span><div class="nus-exam-footer-actions">${question.lessonId ? button("Review lesson", `#/nus/lesson/${esc(state.code)}/${esc(question.lessonId)}`, "ghost") : ""}${button("Mistakes", `#/nus/mistakes/${esc(state.code)}`, "ghost")}<button class="btn primary" id="nus-next-answer">${state.index + 1 === state.questions.length ? "Submit attempt" : "Next question"}</button></div></div></section>`;
     typeset();
     root.querySelector("#nus-next-answer").addEventListener("click", () => {
       const raw = question.type === "mcq" ? (root.querySelector("input[name='nus-answer']:checked") || {}).value : root.querySelector("#nus-answer").value;
@@ -193,5 +223,5 @@
     startTimer();
   }
 
-  return Object.freeze({ render, renderMistakes, stopTimer, questionsFor });
+  return Object.freeze({ render, renderMistakes, stopTimer, questionsFor, answerKey });
 });

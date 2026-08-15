@@ -88,7 +88,7 @@ test("browser script order installs the same repository boundary", () => {
   vm.runInContext(fs.readFileSync(path.join(__dirname, "../data/nus/generated/dsa5105.js"), "utf8"), context, { filename: "data/nus/generated/dsa5105.js" });
   context.NUS_REPOSITORY.registerPackage("DSA5105", context.NUS_CONTENT_PACKAGES.DSA5105);
   assert.equal(context.NUS_REPOSITORY.stats().lessons, 35);
-  assert.equal(context.NUS_REPOSITORY.getLesson("DSA5105", "dsa5105-erm").flashcards.length, 4);
+  assert.equal(context.NUS_REPOSITORY.getLesson("DSA5105", "dsa5105-erm").flashcards.length, 7);
 });
 
 test("a package-only course is discoverable without changing the app shell", () => {

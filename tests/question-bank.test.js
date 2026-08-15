@@ -16,7 +16,7 @@ test("DSA5105 question bank covers every lesson with metadata", () => {
 test("content build exposes question bank metadata and merged questions", () => {
   const packageData = build("DSA5105");
   assert.equal(packageData.questionBank.extensionCount, 44);
-  assert.equal(packageData.counts.questions, 129);
+  assert.equal(packageData.counts.questions, 130);
   const lesson = packageData.content.modules.flatMap(module => module.lessons).find(item => item.id === "dsa5105-gnn");
   assert.ok(lesson.questions.some(question => question.id === "dsa5105-bank-044"));
   assert.equal(lesson.questions.at(-1).schemaVersion, "nus.question.v1");

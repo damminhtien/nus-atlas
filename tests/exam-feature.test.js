@@ -30,3 +30,20 @@ test("exam feature keeps question selection scoped to a lesson", () => {
   assert.match(root.innerHTML, /Start attempt/);
   assert.match(root.innerHTML, /Mistake Clinic/);
 });
+
+test("derivation rubric requires every declared concept", () => {
+  const feature = createExamFeature({
+    root: { innerHTML: "" }, getCourses: () => [], getLessons: () => [], getStore: () => ({}),
+    pageHead: () => "", sourceItem: () => "", text: value => value, esc: value => String(value), button: () => "", typeset() {}
+  });
+  const question = {
+    type: "derivation",
+    rubric: [
+      { label: "normal equation", required: ["a lambda i", "w", "b"] },
+      { label: "interpretation", required: ["weak", "shrink"] }
+    ],
+    accepted: ["ridge spectral filter"]
+  };
+  assert.equal(feature.answerKey(question, "(A + lambda I) w = b"), false);
+  assert.equal(feature.answerKey(question, "(A + lambda I) w = b; weak directions shrink"), true);
+});

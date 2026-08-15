@@ -50,6 +50,7 @@ courses.forEach(c => {
       if (!q.id || !q.type || !q.prompt || !q.explanation && !q.solution) errors.push("incomplete question: " + (q.id || l.id));
       if (q.type === "mcq" && (!Array.isArray(q.choices) || typeof q.answer !== "number" || q.answer < 0 || q.answer >= q.choices.length)) errors.push("bad MCQ: " + q.id);
       if (q.type !== "mcq" && (!Array.isArray(q.accepted) || !q.accepted.length)) errors.push("missing accepted answer: " + q.id);
+      if (q.rubric && (!Array.isArray(q.rubric) || !q.rubric.length || q.rubric.some(item => !item || !item.label || !Array.isArray(item.required) || !item.required.length))) errors.push("invalid derivation rubric: " + q.id);
       (q.sourceRefs || []).forEach(r => { if (packageData && (!sourceTypes.has(r.sourceType) || !r.role || !r.status)) errors.push("untyped question source ref: " + q.id); });
     });
     if (!Array.isArray(l.flashcards) || l.flashcards.length < 3) errors.push("missing flashcards: " + l.id);
