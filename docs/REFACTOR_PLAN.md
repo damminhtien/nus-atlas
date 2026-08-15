@@ -30,10 +30,10 @@ behind an `app-shell` and `legacy-atlas` boundary.
 
 ### 2. Make study state a core service
 
-Introduce a small `src/core/study-store` contract for lesson completion,
+`src/core/study-store.js` now provides the contract for lesson completion,
 attempts, evidence, mastery, tasks, and migration. Keep localStorage details in
-one implementation and pass the service into features. Add migration tests so a
-new schema does not erase a learner's progress.
+one implementation and pass the service into features. Migration tests protect
+learner progress when the state schema changes.
 
 ### 3. Add course packages without shell edits
 
