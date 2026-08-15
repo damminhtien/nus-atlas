@@ -13,6 +13,7 @@ labs by adding data and feature modules—not by editing the app shell.
 - DSA5105 as the first normalized package. Lesson content, questions, study kits,
   visuals, and labs are joined by IDs; artifacts do not mutate lessons.
 - A route table and lab registry with focused tests.
+- A framework-free core router that separates hash lifecycle from page rendering.
 - Planner and Exam Mode extracted from `js/nus.js` into independently testable
   feature modules.
 - One generated content manifest shared by browser runtime, prerender, and the
@@ -23,7 +24,7 @@ labs by adding data and feature modules—not by editing the app shell.
 
 ### 1. Finish the app boundary
 
-Extract the remaining NUS views into `dashboard`, `course`, `lesson`, `sql`, and
+The generic hash lifecycle is now isolated in `src/core/router.js`. Extract the remaining NUS views into `dashboard`, `course`, `lesson`, `sql`, and
 `simulations` feature modules. Keep `js/nus.js` responsible only for dependency
 injection and route registration. Move the generic Atlas routes in `js/app.js`
 behind an `app-shell` and `legacy-atlas` boundary.
@@ -85,7 +86,8 @@ Keep commits small and independently deployable:
 2. `refactor: introduce study store contract`
 3. `perf: load course payloads on demand`
 4. `feat: add textbook chapter index`
-5. `test: add package migration and production smoke checks`
+5. `refactor: isolate app-shell route lifecycle`
+6. `test: add package migration and production smoke checks`
 
 Work stays on `main`. Each commit that changes production runs content build,
 contract tests, extraction provenance, NUS gate, Atlas gate, prerender, and
