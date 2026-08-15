@@ -76,7 +76,7 @@ Object.entries(visualLabs).forEach(([id, lab]) => {
   if (!lab || !allowed.has(lab.courseCode) || !lab.lessonId || !lab.type || !lab.learningGoal || typeof lab.check !== "function" || lab.reducedMotion !== true || !Array.isArray(lab.sourceRefs) || !lab.sourceRefs.length) errors.push("incomplete visual lab: " + id);
   (lab && lab.sourceRefs || []).forEach(ref => { if (!ref.sourceId || !Number.isInteger(ref.page) || ref.page < 1 || !sourceTypes.has(ref.sourceType) || !ref.role || !ref.status) errors.push("incomplete visual lab source: " + id); });
 });
-const labTypes = new Set(["compare", "geometry", "math-stepper", "algorithm-trace", "derivation-trace", "event-timeline", "pipeline-builder", "concept-map", "decision-tree"]);
+const labTypes = new Set(["compare", "geometry", "math-stepper", "algorithm-trace", "derivation-trace", "event-timeline", "pipeline-builder", "concept-map", "decision-tree", "deep-dive"]);
 Object.entries(visualLabs).forEach(([id, lab]) => { if (!labTypes.has(lab.type)) errors.push("unknown visual lab type: " + id); });
 const publicFiles = fs.readdirSync("data/nus").filter(f => f.endsWith(".js")).map(f => "data/nus/" + f).concat(["js/nus.js", "js/nus-store.js", "js/nus-components.js"]);
 const publicText = publicFiles.map(file => fs.readFileSync(file, "utf8"));

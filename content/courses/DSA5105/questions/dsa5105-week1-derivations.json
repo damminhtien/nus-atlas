@@ -1,0 +1,217 @@
+[
+  {
+    "id": "dsa5105-w1d-q1",
+    "type": "derivation",
+    "prompt": "Write both empirical risk and population risk, then state the iid assumption that connects them.",
+    "accepted": [
+      "R hat equals average loss and R population equals expectation",
+      "Rhat and Rpop with x iid mu",
+      "sample average versus expectation"
+    ],
+    "solution": "$\\\\widehat R(h)=N^{-1}\\\\sum_i\\\\ell(h(x_i),y_i)$ while $R_{\\\\mathrm{pop}}(h)=\\\\mathbb E_{x\\\\sim\\\\mu}[\\\\ell(h(x),f^*(x))]$; the usual bridge assumes $x_i\\\\overset{\\\\mathrm{iid}}\\\\sim\\\\mu$.",
+    "explanation": "Do not write the population expectation as though it were directly observable.",
+    "sourceRefs": [
+      {
+        "sourceId": "DSA5105/Lec1_annotated.pdf",
+        "page": 23,
+        "sourceType": "lecture",
+        "role": "empirical risk",
+        "status": "current"
+      },
+      {
+        "sourceId": "DSA5105/Lec1_annotated.pdf",
+        "page": 24,
+        "sourceType": "lecture",
+        "role": "generalization gap",
+        "status": "current"
+      }
+    ],
+    "difficulty": "hard",
+    "skill": "derive",
+    "cognitiveLevel": "analyze",
+    "estimatedSeconds": 150,
+    "misconception": "Check the assumption behind your answer.",
+    "visualHook": "Explain the idea with a small diagram or example.",
+    "courseId": "DSA5105",
+    "lessonId": "dsa5105-week1-derivations",
+    "schemaVersion": "nus.question.v1"
+  },
+  {
+    "id": "dsa5105-w1d-q2",
+    "type": "derivation",
+    "prompt": "Differentiate Huber loss and state the stationarity condition for a location estimate.",
+    "accepted": [
+      "psi delta equals r inside and delta sign r outside; sum psi equals zero",
+      "bounded influence",
+      "sum psi delta m minus yi equals zero"
+    ],
+    "solution": "$\\\\psi_\\\\delta(r)=r$ for $|r|\\\\le\\\\delta$ and $\\\\psi_\\\\delta(r)=\\\\delta\\\\operatorname{sign}(r)$ otherwise; optimality gives $\\\\sum_i\\\\psi_\\\\delta(\\\\hat m-y_i)=0$.",
+    "explanation": "The key interpretation is that influence is bounded outside the quadratic region.",
+    "sourceRefs": [
+      {
+        "sourceId": "DSA5105/Lec1_annotated.pdf",
+        "page": 35,
+        "sourceType": "lecture",
+        "role": "Huber loss",
+        "status": "current"
+      },
+      {
+        "sourceId": "DSA5105/Lec1_exercises-solutions.pdf",
+        "page": 2,
+        "sourceType": "lecture",
+        "role": "Huber derivation",
+        "status": "current"
+      }
+    ],
+    "difficulty": "hard",
+    "skill": "derive",
+    "cognitiveLevel": "analyze",
+    "estimatedSeconds": 150,
+    "misconception": "Check the assumption behind your answer.",
+    "visualHook": "Explain the idea with a small diagram or example.",
+    "courseId": "DSA5105",
+    "lessonId": "dsa5105-week1-derivations",
+    "schemaVersion": "nus.question.v1"
+  },
+  {
+    "id": "dsa5105-w1d-q3",
+    "type": "derivation",
+    "prompt": "Give the full family of singular-OLS solutions using the pseudoinverse.",
+    "accepted": [
+      "Phi dagger y plus I minus Phi dagger Phi u",
+      "particular solution plus null space",
+      "pseudoinverse null space family"
+    ],
+    "solution": "$\\\\hat w(u)=\\\\Phi^\\\\dagger y+(I-\\\\Phi^\\\\dagger\\\\Phi)u$__. The second term lies in the null space of $\\\\Phi$.",
+    "explanation": "State why the training predictions stay fixed and why off-sample behavior can still change.",
+    "sourceRefs": [
+      {
+        "sourceId": "DSA5105/Lec1_annotated.pdf",
+        "page": 46,
+        "sourceType": "lecture",
+        "role": "matrix OLS",
+        "status": "current"
+      },
+      {
+        "sourceId": "DSA5105/Lec1_annotated.pdf",
+        "page": 48,
+        "sourceType": "lecture",
+        "role": "regularization",
+        "status": "current"
+      }
+    ],
+    "difficulty": "hard",
+    "skill": "derive",
+    "cognitiveLevel": "analyze",
+    "estimatedSeconds": 150,
+    "misconception": "Check the assumption behind your answer.",
+    "visualHook": "Explain the idea with a small diagram or example.",
+    "courseId": "DSA5105",
+    "lessonId": "dsa5105-week1-derivations",
+    "schemaVersion": "nus.question.v1"
+  },
+  {
+    "id": "dsa5105-w1d-q4",
+    "type": "derivation",
+    "prompt": "Derive the ridge spectral shrinkage factor along an eigenvector v_j.",
+    "accepted": [
+      "mu j divided by mu j plus lambda",
+      "mu over mu plus lambda",
+      "ridge spectral filter"
+    ],
+    "solution": "From $(A+\\\\lambda I)\\\\hat w_\\\\lambda=b$ and $Av_j=\\\\mu_jv_j$, project onto $v_j$: $(\\\\mu_j+\\\\lambda)\\\\langle\\\\hat w_\\\\lambda,v_j\\\\rangle=\\\\langle b,v_j\\\\rangle$. Since $\\\\langle\\\\hat w_0,v_j\\\\rangle=\\\\langle b,v_j\\\\rangle/\\\\mu_j$, the ratio is $\\\\mu_j/(\\\\mu_j+\\\\lambda)$.",
+    "explanation": "Small eigenvalues are weakly identified directions and receive the strongest shrinkage.",
+    "sourceRefs": [
+      {
+        "sourceId": "DSA5105/Lec1_annotated.pdf",
+        "page": 48,
+        "sourceType": "lecture",
+        "role": "regularization",
+        "status": "current"
+      },
+      {
+        "sourceId": "DSA5105/Lec1_exercises-solutions.pdf",
+        "page": 2,
+        "sourceType": "lecture",
+        "role": "ridge spectral exercise",
+        "status": "current"
+      }
+    ],
+    "difficulty": "hard",
+    "skill": "derive",
+    "cognitiveLevel": "analyze",
+    "estimatedSeconds": 150,
+    "misconception": "Check the assumption behind your answer.",
+    "visualHook": "Explain the idea with a small diagram or example.",
+    "courseId": "DSA5105",
+    "lessonId": "dsa5105-week1-derivations",
+    "schemaVersion": "nus.question.v1"
+  },
+  {
+    "id": "dsa5105-w1d-q5",
+    "type": "short",
+    "prompt": "Explain the reasoning chain from 0-1 loss to cross-entropy.",
+    "accepted": [
+      "0-1 loss is hard to optimize so use a smooth surrogate",
+      "classification error to surrogate loss",
+      "cross entropy is a smooth optimization surrogate"
+    ],
+    "solution": "0-1 loss matches the final classification metric but is discontinuous and difficult to optimize. Smooth surrogates such as cross-entropy provide useful gradients while the decision rule remains a separate sign or argmax operation.",
+    "explanation": "Do not claim that surrogate loss and classification error are the same quantity.",
+    "sourceRefs": [
+      {
+        "sourceId": "DSA5105/Lec1_annotated.pdf",
+        "page": 54,
+        "sourceType": "lecture",
+        "role": "classification model",
+        "status": "current"
+      }
+    ],
+    "difficulty": "medium",
+    "skill": "explain",
+    "cognitiveLevel": "understand",
+    "estimatedSeconds": 90,
+    "misconception": "Check the assumption behind your answer.",
+    "visualHook": "Explain the idea with a small diagram or example.",
+    "courseId": "DSA5105",
+    "lessonId": "dsa5105-week1-derivations",
+    "schemaVersion": "nus.question.v1"
+  },
+  {
+    "id": "dsa5105-w1d-q6",
+    "type": "derivation",
+    "prompt": "Show that binary logistic loss is convex in the score.",
+    "accepted": [
+      "second derivative exp ys over one plus exp ys squared is nonnegative",
+      "hessian nonnegative",
+      "logistic loss convex"
+    ],
+    "solution": "$\\\\ell(s,y)=\\\\log(1+e^{-ys})$ has $\\\\partial^2\\\\ell/\\\\partial s^2=e^{ys}/(1+e^{ys})^2\\\\ge0$.",
+    "explanation": "Both numerator and denominator are positive for every real score and either binary label.",
+    "sourceRefs": [
+      {
+        "sourceId": "DSA5105/Lec1_annotated.pdf",
+        "page": 54,
+        "sourceType": "lecture",
+        "role": "classification model",
+        "status": "current"
+      },
+      {
+        "sourceId": "DSA5105/Lec1_exercises-solutions.pdf",
+        "page": 2,
+        "sourceType": "lecture",
+        "role": "logistic convexity",
+        "status": "current"
+      }
+    ],
+    "difficulty": "hard",
+    "skill": "derive",
+    "cognitiveLevel": "analyze",
+    "estimatedSeconds": 150,
+    "misconception": "Check the assumption behind your answer.",
+    "visualHook": "Explain the idea with a small diagram or example.",
+    "courseId": "DSA5105",
+    "lessonId": "dsa5105-week1-derivations",
+    "schemaVersion": "nus.question.v1"
+  }
+]

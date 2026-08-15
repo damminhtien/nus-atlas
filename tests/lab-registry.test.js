@@ -24,7 +24,7 @@ test("every DSA5105 lesson has a source-backed visual lab", () => {
   new Function("window", fs.readFileSync("data/nus/visual-labs.js", "utf8"))(window);
   const lessons = window.NUS_CONTENT.DSA5105.modules.flatMap(module => module.lessons);
   const labs = new Map(Object.values(window.NUS_VISUAL_LABS).map(lab => [lab.lessonId, lab]));
-  assert.equal(lessons.length, 22);
-  assert.equal(lessons.filter(lesson => labs.has(lesson.id)).length, 22);
-  assert.ok(["concept-map", "decision-tree"].every(type => Object.values(window.NUS_VISUAL_LABS).some(lab => lab.type === type)));
+  assert.equal(lessons.length, 23);
+  assert.equal(lessons.filter(lesson => labs.has(lesson.id)).length, 23);
+  assert.ok(["concept-map", "decision-tree", "deep-dive"].every(type => Object.values(window.NUS_VISUAL_LABS).some(lab => lab.type === type)));
 });
