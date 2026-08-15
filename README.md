@@ -84,6 +84,9 @@ See [docs/PRODUCTION_WORKFLOW.md](docs/PRODUCTION_WORKFLOW.md) for the complete 
 The same checks used by CI can be run locally when needed:
 
 ```bash
+node scripts/content-build.js --all
+node scripts/validate-content.js
+node --test tests/*.test.js
 node nus-gate.js
 node gate.js
 node prerender.js
@@ -97,10 +100,15 @@ The Pages workflow runs `node prerender.js` in CI, creates the static `dist/` ar
 ## Repository map
 
 - `index.html` — app shell and navigation.
-- `js/nus.js` — NUS routes and UI.
+- `src/core/content-repository.js` — typed-compatible content boundary and legacy fallback.
+- `src/features/nus/route-table.js` — NUS route contract.
+- `src/ui/labs/registry.js` — visual-learning lab plugin registry.
+- `js/nus.js` — NUS views using the repository boundary.
 - `js/nus-store.js` — local study progress and attempts.
 - `js/nus-components.js` — reusable visual-learning lab templates.
-- `data/nus/` — courses, lessons, assessments, and provenance.
+- `content/courses/` — normalized course packages; DSA5105 is the pilot.
+- `data/nus/` — legacy registries, provenance, and generated content manifest.
+- `scripts/content-build.js` — joins package IDs into the browser compatibility bundle.
 - `nus-gate.js` — NUS data, privacy, and provenance gate.
 - `prerender.js` — CI static-page and sitemap build.
 - `.github/workflows/pages.yml` — production Pages workflow.

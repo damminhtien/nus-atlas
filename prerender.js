@@ -13,6 +13,8 @@
 
 const fs = require("fs");
 const path = require("path");
+const crypto = require("crypto");
+const createContentRepository = require("./src/core/content-repository.js");
 
 // Where the site will live. Canonical/OG/sitemap urls point here; override in CI if needed.
 const BASE = (process.env.SITE_URL || "https://atlascodex.io").replace(/\/+$/, "");
@@ -27,6 +29,23 @@ function load(f) { new Function("window", "document", "getComputedStyle", fs.rea
 ["linear-algebra", "calculus", "algorithms", "deep-learning", "reinforcement-learning", "llm", "probability-statistics"]
   .forEach(t => load("data/" + t + ".js"));
 const COURSES = global.window.COURSES || [];
+[
+  "data/nus/provenance.js", "data/nus/courses.js", "data/nus/schedule.js", "data/nus/assessments.js", "data/nus/visuals.js",
+  "data/nus/dsa5101.js", "data/nus/dsa5104.js", "data/nus/dsa5105.js", "data/nus/generated/content-manifest.js", "data/nus/dsa5208.js",
+  "data/nus/artifacts.js", "data/nus/formula-depth.js", "data/nus/visual-labs.js"
+].forEach(load);
+const NUS_REPOSITORY = createContentRepository({
+  courses: global.window.NUS_COURSES,
+  content: global.window.NUS_CONTENT,
+  packages: global.window.NUS_CONTENT_PACKAGES,
+  assessments: global.window.NUS_ASSESSMENTS,
+  artifacts: global.window.NUS_ARTIFACTS,
+  labs: global.window.NUS_VISUAL_LABS,
+  visuals: global.window.NUS_VISUALS,
+  schedule: global.window.NUS_SCHEDULE,
+  sourceTypes: global.window.NUS_SOURCE_TYPES,
+  provenance: global.window.NUS_SOURCE_POLICY
+});
 
 // ---- helpers ----
 function esc(s) { return String(s).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;"); }
@@ -51,6 +70,22 @@ function staticizeContent(html) {
   return String(html)
     .replace(/<div\s+data-viz=["'][^"']*["'][^>]*>\s*<\/div>/gi, '<p class="app-note">▶ <em>Interactive visualization — open this lesson in the app to explore it.</em></p>')
     .replace(/<div\s+data-code=["'][^>]*>[\s\S]*?<\/div>/gi, '<p class="app-note">💻 <em>Runnable code exercise — open this lesson in the app to try it.</em></p>');
+}
+
+function nusLessonContent(lesson) {
+  const notes = (lesson.sections || []).map(section => `<h3>${esc(section.title)}</h3><p>${esc(section.body)}</p>`).join("");
+  const formulas = (lesson.math || []).map(formula => `<div class="formula">$$${esc(formula.latex)}$$<p>${esc(formula.explanation)}</p></div>`).join("");
+  const examples = (lesson.examples || []).map(example => `<h3>${esc(example.title)}</h3><ol>${(example.steps || []).map(step => `<li>${esc(step)}</li>`).join("")}</ol>`).join("");
+  return `<p>${esc(lesson.summary || "")}</p>${notes}${formulas}${examples}`;
+}
+
+function nusLessonPage(course, module, lesson) {
+  const url = `${BASE}/nus/${course.code}/${lesson.id}/`;
+  const content = nusLessonContent(lesson);
+  const desc = describe(content);
+  const spaUrl = `${BASE}/#/nus/lesson/${course.code}/${lesson.id}`;
+  const jsonld = { "@context": "https://schema.org", "@type": "LearningResource", name: lesson.title, description: desc, url, educationalLevel: "graduate", learningResourceType: "lesson", isPartOf: { "@type": "Course", name: course.title }, inLanguage: "en", provider: { "@type": "Organization", name: "NUS Atlas", url: BASE } };
+  return `<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"/><meta name="viewport" content="width=device-width,initial-scale=1"/><title>${esc(lesson.title)} — ${esc(course.code)} · NUS Atlas</title><meta name="description" content="${esc(desc)}"/><link rel="canonical" href="${url}"/><meta name="robots" content="index,follow"/><meta name="theme-color" content="#061a33"/><link rel="icon" href="${BASE}/icon.svg" type="image/svg+xml"/><link rel="stylesheet" href="${FONTS}"/><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@${KATEX}/dist/katex.min.css" crossorigin="anonymous"/><style>${PAGE_CSS}</style><script type="application/ld+json">${JSON.stringify(jsonld)}</script></head><body><div class="wrap"><a class="topbar" href="${BASE}/"><span class="g">N</span><span>NUS Atlas · Study Studio</span></a><div class="crumb">${esc(course.code)} → ${esc(module.title)} · Lecture core / textbook depth are labeled in the app</div><h1>${esc(lesson.title)}</h1><div class="meta">${lesson.minutes ? `${esc(lesson.minutes)} min read · ` : ""}Source-backed NUS study lesson</div><article>${staticizeContent(content)}</article><div class="cta"><strong>Open the full study flow.</strong> The interactive page adds retrieval prompts, visual labs, source trails, and planner links.<br/><a class="btn" href="${spaUrl}">Open interactive NUS lesson →</a></div><footer>NUS Atlas — normalized content with lecture, textbook, and reference provenance.</footer></div><script defer src="https://cdn.jsdelivr.net/npm/katex@${KATEX}/dist/katex.min.js" crossorigin="anonymous"></script><script defer src="https://cdn.jsdelivr.net/npm/katex@${KATEX}/dist/contrib/auto-render.min.js" crossorigin="anonymous"></script><script>document.addEventListener("DOMContentLoaded",function(){if(window.renderMathInElement)renderMathInElement(document.body,{delimiters:[{left:"$$",right:"$$",display:true},{left:"$",right:"$",display:false}],throwOnError:false});});</script></body></html>`;
 }
 
 // ---- per-lesson page template ----
@@ -177,6 +212,18 @@ for (const course of COURSES) {
     }
   }
 }
+for (const course of NUS_REPOSITORY.listCourses()) {
+  const modules = (course.modules || []).map(module => ({ ...module, lessons: module.lessons || [] }));
+  for (const module of modules) {
+    for (const lesson of module.lessons) {
+      const dir = path.join(OUT, "nus", course.code, lesson.id);
+      fs.mkdirSync(dir, { recursive: true });
+      fs.writeFileSync(path.join(dir, "index.html"), nusLessonPage(course, module, lesson));
+      urls.push({ loc: `${BASE}/nus/${course.code}/${lesson.id}/`, pri: "0.85" });
+      pages++;
+    }
+  }
+}
 
 // sitemap.xml + robots.txt at the site root
 const sitemap = `<?xml version="1.0" encoding="UTF-8"?>
@@ -187,4 +234,18 @@ ${urls.map(u => `  <url><loc>${u.loc}</loc><priority>${u.pri}</priority></url>`)
 fs.writeFileSync(path.join(OUT, "sitemap.xml"), sitemap);
 fs.writeFileSync(path.join(OUT, "robots.txt"), `User-agent: *\nAllow: /\n\nSitemap: ${BASE}/sitemap.xml\n`);
 
-console.log(`PRERENDER — ${pages} lesson pages · ${urls.length} sitemap urls · base ${BASE} · out ${path.relative(__dirname, OUT)}/`);
+function walkFiles(dir, prefix = "") {
+  return fs.readdirSync(dir, { withFileTypes: true }).flatMap(entry => {
+    const relative = path.join(prefix, entry.name);
+    if (entry.isDirectory()) return walkFiles(path.join(dir, entry.name), relative);
+    return [relative.split(path.sep).join("/")];
+  });
+}
+const assets = walkFiles(OUT).filter(file => !file.startsWith("l/") && !file.startsWith("nus/") && !["sw.js", "asset-manifest.json", "sitemap.xml", "robots.txt"].includes(file));
+const manifest = { schemaVersion: "atlas.asset-manifest.v1", assets: assets.map(file => `./${file}`) };
+fs.writeFileSync(path.join(OUT, "asset-manifest.json"), `${JSON.stringify(manifest, null, 2)}\n`);
+const cache = `atlas-${crypto.createHash("sha1").update(JSON.stringify(manifest)).digest("hex").slice(0, 12)}`;
+const serviceWorker = fs.readFileSync(path.join(OUT, "sw.js"), "utf8").replace('"__ATLAS_CACHE__"', JSON.stringify(cache));
+fs.writeFileSync(path.join(OUT, "sw.js"), serviceWorker);
+
+console.log(`PRERENDER — ${pages} lesson pages · ${urls.length} sitemap urls · ${manifest.assets.length} manifest assets · base ${BASE} · out ${path.relative(__dirname, OUT)}/`);

@@ -4,7 +4,7 @@ global.window = {};
 function load(file) { new Function("window", fs.readFileSync(file, "utf8")).call(global.window, global.window); }
 [
   "data/nus/provenance.js", "data/nus/courses.js", "data/nus/schedule.js", "data/nus/assessments.js", "data/nus/visuals.js",
-  "data/nus/dsa5101.js", "data/nus/dsa5104.js", "data/nus/dsa5105.js", "data/nus/generated/dsa5105.js", "data/nus/dsa5208.js", "data/nus/artifacts.js", "data/nus/formula-depth.js", "data/nus/visual-labs.js"
+  "data/nus/dsa5101.js", "data/nus/dsa5104.js", "data/nus/dsa5105.js", "data/nus/generated/content-manifest.js", "data/nus/dsa5208.js", "data/nus/artifacts.js", "data/nus/formula-depth.js", "data/nus/visual-labs.js"
 ].forEach(load);
 
 const errors = [];

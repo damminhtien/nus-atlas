@@ -20,6 +20,7 @@
   const packages = state.packages && typeof state.packages === "object" ? state.packages : {};
 
   function coursePackage(courseId) { return packages[courseId] || null; }
+  function packageCourses() { return Object.values(packages).map(packageData => packageData.course).filter(Boolean); }
   function catalog(courseId) { return (coursePackage(courseId) && coursePackage(courseId).content) || content[courseId] || { modules: [] }; }
   function lessonRecord(courseId, module, lesson) {
     const kit = artifacts[lesson.id] || {};
@@ -38,7 +39,7 @@
     return (catalog(courseId).modules || []).flatMap(module => (module.lessons || []).map(lesson => lessonRecord(courseId, module, lesson)));
   }
   function getCourse(courseId) {
-    const course = courses.find(item => item.code === courseId);
+    const course = courses.find(item => item.code === courseId) || packageCourses().find(item => item.code === courseId);
     if (!course) return null;
     return {
       ...course,
@@ -75,7 +76,7 @@
   }
   function getSchedule(courseId) { return courseId ? (schedule.courses || {})[courseId] || null : schedule; }
   function getSourceCatalog(courseId) {
-    const course = courses.find(item => item.code === courseId);
+    const course = courses.find(item => item.code === courseId) || packageCourses().find(item => item.code === courseId);
     if (!course) return [];
     const packageData = coursePackage(courseId);
     if (packageData && packageData.sources) return packageData.sources.slice();
@@ -94,11 +95,15 @@
     getSchedule,
     getSourceCatalog,
     getSourceTypes: () => state.sourceTypes && typeof state.sourceTypes === "object" ? state.sourceTypes : {},
-    listCourses: () => courses.map(course => getCourse(course.code) || course),
-    listAssessments: () => courses.flatMap(course => getAssessment(course.code)),
+    listCourses: () => {
+      const merged = new Map(courses.map(course => [course.code, getCourse(course.code) || course]));
+      packageCourses().forEach(course => merged.set(course.code, getCourse(course.code) || course));
+      return [...merged.values()];
+    },
+    listAssessments: () => [...new Set([...courses.map(course => course.code), ...packageCourses().map(course => course.code)])].flatMap(courseId => getAssessment(courseId)),
     listVisuals: () => Object.assign({}, visuals, ...Object.values(packages).map(packageData => packageData.visuals || {})),
     getProvenance: () => provenance,
-    stats: () => ({ courses: courses.length, lessons: courses.reduce((total, course) => total + listLessons(course.code).length, 0), assessments: assessments.length, labs: Object.keys(labs).length })
+    stats: () => ({ courses: new Set([...courses.map(course => course.code), ...packageCourses().map(course => course.code)]).size, lessons: [...new Set([...courses.map(course => course.code), ...packageCourses().map(course => course.code)])].reduce((total, courseId) => total + listLessons(courseId).length, 0), assessments: assessments.length, labs: Object.keys(labs).length })
   });
 });
 
