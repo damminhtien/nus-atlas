@@ -63,6 +63,9 @@ test("migrated package is preferred and joins ID-linked study artifacts", () => 
   assert.equal(lesson.questions.length, lesson.questionIds.length);
   assert.ok(lesson.flashcards.length > 0);
   assert.equal(repo.getAssessment("DSA5105").length, 3);
+  assert.equal(repo.getTextbook("DSA5105").schemaVersion, "nus.textbook-index.v1");
+  assert.equal(repo.getTextbook("DSA5105").chapters.length, 4);
+  assert.equal(repo.getTextbook("DSA5105").source.sourceType, "textbook");
 });
 
 test("browser script order installs the same repository boundary", () => {

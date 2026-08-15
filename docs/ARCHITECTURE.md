@@ -12,6 +12,7 @@ content/courses/<course>/
   questions/*.json
   artifacts/*.json
   sources.json
+  textbook.json
   labs/
         │
         ▼  scripts/content-build.js --all
@@ -33,7 +34,7 @@ src/core/content-repository.js
 ## Runtime boundary
 
 Views use `window.NUS_REPOSITORY` for courses, lessons, assessments, labs,
-visuals, schedule, and source types. If a package is not available, the adapter
+visuals, schedule, textbook indexes, and source types. If a package is not available, the adapter
 reads the legacy `window.NUS_*` registries. This makes course migration reversible.
 
 The NUS entrypoint injects repository and study-store helpers into feature
@@ -67,6 +68,10 @@ are cached only after they are requested.
 The current manifest is intentionally a compatibility bundle. The next loading
 slice will separate course metadata from lesson payloads and add on-demand
 loading while preserving this fallback path.
+
+Textbook indexes are package data, not lecture content. A textbook chapter or
+section is linked by `sourceId` and page, while lecture scope and assessment
+priority remain owned by the lesson and assessment packages.
 
 ## Build and deploy
 

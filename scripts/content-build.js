@@ -117,6 +117,10 @@ function packageCourse(state, courseId) {
   const catalog = state.content[courseId];
   if (!course || !catalog) throw new Error(`Cannot build missing course: ${courseId}`);
   const packageRoot = path.join(ROOT, "content", "courses", courseId);
+  const textbookFile = path.join(packageRoot, "textbook.json");
+  const textbook = fs.existsSync(textbookFile)
+    ? JSON.parse(fs.readFileSync(textbookFile, "utf8"))
+    : null;
   const modules = [];
   const joinedModules = [];
   const questions = [];
@@ -167,6 +171,7 @@ function packageCourse(state, courseId) {
     content: { modules: joinedModules },
     assessments: state.assessments.filter(item => item.courseCode === courseId),
     sources: packageCourse.sourceCatalog,
+    ...(textbook ? { textbook } : {}),
     visuals: Object.fromEntries([...visualIds].filter(id => state.visuals[id]).map(id => [id, cleanObject(state.visuals[id])])),
     labs: Object.fromEntries([...labIds].filter(id => state.labs[id]).map(id => [id, cleanObject(state.labs[id])])),
     counts: { modules: modules.length, lessons: joinedModules.reduce((n, module) => n + module.lessons.length, 0), questions: questions.length, artifacts: artifacts.length }

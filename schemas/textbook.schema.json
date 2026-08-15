@@ -1,0 +1,46 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://nus-atlas.local/schemas/textbook.schema.json",
+  "title": "NUS Atlas textbook chapter index",
+  "type": "object",
+  "required": ["schemaVersion", "courseId", "source", "pageCount", "chapters"],
+  "properties": {
+    "schemaVersion": { "const": "nus.textbook-index.v1" },
+    "courseId": { "type": "string", "minLength": 1 },
+    "source": { "$ref": "source.schema.json" },
+    "pageCount": { "type": "integer", "minimum": 1 },
+    "chapters": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["id", "number", "title", "pageStart", "pageEnd", "sections"],
+        "properties": {
+          "id": { "type": "string", "minLength": 1 },
+          "number": { "type": "string", "minLength": 1 },
+          "title": { "type": "string", "minLength": 1 },
+          "pageStart": { "type": "integer", "minimum": 1 },
+          "pageEnd": { "type": "integer", "minimum": 1 },
+          "sections": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "required": ["id", "number", "title", "pageStart", "pageEnd", "sourceRef"],
+              "properties": {
+                "id": { "type": "string", "minLength": 1 },
+                "number": { "type": "string", "minLength": 1 },
+                "title": { "type": "string", "minLength": 1 },
+                "pageStart": { "type": "integer", "minimum": 1 },
+                "pageEnd": { "type": "integer", "minimum": 1 },
+                "sourceRef": { "$ref": "source.schema.json" }
+              },
+              "additionalProperties": false
+            }
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    "distinction": { "type": "object" }
+  },
+  "additionalProperties": false
+}
