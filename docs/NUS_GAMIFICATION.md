@@ -39,6 +39,10 @@ The NUS ledger owns deduplication and mastery. The existing global store receive
 
 These are feedback weights, not grades. They do not alter course marks or assessment records.
 
+Question-level practice is deliberately separate from rewarded recall. Every submitted answer writes a zero-XP `question_attempt` event with its question ID, correctness, skill, misconception cue, and source refs. Correct answers can also create a small recall reward; a miss enters Mistake Clinic until the learner opens the worked repair and marks it redeemed. If the next attempt is correct, the unresolved queue clears automatically. This makes the loop observable without turning every click into a reward.
+
+The DSA5105 bank lives at `content/courses/DSA5105/questions/bank.json`. It is the editable source of truth for the 44-question extension; generated per-lesson JSON and the browser package are reader/build outputs. Each item carries `difficulty`, `skill`, `cognitiveLevel`, `estimatedSeconds`, `misconception`, `visualHook`, and typed `sourceRefs`. Lecture refs define the exam boundary; textbook and `ref` entries deepen or contextualize it.
+
 ## Daily quests and recognition
 
 The dashboard selects three small daily quests:
@@ -85,8 +89,9 @@ The contract is intentionally small so future templates such as `ConceptMap`, `D
 
 ### Phase 2 — deepen practice
 
-- Add a mistake clinic that links a missed question to one corrective explanation and one retry.
-- Add an exam-readiness view combining source coverage, retrieval accuracy, and freshness.
+- Ship adaptive Exam Mode focus choices: smart mix, weak topics, new concepts, or mixed retrieval, with short 5/10/15-question runs.
+- Ship Mistake Clinic, linking a missed question to one corrective explanation, misconception cue, source trail, and retry path.
+- Ship the DSA5105 readiness card combining question coverage, answer accuracy, and unresolved repairs.
 - Add weekly review missions without adding public rankings or punitive decay.
 
 ### Phase 3 — expand across courses

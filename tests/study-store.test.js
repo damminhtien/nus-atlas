@@ -43,3 +43,21 @@ test("study store keeps evidence idempotent and updates mastery", () => {
   assert.equal(store.events().length, 1);
   assert.equal(store.masteryFor("lesson1").score, 0.12);
 });
+
+test("question attempts build a repairable mistake signal without passive XP", () => {
+  const store = createStudyStore({ storage: memoryStorage(), now: () => new Date("2026-08-15T10:00:00.000Z") });
+  const question = { id: "q1", lessonId: "lesson1", type: "short", prompt: "Why?", solution: "Because.", sourceRefs: [{ sourceId: "lecture.pdf", page: 2 }] };
+  store.recordQuestionAttempt({ attemptId: "a1", courseCode: "DSA5105", correct: false, raw: "No", question });
+  assert.deepEqual(store.questionStats("q1"), {
+    questionId: "q1", attempts: 1, correct: 0, misses: 1, accuracy: 0, redeemed: 0,
+    lastAt: "2026-08-15T10:00:00.000Z", lastCorrectAt: null
+  });
+  assert.equal(store.mistakes("DSA5105").length, 1);
+  assert.equal(store.events()[0].xp, 0);
+  store.redeemMistake("q1", "question:a1:q1");
+  assert.equal(store.mistakes("DSA5105").length, 0);
+  assert.equal(store.masteryFor("lesson1").score, 0.18);
+  store.recordQuestionAttempt({ attemptId: "a2", courseCode: "DSA5105", correct: false, raw: "Still no", question });
+  store.recordQuestionAttempt({ attemptId: "a3", courseCode: "DSA5105", correct: true, raw: "Because", question });
+  assert.equal(store.mistakes("DSA5105").length, 0, "a later correct answer clears the unresolved queue");
+});

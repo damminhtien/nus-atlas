@@ -62,8 +62,10 @@ Each lesson also has at least two critical-thinking prompts. A good prompt asks 
 3. Close the page and answer the quick-recall prompt from memory.
 4. Use the textbook-depth section for a derivation or worked calculation.
 5. Attempt the lesson’s homework prompt before opening the review solution.
-6. Run a scoped Exam Mode attempt and use the review deck to schedule the next session.
-7. Record confirmed assessment dates in Planner; leave unknown dates pending rather than guessing.
+6. Run a 5–15 question Exam Mode attempt. Choose **Weak topics** when repairing gaps or **New concepts** when expanding coverage.
+7. Send misses to Mistake Clinic, read the misconception cue and source-backed repair, then mark the idea redeemed or retry the weak topic.
+8. Use the DSA5105 readiness card to balance coverage with accuracy; a high score on a tiny sample is not exam readiness.
+9. Record confirmed assessment dates in Planner; leave unknown dates pending rather than guessing.
 
 ## Adding or editing content
 
@@ -73,7 +75,7 @@ Use a typed source helper in the course data:
 source("DSA5105/Textbook.pdf", 31, "textbook", "linear SVM geometry", "course-depth")
 ```
 
-When adding a DSA5105 question, attach `sourceRefs` if the question comes from a specific source. Do not copy long textbook passages or paste solution sets into the public bundle; write a short normalized explanation and keep the source/page pointer.
+When adding a DSA5105 question, prefer `content/courses/DSA5105/questions/bank.json` and include metadata plus `sourceRefs`. Do not copy long textbook passages or paste solution sets into the public bundle; write a short normalized explanation and keep the source/page pointer. Run `node scripts/validate-question-bank.js` before rebuilding.
 
 After editing NUS data, run:
 

@@ -25,7 +25,7 @@
     { id: "source-aware", icon: "⌘", name: "Source-aware", desc: "Complete a lesson with its source trail in view.", test: state => state.events.some(event => event.type === "lesson_complete"), value: state => state.events.some(event => event.type === "lesson_complete") ? 1 : 0 },
     { id: "retrieval-builder", icon: "↺", name: "Retrieval builder", desc: "Answer 3 recall questions correctly.", test: state => countType(state, "recall_correct") >= 3, value: state => Math.min(1, countType(state, "recall_correct") / 3) },
     { id: "lab-apprentice", icon: "⌁", name: "Lab apprentice", desc: "Complete 2 visual learning labs.", test: state => countType(state, "simulation_completed") >= 2, value: state => Math.min(1, countType(state, "simulation_completed") / 2) },
-    { id: "dsa5105-explorer", icon: "∑", name: "DSA5105 explorer", desc: "Create 5 pieces of DSA5105 evidence.", test: state => state.events.filter(event => event.courseCode === "DSA5105").length >= 5, value: state => Math.min(1, state.events.filter(event => event.courseCode === "DSA5105").length / 5) },
+    { id: "dsa5105-explorer", icon: "∑", name: "DSA5105 explorer", desc: "Create 5 rewarded pieces of DSA5105 evidence.", test: state => state.events.filter(event => event.courseCode === "DSA5105" && event.xp > 0).length >= 5, value: state => Math.min(1, state.events.filter(event => event.courseCode === "DSA5105" && event.xp > 0).length / 5) },
     { id: "mastery-builder", icon: "▲", name: "Mastery builder", desc: "Reach 60% evidence mastery on 3 lessons.", test: state => Object.values(state.mastery).filter(item => item.score >= 0.6).length >= 3, value: state => Math.min(1, Object.values(state.mastery).filter(item => item.score >= 0.6).length / 3) },
     { id: "mistake-redeemer", icon: "↗", name: "Mistake redeemer", desc: "Turn one missed idea into a corrected one.", test: state => countType(state, "mistake_redeemed") >= 1, value: state => Math.min(1, countType(state, "mistake_redeemed")) },
     { id: "exam-ready", icon: "◇", name: "Exam ready", desc: "Score at least 80% on a 5-question attempt.", test: state => state.attempts.some(attempt => attempt.total >= 5 && attempt.score / attempt.total >= 0.8), value: state => state.attempts.some(attempt => attempt.total >= 5 && attempt.score / attempt.total >= 0.8) ? 1 : 0 },
@@ -82,6 +82,7 @@
     if (!event.lessonId) return;
     const current = state.mastery[event.lessonId] || { score: 0, attempts: 0, correct: 0, lastAt: null };
     const delta = { lesson_complete: 0.35, recall_correct: 0.12, exam_submitted: 0.15, simulation_completed: 0.18, worked_example: 0.12, mistake_redeemed: 0.18 }[event.type] || 0;
+    if (!delta) return;
     current.score = Math.min(1, Number((current.score + delta).toFixed(3)));
     current.attempts += 1;
     if (["recall_correct", "exam_submitted", "simulation_completed", "worked_example", "mistake_redeemed"].includes(event.type)) current.correct += 1;
@@ -134,6 +135,75 @@
     return attempt;
   }
 
+  function questionStats(questionId) {
+    const attempts = eventList().filter(event => event.type === "question_attempt" && event.meta && event.meta.questionId === questionId);
+    const correct = attempts.filter(event => event.meta.correct).length;
+    const redeemed = eventList().filter(event => event.type === "mistake_redeemed" && event.meta && event.meta.questionId === questionId).length;
+    return {
+      questionId,
+      attempts: attempts.length,
+      correct,
+      misses: attempts.length - correct,
+      accuracy: attempts.length ? Number((correct / attempts.length).toFixed(3)) : 0,
+      redeemed,
+      lastAt: attempts.at(-1) ? attempts.at(-1).at : null,
+      lastCorrectAt: [...attempts].reverse().find(event => event.meta.correct)?.at || null
+    };
+  }
+
+  function allQuestionStats() {
+    const ids = new Set(eventList().filter(event => event.type === "question_attempt" && event.meta && event.meta.questionId).map(event => event.meta.questionId));
+    return [...ids].map(questionId => questionStats(questionId));
+  }
+
+  function mistakes(courseCode) {
+    const redeemed = new Set(eventList().filter(event => event.type === "mistake_redeemed").map(event => `${event.meta.questionId}:${event.meta.attemptEventId}`));
+    const latest = new Map();
+    eventList().filter(event => event.type === "question_attempt" && event.meta && (!courseCode || event.courseCode === courseCode)).forEach(event => latest.set(event.meta.questionId, event));
+    return [...latest.values()].reverse().filter(event => !event.meta.correct && !redeemed.has(`${event.meta.questionId}:${event.eventId}`)).map(event => ({ ...event.meta, questionId: event.meta.questionId, attemptEventId: event.eventId, attemptAt: event.at, lessonId: event.lessonId, courseCode: event.courseCode }));
+  }
+
+  function recordQuestionAttempt(input) {
+    const item = input || {};
+    const question = item.question || {};
+    if (!question.id) throw new Error("Question attempts require a question id");
+    return recordEvidence({
+      eventId: `question:${item.attemptId || "attempt"}:${question.id}`,
+      type: "question_attempt",
+      courseCode: item.courseCode,
+      lessonId: question.lessonId,
+      xp: 0,
+      meta: {
+        questionId: question.id,
+        correct: !!item.correct,
+        raw: item.raw,
+        type: question.type,
+        prompt: question.prompt,
+        choices: question.choices || [],
+        answer: question.answer,
+        solution: question.solution,
+        explanation: question.explanation,
+        misconception: question.misconception,
+        sourceRefs: question.sourceRefs || [],
+        difficulty: question.difficulty,
+        skill: question.skill,
+        cognitiveLevel: question.cognitiveLevel
+      }
+    });
+  }
+
+  function redeemMistake(questionId, attemptEventId) {
+    const original = eventList().find(event => event.eventId === attemptEventId && event.type === "question_attempt");
+    return recordEvidence({
+      eventId: `mistake:${questionId}:${attemptEventId}`,
+      type: "mistake_redeemed",
+      courseCode: original && original.courseCode,
+      lessonId: original && original.lessonId,
+      xp: 8,
+      meta: { questionId, attemptEventId }
+    });
+  }
+
   const api = {
     get raw() { return state; },
     get schemaVersion() { return SCHEMA_VERSION; },
@@ -145,6 +215,11 @@
     recordEvidence,
     recordSimulation(name, courseCode, lessonId) { return recordEvidence({ eventId: `lab:${name}`, type: "simulation_completed", courseCode, lessonId, xp: 10, meta: { lab: name } }); },
     recordAttempt,
+    recordQuestionAttempt,
+    questionStats,
+    allQuestionStats,
+    mistakes,
+    redeemMistake,
     attempts() { return state.attempts.slice(); },
     events() { return eventList(); },
     masteryFor(id) { return state.mastery[id] || { score: 0, attempts: 0, correct: 0, lastAt: null }; },

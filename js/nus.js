@@ -28,12 +28,22 @@
     return Math.ceil((new Date(value).getTime() - Date.now()) / 86400000);
   }
   function progress(code) { return window.NUS_STORE.courseProgress(code, lessons(code)); }
+  function readinessFor(code) {
+    const questions = lessons(code).flatMap(item => item.questions || []);
+    const stats = questions.map(question => window.NUS_STORE.questionStats(question.id));
+    const attempted = stats.filter(item => item.attempts > 0).length;
+    const correct = stats.reduce((sum, item) => sum + item.correct, 0);
+    const attempts = stats.reduce((sum, item) => sum + item.attempts, 0);
+    return { coverage: questions.length ? Math.round(attempted / questions.length * 100) : 0, accuracy: attempts ? Math.round(correct / attempts * 100) : 0, unresolved: window.NUS_STORE.mistakes(code).length, total: questions.length };
+  }
   function learningSignals() {
     const quests = window.NUS_STORE.questState(), recognition = window.NUS_STORE.recognition();
+    const readiness = readinessFor("DSA5105");
     const questBody = quests.quests.map(q => `<div class="nus-quest"><div><b>${esc(q.label)}</b><span>${esc(q.hint)}</span></div><strong>${q.progress}/${q.target}</strong><div class="nus-quest-progress"><i style="width:${Math.round(q.progress / q.target * 100)}%"></i></div></div>`).join("");
     const labItems = (repository() ? repository().listLabs("DSA5105") : Object.entries(window.NUS_VISUAL_LABS || {}).map(([id, lab]) => ({ id, ...lab }))).map(l => { const m = window.NUS_STORE.masteryFor(l.lessonId), pct = Math.round(m.score * 100); return `<a class="nus-mastery-row" href="#/nus/lesson/DSA5105/${esc(l.lessonId)}" data-route><span><b>${esc(l.title)}</b><small>${m.attempts ? `${m.attempts} evidence moves` : "Not started"}</small></span><span class="nus-mini-progress"><i style="width:${pct}%"></i></span><strong>${pct}%</strong></a>`; }).join("");
     const badgeItems = recognition.slice(0, 6).map(item => `<div class="nus-badge ${item.unlocked ? "unlocked" : "locked"}"><span>${esc(item.icon)}</span><div><b>${esc(item.name)}</b><small>${esc(item.desc)}</small></div><strong>${item.unlocked ? "✓" : `${item.progress}%`}</strong></div>`).join("");
-    return `<div class="nus-two-col nus-learning-signals"><div>${card("Today’s quests", `<div class="nus-quest-summary"><b>${quests.complete ? "Daily loop complete" : "Evidence over streaks"}</b><span>${quests.quests.filter(q => q.progress >= q.target).length}/${quests.quests.length} quests · ${quests.completedDays} completed days</span></div><div class="nus-quest-list">${questBody}</div><p class="nus-muted">Opening a page never awards XP. Only a completed study move enters the ledger.</p>`, "reveal")}</div><div>${card("DSA5105 mastery map", `<div class="nus-mastery-list">${labItems}</div><p class="nus-muted">Mastery rises through lesson completion, retrieval, and lab reasoning—not page views.</p>`, "reveal")}</div></div><div>${card("Recognition", `<div class="nus-badge-list">${badgeItems}</div>`, "reveal")}</div>`;
+    const readinessBody = `<div class="nus-readiness"><div class="nus-readiness-row"><span>Question coverage</span><strong>${readiness.coverage}%</strong><i><b style="width:${readiness.coverage}%"></b></i></div><div class="nus-readiness-row"><span>Answer accuracy</span><strong>${readiness.accuracy}%</strong><i><b style="width:${readiness.accuracy}%"></b></i></div><p class="nus-muted">${readiness.unresolved ? `${readiness.unresolved} unresolved mistake${readiness.unresolved === 1 ? "" : "s"}.` : "No unresolved mistakes yet."} ${readiness.total} question prompts are available.</p><div class="nus-card-actions">${button("Practice smart mix", "#/nus/exam/DSA5105", "primary")}${button("Open Mistake Clinic", "#/nus/mistakes/DSA5105", "ghost")}</div></div>`;
+    return `<div class="nus-two-col nus-learning-signals"><div>${card("Today’s quests", `<div class="nus-quest-summary"><b>${quests.complete ? "Daily loop complete" : "Evidence over streaks"}</b><span>${quests.quests.filter(q => q.progress >= q.target).length}/${quests.quests.length} quests · ${quests.completedDays} completed days</span></div><div class="nus-quest-list">${questBody}</div><p class="nus-muted">Opening a page never awards XP. Only a completed study move enters the ledger.</p>`, "reveal")}</div><div>${card("DSA5105 mastery map", `<div class="nus-mastery-list">${labItems}</div><p class="nus-muted">Mastery rises through lesson completion, retrieval, and lab reasoning—not page views.</p>`, "reveal")}</div></div><div class="nus-two-col"><div>${card("DSA5105 readiness", readinessBody, "reveal")}</div><div>${card("Recognition", `<div class="nus-badge-list">${badgeItems}</div>`, "reveal")}</div></div>`;
   }
   function courseProgressBar(code) { const p = progress(code); return `<div class="nus-progress"><span style="width:${p.pct}%;background:${esc(course(code).color)}"></span></div><div class="nus-muted">${p.done}/${p.total} lessons complete · ${p.pct}%</div>`; }
   function readerModeOn() { return localStorage.getItem("nus.reader-mode") === "on"; }
@@ -170,6 +180,10 @@
     if (!internal && code && ensureCourseLoaded(code, () => renderExam(code, scope, false))) return;
     return examFeature ? examFeature.render(code, scope, internal) : renderNotFound();
   }
+  function renderMistakes(code) {
+    if (ensureCourseLoaded(code, () => renderMistakes(code))) return;
+    return examFeature ? examFeature.renderMistakes(code) : renderNotFound();
+  }
 
   const sqlFeature = window.NUS_SQL_FEATURE ? window.NUS_SQL_FEATURE({ root, getContent: content, pageHead, card, esc, text, notFound: renderNotFound }) : null;
   const simulationsFeature = window.NUS_SIMULATIONS_FEATURE ? window.NUS_SIMULATIONS_FEATURE({ root, pageHead, esc, getStore: () => window.NUS_STORE }) : null;
@@ -199,6 +213,7 @@
     course: parts => renderCourse(parts[1]),
     lesson: parts => renderLesson(parts[1], parts[2]),
     exam: parts => renderExam(parts[1], parts[2]),
+    mistakes: parts => renderMistakes(parts[1] || "DSA5105"),
     slides: parts => renderSlides(parts[1], parts[2], parts[3]),
     sql: () => renderSql(),
     simulations: () => renderSimulations()
