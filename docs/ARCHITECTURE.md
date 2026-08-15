@@ -20,6 +20,7 @@ data/nus/generated/content-manifest.js
         ▼
 src/core/content-repository.js
         │
+        ├── src/core/study-store.js
         ├── src/features/nus/route-table.js
         ├── src/features/nus/planner.js
         ├── src/features/nus/exam.js
@@ -37,6 +38,11 @@ The NUS entrypoint injects repository and study-store helpers into feature
 modules. Planner owns assessment checklists and reminders; Exam Mode owns
 question selection, timer, scoring, and review. Neither feature reads the
 content files directly, which keeps course and textbook changes data-driven.
+
+`src/core/study-store.js` owns the browser-local evidence ledger, mastery,
+planner tasks, and attempts. The legacy `js/nus-store.js` file is now only a
+bootstrap adapter; existing `nus.v1` data is migrated in memory to
+`nus.study.v2` and persisted on the next write.
 
 `data/nus/artifacts.js` now publishes `window.NUS_ARTIFACTS`; it does not mutate
 lesson objects. The repository joins study-kit artifacts by lesson ID. Questions,
