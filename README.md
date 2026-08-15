@@ -100,6 +100,7 @@ The same checks used by CI can be run locally when needed:
 ```bash
 node scripts/content-build.js --all
 node scripts/validate-content.js
+node scripts/validate-latex.js
 node --test tests/*.test.js
 node nus-gate.js
 node gate.js
@@ -108,6 +109,10 @@ git diff --check
 ```
 
 `nus-gate.js` verifies that all 34 NUS lessons have a LaTeX formula model, formula explanations, source labels, and at least two critical-thinking questions. `data/nus/formula-depth.js` contains the shared formula and critique layer; lecture, textbook, and reference content remains visibly separated.
+
+### Strict authored-math rule
+
+Every formula in authored Atlas text must use an explicit math delimiter: `$...$`, `$$...$$`, `\\(...\\)`, or `\\[...\\]`. This applies to slide explanations (including `whatYouSee`), Atlas-layer notes, Socratic questions and answers, question-bank prompts and solutions, flashcards, homework, visual hooks, lesson explanations, and lab derivation steps. Dedicated `math.latex` fields remain raw LaTeX source and are wrapped by the renderer. PDF extraction text, bounding boxes, image IDs, and other source-layer fields are preserved verbatim and are intentionally exempt. Run `node scripts/validate-latex.js`; CI blocks the Pages deployment when an authored raw fragment is found.
 
 The Pages workflow runs `node prerender.js` in CI, creates the static `dist/` artifact, and publishes it through GitHub Pages. `dist/` is generated and ignored.
 
@@ -129,6 +134,9 @@ The Pages workflow runs `node prerender.js` in CI, creates the static `dist/` ar
 - `content/courses/` — normalized course packages; DSA5105 is the pilot.
 - `data/nus/` — legacy registries, provenance, and generated content manifest.
 - `scripts/content-build.js` — joins package IDs into the browser compatibility bundle.
+- `scripts/validate-latex.js` — blocks raw math fragments in authored study content.
+- `scripts/latex-utils.js` — shared authored-content normalization and field rules.
+- `scripts/normalize-latex.js` — one-time migration helper for JSON content packages.
 - `nus-gate.js` — NUS data, privacy, and provenance gate.
 - `prerender.js` — CI static-page and sitemap build.
 - `VERSION` / `CHANGELOG.md` — canonical release version and dated release history.

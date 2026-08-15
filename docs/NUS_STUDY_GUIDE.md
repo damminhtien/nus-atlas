@@ -53,6 +53,8 @@ See [DSA5105_ASSESSMENT_MAP.md](DSA5105_ASSESSMENT_MAP.md) for the detailed evid
 
 Every NUS lesson must expose at least one structured formula model. Store the expression as raw LaTeX with an explanation for how to read it, a meaning for each important symbol, and a source class. The renderer sends both block formulas and inline formulas through KaTeX; do not introduce Unicode equations such as `γ`, `Σ`, or `→` into lesson-facing formula text.
 
+The authored-math contract is strict: formulas embedded in any reader-facing text—including slide explanations (`whatYouSee` included), Atlas layers, Socratic prompts/answers, question-bank fields, flashcards, homework, visual hooks, lab derivation steps, and textbook-depth notes—must be delimited with `$...$`, `$$...$$`, `\\(...\\)`, or `\\[...\\]`. Keep bare LaTeX only in dedicated `math.latex` fields. Source extraction blocks remain faithful to the PDF and are not rewritten. `node scripts/validate-latex.js` is a required gate and must pass before a package is deployed.
+
 Each lesson also has at least two critical-thinking prompts. A good prompt asks what the formula assumes, how it can fail, what evidence would change the conclusion, or where a textbook/reference analogy stops. The answer remains short and normalized, while the source/page pointer preserves the distinction between lecture, textbook, and reference depth. Week 1's ungraded practice sheet is kept as optional reference material; it does not silently expand the lecture exam boundary.
 
 ## Recommended study loop

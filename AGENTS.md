@@ -79,7 +79,8 @@ the focused workflow cannot answer the question or validate the change.
 - Prefer `rg`/`rg --files` for targeted text lookup and a small `pdftotext`/`pdfimages -list` pass before rendering selected pages.
 - Use Graphify for code relationships, RTK when it is installed for compact command output, and AgentMemory only for durable study/workflow context—not as a substitute for source verification.
 - Keep raw PDFs, textbooks, Canvas exports, screenshots, and personal documents outside the repo. Commit normalized notes plus `sourceId`, page/slide, and a short derived observation.
-- Run `node nus-gate.js`, `node gate.js`, `git diff --check`, and `graphify update . --no-cluster` after content or UI changes.
+- Authored math is a strict data contract: wrap every formula in explanations, Atlas layers (including `whatYouSee`), questions/answers, flashcards, homework, visual-learning text, and lab derivation steps with `$...$`, `$$...$$`, `\\(...\\)`, or `\\[...\\]`. Keep bare LaTeX only in dedicated `math.latex` fields; never rewrite PDF extraction/source-layer text. Run `node scripts/validate-latex.js` before accepting content.
+- Run `node scripts/validate-latex.js`, `node nus-gate.js`, `node gate.js`, `git diff --check`, and `graphify update . --no-cluster` after content or UI changes.
 
 ## Lecture PDF extraction workflow
 
