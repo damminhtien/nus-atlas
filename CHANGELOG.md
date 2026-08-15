@@ -6,6 +6,10 @@ and refresh first-party asset URLs so browsers and the service worker pick up th
 
 ## [Unreleased]
 
+## [0.2.8] - 2026-08-15
+
+- auto-refresh deployed versions without manual cache clearing
+
 ## [0.2.7] - 2026-08-15
 
 - align DSA5105 Week 1 lecture content, provenance, and derivation rubrics
