@@ -2897,6 +2897,7 @@
       const isNusRoute = parts.length === 0 || parts[0] === "nus";
       app.classList.toggle("nus-root", isNusRoute);
       if (!isNusRoute || parts[1] !== "lesson") document.body.classList.remove("nus-reading-mode");
+      if (!isNusRoute || parts[1] !== "slides") document.body.classList.remove("nus-slide-focus-mode");
       try { document.title = docTitleFor(parts); } catch (e) { document.title = "NUS Atlas · Study Studio"; }
       clearResumePill();
       window.scrollTo(0, 0);
