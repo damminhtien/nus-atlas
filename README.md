@@ -106,6 +106,7 @@ The Pages workflow runs `node prerender.js` in CI, creates the static `dist/` ar
 - `src/core/router.js` — framework-free hash route lifecycle used by the app shell.
 - `src/features/nus/route-table.js` — NUS route contract.
 - `src/features/nus/presentation.js` — reusable NUS lesson/source/visual presenters.
+- `src/features/nus/sql.js` / `src/features/nus/simulations.js` — isolated interactive labs.
 - `src/features/nus/planner.js` / `src/features/nus/exam.js` — isolated planner and Exam Mode features.
 - `src/ui/labs/registry.js` — visual-learning lab plugin registry.
 - `js/nus.js` — NUS views using the repository boundary.
