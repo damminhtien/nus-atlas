@@ -19,6 +19,12 @@
         "status": "course-depth"
       }
     ],
+    "difficulty": "medium",
+    "skill": "explain",
+    "cognitiveLevel": "understand",
+    "estimatedSeconds": 90,
+    "misconception": "Check the assumption behind your answer.",
+    "visualHook": "Explain the idea with a small diagram or example.",
     "courseId": "DSA5105",
     "lessonId": "dsa5105-graph-kernel-pagerank",
     "schemaVersion": "nus.question.v1"
@@ -43,6 +49,12 @@
         "status": "assessment-derived"
       }
     ],
+    "difficulty": "medium",
+    "skill": "calculate",
+    "cognitiveLevel": "apply",
+    "estimatedSeconds": 120,
+    "misconception": "Check the assumption behind your answer.",
+    "visualHook": "Explain the idea with a small diagram or example.",
     "courseId": "DSA5105",
     "lessonId": "dsa5105-graph-kernel-pagerank",
     "schemaVersion": "nus.question.v1"
@@ -67,6 +79,12 @@
         "status": "draft"
       }
     ],
+    "difficulty": "hard",
+    "skill": "derive",
+    "cognitiveLevel": "analyze",
+    "estimatedSeconds": 150,
+    "misconception": "Check the assumption behind your answer.",
+    "visualHook": "Explain the idea with a small diagram or example.",
     "courseId": "DSA5105",
     "lessonId": "dsa5105-graph-kernel-pagerank",
     "schemaVersion": "nus.question.v1"
@@ -91,8 +109,90 @@
         "status": "draft"
       }
     ],
+    "difficulty": "medium",
+    "skill": "explain",
+    "cognitiveLevel": "understand",
+    "estimatedSeconds": 90,
+    "misconception": "Check the assumption behind your answer.",
+    "visualHook": "Explain the idea with a small diagram or example.",
     "courseId": "DSA5105",
     "lessonId": "dsa5105-graph-kernel-pagerank",
+    "schemaVersion": "nus.question.v1"
+  },
+  {
+    "id": "dsa5105-bank-033",
+    "lessonId": "dsa5105-graph-kernel-pagerank",
+    "type": "calculation",
+    "difficulty": "medium",
+    "skill": "pagerank",
+    "cognitiveLevel": "apply",
+    "estimatedSeconds": 130,
+    "prompt": "Why is damping used in PageRank?",
+    "accepted": [
+      "to handle sinks and ensure a mixing stationary distribution",
+      "avoid rank sinks and dead ends",
+      "teleportation makes the chain ergodic"
+    ],
+    "solution": "Teleportation prevents probability from getting trapped in sinks or disconnected cycles and helps make the Markov chain well behaved.",
+    "hint": "Consider a graph with a node that has no outgoing edge.",
+    "explanation": "The damping term balances following links with jumping to a baseline distribution.",
+    "misconception": "Damping is only a visual smoothing parameter with no probabilistic role.",
+    "visualHook": "Toggle teleportation and watch mass accumulate or mix.",
+    "sourceRefs": [
+      {
+        "sourceId": "DSA5105/Lec7_annotated.pdf",
+        "page": 31,
+        "sourceType": "lecture",
+        "role": "PageRank",
+        "status": "current"
+      },
+      {
+        "sourceId": "DSA5105/Ref/Chapter3_Graph_Neural_Networks.pdf",
+        "page": 1,
+        "sourceType": "ref",
+        "role": "graph propagation",
+        "status": "supporting"
+      }
+    ],
+    "courseId": "DSA5105",
+    "schemaVersion": "nus.question.v1"
+  },
+  {
+    "id": "dsa5105-bank-034",
+    "lessonId": "dsa5105-graph-kernel-pagerank",
+    "type": "short",
+    "difficulty": "hard",
+    "skill": "graph-kernel",
+    "cognitiveLevel": "analyze",
+    "estimatedSeconds": 120,
+    "prompt": "What is the main modeling idea behind a graph kernel?",
+    "accepted": [
+      "compare graphs through similarities of substructures or walks",
+      "implicit feature map for graph structures",
+      "inner products over graph patterns"
+    ],
+    "solution": "A graph kernel defines an inner product by comparing graph substructures, walks, or other patterns without explicitly enumerating every feature.",
+    "hint": "Transfer the kernel trick from vectors to structured objects.",
+    "explanation": "The choice of kernel encodes which graph patterns count as similar.",
+    "misconception": "Assuming a graph kernel is only an adjacency matrix norm.",
+    "visualHook": "Highlight matching walks or subtrees between two graphs.",
+    "sourceRefs": [
+      {
+        "sourceId": "DSA5105/Lec7_annotated.pdf",
+        "page": 35,
+        "sourceType": "lecture",
+        "role": "graph kernels",
+        "status": "current"
+      },
+      {
+        "sourceId": "DSA5105/Textbook.pdf",
+        "page": 116,
+        "sourceType": "textbook",
+        "role": "structured kernels",
+        "status": "supporting"
+      }
+    ],
+    "courseId": "DSA5105",
     "schemaVersion": "nus.question.v1"
   }
 ]

@@ -19,6 +19,12 @@
         "status": "course-depth"
       }
     ],
+    "difficulty": "hard",
+    "skill": "derive",
+    "cognitiveLevel": "analyze",
+    "estimatedSeconds": 150,
+    "misconception": "Check the assumption behind your answer.",
+    "visualHook": "Explain the idea with a small diagram or example.",
     "courseId": "DSA5105",
     "lessonId": "dsa5105-rl-bellman",
     "schemaVersion": "nus.question.v1"
@@ -44,6 +50,12 @@
         "status": "current"
       }
     ],
+    "difficulty": "easy",
+    "skill": "recall",
+    "cognitiveLevel": "understand",
+    "estimatedSeconds": 60,
+    "misconception": "Check the assumption behind your answer.",
+    "visualHook": "Explain the idea with a small diagram or example.",
     "courseId": "DSA5105",
     "lessonId": "dsa5105-rl-bellman",
     "schemaVersion": "nus.question.v1"
@@ -68,8 +80,90 @@
         "status": "optional"
       }
     ],
+    "difficulty": "medium",
+    "skill": "explain",
+    "cognitiveLevel": "understand",
+    "estimatedSeconds": 90,
+    "misconception": "Check the assumption behind your answer.",
+    "visualHook": "Explain the idea with a small diagram or example.",
     "courseId": "DSA5105",
     "lessonId": "dsa5105-rl-bellman",
+    "schemaVersion": "nus.question.v1"
+  },
+  {
+    "id": "dsa5105-bank-041",
+    "lessonId": "dsa5105-rl-bellman",
+    "type": "calculation",
+    "difficulty": "medium",
+    "skill": "bellman-optimality",
+    "cognitiveLevel": "apply",
+    "estimatedSeconds": 140,
+    "prompt": "Write the optimal Bellman equation for Q*(s,a) in a finite MDP.",
+    "accepted": [
+      "expected reward plus gamma max over next actions Q star",
+      "Q star equals expected r plus gamma max Q star",
+      "optimal Bellman equation"
+    ],
+    "solution": "Q*(s,a) = E[r + gamma max_a' Q*(s',a') | s,a]. The expectation is over the transition and reward model.",
+    "hint": "After taking a, optimize the next action.",
+    "explanation": "The max distinguishes the optimality equation from policy evaluation under a fixed policy.",
+    "misconception": "Using max over the current action before the transition.",
+    "visualHook": "Expand one stochastic transition into successor action branches.",
+    "sourceRefs": [
+      {
+        "sourceId": "DSA5105/Lec8_annotated.pdf",
+        "page": 46,
+        "sourceType": "lecture",
+        "role": "Bellman optimality",
+        "status": "current"
+      },
+      {
+        "sourceId": "DSA5105/Textbook.pdf",
+        "page": 103,
+        "sourceType": "textbook",
+        "role": "Q iteration",
+        "status": "supporting"
+      }
+    ],
+    "courseId": "DSA5105",
+    "schemaVersion": "nus.question.v1"
+  },
+  {
+    "id": "dsa5105-bank-042",
+    "lessonId": "dsa5105-rl-bellman",
+    "type": "short",
+    "difficulty": "hard",
+    "skill": "discounting",
+    "cognitiveLevel": "analyze",
+    "estimatedSeconds": 100,
+    "prompt": "What is the effect of gamma approaching zero in a discounted return?",
+    "accepted": [
+      "the agent becomes myopic and emphasizes immediate reward",
+      "future rewards matter less",
+      "only near-term reward dominates"
+    ],
+    "solution": "As gamma approaches zero, future rewards are heavily discounted and the decision becomes increasingly myopic.",
+    "hint": "Look at gamma to the power of each future time step.",
+    "explanation": "Gamma controls the planning horizon, not the immediate reward itself.",
+    "misconception": "Thinking gamma rescales all rewards equally.",
+    "visualHook": "Compare return contributions for gamma 0.1, 0.8, and 0.99.",
+    "sourceRefs": [
+      {
+        "sourceId": "DSA5105/Lec8_annotated.pdf",
+        "page": 48,
+        "sourceType": "lecture",
+        "role": "discounting",
+        "status": "current"
+      },
+      {
+        "sourceId": "DSA5105/Textbook.pdf",
+        "page": 108,
+        "sourceType": "textbook",
+        "role": "discounted return",
+        "status": "supporting"
+      }
+    ],
+    "courseId": "DSA5105",
     "schemaVersion": "nus.question.v1"
   }
 ]

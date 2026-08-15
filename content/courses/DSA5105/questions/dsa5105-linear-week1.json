@@ -19,6 +19,12 @@
         "status": "current"
       }
     ],
+    "difficulty": "medium",
+    "skill": "calculate",
+    "cognitiveLevel": "apply",
+    "estimatedSeconds": 120,
+    "misconception": "Check the assumption behind your answer.",
+    "visualHook": "Explain the idea with a small diagram or example.",
     "courseId": "DSA5105",
     "lessonId": "dsa5105-linear-week1",
     "schemaVersion": "nus.question.v1"
@@ -44,6 +50,12 @@
         "status": "current"
       }
     ],
+    "difficulty": "easy",
+    "skill": "recall",
+    "cognitiveLevel": "understand",
+    "estimatedSeconds": 60,
+    "misconception": "Check the assumption behind your answer.",
+    "visualHook": "Explain the idea with a small diagram or example.",
     "courseId": "DSA5105",
     "lessonId": "dsa5105-linear-week1",
     "schemaVersion": "nus.question.v1"
@@ -68,6 +80,12 @@
         "status": "current"
       }
     ],
+    "difficulty": "medium",
+    "skill": "explain",
+    "cognitiveLevel": "understand",
+    "estimatedSeconds": 90,
+    "misconception": "Check the assumption behind your answer.",
+    "visualHook": "Explain the idea with a small diagram or example.",
     "courseId": "DSA5105",
     "lessonId": "dsa5105-linear-week1",
     "schemaVersion": "nus.question.v1"
@@ -92,6 +110,12 @@
         "status": "current"
       }
     ],
+    "difficulty": "hard",
+    "skill": "derive",
+    "cognitiveLevel": "analyze",
+    "estimatedSeconds": 150,
+    "misconception": "Check the assumption behind your answer.",
+    "visualHook": "Explain the idea with a small diagram or example.",
     "courseId": "DSA5105",
     "lessonId": "dsa5105-linear-week1",
     "schemaVersion": "nus.question.v1"
@@ -116,8 +140,90 @@
         "status": "optional"
       }
     ],
+    "difficulty": "medium",
+    "skill": "explain",
+    "cognitiveLevel": "understand",
+    "estimatedSeconds": 90,
+    "misconception": "Check the assumption behind your answer.",
+    "visualHook": "Explain the idea with a small diagram or example.",
     "courseId": "DSA5105",
     "lessonId": "dsa5105-linear-week1",
+    "schemaVersion": "nus.question.v1"
+  },
+  {
+    "id": "dsa5105-bank-003",
+    "lessonId": "dsa5105-linear-week1",
+    "type": "short",
+    "difficulty": "easy",
+    "skill": "linear-basis",
+    "cognitiveLevel": "understand",
+    "estimatedSeconds": 75,
+    "prompt": "Why can a linear model still represent a nonlinear curve in x?",
+    "accepted": [
+      "because it is linear in features or basis functions",
+      "linear in parameters but nonlinear in x",
+      "basis expansion"
+    ],
+    "solution": "A model can be linear in its parameters while using nonlinear features such as x^2 or sin(x). The feature map carries the nonlinearity.",
+    "hint": "Ask what the word linear refers to.",
+    "explanation": "Linearity in parameters is different from linearity in the original input coordinate.",
+    "misconception": "Assuming every linear model must be a straight line in raw input space.",
+    "visualHook": "Toggle raw x and a polynomial feature map.",
+    "sourceRefs": [
+      {
+        "sourceId": "DSA5105/Lec1_annotated.pdf",
+        "page": 31,
+        "sourceType": "lecture",
+        "role": "linear models",
+        "status": "current"
+      },
+      {
+        "sourceId": "DSA5105/Textbook.pdf",
+        "page": 24,
+        "sourceType": "textbook",
+        "role": "basis functions",
+        "status": "supporting"
+      }
+    ],
+    "courseId": "DSA5105",
+    "schemaVersion": "nus.question.v1"
+  },
+  {
+    "id": "dsa5105-bank-004",
+    "lessonId": "dsa5105-linear-week1",
+    "type": "calculation",
+    "difficulty": "medium",
+    "skill": "ols-uniqueness",
+    "cognitiveLevel": "apply",
+    "estimatedSeconds": 120,
+    "prompt": "For X with full column rank, what property makes the least-squares minimizer unique?",
+    "accepted": [
+      "X transpose X is invertible",
+      "full column rank",
+      "positive definite X^T X"
+    ],
+    "solution": "Full column rank makes X^T X positive definite and invertible, giving w_hat = (X^T X)^(-1)X^T y as the unique minimizer.",
+    "hint": "Look at the Hessian of the quadratic objective.",
+    "explanation": "Rank deficiency creates flat directions and multiple minimizers; full rank removes them.",
+    "misconception": "Confusing existence of a minimizer with uniqueness.",
+    "visualHook": "Show a bowl becoming a flat valley as rank is lost.",
+    "sourceRefs": [
+      {
+        "sourceId": "DSA5105/Lec1_annotated.pdf",
+        "page": 33,
+        "sourceType": "lecture",
+        "role": "OLS uniqueness",
+        "status": "current"
+      },
+      {
+        "sourceId": "DSA5105/Textbook.pdf",
+        "page": 25,
+        "sourceType": "textbook",
+        "role": "least squares",
+        "status": "supporting"
+      }
+    ],
+    "courseId": "DSA5105",
     "schemaVersion": "nus.question.v1"
   }
 ]

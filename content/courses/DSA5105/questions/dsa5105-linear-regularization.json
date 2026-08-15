@@ -20,6 +20,12 @@
         "status": "current"
       }
     ],
+    "difficulty": "easy",
+    "skill": "recall",
+    "cognitiveLevel": "understand",
+    "estimatedSeconds": 60,
+    "misconception": "Check the assumption behind your answer.",
+    "visualHook": "Explain the idea with a small diagram or example.",
     "courseId": "DSA5105",
     "lessonId": "dsa5105-linear-regularization",
     "schemaVersion": "nus.question.v1"
@@ -44,8 +50,90 @@
         "status": "current"
       }
     ],
+    "difficulty": "medium",
+    "skill": "explain",
+    "cognitiveLevel": "understand",
+    "estimatedSeconds": 90,
+    "misconception": "Check the assumption behind your answer.",
+    "visualHook": "Explain the idea with a small diagram or example.",
     "courseId": "DSA5105",
     "lessonId": "dsa5105-linear-regularization",
+    "schemaVersion": "nus.question.v1"
+  },
+  {
+    "id": "dsa5105-bank-007",
+    "lessonId": "dsa5105-linear-regularization",
+    "type": "calculation",
+    "difficulty": "medium",
+    "skill": "regularization",
+    "cognitiveLevel": "apply",
+    "estimatedSeconds": 120,
+    "prompt": "In ridge regression, what happens to the objective when lambda increases?",
+    "accepted": [
+      "the squared norm penalty receives more weight",
+      "weights are penalized more strongly",
+      "larger regularization penalty"
+    ],
+    "solution": "The objective adds lambda ||w||^2, so increasing lambda makes large coefficients more costly and usually shrinks the fitted weights.",
+    "hint": "Inspect the coefficient multiplying the norm.",
+    "explanation": "Regularization trades some training fit for a constrained or smoother hypothesis.",
+    "misconception": "Thinking lambda changes the labels rather than the optimization preference.",
+    "visualHook": "Show contours changing from elongated to round as lambda grows.",
+    "sourceRefs": [
+      {
+        "sourceId": "DSA5105/Lec1_annotated.pdf",
+        "page": 46,
+        "sourceType": "lecture",
+        "role": "ridge objective",
+        "status": "current"
+      },
+      {
+        "sourceId": "DSA5105/Textbook.pdf",
+        "page": 29,
+        "sourceType": "textbook",
+        "role": "regularization",
+        "status": "supporting"
+      }
+    ],
+    "courseId": "DSA5105",
+    "schemaVersion": "nus.question.v1"
+  },
+  {
+    "id": "dsa5105-bank-008",
+    "lessonId": "dsa5105-linear-regularization",
+    "type": "derivation",
+    "difficulty": "hard",
+    "skill": "regularized-ols",
+    "cognitiveLevel": "analyze",
+    "estimatedSeconds": 150,
+    "prompt": "State the closed-form ridge solution and identify the matrix that is made invertible by lambda > 0.",
+    "accepted": [
+      "(X^T X + lambda I)^-1 X^T y",
+      "X transpose X plus lambda I",
+      "ridge solution"
+    ],
+    "solution": "w_hat_ridge = (X^T X + lambda I)^(-1) X^T y. For lambda > 0, the added positive diagonal term removes zero-eigenvalue directions.",
+    "hint": "Start from the gradient of the squared loss plus lambda||w||^2.",
+    "explanation": "Ridge stabilizes ill-conditioned or rank-deficient least squares.",
+    "misconception": "Adding lambda I to X rather than to the normal-equation matrix.",
+    "visualHook": "Highlight eigenvalues lifted away from zero.",
+    "sourceRefs": [
+      {
+        "sourceId": "DSA5105/Lec1_annotated.pdf",
+        "page": 48,
+        "sourceType": "lecture",
+        "role": "ridge solution",
+        "status": "current"
+      },
+      {
+        "sourceId": "DSA5105/Textbook.pdf",
+        "page": 30,
+        "sourceType": "textbook",
+        "role": "closed form",
+        "status": "supporting"
+      }
+    ],
+    "courseId": "DSA5105",
     "schemaVersion": "nus.question.v1"
   }
 ]

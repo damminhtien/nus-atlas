@@ -19,6 +19,12 @@
         "status": "optional"
       }
     ],
+    "difficulty": "medium",
+    "skill": "explain",
+    "cognitiveLevel": "understand",
+    "estimatedSeconds": 90,
+    "misconception": "Check the assumption behind your answer.",
+    "visualHook": "Explain the idea with a small diagram or example.",
     "courseId": "DSA5105",
     "lessonId": "dsa5105-gnn",
     "schemaVersion": "nus.question.v1"
@@ -44,8 +50,90 @@
         "status": "optional"
       }
     ],
+    "difficulty": "easy",
+    "skill": "recall",
+    "cognitiveLevel": "understand",
+    "estimatedSeconds": 60,
+    "misconception": "Check the assumption behind your answer.",
+    "visualHook": "Explain the idea with a small diagram or example.",
     "courseId": "DSA5105",
     "lessonId": "dsa5105-gnn",
+    "schemaVersion": "nus.question.v1"
+  },
+  {
+    "id": "dsa5105-bank-043",
+    "lessonId": "dsa5105-gnn",
+    "type": "derivation",
+    "difficulty": "medium",
+    "skill": "message-passing",
+    "cognitiveLevel": "apply",
+    "estimatedSeconds": 140,
+    "prompt": "Give a generic one-layer message-passing update for node v.",
+    "accepted": [
+      "h_v next equals update h_v and aggregate neighbor messages",
+      "h_v' = phi(h_v, aggregate psi(h_v,h_u))",
+      "aggregate neighbors then update node"
+    ],
+    "solution": "A generic layer is h_v' = phi(h_v, AGG_{u in N(v)} psi(h_v,h_u)), where AGG is permutation invariant.",
+    "hint": "Separate message, aggregation, and update.",
+    "explanation": "Permutation-invariant aggregation makes the representation insensitive to the ordering of neighbors.",
+    "misconception": "Using a sequence-sensitive sum order as part of the graph definition.",
+    "visualHook": "Show messages arriving, aggregating, and updating a node.",
+    "sourceRefs": [
+      {
+        "sourceId": "DSA5105/Ref/Chapter3_Graph_Neural_Networks.pdf",
+        "page": 1,
+        "sourceType": "ref",
+        "role": "message passing",
+        "status": "supporting"
+      },
+      {
+        "sourceId": "DSA5105/Lec8_annotated.pdf",
+        "page": 54,
+        "sourceType": "lecture",
+        "role": "GNN layer",
+        "status": "current"
+      }
+    ],
+    "courseId": "DSA5105",
+    "schemaVersion": "nus.question.v1"
+  },
+  {
+    "id": "dsa5105-bank-044",
+    "lessonId": "dsa5105-gnn",
+    "type": "short",
+    "difficulty": "hard",
+    "skill": "oversmoothing",
+    "cognitiveLevel": "evaluate",
+    "estimatedSeconds": 110,
+    "prompt": "What is oversmoothing in a deep message-passing GNN?",
+    "accepted": [
+      "node representations become too similar after many propagation layers",
+      "embeddings collapse across nodes",
+      "neighbor mixing erases distinctions"
+    ],
+    "solution": "Repeated aggregation can make node embeddings converge toward similar values, reducing the distinctions needed for prediction.",
+    "hint": "Imagine repeatedly averaging neighboring colors.",
+    "explanation": "Depth, graph spectrum, normalization, and skip connections all affect this trade-off.",
+    "misconception": "Confusing oversmoothing with overfitting to labels.",
+    "visualHook": "Increase message-passing depth and watch node colors converge.",
+    "sourceRefs": [
+      {
+        "sourceId": "DSA5105/Ref/Chapter3_Graph_Neural_Networks.pdf",
+        "page": 1,
+        "sourceType": "ref",
+        "role": "GNN depth",
+        "status": "supporting"
+      },
+      {
+        "sourceId": "DSA5105/Lec8_annotated.pdf",
+        "page": 54,
+        "sourceType": "lecture",
+        "role": "GNN limitations",
+        "status": "current"
+      }
+    ],
+    "courseId": "DSA5105",
     "schemaVersion": "nus.question.v1"
   }
 ]

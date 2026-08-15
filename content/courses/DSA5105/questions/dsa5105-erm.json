@@ -20,6 +20,12 @@
         "status": "current"
       }
     ],
+    "difficulty": "easy",
+    "skill": "recall",
+    "cognitiveLevel": "understand",
+    "estimatedSeconds": 60,
+    "misconception": "Check the assumption behind your answer.",
+    "visualHook": "Explain the idea with a small diagram or example.",
     "courseId": "DSA5105",
     "lessonId": "dsa5105-erm",
     "schemaVersion": "nus.question.v1"
@@ -44,6 +50,12 @@
         "status": "current"
       }
     ],
+    "difficulty": "hard",
+    "skill": "derive",
+    "cognitiveLevel": "analyze",
+    "estimatedSeconds": 150,
+    "misconception": "Check the assumption behind your answer.",
+    "visualHook": "Explain the idea with a small diagram or example.",
     "courseId": "DSA5105",
     "lessonId": "dsa5105-erm",
     "schemaVersion": "nus.question.v1"
@@ -68,6 +80,12 @@
         "status": "current"
       }
     ],
+    "difficulty": "medium",
+    "skill": "explain",
+    "cognitiveLevel": "understand",
+    "estimatedSeconds": 90,
+    "misconception": "Check the assumption behind your answer.",
+    "visualHook": "Explain the idea with a small diagram or example.",
     "courseId": "DSA5105",
     "lessonId": "dsa5105-erm",
     "schemaVersion": "nus.question.v1"
@@ -92,8 +110,84 @@
         "status": "current"
       }
     ],
+    "difficulty": "medium",
+    "skill": "explain",
+    "cognitiveLevel": "understand",
+    "estimatedSeconds": 90,
+    "misconception": "Check the assumption behind your answer.",
+    "visualHook": "Explain the idea with a small diagram or example.",
     "courseId": "DSA5105",
     "lessonId": "dsa5105-erm",
+    "schemaVersion": "nus.question.v1"
+  },
+  {
+    "id": "dsa5105-bank-001",
+    "lessonId": "dsa5105-erm",
+    "type": "mcq",
+    "difficulty": "easy",
+    "skill": "concept-map",
+    "cognitiveLevel": "understand",
+    "estimatedSeconds": 60,
+    "prompt": "A random oracle generates y from p*(·|x). What does one observed pair (x_i, y_i) represent?",
+    "choices": [
+      "One draw from the conditional label distribution",
+      "The exact complete oracle",
+      "A validation score",
+      "A regularizer"
+    ],
+    "answer": 0,
+    "hint": "Separate the data-generating process from one sample.",
+    "explanation": "The pair is one sample drawn at x_i; it does not reveal the full conditional distribution.",
+    "misconception": "Treating an observed label as proof that the oracle is deterministic.",
+    "visualHook": "Trace one x into several possible noisy labels.",
+    "sourceRefs": [
+      {
+        "sourceId": "DSA5105/Lec1_annotated.pdf",
+        "page": 20,
+        "sourceType": "lecture",
+        "role": "random oracle",
+        "status": "current"
+      }
+    ],
+    "courseId": "DSA5105",
+    "schemaVersion": "nus.question.v1"
+  },
+  {
+    "id": "dsa5105-bank-002",
+    "lessonId": "dsa5105-erm",
+    "type": "derivation",
+    "difficulty": "medium",
+    "skill": "objective-reading",
+    "cognitiveLevel": "analyze",
+    "estimatedSeconds": 120,
+    "prompt": "Write the supervised-learning objective using a hypothesis h, loss l, and training set D.",
+    "accepted": [
+      "minimize 1/N sum loss h(x_i),y_i",
+      "argmin h average loss over D",
+      "minimize empirical risk"
+    ],
+    "solution": "Choose h to minimize R_hat(h) = (1/N) sum_i l(h(x_i), y_i), optionally adding a regularization penalty.",
+    "hint": "Use the average over the N observed pairs.",
+    "explanation": "ERM is an optimization statement over observed data; regularization changes the objective but not the role of the sample average.",
+    "misconception": "Writing a population expectation as if all future data were available.",
+    "visualHook": "Slider from individual losses to their mean empirical risk.",
+    "sourceRefs": [
+      {
+        "sourceId": "DSA5105/Lec1_annotated.pdf",
+        "page": 23,
+        "sourceType": "lecture",
+        "role": "ERM objective",
+        "status": "current"
+      },
+      {
+        "sourceId": "DSA5105/Textbook.pdf",
+        "page": 18,
+        "sourceType": "textbook",
+        "role": "empirical risk",
+        "status": "supporting"
+      }
+    ],
+    "courseId": "DSA5105",
     "schemaVersion": "nus.question.v1"
   }
 ]

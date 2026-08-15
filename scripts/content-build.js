@@ -21,6 +21,51 @@ function readJsonIfExists(file) {
   return fs.existsSync(file) ? JSON.parse(fs.readFileSync(file, "utf8")) : null;
 }
 
+function readQuestionBank(courseId) {
+  const file = path.join(ROOT, "content", "courses", courseId, "questions", "bank.json");
+  return readJsonIfExists(file);
+}
+
+function mergeQuestionBank(catalog, bank) {
+  if (!bank || !Array.isArray(bank.questions)) return catalog;
+  const extrasByLesson = new Map();
+  bank.questions.forEach(question => {
+    const list = extrasByLesson.get(question.lessonId) || [];
+    list.push(question);
+    extrasByLesson.set(question.lessonId, list);
+  });
+  return {
+    ...catalog,
+    modules: (catalog.modules || []).map(module => ({
+      ...module,
+      lessons: (module.lessons || []).map(lesson => ({
+        ...lesson,
+        questions: [...(lesson.questions || []), ...(extrasByLesson.get(lesson.id) || [])]
+      }))
+    }))
+  };
+}
+
+const QUESTION_DEFAULTS = {
+  mcq: { difficulty: "easy", skill: "recall", cognitiveLevel: "understand", estimatedSeconds: 60 },
+  short: { difficulty: "medium", skill: "explain", cognitiveLevel: "understand", estimatedSeconds: 90 },
+  derivation: { difficulty: "hard", skill: "derive", cognitiveLevel: "analyze", estimatedSeconds: 150 },
+  calculation: { difficulty: "medium", skill: "calculate", cognitiveLevel: "apply", estimatedSeconds: 120 }
+};
+
+function normalizeQuestion(question) {
+  const defaults = QUESTION_DEFAULTS[question.type] || QUESTION_DEFAULTS.short;
+  return {
+    ...cleanObject(question),
+    difficulty: question.difficulty || defaults.difficulty,
+    skill: question.skill || defaults.skill,
+    cognitiveLevel: question.cognitiveLevel || defaults.cognitiveLevel,
+    estimatedSeconds: question.estimatedSeconds || defaults.estimatedSeconds,
+    misconception: question.misconception || "Check the assumption behind your answer.",
+    visualHook: question.visualHook || "Explain the idea with a small diagram or example."
+  };
+}
+
 function loadSlideSets(packageRoot) {
   const slidesRoot = path.join(packageRoot, "slides");
   if (!fs.existsSync(slidesRoot)) return [];
@@ -79,7 +124,7 @@ function lessonBlocks(lesson) {
 
 function normalizeLesson(courseId, module, lesson, artifactsByLesson = {}) {
   const questions = Array.isArray(lesson.questions) ? lesson.questions.map(question => ({
-    ...cleanObject(question),
+    ...normalizeQuestion(question),
     courseId,
     lessonId: lesson.id,
     schemaVersion: "nus.question.v1"
@@ -121,13 +166,17 @@ function collectSources(course, catalog) {
     if (!byKey.has(key)) byKey.set(key, cleanObject(ref));
   };
   [course.lectureSources, course.textbookSources, course.referenceSources].flat().forEach(add);
-  (catalog.modules || []).forEach(module => (module.lessons || []).forEach(lesson => (lesson.sourceRefs || []).forEach(add)));
+  (catalog.modules || []).forEach(module => (module.lessons || []).forEach(lesson => {
+    (lesson.sourceRefs || []).forEach(add);
+    (lesson.questions || []).forEach(question => (question.sourceRefs || []).forEach(add));
+  }));
   return [...byKey.values()];
 }
 
 function packageCourse(state, courseId) {
   const course = state.courses.find(item => item.code === courseId);
-  const catalog = state.content[courseId];
+  const questionBank = readQuestionBank(courseId);
+  const catalog = mergeQuestionBank(state.content[courseId], questionBank);
   if (!course || !catalog) throw new Error(`Cannot build missing course: ${courseId}`);
   const packageRoot = path.join(ROOT, "content", "courses", courseId);
   const textbookFile = path.join(packageRoot, "textbook.json");
@@ -172,6 +221,13 @@ function packageCourse(state, courseId) {
     moduleIds: modules.map(module => module.id),
     assessmentIds: state.assessments.filter(item => item.courseCode === courseId).map(item => item.id),
     sourceCatalog: collectSources(course, catalog),
+    questionBank: questionBank ? {
+      schemaVersion: questionBank.schemaVersion,
+      purpose: questionBank.purpose,
+      blueprint: cleanObject(questionBank.blueprint || {}),
+      questionIds: questionBank.questions.map(question => question.id),
+      extensionCount: questionBank.questions.length
+    } : null,
     slideSetIds: slideSets.map(slideSet => slideSet.id),
     sourcePolicy: sourceManifest ? cleanObject(sourceManifest.policy || {}) : {},
     visualIds: [...visualIds],
@@ -191,9 +247,10 @@ function packageCourse(state, courseId) {
     ...(sourceManifest ? { sourceManifest: cleanObject(sourceManifest) } : {}),
     slideSets: cleanObject(slideSets),
     ...(textbook ? { textbook } : {}),
+    ...(questionBank ? { questionBank: cleanObject(packageCourse.questionBank) } : {}),
     visuals: Object.fromEntries([...visualIds].filter(id => state.visuals[id]).map(id => [id, cleanObject(state.visuals[id])])),
     labs: Object.fromEntries([...labIds].filter(id => state.labs[id]).map(id => [id, cleanObject(state.labs[id])])),
-    counts: { modules: modules.length, lessons: joinedModules.reduce((n, module) => n + module.lessons.length, 0), questions: questions.length, artifacts: artifacts.length, slideSets: slideSets.length, slides: slideSets.reduce((total, slideSet) => total + (slideSet.slides || []).length, 0) }
+    counts: { modules: modules.length, lessons: joinedModules.reduce((n, module) => n + module.lessons.length, 0), questions: questions.length, questionBank: questionBank ? questionBank.questions.length : 0, artifacts: artifacts.length, slideSets: slideSets.length, slides: slideSets.reduce((total, slideSet) => total + (slideSet.slides || []).length, 0) }
   };
 }
 

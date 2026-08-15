@@ -20,6 +20,12 @@
         "status": "current"
       }
     ],
+    "difficulty": "easy",
+    "skill": "recall",
+    "cognitiveLevel": "understand",
+    "estimatedSeconds": 60,
+    "misconception": "Check the assumption behind your answer.",
+    "visualHook": "Explain the idea with a small diagram or example.",
     "courseId": "DSA5105",
     "lessonId": "dsa5105-neural-backprop",
     "schemaVersion": "nus.question.v1"
@@ -44,6 +50,12 @@
         "status": "course-depth"
       }
     ],
+    "difficulty": "medium",
+    "skill": "explain",
+    "cognitiveLevel": "understand",
+    "estimatedSeconds": 90,
+    "misconception": "Check the assumption behind your answer.",
+    "visualHook": "Explain the idea with a small diagram or example.",
     "courseId": "DSA5105",
     "lessonId": "dsa5105-neural-backprop",
     "schemaVersion": "nus.question.v1"
@@ -68,6 +80,12 @@
         "status": "assessment-derived"
       }
     ],
+    "difficulty": "medium",
+    "skill": "calculate",
+    "cognitiveLevel": "apply",
+    "estimatedSeconds": 120,
+    "misconception": "Check the assumption behind your answer.",
+    "visualHook": "Explain the idea with a small diagram or example.",
     "courseId": "DSA5105",
     "lessonId": "dsa5105-neural-backprop",
     "schemaVersion": "nus.question.v1"
@@ -93,6 +111,12 @@
         "status": "course-depth"
       }
     ],
+    "difficulty": "easy",
+    "skill": "recall",
+    "cognitiveLevel": "understand",
+    "estimatedSeconds": 60,
+    "misconception": "Check the assumption behind your answer.",
+    "visualHook": "Explain the idea with a small diagram or example.",
     "courseId": "DSA5105",
     "lessonId": "dsa5105-neural-backprop",
     "schemaVersion": "nus.question.v1"
@@ -117,8 +141,90 @@
         "status": "course-depth"
       }
     ],
+    "difficulty": "hard",
+    "skill": "derive",
+    "cognitiveLevel": "analyze",
+    "estimatedSeconds": 150,
+    "misconception": "Check the assumption behind your answer.",
+    "visualHook": "Explain the idea with a small diagram or example.",
     "courseId": "DSA5105",
     "lessonId": "dsa5105-neural-backprop",
+    "schemaVersion": "nus.question.v1"
+  },
+  {
+    "id": "dsa5105-bank-023",
+    "lessonId": "dsa5105-neural-backprop",
+    "type": "derivation",
+    "difficulty": "medium",
+    "skill": "backpropagation",
+    "cognitiveLevel": "apply",
+    "estimatedSeconds": 140,
+    "prompt": "For z = wx and loss L(z), express dL/dw using the chain rule.",
+    "accepted": [
+      "dL/dz times x",
+      "(dL/dz)x",
+      "chain rule"
+    ],
+    "solution": "dL/dw = (dL/dz)(dz/dw) = (dL/dz)x.",
+    "hint": "Differentiate the affine node with respect to its weight.",
+    "explanation": "Backpropagation is repeated local chain-rule composition on a computation graph.",
+    "misconception": "Dropping the input x from the gradient.",
+    "visualHook": "Highlight the two edges in the computation graph.",
+    "sourceRefs": [
+      {
+        "sourceId": "DSA5105/Lec5_annotated.pdf",
+        "page": 46,
+        "sourceType": "lecture",
+        "role": "backprop chain rule",
+        "status": "current"
+      },
+      {
+        "sourceId": "DSA5105/Textbook.pdf",
+        "page": 112,
+        "sourceType": "textbook",
+        "role": "neural gradients",
+        "status": "supporting"
+      }
+    ],
+    "courseId": "DSA5105",
+    "schemaVersion": "nus.question.v1"
+  },
+  {
+    "id": "dsa5105-bank-024",
+    "lessonId": "dsa5105-neural-backprop",
+    "type": "short",
+    "difficulty": "hard",
+    "skill": "gradient-descent",
+    "cognitiveLevel": "analyze",
+    "estimatedSeconds": 120,
+    "prompt": "Why can a small learning rate make neural-network training appear stuck?",
+    "accepted": [
+      "updates are too small",
+      "gradient steps make little progress",
+      "slow optimization"
+    ],
+    "solution": "Each parameter update is proportional to the learning rate. If it is too small relative to the loss landscape, progress is extremely slow.",
+    "hint": "Inspect the update rule theta <- theta - eta gradient.",
+    "explanation": "A small rate can be stable but inefficient; a large rate can overshoot or diverge.",
+    "misconception": "Thinking a small learning rate changes the target function.",
+    "visualHook": "Run the same contour descent with three learning rates.",
+    "sourceRefs": [
+      {
+        "sourceId": "DSA5105/Lec5_annotated.pdf",
+        "page": 48,
+        "sourceType": "lecture",
+        "role": "gradient descent",
+        "status": "current"
+      },
+      {
+        "sourceId": "DSA5105/Textbook.pdf",
+        "page": 114,
+        "sourceType": "textbook",
+        "role": "optimization",
+        "status": "supporting"
+      }
+    ],
+    "courseId": "DSA5105",
     "schemaVersion": "nus.question.v1"
   }
 ]

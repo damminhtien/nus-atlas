@@ -19,6 +19,12 @@
         "status": "course-depth"
       }
     ],
+    "difficulty": "hard",
+    "skill": "derive",
+    "cognitiveLevel": "analyze",
+    "estimatedSeconds": 150,
+    "misconception": "Check the assumption behind your answer.",
+    "visualHook": "Explain the idea with a small diagram or example.",
     "courseId": "DSA5105",
     "lessonId": "dsa5105-pca-deep-dive",
     "schemaVersion": "nus.question.v1"
@@ -43,6 +49,12 @@
         "status": "course-depth"
       }
     ],
+    "difficulty": "medium",
+    "skill": "explain",
+    "cognitiveLevel": "understand",
+    "estimatedSeconds": 90,
+    "misconception": "Check the assumption behind your answer.",
+    "visualHook": "Explain the idea with a small diagram or example.",
     "courseId": "DSA5105",
     "lessonId": "dsa5105-pca-deep-dive",
     "schemaVersion": "nus.question.v1"
@@ -67,8 +79,90 @@
         "status": "draft"
       }
     ],
+    "difficulty": "medium",
+    "skill": "explain",
+    "cognitiveLevel": "understand",
+    "estimatedSeconds": 90,
+    "misconception": "Check the assumption behind your answer.",
+    "visualHook": "Explain the idea with a small diagram or example.",
     "courseId": "DSA5105",
     "lessonId": "dsa5105-pca-deep-dive",
+    "schemaVersion": "nus.question.v1"
+  },
+  {
+    "id": "dsa5105-bank-013",
+    "lessonId": "dsa5105-pca-deep-dive",
+    "type": "calculation",
+    "difficulty": "medium",
+    "skill": "pca-eigenvectors",
+    "cognitiveLevel": "apply",
+    "estimatedSeconds": 140,
+    "prompt": "For a centered data matrix X, which matrix supplies the principal directions in the covariance formulation?",
+    "accepted": [
+      "the eigenvectors of X^T X or the covariance matrix",
+      "eigenvectors of covariance",
+      "principal eigenvectors"
+    ],
+    "solution": "The top eigenvectors of (1/N)X^T X are the principal directions; equivalently use the right singular vectors of X.",
+    "hint": "PCA finds directions of maximum projected variance.",
+    "explanation": "The eigenvalue orders the variance captured by each direction.",
+    "misconception": "Using eigenvectors of X itself when X is rectangular.",
+    "visualHook": "Rotate an axis and plot captured variance.",
+    "sourceRefs": [
+      {
+        "sourceId": "DSA5105/Lec3_annotated.pdf",
+        "page": 46,
+        "sourceType": "lecture",
+        "role": "PCA directions",
+        "status": "current"
+      },
+      {
+        "sourceId": "DSA5105/Textbook.pdf",
+        "page": 82,
+        "sourceType": "textbook",
+        "role": "PCA",
+        "status": "supporting"
+      }
+    ],
+    "courseId": "DSA5105",
+    "schemaVersion": "nus.question.v1"
+  },
+  {
+    "id": "dsa5105-bank-014",
+    "lessonId": "dsa5105-pca-deep-dive",
+    "type": "short",
+    "difficulty": "hard",
+    "skill": "pca-reconstruction",
+    "cognitiveLevel": "analyze",
+    "estimatedSeconds": 120,
+    "prompt": "What is the reconstruction error after projecting onto the first k PCA directions?",
+    "accepted": [
+      "the sum of discarded eigenvalues",
+      "sum of eigenvalues after k",
+      "variance not captured by retained components"
+    ],
+    "solution": "For centered data and squared error, the minimum k-dimensional reconstruction error equals the sum of the discarded covariance eigenvalues.",
+    "hint": "Retained eigenvalues are explained variance.",
+    "explanation": "PCA's optimal subspace leaves exactly the variance represented by omitted directions.",
+    "misconception": "Using the sum of retained eigenvalues as the error.",
+    "visualHook": "Click components and watch explained versus discarded variance.",
+    "sourceRefs": [
+      {
+        "sourceId": "DSA5105/Lec3_annotated.pdf",
+        "page": 48,
+        "sourceType": "lecture",
+        "role": "PCA reconstruction",
+        "status": "current"
+      },
+      {
+        "sourceId": "DSA5105/Textbook.pdf",
+        "page": 88,
+        "sourceType": "textbook",
+        "role": "reconstruction error",
+        "status": "supporting"
+      }
+    ],
+    "courseId": "DSA5105",
     "schemaVersion": "nus.question.v1"
   }
 ]

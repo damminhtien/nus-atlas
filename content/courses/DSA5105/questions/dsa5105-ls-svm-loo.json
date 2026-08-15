@@ -19,6 +19,12 @@
         "status": "course-depth"
       }
     ],
+    "difficulty": "hard",
+    "skill": "derive",
+    "cognitiveLevel": "analyze",
+    "estimatedSeconds": 150,
+    "misconception": "Check the assumption behind your answer.",
+    "visualHook": "Explain the idea with a small diagram or example.",
     "courseId": "DSA5105",
     "lessonId": "dsa5105-ls-svm-loo",
     "schemaVersion": "nus.question.v1"
@@ -43,6 +49,12 @@
         "status": "assessment-derived"
       }
     ],
+    "difficulty": "medium",
+    "skill": "explain",
+    "cognitiveLevel": "understand",
+    "estimatedSeconds": 90,
+    "misconception": "Check the assumption behind your answer.",
+    "visualHook": "Explain the idea with a small diagram or example.",
     "courseId": "DSA5105",
     "lessonId": "dsa5105-ls-svm-loo",
     "schemaVersion": "nus.question.v1"
@@ -67,6 +79,12 @@
         "status": "assessment-derived"
       }
     ],
+    "difficulty": "hard",
+    "skill": "derive",
+    "cognitiveLevel": "analyze",
+    "estimatedSeconds": 150,
+    "misconception": "Check the assumption behind your answer.",
+    "visualHook": "Explain the idea with a small diagram or example.",
     "courseId": "DSA5105",
     "lessonId": "dsa5105-ls-svm-loo",
     "schemaVersion": "nus.question.v1"
@@ -92,8 +110,90 @@
         "status": "assessment-derived"
       }
     ],
+    "difficulty": "easy",
+    "skill": "recall",
+    "cognitiveLevel": "understand",
+    "estimatedSeconds": 60,
+    "misconception": "Check the assumption behind your answer.",
+    "visualHook": "Explain the idea with a small diagram or example.",
     "courseId": "DSA5105",
     "lessonId": "dsa5105-ls-svm-loo",
+    "schemaVersion": "nus.question.v1"
+  },
+  {
+    "id": "dsa5105-bank-037",
+    "lessonId": "dsa5105-ls-svm-loo",
+    "type": "short",
+    "difficulty": "hard",
+    "skill": "loo-validation",
+    "cognitiveLevel": "analyze",
+    "estimatedSeconds": 120,
+    "prompt": "What does leave-one-out validation estimate for a model trained on N examples?",
+    "accepted": [
+      "average error when each point is held out once",
+      "test-like error from N retrainings",
+      "cross validation error"
+    ],
+    "solution": "Train on N-1 examples, evaluate the held-out point, and average over all N choices of the held-out point.",
+    "hint": "One example is omitted at a time.",
+    "explanation": "LOO uses much of the data for each fit but can be computationally expensive and correlated across folds.",
+    "misconception": "Evaluating one model on all points without retraining.",
+    "visualHook": "Cycle the held-out index and update the error ledger.",
+    "sourceRefs": [
+      {
+        "sourceId": "DSA5105/Lec4_annotated.pdf",
+        "page": 17,
+        "sourceType": "lecture",
+        "role": "validation",
+        "status": "current"
+      },
+      {
+        "sourceId": "DSA5105/Textbook.pdf",
+        "page": 70,
+        "sourceType": "textbook",
+        "role": "cross validation",
+        "status": "supporting"
+      }
+    ],
+    "courseId": "DSA5105",
+    "schemaVersion": "nus.question.v1"
+  },
+  {
+    "id": "dsa5105-bank-038",
+    "lessonId": "dsa5105-ls-svm-loo",
+    "type": "derivation",
+    "difficulty": "hard",
+    "skill": "model-selection",
+    "cognitiveLevel": "evaluate",
+    "estimatedSeconds": 140,
+    "prompt": "Why should the final test score not be used to select the best regularization parameter?",
+    "accepted": [
+      "it leaks test information and makes the estimate optimistic",
+      "test leakage",
+      "selection bias"
+    ],
+    "solution": "Using the test score to choose lambda makes the test set part of training/model selection, so the reported score is no longer an unbiased final estimate.",
+    "hint": "Ask what information influenced the chosen model.",
+    "explanation": "A clean evaluation requires the test set to remain unseen until all choices are fixed.",
+    "misconception": "Thinking only parameter gradients count as training information.",
+    "visualHook": "Show a data-leakage path from test results back into selection.",
+    "sourceRefs": [
+      {
+        "sourceId": "DSA5105/Lec1_annotated.pdf",
+        "page": 17,
+        "sourceType": "lecture",
+        "role": "test leakage",
+        "status": "current"
+      },
+      {
+        "sourceId": "DSA5105/Textbook.pdf",
+        "page": 70,
+        "sourceType": "textbook",
+        "role": "model selection",
+        "status": "supporting"
+      }
+    ],
+    "courseId": "DSA5105",
     "schemaVersion": "nus.question.v1"
   }
 ]

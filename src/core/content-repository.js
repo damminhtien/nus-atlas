@@ -99,6 +99,10 @@
     const packageData = courseId && coursePackage(courseId);
     return packageData && packageData.textbook ? packageData.textbook : null;
   }
+  function getQuestionBank(courseId) {
+    const packageData = courseId && coursePackage(courseId);
+    return packageData && packageData.questionBank ? packageData.questionBank : null;
+  }
   function getSourceManifest(courseId) {
     const packageData = courseId && coursePackage(courseId);
     return packageData && packageData.sourceManifest ? packageData.sourceManifest : null;
@@ -127,6 +131,7 @@
     getSchedule,
     getSourceCatalog,
     getTextbook,
+    getQuestionBank,
     getSourceManifest,
     getSlideSets,
     getSlideSet,

@@ -20,6 +20,12 @@
         "status": "course-depth"
       }
     ],
+    "difficulty": "easy",
+    "skill": "recall",
+    "cognitiveLevel": "understand",
+    "estimatedSeconds": 60,
+    "misconception": "Check the assumption behind your answer.",
+    "visualHook": "Explain the idea with a small diagram or example.",
     "courseId": "DSA5105",
     "lessonId": "dsa5105-trees-ensembles",
     "schemaVersion": "nus.question.v1"
@@ -44,6 +50,12 @@
         "status": "course-depth"
       }
     ],
+    "difficulty": "medium",
+    "skill": "calculate",
+    "cognitiveLevel": "apply",
+    "estimatedSeconds": 120,
+    "misconception": "Check the assumption behind your answer.",
+    "visualHook": "Explain the idea with a small diagram or example.",
     "courseId": "DSA5105",
     "lessonId": "dsa5105-trees-ensembles",
     "schemaVersion": "nus.question.v1"
@@ -68,6 +80,12 @@
         "status": "course-depth"
       }
     ],
+    "difficulty": "medium",
+    "skill": "explain",
+    "cognitiveLevel": "understand",
+    "estimatedSeconds": 90,
+    "misconception": "Check the assumption behind your answer.",
+    "visualHook": "Explain the idea with a small diagram or example.",
     "courseId": "DSA5105",
     "lessonId": "dsa5105-trees-ensembles",
     "schemaVersion": "nus.question.v1"
@@ -93,6 +111,12 @@
         "status": "course-depth"
       }
     ],
+    "difficulty": "medium",
+    "skill": "calculate",
+    "cognitiveLevel": "apply",
+    "estimatedSeconds": 120,
+    "misconception": "Check the assumption behind your answer.",
+    "visualHook": "Explain the idea with a small diagram or example.",
     "courseId": "DSA5105",
     "lessonId": "dsa5105-trees-ensembles",
     "schemaVersion": "nus.question.v1"
@@ -117,8 +141,91 @@
         "status": "course-depth"
       }
     ],
+    "difficulty": "medium",
+    "skill": "explain",
+    "cognitiveLevel": "understand",
+    "estimatedSeconds": 90,
+    "misconception": "Check the assumption behind your answer.",
+    "visualHook": "Explain the idea with a small diagram or example.",
     "courseId": "DSA5105",
     "lessonId": "dsa5105-trees-ensembles",
+    "schemaVersion": "nus.question.v1"
+  },
+  {
+    "id": "dsa5105-bank-021",
+    "lessonId": "dsa5105-trees-ensembles",
+    "type": "mcq",
+    "difficulty": "easy",
+    "skill": "decision-tree",
+    "cognitiveLevel": "understand",
+    "estimatedSeconds": 60,
+    "prompt": "A decision-tree split is useful when it produces which effect?",
+    "choices": [
+      "Lower impurity in child nodes",
+      "Higher impurity in every child",
+      "A larger test set",
+      "A fixed neural-network gradient"
+    ],
+    "answer": 0,
+    "hint": "A split should make the children more homogeneous.",
+    "explanation": "Information gain or impurity reduction measures how much the split improves node purity.",
+    "misconception": "Choosing a split because it creates the most uneven child sizes.",
+    "visualHook": "Compare class histograms before and after a split.",
+    "sourceRefs": [
+      {
+        "sourceId": "DSA5105/Lec5_annotated.pdf",
+        "page": 31,
+        "sourceType": "lecture",
+        "role": "tree split",
+        "status": "current"
+      },
+      {
+        "sourceId": "DSA5105/Textbook.pdf",
+        "page": 108,
+        "sourceType": "textbook",
+        "role": "decision trees",
+        "status": "supporting"
+      }
+    ],
+    "courseId": "DSA5105",
+    "schemaVersion": "nus.question.v1"
+  },
+  {
+    "id": "dsa5105-bank-022",
+    "lessonId": "dsa5105-trees-ensembles",
+    "type": "short",
+    "difficulty": "medium",
+    "skill": "boosting",
+    "cognitiveLevel": "analyze",
+    "estimatedSeconds": 110,
+    "prompt": "How does AdaBoost change the training emphasis after a weak learner makes errors?",
+    "accepted": [
+      "it increases weights on misclassified examples",
+      "misclassified points receive more weight",
+      "focuses the next learner on errors"
+    ],
+    "solution": "AdaBoost increases the importance of misclassified examples so the next weak learner focuses on residual mistakes.",
+    "hint": "Think of a moving distribution over examples.",
+    "explanation": "Boosting builds a sequential additive model; it is not independent resampling like bagging.",
+    "misconception": "Believing all learners are trained independently on identical weights.",
+    "visualHook": "Animate example weights after each weak learner.",
+    "sourceRefs": [
+      {
+        "sourceId": "DSA5105/Lec5_annotated.pdf",
+        "page": 33,
+        "sourceType": "lecture",
+        "role": "AdaBoost",
+        "status": "current"
+      },
+      {
+        "sourceId": "DSA5105/Textbook.pdf",
+        "page": 110,
+        "sourceType": "textbook",
+        "role": "boosting",
+        "status": "supporting"
+      }
+    ],
+    "courseId": "DSA5105",
     "schemaVersion": "nus.question.v1"
   }
 ]

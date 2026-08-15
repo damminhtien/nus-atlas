@@ -19,6 +19,12 @@
         "status": "course-depth"
       }
     ],
+    "difficulty": "hard",
+    "skill": "derive",
+    "cognitiveLevel": "analyze",
+    "estimatedSeconds": 150,
+    "misconception": "Check the assumption behind your answer.",
+    "visualHook": "Explain the idea with a small diagram or example.",
     "courseId": "DSA5105",
     "lessonId": "dsa5105-mdp-value-iteration",
     "schemaVersion": "nus.question.v1"
@@ -42,6 +48,12 @@
         "status": "assessment-derived"
       }
     ],
+    "difficulty": "medium",
+    "skill": "calculate",
+    "cognitiveLevel": "apply",
+    "estimatedSeconds": 120,
+    "misconception": "Check the assumption behind your answer.",
+    "visualHook": "Explain the idea with a small diagram or example.",
     "courseId": "DSA5105",
     "lessonId": "dsa5105-mdp-value-iteration",
     "schemaVersion": "nus.question.v1"
@@ -66,6 +78,12 @@
         "status": "optional"
       }
     ],
+    "difficulty": "medium",
+    "skill": "explain",
+    "cognitiveLevel": "understand",
+    "estimatedSeconds": 90,
+    "misconception": "Check the assumption behind your answer.",
+    "visualHook": "Explain the idea with a small diagram or example.",
     "courseId": "DSA5105",
     "lessonId": "dsa5105-mdp-value-iteration",
     "schemaVersion": "nus.question.v1"
@@ -91,6 +109,12 @@
         "status": "assessment-derived"
       }
     ],
+    "difficulty": "easy",
+    "skill": "recall",
+    "cognitiveLevel": "understand",
+    "estimatedSeconds": 60,
+    "misconception": "Check the assumption behind your answer.",
+    "visualHook": "Explain the idea with a small diagram or example.",
     "courseId": "DSA5105",
     "lessonId": "dsa5105-mdp-value-iteration",
     "schemaVersion": "nus.question.v1"
@@ -115,8 +139,90 @@
         "status": "course-depth"
       }
     ],
+    "difficulty": "medium",
+    "skill": "explain",
+    "cognitiveLevel": "understand",
+    "estimatedSeconds": 90,
+    "misconception": "Check the assumption behind your answer.",
+    "visualHook": "Explain the idea with a small diagram or example.",
     "courseId": "DSA5105",
     "lessonId": "dsa5105-mdp-value-iteration",
+    "schemaVersion": "nus.question.v1"
+  },
+  {
+    "id": "dsa5105-bank-029",
+    "lessonId": "dsa5105-mdp-value-iteration",
+    "type": "calculation",
+    "difficulty": "medium",
+    "skill": "bellman-backup",
+    "cognitiveLevel": "apply",
+    "estimatedSeconds": 140,
+    "prompt": "In a deterministic one-step MDP, what is the value backup for action a from state s?",
+    "accepted": [
+      "reward plus gamma times value of next state",
+      "r(s,a)+gamma V(s')",
+      "bellman backup"
+    ],
+    "solution": "The backup is Q(s,a) = r(s,a) + gamma V(s'), and value iteration takes the maximum over available actions.",
+    "hint": "Follow one transition and discount the future.",
+    "explanation": "The Bellman operator recursively relates current value to immediate reward and successor value.",
+    "misconception": "Discounting the immediate reward instead of the future value.",
+    "visualHook": "Animate reward and discounted value flowing along an edge.",
+    "sourceRefs": [
+      {
+        "sourceId": "DSA5105/Lec6_annotated.pdf",
+        "page": 17,
+        "sourceType": "lecture",
+        "role": "value iteration",
+        "status": "current"
+      },
+      {
+        "sourceId": "DSA5105/Textbook.pdf",
+        "page": 103,
+        "sourceType": "textbook",
+        "role": "Bellman backup",
+        "status": "supporting"
+      }
+    ],
+    "courseId": "DSA5105",
+    "schemaVersion": "nus.question.v1"
+  },
+  {
+    "id": "dsa5105-bank-030",
+    "lessonId": "dsa5105-mdp-value-iteration",
+    "type": "short",
+    "difficulty": "medium",
+    "skill": "mdp-policy",
+    "cognitiveLevel": "analyze",
+    "estimatedSeconds": 100,
+    "prompt": "How is a greedy policy extracted from a converged value function?",
+    "accepted": [
+      "choose the action with highest expected one-step backed-up value",
+      "argmax action q",
+      "maximize reward plus discounted successor value"
+    ],
+    "solution": "At each state choose an action maximizing expected immediate reward plus discounted successor value under the transition model.",
+    "hint": "Use the same action-value expression as the backup.",
+    "explanation": "The value function evaluates states; the greedy policy chooses the best action under that evaluation.",
+    "misconception": "Choosing the state with largest V rather than an action available from the current state.",
+    "visualHook": "Highlight action arrows and their backup scores.",
+    "sourceRefs": [
+      {
+        "sourceId": "DSA5105/Lec6_annotated.pdf",
+        "page": 20,
+        "sourceType": "lecture",
+        "role": "greedy policy",
+        "status": "current"
+      },
+      {
+        "sourceId": "DSA5105/Textbook.pdf",
+        "page": 108,
+        "sourceType": "textbook",
+        "role": "policy extraction",
+        "status": "supporting"
+      }
+    ],
+    "courseId": "DSA5105",
     "schemaVersion": "nus.question.v1"
   }
 ]

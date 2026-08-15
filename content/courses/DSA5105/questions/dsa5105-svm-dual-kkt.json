@@ -19,6 +19,12 @@
         "status": "course-depth"
       }
     ],
+    "difficulty": "hard",
+    "skill": "derive",
+    "cognitiveLevel": "analyze",
+    "estimatedSeconds": 150,
+    "misconception": "Check the assumption behind your answer.",
+    "visualHook": "Explain the idea with a small diagram or example.",
     "courseId": "DSA5105",
     "lessonId": "dsa5105-svm-dual-kkt",
     "schemaVersion": "nus.question.v1"
@@ -43,6 +49,12 @@
         "status": "course-depth"
       }
     ],
+    "difficulty": "medium",
+    "skill": "explain",
+    "cognitiveLevel": "understand",
+    "estimatedSeconds": 90,
+    "misconception": "Check the assumption behind your answer.",
+    "visualHook": "Explain the idea with a small diagram or example.",
     "courseId": "DSA5105",
     "lessonId": "dsa5105-svm-dual-kkt",
     "schemaVersion": "nus.question.v1"
@@ -68,6 +80,12 @@
         "status": "assessment-derived"
       }
     ],
+    "difficulty": "easy",
+    "skill": "recall",
+    "cognitiveLevel": "understand",
+    "estimatedSeconds": 60,
+    "misconception": "Check the assumption behind your answer.",
+    "visualHook": "Explain the idea with a small diagram or example.",
     "courseId": "DSA5105",
     "lessonId": "dsa5105-svm-dual-kkt",
     "schemaVersion": "nus.question.v1"
@@ -92,6 +110,12 @@
         "status": "course-depth"
       }
     ],
+    "difficulty": "medium",
+    "skill": "explain",
+    "cognitiveLevel": "understand",
+    "estimatedSeconds": 90,
+    "misconception": "Check the assumption behind your answer.",
+    "visualHook": "Explain the idea with a small diagram or example.",
     "courseId": "DSA5105",
     "lessonId": "dsa5105-svm-dual-kkt",
     "schemaVersion": "nus.question.v1"
@@ -116,8 +140,90 @@
         "status": "assessment-derived"
       }
     ],
+    "difficulty": "medium",
+    "skill": "explain",
+    "cognitiveLevel": "understand",
+    "estimatedSeconds": 90,
+    "misconception": "Check the assumption behind your answer.",
+    "visualHook": "Explain the idea with a small diagram or example.",
     "courseId": "DSA5105",
     "lessonId": "dsa5105-svm-dual-kkt",
+    "schemaVersion": "nus.question.v1"
+  },
+  {
+    "id": "dsa5105-bank-019",
+    "lessonId": "dsa5105-svm-dual-kkt",
+    "type": "derivation",
+    "difficulty": "hard",
+    "skill": "svm-dual",
+    "cognitiveLevel": "analyze",
+    "estimatedSeconds": 180,
+    "prompt": "In the SVM dual, what is the constraint on each alpha_i for a soft-margin model with C?",
+    "accepted": [
+      "0 <= alpha_i <= C",
+      "alpha_i is between zero and C",
+      "box constraint"
+    ],
+    "solution": "The dual variables satisfy 0 <= alpha_i <= C and sum_i alpha_i y_i = 0.",
+    "hint": "The slack penalty creates an upper bound.",
+    "explanation": "The box constraint distinguishes soft-margin dual variables from the hard-margin case.",
+    "misconception": "Using alpha_i >= C or omitting the equality constraint.",
+    "visualHook": "Move alpha values along a bounded KKT slider.",
+    "sourceRefs": [
+      {
+        "sourceId": "DSA5105/Lec4_annotated.pdf",
+        "page": 23,
+        "sourceType": "lecture",
+        "role": "SVM dual",
+        "status": "current"
+      },
+      {
+        "sourceId": "DSA5105/Textbook.pdf",
+        "page": 103,
+        "sourceType": "textbook",
+        "role": "dual constraints",
+        "status": "supporting"
+      }
+    ],
+    "courseId": "DSA5105",
+    "schemaVersion": "nus.question.v1"
+  },
+  {
+    "id": "dsa5105-bank-020",
+    "lessonId": "dsa5105-svm-dual-kkt",
+    "type": "short",
+    "difficulty": "hard",
+    "skill": "kkt",
+    "cognitiveLevel": "analyze",
+    "estimatedSeconds": 150,
+    "prompt": "What does 0 < alpha_i < C typically tell you about a soft-margin training point?",
+    "accepted": [
+      "it lies on the margin",
+      "the point is a support vector with active margin",
+      "complementary slackness gives equality"
+    ],
+    "solution": "An interior alpha usually corresponds to a point satisfying y_i f(x_i)=1, so it lies on the margin and can help determine the bias.",
+    "hint": "Use complementary slackness and the stationarity conditions.",
+    "explanation": "Alpha at zero, interior, or C encodes different KKT cases.",
+    "misconception": "Assuming every support vector must have alpha exactly C.",
+    "visualHook": "Click KKT cases and highlight point position.",
+    "sourceRefs": [
+      {
+        "sourceId": "DSA5105/Lec4_annotated.pdf",
+        "page": 25,
+        "sourceType": "lecture",
+        "role": "KKT cases",
+        "status": "current"
+      },
+      {
+        "sourceId": "DSA5105/Textbook.pdf",
+        "page": 107,
+        "sourceType": "textbook",
+        "role": "support vectors",
+        "status": "supporting"
+      }
+    ],
+    "courseId": "DSA5105",
     "schemaVersion": "nus.question.v1"
   }
 ]

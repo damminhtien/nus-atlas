@@ -20,6 +20,12 @@
         "status": "course-depth"
       }
     ],
+    "difficulty": "easy",
+    "skill": "recall",
+    "cognitiveLevel": "understand",
+    "estimatedSeconds": 60,
+    "misconception": "Check the assumption behind your answer.",
+    "visualHook": "Explain the idea with a small diagram or example.",
     "courseId": "DSA5105",
     "lessonId": "dsa5105-weighted-ols",
     "schemaVersion": "nus.question.v1"
@@ -45,6 +51,12 @@
         "status": "course-depth"
       }
     ],
+    "difficulty": "medium",
+    "skill": "explain",
+    "cognitiveLevel": "understand",
+    "estimatedSeconds": 90,
+    "misconception": "Check the assumption behind your answer.",
+    "visualHook": "Explain the idea with a small diagram or example.",
     "courseId": "DSA5105",
     "lessonId": "dsa5105-weighted-ols",
     "schemaVersion": "nus.question.v1"
@@ -69,6 +81,12 @@
         "status": "assessment-derived"
       }
     ],
+    "difficulty": "hard",
+    "skill": "derive",
+    "cognitiveLevel": "analyze",
+    "estimatedSeconds": 150,
+    "misconception": "Check the assumption behind your answer.",
+    "visualHook": "Explain the idea with a small diagram or example.",
     "courseId": "DSA5105",
     "lessonId": "dsa5105-weighted-ols",
     "schemaVersion": "nus.question.v1"
@@ -93,6 +111,12 @@
         "status": "current"
       }
     ],
+    "difficulty": "medium",
+    "skill": "explain",
+    "cognitiveLevel": "understand",
+    "estimatedSeconds": 90,
+    "misconception": "Check the assumption behind your answer.",
+    "visualHook": "Explain the idea with a small diagram or example.",
     "courseId": "DSA5105",
     "lessonId": "dsa5105-weighted-ols",
     "schemaVersion": "nus.question.v1"
@@ -117,8 +141,90 @@
         "status": "course-depth"
       }
     ],
+    "difficulty": "medium",
+    "skill": "explain",
+    "cognitiveLevel": "understand",
+    "estimatedSeconds": 90,
+    "misconception": "Check the assumption behind your answer.",
+    "visualHook": "Explain the idea with a small diagram or example.",
     "courseId": "DSA5105",
     "lessonId": "dsa5105-weighted-ols",
+    "schemaVersion": "nus.question.v1"
+  },
+  {
+    "id": "dsa5105-bank-017",
+    "lessonId": "dsa5105-weighted-ols",
+    "type": "calculation",
+    "difficulty": "medium",
+    "skill": "weighted-risk",
+    "cognitiveLevel": "apply",
+    "estimatedSeconds": 120,
+    "prompt": "In weighted least squares, what does a larger weight w_i do to example i?",
+    "accepted": [
+      "gives its squared error more influence",
+      "weights its loss more heavily",
+      "increases contribution to objective"
+    ],
+    "solution": "The objective contains sum_i w_i (y_i - x_i^T beta)^2, so a larger w_i makes fitting example i more important.",
+    "hint": "Look at the coefficient multiplying its residual squared.",
+    "explanation": "Weights change the empirical measure being optimized; they are not automatically class probabilities.",
+    "misconception": "Thinking a larger weight changes the feature value.",
+    "visualHook": "Resize loss bars as individual weights change.",
+    "sourceRefs": [
+      {
+        "sourceId": "DSA5105/Lec4_annotated.pdf",
+        "page": 17,
+        "sourceType": "lecture",
+        "role": "weighted risk",
+        "status": "current"
+      },
+      {
+        "sourceId": "DSA5105/Textbook.pdf",
+        "page": 100,
+        "sourceType": "textbook",
+        "role": "weighted least squares",
+        "status": "supporting"
+      }
+    ],
+    "courseId": "DSA5105",
+    "schemaVersion": "nus.question.v1"
+  },
+  {
+    "id": "dsa5105-bank-018",
+    "lessonId": "dsa5105-weighted-ols",
+    "type": "short",
+    "difficulty": "medium",
+    "skill": "validation-test",
+    "cognitiveLevel": "analyze",
+    "estimatedSeconds": 100,
+    "prompt": "Why can reweighting a training objective change the model even when the data points do not change?",
+    "accepted": [
+      "it changes the empirical risk geometry",
+      "different examples dominate optimization",
+      "changes objective curvature"
+    ],
+    "solution": "The weighted objective changes both the gradient and curvature, so the minimizer prioritizes some residuals over others.",
+    "hint": "The sample is the same, but the objective is not.",
+    "explanation": "This is useful for costs, imbalance, or heteroscedastic noise, but it must be validated carefully.",
+    "misconception": "Assuming weights only rescale the final score.",
+    "visualHook": "Show the loss surface tilting as weights change.",
+    "sourceRefs": [
+      {
+        "sourceId": "DSA5105/Lec4_annotated.pdf",
+        "page": 20,
+        "sourceType": "lecture",
+        "role": "weighted objective",
+        "status": "current"
+      },
+      {
+        "sourceId": "DSA5105/Textbook.pdf",
+        "page": 102,
+        "sourceType": "textbook",
+        "role": "weighted risk",
+        "status": "supporting"
+      }
+    ],
+    "courseId": "DSA5105",
     "schemaVersion": "nus.question.v1"
   }
 ]

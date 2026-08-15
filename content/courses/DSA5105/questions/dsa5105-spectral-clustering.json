@@ -19,6 +19,12 @@
         "status": "draft"
       }
     ],
+    "difficulty": "hard",
+    "skill": "derive",
+    "cognitiveLevel": "analyze",
+    "estimatedSeconds": 150,
+    "misconception": "Check the assumption behind your answer.",
+    "visualHook": "Explain the idea with a small diagram or example.",
     "courseId": "DSA5105",
     "lessonId": "dsa5105-spectral-clustering",
     "schemaVersion": "nus.question.v1"
@@ -43,6 +49,12 @@
         "status": "assessment-derived"
       }
     ],
+    "difficulty": "medium",
+    "skill": "explain",
+    "cognitiveLevel": "understand",
+    "estimatedSeconds": 90,
+    "misconception": "Check the assumption behind your answer.",
+    "visualHook": "Explain the idea with a small diagram or example.",
     "courseId": "DSA5105",
     "lessonId": "dsa5105-spectral-clustering",
     "schemaVersion": "nus.question.v1"
@@ -67,8 +79,91 @@
         "status": "draft"
       }
     ],
+    "difficulty": "medium",
+    "skill": "explain",
+    "cognitiveLevel": "understand",
+    "estimatedSeconds": 90,
+    "misconception": "Check the assumption behind your answer.",
+    "visualHook": "Explain the idea with a small diagram or example.",
     "courseId": "DSA5105",
     "lessonId": "dsa5105-spectral-clustering",
+    "schemaVersion": "nus.question.v1"
+  },
+  {
+    "id": "dsa5105-bank-035",
+    "lessonId": "dsa5105-spectral-clustering",
+    "type": "mcq",
+    "difficulty": "medium",
+    "skill": "graph-laplacian",
+    "cognitiveLevel": "understand",
+    "estimatedSeconds": 70,
+    "prompt": "What does the graph Laplacian encode for a node signal?",
+    "choices": [
+      "Differences between a node and its neighbors",
+      "Only the node labels",
+      "The SVM margin",
+      "A neural-network loss derivative"
+    ],
+    "answer": 0,
+    "hint": "Look at the quadratic form f^T L f.",
+    "explanation": "The Laplacian penalizes disagreement across edges and exposes smooth graph structure.",
+    "misconception": "Treating L as another adjacency matrix with the same semantics.",
+    "visualHook": "Color a graph signal and display edge disagreement.",
+    "sourceRefs": [
+      {
+        "sourceId": "DSA5105/Lec7_annotated.pdf",
+        "page": 39,
+        "sourceType": "lecture",
+        "role": "graph Laplacian",
+        "status": "current"
+      },
+      {
+        "sourceId": "DSA5105/Textbook.pdf",
+        "page": 118,
+        "sourceType": "textbook",
+        "role": "spectral graph theory",
+        "status": "supporting"
+      }
+    ],
+    "courseId": "DSA5105",
+    "schemaVersion": "nus.question.v1"
+  },
+  {
+    "id": "dsa5105-bank-036",
+    "lessonId": "dsa5105-spectral-clustering",
+    "type": "short",
+    "difficulty": "hard",
+    "skill": "spectral-embedding",
+    "cognitiveLevel": "analyze",
+    "estimatedSeconds": 130,
+    "prompt": "Why can the first nontrivial Laplacian eigenvectors help reveal clusters?",
+    "accepted": [
+      "they provide a low-dimensional smooth embedding that separates weakly connected groups",
+      "small eigenvectors encode clusters",
+      "spectral embedding separates communities"
+    ],
+    "solution": "Low-eigenvalue eigenvectors vary little within well-connected groups but change across weak cuts, making them useful coordinates for clustering.",
+    "hint": "Relate smoothness to a small f^T L f.",
+    "explanation": "Spectral clustering turns graph connectivity into coordinates before applying a conventional clustering method.",
+    "misconception": "Using the largest eigenvectors because they always contain the clusters.",
+    "visualHook": "Project graph nodes onto the first two eigenvectors.",
+    "sourceRefs": [
+      {
+        "sourceId": "DSA5105/Lec7_annotated.pdf",
+        "page": 46,
+        "sourceType": "lecture",
+        "role": "spectral clustering",
+        "status": "current"
+      },
+      {
+        "sourceId": "DSA5105/Textbook.pdf",
+        "page": 120,
+        "sourceType": "textbook",
+        "role": "spectral embedding",
+        "status": "supporting"
+      }
+    ],
+    "courseId": "DSA5105",
     "schemaVersion": "nus.question.v1"
   }
 ]

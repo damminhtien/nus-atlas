@@ -20,6 +20,12 @@
         "status": "assessment-derived"
       }
     ],
+    "difficulty": "medium",
+    "skill": "calculate",
+    "cognitiveLevel": "apply",
+    "estimatedSeconds": 120,
+    "misconception": "Check the assumption behind your answer.",
+    "visualHook": "Explain the idea with a small diagram or example.",
     "courseId": "DSA5105",
     "lessonId": "dsa5105-gmm-em-numerical",
     "schemaVersion": "nus.question.v1"
@@ -44,6 +50,12 @@
         "status": "course-depth"
       }
     ],
+    "difficulty": "medium",
+    "skill": "explain",
+    "cognitiveLevel": "understand",
+    "estimatedSeconds": 90,
+    "misconception": "Check the assumption behind your answer.",
+    "visualHook": "Explain the idea with a small diagram or example.",
     "courseId": "DSA5105",
     "lessonId": "dsa5105-gmm-em-numerical",
     "schemaVersion": "nus.question.v1"
@@ -68,6 +80,12 @@
         "status": "course-depth"
       }
     ],
+    "difficulty": "hard",
+    "skill": "derive",
+    "cognitiveLevel": "analyze",
+    "estimatedSeconds": 150,
+    "misconception": "Check the assumption behind your answer.",
+    "visualHook": "Explain the idea with a small diagram or example.",
     "courseId": "DSA5105",
     "lessonId": "dsa5105-gmm-em-numerical",
     "schemaVersion": "nus.question.v1"
@@ -93,8 +111,90 @@
         "status": "course-depth"
       }
     ],
+    "difficulty": "easy",
+    "skill": "recall",
+    "cognitiveLevel": "understand",
+    "estimatedSeconds": 60,
+    "misconception": "Check the assumption behind your answer.",
+    "visualHook": "Explain the idea with a small diagram or example.",
     "courseId": "DSA5105",
     "lessonId": "dsa5105-gmm-em-numerical",
+    "schemaVersion": "nus.question.v1"
+  },
+  {
+    "id": "dsa5105-bank-027",
+    "lessonId": "dsa5105-gmm-em-numerical",
+    "type": "calculation",
+    "difficulty": "hard",
+    "skill": "em-responsibility",
+    "cognitiveLevel": "apply",
+    "estimatedSeconds": 170,
+    "prompt": "For two equally likely Gaussian components, what determines whether r_i1 exceeds r_i2?",
+    "accepted": [
+      "which component has higher likelihood at x_i",
+      "compare the two component densities",
+      "posterior responsibility follows likelihood"
+    ],
+    "solution": "With equal priors, the component with larger density at x_i receives the larger posterior responsibility; unequal priors multiply those likelihoods.",
+    "hint": "Write Bayes' rule and cancel the common denominator.",
+    "explanation": "Responsibilities combine mixture weights and component likelihoods.",
+    "misconception": "Choosing the nearest mean regardless of covariance or prior.",
+    "visualHook": "Change covariance and watch responsibilities shift.",
+    "sourceRefs": [
+      {
+        "sourceId": "DSA5105/Lec3_annotated.pdf",
+        "page": 54,
+        "sourceType": "lecture",
+        "role": "GMM responsibility",
+        "status": "current"
+      },
+      {
+        "sourceId": "DSA5105/Textbook.pdf",
+        "page": 98,
+        "sourceType": "textbook",
+        "role": "Bayesian assignment",
+        "status": "supporting"
+      }
+    ],
+    "courseId": "DSA5105",
+    "schemaVersion": "nus.question.v1"
+  },
+  {
+    "id": "dsa5105-bank-028",
+    "lessonId": "dsa5105-gmm-em-numerical",
+    "type": "short",
+    "difficulty": "hard",
+    "skill": "em-monotonicity",
+    "cognitiveLevel": "analyze",
+    "estimatedSeconds": 120,
+    "prompt": "What is the role of the M-step after responsibilities have been computed?",
+    "accepted": [
+      "maximize expected complete data log likelihood",
+      "reestimate parameters using responsibilities",
+      "weighted maximum likelihood"
+    ],
+    "solution": "The M-step maximizes the expected complete-data log likelihood, using responsibilities as soft weights for means, covariances, and mixture weights.",
+    "hint": "E assigns soft memberships; M updates parameters.",
+    "explanation": "The alternating procedure improves a lower bound under standard EM assumptions.",
+    "misconception": "The M-step converts responsibilities into hard labels first.",
+    "visualHook": "Use responsibility bars as weights in a weighted mean.",
+    "sourceRefs": [
+      {
+        "sourceId": "DSA5105/Textbook.pdf",
+        "page": 100,
+        "sourceType": "textbook",
+        "role": "EM M-step",
+        "status": "supporting"
+      },
+      {
+        "sourceId": "DSA5105/Ref/Chapter3_Graph_Neural_Networks.pdf",
+        "page": 1,
+        "sourceType": "ref",
+        "role": "probabilistic learning",
+        "status": "supporting"
+      }
+    ],
+    "courseId": "DSA5105",
     "schemaVersion": "nus.question.v1"
   }
 ]

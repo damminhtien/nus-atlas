@@ -20,6 +20,12 @@
         "status": "current"
       }
     ],
+    "difficulty": "easy",
+    "skill": "recall",
+    "cognitiveLevel": "understand",
+    "estimatedSeconds": 60,
+    "misconception": "Check the assumption behind your answer.",
+    "visualHook": "Explain the idea with a small diagram or example.",
     "courseId": "DSA5105",
     "lessonId": "dsa5105-kernel-pca-cluster",
     "schemaVersion": "nus.question.v1"
@@ -45,8 +51,90 @@
         "status": "current"
       }
     ],
+    "difficulty": "easy",
+    "skill": "recall",
+    "cognitiveLevel": "understand",
+    "estimatedSeconds": 60,
+    "misconception": "Check the assumption behind your answer.",
+    "visualHook": "Explain the idea with a small diagram or example.",
     "courseId": "DSA5105",
     "lessonId": "dsa5105-kernel-pca-cluster",
+    "schemaVersion": "nus.question.v1"
+  },
+  {
+    "id": "dsa5105-bank-011",
+    "lessonId": "dsa5105-kernel-pca-cluster",
+    "type": "short",
+    "difficulty": "medium",
+    "skill": "kernel-trick",
+    "cognitiveLevel": "understand",
+    "estimatedSeconds": 90,
+    "prompt": "What must a kernel function provide so that it can be treated as an inner product in a feature space?",
+    "accepted": [
+      "a positive semidefinite Gram matrix",
+      "PSD Gram matrix",
+      "valid Mercer kernel"
+    ],
+    "solution": "For every finite sample, the Gram matrix K_ij = k(x_i,x_j) must be positive semidefinite.",
+    "hint": "Check the quadratic form a^T K a.",
+    "explanation": "Positive semidefiniteness is what makes the implicit feature-space inner product consistent.",
+    "misconception": "Assuming symmetry alone is sufficient.",
+    "visualHook": "Build a Gram matrix and inspect its eigenvalues.",
+    "sourceRefs": [
+      {
+        "sourceId": "DSA5105/Lec2_annotated.pdf",
+        "page": 39,
+        "sourceType": "lecture",
+        "role": "kernel validity",
+        "status": "current"
+      },
+      {
+        "sourceId": "DSA5105/Textbook.pdf",
+        "page": 41,
+        "sourceType": "textbook",
+        "role": "kernel trick",
+        "status": "supporting"
+      }
+    ],
+    "courseId": "DSA5105",
+    "schemaVersion": "nus.question.v1"
+  },
+  {
+    "id": "dsa5105-bank-012",
+    "lessonId": "dsa5105-kernel-pca-cluster",
+    "type": "calculation",
+    "difficulty": "hard",
+    "skill": "kernel-pca",
+    "cognitiveLevel": "analyze",
+    "estimatedSeconds": 150,
+    "prompt": "Why is the kernel matrix centered before kernel PCA, and what operation performs that centering?",
+    "accepted": [
+      "to center feature vectors in feature space; H K H",
+      "H K H with H=I-11^T/N",
+      "double centering"
+    ],
+    "solution": "Use H = I - (1/N)11^T and replace K by K_c = H K H so the implicit feature vectors have zero mean.",
+    "hint": "Centering in feature space has a matrix analogue.",
+    "explanation": "The centered Gram matrix yields covariance directions around the feature-space mean rather than the origin.",
+    "misconception": "Subtracting the scalar mean of all kernel entries only.",
+    "visualHook": "Compare the kernel embedding before and after centering.",
+    "sourceRefs": [
+      {
+        "sourceId": "DSA5105/Lec2_annotated.pdf",
+        "page": 39,
+        "sourceType": "lecture",
+        "role": "kernel PCA",
+        "status": "current"
+      },
+      {
+        "sourceId": "DSA5105/Textbook.pdf",
+        "page": 43,
+        "sourceType": "textbook",
+        "role": "kernel centering",
+        "status": "supporting"
+      }
+    ],
+    "courseId": "DSA5105",
     "schemaVersion": "nus.question.v1"
   }
 ]

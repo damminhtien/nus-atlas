@@ -20,6 +20,12 @@
         "status": "course-depth"
       }
     ],
+    "difficulty": "easy",
+    "skill": "recall",
+    "cognitiveLevel": "understand",
+    "estimatedSeconds": 60,
+    "misconception": "Check the assumption behind your answer.",
+    "visualHook": "Explain the idea with a small diagram or example.",
     "courseId": "DSA5105",
     "lessonId": "dsa5105-cluster-gmm",
     "schemaVersion": "nus.question.v1"
@@ -44,6 +50,12 @@
         "status": "course-depth"
       }
     ],
+    "difficulty": "medium",
+    "skill": "explain",
+    "cognitiveLevel": "understand",
+    "estimatedSeconds": 90,
+    "misconception": "Check the assumption behind your answer.",
+    "visualHook": "Explain the idea with a small diagram or example.",
     "courseId": "DSA5105",
     "lessonId": "dsa5105-cluster-gmm",
     "schemaVersion": "nus.question.v1"
@@ -68,8 +80,91 @@
         "status": "draft"
       }
     ],
+    "difficulty": "medium",
+    "skill": "explain",
+    "cognitiveLevel": "understand",
+    "estimatedSeconds": 90,
+    "misconception": "Check the assumption behind your answer.",
+    "visualHook": "Explain the idea with a small diagram or example.",
     "courseId": "DSA5105",
     "lessonId": "dsa5105-cluster-gmm",
+    "schemaVersion": "nus.question.v1"
+  },
+  {
+    "id": "dsa5105-bank-015",
+    "lessonId": "dsa5105-cluster-gmm",
+    "type": "mcq",
+    "difficulty": "easy",
+    "skill": "kmeans",
+    "cognitiveLevel": "understand",
+    "estimatedSeconds": 60,
+    "prompt": "Which alternating steps define standard K-means?",
+    "choices": [
+      "Assign points to nearest centroid, then update centroids",
+      "Fit a density and backpropagate",
+      "Sort labels and compute a margin",
+      "Sample a policy and apply Bellman backup"
+    ],
+    "answer": 0,
+    "hint": "K-means alternates discrete assignments and mean updates.",
+    "explanation": "Each step does not increase the within-cluster squared-distance objective.",
+    "misconception": "Calling the assignment step a probabilistic posterior.",
+    "visualHook": "Animate assignment colors and centroid movement.",
+    "sourceRefs": [
+      {
+        "sourceId": "DSA5105/Lec3_annotated.pdf",
+        "page": 54,
+        "sourceType": "lecture",
+        "role": "K-means",
+        "status": "current"
+      },
+      {
+        "sourceId": "DSA5105/Textbook.pdf",
+        "page": 90,
+        "sourceType": "textbook",
+        "role": "clustering",
+        "status": "supporting"
+      }
+    ],
+    "courseId": "DSA5105",
+    "schemaVersion": "nus.question.v1"
+  },
+  {
+    "id": "dsa5105-bank-016",
+    "lessonId": "dsa5105-cluster-gmm",
+    "type": "derivation",
+    "difficulty": "hard",
+    "skill": "gmm-em",
+    "cognitiveLevel": "analyze",
+    "estimatedSeconds": 150,
+    "prompt": "What quantity does the E-step compute in a Gaussian mixture model?",
+    "accepted": [
+      "posterior responsibilities for each component",
+      "p(z_i=k given x_i)",
+      "component posterior probabilities"
+    ],
+    "solution": "The E-step computes r_ik = p(z_i=k|x_i, parameters), the soft responsibility of component k for observation i.",
+    "hint": "Replace hard cluster membership with a conditional probability.",
+    "explanation": "The M-step then re-estimates mixture parameters using these responsibilities as weights.",
+    "misconception": "Updating means and covariances in the E-step.",
+    "visualHook": "Show soft responsibility bars beside each data point.",
+    "sourceRefs": [
+      {
+        "sourceId": "DSA5105/Lec3_annotated.pdf",
+        "page": 54,
+        "sourceType": "lecture",
+        "role": "GMM EM",
+        "status": "current"
+      },
+      {
+        "sourceId": "DSA5105/Textbook.pdf",
+        "page": 98,
+        "sourceType": "textbook",
+        "role": "EM responsibilities",
+        "status": "supporting"
+      }
+    ],
+    "courseId": "DSA5105",
     "schemaVersion": "nus.question.v1"
   }
 ]

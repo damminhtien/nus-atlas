@@ -1,0 +1,320 @@
+{
+  "schemaVersion": "nus.question-bank.v1",
+  "courseId": "DSA5105",
+  "purpose": "Conceptual retrieval and worked reasoning across the DSA5105 learning arc.",
+  "blueprint": {
+    "questionsPerLesson": 2,
+    "sourcePolicy": "Lecture is primary; textbook and reference sources extend or clarify it.",
+    "types": ["mcq", "short", "derivation", "calculation"]
+  },
+  "questions": [
+    {
+      "id": "dsa5105-bank-001", "lessonId": "dsa5105-erm", "type": "mcq", "difficulty": "easy", "skill": "concept-map", "cognitiveLevel": "understand", "estimatedSeconds": 60,
+      "prompt": "A random oracle generates y from p*(·|x). What does one observed pair (x_i, y_i) represent?",
+      "choices": ["One draw from the conditional label distribution", "The exact complete oracle", "A validation score", "A regularizer"], "answer": 0,
+      "hint": "Separate the data-generating process from one sample.", "explanation": "The pair is one sample drawn at x_i; it does not reveal the full conditional distribution.", "misconception": "Treating an observed label as proof that the oracle is deterministic.", "visualHook": "Trace one x into several possible noisy labels.",
+      "sourceRefs": [{"sourceId": "DSA5105/Lec1_annotated.pdf", "page": 20, "sourceType": "lecture", "role": "random oracle", "status": "current"}]
+    },
+    {
+      "id": "dsa5105-bank-002", "lessonId": "dsa5105-erm", "type": "derivation", "difficulty": "medium", "skill": "objective-reading", "cognitiveLevel": "analyze", "estimatedSeconds": 120,
+      "prompt": "Write the supervised-learning objective using a hypothesis h, loss l, and training set D.",
+      "accepted": ["minimize 1/N sum loss h(x_i),y_i", "argmin h average loss over D", "minimize empirical risk"],
+      "solution": "Choose h to minimize R_hat(h) = (1/N) sum_i l(h(x_i), y_i), optionally adding a regularization penalty.", "hint": "Use the average over the N observed pairs.", "explanation": "ERM is an optimization statement over observed data; regularization changes the objective but not the role of the sample average.", "misconception": "Writing a population expectation as if all future data were available.", "visualHook": "Slider from individual losses to their mean empirical risk.",
+      "sourceRefs": [{"sourceId": "DSA5105/Lec1_annotated.pdf", "page": 23, "sourceType": "lecture", "role": "ERM objective", "status": "current"}, {"sourceId": "DSA5105/Textbook.pdf", "page": 18, "sourceType": "textbook", "role": "empirical risk", "status": "supporting"}]
+    },
+    {
+      "id": "dsa5105-bank-003", "lessonId": "dsa5105-linear-week1", "type": "short", "difficulty": "easy", "skill": "linear-basis", "cognitiveLevel": "understand", "estimatedSeconds": 75,
+      "prompt": "Why can a linear model still represent a nonlinear curve in x?",
+      "accepted": ["because it is linear in features or basis functions", "linear in parameters but nonlinear in x", "basis expansion"],
+      "solution": "A model can be linear in its parameters while using nonlinear features such as x^2 or sin(x). The feature map carries the nonlinearity.", "hint": "Ask what the word linear refers to.", "explanation": "Linearity in parameters is different from linearity in the original input coordinate.", "misconception": "Assuming every linear model must be a straight line in raw input space.", "visualHook": "Toggle raw x and a polynomial feature map.",
+      "sourceRefs": [{"sourceId": "DSA5105/Lec1_annotated.pdf", "page": 31, "sourceType": "lecture", "role": "linear models", "status": "current"}, {"sourceId": "DSA5105/Textbook.pdf", "page": 24, "sourceType": "textbook", "role": "basis functions", "status": "supporting"}]
+    },
+    {
+      "id": "dsa5105-bank-004", "lessonId": "dsa5105-linear-week1", "type": "calculation", "difficulty": "medium", "skill": "ols-uniqueness", "cognitiveLevel": "apply", "estimatedSeconds": 120,
+      "prompt": "For X with full column rank, what property makes the least-squares minimizer unique?",
+      "accepted": ["X transpose X is invertible", "full column rank", "positive definite X^T X"],
+      "solution": "Full column rank makes X^T X positive definite and invertible, giving w_hat = (X^T X)^(-1)X^T y as the unique minimizer.", "hint": "Look at the Hessian of the quadratic objective.", "explanation": "Rank deficiency creates flat directions and multiple minimizers; full rank removes them.", "misconception": "Confusing existence of a minimizer with uniqueness.", "visualHook": "Show a bowl becoming a flat valley as rank is lost.",
+      "sourceRefs": [{"sourceId": "DSA5105/Lec1_annotated.pdf", "page": 33, "sourceType": "lecture", "role": "OLS uniqueness", "status": "current"}, {"sourceId": "DSA5105/Textbook.pdf", "page": 25, "sourceType": "textbook", "role": "least squares", "status": "supporting"}]
+    },
+    {
+      "id": "dsa5105-bank-005", "lessonId": "dsa5105-learning-theory", "type": "mcq", "difficulty": "easy", "skill": "generalization", "cognitiveLevel": "understand", "estimatedSeconds": 60,
+      "prompt": "Which split should remain untouched until the final model estimate?",
+      "choices": ["Test", "Training", "Validation", "Bootstrap sample"], "answer": 0,
+      "hint": "Model selection is not final evaluation.", "explanation": "Validation supports choices; the test set estimates performance after those choices are fixed.", "misconception": "Using test performance repeatedly to select hyperparameters.", "visualHook": "Animate information flowing from train to validation to test only once.",
+      "sourceRefs": [{"sourceId": "DSA5105/Lec1_annotated.pdf", "page": 17, "sourceType": "lecture", "role": "evaluation split", "status": "current"}, {"sourceId": "DSA5105/Textbook.pdf", "page": 70, "sourceType": "textbook", "role": "generalization", "status": "supporting"}]
+    },
+    {
+      "id": "dsa5105-bank-006", "lessonId": "dsa5105-learning-theory", "type": "short", "difficulty": "medium", "skill": "bias-variance", "cognitiveLevel": "analyze", "estimatedSeconds": 100,
+      "prompt": "Explain why a very flexible hypothesis class can still have poor test error.",
+      "accepted": ["it can overfit and have high variance", "memorizes training data", "poor generalization"],
+      "solution": "A flexible class may fit noise or idiosyncrasies in the sample. Training error falls, but variance and generalization error can rise.", "hint": "Compare fit to observed data with performance on unseen data.", "explanation": "Approximation power is only one of the approximation-optimization-generalization questions.", "misconception": "Believing lower training error always implies lower test error.", "visualHook": "Move a complexity slider and reveal train/test curves.",
+      "sourceRefs": [{"sourceId": "DSA5105/Lec1_annotated.pdf", "page": 17, "sourceType": "lecture", "role": "generalization", "status": "current"}, {"sourceId": "DSA5105/Textbook.pdf", "page": 70, "sourceType": "textbook", "role": "overfitting", "status": "supporting"}]
+    },
+    {
+      "id": "dsa5105-bank-007", "lessonId": "dsa5105-linear-regularization", "type": "calculation", "difficulty": "medium", "skill": "regularization", "cognitiveLevel": "apply", "estimatedSeconds": 120,
+      "prompt": "In ridge regression, what happens to the objective when lambda increases?",
+      "accepted": ["the squared norm penalty receives more weight", "weights are penalized more strongly", "larger regularization penalty"],
+      "solution": "The objective adds lambda ||w||^2, so increasing lambda makes large coefficients more costly and usually shrinks the fitted weights.", "hint": "Inspect the coefficient multiplying the norm.", "explanation": "Regularization trades some training fit for a constrained or smoother hypothesis.", "misconception": "Thinking lambda changes the labels rather than the optimization preference.", "visualHook": "Show contours changing from elongated to round as lambda grows.",
+      "sourceRefs": [{"sourceId": "DSA5105/Lec1_annotated.pdf", "page": 46, "sourceType": "lecture", "role": "ridge objective", "status": "current"}, {"sourceId": "DSA5105/Textbook.pdf", "page": 29, "sourceType": "textbook", "role": "regularization", "status": "supporting"}]
+    },
+    {
+      "id": "dsa5105-bank-008", "lessonId": "dsa5105-linear-regularization", "type": "derivation", "difficulty": "hard", "skill": "regularized-ols", "cognitiveLevel": "analyze", "estimatedSeconds": 150,
+      "prompt": "State the closed-form ridge solution and identify the matrix that is made invertible by lambda > 0.",
+      "accepted": ["(X^T X + lambda I)^-1 X^T y", "X transpose X plus lambda I", "ridge solution"],
+      "solution": "w_hat_ridge = (X^T X + lambda I)^(-1) X^T y. For lambda > 0, the added positive diagonal term removes zero-eigenvalue directions.", "hint": "Start from the gradient of the squared loss plus lambda||w||^2.", "explanation": "Ridge stabilizes ill-conditioned or rank-deficient least squares.", "misconception": "Adding lambda I to X rather than to the normal-equation matrix.", "visualHook": "Highlight eigenvalues lifted away from zero.",
+      "sourceRefs": [{"sourceId": "DSA5105/Lec1_annotated.pdf", "page": 48, "sourceType": "lecture", "role": "ridge solution", "status": "current"}, {"sourceId": "DSA5105/Textbook.pdf", "page": 30, "sourceType": "textbook", "role": "closed form", "status": "supporting"}]
+    },
+    {
+      "id": "dsa5105-bank-009", "lessonId": "dsa5105-svm-margin", "type": "mcq", "difficulty": "easy", "skill": "svm-margin", "cognitiveLevel": "understand", "estimatedSeconds": 60,
+      "prompt": "For a hard-margin SVM, which points determine the separating hyperplane?",
+      "choices": ["Support vectors on the margin", "All points equally", "Only misclassified points", "The test set"], "answer": 0,
+      "hint": "The margin boundary is active at a small subset of examples.", "explanation": "Support vectors have active constraints and determine the maximum-margin separator.", "misconception": "Assuming every training point has equal geometric influence.", "visualHook": "Drag points and highlight active margin constraints.",
+      "sourceRefs": [{"sourceId": "DSA5105/Lec2_annotated.pdf", "page": 31, "sourceType": "lecture", "role": "support vectors", "status": "current"}, {"sourceId": "DSA5105/Textbook.pdf", "page": 35, "sourceType": "textbook", "role": "SVM margin", "status": "supporting"}]
+    },
+    {
+      "id": "dsa5105-bank-010", "lessonId": "dsa5105-svm-margin", "type": "short", "difficulty": "medium", "skill": "geometric-margin", "cognitiveLevel": "apply", "estimatedSeconds": 100,
+      "prompt": "How does scaling w affect the geometric margin in a canonical SVM constraint?",
+      "accepted": ["the canonical scaling fixes functional margin and geometric margin is 1 over norm w", "geometric margin is inversely proportional to norm w", "margin equals 1 over ||w||"],
+      "solution": "With y_i(w^T x_i+b) >= 1, the geometric margin is 1/||w|| (or 2/||w|| for the full slab). Scaling is fixed by the canonical constraint.", "hint": "Separate functional margin from distance in input space.", "explanation": "The SVM objective minimizes ||w|| because that maximizes geometric separation under the chosen scaling.", "misconception": "Treating w^T x+b itself as a scale-invariant distance.", "visualHook": "Normalize the same hyperplane and compare raw scores with distances.",
+      "sourceRefs": [{"sourceId": "DSA5105/Lec2_annotated.pdf", "page": 35, "sourceType": "lecture", "role": "geometric margin", "status": "current"}, {"sourceId": "DSA5105/Textbook.pdf", "page": 36, "sourceType": "textbook", "role": "margin geometry", "status": "supporting"}]
+    },
+    {
+      "id": "dsa5105-bank-011", "lessonId": "dsa5105-kernel-pca-cluster", "type": "short", "difficulty": "medium", "skill": "kernel-trick", "cognitiveLevel": "understand", "estimatedSeconds": 90,
+      "prompt": "What must a kernel function provide so that it can be treated as an inner product in a feature space?",
+      "accepted": ["a positive semidefinite Gram matrix", "PSD Gram matrix", "valid Mercer kernel"],
+      "solution": "For every finite sample, the Gram matrix K_ij = k(x_i,x_j) must be positive semidefinite.", "hint": "Check the quadratic form a^T K a.", "explanation": "Positive semidefiniteness is what makes the implicit feature-space inner product consistent.", "misconception": "Assuming symmetry alone is sufficient.", "visualHook": "Build a Gram matrix and inspect its eigenvalues.",
+      "sourceRefs": [{"sourceId": "DSA5105/Lec2_annotated.pdf", "page": 39, "sourceType": "lecture", "role": "kernel validity", "status": "current"}, {"sourceId": "DSA5105/Textbook.pdf", "page": 41, "sourceType": "textbook", "role": "kernel trick", "status": "supporting"}]
+    },
+    {
+      "id": "dsa5105-bank-012", "lessonId": "dsa5105-kernel-pca-cluster", "type": "calculation", "difficulty": "hard", "skill": "kernel-pca", "cognitiveLevel": "analyze", "estimatedSeconds": 150,
+      "prompt": "Why is the kernel matrix centered before kernel PCA, and what operation performs that centering?",
+      "accepted": ["to center feature vectors in feature space; H K H", "H K H with H=I-11^T/N", "double centering"],
+      "solution": "Use H = I - (1/N)11^T and replace K by K_c = H K H so the implicit feature vectors have zero mean.", "hint": "Centering in feature space has a matrix analogue.", "explanation": "The centered Gram matrix yields covariance directions around the feature-space mean rather than the origin.", "misconception": "Subtracting the scalar mean of all kernel entries only.", "visualHook": "Compare the kernel embedding before and after centering.",
+      "sourceRefs": [{"sourceId": "DSA5105/Lec2_annotated.pdf", "page": 39, "sourceType": "lecture", "role": "kernel PCA", "status": "current"}, {"sourceId": "DSA5105/Textbook.pdf", "page": 43, "sourceType": "textbook", "role": "kernel centering", "status": "supporting"}]
+    },
+    {
+      "id": "dsa5105-bank-013", "lessonId": "dsa5105-pca-deep-dive", "type": "calculation", "difficulty": "medium", "skill": "pca-eigenvectors", "cognitiveLevel": "apply", "estimatedSeconds": 140,
+      "prompt": "For a centered data matrix X, which matrix supplies the principal directions in the covariance formulation?",
+      "accepted": ["the eigenvectors of X^T X or the covariance matrix", "eigenvectors of covariance", "principal eigenvectors"],
+      "solution": "The top eigenvectors of (1/N)X^T X are the principal directions; equivalently use the right singular vectors of X.", "hint": "PCA finds directions of maximum projected variance.", "explanation": "The eigenvalue orders the variance captured by each direction.", "misconception": "Using eigenvectors of X itself when X is rectangular.", "visualHook": "Rotate an axis and plot captured variance.",
+      "sourceRefs": [{"sourceId": "DSA5105/Lec3_annotated.pdf", "page": 46, "sourceType": "lecture", "role": "PCA directions", "status": "current"}, {"sourceId": "DSA5105/Textbook.pdf", "page": 82, "sourceType": "textbook", "role": "PCA", "status": "supporting"}]
+    },
+    {
+      "id": "dsa5105-bank-014", "lessonId": "dsa5105-pca-deep-dive", "type": "short", "difficulty": "hard", "skill": "pca-reconstruction", "cognitiveLevel": "analyze", "estimatedSeconds": 120,
+      "prompt": "What is the reconstruction error after projecting onto the first k PCA directions?",
+      "accepted": ["the sum of discarded eigenvalues", "sum of eigenvalues after k", "variance not captured by retained components"],
+      "solution": "For centered data and squared error, the minimum k-dimensional reconstruction error equals the sum of the discarded covariance eigenvalues.", "hint": "Retained eigenvalues are explained variance.", "explanation": "PCA's optimal subspace leaves exactly the variance represented by omitted directions.", "misconception": "Using the sum of retained eigenvalues as the error.", "visualHook": "Click components and watch explained versus discarded variance.",
+      "sourceRefs": [{"sourceId": "DSA5105/Lec3_annotated.pdf", "page": 48, "sourceType": "lecture", "role": "PCA reconstruction", "status": "current"}, {"sourceId": "DSA5105/Textbook.pdf", "page": 88, "sourceType": "textbook", "role": "reconstruction error", "status": "supporting"}]
+    },
+    {
+      "id": "dsa5105-bank-015", "lessonId": "dsa5105-cluster-gmm", "type": "mcq", "difficulty": "easy", "skill": "kmeans", "cognitiveLevel": "understand", "estimatedSeconds": 60,
+      "prompt": "Which alternating steps define standard K-means?",
+      "choices": ["Assign points to nearest centroid, then update centroids", "Fit a density and backpropagate", "Sort labels and compute a margin", "Sample a policy and apply Bellman backup"], "answer": 0,
+      "hint": "K-means alternates discrete assignments and mean updates.", "explanation": "Each step does not increase the within-cluster squared-distance objective.", "misconception": "Calling the assignment step a probabilistic posterior.", "visualHook": "Animate assignment colors and centroid movement.",
+      "sourceRefs": [{"sourceId": "DSA5105/Lec3_annotated.pdf", "page": 54, "sourceType": "lecture", "role": "K-means", "status": "current"}, {"sourceId": "DSA5105/Textbook.pdf", "page": 90, "sourceType": "textbook", "role": "clustering", "status": "supporting"}]
+    },
+    {
+      "id": "dsa5105-bank-016", "lessonId": "dsa5105-cluster-gmm", "type": "derivation", "difficulty": "hard", "skill": "gmm-em", "cognitiveLevel": "analyze", "estimatedSeconds": 150,
+      "prompt": "What quantity does the E-step compute in a Gaussian mixture model?",
+      "accepted": ["posterior responsibilities for each component", "p(z_i=k given x_i)", "component posterior probabilities"],
+      "solution": "The E-step computes r_ik = p(z_i=k|x_i, parameters), the soft responsibility of component k for observation i.", "hint": "Replace hard cluster membership with a conditional probability.", "explanation": "The M-step then re-estimates mixture parameters using these responsibilities as weights.", "misconception": "Updating means and covariances in the E-step.", "visualHook": "Show soft responsibility bars beside each data point.",
+      "sourceRefs": [{"sourceId": "DSA5105/Lec3_annotated.pdf", "page": 54, "sourceType": "lecture", "role": "GMM EM", "status": "current"}, {"sourceId": "DSA5105/Textbook.pdf", "page": 98, "sourceType": "textbook", "role": "EM responsibilities", "status": "supporting"}]
+    },
+    {
+      "id": "dsa5105-bank-017", "lessonId": "dsa5105-weighted-ols", "type": "calculation", "difficulty": "medium", "skill": "weighted-risk", "cognitiveLevel": "apply", "estimatedSeconds": 120,
+      "prompt": "In weighted least squares, what does a larger weight w_i do to example i?",
+      "accepted": ["gives its squared error more influence", "weights its loss more heavily", "increases contribution to objective"],
+      "solution": "The objective contains sum_i w_i (y_i - x_i^T beta)^2, so a larger w_i makes fitting example i more important.", "hint": "Look at the coefficient multiplying its residual squared.", "explanation": "Weights change the empirical measure being optimized; they are not automatically class probabilities.", "misconception": "Thinking a larger weight changes the feature value.", "visualHook": "Resize loss bars as individual weights change.",
+      "sourceRefs": [{"sourceId": "DSA5105/Lec4_annotated.pdf", "page": 17, "sourceType": "lecture", "role": "weighted risk", "status": "current"}, {"sourceId": "DSA5105/Textbook.pdf", "page": 100, "sourceType": "textbook", "role": "weighted least squares", "status": "supporting"}]
+    },
+    {
+      "id": "dsa5105-bank-018", "lessonId": "dsa5105-weighted-ols", "type": "short", "difficulty": "medium", "skill": "validation-test", "cognitiveLevel": "analyze", "estimatedSeconds": 100,
+      "prompt": "Why can reweighting a training objective change the model even when the data points do not change?",
+      "accepted": ["it changes the empirical risk geometry", "different examples dominate optimization", "changes objective curvature"],
+      "solution": "The weighted objective changes both the gradient and curvature, so the minimizer prioritizes some residuals over others.", "hint": "The sample is the same, but the objective is not.", "explanation": "This is useful for costs, imbalance, or heteroscedastic noise, but it must be validated carefully.", "misconception": "Assuming weights only rescale the final score.", "visualHook": "Show the loss surface tilting as weights change.",
+      "sourceRefs": [{"sourceId": "DSA5105/Lec4_annotated.pdf", "page": 20, "sourceType": "lecture", "role": "weighted objective", "status": "current"}, {"sourceId": "DSA5105/Textbook.pdf", "page": 102, "sourceType": "textbook", "role": "weighted risk", "status": "supporting"}]
+    },
+    {
+      "id": "dsa5105-bank-019", "lessonId": "dsa5105-svm-dual-kkt", "type": "derivation", "difficulty": "hard", "skill": "svm-dual", "cognitiveLevel": "analyze", "estimatedSeconds": 180,
+      "prompt": "In the SVM dual, what is the constraint on each alpha_i for a soft-margin model with C?",
+      "accepted": ["0 <= alpha_i <= C", "alpha_i is between zero and C", "box constraint"],
+      "solution": "The dual variables satisfy 0 <= alpha_i <= C and sum_i alpha_i y_i = 0.", "hint": "The slack penalty creates an upper bound.", "explanation": "The box constraint distinguishes soft-margin dual variables from the hard-margin case.", "misconception": "Using alpha_i >= C or omitting the equality constraint.", "visualHook": "Move alpha values along a bounded KKT slider.",
+      "sourceRefs": [{"sourceId": "DSA5105/Lec4_annotated.pdf", "page": 23, "sourceType": "lecture", "role": "SVM dual", "status": "current"}, {"sourceId": "DSA5105/Textbook.pdf", "page": 103, "sourceType": "textbook", "role": "dual constraints", "status": "supporting"}]
+    },
+    {
+      "id": "dsa5105-bank-020", "lessonId": "dsa5105-svm-dual-kkt", "type": "short", "difficulty": "hard", "skill": "kkt", "cognitiveLevel": "analyze", "estimatedSeconds": 150,
+      "prompt": "What does 0 < alpha_i < C typically tell you about a soft-margin training point?",
+      "accepted": ["it lies on the margin", "the point is a support vector with active margin", "complementary slackness gives equality"],
+      "solution": "An interior alpha usually corresponds to a point satisfying y_i f(x_i)=1, so it lies on the margin and can help determine the bias.", "hint": "Use complementary slackness and the stationarity conditions.", "explanation": "Alpha at zero, interior, or C encodes different KKT cases.", "misconception": "Assuming every support vector must have alpha exactly C.", "visualHook": "Click KKT cases and highlight point position.",
+      "sourceRefs": [{"sourceId": "DSA5105/Lec4_annotated.pdf", "page": 25, "sourceType": "lecture", "role": "KKT cases", "status": "current"}, {"sourceId": "DSA5105/Textbook.pdf", "page": 107, "sourceType": "textbook", "role": "support vectors", "status": "supporting"}]
+    },
+    {
+      "id": "dsa5105-bank-021", "lessonId": "dsa5105-trees-ensembles", "type": "mcq", "difficulty": "easy", "skill": "decision-tree", "cognitiveLevel": "understand", "estimatedSeconds": 60,
+      "prompt": "A decision-tree split is useful when it produces which effect?",
+      "choices": ["Lower impurity in child nodes", "Higher impurity in every child", "A larger test set", "A fixed neural-network gradient"], "answer": 0,
+      "hint": "A split should make the children more homogeneous.", "explanation": "Information gain or impurity reduction measures how much the split improves node purity.", "misconception": "Choosing a split because it creates the most uneven child sizes.", "visualHook": "Compare class histograms before and after a split.",
+      "sourceRefs": [{"sourceId": "DSA5105/Lec5_annotated.pdf", "page": 31, "sourceType": "lecture", "role": "tree split", "status": "current"}, {"sourceId": "DSA5105/Textbook.pdf", "page": 108, "sourceType": "textbook", "role": "decision trees", "status": "supporting"}]
+    },
+    {
+      "id": "dsa5105-bank-022", "lessonId": "dsa5105-trees-ensembles", "type": "short", "difficulty": "medium", "skill": "boosting", "cognitiveLevel": "analyze", "estimatedSeconds": 110,
+      "prompt": "How does AdaBoost change the training emphasis after a weak learner makes errors?",
+      "accepted": ["it increases weights on misclassified examples", "misclassified points receive more weight", "focuses the next learner on errors"],
+      "solution": "AdaBoost increases the importance of misclassified examples so the next weak learner focuses on residual mistakes.", "hint": "Think of a moving distribution over examples.", "explanation": "Boosting builds a sequential additive model; it is not independent resampling like bagging.", "misconception": "Believing all learners are trained independently on identical weights.", "visualHook": "Animate example weights after each weak learner.",
+      "sourceRefs": [{"sourceId": "DSA5105/Lec5_annotated.pdf", "page": 33, "sourceType": "lecture", "role": "AdaBoost", "status": "current"}, {"sourceId": "DSA5105/Textbook.pdf", "page": 110, "sourceType": "textbook", "role": "boosting", "status": "supporting"}]
+    },
+    {
+      "id": "dsa5105-bank-023", "lessonId": "dsa5105-neural-backprop", "type": "derivation", "difficulty": "medium", "skill": "backpropagation", "cognitiveLevel": "apply", "estimatedSeconds": 140,
+      "prompt": "For z = wx and loss L(z), express dL/dw using the chain rule.",
+      "accepted": ["dL/dz times x", "(dL/dz)x", "chain rule"],
+      "solution": "dL/dw = (dL/dz)(dz/dw) = (dL/dz)x.", "hint": "Differentiate the affine node with respect to its weight.", "explanation": "Backpropagation is repeated local chain-rule composition on a computation graph.", "misconception": "Dropping the input x from the gradient.", "visualHook": "Highlight the two edges in the computation graph.",
+      "sourceRefs": [{"sourceId": "DSA5105/Lec5_annotated.pdf", "page": 46, "sourceType": "lecture", "role": "backprop chain rule", "status": "current"}, {"sourceId": "DSA5105/Textbook.pdf", "page": 112, "sourceType": "textbook", "role": "neural gradients", "status": "supporting"}]
+    },
+    {
+      "id": "dsa5105-bank-024", "lessonId": "dsa5105-neural-backprop", "type": "short", "difficulty": "hard", "skill": "gradient-descent", "cognitiveLevel": "analyze", "estimatedSeconds": 120,
+      "prompt": "Why can a small learning rate make neural-network training appear stuck?",
+      "accepted": ["updates are too small", "gradient steps make little progress", "slow optimization"],
+      "solution": "Each parameter update is proportional to the learning rate. If it is too small relative to the loss landscape, progress is extremely slow.", "hint": "Inspect the update rule theta <- theta - eta gradient.", "explanation": "A small rate can be stable but inefficient; a large rate can overshoot or diverge.", "misconception": "Thinking a small learning rate changes the target function.", "visualHook": "Run the same contour descent with three learning rates.",
+      "sourceRefs": [{"sourceId": "DSA5105/Lec5_annotated.pdf", "page": 48, "sourceType": "lecture", "role": "gradient descent", "status": "current"}, {"sourceId": "DSA5105/Textbook.pdf", "page": 114, "sourceType": "textbook", "role": "optimization", "status": "supporting"}]
+    },
+    {
+      "id": "dsa5105-bank-025", "lessonId": "dsa5105-pca-numerical", "type": "calculation", "difficulty": "medium", "skill": "covariance", "cognitiveLevel": "apply", "estimatedSeconds": 150,
+      "prompt": "Before computing a covariance matrix for PCA, what should be done to each feature column?",
+      "accepted": ["subtract its sample mean", "center each feature", "mean center columns"],
+      "solution": "Subtract the sample mean of each feature column so the covariance describes variation around the empirical feature mean.", "hint": "PCA directions are defined around the data centroid.", "explanation": "Without centering, the first direction can mostly point toward the origin-offset mean.", "misconception": "Normalizing every feature is always required; centering and scaling are separate choices.", "visualHook": "Move the cloud to the origin before showing its covariance ellipse.",
+      "sourceRefs": [{"sourceId": "DSA5105/Lec3_annotated.pdf", "page": 46, "sourceType": "lecture", "role": "PCA preprocessing", "status": "current"}, {"sourceId": "DSA5105/Textbook.pdf", "page": 82, "sourceType": "textbook", "role": "centering", "status": "supporting"}]
+    },
+    {
+      "id": "dsa5105-bank-026", "lessonId": "dsa5105-pca-numerical", "type": "short", "difficulty": "hard", "skill": "singular-values", "cognitiveLevel": "analyze", "estimatedSeconds": 130,
+      "prompt": "How are the singular values of centered X related to PCA variance?",
+      "accepted": ["squared singular values are proportional to eigenvalues of X transpose X", "singular values squared give variance up to normalization", "SVD gives PCA"],
+      "solution": "If X = U Sigma V^T, the eigenvalues of X^T X are sigma_j^2; divide by N (or N-1, by convention) for covariance eigenvalues.", "hint": "Multiply X^T X using the SVD.", "explanation": "SVD is often numerically preferable and provides the same principal directions in V.", "misconception": "Using singular values without squaring them for variance.", "visualHook": "Link singular-value bars to explained-variance bars.",
+      "sourceRefs": [{"sourceId": "DSA5105/Textbook.pdf", "page": 86, "sourceType": "textbook", "role": "SVD and PCA", "status": "supporting"}, {"sourceId": "DSA5105/Ref/Mathematics_of_Data_Science.pdf", "page": 31, "sourceType": "ref", "role": "SVD", "status": "supporting"}]
+    },
+    {
+      "id": "dsa5105-bank-027", "lessonId": "dsa5105-gmm-em-numerical", "type": "calculation", "difficulty": "hard", "skill": "em-responsibility", "cognitiveLevel": "apply", "estimatedSeconds": 170,
+      "prompt": "For two equally likely Gaussian components, what determines whether r_i1 exceeds r_i2?",
+      "accepted": ["which component has higher likelihood at x_i", "compare the two component densities", "posterior responsibility follows likelihood"],
+      "solution": "With equal priors, the component with larger density at x_i receives the larger posterior responsibility; unequal priors multiply those likelihoods.", "hint": "Write Bayes' rule and cancel the common denominator.", "explanation": "Responsibilities combine mixture weights and component likelihoods.", "misconception": "Choosing the nearest mean regardless of covariance or prior.", "visualHook": "Change covariance and watch responsibilities shift.",
+      "sourceRefs": [{"sourceId": "DSA5105/Lec3_annotated.pdf", "page": 54, "sourceType": "lecture", "role": "GMM responsibility", "status": "current"}, {"sourceId": "DSA5105/Textbook.pdf", "page": 98, "sourceType": "textbook", "role": "Bayesian assignment", "status": "supporting"}]
+    },
+    {
+      "id": "dsa5105-bank-028", "lessonId": "dsa5105-gmm-em-numerical", "type": "short", "difficulty": "hard", "skill": "em-monotonicity", "cognitiveLevel": "analyze", "estimatedSeconds": 120,
+      "prompt": "What is the role of the M-step after responsibilities have been computed?",
+      "accepted": ["maximize expected complete data log likelihood", "reestimate parameters using responsibilities", "weighted maximum likelihood"],
+      "solution": "The M-step maximizes the expected complete-data log likelihood, using responsibilities as soft weights for means, covariances, and mixture weights.", "hint": "E assigns soft memberships; M updates parameters.", "explanation": "The alternating procedure improves a lower bound under standard EM assumptions.", "misconception": "The M-step converts responsibilities into hard labels first.", "visualHook": "Use responsibility bars as weights in a weighted mean.",
+      "sourceRefs": [{"sourceId": "DSA5105/Textbook.pdf", "page": 100, "sourceType": "textbook", "role": "EM M-step", "status": "supporting"}, {"sourceId": "DSA5105/Ref/Chapter3_Graph_Neural_Networks.pdf", "page": 1, "sourceType": "ref", "role": "probabilistic learning", "status": "supporting"}]
+    },
+    {
+      "id": "dsa5105-bank-029", "lessonId": "dsa5105-mdp-value-iteration", "type": "calculation", "difficulty": "medium", "skill": "bellman-backup", "cognitiveLevel": "apply", "estimatedSeconds": 140,
+      "prompt": "In a deterministic one-step MDP, what is the value backup for action a from state s?",
+      "accepted": ["reward plus gamma times value of next state", "r(s,a)+gamma V(s')", "bellman backup"],
+      "solution": "The backup is Q(s,a) = r(s,a) + gamma V(s'), and value iteration takes the maximum over available actions.", "hint": "Follow one transition and discount the future.", "explanation": "The Bellman operator recursively relates current value to immediate reward and successor value.", "misconception": "Discounting the immediate reward instead of the future value.", "visualHook": "Animate reward and discounted value flowing along an edge.",
+      "sourceRefs": [{"sourceId": "DSA5105/Lec6_annotated.pdf", "page": 17, "sourceType": "lecture", "role": "value iteration", "status": "current"}, {"sourceId": "DSA5105/Textbook.pdf", "page": 103, "sourceType": "textbook", "role": "Bellman backup", "status": "supporting"}]
+    },
+    {
+      "id": "dsa5105-bank-030", "lessonId": "dsa5105-mdp-value-iteration", "type": "short", "difficulty": "medium", "skill": "mdp-policy", "cognitiveLevel": "analyze", "estimatedSeconds": 100,
+      "prompt": "How is a greedy policy extracted from a converged value function?",
+      "accepted": ["choose the action with highest expected one-step backed-up value", "argmax action q", "maximize reward plus discounted successor value"],
+      "solution": "At each state choose an action maximizing expected immediate reward plus discounted successor value under the transition model.", "hint": "Use the same action-value expression as the backup.", "explanation": "The value function evaluates states; the greedy policy chooses the best action under that evaluation.", "misconception": "Choosing the state with largest V rather than an action available from the current state.", "visualHook": "Highlight action arrows and their backup scores.",
+      "sourceRefs": [{"sourceId": "DSA5105/Lec6_annotated.pdf", "page": 20, "sourceType": "lecture", "role": "greedy policy", "status": "current"}, {"sourceId": "DSA5105/Textbook.pdf", "page": 108, "sourceType": "textbook", "role": "policy extraction", "status": "supporting"}]
+    },
+    {
+      "id": "dsa5105-bank-031", "lessonId": "dsa5105-dynamic-programming", "type": "short", "difficulty": "medium", "skill": "optimal-substructure", "cognitiveLevel": "understand", "estimatedSeconds": 90,
+      "prompt": "What does optimal substructure mean in dynamic programming?",
+      "accepted": ["optimal solution contains optimal solutions to subproblems", "subproblems are optimal", "reuse optimal subsolutions"],
+      "solution": "An optimal solution can be composed from optimal solutions of appropriately defined smaller subproblems.", "hint": "Think about replacing a subpath or suffix with a better one.", "explanation": "Together with overlapping subproblems, this justifies memoization or bottom-up dynamic programming.", "misconception": "Assuming any greedy locally best choice is optimal.", "visualHook": "Collapse repeated subproblems into a DAG.",
+      "sourceRefs": [{"sourceId": "DSA5105/Lec6_annotated.pdf", "page": 23, "sourceType": "lecture", "role": "dynamic programming", "status": "current"}, {"sourceId": "DSA5105/Textbook.pdf", "page": 107, "sourceType": "textbook", "role": "optimal substructure", "status": "supporting"}]
+    },
+    {
+      "id": "dsa5105-bank-032", "lessonId": "dsa5105-dynamic-programming", "type": "derivation", "difficulty": "hard", "skill": "recurrence-design", "cognitiveLevel": "create", "estimatedSeconds": 150,
+      "prompt": "Give the three ingredients of a correct dynamic-programming recurrence.",
+      "accepted": ["state definition, transition, base case", "define state transition base case", "subproblem state recurrence boundary"],
+      "solution": "Define what each state means, specify transitions from smaller states, and provide base cases that terminate the recurrence.", "hint": "A recurrence is not complete without boundaries.", "explanation": "A clear state definition prevents hidden dependence on information discarded by the recurrence.", "misconception": "Writing only the recurrence formula without saying what its table entries mean.", "visualHook": "Click a state to reveal its dependencies and base case.",
+      "sourceRefs": [{"sourceId": "DSA5105/Lec6_annotated.pdf", "page": 25, "sourceType": "lecture", "role": "DP recurrence", "status": "current"}, {"sourceId": "DSA5105/Textbook.pdf", "page": 102, "sourceType": "textbook", "role": "recurrences", "status": "supporting"}]
+    },
+    {
+      "id": "dsa5105-bank-033", "lessonId": "dsa5105-graph-kernel-pagerank", "type": "calculation", "difficulty": "medium", "skill": "pagerank", "cognitiveLevel": "apply", "estimatedSeconds": 130,
+      "prompt": "Why is damping used in PageRank?",
+      "accepted": ["to handle sinks and ensure a mixing stationary distribution", "avoid rank sinks and dead ends", "teleportation makes the chain ergodic"],
+      "solution": "Teleportation prevents probability from getting trapped in sinks or disconnected cycles and helps make the Markov chain well behaved.", "hint": "Consider a graph with a node that has no outgoing edge.", "explanation": "The damping term balances following links with jumping to a baseline distribution.", "misconception": "Damping is only a visual smoothing parameter with no probabilistic role.", "visualHook": "Toggle teleportation and watch mass accumulate or mix.",
+      "sourceRefs": [{"sourceId": "DSA5105/Lec7_annotated.pdf", "page": 31, "sourceType": "lecture", "role": "PageRank", "status": "current"}, {"sourceId": "DSA5105/Ref/Chapter3_Graph_Neural_Networks.pdf", "page": 1, "sourceType": "ref", "role": "graph propagation", "status": "supporting"}]
+    },
+    {
+      "id": "dsa5105-bank-034", "lessonId": "dsa5105-graph-kernel-pagerank", "type": "short", "difficulty": "hard", "skill": "graph-kernel", "cognitiveLevel": "analyze", "estimatedSeconds": 120,
+      "prompt": "What is the main modeling idea behind a graph kernel?",
+      "accepted": ["compare graphs through similarities of substructures or walks", "implicit feature map for graph structures", "inner products over graph patterns"],
+      "solution": "A graph kernel defines an inner product by comparing graph substructures, walks, or other patterns without explicitly enumerating every feature.", "hint": "Transfer the kernel trick from vectors to structured objects.", "explanation": "The choice of kernel encodes which graph patterns count as similar.", "misconception": "Assuming a graph kernel is only an adjacency matrix norm.", "visualHook": "Highlight matching walks or subtrees between two graphs.",
+      "sourceRefs": [{"sourceId": "DSA5105/Lec7_annotated.pdf", "page": 35, "sourceType": "lecture", "role": "graph kernels", "status": "current"}, {"sourceId": "DSA5105/Textbook.pdf", "page": 116, "sourceType": "textbook", "role": "structured kernels", "status": "supporting"}]
+    },
+    {
+      "id": "dsa5105-bank-035", "lessonId": "dsa5105-spectral-clustering", "type": "mcq", "difficulty": "medium", "skill": "graph-laplacian", "cognitiveLevel": "understand", "estimatedSeconds": 70,
+      "prompt": "What does the graph Laplacian encode for a node signal?",
+      "choices": ["Differences between a node and its neighbors", "Only the node labels", "The SVM margin", "A neural-network loss derivative"], "answer": 0,
+      "hint": "Look at the quadratic form f^T L f.", "explanation": "The Laplacian penalizes disagreement across edges and exposes smooth graph structure.", "misconception": "Treating L as another adjacency matrix with the same semantics.", "visualHook": "Color a graph signal and display edge disagreement.",
+      "sourceRefs": [{"sourceId": "DSA5105/Lec7_annotated.pdf", "page": 39, "sourceType": "lecture", "role": "graph Laplacian", "status": "current"}, {"sourceId": "DSA5105/Textbook.pdf", "page": 118, "sourceType": "textbook", "role": "spectral graph theory", "status": "supporting"}]
+    },
+    {
+      "id": "dsa5105-bank-036", "lessonId": "dsa5105-spectral-clustering", "type": "short", "difficulty": "hard", "skill": "spectral-embedding", "cognitiveLevel": "analyze", "estimatedSeconds": 130,
+      "prompt": "Why can the first nontrivial Laplacian eigenvectors help reveal clusters?",
+      "accepted": ["they provide a low-dimensional smooth embedding that separates weakly connected groups", "small eigenvectors encode clusters", "spectral embedding separates communities"],
+      "solution": "Low-eigenvalue eigenvectors vary little within well-connected groups but change across weak cuts, making them useful coordinates for clustering.", "hint": "Relate smoothness to a small f^T L f.", "explanation": "Spectral clustering turns graph connectivity into coordinates before applying a conventional clustering method.", "misconception": "Using the largest eigenvectors because they always contain the clusters.", "visualHook": "Project graph nodes onto the first two eigenvectors.",
+      "sourceRefs": [{"sourceId": "DSA5105/Lec7_annotated.pdf", "page": 46, "sourceType": "lecture", "role": "spectral clustering", "status": "current"}, {"sourceId": "DSA5105/Textbook.pdf", "page": 120, "sourceType": "textbook", "role": "spectral embedding", "status": "supporting"}]
+    },
+    {
+      "id": "dsa5105-bank-037", "lessonId": "dsa5105-ls-svm-loo", "type": "short", "difficulty": "hard", "skill": "loo-validation", "cognitiveLevel": "analyze", "estimatedSeconds": 120,
+      "prompt": "What does leave-one-out validation estimate for a model trained on N examples?",
+      "accepted": ["average error when each point is held out once", "test-like error from N retrainings", "cross validation error"],
+      "solution": "Train on N-1 examples, evaluate the held-out point, and average over all N choices of the held-out point.", "hint": "One example is omitted at a time.", "explanation": "LOO uses much of the data for each fit but can be computationally expensive and correlated across folds.", "misconception": "Evaluating one model on all points without retraining.", "visualHook": "Cycle the held-out index and update the error ledger.",
+      "sourceRefs": [{"sourceId": "DSA5105/Lec4_annotated.pdf", "page": 17, "sourceType": "lecture", "role": "validation", "status": "current"}, {"sourceId": "DSA5105/Textbook.pdf", "page": 70, "sourceType": "textbook", "role": "cross validation", "status": "supporting"}]
+    },
+    {
+      "id": "dsa5105-bank-038", "lessonId": "dsa5105-ls-svm-loo", "type": "derivation", "difficulty": "hard", "skill": "model-selection", "cognitiveLevel": "evaluate", "estimatedSeconds": 140,
+      "prompt": "Why should the final test score not be used to select the best regularization parameter?",
+      "accepted": ["it leaks test information and makes the estimate optimistic", "test leakage", "selection bias"],
+      "solution": "Using the test score to choose lambda makes the test set part of training/model selection, so the reported score is no longer an unbiased final estimate.", "hint": "Ask what information influenced the chosen model.", "explanation": "A clean evaluation requires the test set to remain unseen until all choices are fixed.", "misconception": "Thinking only parameter gradients count as training information.", "visualHook": "Show a data-leakage path from test results back into selection.",
+      "sourceRefs": [{"sourceId": "DSA5105/Lec1_annotated.pdf", "page": 17, "sourceType": "lecture", "role": "test leakage", "status": "current"}, {"sourceId": "DSA5105/Textbook.pdf", "page": 70, "sourceType": "textbook", "role": "model selection", "status": "supporting"}]
+    },
+    {
+      "id": "dsa5105-bank-039", "lessonId": "dsa5105-rl-gnn", "type": "short", "difficulty": "medium", "skill": "state-representation", "cognitiveLevel": "analyze", "estimatedSeconds": 100,
+      "prompt": "Why might a graph neural network be a useful state encoder for reinforcement learning on relational data?",
+      "accepted": ["it aggregates information over neighbors while respecting graph structure", "message passing captures relations", "graph-aware representation"],
+      "solution": "Message passing builds node or graph representations from local neighborhoods, preserving relational structure that a flat vector may discard.", "hint": "What information is naturally expressed by edges?", "explanation": "The encoder supplies a state representation; the RL objective still decides actions or values.", "misconception": "Assuming message passing itself solves the control problem.", "visualHook": "Animate two rounds of neighborhood aggregation.",
+      "sourceRefs": [{"sourceId": "DSA5105/Ref/Chapter3_Graph_Neural_Networks.pdf", "page": 1, "sourceType": "ref", "role": "GNN message passing", "status": "supporting"}, {"sourceId": "DSA5105/Lec8_annotated.pdf", "page": 31, "sourceType": "lecture", "role": "RL representation", "status": "current"}]
+    },
+    {
+      "id": "dsa5105-bank-040", "lessonId": "dsa5105-rl-gnn", "type": "short", "difficulty": "hard", "skill": "representation-learning", "cognitiveLevel": "evaluate", "estimatedSeconds": 120,
+      "prompt": "What failure can occur if an RL state encoder removes information needed to distinguish two optimal actions?",
+      "accepted": ["the state is not Markov and the policy cannot choose correctly", "partial observability", "aliased states"],
+      "solution": "State aliasing makes distinct decision situations look identical, so no policy using only that representation can act optimally in both.", "hint": "Can the representation predict the future and reward-relevant consequences?", "explanation": "A useful state representation must preserve information required for value and policy decisions.", "misconception": "Assuming a lower-dimensional representation is always harmless.", "visualHook": "Merge two states and show incompatible optimal actions.",
+      "sourceRefs": [{"sourceId": "DSA5105/Ref/Mathematics_of_Data_Science.pdf", "page": 31, "sourceType": "ref", "role": "state representation", "status": "supporting"}, {"sourceId": "DSA5105/Lec8_annotated.pdf", "page": 35, "sourceType": "lecture", "role": "RL state", "status": "current"}]
+    },
+    {
+      "id": "dsa5105-bank-041", "lessonId": "dsa5105-rl-bellman", "type": "calculation", "difficulty": "medium", "skill": "bellman-optimality", "cognitiveLevel": "apply", "estimatedSeconds": 140,
+      "prompt": "Write the optimal Bellman equation for Q*(s,a) in a finite MDP.",
+      "accepted": ["expected reward plus gamma max over next actions Q star", "Q star equals expected r plus gamma max Q star", "optimal Bellman equation"],
+      "solution": "Q*(s,a) = E[r + gamma max_a' Q*(s',a') | s,a]. The expectation is over the transition and reward model.", "hint": "After taking a, optimize the next action.", "explanation": "The max distinguishes the optimality equation from policy evaluation under a fixed policy.", "misconception": "Using max over the current action before the transition.", "visualHook": "Expand one stochastic transition into successor action branches.",
+      "sourceRefs": [{"sourceId": "DSA5105/Lec8_annotated.pdf", "page": 46, "sourceType": "lecture", "role": "Bellman optimality", "status": "current"}, {"sourceId": "DSA5105/Textbook.pdf", "page": 103, "sourceType": "textbook", "role": "Q iteration", "status": "supporting"}]
+    },
+    {
+      "id": "dsa5105-bank-042", "lessonId": "dsa5105-rl-bellman", "type": "short", "difficulty": "hard", "skill": "discounting", "cognitiveLevel": "analyze", "estimatedSeconds": 100,
+      "prompt": "What is the effect of gamma approaching zero in a discounted return?",
+      "accepted": ["the agent becomes myopic and emphasizes immediate reward", "future rewards matter less", "only near-term reward dominates"],
+      "solution": "As gamma approaches zero, future rewards are heavily discounted and the decision becomes increasingly myopic.", "hint": "Look at gamma to the power of each future time step.", "explanation": "Gamma controls the planning horizon, not the immediate reward itself.", "misconception": "Thinking gamma rescales all rewards equally.", "visualHook": "Compare return contributions for gamma 0.1, 0.8, and 0.99.",
+      "sourceRefs": [{"sourceId": "DSA5105/Lec8_annotated.pdf", "page": 48, "sourceType": "lecture", "role": "discounting", "status": "current"}, {"sourceId": "DSA5105/Textbook.pdf", "page": 108, "sourceType": "textbook", "role": "discounted return", "status": "supporting"}]
+    },
+    {
+      "id": "dsa5105-bank-043", "lessonId": "dsa5105-gnn", "type": "derivation", "difficulty": "medium", "skill": "message-passing", "cognitiveLevel": "apply", "estimatedSeconds": 140,
+      "prompt": "Give a generic one-layer message-passing update for node v.",
+      "accepted": ["h_v next equals update h_v and aggregate neighbor messages", "h_v' = phi(h_v, aggregate psi(h_v,h_u))", "aggregate neighbors then update node"],
+      "solution": "A generic layer is h_v' = phi(h_v, AGG_{u in N(v)} psi(h_v,h_u)), where AGG is permutation invariant.", "hint": "Separate message, aggregation, and update.", "explanation": "Permutation-invariant aggregation makes the representation insensitive to the ordering of neighbors.", "misconception": "Using a sequence-sensitive sum order as part of the graph definition.", "visualHook": "Show messages arriving, aggregating, and updating a node.",
+      "sourceRefs": [{"sourceId": "DSA5105/Ref/Chapter3_Graph_Neural_Networks.pdf", "page": 1, "sourceType": "ref", "role": "message passing", "status": "supporting"}, {"sourceId": "DSA5105/Lec8_annotated.pdf", "page": 54, "sourceType": "lecture", "role": "GNN layer", "status": "current"}]
+    },
+    {
+      "id": "dsa5105-bank-044", "lessonId": "dsa5105-gnn", "type": "short", "difficulty": "hard", "skill": "oversmoothing", "cognitiveLevel": "evaluate", "estimatedSeconds": 110,
+      "prompt": "What is oversmoothing in a deep message-passing GNN?",
+      "accepted": ["node representations become too similar after many propagation layers", "embeddings collapse across nodes", "neighbor mixing erases distinctions"],
+      "solution": "Repeated aggregation can make node embeddings converge toward similar values, reducing the distinctions needed for prediction.", "hint": "Imagine repeatedly averaging neighboring colors.", "explanation": "Depth, graph spectrum, normalization, and skip connections all affect this trade-off.", "misconception": "Confusing oversmoothing with overfitting to labels.", "visualHook": "Increase message-passing depth and watch node colors converge.",
+      "sourceRefs": [{"sourceId": "DSA5105/Ref/Chapter3_Graph_Neural_Networks.pdf", "page": 1, "sourceType": "ref", "role": "GNN depth", "status": "supporting"}, {"sourceId": "DSA5105/Lec8_annotated.pdf", "page": 54, "sourceType": "lecture", "role": "GNN limitations", "status": "current"}]
+    }
+  ]
+}

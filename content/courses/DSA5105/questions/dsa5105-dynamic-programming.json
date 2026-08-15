@@ -19,6 +19,12 @@
         "status": "assessment-derived"
       }
     ],
+    "difficulty": "hard",
+    "skill": "derive",
+    "cognitiveLevel": "analyze",
+    "estimatedSeconds": 150,
+    "misconception": "Check the assumption behind your answer.",
+    "visualHook": "Explain the idea with a small diagram or example.",
     "courseId": "DSA5105",
     "lessonId": "dsa5105-dynamic-programming",
     "schemaVersion": "nus.question.v1"
@@ -43,6 +49,12 @@
         "status": "assessment-derived"
       }
     ],
+    "difficulty": "medium",
+    "skill": "explain",
+    "cognitiveLevel": "understand",
+    "estimatedSeconds": 90,
+    "misconception": "Check the assumption behind your answer.",
+    "visualHook": "Explain the idea with a small diagram or example.",
     "courseId": "DSA5105",
     "lessonId": "dsa5105-dynamic-programming",
     "schemaVersion": "nus.question.v1"
@@ -67,8 +79,90 @@
         "status": "course-depth"
       }
     ],
+    "difficulty": "medium",
+    "skill": "explain",
+    "cognitiveLevel": "understand",
+    "estimatedSeconds": 90,
+    "misconception": "Check the assumption behind your answer.",
+    "visualHook": "Explain the idea with a small diagram or example.",
     "courseId": "DSA5105",
     "lessonId": "dsa5105-dynamic-programming",
+    "schemaVersion": "nus.question.v1"
+  },
+  {
+    "id": "dsa5105-bank-031",
+    "lessonId": "dsa5105-dynamic-programming",
+    "type": "short",
+    "difficulty": "medium",
+    "skill": "optimal-substructure",
+    "cognitiveLevel": "understand",
+    "estimatedSeconds": 90,
+    "prompt": "What does optimal substructure mean in dynamic programming?",
+    "accepted": [
+      "optimal solution contains optimal solutions to subproblems",
+      "subproblems are optimal",
+      "reuse optimal subsolutions"
+    ],
+    "solution": "An optimal solution can be composed from optimal solutions of appropriately defined smaller subproblems.",
+    "hint": "Think about replacing a subpath or suffix with a better one.",
+    "explanation": "Together with overlapping subproblems, this justifies memoization or bottom-up dynamic programming.",
+    "misconception": "Assuming any greedy locally best choice is optimal.",
+    "visualHook": "Collapse repeated subproblems into a DAG.",
+    "sourceRefs": [
+      {
+        "sourceId": "DSA5105/Lec6_annotated.pdf",
+        "page": 23,
+        "sourceType": "lecture",
+        "role": "dynamic programming",
+        "status": "current"
+      },
+      {
+        "sourceId": "DSA5105/Textbook.pdf",
+        "page": 107,
+        "sourceType": "textbook",
+        "role": "optimal substructure",
+        "status": "supporting"
+      }
+    ],
+    "courseId": "DSA5105",
+    "schemaVersion": "nus.question.v1"
+  },
+  {
+    "id": "dsa5105-bank-032",
+    "lessonId": "dsa5105-dynamic-programming",
+    "type": "derivation",
+    "difficulty": "hard",
+    "skill": "recurrence-design",
+    "cognitiveLevel": "create",
+    "estimatedSeconds": 150,
+    "prompt": "Give the three ingredients of a correct dynamic-programming recurrence.",
+    "accepted": [
+      "state definition, transition, base case",
+      "define state transition base case",
+      "subproblem state recurrence boundary"
+    ],
+    "solution": "Define what each state means, specify transitions from smaller states, and provide base cases that terminate the recurrence.",
+    "hint": "A recurrence is not complete without boundaries.",
+    "explanation": "A clear state definition prevents hidden dependence on information discarded by the recurrence.",
+    "misconception": "Writing only the recurrence formula without saying what its table entries mean.",
+    "visualHook": "Click a state to reveal its dependencies and base case.",
+    "sourceRefs": [
+      {
+        "sourceId": "DSA5105/Lec6_annotated.pdf",
+        "page": 25,
+        "sourceType": "lecture",
+        "role": "DP recurrence",
+        "status": "current"
+      },
+      {
+        "sourceId": "DSA5105/Textbook.pdf",
+        "page": 102,
+        "sourceType": "textbook",
+        "role": "recurrences",
+        "status": "supporting"
+      }
+    ],
+    "courseId": "DSA5105",
     "schemaVersion": "nus.question.v1"
   }
 ]

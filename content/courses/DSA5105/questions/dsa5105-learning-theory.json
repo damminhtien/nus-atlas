@@ -20,6 +20,12 @@
         "status": "current"
       }
     ],
+    "difficulty": "easy",
+    "skill": "recall",
+    "cognitiveLevel": "understand",
+    "estimatedSeconds": 60,
+    "misconception": "Check the assumption behind your answer.",
+    "visualHook": "Explain the idea with a small diagram or example.",
     "courseId": "DSA5105",
     "lessonId": "dsa5105-learning-theory",
     "schemaVersion": "nus.question.v1"
@@ -44,6 +50,12 @@
         "status": "course-depth"
       }
     ],
+    "difficulty": "medium",
+    "skill": "explain",
+    "cognitiveLevel": "understand",
+    "estimatedSeconds": 90,
+    "misconception": "Check the assumption behind your answer.",
+    "visualHook": "Explain the idea with a small diagram or example.",
     "courseId": "DSA5105",
     "lessonId": "dsa5105-learning-theory",
     "schemaVersion": "nus.question.v1"
@@ -68,8 +80,91 @@
         "status": "optional"
       }
     ],
+    "difficulty": "medium",
+    "skill": "explain",
+    "cognitiveLevel": "understand",
+    "estimatedSeconds": 90,
+    "misconception": "Check the assumption behind your answer.",
+    "visualHook": "Explain the idea with a small diagram or example.",
     "courseId": "DSA5105",
     "lessonId": "dsa5105-learning-theory",
+    "schemaVersion": "nus.question.v1"
+  },
+  {
+    "id": "dsa5105-bank-005",
+    "lessonId": "dsa5105-learning-theory",
+    "type": "mcq",
+    "difficulty": "easy",
+    "skill": "generalization",
+    "cognitiveLevel": "understand",
+    "estimatedSeconds": 60,
+    "prompt": "Which split should remain untouched until the final model estimate?",
+    "choices": [
+      "Test",
+      "Training",
+      "Validation",
+      "Bootstrap sample"
+    ],
+    "answer": 0,
+    "hint": "Model selection is not final evaluation.",
+    "explanation": "Validation supports choices; the test set estimates performance after those choices are fixed.",
+    "misconception": "Using test performance repeatedly to select hyperparameters.",
+    "visualHook": "Animate information flowing from train to validation to test only once.",
+    "sourceRefs": [
+      {
+        "sourceId": "DSA5105/Lec1_annotated.pdf",
+        "page": 17,
+        "sourceType": "lecture",
+        "role": "evaluation split",
+        "status": "current"
+      },
+      {
+        "sourceId": "DSA5105/Textbook.pdf",
+        "page": 70,
+        "sourceType": "textbook",
+        "role": "generalization",
+        "status": "supporting"
+      }
+    ],
+    "courseId": "DSA5105",
+    "schemaVersion": "nus.question.v1"
+  },
+  {
+    "id": "dsa5105-bank-006",
+    "lessonId": "dsa5105-learning-theory",
+    "type": "short",
+    "difficulty": "medium",
+    "skill": "bias-variance",
+    "cognitiveLevel": "analyze",
+    "estimatedSeconds": 100,
+    "prompt": "Explain why a very flexible hypothesis class can still have poor test error.",
+    "accepted": [
+      "it can overfit and have high variance",
+      "memorizes training data",
+      "poor generalization"
+    ],
+    "solution": "A flexible class may fit noise or idiosyncrasies in the sample. Training error falls, but variance and generalization error can rise.",
+    "hint": "Compare fit to observed data with performance on unseen data.",
+    "explanation": "Approximation power is only one of the approximation-optimization-generalization questions.",
+    "misconception": "Believing lower training error always implies lower test error.",
+    "visualHook": "Move a complexity slider and reveal train/test curves.",
+    "sourceRefs": [
+      {
+        "sourceId": "DSA5105/Lec1_annotated.pdf",
+        "page": 17,
+        "sourceType": "lecture",
+        "role": "generalization",
+        "status": "current"
+      },
+      {
+        "sourceId": "DSA5105/Textbook.pdf",
+        "page": 70,
+        "sourceType": "textbook",
+        "role": "overfitting",
+        "status": "supporting"
+      }
+    ],
+    "courseId": "DSA5105",
     "schemaVersion": "nus.question.v1"
   }
 ]

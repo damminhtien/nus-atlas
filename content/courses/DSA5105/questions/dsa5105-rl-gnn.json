@@ -19,6 +19,12 @@
         "status": "current"
       }
     ],
+    "difficulty": "hard",
+    "skill": "derive",
+    "cognitiveLevel": "analyze",
+    "estimatedSeconds": 150,
+    "misconception": "Check the assumption behind your answer.",
+    "visualHook": "Explain the idea with a small diagram or example.",
     "courseId": "DSA5105",
     "lessonId": "dsa5105-rl-gnn",
     "schemaVersion": "nus.question.v1"
@@ -43,8 +49,90 @@
         "status": "optional"
       }
     ],
+    "difficulty": "medium",
+    "skill": "explain",
+    "cognitiveLevel": "understand",
+    "estimatedSeconds": 90,
+    "misconception": "Check the assumption behind your answer.",
+    "visualHook": "Explain the idea with a small diagram or example.",
     "courseId": "DSA5105",
     "lessonId": "dsa5105-rl-gnn",
+    "schemaVersion": "nus.question.v1"
+  },
+  {
+    "id": "dsa5105-bank-039",
+    "lessonId": "dsa5105-rl-gnn",
+    "type": "short",
+    "difficulty": "medium",
+    "skill": "state-representation",
+    "cognitiveLevel": "analyze",
+    "estimatedSeconds": 100,
+    "prompt": "Why might a graph neural network be a useful state encoder for reinforcement learning on relational data?",
+    "accepted": [
+      "it aggregates information over neighbors while respecting graph structure",
+      "message passing captures relations",
+      "graph-aware representation"
+    ],
+    "solution": "Message passing builds node or graph representations from local neighborhoods, preserving relational structure that a flat vector may discard.",
+    "hint": "What information is naturally expressed by edges?",
+    "explanation": "The encoder supplies a state representation; the RL objective still decides actions or values.",
+    "misconception": "Assuming message passing itself solves the control problem.",
+    "visualHook": "Animate two rounds of neighborhood aggregation.",
+    "sourceRefs": [
+      {
+        "sourceId": "DSA5105/Ref/Chapter3_Graph_Neural_Networks.pdf",
+        "page": 1,
+        "sourceType": "ref",
+        "role": "GNN message passing",
+        "status": "supporting"
+      },
+      {
+        "sourceId": "DSA5105/Lec8_annotated.pdf",
+        "page": 31,
+        "sourceType": "lecture",
+        "role": "RL representation",
+        "status": "current"
+      }
+    ],
+    "courseId": "DSA5105",
+    "schemaVersion": "nus.question.v1"
+  },
+  {
+    "id": "dsa5105-bank-040",
+    "lessonId": "dsa5105-rl-gnn",
+    "type": "short",
+    "difficulty": "hard",
+    "skill": "representation-learning",
+    "cognitiveLevel": "evaluate",
+    "estimatedSeconds": 120,
+    "prompt": "What failure can occur if an RL state encoder removes information needed to distinguish two optimal actions?",
+    "accepted": [
+      "the state is not Markov and the policy cannot choose correctly",
+      "partial observability",
+      "aliased states"
+    ],
+    "solution": "State aliasing makes distinct decision situations look identical, so no policy using only that representation can act optimally in both.",
+    "hint": "Can the representation predict the future and reward-relevant consequences?",
+    "explanation": "A useful state representation must preserve information required for value and policy decisions.",
+    "misconception": "Assuming a lower-dimensional representation is always harmless.",
+    "visualHook": "Merge two states and show incompatible optimal actions.",
+    "sourceRefs": [
+      {
+        "sourceId": "DSA5105/Ref/Mathematics_of_Data_Science.pdf",
+        "page": 31,
+        "sourceType": "ref",
+        "role": "state representation",
+        "status": "supporting"
+      },
+      {
+        "sourceId": "DSA5105/Lec8_annotated.pdf",
+        "page": 35,
+        "sourceType": "lecture",
+        "role": "RL state",
+        "status": "current"
+      }
+    ],
+    "courseId": "DSA5105",
     "schemaVersion": "nus.question.v1"
   }
 ]
