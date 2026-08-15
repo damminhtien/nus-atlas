@@ -33,3 +33,9 @@ test("KaTeX boundary guards against double-escaped authored commands", () => {
   assert.match(app, /normalizeDoubleEscapedMath/);
   assert.match(app, /normalizeMathTextNodes/);
 });
+
+test("visual lab provenance stays collapsed by default", () => {
+  const components = fs.readFileSync("js/nus-components.js", "utf8");
+  assert.doesNotMatch(components, /Source lens/);
+  assert.match(components, /nus-lab-source-details/);
+});

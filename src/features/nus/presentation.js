@@ -20,6 +20,20 @@
     return `<span class="pill ${esc(meta.tone)}">${esc(meta.shortLabel)}${esc(status)}</span>`;
   }
   function sourceItem(ref) { return `${sourceBadge(ref)} <span>${esc(sourceLabel(ref))}</span>${ref && ref.role ? `<small>${esc(ref.role)}</small>` : ""}`; }
+  function sourceSummary(refs) {
+    const counts = new Map();
+    (refs || []).forEach(ref => {
+      const meta = getSourceTypes()[ref && ref.sourceType];
+      const label = meta ? meta.shortLabel : (ref && ref.sourceType) || "Source";
+      counts.set(label, (counts.get(label) || 0) + 1);
+    });
+    const total = (refs || []).length;
+    return [`${total} ref${total === 1 ? "" : "s"}`, ...[...counts].map(([label, count]) => `${count} ${label}`)].join(" · ");
+  }
+  function sourceDisclosure(refs, title = "Source trail") {
+    if (!(refs || []).length) return "";
+    return `<details class="nus-source-disclosure"><summary><span>${esc(title)}</span><small>${esc(sourceSummary(refs))}</small></summary><ul class="nus-source-list">${refs.map(ref => `<li>${sourceItem(ref)}</li>`).join("")}</ul><p class="nus-muted">Open to inspect exact page-level provenance.</p></details>`;
+  }
   function sourceGroups(course) {
     if (!course.lectureSources) return [{ label: "Course sources", refs: (course.localSources || []).map(sourceId => ({ sourceId })) }];
     return [
@@ -96,7 +110,7 @@
   }
 
   return Object.freeze({
-    esc, text, sourceLabel, sourceBadge, sourceItem, sourceGroups, quickNav, pageHead, card,
+    esc, text, sourceLabel, sourceBadge, sourceItem, sourceSummary, sourceDisclosure, sourceGroups, quickNav, pageHead, card,
     button, statusPill, visualCard, mathBlock, lessonSection, workedExample,
     recallItem, criticalThinking, studyKit, studyCompass
   });

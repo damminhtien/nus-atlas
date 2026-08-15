@@ -17,6 +17,19 @@ test("presentation helpers escape reader content and preserve source labels", ()
   assert.match(view.sourceItem({ sourceId: "Textbook.pdf", sourceType: "textbook", page: 31, role: "depth" }), /Textbook\.pdf · p\.31/);
 });
 
+test("source provenance is compact until explicitly opened", () => {
+  const view = presentation();
+  const refs = [
+    { sourceId: "lecture.pdf", sourceType: "lecture", page: 39 },
+    { sourceId: "Textbook.pdf", sourceType: "textbook", page: 18 }
+  ];
+  assert.equal(view.sourceSummary(refs), "2 refs · 1 Lecture · 1 Textbook");
+  const html = view.sourceDisclosure(refs);
+  assert.match(html, /<details class="nus-source-disclosure">/);
+  assert.match(html, /2 refs · 1 Lecture · 1 Textbook/);
+  assert.match(html, /lecture\.pdf · p\.39/);
+});
+
 test("presentation helpers render visual cues without owning data", () => {
   const view = presentation();
   assert.match(view.visualCard("visual"), /nus-visual-table/);
