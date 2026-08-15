@@ -1,0 +1,781 @@
+{
+  "id": "dsa5105-erm",
+  "title": "Learning setup, data, and generalization",
+  "week": 1,
+  "minutes": 65,
+  "summary": "Build the Week 1 learning vocabulary: data representation, supervised-learning setup, ERM, evaluation splits, and generalization.",
+  "objectives": [
+    "Classify a learning problem and feature type",
+    "Write the ERM objective",
+    "Explain why validation and test data have different jobs"
+  ],
+  "sourceRefs": [
+    {
+      "sourceId": "DSA5105/Ref/week1_DSA5105_lecture1_with_note.pdf",
+      "page": 8,
+      "sourceType": "lecture",
+      "role": "learning definition and motivation",
+      "status": "current"
+    },
+    {
+      "sourceId": "DSA5105/Ref/week1_DSA5105_lecture1_with_note.pdf",
+      "page": 22,
+      "sourceType": "lecture",
+      "role": "learning problem classes",
+      "status": "current"
+    },
+    {
+      "sourceId": "DSA5105/Ref/week1_DSA5105_lecture1_with_note.pdf",
+      "page": 23,
+      "sourceType": "lecture",
+      "role": "evaluation split",
+      "status": "current"
+    },
+    {
+      "sourceId": "DSA5105/Ref/week1_DSA5105_lecture1_with_note.pdf",
+      "page": 26,
+      "sourceType": "lecture",
+      "role": "training set and oracle",
+      "status": "current"
+    },
+    {
+      "sourceId": "DSA5105/Ref/week1_DSA5105_lecture1_with_note.pdf",
+      "page": 29,
+      "sourceType": "lecture",
+      "role": "empirical risk",
+      "status": "current"
+    },
+    {
+      "sourceId": "DSA5105/Ref/week1_DSA5105_lecture1_with_note.pdf",
+      "page": 30,
+      "sourceType": "lecture",
+      "role": "generalization gap",
+      "status": "current"
+    }
+  ],
+  "visualIds": [
+    "dsa5105-ordinal-nominal"
+  ],
+  "sections": [
+    {
+      "title": "Lecture core · What is being learned?",
+      "body": "A supervised-learning problem gives examples of inputs and targets, a hypothesis class, and a loss. Before fitting, name the input, target, task, and evaluation measure. Week 1 also surveys unsupervised and reinforcement learning, but this first deep-dive follows the supervised linear-model path.",
+      "sourceType": "lecture",
+      "math": {
+        "latex": "\\hat h = \\arg\\min_{h \\in \\mathcal{H}} \\widehat{R}(h)",
+        "explanation": "The learner searches the allowed hypothesis class and selects the function with the smallest observed average loss.",
+        "symbols": [
+          {
+            "latex": "\\hat h",
+            "meaning": "the fitted hypothesis"
+          },
+          {
+            "latex": "\\mathcal{H}",
+            "meaning": "the allowed hypothesis class"
+          },
+          {
+            "latex": "\\widehat{R}(h)",
+            "meaning": "empirical risk"
+          }
+        ],
+        "sourceType": "lecture"
+      }
+    },
+    {
+      "title": "Lecture core · Training set and oracle",
+      "body": "The training set contains N observed input-target pairs. The input x_i is what the model receives; y_i is the output or label it should predict. Learning means using the sample to approximate the relationship from x to y. The oracle f* names the unknown target relationship: it can be deterministic, or the target can be sampled from a conditional distribution when the same input may have multiple plausible outputs.",
+      "sourceType": "lecture",
+      "math": {
+        "latex": "\\mathcal{D}=\\{(x_i,y_i)\\}_{i=1}^{N},\\qquad y_i=f^*(x_i)\\quad\\text{or}\\quad y_i\\sim p^*(\\cdot\\mid x_i)",
+        "explanation": "The first case is a deterministic oracle. A noisy regression view writes y_i = f*(x_i) + epsilon_i; the second case makes the randomness explicit through a conditional target distribution. Do not confuse an observed label with the unknown oracle itself.",
+        "symbols": [
+          {
+            "latex": "\\mathcal{D}",
+            "meaning": "training set"
+          },
+          {
+            "latex": "x_i",
+            "meaning": "i-th input"
+          },
+          {
+            "latex": "y_i",
+            "meaning": "i-th output or label"
+          },
+          {
+            "latex": "N",
+            "meaning": "training-set size"
+          },
+          {
+            "latex": "f^*",
+            "meaning": "oracle or target relationship"
+          },
+          {
+            "latex": "p^*(\\cdot\\mid x_i)",
+            "meaning": "conditional target distribution"
+          }
+        ],
+        "sourceType": "lecture"
+      }
+    },
+    {
+      "title": "Lecture core · Data representation",
+      "body": "Ordinal values have meaningful order, such as a level or rating. Nominal labels are categories without a meaningful distance, so one-hot or another categorical representation is safer than treating the label names as numbers.",
+      "sourceType": "lecture"
+    },
+    {
+      "title": "Lecture core · Empirical risk",
+      "body": "Empirical risk is the average loss on the examples we observed. It is a training measurement, not a guarantee about future data. A regularizer can be added when we want to prefer simpler or smoother hypotheses.",
+      "sourceType": "lecture",
+      "math": {
+        "latex": "\\widehat{R}(h) = \\frac{1}{N}\\sum_{i=1}^{N}\\ell\\bigl(h(x_i), y_i\\bigr)",
+        "explanation": "Add the loss made on each observed example, then divide by the number of examples. This still says nothing by itself about unseen data.",
+        "symbols": [
+          {
+            "latex": "N",
+            "meaning": "number of training examples"
+          },
+          {
+            "latex": "\\ell",
+            "meaning": "loss assigned to one prediction"
+          },
+          {
+            "latex": "(x_i,y_i)",
+            "meaning": "the i-th observed input and target"
+          }
+        ],
+        "sourceType": "lecture"
+      }
+    },
+    {
+      "title": "Lecture core · Train, validation, test",
+      "body": "Use training data to fit parameters, validation data to choose settings such as $\\lambda$ or model size, and test data once for the final estimate. Reusing the test set for decisions quietly turns it into another validation set.",
+      "sourceType": "lecture"
+    },
+    {
+      "title": "Lecture core · Approximation, optimization, generalization",
+      "body": "The Week 1 notes separate three questions: is the hypothesis space expressive enough, can an algorithm find a good member of it, and does that fitted member remain useful on unseen examples? Keep these questions separate when diagnosing a model.",
+      "sourceType": "lecture"
+    },
+    {
+      "title": "Textbook depth · Why the gap appears",
+      "body": "A flexible hypothesis class can memorize sample-specific noise. That makes empirical risk small while population risk stays large. The lecture introduces this generalization concern; textbook depth supplies the formal risk vocabulary.",
+      "sourceType": "textbook"
+    }
+  ],
+  "examples": [
+    {
+      "title": "Worked example: choose the right measurement",
+      "steps": [
+        "Suppose a classifier makes 2 errors on a training sample of 10 points. Its empirical 0–1 risk is 2/10 = 0.2.",
+        "A second model makes 0 training errors but has enough flexibility to memorize IDs. Training risk prefers the second model, but validation risk may prefer the first.",
+        "The decision is not 'lowest training error wins'; it is 'choose using validation evidence, then report test performance once.'"
+      ],
+      "answer": "The train–validation–test split separates fitting, model selection, and final evaluation.",
+      "sourceType": "lecture"
+    }
+  ],
+  "math": [],
+  "criticalQuestions": [
+    {
+      "prompt": "If training risk falls but validation risk rises, what hypothesis about the model class becomes plausible?",
+      "angle": "Connect the two curves to capacity, noise, and the choice of regularization.",
+      "modelAnswer": "The model may be fitting sample-specific noise. Check leakage and split quality first, then compare a simpler class or stronger regularization.",
+      "focus": "diagnosis"
+    },
+    {
+      "prompt": "When would a validation split be misleading even if it is large?",
+      "angle": "Inspect dependence, time ordering, duplicates, and mismatch with the deployment population.",
+      "modelAnswer": "A large but non-representative or leaked validation set can produce a precise answer to the wrong question.",
+      "focus": "evaluation"
+    },
+    {
+      "prompt": "What is the difference between observing a label and knowing the oracle?",
+      "angle": "Separate one realized training target from the unknown function or conditional distribution that generates targets.",
+      "modelAnswer": "The dataset contains one observed y_i for each x_i. The oracle f* or p* describes the underlying relationship; a random oracle means repeated labels for the same input can differ.",
+      "focus": "data-generating process"
+    }
+  ],
+  "courseId": "DSA5105",
+  "moduleId": "dsa5105-foundations",
+  "blocks": [
+    {
+      "id": "dsa5105-erm-section-1",
+      "type": "teaching-note",
+      "title": "Lecture core · What is being learned?",
+      "body": "A supervised-learning problem gives examples of inputs and targets, a hypothesis class, and a loss. Before fitting, name the input, target, task, and evaluation measure. Week 1 also surveys unsupervised and reinforcement learning, but this first deep-dive follows the supervised linear-model path.",
+      "sourceType": "lecture",
+      "sourceRefs": [
+        {
+          "sourceId": "DSA5105/Ref/week1_DSA5105_lecture1_with_note.pdf",
+          "page": 8,
+          "sourceType": "lecture",
+          "role": "learning definition and motivation",
+          "status": "current"
+        },
+        {
+          "sourceId": "DSA5105/Ref/week1_DSA5105_lecture1_with_note.pdf",
+          "page": 22,
+          "sourceType": "lecture",
+          "role": "learning problem classes",
+          "status": "current"
+        },
+        {
+          "sourceId": "DSA5105/Ref/week1_DSA5105_lecture1_with_note.pdf",
+          "page": 23,
+          "sourceType": "lecture",
+          "role": "evaluation split",
+          "status": "current"
+        },
+        {
+          "sourceId": "DSA5105/Ref/week1_DSA5105_lecture1_with_note.pdf",
+          "page": 26,
+          "sourceType": "lecture",
+          "role": "training set and oracle",
+          "status": "current"
+        },
+        {
+          "sourceId": "DSA5105/Ref/week1_DSA5105_lecture1_with_note.pdf",
+          "page": 29,
+          "sourceType": "lecture",
+          "role": "empirical risk",
+          "status": "current"
+        },
+        {
+          "sourceId": "DSA5105/Ref/week1_DSA5105_lecture1_with_note.pdf",
+          "page": 30,
+          "sourceType": "lecture",
+          "role": "generalization gap",
+          "status": "current"
+        }
+      ]
+    },
+    {
+      "id": "dsa5105-erm-section-2",
+      "type": "teaching-note",
+      "title": "Lecture core · Training set and oracle",
+      "body": "The training set contains N observed input-target pairs. The input x_i is what the model receives; y_i is the output or label it should predict. Learning means using the sample to approximate the relationship from x to y. The oracle f* names the unknown target relationship: it can be deterministic, or the target can be sampled from a conditional distribution when the same input may have multiple plausible outputs.",
+      "sourceType": "lecture",
+      "sourceRefs": [
+        {
+          "sourceId": "DSA5105/Ref/week1_DSA5105_lecture1_with_note.pdf",
+          "page": 8,
+          "sourceType": "lecture",
+          "role": "learning definition and motivation",
+          "status": "current"
+        },
+        {
+          "sourceId": "DSA5105/Ref/week1_DSA5105_lecture1_with_note.pdf",
+          "page": 22,
+          "sourceType": "lecture",
+          "role": "learning problem classes",
+          "status": "current"
+        },
+        {
+          "sourceId": "DSA5105/Ref/week1_DSA5105_lecture1_with_note.pdf",
+          "page": 23,
+          "sourceType": "lecture",
+          "role": "evaluation split",
+          "status": "current"
+        },
+        {
+          "sourceId": "DSA5105/Ref/week1_DSA5105_lecture1_with_note.pdf",
+          "page": 26,
+          "sourceType": "lecture",
+          "role": "training set and oracle",
+          "status": "current"
+        },
+        {
+          "sourceId": "DSA5105/Ref/week1_DSA5105_lecture1_with_note.pdf",
+          "page": 29,
+          "sourceType": "lecture",
+          "role": "empirical risk",
+          "status": "current"
+        },
+        {
+          "sourceId": "DSA5105/Ref/week1_DSA5105_lecture1_with_note.pdf",
+          "page": 30,
+          "sourceType": "lecture",
+          "role": "generalization gap",
+          "status": "current"
+        }
+      ]
+    },
+    {
+      "id": "dsa5105-erm-section-3",
+      "type": "teaching-note",
+      "title": "Lecture core · Data representation",
+      "body": "Ordinal values have meaningful order, such as a level or rating. Nominal labels are categories without a meaningful distance, so one-hot or another categorical representation is safer than treating the label names as numbers.",
+      "sourceType": "lecture",
+      "sourceRefs": [
+        {
+          "sourceId": "DSA5105/Ref/week1_DSA5105_lecture1_with_note.pdf",
+          "page": 8,
+          "sourceType": "lecture",
+          "role": "learning definition and motivation",
+          "status": "current"
+        },
+        {
+          "sourceId": "DSA5105/Ref/week1_DSA5105_lecture1_with_note.pdf",
+          "page": 22,
+          "sourceType": "lecture",
+          "role": "learning problem classes",
+          "status": "current"
+        },
+        {
+          "sourceId": "DSA5105/Ref/week1_DSA5105_lecture1_with_note.pdf",
+          "page": 23,
+          "sourceType": "lecture",
+          "role": "evaluation split",
+          "status": "current"
+        },
+        {
+          "sourceId": "DSA5105/Ref/week1_DSA5105_lecture1_with_note.pdf",
+          "page": 26,
+          "sourceType": "lecture",
+          "role": "training set and oracle",
+          "status": "current"
+        },
+        {
+          "sourceId": "DSA5105/Ref/week1_DSA5105_lecture1_with_note.pdf",
+          "page": 29,
+          "sourceType": "lecture",
+          "role": "empirical risk",
+          "status": "current"
+        },
+        {
+          "sourceId": "DSA5105/Ref/week1_DSA5105_lecture1_with_note.pdf",
+          "page": 30,
+          "sourceType": "lecture",
+          "role": "generalization gap",
+          "status": "current"
+        }
+      ]
+    },
+    {
+      "id": "dsa5105-erm-section-4",
+      "type": "teaching-note",
+      "title": "Lecture core · Empirical risk",
+      "body": "Empirical risk is the average loss on the examples we observed. It is a training measurement, not a guarantee about future data. A regularizer can be added when we want to prefer simpler or smoother hypotheses.",
+      "sourceType": "lecture",
+      "sourceRefs": [
+        {
+          "sourceId": "DSA5105/Ref/week1_DSA5105_lecture1_with_note.pdf",
+          "page": 8,
+          "sourceType": "lecture",
+          "role": "learning definition and motivation",
+          "status": "current"
+        },
+        {
+          "sourceId": "DSA5105/Ref/week1_DSA5105_lecture1_with_note.pdf",
+          "page": 22,
+          "sourceType": "lecture",
+          "role": "learning problem classes",
+          "status": "current"
+        },
+        {
+          "sourceId": "DSA5105/Ref/week1_DSA5105_lecture1_with_note.pdf",
+          "page": 23,
+          "sourceType": "lecture",
+          "role": "evaluation split",
+          "status": "current"
+        },
+        {
+          "sourceId": "DSA5105/Ref/week1_DSA5105_lecture1_with_note.pdf",
+          "page": 26,
+          "sourceType": "lecture",
+          "role": "training set and oracle",
+          "status": "current"
+        },
+        {
+          "sourceId": "DSA5105/Ref/week1_DSA5105_lecture1_with_note.pdf",
+          "page": 29,
+          "sourceType": "lecture",
+          "role": "empirical risk",
+          "status": "current"
+        },
+        {
+          "sourceId": "DSA5105/Ref/week1_DSA5105_lecture1_with_note.pdf",
+          "page": 30,
+          "sourceType": "lecture",
+          "role": "generalization gap",
+          "status": "current"
+        }
+      ]
+    },
+    {
+      "id": "dsa5105-erm-section-5",
+      "type": "teaching-note",
+      "title": "Lecture core · Train, validation, test",
+      "body": "Use training data to fit parameters, validation data to choose settings such as $\\lambda$ or model size, and test data once for the final estimate. Reusing the test set for decisions quietly turns it into another validation set.",
+      "sourceType": "lecture",
+      "sourceRefs": [
+        {
+          "sourceId": "DSA5105/Ref/week1_DSA5105_lecture1_with_note.pdf",
+          "page": 8,
+          "sourceType": "lecture",
+          "role": "learning definition and motivation",
+          "status": "current"
+        },
+        {
+          "sourceId": "DSA5105/Ref/week1_DSA5105_lecture1_with_note.pdf",
+          "page": 22,
+          "sourceType": "lecture",
+          "role": "learning problem classes",
+          "status": "current"
+        },
+        {
+          "sourceId": "DSA5105/Ref/week1_DSA5105_lecture1_with_note.pdf",
+          "page": 23,
+          "sourceType": "lecture",
+          "role": "evaluation split",
+          "status": "current"
+        },
+        {
+          "sourceId": "DSA5105/Ref/week1_DSA5105_lecture1_with_note.pdf",
+          "page": 26,
+          "sourceType": "lecture",
+          "role": "training set and oracle",
+          "status": "current"
+        },
+        {
+          "sourceId": "DSA5105/Ref/week1_DSA5105_lecture1_with_note.pdf",
+          "page": 29,
+          "sourceType": "lecture",
+          "role": "empirical risk",
+          "status": "current"
+        },
+        {
+          "sourceId": "DSA5105/Ref/week1_DSA5105_lecture1_with_note.pdf",
+          "page": 30,
+          "sourceType": "lecture",
+          "role": "generalization gap",
+          "status": "current"
+        }
+      ]
+    },
+    {
+      "id": "dsa5105-erm-section-6",
+      "type": "teaching-note",
+      "title": "Lecture core · Approximation, optimization, generalization",
+      "body": "The Week 1 notes separate three questions: is the hypothesis space expressive enough, can an algorithm find a good member of it, and does that fitted member remain useful on unseen examples? Keep these questions separate when diagnosing a model.",
+      "sourceType": "lecture",
+      "sourceRefs": [
+        {
+          "sourceId": "DSA5105/Ref/week1_DSA5105_lecture1_with_note.pdf",
+          "page": 8,
+          "sourceType": "lecture",
+          "role": "learning definition and motivation",
+          "status": "current"
+        },
+        {
+          "sourceId": "DSA5105/Ref/week1_DSA5105_lecture1_with_note.pdf",
+          "page": 22,
+          "sourceType": "lecture",
+          "role": "learning problem classes",
+          "status": "current"
+        },
+        {
+          "sourceId": "DSA5105/Ref/week1_DSA5105_lecture1_with_note.pdf",
+          "page": 23,
+          "sourceType": "lecture",
+          "role": "evaluation split",
+          "status": "current"
+        },
+        {
+          "sourceId": "DSA5105/Ref/week1_DSA5105_lecture1_with_note.pdf",
+          "page": 26,
+          "sourceType": "lecture",
+          "role": "training set and oracle",
+          "status": "current"
+        },
+        {
+          "sourceId": "DSA5105/Ref/week1_DSA5105_lecture1_with_note.pdf",
+          "page": 29,
+          "sourceType": "lecture",
+          "role": "empirical risk",
+          "status": "current"
+        },
+        {
+          "sourceId": "DSA5105/Ref/week1_DSA5105_lecture1_with_note.pdf",
+          "page": 30,
+          "sourceType": "lecture",
+          "role": "generalization gap",
+          "status": "current"
+        }
+      ]
+    },
+    {
+      "id": "dsa5105-erm-section-7",
+      "type": "teaching-note",
+      "title": "Textbook depth · Why the gap appears",
+      "body": "A flexible hypothesis class can memorize sample-specific noise. That makes empirical risk small while population risk stays large. The lecture introduces this generalization concern; textbook depth supplies the formal risk vocabulary.",
+      "sourceType": "textbook",
+      "sourceRefs": [
+        {
+          "sourceId": "DSA5105/Ref/week1_DSA5105_lecture1_with_note.pdf",
+          "page": 8,
+          "sourceType": "lecture",
+          "role": "learning definition and motivation",
+          "status": "current"
+        },
+        {
+          "sourceId": "DSA5105/Ref/week1_DSA5105_lecture1_with_note.pdf",
+          "page": 22,
+          "sourceType": "lecture",
+          "role": "learning problem classes",
+          "status": "current"
+        },
+        {
+          "sourceId": "DSA5105/Ref/week1_DSA5105_lecture1_with_note.pdf",
+          "page": 23,
+          "sourceType": "lecture",
+          "role": "evaluation split",
+          "status": "current"
+        },
+        {
+          "sourceId": "DSA5105/Ref/week1_DSA5105_lecture1_with_note.pdf",
+          "page": 26,
+          "sourceType": "lecture",
+          "role": "training set and oracle",
+          "status": "current"
+        },
+        {
+          "sourceId": "DSA5105/Ref/week1_DSA5105_lecture1_with_note.pdf",
+          "page": 29,
+          "sourceType": "lecture",
+          "role": "empirical risk",
+          "status": "current"
+        },
+        {
+          "sourceId": "DSA5105/Ref/week1_DSA5105_lecture1_with_note.pdf",
+          "page": 30,
+          "sourceType": "lecture",
+          "role": "generalization gap",
+          "status": "current"
+        }
+      ]
+    },
+    {
+      "id": "dsa5105-erm-example-1",
+      "type": "worked-example",
+      "title": "Worked example: choose the right measurement",
+      "steps": [
+        "Suppose a classifier makes 2 errors on a training sample of 10 points. Its empirical 0–1 risk is 2/10 = 0.2.",
+        "A second model makes 0 training errors but has enough flexibility to memorize IDs. Training risk prefers the second model, but validation risk may prefer the first.",
+        "The decision is not 'lowest training error wins'; it is 'choose using validation evidence, then report test performance once.'"
+      ],
+      "answer": "The train–validation–test split separates fitting, model selection, and final evaluation.",
+      "sourceType": "lecture",
+      "sourceRefs": [
+        {
+          "sourceId": "DSA5105/Ref/week1_DSA5105_lecture1_with_note.pdf",
+          "page": 8,
+          "sourceType": "lecture",
+          "role": "learning definition and motivation",
+          "status": "current"
+        },
+        {
+          "sourceId": "DSA5105/Ref/week1_DSA5105_lecture1_with_note.pdf",
+          "page": 22,
+          "sourceType": "lecture",
+          "role": "learning problem classes",
+          "status": "current"
+        },
+        {
+          "sourceId": "DSA5105/Ref/week1_DSA5105_lecture1_with_note.pdf",
+          "page": 23,
+          "sourceType": "lecture",
+          "role": "evaluation split",
+          "status": "current"
+        },
+        {
+          "sourceId": "DSA5105/Ref/week1_DSA5105_lecture1_with_note.pdf",
+          "page": 26,
+          "sourceType": "lecture",
+          "role": "training set and oracle",
+          "status": "current"
+        },
+        {
+          "sourceId": "DSA5105/Ref/week1_DSA5105_lecture1_with_note.pdf",
+          "page": 29,
+          "sourceType": "lecture",
+          "role": "empirical risk",
+          "status": "current"
+        },
+        {
+          "sourceId": "DSA5105/Ref/week1_DSA5105_lecture1_with_note.pdf",
+          "page": 30,
+          "sourceType": "lecture",
+          "role": "generalization gap",
+          "status": "current"
+        }
+      ]
+    },
+    {
+      "id": "dsa5105-erm-critical-1",
+      "type": "critical-question",
+      "prompt": "If training risk falls but validation risk rises, what hypothesis about the model class becomes plausible?",
+      "angle": "Connect the two curves to capacity, noise, and the choice of regularization.",
+      "modelAnswer": "The model may be fitting sample-specific noise. Check leakage and split quality first, then compare a simpler class or stronger regularization.",
+      "focus": "diagnosis",
+      "sourceRefs": [
+        {
+          "sourceId": "DSA5105/Ref/week1_DSA5105_lecture1_with_note.pdf",
+          "page": 8,
+          "sourceType": "lecture",
+          "role": "learning definition and motivation",
+          "status": "current"
+        },
+        {
+          "sourceId": "DSA5105/Ref/week1_DSA5105_lecture1_with_note.pdf",
+          "page": 22,
+          "sourceType": "lecture",
+          "role": "learning problem classes",
+          "status": "current"
+        },
+        {
+          "sourceId": "DSA5105/Ref/week1_DSA5105_lecture1_with_note.pdf",
+          "page": 23,
+          "sourceType": "lecture",
+          "role": "evaluation split",
+          "status": "current"
+        },
+        {
+          "sourceId": "DSA5105/Ref/week1_DSA5105_lecture1_with_note.pdf",
+          "page": 26,
+          "sourceType": "lecture",
+          "role": "training set and oracle",
+          "status": "current"
+        },
+        {
+          "sourceId": "DSA5105/Ref/week1_DSA5105_lecture1_with_note.pdf",
+          "page": 29,
+          "sourceType": "lecture",
+          "role": "empirical risk",
+          "status": "current"
+        },
+        {
+          "sourceId": "DSA5105/Ref/week1_DSA5105_lecture1_with_note.pdf",
+          "page": 30,
+          "sourceType": "lecture",
+          "role": "generalization gap",
+          "status": "current"
+        }
+      ]
+    },
+    {
+      "id": "dsa5105-erm-critical-2",
+      "type": "critical-question",
+      "prompt": "When would a validation split be misleading even if it is large?",
+      "angle": "Inspect dependence, time ordering, duplicates, and mismatch with the deployment population.",
+      "modelAnswer": "A large but non-representative or leaked validation set can produce a precise answer to the wrong question.",
+      "focus": "evaluation",
+      "sourceRefs": [
+        {
+          "sourceId": "DSA5105/Ref/week1_DSA5105_lecture1_with_note.pdf",
+          "page": 8,
+          "sourceType": "lecture",
+          "role": "learning definition and motivation",
+          "status": "current"
+        },
+        {
+          "sourceId": "DSA5105/Ref/week1_DSA5105_lecture1_with_note.pdf",
+          "page": 22,
+          "sourceType": "lecture",
+          "role": "learning problem classes",
+          "status": "current"
+        },
+        {
+          "sourceId": "DSA5105/Ref/week1_DSA5105_lecture1_with_note.pdf",
+          "page": 23,
+          "sourceType": "lecture",
+          "role": "evaluation split",
+          "status": "current"
+        },
+        {
+          "sourceId": "DSA5105/Ref/week1_DSA5105_lecture1_with_note.pdf",
+          "page": 26,
+          "sourceType": "lecture",
+          "role": "training set and oracle",
+          "status": "current"
+        },
+        {
+          "sourceId": "DSA5105/Ref/week1_DSA5105_lecture1_with_note.pdf",
+          "page": 29,
+          "sourceType": "lecture",
+          "role": "empirical risk",
+          "status": "current"
+        },
+        {
+          "sourceId": "DSA5105/Ref/week1_DSA5105_lecture1_with_note.pdf",
+          "page": 30,
+          "sourceType": "lecture",
+          "role": "generalization gap",
+          "status": "current"
+        }
+      ]
+    },
+    {
+      "id": "dsa5105-erm-critical-3",
+      "type": "critical-question",
+      "prompt": "What is the difference between observing a label and knowing the oracle?",
+      "angle": "Separate one realized training target from the unknown function or conditional distribution that generates targets.",
+      "modelAnswer": "The dataset contains one observed y_i for each x_i. The oracle f* or p* describes the underlying relationship; a random oracle means repeated labels for the same input can differ.",
+      "focus": "data-generating process",
+      "sourceRefs": [
+        {
+          "sourceId": "DSA5105/Ref/week1_DSA5105_lecture1_with_note.pdf",
+          "page": 8,
+          "sourceType": "lecture",
+          "role": "learning definition and motivation",
+          "status": "current"
+        },
+        {
+          "sourceId": "DSA5105/Ref/week1_DSA5105_lecture1_with_note.pdf",
+          "page": 22,
+          "sourceType": "lecture",
+          "role": "learning problem classes",
+          "status": "current"
+        },
+        {
+          "sourceId": "DSA5105/Ref/week1_DSA5105_lecture1_with_note.pdf",
+          "page": 23,
+          "sourceType": "lecture",
+          "role": "evaluation split",
+          "status": "current"
+        },
+        {
+          "sourceId": "DSA5105/Ref/week1_DSA5105_lecture1_with_note.pdf",
+          "page": 26,
+          "sourceType": "lecture",
+          "role": "training set and oracle",
+          "status": "current"
+        },
+        {
+          "sourceId": "DSA5105/Ref/week1_DSA5105_lecture1_with_note.pdf",
+          "page": 29,
+          "sourceType": "lecture",
+          "role": "empirical risk",
+          "status": "current"
+        },
+        {
+          "sourceId": "DSA5105/Ref/week1_DSA5105_lecture1_with_note.pdf",
+          "page": 30,
+          "sourceType": "lecture",
+          "role": "generalization gap",
+          "status": "current"
+        }
+      ]
+    }
+  ],
+  "questionIds": [
+    "dsa5105-e-q1",
+    "dsa5105-e-q2",
+    "dsa5105-e-q3",
+    "dsa5105-e-q4"
+  ],
+  "labIds": [
+    "dsa5105-ordinal-nominal"
+  ],
+  "schemaVersion": "nus.lesson.v1"
+}

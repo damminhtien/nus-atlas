@@ -1,0 +1,75 @@
+[
+  {
+    "id": "dsa5105-cg-q1",
+    "type": "mcq",
+    "prompt": "What does the E-step of GMM training compute?",
+    "choices": [
+      "New labels treated as ground truth",
+      "Posterior responsibilities for latent components",
+      "A single global centroid",
+      "The final test accuracy"
+    ],
+    "answer": 1,
+    "explanation": "The E-step estimates the latent component membership probabilities under current parameters.",
+    "sourceRefs": [
+      {
+        "sourceId": "DSA5105/Textbook.pdf",
+        "page": 102,
+        "sourceType": "textbook",
+        "role": "EM E-step",
+        "status": "course-depth"
+      }
+    ],
+    "courseId": "DSA5105",
+    "lessonId": "dsa5105-cluster-gmm",
+    "schemaVersion": "nus.question.v1"
+  },
+  {
+    "id": "dsa5105-cg-q2",
+    "type": "short",
+    "prompt": "Why can K-means be viewed as a restricted mixture model?",
+    "accepted": [
+      "hard assignments and spherical equal variance",
+      "zero variance limit of a spherical GMM",
+      "hard responsibilities with centroids"
+    ],
+    "solution": "K-means uses hard assignments and squared Euclidean distance, corresponding to a restricted spherical/equal-variance mixture interpretation in a limiting view.",
+    "explanation": "State the hard-assignment and restricted-geometry conditions.",
+    "sourceRefs": [
+      {
+        "sourceId": "DSA5105/Textbook.pdf",
+        "page": 98,
+        "sourceType": "textbook",
+        "role": "GMM and K-means connection",
+        "status": "course-depth"
+      }
+    ],
+    "courseId": "DSA5105",
+    "lessonId": "dsa5105-cluster-gmm",
+    "schemaVersion": "nus.question.v1"
+  },
+  {
+    "id": "dsa5105-cg-q3",
+    "type": "short",
+    "prompt": "Name one reason EM or K-means can return different solutions on repeated runs.",
+    "accepted": [
+      "random initialization",
+      "local optimum",
+      "initialization changes the local optimum"
+    ],
+    "solution": "Both methods optimize a non-convex objective in common formulations, so initialization can lead to different local optima.",
+    "explanation": "A good answer links randomness to non-convex optimization.",
+    "sourceRefs": [
+      {
+        "sourceId": "DSA5105/Ref/Mathematics_of_Data_Science.pdf",
+        "page": 51,
+        "sourceType": "ref",
+        "role": "clustering context",
+        "status": "draft"
+      }
+    ],
+    "courseId": "DSA5105",
+    "lessonId": "dsa5105-cluster-gmm",
+    "schemaVersion": "nus.question.v1"
+  }
+]

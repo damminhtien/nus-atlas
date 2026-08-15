@@ -1,0 +1,124 @@
+[
+  {
+    "id": "dsa5105-wols-q1",
+    "type": "mcq",
+    "prompt": "Which statement about a basis model is correct?",
+    "choices": [
+      "It can be nonlinear in x while linear in w",
+      "It must be linear in x",
+      "It cannot represent polynomials",
+      "It always has a unique OLS solution"
+    ],
+    "answer": 0,
+    "explanation": "The basis map can be nonlinear; the coefficients still enter linearly.",
+    "sourceRefs": [
+      {
+        "sourceId": "DSA5105/Textbook.pdf",
+        "page": 18,
+        "sourceType": "textbook",
+        "role": "basis functions",
+        "status": "course-depth"
+      }
+    ],
+    "courseId": "DSA5105",
+    "lessonId": "dsa5105-weighted-ols",
+    "schemaVersion": "nus.question.v1"
+  },
+  {
+    "id": "dsa5105-wols-q2",
+    "type": "short",
+    "prompt": "Give the rank condition that guarantees a unique unregularized OLS coefficient vector.",
+    "accepted": [
+      "full column rank",
+      "rank phi equals number of columns",
+      "phi transpose phi invertible",
+      "Phi^T Phi invertible"
+    ],
+    "solution": "The design matrix must have full column rank, equivalently Phi^T Phi must be invertible.",
+    "explanation": "State the condition rather than merely quoting the inverse formula.",
+    "sourceRefs": [
+      {
+        "sourceId": "DSA5105/Textbook.pdf",
+        "page": 18,
+        "sourceType": "textbook",
+        "role": "OLS uniqueness",
+        "status": "course-depth"
+      }
+    ],
+    "courseId": "DSA5105",
+    "lessonId": "dsa5105-weighted-ols",
+    "schemaVersion": "nus.question.v1"
+  },
+  {
+    "id": "dsa5105-wols-q3",
+    "type": "derivation",
+    "prompt": "Write the weighted least-squares solution using A = diag(a_i).",
+    "accepted": [
+      "(Phi^T A Phi)^-1 Phi^T A y",
+      "Phi transpose A Phi inverse Phi transpose A y",
+      "weighted normal equation solution"
+    ],
+    "solution": "$\\hat w_A=(\\Phi^\\top A\\Phi)^{-1}\\Phi^\\top Ay$, assuming the weighted normal matrix is invertible.",
+    "explanation": "The weights appear on both sides of the residual in the quadratic objective.",
+    "sourceRefs": [
+      {
+        "sourceId": "DSA5105/Ref/document.pdf",
+        "page": 1,
+        "sourceType": "ref",
+        "role": "weighted empirical risk alignment",
+        "status": "assessment-derived"
+      }
+    ],
+    "courseId": "DSA5105",
+    "lessonId": "dsa5105-weighted-ols",
+    "schemaVersion": "nus.question.v1"
+  },
+  {
+    "id": "dsa5105-wols-q4",
+    "type": "short",
+    "prompt": "Which split should tune a regularization strength?",
+    "accepted": [
+      "validation",
+      "validation set",
+      "not test"
+    ],
+    "solution": "Use validation data to choose lambda; use the test set only for the final report.",
+    "explanation": "Repeated test-set decisions leak information into the evaluation.",
+    "sourceRefs": [
+      {
+        "sourceId": "DSA5105/Ref/week1_DSA5105_lecture1_with_note.pdf",
+        "page": 23,
+        "sourceType": "lecture",
+        "role": "evaluation split",
+        "status": "current"
+      }
+    ],
+    "courseId": "DSA5105",
+    "lessonId": "dsa5105-weighted-ols",
+    "schemaVersion": "nus.question.v1"
+  },
+  {
+    "id": "dsa5105-wols-q5",
+    "type": "short",
+    "prompt": "What does positive weighting do to the design matrix viewpoint?",
+    "accepted": [
+      "scales rows by square root weights",
+      "ordinary least squares on sqrt A Phi",
+      "row scaling"
+    ],
+    "solution": "It is ordinary least squares on A^(1/2) Phi and A^(1/2) y.",
+    "explanation": "This makes the weighted uniqueness argument immediate.",
+    "sourceRefs": [
+      {
+        "sourceId": "DSA5105/Textbook.pdf",
+        "page": 24,
+        "sourceType": "textbook",
+        "role": "weighted least squares bridge",
+        "status": "course-depth"
+      }
+    ],
+    "courseId": "DSA5105",
+    "lessonId": "dsa5105-weighted-ols",
+    "schemaVersion": "nus.question.v1"
+  }
+]

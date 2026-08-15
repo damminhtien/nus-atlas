@@ -1,0 +1,247 @@
+{
+  "id": "dsa5105-gnn",
+  "title": "GNN message passing and invariance",
+  "week": 12,
+  "minutes": 55,
+  "summary": "Explain how graph neural networks update node representations while respecting neighborhood structure and node ordering.",
+  "objectives": [
+    "Write a neighborhood aggregation pattern",
+    "Explain permutation-invariant aggregation",
+    "Identify oversmoothing as a depth risk"
+  ],
+  "sourceRefs": [
+    {
+      "sourceId": "DSA5105/syllabus.pdf",
+      "page": 1,
+      "sourceType": "lecture",
+      "role": "current scope",
+      "status": "current"
+    },
+    {
+      "sourceId": "DSA5105/Ref/Chapter3_Graph_Neural_Networks.pdf",
+      "page": 1,
+      "sourceType": "ref",
+      "role": "optional GNN reading",
+      "status": "optional"
+    }
+  ],
+  "visualIds": [],
+  "sections": [
+    {
+      "title": "Reference depth · Message passing",
+      "body": "A typical layer builds a message from each neighbor, aggregates the messages with sum, mean, or max, and combines the result with the node’s own state. Because the neighborhood is a set, reordering its nodes should not change the output.",
+      "sourceType": "ref",
+      "math": {
+        "latex": "h_v'=\\sigma\\!\\left(W_0h_v+\\operatorname{AGG}_{u\\in N(v)}W_1h_u\\right)",
+        "explanation": "The self-state contribution and the aggregated neighbor message are combined before the nonlinearity. Because $N(v)$ is a set, the aggregator must give the same result after any permutation of the neighbor list.",
+        "symbols": [
+          {
+            "latex": "h_v",
+            "meaning": "current representation of node $v$"
+          },
+          {
+            "latex": "N(v)",
+            "meaning": "neighbors of node $v$"
+          },
+          {
+            "latex": "\\operatorname{AGG}",
+            "meaning": "permutation-invariant aggregation"
+          }
+        ],
+        "sourceType": "ref"
+      }
+    },
+    {
+      "title": "Reference depth · Receptive field",
+      "body": "One layer sees one-hop neighbors. Stacking layers expands the receptive field, but it also mixes information repeatedly and can make embeddings too similar. Check held-out performance and representation separation rather than assuming deeper is better.",
+      "sourceType": "ref"
+    },
+    {
+      "title": "Scope boundary",
+      "body": "This is reference-supported graph depth. Use it to understand the GNN idea and its invariance requirement; do not silently treat every architecture detail as current lecture exam scope.",
+      "sourceType": "lecture"
+    }
+  ],
+  "examples": [
+    {
+      "title": "Worked example: permutation invariance",
+      "steps": [
+        "A node has neighbor features [1, 3] and [3, 1] under two different input orders.",
+        "A sum aggregator returns 4 in both cases; a mean aggregator returns 2 in both cases.",
+        "A sequence-sensitive operation could return different values, which would make the result depend on an arbitrary neighbor ordering."
+      ],
+      "answer": "Set aggregation preserves graph semantics because neighbor order has no meaning.",
+      "sourceType": "ref"
+    }
+  ],
+  "math": [],
+  "criticalQuestions": [
+    {
+      "prompt": "Why is permutation invariance necessary but not sufficient for a useful GNN?",
+      "angle": "A valid set function can still discard information or oversmooth nodes.",
+      "modelAnswer": "Invariance prevents arbitrary ordering effects, but the aggregator and update still need enough expressive power, depth, and regularization for the task.",
+      "focus": "expressivity"
+    },
+    {
+      "prompt": "What evidence would show that another message-passing layer is harmful?",
+      "angle": "Measure validation performance and node-embedding separation as depth increases.",
+      "modelAnswer": "A validation drop accompanied by increasingly similar node embeddings is evidence of oversmoothing or over-mixing.",
+      "focus": "diagnosis"
+    }
+  ],
+  "courseId": "DSA5105",
+  "moduleId": "dsa5105-advanced",
+  "blocks": [
+    {
+      "id": "dsa5105-gnn-section-1",
+      "type": "teaching-note",
+      "title": "Reference depth · Message passing",
+      "body": "A typical layer builds a message from each neighbor, aggregates the messages with sum, mean, or max, and combines the result with the node’s own state. Because the neighborhood is a set, reordering its nodes should not change the output.",
+      "sourceType": "ref",
+      "sourceRefs": [
+        {
+          "sourceId": "DSA5105/syllabus.pdf",
+          "page": 1,
+          "sourceType": "lecture",
+          "role": "current scope",
+          "status": "current"
+        },
+        {
+          "sourceId": "DSA5105/Ref/Chapter3_Graph_Neural_Networks.pdf",
+          "page": 1,
+          "sourceType": "ref",
+          "role": "optional GNN reading",
+          "status": "optional"
+        }
+      ]
+    },
+    {
+      "id": "dsa5105-gnn-section-2",
+      "type": "teaching-note",
+      "title": "Reference depth · Receptive field",
+      "body": "One layer sees one-hop neighbors. Stacking layers expands the receptive field, but it also mixes information repeatedly and can make embeddings too similar. Check held-out performance and representation separation rather than assuming deeper is better.",
+      "sourceType": "ref",
+      "sourceRefs": [
+        {
+          "sourceId": "DSA5105/syllabus.pdf",
+          "page": 1,
+          "sourceType": "lecture",
+          "role": "current scope",
+          "status": "current"
+        },
+        {
+          "sourceId": "DSA5105/Ref/Chapter3_Graph_Neural_Networks.pdf",
+          "page": 1,
+          "sourceType": "ref",
+          "role": "optional GNN reading",
+          "status": "optional"
+        }
+      ]
+    },
+    {
+      "id": "dsa5105-gnn-section-3",
+      "type": "teaching-note",
+      "title": "Scope boundary",
+      "body": "This is reference-supported graph depth. Use it to understand the GNN idea and its invariance requirement; do not silently treat every architecture detail as current lecture exam scope.",
+      "sourceType": "lecture",
+      "sourceRefs": [
+        {
+          "sourceId": "DSA5105/syllabus.pdf",
+          "page": 1,
+          "sourceType": "lecture",
+          "role": "current scope",
+          "status": "current"
+        },
+        {
+          "sourceId": "DSA5105/Ref/Chapter3_Graph_Neural_Networks.pdf",
+          "page": 1,
+          "sourceType": "ref",
+          "role": "optional GNN reading",
+          "status": "optional"
+        }
+      ]
+    },
+    {
+      "id": "dsa5105-gnn-example-1",
+      "type": "worked-example",
+      "title": "Worked example: permutation invariance",
+      "steps": [
+        "A node has neighbor features [1, 3] and [3, 1] under two different input orders.",
+        "A sum aggregator returns 4 in both cases; a mean aggregator returns 2 in both cases.",
+        "A sequence-sensitive operation could return different values, which would make the result depend on an arbitrary neighbor ordering."
+      ],
+      "answer": "Set aggregation preserves graph semantics because neighbor order has no meaning.",
+      "sourceType": "ref",
+      "sourceRefs": [
+        {
+          "sourceId": "DSA5105/syllabus.pdf",
+          "page": 1,
+          "sourceType": "lecture",
+          "role": "current scope",
+          "status": "current"
+        },
+        {
+          "sourceId": "DSA5105/Ref/Chapter3_Graph_Neural_Networks.pdf",
+          "page": 1,
+          "sourceType": "ref",
+          "role": "optional GNN reading",
+          "status": "optional"
+        }
+      ]
+    },
+    {
+      "id": "dsa5105-gnn-critical-1",
+      "type": "critical-question",
+      "prompt": "Why is permutation invariance necessary but not sufficient for a useful GNN?",
+      "angle": "A valid set function can still discard information or oversmooth nodes.",
+      "modelAnswer": "Invariance prevents arbitrary ordering effects, but the aggregator and update still need enough expressive power, depth, and regularization for the task.",
+      "focus": "expressivity",
+      "sourceRefs": [
+        {
+          "sourceId": "DSA5105/syllabus.pdf",
+          "page": 1,
+          "sourceType": "lecture",
+          "role": "current scope",
+          "status": "current"
+        },
+        {
+          "sourceId": "DSA5105/Ref/Chapter3_Graph_Neural_Networks.pdf",
+          "page": 1,
+          "sourceType": "ref",
+          "role": "optional GNN reading",
+          "status": "optional"
+        }
+      ]
+    },
+    {
+      "id": "dsa5105-gnn-critical-2",
+      "type": "critical-question",
+      "prompt": "What evidence would show that another message-passing layer is harmful?",
+      "angle": "Measure validation performance and node-embedding separation as depth increases.",
+      "modelAnswer": "A validation drop accompanied by increasingly similar node embeddings is evidence of oversmoothing or over-mixing.",
+      "focus": "diagnosis",
+      "sourceRefs": [
+        {
+          "sourceId": "DSA5105/syllabus.pdf",
+          "page": 1,
+          "sourceType": "lecture",
+          "role": "current scope",
+          "status": "current"
+        },
+        {
+          "sourceId": "DSA5105/Ref/Chapter3_Graph_Neural_Networks.pdf",
+          "page": 1,
+          "sourceType": "ref",
+          "role": "optional GNN reading",
+          "status": "optional"
+        }
+      ]
+    }
+  ],
+  "questionIds": [
+    "dsa5105-gnn-q1",
+    "dsa5105-gnn-q2"
+  ],
+  "labIds": [],
+  "schemaVersion": "nus.lesson.v1"
+}

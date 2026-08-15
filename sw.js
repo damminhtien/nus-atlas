@@ -1,6 +1,6 @@
 /* Atlas service worker — offline app shell + runtime caching.
    Bump CACHE when the asset list changes (e.g. after adding per-topic data files). */
-const CACHE = "atlas-v1138";
+const CACHE = "atlas-v1139";
 // Pre-cache ONLY the lightweight app shell at install. The heavy per-topic data files
 // (~6.4MB combined), viz.js, glossary/references/prereqs are deliberately left out:
 // the page loads them on first visit and the fetch handler below caches every
@@ -11,7 +11,7 @@ const CORE = [
   "./", "./index.html", "./css/styles.css",
   "./js/app.js", "./js/store.js", "./js/nus.js", "./js/nus-store.js", "./js/nus-components.js",
   "./data/nus/provenance.js", "./data/nus/courses.js", "./data/nus/schedule.js", "./data/nus/assessments.js", "./data/nus/visuals.js",
-  "./data/nus/dsa5101.js", "./data/nus/dsa5104.js", "./data/nus/dsa5105.js", "./data/nus/dsa5208.js",
+  "./data/nus/dsa5101.js", "./data/nus/dsa5104.js", "./data/nus/dsa5105.js", "./data/nus/generated/dsa5105.js?v=atlas-content-dsa5105-v1", "./data/nus/dsa5208.js",
   "./data/nus/artifacts.js", "./data/nus/formula-depth.js", "./data/nus/visual-labs.js",
   "./src/core/content-repository.js?v=atlas-repository-v1",
   "./manifest.webmanifest", "./icon.svg"

@@ -1,0 +1,50 @@
+[
+  {
+    "id": "dsa5105-rg-q1",
+    "type": "derivation",
+    "prompt": "Write the one-step discounted Bellman optimality backup.",
+    "accepted": [
+      "r + gamma max a' q(s',a')",
+      "r + gamma max q(s',a')",
+      "r + gamma max over a prime q(s prime a prime)"
+    ],
+    "solution": "$Q^*(s,a)=r+\\gamma\\max_{a'}Q^*(s',a')$ for a deterministic one-step transition.",
+    "explanation": "Include immediate reward, discount, next state, and the maximizing next action.",
+    "sourceRefs": [
+      {
+        "sourceId": "DSA5105/syllabus.pdf",
+        "page": 1,
+        "sourceType": "lecture",
+        "role": "current scope",
+        "status": "current"
+      }
+    ],
+    "courseId": "DSA5105",
+    "lessonId": "dsa5105-rl-gnn",
+    "schemaVersion": "nus.question.v1"
+  },
+  {
+    "id": "dsa5105-rg-q2",
+    "type": "short",
+    "prompt": "What does a message-passing GNN aggregate at a node?",
+    "accepted": [
+      "neighbor representations",
+      "representations from neighbors",
+      "neighbor features"
+    ],
+    "solution": "It aggregates transformed representations/features from neighboring nodes, then combines them with the node's own state.",
+    "explanation": "Mention the neighborhood and the update of the node representation.",
+    "sourceRefs": [
+      {
+        "sourceId": "DSA5105/Ref/Chapter3_Graph_Neural_Networks.pdf",
+        "page": 1,
+        "sourceType": "ref",
+        "role": "message passing",
+        "status": "optional"
+      }
+    ],
+    "courseId": "DSA5105",
+    "lessonId": "dsa5105-rl-gnn",
+    "schemaVersion": "nus.question.v1"
+  }
+]

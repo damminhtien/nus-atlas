@@ -33,6 +33,10 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: 20
+      - name: Build normalized course packages
+        run: node scripts/content-build.js --all
+      - name: Validate content contracts and gates
+        run: node scripts/validate-content.js && node --test tests/*.test.js && node nus-gate.js && node gate.js
       - name: Prerender lesson pages + sitemap + robots
         run: node prerender.js
       - name: Configure GitHub Pages

@@ -1,0 +1,475 @@
+{
+  "id": "dsa5105-ls-svm-loo",
+  "title": "LS-SVM KKT systems and ridge leave-one-out",
+  "week": 3,
+  "minutes": 80,
+  "summary": "Connect regularized least squares, dual variables, KKT linear systems, and the efficient leave-one-out residual formula.",
+  "objectives": [
+    "Derive the ridge normal system",
+    "Write the LS-SVM KKT block system",
+    "Interpret equality and stationarity constraints",
+    "Use the hat matrix for LOO"
+  ],
+  "sourceRefs": [
+    {
+      "sourceId": "DSA5105/Textbook.pdf",
+      "page": 29,
+      "sourceType": "textbook",
+      "role": "kernel ridge",
+      "status": "course-depth"
+    },
+    {
+      "sourceId": "DSA5105/Textbook.pdf",
+      "page": 34,
+      "sourceType": "textbook",
+      "role": "KKT stationarity",
+      "status": "course-depth"
+    },
+    {
+      "sourceId": "DSA5105/Ref/document.pdf",
+      "page": 1,
+      "sourceType": "ref",
+      "role": "past-exam dual ridge and LOO alignment",
+      "status": "assessment-derived"
+    },
+    {
+      "sourceId": "DSA5105/Ref/document.pdf",
+      "page": 4,
+      "sourceType": "ref",
+      "role": "past-exam LS-SVM KKT alignment",
+      "status": "assessment-derived"
+    }
+  ],
+  "visualIds": [
+    "dsa5105-ls-svm-loo"
+  ],
+  "sections": [
+    {
+      "title": "Textbook depth · Ridge normal equations",
+      "body": "Ridge solves $\\min_w\\frac12\\lVert\\Phi w-y\\rVert^2+\\frac\\lambda2\\lVert w\\rVert^2$. Differentiation gives $(\\Phi^\\top\\Phi+\\lambda I)\\hat w=\\Phi^\\top y$. The $\\lambda I$ term makes the system invertible for $\\lambda>0$ even when the design matrix is rank deficient.",
+      "sourceType": "textbook",
+      "math": {
+        "latex": "\\hat w=(\\Phi^\\top\\Phi+\\lambda I)^{-1}\\Phi^\\top y",
+        "explanation": "Ridge trades fit for a stable, small-norm solution. In a kernel representation the same idea acts through the Gram matrix.",
+        "symbols": [
+          {
+            "latex": "\\lambda",
+            "meaning": "ridge strength"
+          },
+          {
+            "latex": "I",
+            "meaning": "identity matrix"
+          }
+        ],
+        "sourceType": "textbook"
+      }
+    },
+    {
+      "title": "Assessment bridge · LS-SVM KKT system",
+      "body": "A least-squares SVM uses equality constraints with squared errors: $y_i(w^\\top\\phi(x_i)+b)=1-e_i$ and objective $\\frac12\\lVert w\\rVert^2+\\frac\\gamma2\\sum_i e_i^2$. Stationarity gives $w=\\sum_i\\alpha_i y_i\\phi(x_i)$, $\\sum_i\\alpha_i y_i=0$, and $\\alpha_i=\\gamma e_i$.",
+      "sourceType": "ref",
+      "math": {
+        "latex": "\\begin{bmatrix}0&y^\\top\\\\y&K+\\gamma^{-1}I\\end{bmatrix}\\begin{bmatrix}b\\\\\\alpha\\end{bmatrix}=\\begin{bmatrix}0\\\\\\mathbf1\\end{bmatrix}",
+        "explanation": "The block system couples the bias equality with the kernel Gram matrix. It is a linear system rather than the inequality-constrained hard-margin SVM QP.",
+        "symbols": [
+          {
+            "latex": "K",
+            "meaning": "kernel Gram matrix"
+          },
+          {
+            "latex": "\\gamma",
+            "meaning": "LS-SVM error penalty"
+          },
+          {
+            "latex": "\\alpha",
+            "meaning": "LS-SVM multipliers"
+          }
+        ],
+        "sourceType": "ref"
+      }
+    },
+    {
+      "title": "Textbook depth · Hat matrix and LOO",
+      "body": "For a linear smoother $\\hat y=Hy$, the diagonal $H_{ii}$ measures how much observation i influences its own fitted value. Leave-one-out residuals can be computed without refitting as $e_i^{LOO}=e_i/(1-H_{ii})$, where $e_i=y_i-\\hat y_i$.",
+      "sourceType": "textbook",
+      "math": {
+        "latex": "e_i^{LOO}=\\frac{y_i-\\hat y_i}{1-H_{ii}}",
+        "explanation": "High-leverage points have Hii near one and can make the LOO residual large. The formula is a computational shortcut, not permission to use the test set for tuning.",
+        "symbols": [
+          {
+            "latex": "H",
+            "meaning": "hat or smoothing matrix"
+          },
+          {
+            "latex": "H_{ii}",
+            "meaning": "leverage of observation i"
+          }
+        ],
+        "sourceType": "textbook"
+      }
+    },
+    {
+      "title": "Assessment habit · Compare constraint types",
+      "body": "Hard-margin SVM has inequality constraints and complementary slackness. LS-SVM replaces them with equality constraints and squared errors, producing a block linear system. Ridge has no margin labels but shares the regularized linear-algebra pattern.",
+      "sourceType": "ref"
+    }
+  ],
+  "examples": [
+    {
+      "title": "Read the LS-SVM block system",
+      "steps": [
+        "The top row enforces y^T alpha=0, which is the bias stationarity condition.",
+        "The lower block couples b, alpha, and the kernel matrix through yb+(K+gamma^-1 I)alpha=1.",
+        "Solve the block system, then predict with f(x)=sum_i alpha_i y_i k(x_i,x)+b."
+      ],
+      "answer": "The matrix form is the compact answer; explain where each block came from if the question asks for a derivation.",
+      "sourceType": "ref"
+    },
+    {
+      "title": "LOO residual",
+      "steps": [
+        "Suppose a fitted residual is e_i=0.2 and the leverage is H_ii=0.5.",
+        "The leave-one-out residual is 0.2/(1-0.5)=0.4.",
+        "A high leverage value inflates the correction because the observation strongly affected its own fitted value."
+      ],
+      "answer": "LOO estimates the error after removing point i without fitting N separate models.",
+      "sourceType": "textbook"
+    }
+  ],
+  "criticalQuestions": [
+    {
+      "prompt": "Why does ridge restore invertibility?",
+      "focus": "regularized linear algebra",
+      "angle": "look at eigenvalues",
+      "modelAnswer": "Phi transpose Phi is positive semidefinite; adding lambda I shifts every eigenvalue by lambda, making the matrix positive definite for lambda>0."
+    },
+    {
+      "prompt": "How is LS-SVM different from hard-margin SVM?",
+      "focus": "KKT structure",
+      "angle": "compare constraints",
+      "modelAnswer": "LS-SVM uses equality constraints with squared error slack and yields a block linear system; hard-margin SVM uses inequalities, nonnegative multipliers, and complementary slackness."
+    }
+  ],
+  "courseId": "DSA5105",
+  "moduleId": "dsa5105-exam-core",
+  "blocks": [
+    {
+      "id": "dsa5105-ls-svm-loo-section-1",
+      "type": "teaching-note",
+      "title": "Textbook depth · Ridge normal equations",
+      "body": "Ridge solves $\\min_w\\frac12\\lVert\\Phi w-y\\rVert^2+\\frac\\lambda2\\lVert w\\rVert^2$. Differentiation gives $(\\Phi^\\top\\Phi+\\lambda I)\\hat w=\\Phi^\\top y$. The $\\lambda I$ term makes the system invertible for $\\lambda>0$ even when the design matrix is rank deficient.",
+      "sourceType": "textbook",
+      "sourceRefs": [
+        {
+          "sourceId": "DSA5105/Textbook.pdf",
+          "page": 29,
+          "sourceType": "textbook",
+          "role": "kernel ridge",
+          "status": "course-depth"
+        },
+        {
+          "sourceId": "DSA5105/Textbook.pdf",
+          "page": 34,
+          "sourceType": "textbook",
+          "role": "KKT stationarity",
+          "status": "course-depth"
+        },
+        {
+          "sourceId": "DSA5105/Ref/document.pdf",
+          "page": 1,
+          "sourceType": "ref",
+          "role": "past-exam dual ridge and LOO alignment",
+          "status": "assessment-derived"
+        },
+        {
+          "sourceId": "DSA5105/Ref/document.pdf",
+          "page": 4,
+          "sourceType": "ref",
+          "role": "past-exam LS-SVM KKT alignment",
+          "status": "assessment-derived"
+        }
+      ]
+    },
+    {
+      "id": "dsa5105-ls-svm-loo-section-2",
+      "type": "teaching-note",
+      "title": "Assessment bridge · LS-SVM KKT system",
+      "body": "A least-squares SVM uses equality constraints with squared errors: $y_i(w^\\top\\phi(x_i)+b)=1-e_i$ and objective $\\frac12\\lVert w\\rVert^2+\\frac\\gamma2\\sum_i e_i^2$. Stationarity gives $w=\\sum_i\\alpha_i y_i\\phi(x_i)$, $\\sum_i\\alpha_i y_i=0$, and $\\alpha_i=\\gamma e_i$.",
+      "sourceType": "ref",
+      "sourceRefs": [
+        {
+          "sourceId": "DSA5105/Textbook.pdf",
+          "page": 29,
+          "sourceType": "textbook",
+          "role": "kernel ridge",
+          "status": "course-depth"
+        },
+        {
+          "sourceId": "DSA5105/Textbook.pdf",
+          "page": 34,
+          "sourceType": "textbook",
+          "role": "KKT stationarity",
+          "status": "course-depth"
+        },
+        {
+          "sourceId": "DSA5105/Ref/document.pdf",
+          "page": 1,
+          "sourceType": "ref",
+          "role": "past-exam dual ridge and LOO alignment",
+          "status": "assessment-derived"
+        },
+        {
+          "sourceId": "DSA5105/Ref/document.pdf",
+          "page": 4,
+          "sourceType": "ref",
+          "role": "past-exam LS-SVM KKT alignment",
+          "status": "assessment-derived"
+        }
+      ]
+    },
+    {
+      "id": "dsa5105-ls-svm-loo-section-3",
+      "type": "teaching-note",
+      "title": "Textbook depth · Hat matrix and LOO",
+      "body": "For a linear smoother $\\hat y=Hy$, the diagonal $H_{ii}$ measures how much observation i influences its own fitted value. Leave-one-out residuals can be computed without refitting as $e_i^{LOO}=e_i/(1-H_{ii})$, where $e_i=y_i-\\hat y_i$.",
+      "sourceType": "textbook",
+      "sourceRefs": [
+        {
+          "sourceId": "DSA5105/Textbook.pdf",
+          "page": 29,
+          "sourceType": "textbook",
+          "role": "kernel ridge",
+          "status": "course-depth"
+        },
+        {
+          "sourceId": "DSA5105/Textbook.pdf",
+          "page": 34,
+          "sourceType": "textbook",
+          "role": "KKT stationarity",
+          "status": "course-depth"
+        },
+        {
+          "sourceId": "DSA5105/Ref/document.pdf",
+          "page": 1,
+          "sourceType": "ref",
+          "role": "past-exam dual ridge and LOO alignment",
+          "status": "assessment-derived"
+        },
+        {
+          "sourceId": "DSA5105/Ref/document.pdf",
+          "page": 4,
+          "sourceType": "ref",
+          "role": "past-exam LS-SVM KKT alignment",
+          "status": "assessment-derived"
+        }
+      ]
+    },
+    {
+      "id": "dsa5105-ls-svm-loo-section-4",
+      "type": "teaching-note",
+      "title": "Assessment habit · Compare constraint types",
+      "body": "Hard-margin SVM has inequality constraints and complementary slackness. LS-SVM replaces them with equality constraints and squared errors, producing a block linear system. Ridge has no margin labels but shares the regularized linear-algebra pattern.",
+      "sourceType": "ref",
+      "sourceRefs": [
+        {
+          "sourceId": "DSA5105/Textbook.pdf",
+          "page": 29,
+          "sourceType": "textbook",
+          "role": "kernel ridge",
+          "status": "course-depth"
+        },
+        {
+          "sourceId": "DSA5105/Textbook.pdf",
+          "page": 34,
+          "sourceType": "textbook",
+          "role": "KKT stationarity",
+          "status": "course-depth"
+        },
+        {
+          "sourceId": "DSA5105/Ref/document.pdf",
+          "page": 1,
+          "sourceType": "ref",
+          "role": "past-exam dual ridge and LOO alignment",
+          "status": "assessment-derived"
+        },
+        {
+          "sourceId": "DSA5105/Ref/document.pdf",
+          "page": 4,
+          "sourceType": "ref",
+          "role": "past-exam LS-SVM KKT alignment",
+          "status": "assessment-derived"
+        }
+      ]
+    },
+    {
+      "id": "dsa5105-ls-svm-loo-example-1",
+      "type": "worked-example",
+      "title": "Read the LS-SVM block system",
+      "steps": [
+        "The top row enforces y^T alpha=0, which is the bias stationarity condition.",
+        "The lower block couples b, alpha, and the kernel matrix through yb+(K+gamma^-1 I)alpha=1.",
+        "Solve the block system, then predict with f(x)=sum_i alpha_i y_i k(x_i,x)+b."
+      ],
+      "answer": "The matrix form is the compact answer; explain where each block came from if the question asks for a derivation.",
+      "sourceType": "ref",
+      "sourceRefs": [
+        {
+          "sourceId": "DSA5105/Textbook.pdf",
+          "page": 29,
+          "sourceType": "textbook",
+          "role": "kernel ridge",
+          "status": "course-depth"
+        },
+        {
+          "sourceId": "DSA5105/Textbook.pdf",
+          "page": 34,
+          "sourceType": "textbook",
+          "role": "KKT stationarity",
+          "status": "course-depth"
+        },
+        {
+          "sourceId": "DSA5105/Ref/document.pdf",
+          "page": 1,
+          "sourceType": "ref",
+          "role": "past-exam dual ridge and LOO alignment",
+          "status": "assessment-derived"
+        },
+        {
+          "sourceId": "DSA5105/Ref/document.pdf",
+          "page": 4,
+          "sourceType": "ref",
+          "role": "past-exam LS-SVM KKT alignment",
+          "status": "assessment-derived"
+        }
+      ]
+    },
+    {
+      "id": "dsa5105-ls-svm-loo-example-2",
+      "type": "worked-example",
+      "title": "LOO residual",
+      "steps": [
+        "Suppose a fitted residual is e_i=0.2 and the leverage is H_ii=0.5.",
+        "The leave-one-out residual is 0.2/(1-0.5)=0.4.",
+        "A high leverage value inflates the correction because the observation strongly affected its own fitted value."
+      ],
+      "answer": "LOO estimates the error after removing point i without fitting N separate models.",
+      "sourceType": "textbook",
+      "sourceRefs": [
+        {
+          "sourceId": "DSA5105/Textbook.pdf",
+          "page": 29,
+          "sourceType": "textbook",
+          "role": "kernel ridge",
+          "status": "course-depth"
+        },
+        {
+          "sourceId": "DSA5105/Textbook.pdf",
+          "page": 34,
+          "sourceType": "textbook",
+          "role": "KKT stationarity",
+          "status": "course-depth"
+        },
+        {
+          "sourceId": "DSA5105/Ref/document.pdf",
+          "page": 1,
+          "sourceType": "ref",
+          "role": "past-exam dual ridge and LOO alignment",
+          "status": "assessment-derived"
+        },
+        {
+          "sourceId": "DSA5105/Ref/document.pdf",
+          "page": 4,
+          "sourceType": "ref",
+          "role": "past-exam LS-SVM KKT alignment",
+          "status": "assessment-derived"
+        }
+      ]
+    },
+    {
+      "id": "dsa5105-ls-svm-loo-critical-1",
+      "type": "critical-question",
+      "prompt": "Why does ridge restore invertibility?",
+      "focus": "regularized linear algebra",
+      "angle": "look at eigenvalues",
+      "modelAnswer": "Phi transpose Phi is positive semidefinite; adding lambda I shifts every eigenvalue by lambda, making the matrix positive definite for lambda>0.",
+      "sourceRefs": [
+        {
+          "sourceId": "DSA5105/Textbook.pdf",
+          "page": 29,
+          "sourceType": "textbook",
+          "role": "kernel ridge",
+          "status": "course-depth"
+        },
+        {
+          "sourceId": "DSA5105/Textbook.pdf",
+          "page": 34,
+          "sourceType": "textbook",
+          "role": "KKT stationarity",
+          "status": "course-depth"
+        },
+        {
+          "sourceId": "DSA5105/Ref/document.pdf",
+          "page": 1,
+          "sourceType": "ref",
+          "role": "past-exam dual ridge and LOO alignment",
+          "status": "assessment-derived"
+        },
+        {
+          "sourceId": "DSA5105/Ref/document.pdf",
+          "page": 4,
+          "sourceType": "ref",
+          "role": "past-exam LS-SVM KKT alignment",
+          "status": "assessment-derived"
+        }
+      ]
+    },
+    {
+      "id": "dsa5105-ls-svm-loo-critical-2",
+      "type": "critical-question",
+      "prompt": "How is LS-SVM different from hard-margin SVM?",
+      "focus": "KKT structure",
+      "angle": "compare constraints",
+      "modelAnswer": "LS-SVM uses equality constraints with squared error slack and yields a block linear system; hard-margin SVM uses inequalities, nonnegative multipliers, and complementary slackness.",
+      "sourceRefs": [
+        {
+          "sourceId": "DSA5105/Textbook.pdf",
+          "page": 29,
+          "sourceType": "textbook",
+          "role": "kernel ridge",
+          "status": "course-depth"
+        },
+        {
+          "sourceId": "DSA5105/Textbook.pdf",
+          "page": 34,
+          "sourceType": "textbook",
+          "role": "KKT stationarity",
+          "status": "course-depth"
+        },
+        {
+          "sourceId": "DSA5105/Ref/document.pdf",
+          "page": 1,
+          "sourceType": "ref",
+          "role": "past-exam dual ridge and LOO alignment",
+          "status": "assessment-derived"
+        },
+        {
+          "sourceId": "DSA5105/Ref/document.pdf",
+          "page": 4,
+          "sourceType": "ref",
+          "role": "past-exam LS-SVM KKT alignment",
+          "status": "assessment-derived"
+        }
+      ]
+    }
+  ],
+  "questionIds": [
+    "dsa5105-ls-q1",
+    "dsa5105-ls-q2",
+    "dsa5105-ls-q3",
+    "dsa5105-ls-q4"
+  ],
+  "labIds": [
+    "dsa5105-ls-svm-loo"
+  ],
+  "schemaVersion": "nus.lesson.v1"
+}

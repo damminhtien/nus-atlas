@@ -1,0 +1,75 @@
+[
+  {
+    "id": "dsa5105-lt-q1",
+    "type": "mcq",
+    "prompt": "Why can ERM achieve low training error but still generalize poorly?",
+    "choices": [
+      "The optimizer always increases bias",
+      "The hypothesis class can fit sample-specific noise",
+      "Population risk is always zero",
+      "Validation data is part of the training loss"
+    ],
+    "answer": 1,
+    "explanation": "A flexible hypothesis class can memorize the sample, making empirical risk look good while population risk remains high.",
+    "sourceRefs": [
+      {
+        "sourceId": "DSA5105/Lec1.pdf",
+        "page": 10,
+        "sourceType": "lecture",
+        "role": "generalization gap",
+        "status": "current"
+      }
+    ],
+    "courseId": "DSA5105",
+    "lessonId": "dsa5105-learning-theory",
+    "schemaVersion": "nus.question.v1"
+  },
+  {
+    "id": "dsa5105-lt-q2",
+    "type": "short",
+    "prompt": "In a PAC statement, what do $\\varepsilon$ and $\\delta$ control?",
+    "accepted": [
+      "epsilon controls error and delta controls failure probability",
+      "epsilon accuracy delta confidence",
+      "allowed risk and probability of failure"
+    ],
+    "solution": "$\\varepsilon$ bounds the allowed population error; $\\delta$ is the probability that the guarantee fails, so confidence is $1-\\delta$.",
+    "explanation": "Do not swap the roles of accuracy and confidence.",
+    "sourceRefs": [
+      {
+        "sourceId": "DSA5105/Textbook.pdf",
+        "page": 70,
+        "sourceType": "textbook",
+        "role": "PAC definition",
+        "status": "course-depth"
+      }
+    ],
+    "courseId": "DSA5105",
+    "lessonId": "dsa5105-learning-theory",
+    "schemaVersion": "nus.question.v1"
+  },
+  {
+    "id": "dsa5105-lt-q3",
+    "type": "short",
+    "prompt": "What extra assumption makes a train–test estimate meaningful in the basic setup?",
+    "accepted": [
+      "iid samples from the same distribution",
+      "independent identically distributed",
+      "training and test drawn from the same distribution"
+    ],
+    "solution": "The basic setup assumes independent, identically distributed examples from the same underlying distribution.",
+    "explanation": "Distribution shift breaks the simplest interpretation of the generalization gap.",
+    "sourceRefs": [
+      {
+        "sourceId": "DSA5105/Ref/Understanding_Machine_Learning_From_Theory_to_Algorithms.pdf",
+        "page": 45,
+        "sourceType": "ref",
+        "role": "agnostic PAC context",
+        "status": "optional"
+      }
+    ],
+    "courseId": "DSA5105",
+    "lessonId": "dsa5105-learning-theory",
+    "schemaVersion": "nus.question.v1"
+  }
+]

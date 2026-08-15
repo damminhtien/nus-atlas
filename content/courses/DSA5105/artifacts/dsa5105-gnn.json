@@ -1,0 +1,43 @@
+{
+  "lessonId": "dsa5105-gnn",
+  "schemaVersion": "nus.study-kit.v1",
+  "flashcards": [
+    {
+      "front": "GNN aggregation invariant?",
+      "back": "Reordering neighbors should not change the node update because graph neighborhoods are unordered."
+    },
+    {
+      "front": "One message-passing layer?",
+      "back": "Transform neighbor states, aggregate them, and combine the result with the node's own state."
+    },
+    {
+      "front": "Depth risk?",
+      "back": "Oversmoothing can make node embeddings too similar after repeated local mixing."
+    }
+  ],
+  "homework": [
+    {
+      "prompt": "Write a permutation-invariant node-update equation and identify each term.",
+      "rubric": "Name message transform, aggregation, self-state update, and graph-order invariance.",
+      "source": {
+        "sourceId": "DSA5105/Ref/Chapter3_Graph_Neural_Networks.pdf",
+        "page": 1,
+        "sourceType": "ref",
+        "role": "GNN message passing",
+        "status": "optional"
+      }
+    },
+    {
+      "prompt": "Propose one validation signal for deciding whether another GNN layer helps.",
+      "rubric": "Use held-out performance or embedding separation and mention oversmoothing.",
+      "source": {
+        "sourceId": "DSA5105/Ref/Chapter3_Graph_Neural_Networks.pdf",
+        "page": 1,
+        "sourceType": "ref",
+        "role": "GNN depth",
+        "status": "optional"
+      }
+    }
+  ],
+  "codeExercises": []
+}

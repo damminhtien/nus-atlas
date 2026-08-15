@@ -1,0 +1,347 @@
+{
+  "id": "dsa5105-svm-margin",
+  "title": "SVM margins and support vectors",
+  "week": 5,
+  "minutes": 60,
+  "summary": "Derive the geometric margin, connect it to the hard-margin objective, and explain support vectors and hinge loss.",
+  "objectives": [
+    "Compute a separating-hyperplane margin",
+    "State the hard-margin primal",
+    "Explain soft-margin support vectors"
+  ],
+  "sourceRefs": [
+    {
+      "sourceId": "DSA5105/Textbook.pdf",
+      "page": 31,
+      "sourceType": "textbook",
+      "role": "linear SVM geometry",
+      "status": "course-depth"
+    },
+    {
+      "sourceId": "DSA5105/Textbook.pdf",
+      "page": 35,
+      "sourceType": "textbook",
+      "role": "dual and support vectors",
+      "status": "course-depth"
+    },
+    {
+      "sourceId": "DSA5105/Textbook.pdf",
+      "page": 36,
+      "sourceType": "textbook",
+      "role": "soft margin and hinge loss",
+      "status": "course-depth"
+    }
+  ],
+  "visualIds": [],
+  "sections": [
+    {
+      "title": "Textbook depth · Geometry first",
+      "body": "For $f(x)=w^\\top x+b$, the distance from $x$ to the separating hyperplane is $|w^\\top x+b|/\\lVert w\\rVert_2$. Scaling $w$ and $b$ changes the score but not the boundary, so the optimization needs a scale convention before 'largest margin' has a precise meaning.",
+      "sourceType": "textbook",
+      "math": {
+        "latex": "\\gamma_i=\\frac{y_i(w^\\top x_i+b)}{\\lVert w\\rVert_2}",
+        "explanation": "The numerator is the signed classifier score after multiplying by the label, so a correctly classified point has a positive value. Dividing by the normal-vector length converts that score into a geometric distance.",
+        "symbols": [
+          {
+            "latex": "y_i\\in\\{-1,+1\\}",
+            "meaning": "binary class label"
+          },
+          {
+            "latex": "w^\\top x_i+b",
+            "meaning": "signed hyperplane score"
+          },
+          {
+            "latex": "\\gamma_i",
+            "meaning": "signed geometric margin"
+          }
+        ],
+        "sourceType": "textbook"
+      }
+    },
+    {
+      "title": "Textbook depth · Hard margin",
+      "body": "With labels in $\\{-1,+1\\}$, require $y_i(w^\\top x_i+b)\\ge 1$. The closest feasible points then have geometric margin $1/\\lVert w\\rVert_2$, so maximizing margin is equivalent to minimizing the norm under the constraints.",
+      "sourceType": "textbook",
+      "math": {
+        "latex": "\\min_{w,b}\\;\\frac{1}{2}\\lVert w\\rVert_2^2\\quad\\text{subject to}\\quad y_i(w^\\top x_i+b)\\ge 1\\ \\forall i",
+        "explanation": "The constraint fixes the arbitrary scale by placing the closest correct points at score one. Once scale is fixed, a smaller norm means a wider geometric margin.",
+        "symbols": [
+          {
+            "latex": "\\frac12\\lVert w\\rVert_2^2",
+            "meaning": "smooth objective equivalent to minimizing the norm"
+          },
+          {
+            "latex": "y_i(w^\\top x_i+b)\\ge1",
+            "meaning": "correct classification with fixed scale"
+          }
+        ],
+        "sourceType": "textbook"
+      }
+    },
+    {
+      "title": "Textbook depth · Support vectors and slack",
+      "body": "Support vectors are the observations with active constraints or non-zero dual multipliers; they determine the boundary in the dual representation. When perfect separation is unrealistic, slack variables and hinge loss allow violations while still penalizing them.",
+      "sourceType": "textbook"
+    },
+    {
+      "title": "Scope boundary",
+      "body": "This page is textbook depth. Treat the derivation as a worked mathematical extension and verify the current lecture sequence before calling every SVM detail examinable.",
+      "sourceType": "ref"
+    }
+  ],
+  "examples": [
+    {
+      "title": "Worked example: compute one geometric margin",
+      "steps": [
+        "A point has $y(w^\\top x+b)=2$ and $\\lVert w\\rVert_2=4$.",
+        "Divide the label-scaled score by the normal-vector length: $2/4$.",
+        "The signed geometric margin is $0.5$. A larger norm with the same score would reduce the geometric distance."
+      ],
+      "answer": "The margin is $0.5$; keep the label inside the numerator when using the signed form.",
+      "sourceType": "textbook"
+    }
+  ],
+  "math": [],
+  "criticalQuestions": [
+    {
+      "prompt": "Why is the SVM scale convention necessary?",
+      "angle": "Show what happens if $(w,b)$ is multiplied by a positive constant.",
+      "modelAnswer": "The boundary is unchanged but the raw scores change. Fixing the closest scores at one removes this arbitrary scale and makes the geometric margin comparable.",
+      "focus": "invariance"
+    },
+    {
+      "prompt": "When is a hard-margin SVM the wrong model even if a separator exists?",
+      "angle": "Consider noise, outliers, measurement error, and the cost of treating every point as perfectly separable.",
+      "modelAnswer": "A separator can be created by an outlier or an overly flexible feature map. Soft margins and validation can produce a more robust boundary.",
+      "focus": "robustness"
+    }
+  ],
+  "courseId": "DSA5105",
+  "moduleId": "dsa5105-linear",
+  "blocks": [
+    {
+      "id": "dsa5105-svm-margin-section-1",
+      "type": "teaching-note",
+      "title": "Textbook depth · Geometry first",
+      "body": "For $f(x)=w^\\top x+b$, the distance from $x$ to the separating hyperplane is $|w^\\top x+b|/\\lVert w\\rVert_2$. Scaling $w$ and $b$ changes the score but not the boundary, so the optimization needs a scale convention before 'largest margin' has a precise meaning.",
+      "sourceType": "textbook",
+      "sourceRefs": [
+        {
+          "sourceId": "DSA5105/Textbook.pdf",
+          "page": 31,
+          "sourceType": "textbook",
+          "role": "linear SVM geometry",
+          "status": "course-depth"
+        },
+        {
+          "sourceId": "DSA5105/Textbook.pdf",
+          "page": 35,
+          "sourceType": "textbook",
+          "role": "dual and support vectors",
+          "status": "course-depth"
+        },
+        {
+          "sourceId": "DSA5105/Textbook.pdf",
+          "page": 36,
+          "sourceType": "textbook",
+          "role": "soft margin and hinge loss",
+          "status": "course-depth"
+        }
+      ]
+    },
+    {
+      "id": "dsa5105-svm-margin-section-2",
+      "type": "teaching-note",
+      "title": "Textbook depth · Hard margin",
+      "body": "With labels in $\\{-1,+1\\}$, require $y_i(w^\\top x_i+b)\\ge 1$. The closest feasible points then have geometric margin $1/\\lVert w\\rVert_2$, so maximizing margin is equivalent to minimizing the norm under the constraints.",
+      "sourceType": "textbook",
+      "sourceRefs": [
+        {
+          "sourceId": "DSA5105/Textbook.pdf",
+          "page": 31,
+          "sourceType": "textbook",
+          "role": "linear SVM geometry",
+          "status": "course-depth"
+        },
+        {
+          "sourceId": "DSA5105/Textbook.pdf",
+          "page": 35,
+          "sourceType": "textbook",
+          "role": "dual and support vectors",
+          "status": "course-depth"
+        },
+        {
+          "sourceId": "DSA5105/Textbook.pdf",
+          "page": 36,
+          "sourceType": "textbook",
+          "role": "soft margin and hinge loss",
+          "status": "course-depth"
+        }
+      ]
+    },
+    {
+      "id": "dsa5105-svm-margin-section-3",
+      "type": "teaching-note",
+      "title": "Textbook depth · Support vectors and slack",
+      "body": "Support vectors are the observations with active constraints or non-zero dual multipliers; they determine the boundary in the dual representation. When perfect separation is unrealistic, slack variables and hinge loss allow violations while still penalizing them.",
+      "sourceType": "textbook",
+      "sourceRefs": [
+        {
+          "sourceId": "DSA5105/Textbook.pdf",
+          "page": 31,
+          "sourceType": "textbook",
+          "role": "linear SVM geometry",
+          "status": "course-depth"
+        },
+        {
+          "sourceId": "DSA5105/Textbook.pdf",
+          "page": 35,
+          "sourceType": "textbook",
+          "role": "dual and support vectors",
+          "status": "course-depth"
+        },
+        {
+          "sourceId": "DSA5105/Textbook.pdf",
+          "page": 36,
+          "sourceType": "textbook",
+          "role": "soft margin and hinge loss",
+          "status": "course-depth"
+        }
+      ]
+    },
+    {
+      "id": "dsa5105-svm-margin-section-4",
+      "type": "teaching-note",
+      "title": "Scope boundary",
+      "body": "This page is textbook depth. Treat the derivation as a worked mathematical extension and verify the current lecture sequence before calling every SVM detail examinable.",
+      "sourceType": "ref",
+      "sourceRefs": [
+        {
+          "sourceId": "DSA5105/Textbook.pdf",
+          "page": 31,
+          "sourceType": "textbook",
+          "role": "linear SVM geometry",
+          "status": "course-depth"
+        },
+        {
+          "sourceId": "DSA5105/Textbook.pdf",
+          "page": 35,
+          "sourceType": "textbook",
+          "role": "dual and support vectors",
+          "status": "course-depth"
+        },
+        {
+          "sourceId": "DSA5105/Textbook.pdf",
+          "page": 36,
+          "sourceType": "textbook",
+          "role": "soft margin and hinge loss",
+          "status": "course-depth"
+        }
+      ]
+    },
+    {
+      "id": "dsa5105-svm-margin-example-1",
+      "type": "worked-example",
+      "title": "Worked example: compute one geometric margin",
+      "steps": [
+        "A point has $y(w^\\top x+b)=2$ and $\\lVert w\\rVert_2=4$.",
+        "Divide the label-scaled score by the normal-vector length: $2/4$.",
+        "The signed geometric margin is $0.5$. A larger norm with the same score would reduce the geometric distance."
+      ],
+      "answer": "The margin is $0.5$; keep the label inside the numerator when using the signed form.",
+      "sourceType": "textbook",
+      "sourceRefs": [
+        {
+          "sourceId": "DSA5105/Textbook.pdf",
+          "page": 31,
+          "sourceType": "textbook",
+          "role": "linear SVM geometry",
+          "status": "course-depth"
+        },
+        {
+          "sourceId": "DSA5105/Textbook.pdf",
+          "page": 35,
+          "sourceType": "textbook",
+          "role": "dual and support vectors",
+          "status": "course-depth"
+        },
+        {
+          "sourceId": "DSA5105/Textbook.pdf",
+          "page": 36,
+          "sourceType": "textbook",
+          "role": "soft margin and hinge loss",
+          "status": "course-depth"
+        }
+      ]
+    },
+    {
+      "id": "dsa5105-svm-margin-critical-1",
+      "type": "critical-question",
+      "prompt": "Why is the SVM scale convention necessary?",
+      "angle": "Show what happens if $(w,b)$ is multiplied by a positive constant.",
+      "modelAnswer": "The boundary is unchanged but the raw scores change. Fixing the closest scores at one removes this arbitrary scale and makes the geometric margin comparable.",
+      "focus": "invariance",
+      "sourceRefs": [
+        {
+          "sourceId": "DSA5105/Textbook.pdf",
+          "page": 31,
+          "sourceType": "textbook",
+          "role": "linear SVM geometry",
+          "status": "course-depth"
+        },
+        {
+          "sourceId": "DSA5105/Textbook.pdf",
+          "page": 35,
+          "sourceType": "textbook",
+          "role": "dual and support vectors",
+          "status": "course-depth"
+        },
+        {
+          "sourceId": "DSA5105/Textbook.pdf",
+          "page": 36,
+          "sourceType": "textbook",
+          "role": "soft margin and hinge loss",
+          "status": "course-depth"
+        }
+      ]
+    },
+    {
+      "id": "dsa5105-svm-margin-critical-2",
+      "type": "critical-question",
+      "prompt": "When is a hard-margin SVM the wrong model even if a separator exists?",
+      "angle": "Consider noise, outliers, measurement error, and the cost of treating every point as perfectly separable.",
+      "modelAnswer": "A separator can be created by an outlier or an overly flexible feature map. Soft margins and validation can produce a more robust boundary.",
+      "focus": "robustness",
+      "sourceRefs": [
+        {
+          "sourceId": "DSA5105/Textbook.pdf",
+          "page": 31,
+          "sourceType": "textbook",
+          "role": "linear SVM geometry",
+          "status": "course-depth"
+        },
+        {
+          "sourceId": "DSA5105/Textbook.pdf",
+          "page": 35,
+          "sourceType": "textbook",
+          "role": "dual and support vectors",
+          "status": "course-depth"
+        },
+        {
+          "sourceId": "DSA5105/Textbook.pdf",
+          "page": 36,
+          "sourceType": "textbook",
+          "role": "soft margin and hinge loss",
+          "status": "course-depth"
+        }
+      ]
+    }
+  ],
+  "questionIds": [
+    "dsa5105-svm-q1",
+    "dsa5105-svm-q2",
+    "dsa5105-svm-q3"
+  ],
+  "labIds": [],
+  "schemaVersion": "nus.lesson.v1"
+}

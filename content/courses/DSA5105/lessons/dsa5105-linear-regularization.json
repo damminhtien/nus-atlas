@@ -1,0 +1,266 @@
+{
+  "id": "dsa5105-linear-regularization",
+  "title": "OLS, ridge, and lasso",
+  "week": 3,
+  "minutes": 55,
+  "summary": "Compare least squares with L2 and L1 penalties and understand how regularization changes the solution.",
+  "objectives": [
+    "State the OLS objective",
+    "Explain ridge shrinkage",
+    "Explain lasso sparsity"
+  ],
+  "sourceRefs": [
+    {
+      "sourceId": "DSA5105/Lec1.pdf",
+      "page": 24,
+      "sourceType": "lecture",
+      "role": "linear models",
+      "status": "current"
+    },
+    {
+      "sourceId": "DSA5105/Lec1_exercises-solutions.pdf",
+      "page": 2,
+      "sourceType": "lecture",
+      "role": "worked regularization exercise",
+      "status": "current"
+    }
+  ],
+  "visualIds": [],
+  "sections": [
+    {
+      "title": "Lecture core · OLS baseline",
+      "body": "Ordinary least squares chooses weights that minimize squared residuals. It is a useful baseline because the objective is explicit, but correlated features can make the fitted weights unstable and high-dimensional models can fit noise.",
+      "sourceType": "lecture",
+      "math": {
+        "latex": "\\hat w = \\arg\\min_w \\lVert Xw-y\\rVert_2^2",
+        "explanation": "The model predicts $Xw$ and compares it with the target vector $y$. Squaring and summing the residuals penalizes large mistakes and gives a smooth objective.",
+        "symbols": [
+          {
+            "latex": "X",
+            "meaning": "design matrix"
+          },
+          {
+            "latex": "w",
+            "meaning": "learned coefficient vector"
+          },
+          {
+            "latex": "y",
+            "meaning": "target vector"
+          }
+        ],
+        "sourceType": "lecture"
+      }
+    },
+    {
+      "title": "Lecture core · Ridge and lasso",
+      "body": "Ridge adds an L2 penalty, shrinking weights toward zero while usually keeping correlated predictors together. Lasso adds an L1 penalty, whose corners make exact zeros possible. Both trade a little bias for lower variance when the unregularized fit is too sensitive.",
+      "sourceType": "lecture",
+      "math": {
+        "latex": "\\min_w\\;\\lVert Xw-y\\rVert_2^2+\\lambda\\lVert w\\rVert_2^2\\;\\text{(ridge)},\\qquad \\min_w\\;\\lVert Xw-y\\rVert_2^2+\\lambda\\lVert w\\rVert_1\\;\\text{(lasso)}",
+        "explanation": "The first term rewards fit to the data; the penalty charges for coefficient size. Increasing $lambda$ makes complexity more expensive. The L2 norm is smooth, while the L1 norm has corners that allow exact zeros.",
+        "symbols": [
+          {
+            "latex": "\\lambda",
+            "meaning": "regularization strength"
+          },
+          {
+            "latex": "\\lVert w\\rVert_2^2",
+            "meaning": "sum of squared coefficients"
+          },
+          {
+            "latex": "\\lVert w\\rVert_1",
+            "meaning": "sum of absolute coefficient values"
+          }
+        ],
+        "sourceType": "lecture"
+      }
+    },
+    {
+      "title": "Textbook depth · Choose lambda with validation",
+      "body": "$\\lambda$ is not chosen by looking at the test score repeatedly. Fit a grid of $\\lambda$ values on the training data, select the value with the best validation behavior, refit if appropriate, and use the test set only for the final report. Standardize features when penalty scale should be comparable.",
+      "sourceType": "textbook"
+    }
+  ],
+  "examples": [
+    {
+      "title": "Worked example: why lasso can remove a feature",
+      "steps": [
+        "Start with two standardized features whose residual correlations are similar.",
+        "The L1 constraint has corners on the coordinate axes. The optimum can land on a corner, which means one coefficient is exactly zero.",
+        "The L2 constraint is rounder, so it usually shrinks both coefficients without selecting one exactly."
+      ],
+      "answer": "Lasso supports sparse feature selection; ridge supports stable shrinkage without the same exact-zero behavior.",
+      "sourceType": "lecture"
+    }
+  ],
+  "math": [],
+  "criticalQuestions": [
+    {
+      "prompt": "Why can standardization change which feature lasso selects?",
+      "angle": "Compare the penalty's scale across coordinates before and after normalization.",
+      "modelAnswer": "The L1 penalty acts on coefficient magnitude. Without comparable feature scales, a feature measured in large units can be penalized differently even when its predictive role is similar.",
+      "focus": "preprocessing"
+    },
+    {
+      "prompt": "Can stronger regularization ever improve test error while worsening training error?",
+      "angle": "Use the bias–variance trade-off and distinguish optimization error from generalization error.",
+      "modelAnswer": "Yes. The extra bias can reduce variance and prevent fitting noise, so unseen-data error may fall even as training error rises.",
+      "focus": "trade-off"
+    }
+  ],
+  "courseId": "DSA5105",
+  "moduleId": "dsa5105-linear",
+  "blocks": [
+    {
+      "id": "dsa5105-linear-regularization-section-1",
+      "type": "teaching-note",
+      "title": "Lecture core · OLS baseline",
+      "body": "Ordinary least squares chooses weights that minimize squared residuals. It is a useful baseline because the objective is explicit, but correlated features can make the fitted weights unstable and high-dimensional models can fit noise.",
+      "sourceType": "lecture",
+      "sourceRefs": [
+        {
+          "sourceId": "DSA5105/Lec1.pdf",
+          "page": 24,
+          "sourceType": "lecture",
+          "role": "linear models",
+          "status": "current"
+        },
+        {
+          "sourceId": "DSA5105/Lec1_exercises-solutions.pdf",
+          "page": 2,
+          "sourceType": "lecture",
+          "role": "worked regularization exercise",
+          "status": "current"
+        }
+      ]
+    },
+    {
+      "id": "dsa5105-linear-regularization-section-2",
+      "type": "teaching-note",
+      "title": "Lecture core · Ridge and lasso",
+      "body": "Ridge adds an L2 penalty, shrinking weights toward zero while usually keeping correlated predictors together. Lasso adds an L1 penalty, whose corners make exact zeros possible. Both trade a little bias for lower variance when the unregularized fit is too sensitive.",
+      "sourceType": "lecture",
+      "sourceRefs": [
+        {
+          "sourceId": "DSA5105/Lec1.pdf",
+          "page": 24,
+          "sourceType": "lecture",
+          "role": "linear models",
+          "status": "current"
+        },
+        {
+          "sourceId": "DSA5105/Lec1_exercises-solutions.pdf",
+          "page": 2,
+          "sourceType": "lecture",
+          "role": "worked regularization exercise",
+          "status": "current"
+        }
+      ]
+    },
+    {
+      "id": "dsa5105-linear-regularization-section-3",
+      "type": "teaching-note",
+      "title": "Textbook depth · Choose lambda with validation",
+      "body": "$\\lambda$ is not chosen by looking at the test score repeatedly. Fit a grid of $\\lambda$ values on the training data, select the value with the best validation behavior, refit if appropriate, and use the test set only for the final report. Standardize features when penalty scale should be comparable.",
+      "sourceType": "textbook",
+      "sourceRefs": [
+        {
+          "sourceId": "DSA5105/Lec1.pdf",
+          "page": 24,
+          "sourceType": "lecture",
+          "role": "linear models",
+          "status": "current"
+        },
+        {
+          "sourceId": "DSA5105/Lec1_exercises-solutions.pdf",
+          "page": 2,
+          "sourceType": "lecture",
+          "role": "worked regularization exercise",
+          "status": "current"
+        }
+      ]
+    },
+    {
+      "id": "dsa5105-linear-regularization-example-1",
+      "type": "worked-example",
+      "title": "Worked example: why lasso can remove a feature",
+      "steps": [
+        "Start with two standardized features whose residual correlations are similar.",
+        "The L1 constraint has corners on the coordinate axes. The optimum can land on a corner, which means one coefficient is exactly zero.",
+        "The L2 constraint is rounder, so it usually shrinks both coefficients without selecting one exactly."
+      ],
+      "answer": "Lasso supports sparse feature selection; ridge supports stable shrinkage without the same exact-zero behavior.",
+      "sourceType": "lecture",
+      "sourceRefs": [
+        {
+          "sourceId": "DSA5105/Lec1.pdf",
+          "page": 24,
+          "sourceType": "lecture",
+          "role": "linear models",
+          "status": "current"
+        },
+        {
+          "sourceId": "DSA5105/Lec1_exercises-solutions.pdf",
+          "page": 2,
+          "sourceType": "lecture",
+          "role": "worked regularization exercise",
+          "status": "current"
+        }
+      ]
+    },
+    {
+      "id": "dsa5105-linear-regularization-critical-1",
+      "type": "critical-question",
+      "prompt": "Why can standardization change which feature lasso selects?",
+      "angle": "Compare the penalty's scale across coordinates before and after normalization.",
+      "modelAnswer": "The L1 penalty acts on coefficient magnitude. Without comparable feature scales, a feature measured in large units can be penalized differently even when its predictive role is similar.",
+      "focus": "preprocessing",
+      "sourceRefs": [
+        {
+          "sourceId": "DSA5105/Lec1.pdf",
+          "page": 24,
+          "sourceType": "lecture",
+          "role": "linear models",
+          "status": "current"
+        },
+        {
+          "sourceId": "DSA5105/Lec1_exercises-solutions.pdf",
+          "page": 2,
+          "sourceType": "lecture",
+          "role": "worked regularization exercise",
+          "status": "current"
+        }
+      ]
+    },
+    {
+      "id": "dsa5105-linear-regularization-critical-2",
+      "type": "critical-question",
+      "prompt": "Can stronger regularization ever improve test error while worsening training error?",
+      "angle": "Use the bias–variance trade-off and distinguish optimization error from generalization error.",
+      "modelAnswer": "Yes. The extra bias can reduce variance and prevent fitting noise, so unseen-data error may fall even as training error rises.",
+      "focus": "trade-off",
+      "sourceRefs": [
+        {
+          "sourceId": "DSA5105/Lec1.pdf",
+          "page": 24,
+          "sourceType": "lecture",
+          "role": "linear models",
+          "status": "current"
+        },
+        {
+          "sourceId": "DSA5105/Lec1_exercises-solutions.pdf",
+          "page": 2,
+          "sourceType": "lecture",
+          "role": "worked regularization exercise",
+          "status": "current"
+        }
+      ]
+    }
+  ],
+  "questionIds": [
+    "dsa5105-lr-q1",
+    "dsa5105-lr-q2"
+  ],
+  "labIds": [],
+  "schemaVersion": "nus.lesson.v1"
+}

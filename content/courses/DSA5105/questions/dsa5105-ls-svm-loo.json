@@ -1,0 +1,99 @@
+[
+  {
+    "id": "dsa5105-ls-q1",
+    "type": "derivation",
+    "prompt": "Write the ridge normal equation.",
+    "accepted": [
+      "Phi transpose Phi plus lambda I w equals Phi transpose y",
+      "(Phi^T Phi + lambda I)w = Phi^T y",
+      "ridge normal system"
+    ],
+    "solution": "$(\\Phi^\\top\\Phi+\\lambda I)\\hat w=\\Phi^\\top y$.",
+    "explanation": "The lambda I term is the derivative of the squared-norm penalty.",
+    "sourceRefs": [
+      {
+        "sourceId": "DSA5105/Textbook.pdf",
+        "page": 29,
+        "sourceType": "textbook",
+        "role": "ridge normal equation",
+        "status": "course-depth"
+      }
+    ],
+    "courseId": "DSA5105",
+    "lessonId": "dsa5105-ls-svm-loo",
+    "schemaVersion": "nus.question.v1"
+  },
+  {
+    "id": "dsa5105-ls-q2",
+    "type": "short",
+    "prompt": "What equality does LS-SVM stationarity impose on alpha and labels?",
+    "accepted": [
+      "sum alpha i y i equals zero",
+      "y transpose alpha equals zero",
+      "bias stationarity"
+    ],
+    "solution": "$y^\\top\\alpha=\\sum_i\\alpha_i y_i=0$.",
+    "explanation": "This is the derivative with respect to the bias.",
+    "sourceRefs": [
+      {
+        "sourceId": "DSA5105/Ref/document.pdf",
+        "page": 4,
+        "sourceType": "ref",
+        "role": "LS-SVM bias stationarity",
+        "status": "assessment-derived"
+      }
+    ],
+    "courseId": "DSA5105",
+    "lessonId": "dsa5105-ls-svm-loo",
+    "schemaVersion": "nus.question.v1"
+  },
+  {
+    "id": "dsa5105-ls-q3",
+    "type": "derivation",
+    "prompt": "Write the leave-one-out residual shortcut for a linear smoother.",
+    "accepted": [
+      "e i divided by 1 minus H ii",
+      "(y i minus yhat i)/(1-H ii)",
+      "loo residual formula"
+    ],
+    "solution": "$e_i^{LOO}=(y_i-\\hat y_i)/(1-H_{ii})$.",
+    "explanation": "The diagonal hat-matrix leverage corrects the in-sample residual.",
+    "sourceRefs": [
+      {
+        "sourceId": "DSA5105/Ref/document.pdf",
+        "page": 1,
+        "sourceType": "ref",
+        "role": "LOO residual alignment",
+        "status": "assessment-derived"
+      }
+    ],
+    "courseId": "DSA5105",
+    "lessonId": "dsa5105-ls-svm-loo",
+    "schemaVersion": "nus.question.v1"
+  },
+  {
+    "id": "dsa5105-ls-q4",
+    "type": "mcq",
+    "prompt": "What is the main computational distinction between hard-margin SVM and LS-SVM?",
+    "choices": [
+      "Hard-margin uses inequality constraints; LS-SVM yields an equality-constrained linear system",
+      "They always have identical constraints",
+      "LS-SVM removes all regularization",
+      "Hard-margin has no KKT conditions"
+    ],
+    "answer": 0,
+    "explanation": "The squared-error equality formulation changes the optimization structure.",
+    "sourceRefs": [
+      {
+        "sourceId": "DSA5105/Ref/document.pdf",
+        "page": 4,
+        "sourceType": "ref",
+        "role": "LS-SVM KKT alignment",
+        "status": "assessment-derived"
+      }
+    ],
+    "courseId": "DSA5105",
+    "lessonId": "dsa5105-ls-svm-loo",
+    "schemaVersion": "nus.question.v1"
+  }
+]

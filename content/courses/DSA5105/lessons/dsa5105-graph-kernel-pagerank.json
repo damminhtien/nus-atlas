@@ -1,0 +1,534 @@
+{
+  "id": "dsa5105-graph-kernel-pagerank",
+  "title": "Graph kernels, PageRank, and power iteration",
+  "week": 11,
+  "minutes": 85,
+  "summary": "Prove a graph-kernel construction is positive semidefinite, determine a kernel-parameter range, and compute PageRank as a fixed-point iteration.",
+  "objectives": [
+    "Use feature maps to prove PSD",
+    "Bound a graph-kernel parameter",
+    "Build a stochastic transition matrix",
+    "Run a PageRank power iteration"
+  ],
+  "sourceRefs": [
+    {
+      "sourceId": "DSA5105/Textbook.pdf",
+      "page": 25,
+      "sourceType": "textbook",
+      "role": "positive-semidefinite kernels",
+      "status": "course-depth"
+    },
+    {
+      "sourceId": "DSA5105/Textbook.pdf",
+      "page": 28,
+      "sourceType": "textbook",
+      "role": "kernel proof exercise",
+      "status": "course-depth"
+    },
+    {
+      "sourceId": "DSA5105/Ref/Mathematics_of_Data_Science.pdf",
+      "page": 47,
+      "sourceType": "ref",
+      "role": "PageRank",
+      "status": "draft"
+    },
+    {
+      "sourceId": "DSA5105/Ref/Mathematics_of_Data_Science.pdf",
+      "page": 50,
+      "sourceType": "ref",
+      "role": "graph theory",
+      "status": "draft"
+    },
+    {
+      "sourceId": "DSA5105/Ref/document.pdf",
+      "page": 2,
+      "sourceType": "ref",
+      "role": "past-exam graph kernel and PageRank alignment",
+      "status": "assessment-derived"
+    }
+  ],
+  "visualIds": [
+    "dsa5105-graph-kernel-pagerank"
+  ],
+  "sections": [
+    {
+      "title": "Textbook depth · Kernel PSD by feature map",
+      "body": "A kernel is positive semidefinite when every finite Gram matrix is PSD. The safest proof pattern is to write $K(G,G')=\\langle\\Psi(G),\\Psi(G')\\rangle$ for an explicit or implicit feature map. Sums of valid kernels remain valid because their feature maps can be concatenated.",
+      "sourceType": "textbook",
+      "math": {
+        "latex": "\\sum_{i,j}c_ic_jK(G_i,G_j)=\\left\\lVert\\sum_i c_i\\Psi(G_i)\\right\\rVert_2^2\\ge0",
+        "explanation": "The quadratic-form test proves PSD directly once the feature map is identified. For graph kernels, coordinates can count node labels, edge patterns, walks, or other substructures.",
+        "symbols": [
+          {
+            "latex": "\\Psi(G)",
+            "meaning": "graph feature map"
+          },
+          {
+            "latex": "c_i",
+            "meaning": "arbitrary real Gram coefficients"
+          }
+        ],
+        "sourceType": "textbook"
+      }
+    },
+    {
+      "title": "Assessment bridge · Opposite-edge parameter",
+      "body": "If a graph-kernel Gram block for two opposite orientations is $[[1,q],[q,1]]$, its eigenvalues are $1+q$ and $1-q$. Positive semidefiniteness therefore requires $-1\\le q\\le1$. Always derive the range from the actual Gram block stated in the question; do not infer it from a visual intuition about similarity.",
+      "sourceType": "ref",
+      "math": {
+        "latex": "\\lambda_\\pm=1\\pm q\\quad\\Longrightarrow\\quad -1\\le q\\le1",
+        "explanation": "Both eigenvalues must be non-negative. The boundary values are PSD but can make the feature representation linearly dependent.",
+        "symbols": [
+          {
+            "latex": "q",
+            "meaning": "opposite-orientation similarity parameter"
+          }
+        ],
+        "sourceType": "ref"
+      }
+    },
+    {
+      "title": "Reference depth · PageRank as a fixed point",
+      "body": "Construct a column- or row-stochastic transition matrix $P$, repair dangling nodes, and apply damping: $r_{t+1}=\\alpha P^\\top r_t+(1-\\alpha)\\frac1n\\mathbf1$. The stationary ranking is an eigenvector/fixed point normalized to sum to one.",
+      "sourceType": "ref",
+      "math": {
+        "latex": "r=\\alpha P^\\top r+(1-\\alpha)\\frac1n\\mathbf1",
+        "explanation": "Damping makes the random-surfer chain well behaved even when the raw graph has sinks or disconnected structure. Check the orientation convention: whether vectors are columns or rows changes where the transpose appears.",
+        "symbols": [
+          {
+            "latex": "r",
+            "meaning": "PageRank vector"
+          },
+          {
+            "latex": "P",
+            "meaning": "stochastic transition matrix"
+          },
+          {
+            "latex": "\\alpha",
+            "meaning": "damping or continuation probability"
+          }
+        ],
+        "sourceType": "ref"
+      }
+    },
+    {
+      "title": "Assessment habit · Matrix orientation and normalization",
+      "body": "Before multiplying, state whether P is row-stochastic or column-stochastic and whether r is a row or column vector. After each iteration, check non-negativity and that the rank vector sums to one. These checks catch most PageRank arithmetic errors.",
+      "sourceType": "ref"
+    }
+  ],
+  "examples": [
+    {
+      "title": "PSD parameter range",
+      "steps": [
+        "Take the two-orientation Gram block K=[[1,q],[q,1]].",
+        "Its eigenvectors are [1,1] and [1,-1], with eigenvalues 1+q and 1-q.",
+        "Both are non-negative exactly when q is between -1 and 1 inclusive."
+      ],
+      "answer": "A small Gram eigenvalue is a numerical warning even when the matrix is theoretically PSD.",
+      "sourceType": "ref"
+    },
+    {
+      "title": "One PageRank update",
+      "steps": [
+        "Start with r0 uniform on n nodes. Multiply by the transition operator to move mass along outgoing links.",
+        "Mix alpha times the propagated mass with (1-alpha) times the uniform teleportation vector.",
+        "Verify that the resulting entries remain non-negative and sum to one."
+      ],
+      "answer": "Power iteration is repeated matrix-vector multiplication plus damping; it is not an eigen-decomposition requirement for a small exam calculation.",
+      "sourceType": "ref"
+    }
+  ],
+  "criticalQuestions": [
+    {
+      "prompt": "What makes a kernel proof robust?",
+      "focus": "positive semidefiniteness",
+      "angle": "write the quadratic form",
+      "modelAnswer": "Identify a feature map or a PSD Gram block, then show every coefficient quadratic form is a squared norm or has non-negative eigenvalues."
+    },
+    {
+      "prompt": "Why can a transpose appear in PageRank?",
+      "focus": "convention",
+      "angle": "row versus column vectors",
+      "modelAnswer": "A row-stochastic matrix propagates row vectors on the right; a column rank vector typically uses the transpose of that transition convention. The mathematics is the same after fixing one orientation."
+    }
+  ],
+  "courseId": "DSA5105",
+  "moduleId": "dsa5105-exam-core",
+  "blocks": [
+    {
+      "id": "dsa5105-graph-kernel-pagerank-section-1",
+      "type": "teaching-note",
+      "title": "Textbook depth · Kernel PSD by feature map",
+      "body": "A kernel is positive semidefinite when every finite Gram matrix is PSD. The safest proof pattern is to write $K(G,G')=\\langle\\Psi(G),\\Psi(G')\\rangle$ for an explicit or implicit feature map. Sums of valid kernels remain valid because their feature maps can be concatenated.",
+      "sourceType": "textbook",
+      "sourceRefs": [
+        {
+          "sourceId": "DSA5105/Textbook.pdf",
+          "page": 25,
+          "sourceType": "textbook",
+          "role": "positive-semidefinite kernels",
+          "status": "course-depth"
+        },
+        {
+          "sourceId": "DSA5105/Textbook.pdf",
+          "page": 28,
+          "sourceType": "textbook",
+          "role": "kernel proof exercise",
+          "status": "course-depth"
+        },
+        {
+          "sourceId": "DSA5105/Ref/Mathematics_of_Data_Science.pdf",
+          "page": 47,
+          "sourceType": "ref",
+          "role": "PageRank",
+          "status": "draft"
+        },
+        {
+          "sourceId": "DSA5105/Ref/Mathematics_of_Data_Science.pdf",
+          "page": 50,
+          "sourceType": "ref",
+          "role": "graph theory",
+          "status": "draft"
+        },
+        {
+          "sourceId": "DSA5105/Ref/document.pdf",
+          "page": 2,
+          "sourceType": "ref",
+          "role": "past-exam graph kernel and PageRank alignment",
+          "status": "assessment-derived"
+        }
+      ]
+    },
+    {
+      "id": "dsa5105-graph-kernel-pagerank-section-2",
+      "type": "teaching-note",
+      "title": "Assessment bridge · Opposite-edge parameter",
+      "body": "If a graph-kernel Gram block for two opposite orientations is $[[1,q],[q,1]]$, its eigenvalues are $1+q$ and $1-q$. Positive semidefiniteness therefore requires $-1\\le q\\le1$. Always derive the range from the actual Gram block stated in the question; do not infer it from a visual intuition about similarity.",
+      "sourceType": "ref",
+      "sourceRefs": [
+        {
+          "sourceId": "DSA5105/Textbook.pdf",
+          "page": 25,
+          "sourceType": "textbook",
+          "role": "positive-semidefinite kernels",
+          "status": "course-depth"
+        },
+        {
+          "sourceId": "DSA5105/Textbook.pdf",
+          "page": 28,
+          "sourceType": "textbook",
+          "role": "kernel proof exercise",
+          "status": "course-depth"
+        },
+        {
+          "sourceId": "DSA5105/Ref/Mathematics_of_Data_Science.pdf",
+          "page": 47,
+          "sourceType": "ref",
+          "role": "PageRank",
+          "status": "draft"
+        },
+        {
+          "sourceId": "DSA5105/Ref/Mathematics_of_Data_Science.pdf",
+          "page": 50,
+          "sourceType": "ref",
+          "role": "graph theory",
+          "status": "draft"
+        },
+        {
+          "sourceId": "DSA5105/Ref/document.pdf",
+          "page": 2,
+          "sourceType": "ref",
+          "role": "past-exam graph kernel and PageRank alignment",
+          "status": "assessment-derived"
+        }
+      ]
+    },
+    {
+      "id": "dsa5105-graph-kernel-pagerank-section-3",
+      "type": "teaching-note",
+      "title": "Reference depth · PageRank as a fixed point",
+      "body": "Construct a column- or row-stochastic transition matrix $P$, repair dangling nodes, and apply damping: $r_{t+1}=\\alpha P^\\top r_t+(1-\\alpha)\\frac1n\\mathbf1$. The stationary ranking is an eigenvector/fixed point normalized to sum to one.",
+      "sourceType": "ref",
+      "sourceRefs": [
+        {
+          "sourceId": "DSA5105/Textbook.pdf",
+          "page": 25,
+          "sourceType": "textbook",
+          "role": "positive-semidefinite kernels",
+          "status": "course-depth"
+        },
+        {
+          "sourceId": "DSA5105/Textbook.pdf",
+          "page": 28,
+          "sourceType": "textbook",
+          "role": "kernel proof exercise",
+          "status": "course-depth"
+        },
+        {
+          "sourceId": "DSA5105/Ref/Mathematics_of_Data_Science.pdf",
+          "page": 47,
+          "sourceType": "ref",
+          "role": "PageRank",
+          "status": "draft"
+        },
+        {
+          "sourceId": "DSA5105/Ref/Mathematics_of_Data_Science.pdf",
+          "page": 50,
+          "sourceType": "ref",
+          "role": "graph theory",
+          "status": "draft"
+        },
+        {
+          "sourceId": "DSA5105/Ref/document.pdf",
+          "page": 2,
+          "sourceType": "ref",
+          "role": "past-exam graph kernel and PageRank alignment",
+          "status": "assessment-derived"
+        }
+      ]
+    },
+    {
+      "id": "dsa5105-graph-kernel-pagerank-section-4",
+      "type": "teaching-note",
+      "title": "Assessment habit · Matrix orientation and normalization",
+      "body": "Before multiplying, state whether P is row-stochastic or column-stochastic and whether r is a row or column vector. After each iteration, check non-negativity and that the rank vector sums to one. These checks catch most PageRank arithmetic errors.",
+      "sourceType": "ref",
+      "sourceRefs": [
+        {
+          "sourceId": "DSA5105/Textbook.pdf",
+          "page": 25,
+          "sourceType": "textbook",
+          "role": "positive-semidefinite kernels",
+          "status": "course-depth"
+        },
+        {
+          "sourceId": "DSA5105/Textbook.pdf",
+          "page": 28,
+          "sourceType": "textbook",
+          "role": "kernel proof exercise",
+          "status": "course-depth"
+        },
+        {
+          "sourceId": "DSA5105/Ref/Mathematics_of_Data_Science.pdf",
+          "page": 47,
+          "sourceType": "ref",
+          "role": "PageRank",
+          "status": "draft"
+        },
+        {
+          "sourceId": "DSA5105/Ref/Mathematics_of_Data_Science.pdf",
+          "page": 50,
+          "sourceType": "ref",
+          "role": "graph theory",
+          "status": "draft"
+        },
+        {
+          "sourceId": "DSA5105/Ref/document.pdf",
+          "page": 2,
+          "sourceType": "ref",
+          "role": "past-exam graph kernel and PageRank alignment",
+          "status": "assessment-derived"
+        }
+      ]
+    },
+    {
+      "id": "dsa5105-graph-kernel-pagerank-example-1",
+      "type": "worked-example",
+      "title": "PSD parameter range",
+      "steps": [
+        "Take the two-orientation Gram block K=[[1,q],[q,1]].",
+        "Its eigenvectors are [1,1] and [1,-1], with eigenvalues 1+q and 1-q.",
+        "Both are non-negative exactly when q is between -1 and 1 inclusive."
+      ],
+      "answer": "A small Gram eigenvalue is a numerical warning even when the matrix is theoretically PSD.",
+      "sourceType": "ref",
+      "sourceRefs": [
+        {
+          "sourceId": "DSA5105/Textbook.pdf",
+          "page": 25,
+          "sourceType": "textbook",
+          "role": "positive-semidefinite kernels",
+          "status": "course-depth"
+        },
+        {
+          "sourceId": "DSA5105/Textbook.pdf",
+          "page": 28,
+          "sourceType": "textbook",
+          "role": "kernel proof exercise",
+          "status": "course-depth"
+        },
+        {
+          "sourceId": "DSA5105/Ref/Mathematics_of_Data_Science.pdf",
+          "page": 47,
+          "sourceType": "ref",
+          "role": "PageRank",
+          "status": "draft"
+        },
+        {
+          "sourceId": "DSA5105/Ref/Mathematics_of_Data_Science.pdf",
+          "page": 50,
+          "sourceType": "ref",
+          "role": "graph theory",
+          "status": "draft"
+        },
+        {
+          "sourceId": "DSA5105/Ref/document.pdf",
+          "page": 2,
+          "sourceType": "ref",
+          "role": "past-exam graph kernel and PageRank alignment",
+          "status": "assessment-derived"
+        }
+      ]
+    },
+    {
+      "id": "dsa5105-graph-kernel-pagerank-example-2",
+      "type": "worked-example",
+      "title": "One PageRank update",
+      "steps": [
+        "Start with r0 uniform on n nodes. Multiply by the transition operator to move mass along outgoing links.",
+        "Mix alpha times the propagated mass with (1-alpha) times the uniform teleportation vector.",
+        "Verify that the resulting entries remain non-negative and sum to one."
+      ],
+      "answer": "Power iteration is repeated matrix-vector multiplication plus damping; it is not an eigen-decomposition requirement for a small exam calculation.",
+      "sourceType": "ref",
+      "sourceRefs": [
+        {
+          "sourceId": "DSA5105/Textbook.pdf",
+          "page": 25,
+          "sourceType": "textbook",
+          "role": "positive-semidefinite kernels",
+          "status": "course-depth"
+        },
+        {
+          "sourceId": "DSA5105/Textbook.pdf",
+          "page": 28,
+          "sourceType": "textbook",
+          "role": "kernel proof exercise",
+          "status": "course-depth"
+        },
+        {
+          "sourceId": "DSA5105/Ref/Mathematics_of_Data_Science.pdf",
+          "page": 47,
+          "sourceType": "ref",
+          "role": "PageRank",
+          "status": "draft"
+        },
+        {
+          "sourceId": "DSA5105/Ref/Mathematics_of_Data_Science.pdf",
+          "page": 50,
+          "sourceType": "ref",
+          "role": "graph theory",
+          "status": "draft"
+        },
+        {
+          "sourceId": "DSA5105/Ref/document.pdf",
+          "page": 2,
+          "sourceType": "ref",
+          "role": "past-exam graph kernel and PageRank alignment",
+          "status": "assessment-derived"
+        }
+      ]
+    },
+    {
+      "id": "dsa5105-graph-kernel-pagerank-critical-1",
+      "type": "critical-question",
+      "prompt": "What makes a kernel proof robust?",
+      "focus": "positive semidefiniteness",
+      "angle": "write the quadratic form",
+      "modelAnswer": "Identify a feature map or a PSD Gram block, then show every coefficient quadratic form is a squared norm or has non-negative eigenvalues.",
+      "sourceRefs": [
+        {
+          "sourceId": "DSA5105/Textbook.pdf",
+          "page": 25,
+          "sourceType": "textbook",
+          "role": "positive-semidefinite kernels",
+          "status": "course-depth"
+        },
+        {
+          "sourceId": "DSA5105/Textbook.pdf",
+          "page": 28,
+          "sourceType": "textbook",
+          "role": "kernel proof exercise",
+          "status": "course-depth"
+        },
+        {
+          "sourceId": "DSA5105/Ref/Mathematics_of_Data_Science.pdf",
+          "page": 47,
+          "sourceType": "ref",
+          "role": "PageRank",
+          "status": "draft"
+        },
+        {
+          "sourceId": "DSA5105/Ref/Mathematics_of_Data_Science.pdf",
+          "page": 50,
+          "sourceType": "ref",
+          "role": "graph theory",
+          "status": "draft"
+        },
+        {
+          "sourceId": "DSA5105/Ref/document.pdf",
+          "page": 2,
+          "sourceType": "ref",
+          "role": "past-exam graph kernel and PageRank alignment",
+          "status": "assessment-derived"
+        }
+      ]
+    },
+    {
+      "id": "dsa5105-graph-kernel-pagerank-critical-2",
+      "type": "critical-question",
+      "prompt": "Why can a transpose appear in PageRank?",
+      "focus": "convention",
+      "angle": "row versus column vectors",
+      "modelAnswer": "A row-stochastic matrix propagates row vectors on the right; a column rank vector typically uses the transpose of that transition convention. The mathematics is the same after fixing one orientation.",
+      "sourceRefs": [
+        {
+          "sourceId": "DSA5105/Textbook.pdf",
+          "page": 25,
+          "sourceType": "textbook",
+          "role": "positive-semidefinite kernels",
+          "status": "course-depth"
+        },
+        {
+          "sourceId": "DSA5105/Textbook.pdf",
+          "page": 28,
+          "sourceType": "textbook",
+          "role": "kernel proof exercise",
+          "status": "course-depth"
+        },
+        {
+          "sourceId": "DSA5105/Ref/Mathematics_of_Data_Science.pdf",
+          "page": 47,
+          "sourceType": "ref",
+          "role": "PageRank",
+          "status": "draft"
+        },
+        {
+          "sourceId": "DSA5105/Ref/Mathematics_of_Data_Science.pdf",
+          "page": 50,
+          "sourceType": "ref",
+          "role": "graph theory",
+          "status": "draft"
+        },
+        {
+          "sourceId": "DSA5105/Ref/document.pdf",
+          "page": 2,
+          "sourceType": "ref",
+          "role": "past-exam graph kernel and PageRank alignment",
+          "status": "assessment-derived"
+        }
+      ]
+    }
+  ],
+  "questionIds": [
+    "dsa5105-gk-q1",
+    "dsa5105-gk-q2",
+    "dsa5105-gk-q3",
+    "dsa5105-gk-q4"
+  ],
+  "labIds": [
+    "dsa5105-graph-kernel-pagerank"
+  ],
+  "schemaVersion": "nus.lesson.v1"
+}

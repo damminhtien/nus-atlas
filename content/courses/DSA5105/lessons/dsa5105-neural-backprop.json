@@ -1,0 +1,681 @@
+{
+  "id": "dsa5105-neural-backprop",
+  "title": "Neural networks, gradient descent, and backpropagation",
+  "week": 5,
+  "minutes": 95,
+  "summary": "Read a computation graph forward, propagate error signals backward, and distinguish efficient differentiation from a global-optimum guarantee.",
+  "objectives": [
+    "Explain why nonlinear activations matter",
+    "Write the backpropagation recurrence",
+    "Compute a scalar chain-rule derivative",
+    "Compare direct differentiation with backprop"
+  ],
+  "sourceRefs": [
+    {
+      "sourceId": "DSA5105/Lec1.pdf",
+      "page": 31,
+      "sourceType": "lecture",
+      "role": "model-family overview",
+      "status": "current"
+    },
+    {
+      "sourceId": "DSA5105/Textbook.pdf",
+      "page": 46,
+      "sourceType": "textbook",
+      "role": "neural networks",
+      "status": "course-depth"
+    },
+    {
+      "sourceId": "DSA5105/Textbook.pdf",
+      "page": 48,
+      "sourceType": "textbook",
+      "role": "gradient descent",
+      "status": "course-depth"
+    },
+    {
+      "sourceId": "DSA5105/Textbook.pdf",
+      "page": 52,
+      "sourceType": "textbook",
+      "role": "backpropagation",
+      "status": "course-depth"
+    },
+    {
+      "sourceId": "DSA5105/Textbook.pdf",
+      "page": 54,
+      "sourceType": "textbook",
+      "role": "backprop algorithm",
+      "status": "course-depth"
+    },
+    {
+      "sourceId": "DSA5105/Ref/document.pdf",
+      "page": 3,
+      "sourceType": "ref",
+      "role": "past-exam numerical backprop alignment",
+      "status": "assessment-derived"
+    }
+  ],
+  "visualIds": [
+    "dsa5105-neural-backprop"
+  ],
+  "sections": [
+    {
+      "title": "Lecture core · A shallow network needs a nonlinearity",
+      "body": "A composition of affine maps is still affine: $W_2(W_1x+b_1)+b_2$ can be collapsed into one affine map. A nonlinear activation between layers prevents that collapse and lets a shallow network form curved or piecewise-linear decision boundaries.",
+      "sourceType": "lecture",
+      "math": {
+        "latex": "h=\\sigma(W_1x+b_1),\\qquad f(x)=W_2h+b_2",
+        "explanation": "The activation is the source of extra expressive shape. If sigma is the identity everywhere, stacking layers does not create a richer linear decision family.",
+        "symbols": [
+          {
+            "latex": "\\sigma",
+            "meaning": "nonlinear activation"
+          },
+          {
+            "latex": "h",
+            "meaning": "hidden representation"
+          },
+          {
+            "latex": "W_l,b_l",
+            "meaning": "layer weights and bias"
+          }
+        ],
+        "sourceType": "lecture"
+      }
+    },
+    {
+      "title": "Textbook depth · Gradient descent and non-convexity",
+      "body": "Gradient descent updates parameters using the local gradient: $\\theta_{t+1}=\\theta_t-\\eta\\nabla L(\\theta_t)$. For a convex objective, every local minimum is global; neural-network objectives are generally non-convex, so backprop computes gradients efficiently but does not promise a global optimum.",
+      "sourceType": "textbook",
+      "math": {
+        "latex": "\\theta_{t+1}=\\theta_t-\\eta\\nabla_\\theta L(\\theta_t)",
+        "explanation": "The learning rate controls the step size. A small gradient can mean a stationary point, saturation, or a poorly scaled parameterization; it is not proof that the global best loss has been found.",
+        "symbols": [
+          {
+            "latex": "\\theta",
+            "meaning": "all trainable parameters"
+          },
+          {
+            "latex": "\\eta",
+            "meaning": "learning rate"
+          },
+          {
+            "latex": "L",
+            "meaning": "training loss"
+          }
+        ],
+        "sourceType": "textbook"
+      }
+    },
+    {
+      "title": "Textbook depth · Backpropagation recurrence",
+      "body": "For $z^l=W^lh^{l-1}+b^l$ and $h^l=\\sigma_l(z^l)$, define the error signal $\\delta^l=\\partial L/\\partial z^l$. Starting at the output, apply the chain rule backward; each layer reuses the upstream signal instead of recomputing every path from scratch.",
+      "sourceType": "textbook",
+      "math": {
+        "latex": "\\delta^l=(W^{l+1\\top}\\delta^{l+1})\\odot\\sigma_l'(z^l),\\qquad \\frac{\\partial L}{\\partial W^l}=\\delta^l h^{l-1\\top}",
+        "explanation": "The transpose transports sensitivity from the next layer; the elementwise derivative gates it at the current pre-activation. The outer product gives the parameter gradient for an affine layer.",
+        "symbols": [
+          {
+            "latex": "\\delta^l",
+            "meaning": "backpropagated pre-activation gradient"
+          },
+          {
+            "latex": "\\odot",
+            "meaning": "elementwise product"
+          },
+          {
+            "latex": "h^{l-1}",
+            "meaning": "input to layer $l"
+          }
+        ],
+        "sourceType": "textbook"
+      }
+    },
+    {
+      "title": "Assessment habit · Direct differentiation versus backprop",
+      "body": "For a tiny scalar network, direct chain-rule expansion is acceptable and often helps verify signs. For a vector network, backprop stores intermediate values and reuses shared subexpressions, reducing repeated work and making the gradient scale with the graph rather than with the number of input-output paths.",
+      "sourceType": "ref"
+    },
+    {
+      "title": "Textbook depth · L2-regularized neural objective",
+      "body": "With $L_{total}=L_{data}+\\frac{\\lambda}{2}\\sum_l\\lVert W^l\\rVert_F^2$, the data gradient is backpropagated through the network and the regularizer contributes $\\lambda W^l$ directly to each weight gradient. Biases are usually excluded unless the objective says otherwise.",
+      "sourceType": "textbook",
+      "math": {
+        "latex": "\\frac{\\partial L_{total}}{\\partial W^l}=\\frac{\\partial L_{data}}{\\partial W^l}+\\lambda W^l",
+        "explanation": "Keep the computational graph for the data term separate from the explicit derivative of the penalty. This is a common place to lose the lambda term in an exam derivation.",
+        "symbols": [
+          {
+            "latex": "\\lambda",
+            "meaning": "L2 strength"
+          },
+          {
+            "latex": "\\lVert W^l\\rVert_F",
+            "meaning": "Frobenius norm of layer weights"
+          }
+        ],
+        "sourceType": "textbook"
+      }
+    }
+  ],
+  "examples": [
+    {
+      "title": "Scalar chain rule",
+      "steps": [
+        "Let $u=wx$, $h=\\operatorname{ReLU}(u)$, $p=\\sigma(h)$, and $L=\\frac12(p-t)^2$. For $x=1,t=0,w=2$, $u=h=2$ and $p\\approx0.881$.",
+        "The local derivatives are $\\partial L/\\partial p=p-t\\approx0.881$, $\\sigma'(h)=p(1-p)\\approx0.105$, and $\\operatorname{ReLU}'(u)=1$.",
+        "Therefore $\\partial L/\\partial w\\approx0.881\\times0.105\\times1\\times x\\approx0.0925$."
+      ],
+      "answer": "A scalar graph is a good sign-checking exercise; the same local factors are reused in vector backprop.",
+      "sourceType": "textbook"
+    },
+    {
+      "title": "Linear activations collapse",
+      "steps": [
+        "Compose two layers with identity activations: h=W1x+b1 and f=W2h+b2.",
+        "Expand: f=(W2W1)x+(W2b1+b2), which is another affine function.",
+        "Therefore an exam statement that a deep stack of purely linear layers creates a nonlinear boundary is false."
+      ],
+      "answer": "Nonlinear activations are structural, not an optional decoration.",
+      "sourceType": "lecture"
+    }
+  ],
+  "criticalQuestions": [
+    {
+      "prompt": "What does backprop guarantee?",
+      "focus": "optimization versus differentiation",
+      "angle": "separate gradient computation from search",
+      "modelAnswer": "Backprop computes the gradient of the chosen loss efficiently. It does not guarantee that gradient descent reaches a global optimum for a non-convex neural-network objective."
+    },
+    {
+      "prompt": "Why is the forward pass needed before the backward pass?",
+      "focus": "computational graph",
+      "angle": "reuse activation values",
+      "modelAnswer": "Local derivatives depend on intermediate pre-activations and activations. The forward pass records these values so the backward pass can multiply local Jacobian factors in reverse order."
+    }
+  ],
+  "courseId": "DSA5105",
+  "moduleId": "dsa5105-exam-core",
+  "blocks": [
+    {
+      "id": "dsa5105-neural-backprop-section-1",
+      "type": "teaching-note",
+      "title": "Lecture core · A shallow network needs a nonlinearity",
+      "body": "A composition of affine maps is still affine: $W_2(W_1x+b_1)+b_2$ can be collapsed into one affine map. A nonlinear activation between layers prevents that collapse and lets a shallow network form curved or piecewise-linear decision boundaries.",
+      "sourceType": "lecture",
+      "sourceRefs": [
+        {
+          "sourceId": "DSA5105/Lec1.pdf",
+          "page": 31,
+          "sourceType": "lecture",
+          "role": "model-family overview",
+          "status": "current"
+        },
+        {
+          "sourceId": "DSA5105/Textbook.pdf",
+          "page": 46,
+          "sourceType": "textbook",
+          "role": "neural networks",
+          "status": "course-depth"
+        },
+        {
+          "sourceId": "DSA5105/Textbook.pdf",
+          "page": 48,
+          "sourceType": "textbook",
+          "role": "gradient descent",
+          "status": "course-depth"
+        },
+        {
+          "sourceId": "DSA5105/Textbook.pdf",
+          "page": 52,
+          "sourceType": "textbook",
+          "role": "backpropagation",
+          "status": "course-depth"
+        },
+        {
+          "sourceId": "DSA5105/Textbook.pdf",
+          "page": 54,
+          "sourceType": "textbook",
+          "role": "backprop algorithm",
+          "status": "course-depth"
+        },
+        {
+          "sourceId": "DSA5105/Ref/document.pdf",
+          "page": 3,
+          "sourceType": "ref",
+          "role": "past-exam numerical backprop alignment",
+          "status": "assessment-derived"
+        }
+      ]
+    },
+    {
+      "id": "dsa5105-neural-backprop-section-2",
+      "type": "teaching-note",
+      "title": "Textbook depth · Gradient descent and non-convexity",
+      "body": "Gradient descent updates parameters using the local gradient: $\\theta_{t+1}=\\theta_t-\\eta\\nabla L(\\theta_t)$. For a convex objective, every local minimum is global; neural-network objectives are generally non-convex, so backprop computes gradients efficiently but does not promise a global optimum.",
+      "sourceType": "textbook",
+      "sourceRefs": [
+        {
+          "sourceId": "DSA5105/Lec1.pdf",
+          "page": 31,
+          "sourceType": "lecture",
+          "role": "model-family overview",
+          "status": "current"
+        },
+        {
+          "sourceId": "DSA5105/Textbook.pdf",
+          "page": 46,
+          "sourceType": "textbook",
+          "role": "neural networks",
+          "status": "course-depth"
+        },
+        {
+          "sourceId": "DSA5105/Textbook.pdf",
+          "page": 48,
+          "sourceType": "textbook",
+          "role": "gradient descent",
+          "status": "course-depth"
+        },
+        {
+          "sourceId": "DSA5105/Textbook.pdf",
+          "page": 52,
+          "sourceType": "textbook",
+          "role": "backpropagation",
+          "status": "course-depth"
+        },
+        {
+          "sourceId": "DSA5105/Textbook.pdf",
+          "page": 54,
+          "sourceType": "textbook",
+          "role": "backprop algorithm",
+          "status": "course-depth"
+        },
+        {
+          "sourceId": "DSA5105/Ref/document.pdf",
+          "page": 3,
+          "sourceType": "ref",
+          "role": "past-exam numerical backprop alignment",
+          "status": "assessment-derived"
+        }
+      ]
+    },
+    {
+      "id": "dsa5105-neural-backprop-section-3",
+      "type": "teaching-note",
+      "title": "Textbook depth · Backpropagation recurrence",
+      "body": "For $z^l=W^lh^{l-1}+b^l$ and $h^l=\\sigma_l(z^l)$, define the error signal $\\delta^l=\\partial L/\\partial z^l$. Starting at the output, apply the chain rule backward; each layer reuses the upstream signal instead of recomputing every path from scratch.",
+      "sourceType": "textbook",
+      "sourceRefs": [
+        {
+          "sourceId": "DSA5105/Lec1.pdf",
+          "page": 31,
+          "sourceType": "lecture",
+          "role": "model-family overview",
+          "status": "current"
+        },
+        {
+          "sourceId": "DSA5105/Textbook.pdf",
+          "page": 46,
+          "sourceType": "textbook",
+          "role": "neural networks",
+          "status": "course-depth"
+        },
+        {
+          "sourceId": "DSA5105/Textbook.pdf",
+          "page": 48,
+          "sourceType": "textbook",
+          "role": "gradient descent",
+          "status": "course-depth"
+        },
+        {
+          "sourceId": "DSA5105/Textbook.pdf",
+          "page": 52,
+          "sourceType": "textbook",
+          "role": "backpropagation",
+          "status": "course-depth"
+        },
+        {
+          "sourceId": "DSA5105/Textbook.pdf",
+          "page": 54,
+          "sourceType": "textbook",
+          "role": "backprop algorithm",
+          "status": "course-depth"
+        },
+        {
+          "sourceId": "DSA5105/Ref/document.pdf",
+          "page": 3,
+          "sourceType": "ref",
+          "role": "past-exam numerical backprop alignment",
+          "status": "assessment-derived"
+        }
+      ]
+    },
+    {
+      "id": "dsa5105-neural-backprop-section-4",
+      "type": "teaching-note",
+      "title": "Assessment habit · Direct differentiation versus backprop",
+      "body": "For a tiny scalar network, direct chain-rule expansion is acceptable and often helps verify signs. For a vector network, backprop stores intermediate values and reuses shared subexpressions, reducing repeated work and making the gradient scale with the graph rather than with the number of input-output paths.",
+      "sourceType": "ref",
+      "sourceRefs": [
+        {
+          "sourceId": "DSA5105/Lec1.pdf",
+          "page": 31,
+          "sourceType": "lecture",
+          "role": "model-family overview",
+          "status": "current"
+        },
+        {
+          "sourceId": "DSA5105/Textbook.pdf",
+          "page": 46,
+          "sourceType": "textbook",
+          "role": "neural networks",
+          "status": "course-depth"
+        },
+        {
+          "sourceId": "DSA5105/Textbook.pdf",
+          "page": 48,
+          "sourceType": "textbook",
+          "role": "gradient descent",
+          "status": "course-depth"
+        },
+        {
+          "sourceId": "DSA5105/Textbook.pdf",
+          "page": 52,
+          "sourceType": "textbook",
+          "role": "backpropagation",
+          "status": "course-depth"
+        },
+        {
+          "sourceId": "DSA5105/Textbook.pdf",
+          "page": 54,
+          "sourceType": "textbook",
+          "role": "backprop algorithm",
+          "status": "course-depth"
+        },
+        {
+          "sourceId": "DSA5105/Ref/document.pdf",
+          "page": 3,
+          "sourceType": "ref",
+          "role": "past-exam numerical backprop alignment",
+          "status": "assessment-derived"
+        }
+      ]
+    },
+    {
+      "id": "dsa5105-neural-backprop-section-5",
+      "type": "teaching-note",
+      "title": "Textbook depth · L2-regularized neural objective",
+      "body": "With $L_{total}=L_{data}+\\frac{\\lambda}{2}\\sum_l\\lVert W^l\\rVert_F^2$, the data gradient is backpropagated through the network and the regularizer contributes $\\lambda W^l$ directly to each weight gradient. Biases are usually excluded unless the objective says otherwise.",
+      "sourceType": "textbook",
+      "sourceRefs": [
+        {
+          "sourceId": "DSA5105/Lec1.pdf",
+          "page": 31,
+          "sourceType": "lecture",
+          "role": "model-family overview",
+          "status": "current"
+        },
+        {
+          "sourceId": "DSA5105/Textbook.pdf",
+          "page": 46,
+          "sourceType": "textbook",
+          "role": "neural networks",
+          "status": "course-depth"
+        },
+        {
+          "sourceId": "DSA5105/Textbook.pdf",
+          "page": 48,
+          "sourceType": "textbook",
+          "role": "gradient descent",
+          "status": "course-depth"
+        },
+        {
+          "sourceId": "DSA5105/Textbook.pdf",
+          "page": 52,
+          "sourceType": "textbook",
+          "role": "backpropagation",
+          "status": "course-depth"
+        },
+        {
+          "sourceId": "DSA5105/Textbook.pdf",
+          "page": 54,
+          "sourceType": "textbook",
+          "role": "backprop algorithm",
+          "status": "course-depth"
+        },
+        {
+          "sourceId": "DSA5105/Ref/document.pdf",
+          "page": 3,
+          "sourceType": "ref",
+          "role": "past-exam numerical backprop alignment",
+          "status": "assessment-derived"
+        }
+      ]
+    },
+    {
+      "id": "dsa5105-neural-backprop-example-1",
+      "type": "worked-example",
+      "title": "Scalar chain rule",
+      "steps": [
+        "Let $u=wx$, $h=\\operatorname{ReLU}(u)$, $p=\\sigma(h)$, and $L=\\frac12(p-t)^2$. For $x=1,t=0,w=2$, $u=h=2$ and $p\\approx0.881$.",
+        "The local derivatives are $\\partial L/\\partial p=p-t\\approx0.881$, $\\sigma'(h)=p(1-p)\\approx0.105$, and $\\operatorname{ReLU}'(u)=1$.",
+        "Therefore $\\partial L/\\partial w\\approx0.881\\times0.105\\times1\\times x\\approx0.0925$."
+      ],
+      "answer": "A scalar graph is a good sign-checking exercise; the same local factors are reused in vector backprop.",
+      "sourceType": "textbook",
+      "sourceRefs": [
+        {
+          "sourceId": "DSA5105/Lec1.pdf",
+          "page": 31,
+          "sourceType": "lecture",
+          "role": "model-family overview",
+          "status": "current"
+        },
+        {
+          "sourceId": "DSA5105/Textbook.pdf",
+          "page": 46,
+          "sourceType": "textbook",
+          "role": "neural networks",
+          "status": "course-depth"
+        },
+        {
+          "sourceId": "DSA5105/Textbook.pdf",
+          "page": 48,
+          "sourceType": "textbook",
+          "role": "gradient descent",
+          "status": "course-depth"
+        },
+        {
+          "sourceId": "DSA5105/Textbook.pdf",
+          "page": 52,
+          "sourceType": "textbook",
+          "role": "backpropagation",
+          "status": "course-depth"
+        },
+        {
+          "sourceId": "DSA5105/Textbook.pdf",
+          "page": 54,
+          "sourceType": "textbook",
+          "role": "backprop algorithm",
+          "status": "course-depth"
+        },
+        {
+          "sourceId": "DSA5105/Ref/document.pdf",
+          "page": 3,
+          "sourceType": "ref",
+          "role": "past-exam numerical backprop alignment",
+          "status": "assessment-derived"
+        }
+      ]
+    },
+    {
+      "id": "dsa5105-neural-backprop-example-2",
+      "type": "worked-example",
+      "title": "Linear activations collapse",
+      "steps": [
+        "Compose two layers with identity activations: h=W1x+b1 and f=W2h+b2.",
+        "Expand: f=(W2W1)x+(W2b1+b2), which is another affine function.",
+        "Therefore an exam statement that a deep stack of purely linear layers creates a nonlinear boundary is false."
+      ],
+      "answer": "Nonlinear activations are structural, not an optional decoration.",
+      "sourceType": "lecture",
+      "sourceRefs": [
+        {
+          "sourceId": "DSA5105/Lec1.pdf",
+          "page": 31,
+          "sourceType": "lecture",
+          "role": "model-family overview",
+          "status": "current"
+        },
+        {
+          "sourceId": "DSA5105/Textbook.pdf",
+          "page": 46,
+          "sourceType": "textbook",
+          "role": "neural networks",
+          "status": "course-depth"
+        },
+        {
+          "sourceId": "DSA5105/Textbook.pdf",
+          "page": 48,
+          "sourceType": "textbook",
+          "role": "gradient descent",
+          "status": "course-depth"
+        },
+        {
+          "sourceId": "DSA5105/Textbook.pdf",
+          "page": 52,
+          "sourceType": "textbook",
+          "role": "backpropagation",
+          "status": "course-depth"
+        },
+        {
+          "sourceId": "DSA5105/Textbook.pdf",
+          "page": 54,
+          "sourceType": "textbook",
+          "role": "backprop algorithm",
+          "status": "course-depth"
+        },
+        {
+          "sourceId": "DSA5105/Ref/document.pdf",
+          "page": 3,
+          "sourceType": "ref",
+          "role": "past-exam numerical backprop alignment",
+          "status": "assessment-derived"
+        }
+      ]
+    },
+    {
+      "id": "dsa5105-neural-backprop-critical-1",
+      "type": "critical-question",
+      "prompt": "What does backprop guarantee?",
+      "focus": "optimization versus differentiation",
+      "angle": "separate gradient computation from search",
+      "modelAnswer": "Backprop computes the gradient of the chosen loss efficiently. It does not guarantee that gradient descent reaches a global optimum for a non-convex neural-network objective.",
+      "sourceRefs": [
+        {
+          "sourceId": "DSA5105/Lec1.pdf",
+          "page": 31,
+          "sourceType": "lecture",
+          "role": "model-family overview",
+          "status": "current"
+        },
+        {
+          "sourceId": "DSA5105/Textbook.pdf",
+          "page": 46,
+          "sourceType": "textbook",
+          "role": "neural networks",
+          "status": "course-depth"
+        },
+        {
+          "sourceId": "DSA5105/Textbook.pdf",
+          "page": 48,
+          "sourceType": "textbook",
+          "role": "gradient descent",
+          "status": "course-depth"
+        },
+        {
+          "sourceId": "DSA5105/Textbook.pdf",
+          "page": 52,
+          "sourceType": "textbook",
+          "role": "backpropagation",
+          "status": "course-depth"
+        },
+        {
+          "sourceId": "DSA5105/Textbook.pdf",
+          "page": 54,
+          "sourceType": "textbook",
+          "role": "backprop algorithm",
+          "status": "course-depth"
+        },
+        {
+          "sourceId": "DSA5105/Ref/document.pdf",
+          "page": 3,
+          "sourceType": "ref",
+          "role": "past-exam numerical backprop alignment",
+          "status": "assessment-derived"
+        }
+      ]
+    },
+    {
+      "id": "dsa5105-neural-backprop-critical-2",
+      "type": "critical-question",
+      "prompt": "Why is the forward pass needed before the backward pass?",
+      "focus": "computational graph",
+      "angle": "reuse activation values",
+      "modelAnswer": "Local derivatives depend on intermediate pre-activations and activations. The forward pass records these values so the backward pass can multiply local Jacobian factors in reverse order.",
+      "sourceRefs": [
+        {
+          "sourceId": "DSA5105/Lec1.pdf",
+          "page": 31,
+          "sourceType": "lecture",
+          "role": "model-family overview",
+          "status": "current"
+        },
+        {
+          "sourceId": "DSA5105/Textbook.pdf",
+          "page": 46,
+          "sourceType": "textbook",
+          "role": "neural networks",
+          "status": "course-depth"
+        },
+        {
+          "sourceId": "DSA5105/Textbook.pdf",
+          "page": 48,
+          "sourceType": "textbook",
+          "role": "gradient descent",
+          "status": "course-depth"
+        },
+        {
+          "sourceId": "DSA5105/Textbook.pdf",
+          "page": 52,
+          "sourceType": "textbook",
+          "role": "backpropagation",
+          "status": "course-depth"
+        },
+        {
+          "sourceId": "DSA5105/Textbook.pdf",
+          "page": 54,
+          "sourceType": "textbook",
+          "role": "backprop algorithm",
+          "status": "course-depth"
+        },
+        {
+          "sourceId": "DSA5105/Ref/document.pdf",
+          "page": 3,
+          "sourceType": "ref",
+          "role": "past-exam numerical backprop alignment",
+          "status": "assessment-derived"
+        }
+      ]
+    }
+  ],
+  "questionIds": [
+    "dsa5105-nn-q1",
+    "dsa5105-nn-q2",
+    "dsa5105-nn-q3",
+    "dsa5105-nn-q4",
+    "dsa5105-nn-q5"
+  ],
+  "labIds": [
+    "dsa5105-neural-backprop"
+  ],
+  "schemaVersion": "nus.lesson.v1"
+}

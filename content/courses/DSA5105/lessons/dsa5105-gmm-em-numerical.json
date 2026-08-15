@@ -1,0 +1,542 @@
+{
+  "id": "dsa5105-gmm-em-numerical",
+  "title": "GMM responsibilities and EM updates",
+  "week": 7,
+  "minutes": 75,
+  "summary": "Compute a responsibility, update mixture parameters, and understand why EM alternates between latent assignments and parameter fitting.",
+  "objectives": [
+    "Run one K-means update",
+    "Compute a GMM responsibility",
+    "Write the EM E and M steps",
+    "Explain local optima and initialization"
+  ],
+  "sourceRefs": [
+    {
+      "sourceId": "DSA5105/Textbook.pdf",
+      "page": 93,
+      "sourceType": "textbook",
+      "role": "K-means assignment",
+      "status": "course-depth"
+    },
+    {
+      "sourceId": "DSA5105/Textbook.pdf",
+      "page": 98,
+      "sourceType": "textbook",
+      "role": "GMM likelihood",
+      "status": "course-depth"
+    },
+    {
+      "sourceId": "DSA5105/Textbook.pdf",
+      "page": 100,
+      "sourceType": "textbook",
+      "role": "responsibilities",
+      "status": "course-depth"
+    },
+    {
+      "sourceId": "DSA5105/Textbook.pdf",
+      "page": 102,
+      "sourceType": "textbook",
+      "role": "EM updates",
+      "status": "course-depth"
+    },
+    {
+      "sourceId": "DSA5105/Ref/document.pdf",
+      "page": 5,
+      "sourceType": "ref",
+      "role": "past-exam GMM responsibility alignment",
+      "status": "assessment-derived"
+    }
+  ],
+  "visualIds": [
+    "dsa5105-gmm-em-numerical"
+  ],
+  "sections": [
+    {
+      "title": "Lecture core · K-means assignment and update",
+      "body": "K-means alternates $z_i\\leftarrow\\arg\\min_k\\lVert x_i-c_k\\rVert^2$ and $c_k\\leftarrow\\frac{1}{|C_k|}\\sum_{i:z_i=k}x_i$. Each step does not increase the within-cluster squared-distance objective, but the result depends on initialization and is generally only a local optimum.",
+      "sourceType": "lecture",
+      "math": {
+        "latex": "J=\\sum_i\\lVert x_i-c_{z_i}\\rVert_2^2",
+        "explanation": "The assignment chooses the closest current centroid; the centroid update is the minimizer of the squared distances for a fixed assignment.",
+        "symbols": [
+          {
+            "latex": "z_i",
+            "meaning": "hard assignment"
+          },
+          {
+            "latex": "c_k",
+            "meaning": "centroid"
+          },
+          {
+            "latex": "J",
+            "meaning": "K-means objective"
+          }
+        ],
+        "sourceType": "lecture"
+      }
+    },
+    {
+      "title": "Textbook depth · GMM responsibilities",
+      "body": "A GMM models $p(x)=\\sum_k\\pi_k\\mathcal{N}(x\\mid\\mu_k,\\Sigma_k)$. The E-step computes $\\gamma_{ik}=P(z_i=k\\mid x_i)$ by multiplying the prior and likelihood, then normalizing across components.",
+      "sourceType": "textbook",
+      "math": {
+        "latex": "\\gamma_{ik}=\\frac{\\pi_k\\mathcal{N}(x_i\\mid\\mu_k,\\Sigma_k)}{\\sum_j\\pi_j\\mathcal{N}(x_i\\mid\\mu_j,\\Sigma_j)}",
+        "explanation": "Responsibilities are soft labels and sum to one across components for each point. A component with a smaller prior can still receive high responsibility if its likelihood is much larger.",
+        "symbols": [
+          {
+            "latex": "\\pi_k",
+            "meaning": "mixture weight"
+          },
+          {
+            "latex": "\\mu_k",
+            "meaning": "component mean"
+          },
+          {
+            "latex": "\\Sigma_k",
+            "meaning": "component covariance"
+          }
+        ],
+        "sourceType": "textbook"
+      }
+    },
+    {
+      "title": "Textbook depth · M-step",
+      "body": "Using responsibilities, define $N_k=\\sum_i\\gamma_{ik}$. Then update $\\pi_k=N_k/N$, $\\mu_k=\\frac1{N_k}\\sum_i\\gamma_{ik}x_i$, and the covariance as the responsibility-weighted scatter. The E and M steps form an alternating optimization of the latent-variable likelihood.",
+      "sourceType": "textbook",
+      "math": {
+        "latex": "\\mu_k^{new}=\\frac{\\sum_i\\gamma_{ik}x_i}{\\sum_i\\gamma_{ik}}",
+        "explanation": "The mean is a weighted average, so high-responsibility points pull the component more strongly.",
+        "symbols": [
+          {
+            "latex": "N_k",
+            "meaning": "effective component count"
+          },
+          {
+            "latex": "\\gamma_{ik}",
+            "meaning": "soft membership weight"
+          }
+        ],
+        "sourceType": "textbook"
+      }
+    },
+    {
+      "title": "Assessment habit · Keep probability and distance reasoning distinct",
+      "body": "K-means chooses one nearest centroid using a distance. GMM compares weighted probability densities and can model covariance shape. A responsibility is not simply the inverse distance and it must sum to one over components for each point.",
+      "sourceType": "ref"
+    }
+  ],
+  "examples": [
+    {
+      "title": "Responsibility by hand",
+      "steps": [
+        "Let priors be $\\pi_1=0.6$ and $\\pi_2=0.4$, and likelihoods at x be 0.5 and 0.1.",
+        "The unnormalized weights are 0.3 and 0.04.",
+        "Normalize by 0.34: $\\gamma_1\\approx0.8824$ and $\\gamma_2\\approx0.1176$."
+      ],
+      "answer": "Always multiply by the prior before normalizing the component likelihoods.",
+      "sourceType": "textbook"
+    },
+    {
+      "title": "One M-step mean",
+      "steps": [
+        "Suppose scalar points are x1=0 and x2=4 with responsibilities 0.8 and 0.2 for component k.",
+        "The effective count is Nk=1.0.",
+        "The updated mean is (0.8*0+0.2*4)/1.0=0.8."
+      ],
+      "answer": "The M-step mean is a responsibility-weighted average, not an unweighted average of all data.",
+      "sourceType": "textbook"
+    }
+  ],
+  "criticalQuestions": [
+    {
+      "prompt": "Why is EM called an alternating procedure?",
+      "focus": "latent variables",
+      "angle": "separate E and M",
+      "modelAnswer": "The E-step estimates latent memberships with current parameters; the M-step fits parameters with those memberships held as weights. Each step makes a different part of the coupled problem tractable."
+    },
+    {
+      "prompt": "Why can repeated EM runs disagree?",
+      "focus": "non-convexity",
+      "angle": "connect initialization and local optimum",
+      "modelAnswer": "The mixture likelihood is non-convex and can have local optima or degenerate regions. Different initial parameters can lead to different final solutions."
+    }
+  ],
+  "courseId": "DSA5105",
+  "moduleId": "dsa5105-exam-core",
+  "blocks": [
+    {
+      "id": "dsa5105-gmm-em-numerical-section-1",
+      "type": "teaching-note",
+      "title": "Lecture core · K-means assignment and update",
+      "body": "K-means alternates $z_i\\leftarrow\\arg\\min_k\\lVert x_i-c_k\\rVert^2$ and $c_k\\leftarrow\\frac{1}{|C_k|}\\sum_{i:z_i=k}x_i$. Each step does not increase the within-cluster squared-distance objective, but the result depends on initialization and is generally only a local optimum.",
+      "sourceType": "lecture",
+      "sourceRefs": [
+        {
+          "sourceId": "DSA5105/Textbook.pdf",
+          "page": 93,
+          "sourceType": "textbook",
+          "role": "K-means assignment",
+          "status": "course-depth"
+        },
+        {
+          "sourceId": "DSA5105/Textbook.pdf",
+          "page": 98,
+          "sourceType": "textbook",
+          "role": "GMM likelihood",
+          "status": "course-depth"
+        },
+        {
+          "sourceId": "DSA5105/Textbook.pdf",
+          "page": 100,
+          "sourceType": "textbook",
+          "role": "responsibilities",
+          "status": "course-depth"
+        },
+        {
+          "sourceId": "DSA5105/Textbook.pdf",
+          "page": 102,
+          "sourceType": "textbook",
+          "role": "EM updates",
+          "status": "course-depth"
+        },
+        {
+          "sourceId": "DSA5105/Ref/document.pdf",
+          "page": 5,
+          "sourceType": "ref",
+          "role": "past-exam GMM responsibility alignment",
+          "status": "assessment-derived"
+        }
+      ]
+    },
+    {
+      "id": "dsa5105-gmm-em-numerical-section-2",
+      "type": "teaching-note",
+      "title": "Textbook depth · GMM responsibilities",
+      "body": "A GMM models $p(x)=\\sum_k\\pi_k\\mathcal{N}(x\\mid\\mu_k,\\Sigma_k)$. The E-step computes $\\gamma_{ik}=P(z_i=k\\mid x_i)$ by multiplying the prior and likelihood, then normalizing across components.",
+      "sourceType": "textbook",
+      "sourceRefs": [
+        {
+          "sourceId": "DSA5105/Textbook.pdf",
+          "page": 93,
+          "sourceType": "textbook",
+          "role": "K-means assignment",
+          "status": "course-depth"
+        },
+        {
+          "sourceId": "DSA5105/Textbook.pdf",
+          "page": 98,
+          "sourceType": "textbook",
+          "role": "GMM likelihood",
+          "status": "course-depth"
+        },
+        {
+          "sourceId": "DSA5105/Textbook.pdf",
+          "page": 100,
+          "sourceType": "textbook",
+          "role": "responsibilities",
+          "status": "course-depth"
+        },
+        {
+          "sourceId": "DSA5105/Textbook.pdf",
+          "page": 102,
+          "sourceType": "textbook",
+          "role": "EM updates",
+          "status": "course-depth"
+        },
+        {
+          "sourceId": "DSA5105/Ref/document.pdf",
+          "page": 5,
+          "sourceType": "ref",
+          "role": "past-exam GMM responsibility alignment",
+          "status": "assessment-derived"
+        }
+      ]
+    },
+    {
+      "id": "dsa5105-gmm-em-numerical-section-3",
+      "type": "teaching-note",
+      "title": "Textbook depth · M-step",
+      "body": "Using responsibilities, define $N_k=\\sum_i\\gamma_{ik}$. Then update $\\pi_k=N_k/N$, $\\mu_k=\\frac1{N_k}\\sum_i\\gamma_{ik}x_i$, and the covariance as the responsibility-weighted scatter. The E and M steps form an alternating optimization of the latent-variable likelihood.",
+      "sourceType": "textbook",
+      "sourceRefs": [
+        {
+          "sourceId": "DSA5105/Textbook.pdf",
+          "page": 93,
+          "sourceType": "textbook",
+          "role": "K-means assignment",
+          "status": "course-depth"
+        },
+        {
+          "sourceId": "DSA5105/Textbook.pdf",
+          "page": 98,
+          "sourceType": "textbook",
+          "role": "GMM likelihood",
+          "status": "course-depth"
+        },
+        {
+          "sourceId": "DSA5105/Textbook.pdf",
+          "page": 100,
+          "sourceType": "textbook",
+          "role": "responsibilities",
+          "status": "course-depth"
+        },
+        {
+          "sourceId": "DSA5105/Textbook.pdf",
+          "page": 102,
+          "sourceType": "textbook",
+          "role": "EM updates",
+          "status": "course-depth"
+        },
+        {
+          "sourceId": "DSA5105/Ref/document.pdf",
+          "page": 5,
+          "sourceType": "ref",
+          "role": "past-exam GMM responsibility alignment",
+          "status": "assessment-derived"
+        }
+      ]
+    },
+    {
+      "id": "dsa5105-gmm-em-numerical-section-4",
+      "type": "teaching-note",
+      "title": "Assessment habit · Keep probability and distance reasoning distinct",
+      "body": "K-means chooses one nearest centroid using a distance. GMM compares weighted probability densities and can model covariance shape. A responsibility is not simply the inverse distance and it must sum to one over components for each point.",
+      "sourceType": "ref",
+      "sourceRefs": [
+        {
+          "sourceId": "DSA5105/Textbook.pdf",
+          "page": 93,
+          "sourceType": "textbook",
+          "role": "K-means assignment",
+          "status": "course-depth"
+        },
+        {
+          "sourceId": "DSA5105/Textbook.pdf",
+          "page": 98,
+          "sourceType": "textbook",
+          "role": "GMM likelihood",
+          "status": "course-depth"
+        },
+        {
+          "sourceId": "DSA5105/Textbook.pdf",
+          "page": 100,
+          "sourceType": "textbook",
+          "role": "responsibilities",
+          "status": "course-depth"
+        },
+        {
+          "sourceId": "DSA5105/Textbook.pdf",
+          "page": 102,
+          "sourceType": "textbook",
+          "role": "EM updates",
+          "status": "course-depth"
+        },
+        {
+          "sourceId": "DSA5105/Ref/document.pdf",
+          "page": 5,
+          "sourceType": "ref",
+          "role": "past-exam GMM responsibility alignment",
+          "status": "assessment-derived"
+        }
+      ]
+    },
+    {
+      "id": "dsa5105-gmm-em-numerical-example-1",
+      "type": "worked-example",
+      "title": "Responsibility by hand",
+      "steps": [
+        "Let priors be $\\pi_1=0.6$ and $\\pi_2=0.4$, and likelihoods at x be 0.5 and 0.1.",
+        "The unnormalized weights are 0.3 and 0.04.",
+        "Normalize by 0.34: $\\gamma_1\\approx0.8824$ and $\\gamma_2\\approx0.1176$."
+      ],
+      "answer": "Always multiply by the prior before normalizing the component likelihoods.",
+      "sourceType": "textbook",
+      "sourceRefs": [
+        {
+          "sourceId": "DSA5105/Textbook.pdf",
+          "page": 93,
+          "sourceType": "textbook",
+          "role": "K-means assignment",
+          "status": "course-depth"
+        },
+        {
+          "sourceId": "DSA5105/Textbook.pdf",
+          "page": 98,
+          "sourceType": "textbook",
+          "role": "GMM likelihood",
+          "status": "course-depth"
+        },
+        {
+          "sourceId": "DSA5105/Textbook.pdf",
+          "page": 100,
+          "sourceType": "textbook",
+          "role": "responsibilities",
+          "status": "course-depth"
+        },
+        {
+          "sourceId": "DSA5105/Textbook.pdf",
+          "page": 102,
+          "sourceType": "textbook",
+          "role": "EM updates",
+          "status": "course-depth"
+        },
+        {
+          "sourceId": "DSA5105/Ref/document.pdf",
+          "page": 5,
+          "sourceType": "ref",
+          "role": "past-exam GMM responsibility alignment",
+          "status": "assessment-derived"
+        }
+      ]
+    },
+    {
+      "id": "dsa5105-gmm-em-numerical-example-2",
+      "type": "worked-example",
+      "title": "One M-step mean",
+      "steps": [
+        "Suppose scalar points are x1=0 and x2=4 with responsibilities 0.8 and 0.2 for component k.",
+        "The effective count is Nk=1.0.",
+        "The updated mean is (0.8*0+0.2*4)/1.0=0.8."
+      ],
+      "answer": "The M-step mean is a responsibility-weighted average, not an unweighted average of all data.",
+      "sourceType": "textbook",
+      "sourceRefs": [
+        {
+          "sourceId": "DSA5105/Textbook.pdf",
+          "page": 93,
+          "sourceType": "textbook",
+          "role": "K-means assignment",
+          "status": "course-depth"
+        },
+        {
+          "sourceId": "DSA5105/Textbook.pdf",
+          "page": 98,
+          "sourceType": "textbook",
+          "role": "GMM likelihood",
+          "status": "course-depth"
+        },
+        {
+          "sourceId": "DSA5105/Textbook.pdf",
+          "page": 100,
+          "sourceType": "textbook",
+          "role": "responsibilities",
+          "status": "course-depth"
+        },
+        {
+          "sourceId": "DSA5105/Textbook.pdf",
+          "page": 102,
+          "sourceType": "textbook",
+          "role": "EM updates",
+          "status": "course-depth"
+        },
+        {
+          "sourceId": "DSA5105/Ref/document.pdf",
+          "page": 5,
+          "sourceType": "ref",
+          "role": "past-exam GMM responsibility alignment",
+          "status": "assessment-derived"
+        }
+      ]
+    },
+    {
+      "id": "dsa5105-gmm-em-numerical-critical-1",
+      "type": "critical-question",
+      "prompt": "Why is EM called an alternating procedure?",
+      "focus": "latent variables",
+      "angle": "separate E and M",
+      "modelAnswer": "The E-step estimates latent memberships with current parameters; the M-step fits parameters with those memberships held as weights. Each step makes a different part of the coupled problem tractable.",
+      "sourceRefs": [
+        {
+          "sourceId": "DSA5105/Textbook.pdf",
+          "page": 93,
+          "sourceType": "textbook",
+          "role": "K-means assignment",
+          "status": "course-depth"
+        },
+        {
+          "sourceId": "DSA5105/Textbook.pdf",
+          "page": 98,
+          "sourceType": "textbook",
+          "role": "GMM likelihood",
+          "status": "course-depth"
+        },
+        {
+          "sourceId": "DSA5105/Textbook.pdf",
+          "page": 100,
+          "sourceType": "textbook",
+          "role": "responsibilities",
+          "status": "course-depth"
+        },
+        {
+          "sourceId": "DSA5105/Textbook.pdf",
+          "page": 102,
+          "sourceType": "textbook",
+          "role": "EM updates",
+          "status": "course-depth"
+        },
+        {
+          "sourceId": "DSA5105/Ref/document.pdf",
+          "page": 5,
+          "sourceType": "ref",
+          "role": "past-exam GMM responsibility alignment",
+          "status": "assessment-derived"
+        }
+      ]
+    },
+    {
+      "id": "dsa5105-gmm-em-numerical-critical-2",
+      "type": "critical-question",
+      "prompt": "Why can repeated EM runs disagree?",
+      "focus": "non-convexity",
+      "angle": "connect initialization and local optimum",
+      "modelAnswer": "The mixture likelihood is non-convex and can have local optima or degenerate regions. Different initial parameters can lead to different final solutions.",
+      "sourceRefs": [
+        {
+          "sourceId": "DSA5105/Textbook.pdf",
+          "page": 93,
+          "sourceType": "textbook",
+          "role": "K-means assignment",
+          "status": "course-depth"
+        },
+        {
+          "sourceId": "DSA5105/Textbook.pdf",
+          "page": 98,
+          "sourceType": "textbook",
+          "role": "GMM likelihood",
+          "status": "course-depth"
+        },
+        {
+          "sourceId": "DSA5105/Textbook.pdf",
+          "page": 100,
+          "sourceType": "textbook",
+          "role": "responsibilities",
+          "status": "course-depth"
+        },
+        {
+          "sourceId": "DSA5105/Textbook.pdf",
+          "page": 102,
+          "sourceType": "textbook",
+          "role": "EM updates",
+          "status": "course-depth"
+        },
+        {
+          "sourceId": "DSA5105/Ref/document.pdf",
+          "page": 5,
+          "sourceType": "ref",
+          "role": "past-exam GMM responsibility alignment",
+          "status": "assessment-derived"
+        }
+      ]
+    }
+  ],
+  "questionIds": [
+    "dsa5105-gmm-q1",
+    "dsa5105-gmm-q2",
+    "dsa5105-gmm-q3",
+    "dsa5105-gmm-q4"
+  ],
+  "labIds": [
+    "dsa5105-gmm-em-numerical"
+  ],
+  "schemaVersion": "nus.lesson.v1"
+}

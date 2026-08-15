@@ -1,0 +1,607 @@
+{
+  "id": "dsa5105-trees-ensembles",
+  "title": "Decision trees, bagging, and AdaBoost",
+  "week": 4,
+  "minutes": 80,
+  "summary": "Turn the assessment patterns into one coherent story: greedy tree splits, depth and pruning, variance reduction by bagging, and AdaBoost's reweighted mistakes.",
+  "objectives": [
+    "Compute a split impurity",
+    "Explain depth and pruning",
+    "Contrast bagging with boosting",
+    "Update AdaBoost weights and alpha"
+  ],
+  "sourceRefs": [
+    {
+      "sourceId": "DSA5105/Lec1.pdf",
+      "page": 31,
+      "sourceType": "lecture",
+      "role": "model-family overview",
+      "status": "current"
+    },
+    {
+      "sourceId": "DSA5105/Textbook.pdf",
+      "page": 36,
+      "sourceType": "textbook",
+      "role": "decision trees",
+      "status": "course-depth"
+    },
+    {
+      "sourceId": "DSA5105/Textbook.pdf",
+      "page": 41,
+      "sourceType": "textbook",
+      "role": "bagging",
+      "status": "course-depth"
+    },
+    {
+      "sourceId": "DSA5105/Textbook.pdf",
+      "page": 43,
+      "sourceType": "textbook",
+      "role": "AdaBoost",
+      "status": "course-depth"
+    },
+    {
+      "sourceId": "DSA5105/Ref/document.pdf",
+      "page": 1,
+      "sourceType": "ref",
+      "role": "past-exam tree and ensemble alignment",
+      "status": "assessment-derived"
+    }
+  ],
+  "visualIds": [
+    "dsa5105-trees-ensembles"
+  ],
+  "sections": [
+    {
+      "title": "Lecture core · A tree is a piecewise-constant model",
+      "body": "A decision tree partitions the input space by asking a sequence of feature-threshold questions. A regression leaf predicts a constant such as the mean target; a classification leaf predicts a class distribution or majority class. Training is greedy: choose the split with the best local impurity reduction, then recurse.",
+      "sourceType": "lecture",
+      "math": {
+        "latex": "\\Delta I=I(\\text{parent})-\\sum_{c\\in\\text{children}}\\frac{n_c}{n}I(c)",
+        "explanation": "The child impurities are weighted by their sample counts. A split is useful when it reduces impurity, but the best local split is not a proof of globally optimal future depth.",
+        "symbols": [
+          {
+            "latex": "I",
+            "meaning": "impurity measure"
+          },
+          {
+            "latex": "n_c",
+            "meaning": "samples in child $c$"
+          },
+          {
+            "latex": "\\Delta I",
+            "meaning": "impurity decrease"
+          }
+        ],
+        "sourceType": "lecture"
+      }
+    },
+    {
+      "title": "Textbook depth · Entropy, Gini, depth, pruning",
+      "body": "For class proportions $p_k$, entropy is $-\\sum_kp_k\\log p_k$ and binary Gini is $1-\\sum_kp_k^2$. A deeper tree can fit finer interactions but has more variance. Stop criteria, maximum depth, minimum leaf size, or post-pruning control this capacity; decision trees are not trained by ordinary gradient descent over a smooth parameter vector.",
+      "sourceType": "textbook",
+      "math": {
+        "latex": "Gini(S)=1-\\sum_{k=1}^{K}p_k^2",
+        "explanation": "A pure node has Gini zero. The impurity is largest when classes are balanced, so a split that creates purer children lowers the weighted impurity.",
+        "symbols": [
+          {
+            "latex": "p_k",
+            "meaning": "class proportion in a node"
+          },
+          {
+            "latex": "K",
+            "meaning": "number of classes"
+          }
+        ],
+        "sourceType": "textbook"
+      }
+    },
+    {
+      "title": "Textbook depth · Bagging reduces variance",
+      "body": "Bagging trains many learners on bootstrap samples and averages regression predictions or votes in classification. If their errors are not perfectly correlated, averaging reduces variance. It does not automatically remove bias; using a deeper or more flexible base learner can still overfit.",
+      "sourceType": "textbook",
+      "math": {
+        "latex": "\\hat f_{bag}(x)=\\frac{1}{B}\\sum_{b=1}^{B}\\hat f_b(x)",
+        "explanation": "The ensemble average cancels some independent fluctuations across bootstrap-fitted models. The benefit is strongest when the base learners are reasonably accurate but diverse.",
+        "symbols": [
+          {
+            "latex": "B",
+            "meaning": "number of bootstrap learners"
+          },
+          {
+            "latex": "\\hat f_b",
+            "meaning": "prediction of learner $b"
+          }
+        ],
+        "sourceType": "textbook"
+      }
+    },
+    {
+      "title": "Textbook depth · AdaBoost focuses on mistakes",
+      "body": "AdaBoost maintains a distribution $D_t$ over training examples. A weak learner receives weight $\\alpha_t=\\frac12\\log\\frac{1-\\epsilon_t}{\\epsilon_t}$, then the next distribution upweights mistakes and downweights correct examples. The final classifier is a weighted vote.",
+      "sourceType": "textbook",
+      "math": {
+        "latex": "D_{t+1}(i)\\propto D_t(i)\\exp\\{-\\alpha_t y_i h_t(x_i)\\}",
+        "explanation": "When the weak learner is correct, $y_i h_t(x_i)=1$ and the weight is multiplied by $e^{-alpha_t}$. When it is wrong, the sign flips and the weight is multiplied by $e^{alpha_t}$. A learner better than random has $epsilon_t<0.5$ and non-negative alpha.",
+        "symbols": [
+          {
+            "latex": "\\epsilon_t",
+            "meaning": "weighted error of weak learner $t$"
+          },
+          {
+            "latex": "h_t",
+            "meaning": "weak learner"
+          },
+          {
+            "latex": "D_t",
+            "meaning": "example-weight distribution"
+          }
+        ],
+        "sourceType": "textbook"
+      }
+    },
+    {
+      "title": "Assessment habit · Explain the bias–variance statement",
+      "body": "The common trap is to say bagging always reduces bias or boosting is simply repeated bagging. Bagging mainly attacks variance through averaging. Boosting builds a sequential, weighted combination that can reduce bias but can also overfit, so the claim must be checked against the exact statement and validation evidence.",
+      "sourceType": "ref"
+    }
+  ],
+  "examples": [
+    {
+      "title": "Compute a Gini split",
+      "steps": [
+        "A parent node has labels +,+,-,-, so Gini(parent)=1-(1/2)^2-(1/2)^2=0.5.",
+        "A candidate split creates two pure children, each with Gini 0.",
+        "The weighted child impurity is 0, so the impurity decrease is 0.5."
+      ],
+      "answer": "Purity is evaluated after weighting children by their sizes; do not compare an unweighted average when child sizes differ.",
+      "sourceType": "textbook"
+    },
+    {
+      "title": "One AdaBoost coefficient",
+      "steps": [
+        "If the weighted error is $\\epsilon=0.2$, then $\\alpha=\\frac12\\log(0.8/0.2)=\\frac12\\log4\\approx0.693$.",
+        "Examples classified incorrectly receive a multiplicative factor exp(alpha), while correct examples receive exp(-alpha), before normalization.",
+        "Because epsilon is below 0.5, alpha is positive and the learner receives a positive vote weight."
+      ],
+      "answer": "AdaBoost turns weighted accuracy into both a vote coefficient and a reweighting signal.",
+      "sourceType": "textbook"
+    }
+  ],
+  "criticalQuestions": [
+    {
+      "prompt": "Why is greedy tree training not gradient descent?",
+      "focus": "optimization structure",
+      "angle": "look at split decisions",
+      "modelAnswer": "A tree changes discrete structure—feature, threshold, and child membership—rather than smoothly updating a fixed differentiable parameter vector. Standard tree induction searches splits greedily and then controls depth or prunes."
+    },
+    {
+      "prompt": "What does bagging buy that one tree does not?",
+      "focus": "variance",
+      "angle": "average decorrelated errors",
+      "modelAnswer": "Bootstrap learners vary; averaging their partially uncorrelated errors reduces variance. It does not guarantee lower bias or a global optimum."
+    }
+  ],
+  "courseId": "DSA5105",
+  "moduleId": "dsa5105-exam-core",
+  "blocks": [
+    {
+      "id": "dsa5105-trees-ensembles-section-1",
+      "type": "teaching-note",
+      "title": "Lecture core · A tree is a piecewise-constant model",
+      "body": "A decision tree partitions the input space by asking a sequence of feature-threshold questions. A regression leaf predicts a constant such as the mean target; a classification leaf predicts a class distribution or majority class. Training is greedy: choose the split with the best local impurity reduction, then recurse.",
+      "sourceType": "lecture",
+      "sourceRefs": [
+        {
+          "sourceId": "DSA5105/Lec1.pdf",
+          "page": 31,
+          "sourceType": "lecture",
+          "role": "model-family overview",
+          "status": "current"
+        },
+        {
+          "sourceId": "DSA5105/Textbook.pdf",
+          "page": 36,
+          "sourceType": "textbook",
+          "role": "decision trees",
+          "status": "course-depth"
+        },
+        {
+          "sourceId": "DSA5105/Textbook.pdf",
+          "page": 41,
+          "sourceType": "textbook",
+          "role": "bagging",
+          "status": "course-depth"
+        },
+        {
+          "sourceId": "DSA5105/Textbook.pdf",
+          "page": 43,
+          "sourceType": "textbook",
+          "role": "AdaBoost",
+          "status": "course-depth"
+        },
+        {
+          "sourceId": "DSA5105/Ref/document.pdf",
+          "page": 1,
+          "sourceType": "ref",
+          "role": "past-exam tree and ensemble alignment",
+          "status": "assessment-derived"
+        }
+      ]
+    },
+    {
+      "id": "dsa5105-trees-ensembles-section-2",
+      "type": "teaching-note",
+      "title": "Textbook depth · Entropy, Gini, depth, pruning",
+      "body": "For class proportions $p_k$, entropy is $-\\sum_kp_k\\log p_k$ and binary Gini is $1-\\sum_kp_k^2$. A deeper tree can fit finer interactions but has more variance. Stop criteria, maximum depth, minimum leaf size, or post-pruning control this capacity; decision trees are not trained by ordinary gradient descent over a smooth parameter vector.",
+      "sourceType": "textbook",
+      "sourceRefs": [
+        {
+          "sourceId": "DSA5105/Lec1.pdf",
+          "page": 31,
+          "sourceType": "lecture",
+          "role": "model-family overview",
+          "status": "current"
+        },
+        {
+          "sourceId": "DSA5105/Textbook.pdf",
+          "page": 36,
+          "sourceType": "textbook",
+          "role": "decision trees",
+          "status": "course-depth"
+        },
+        {
+          "sourceId": "DSA5105/Textbook.pdf",
+          "page": 41,
+          "sourceType": "textbook",
+          "role": "bagging",
+          "status": "course-depth"
+        },
+        {
+          "sourceId": "DSA5105/Textbook.pdf",
+          "page": 43,
+          "sourceType": "textbook",
+          "role": "AdaBoost",
+          "status": "course-depth"
+        },
+        {
+          "sourceId": "DSA5105/Ref/document.pdf",
+          "page": 1,
+          "sourceType": "ref",
+          "role": "past-exam tree and ensemble alignment",
+          "status": "assessment-derived"
+        }
+      ]
+    },
+    {
+      "id": "dsa5105-trees-ensembles-section-3",
+      "type": "teaching-note",
+      "title": "Textbook depth · Bagging reduces variance",
+      "body": "Bagging trains many learners on bootstrap samples and averages regression predictions or votes in classification. If their errors are not perfectly correlated, averaging reduces variance. It does not automatically remove bias; using a deeper or more flexible base learner can still overfit.",
+      "sourceType": "textbook",
+      "sourceRefs": [
+        {
+          "sourceId": "DSA5105/Lec1.pdf",
+          "page": 31,
+          "sourceType": "lecture",
+          "role": "model-family overview",
+          "status": "current"
+        },
+        {
+          "sourceId": "DSA5105/Textbook.pdf",
+          "page": 36,
+          "sourceType": "textbook",
+          "role": "decision trees",
+          "status": "course-depth"
+        },
+        {
+          "sourceId": "DSA5105/Textbook.pdf",
+          "page": 41,
+          "sourceType": "textbook",
+          "role": "bagging",
+          "status": "course-depth"
+        },
+        {
+          "sourceId": "DSA5105/Textbook.pdf",
+          "page": 43,
+          "sourceType": "textbook",
+          "role": "AdaBoost",
+          "status": "course-depth"
+        },
+        {
+          "sourceId": "DSA5105/Ref/document.pdf",
+          "page": 1,
+          "sourceType": "ref",
+          "role": "past-exam tree and ensemble alignment",
+          "status": "assessment-derived"
+        }
+      ]
+    },
+    {
+      "id": "dsa5105-trees-ensembles-section-4",
+      "type": "teaching-note",
+      "title": "Textbook depth · AdaBoost focuses on mistakes",
+      "body": "AdaBoost maintains a distribution $D_t$ over training examples. A weak learner receives weight $\\alpha_t=\\frac12\\log\\frac{1-\\epsilon_t}{\\epsilon_t}$, then the next distribution upweights mistakes and downweights correct examples. The final classifier is a weighted vote.",
+      "sourceType": "textbook",
+      "sourceRefs": [
+        {
+          "sourceId": "DSA5105/Lec1.pdf",
+          "page": 31,
+          "sourceType": "lecture",
+          "role": "model-family overview",
+          "status": "current"
+        },
+        {
+          "sourceId": "DSA5105/Textbook.pdf",
+          "page": 36,
+          "sourceType": "textbook",
+          "role": "decision trees",
+          "status": "course-depth"
+        },
+        {
+          "sourceId": "DSA5105/Textbook.pdf",
+          "page": 41,
+          "sourceType": "textbook",
+          "role": "bagging",
+          "status": "course-depth"
+        },
+        {
+          "sourceId": "DSA5105/Textbook.pdf",
+          "page": 43,
+          "sourceType": "textbook",
+          "role": "AdaBoost",
+          "status": "course-depth"
+        },
+        {
+          "sourceId": "DSA5105/Ref/document.pdf",
+          "page": 1,
+          "sourceType": "ref",
+          "role": "past-exam tree and ensemble alignment",
+          "status": "assessment-derived"
+        }
+      ]
+    },
+    {
+      "id": "dsa5105-trees-ensembles-section-5",
+      "type": "teaching-note",
+      "title": "Assessment habit · Explain the bias–variance statement",
+      "body": "The common trap is to say bagging always reduces bias or boosting is simply repeated bagging. Bagging mainly attacks variance through averaging. Boosting builds a sequential, weighted combination that can reduce bias but can also overfit, so the claim must be checked against the exact statement and validation evidence.",
+      "sourceType": "ref",
+      "sourceRefs": [
+        {
+          "sourceId": "DSA5105/Lec1.pdf",
+          "page": 31,
+          "sourceType": "lecture",
+          "role": "model-family overview",
+          "status": "current"
+        },
+        {
+          "sourceId": "DSA5105/Textbook.pdf",
+          "page": 36,
+          "sourceType": "textbook",
+          "role": "decision trees",
+          "status": "course-depth"
+        },
+        {
+          "sourceId": "DSA5105/Textbook.pdf",
+          "page": 41,
+          "sourceType": "textbook",
+          "role": "bagging",
+          "status": "course-depth"
+        },
+        {
+          "sourceId": "DSA5105/Textbook.pdf",
+          "page": 43,
+          "sourceType": "textbook",
+          "role": "AdaBoost",
+          "status": "course-depth"
+        },
+        {
+          "sourceId": "DSA5105/Ref/document.pdf",
+          "page": 1,
+          "sourceType": "ref",
+          "role": "past-exam tree and ensemble alignment",
+          "status": "assessment-derived"
+        }
+      ]
+    },
+    {
+      "id": "dsa5105-trees-ensembles-example-1",
+      "type": "worked-example",
+      "title": "Compute a Gini split",
+      "steps": [
+        "A parent node has labels +,+,-,-, so Gini(parent)=1-(1/2)^2-(1/2)^2=0.5.",
+        "A candidate split creates two pure children, each with Gini 0.",
+        "The weighted child impurity is 0, so the impurity decrease is 0.5."
+      ],
+      "answer": "Purity is evaluated after weighting children by their sizes; do not compare an unweighted average when child sizes differ.",
+      "sourceType": "textbook",
+      "sourceRefs": [
+        {
+          "sourceId": "DSA5105/Lec1.pdf",
+          "page": 31,
+          "sourceType": "lecture",
+          "role": "model-family overview",
+          "status": "current"
+        },
+        {
+          "sourceId": "DSA5105/Textbook.pdf",
+          "page": 36,
+          "sourceType": "textbook",
+          "role": "decision trees",
+          "status": "course-depth"
+        },
+        {
+          "sourceId": "DSA5105/Textbook.pdf",
+          "page": 41,
+          "sourceType": "textbook",
+          "role": "bagging",
+          "status": "course-depth"
+        },
+        {
+          "sourceId": "DSA5105/Textbook.pdf",
+          "page": 43,
+          "sourceType": "textbook",
+          "role": "AdaBoost",
+          "status": "course-depth"
+        },
+        {
+          "sourceId": "DSA5105/Ref/document.pdf",
+          "page": 1,
+          "sourceType": "ref",
+          "role": "past-exam tree and ensemble alignment",
+          "status": "assessment-derived"
+        }
+      ]
+    },
+    {
+      "id": "dsa5105-trees-ensembles-example-2",
+      "type": "worked-example",
+      "title": "One AdaBoost coefficient",
+      "steps": [
+        "If the weighted error is $\\epsilon=0.2$, then $\\alpha=\\frac12\\log(0.8/0.2)=\\frac12\\log4\\approx0.693$.",
+        "Examples classified incorrectly receive a multiplicative factor exp(alpha), while correct examples receive exp(-alpha), before normalization.",
+        "Because epsilon is below 0.5, alpha is positive and the learner receives a positive vote weight."
+      ],
+      "answer": "AdaBoost turns weighted accuracy into both a vote coefficient and a reweighting signal.",
+      "sourceType": "textbook",
+      "sourceRefs": [
+        {
+          "sourceId": "DSA5105/Lec1.pdf",
+          "page": 31,
+          "sourceType": "lecture",
+          "role": "model-family overview",
+          "status": "current"
+        },
+        {
+          "sourceId": "DSA5105/Textbook.pdf",
+          "page": 36,
+          "sourceType": "textbook",
+          "role": "decision trees",
+          "status": "course-depth"
+        },
+        {
+          "sourceId": "DSA5105/Textbook.pdf",
+          "page": 41,
+          "sourceType": "textbook",
+          "role": "bagging",
+          "status": "course-depth"
+        },
+        {
+          "sourceId": "DSA5105/Textbook.pdf",
+          "page": 43,
+          "sourceType": "textbook",
+          "role": "AdaBoost",
+          "status": "course-depth"
+        },
+        {
+          "sourceId": "DSA5105/Ref/document.pdf",
+          "page": 1,
+          "sourceType": "ref",
+          "role": "past-exam tree and ensemble alignment",
+          "status": "assessment-derived"
+        }
+      ]
+    },
+    {
+      "id": "dsa5105-trees-ensembles-critical-1",
+      "type": "critical-question",
+      "prompt": "Why is greedy tree training not gradient descent?",
+      "focus": "optimization structure",
+      "angle": "look at split decisions",
+      "modelAnswer": "A tree changes discrete structure—feature, threshold, and child membership—rather than smoothly updating a fixed differentiable parameter vector. Standard tree induction searches splits greedily and then controls depth or prunes.",
+      "sourceRefs": [
+        {
+          "sourceId": "DSA5105/Lec1.pdf",
+          "page": 31,
+          "sourceType": "lecture",
+          "role": "model-family overview",
+          "status": "current"
+        },
+        {
+          "sourceId": "DSA5105/Textbook.pdf",
+          "page": 36,
+          "sourceType": "textbook",
+          "role": "decision trees",
+          "status": "course-depth"
+        },
+        {
+          "sourceId": "DSA5105/Textbook.pdf",
+          "page": 41,
+          "sourceType": "textbook",
+          "role": "bagging",
+          "status": "course-depth"
+        },
+        {
+          "sourceId": "DSA5105/Textbook.pdf",
+          "page": 43,
+          "sourceType": "textbook",
+          "role": "AdaBoost",
+          "status": "course-depth"
+        },
+        {
+          "sourceId": "DSA5105/Ref/document.pdf",
+          "page": 1,
+          "sourceType": "ref",
+          "role": "past-exam tree and ensemble alignment",
+          "status": "assessment-derived"
+        }
+      ]
+    },
+    {
+      "id": "dsa5105-trees-ensembles-critical-2",
+      "type": "critical-question",
+      "prompt": "What does bagging buy that one tree does not?",
+      "focus": "variance",
+      "angle": "average decorrelated errors",
+      "modelAnswer": "Bootstrap learners vary; averaging their partially uncorrelated errors reduces variance. It does not guarantee lower bias or a global optimum.",
+      "sourceRefs": [
+        {
+          "sourceId": "DSA5105/Lec1.pdf",
+          "page": 31,
+          "sourceType": "lecture",
+          "role": "model-family overview",
+          "status": "current"
+        },
+        {
+          "sourceId": "DSA5105/Textbook.pdf",
+          "page": 36,
+          "sourceType": "textbook",
+          "role": "decision trees",
+          "status": "course-depth"
+        },
+        {
+          "sourceId": "DSA5105/Textbook.pdf",
+          "page": 41,
+          "sourceType": "textbook",
+          "role": "bagging",
+          "status": "course-depth"
+        },
+        {
+          "sourceId": "DSA5105/Textbook.pdf",
+          "page": 43,
+          "sourceType": "textbook",
+          "role": "AdaBoost",
+          "status": "course-depth"
+        },
+        {
+          "sourceId": "DSA5105/Ref/document.pdf",
+          "page": 1,
+          "sourceType": "ref",
+          "role": "past-exam tree and ensemble alignment",
+          "status": "assessment-derived"
+        }
+      ]
+    }
+  ],
+  "questionIds": [
+    "dsa5105-te-q1",
+    "dsa5105-te-q2",
+    "dsa5105-te-q3",
+    "dsa5105-te-q4",
+    "dsa5105-te-q5"
+  ],
+  "labIds": [
+    "dsa5105-trees-ensembles"
+  ],
+  "schemaVersion": "nus.lesson.v1"
+}

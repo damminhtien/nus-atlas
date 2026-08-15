@@ -1,0 +1,350 @@
+{
+  "id": "dsa5105-learning-theory",
+  "title": "Generalization and PAC intuition",
+  "week": 2,
+  "minutes": 55,
+  "summary": "Use population risk, empirical risk, and PAC language to explain why a low training error is not enough.",
+  "objectives": [
+    "Separate empirical and population risk",
+    "Explain the generalization gap",
+    "Read PAC as an accuracy-confidence statement"
+  ],
+  "sourceRefs": [
+    {
+      "sourceId": "DSA5105/Lec1.pdf",
+      "page": 10,
+      "sourceType": "lecture",
+      "role": "lecture core",
+      "status": "current"
+    },
+    {
+      "sourceId": "DSA5105/Textbook.pdf",
+      "page": 70,
+      "sourceType": "textbook",
+      "role": "PAC setup and risk definitions",
+      "status": "course-depth"
+    },
+    {
+      "sourceId": "DSA5105/Ref/Understanding_Machine_Learning_From_Theory_to_Algorithms.pdf",
+      "page": 45,
+      "sourceType": "ref",
+      "role": "agnostic PAC depth",
+      "status": "optional"
+    }
+  ],
+  "sections": [
+    {
+      "title": "Lecture core · Generalization gap",
+      "body": "The lecture distinction is simple but essential: empirical risk measures observed examples, while population risk measures the distribution of future examples. A low training error is evidence about the sample; it becomes evidence about the population only under assumptions about sampling, model capacity, and stability.",
+      "sourceType": "lecture",
+      "math": {
+        "latex": "\\operatorname{gap}(h)=R(h)-\\widehat{R}(h)",
+        "explanation": "Subtract the observed-sample risk from the population risk for the same hypothesis. The gap is not a constant property of an algorithm: it depends on the data distribution, sample size, hypothesis class, and evaluation protocol.",
+        "symbols": [
+          {
+            "latex": "R(h)",
+            "meaning": "population risk on future draws"
+          },
+          {
+            "latex": "\\widehat{R}(h)",
+            "meaning": "empirical risk on the observed sample"
+          },
+          {
+            "latex": "\\operatorname{gap}(h)",
+            "meaning": "generalization gap"
+          }
+        ],
+        "sourceType": "lecture"
+      }
+    },
+    {
+      "title": "Textbook depth · PAC language",
+      "body": "A PAC-style statement says that, with high probability over the training sample, the learned hypothesis has population error at most $\\varepsilon$. $\\varepsilon$ controls the allowed error and $\\delta$ controls the probability that the guarantee fails. Therefore the confidence level is $1-\\delta$; never swap the roles of $\\varepsilon$ and $\\delta$.",
+      "sourceType": "textbook",
+      "math": {
+        "latex": "\\Pr\\{R(\\hat h)\\le\\varepsilon\\}\\ge 1-\\delta",
+        "explanation": "Read the statement from inside out: the learned model's population risk is at most $\u000barepsilon$, and this claim holds with confidence $1-delta$ over the random training sample.",
+        "symbols": [
+          {
+            "latex": "R(\\hat h)",
+            "meaning": "population risk of the fitted hypothesis"
+          },
+          {
+            "latex": "\\varepsilon",
+            "meaning": "allowed error"
+          },
+          {
+            "latex": "\\delta",
+            "meaning": "failure probability"
+          }
+        ],
+        "sourceType": "textbook"
+      }
+    },
+    {
+      "title": "Lecture core · What breaks the estimate?",
+      "body": "The basic train–test story assumes the examples are independent and identically distributed. Duplicates, leakage, time drift, and distribution shift can make a validation score look precise while answering the wrong question. Always state the evaluation population before trusting a number.",
+      "sourceType": "lecture"
+    },
+    {
+      "title": "Reference boundary · Optional theory",
+      "body": "The learning-theory reference develops agnostic PAC and sample-complexity results beyond the current short lesson. Use it to understand why capacity and sample size affect confidence, but keep the current lecture syllabus as the exam boundary.",
+      "sourceType": "ref"
+    }
+  ],
+  "examples": [
+    {
+      "title": "Worked example: read a PAC statement",
+      "steps": [
+        "Suppose a statement uses $\\varepsilon=0.05$ and $\\delta=0.10$. The allowed population error is $5\\%$.",
+        "The failure probability is $10\\%$, so the confidence is $1-\\delta=0.90$, or $90\\%$.",
+        "The statement does not say that 90% of future predictions are correct on every run; it describes the probability of the guarantee over sampled training sets."
+      ],
+      "answer": "Translate $\u000barepsilon$ as accuracy/error tolerance and $delta$ as the probability the guarantee fails.",
+      "sourceType": "textbook"
+    }
+  ],
+  "math": [],
+  "criticalQuestions": [
+    {
+      "prompt": "Does a smaller empirical risk guarantee a smaller population risk?",
+      "angle": "State the missing assumptions rather than answering from the training score alone.",
+      "modelAnswer": "No. The guarantee requires conditions relating the sample, hypothesis class, and distribution; flexible models can have low empirical risk and poor generalization.",
+      "focus": "guarantee"
+    },
+    {
+      "prompt": "What changes when train and test data are not identically distributed?",
+      "angle": "Ask which probability distribution appears in empirical risk and which appears in deployment risk.",
+      "modelAnswer": "The basic IID PAC interpretation no longer applies directly; the evaluation must model distribution shift or use a target-domain sample.",
+      "focus": "distribution shift"
+    }
+  ],
+  "courseId": "DSA5105",
+  "moduleId": "dsa5105-foundations",
+  "blocks": [
+    {
+      "id": "dsa5105-learning-theory-section-1",
+      "type": "teaching-note",
+      "title": "Lecture core · Generalization gap",
+      "body": "The lecture distinction is simple but essential: empirical risk measures observed examples, while population risk measures the distribution of future examples. A low training error is evidence about the sample; it becomes evidence about the population only under assumptions about sampling, model capacity, and stability.",
+      "sourceType": "lecture",
+      "sourceRefs": [
+        {
+          "sourceId": "DSA5105/Lec1.pdf",
+          "page": 10,
+          "sourceType": "lecture",
+          "role": "lecture core",
+          "status": "current"
+        },
+        {
+          "sourceId": "DSA5105/Textbook.pdf",
+          "page": 70,
+          "sourceType": "textbook",
+          "role": "PAC setup and risk definitions",
+          "status": "course-depth"
+        },
+        {
+          "sourceId": "DSA5105/Ref/Understanding_Machine_Learning_From_Theory_to_Algorithms.pdf",
+          "page": 45,
+          "sourceType": "ref",
+          "role": "agnostic PAC depth",
+          "status": "optional"
+        }
+      ]
+    },
+    {
+      "id": "dsa5105-learning-theory-section-2",
+      "type": "teaching-note",
+      "title": "Textbook depth · PAC language",
+      "body": "A PAC-style statement says that, with high probability over the training sample, the learned hypothesis has population error at most $\\varepsilon$. $\\varepsilon$ controls the allowed error and $\\delta$ controls the probability that the guarantee fails. Therefore the confidence level is $1-\\delta$; never swap the roles of $\\varepsilon$ and $\\delta$.",
+      "sourceType": "textbook",
+      "sourceRefs": [
+        {
+          "sourceId": "DSA5105/Lec1.pdf",
+          "page": 10,
+          "sourceType": "lecture",
+          "role": "lecture core",
+          "status": "current"
+        },
+        {
+          "sourceId": "DSA5105/Textbook.pdf",
+          "page": 70,
+          "sourceType": "textbook",
+          "role": "PAC setup and risk definitions",
+          "status": "course-depth"
+        },
+        {
+          "sourceId": "DSA5105/Ref/Understanding_Machine_Learning_From_Theory_to_Algorithms.pdf",
+          "page": 45,
+          "sourceType": "ref",
+          "role": "agnostic PAC depth",
+          "status": "optional"
+        }
+      ]
+    },
+    {
+      "id": "dsa5105-learning-theory-section-3",
+      "type": "teaching-note",
+      "title": "Lecture core · What breaks the estimate?",
+      "body": "The basic train–test story assumes the examples are independent and identically distributed. Duplicates, leakage, time drift, and distribution shift can make a validation score look precise while answering the wrong question. Always state the evaluation population before trusting a number.",
+      "sourceType": "lecture",
+      "sourceRefs": [
+        {
+          "sourceId": "DSA5105/Lec1.pdf",
+          "page": 10,
+          "sourceType": "lecture",
+          "role": "lecture core",
+          "status": "current"
+        },
+        {
+          "sourceId": "DSA5105/Textbook.pdf",
+          "page": 70,
+          "sourceType": "textbook",
+          "role": "PAC setup and risk definitions",
+          "status": "course-depth"
+        },
+        {
+          "sourceId": "DSA5105/Ref/Understanding_Machine_Learning_From_Theory_to_Algorithms.pdf",
+          "page": 45,
+          "sourceType": "ref",
+          "role": "agnostic PAC depth",
+          "status": "optional"
+        }
+      ]
+    },
+    {
+      "id": "dsa5105-learning-theory-section-4",
+      "type": "teaching-note",
+      "title": "Reference boundary · Optional theory",
+      "body": "The learning-theory reference develops agnostic PAC and sample-complexity results beyond the current short lesson. Use it to understand why capacity and sample size affect confidence, but keep the current lecture syllabus as the exam boundary.",
+      "sourceType": "ref",
+      "sourceRefs": [
+        {
+          "sourceId": "DSA5105/Lec1.pdf",
+          "page": 10,
+          "sourceType": "lecture",
+          "role": "lecture core",
+          "status": "current"
+        },
+        {
+          "sourceId": "DSA5105/Textbook.pdf",
+          "page": 70,
+          "sourceType": "textbook",
+          "role": "PAC setup and risk definitions",
+          "status": "course-depth"
+        },
+        {
+          "sourceId": "DSA5105/Ref/Understanding_Machine_Learning_From_Theory_to_Algorithms.pdf",
+          "page": 45,
+          "sourceType": "ref",
+          "role": "agnostic PAC depth",
+          "status": "optional"
+        }
+      ]
+    },
+    {
+      "id": "dsa5105-learning-theory-example-1",
+      "type": "worked-example",
+      "title": "Worked example: read a PAC statement",
+      "steps": [
+        "Suppose a statement uses $\\varepsilon=0.05$ and $\\delta=0.10$. The allowed population error is $5\\%$.",
+        "The failure probability is $10\\%$, so the confidence is $1-\\delta=0.90$, or $90\\%$.",
+        "The statement does not say that 90% of future predictions are correct on every run; it describes the probability of the guarantee over sampled training sets."
+      ],
+      "answer": "Translate $\u000barepsilon$ as accuracy/error tolerance and $delta$ as the probability the guarantee fails.",
+      "sourceType": "textbook",
+      "sourceRefs": [
+        {
+          "sourceId": "DSA5105/Lec1.pdf",
+          "page": 10,
+          "sourceType": "lecture",
+          "role": "lecture core",
+          "status": "current"
+        },
+        {
+          "sourceId": "DSA5105/Textbook.pdf",
+          "page": 70,
+          "sourceType": "textbook",
+          "role": "PAC setup and risk definitions",
+          "status": "course-depth"
+        },
+        {
+          "sourceId": "DSA5105/Ref/Understanding_Machine_Learning_From_Theory_to_Algorithms.pdf",
+          "page": 45,
+          "sourceType": "ref",
+          "role": "agnostic PAC depth",
+          "status": "optional"
+        }
+      ]
+    },
+    {
+      "id": "dsa5105-learning-theory-critical-1",
+      "type": "critical-question",
+      "prompt": "Does a smaller empirical risk guarantee a smaller population risk?",
+      "angle": "State the missing assumptions rather than answering from the training score alone.",
+      "modelAnswer": "No. The guarantee requires conditions relating the sample, hypothesis class, and distribution; flexible models can have low empirical risk and poor generalization.",
+      "focus": "guarantee",
+      "sourceRefs": [
+        {
+          "sourceId": "DSA5105/Lec1.pdf",
+          "page": 10,
+          "sourceType": "lecture",
+          "role": "lecture core",
+          "status": "current"
+        },
+        {
+          "sourceId": "DSA5105/Textbook.pdf",
+          "page": 70,
+          "sourceType": "textbook",
+          "role": "PAC setup and risk definitions",
+          "status": "course-depth"
+        },
+        {
+          "sourceId": "DSA5105/Ref/Understanding_Machine_Learning_From_Theory_to_Algorithms.pdf",
+          "page": 45,
+          "sourceType": "ref",
+          "role": "agnostic PAC depth",
+          "status": "optional"
+        }
+      ]
+    },
+    {
+      "id": "dsa5105-learning-theory-critical-2",
+      "type": "critical-question",
+      "prompt": "What changes when train and test data are not identically distributed?",
+      "angle": "Ask which probability distribution appears in empirical risk and which appears in deployment risk.",
+      "modelAnswer": "The basic IID PAC interpretation no longer applies directly; the evaluation must model distribution shift or use a target-domain sample.",
+      "focus": "distribution shift",
+      "sourceRefs": [
+        {
+          "sourceId": "DSA5105/Lec1.pdf",
+          "page": 10,
+          "sourceType": "lecture",
+          "role": "lecture core",
+          "status": "current"
+        },
+        {
+          "sourceId": "DSA5105/Textbook.pdf",
+          "page": 70,
+          "sourceType": "textbook",
+          "role": "PAC setup and risk definitions",
+          "status": "course-depth"
+        },
+        {
+          "sourceId": "DSA5105/Ref/Understanding_Machine_Learning_From_Theory_to_Algorithms.pdf",
+          "page": 45,
+          "sourceType": "ref",
+          "role": "agnostic PAC depth",
+          "status": "optional"
+        }
+      ]
+    }
+  ],
+  "questionIds": [
+    "dsa5105-lt-q1",
+    "dsa5105-lt-q2",
+    "dsa5105-lt-q3"
+  ],
+  "labIds": [],
+  "schemaVersion": "nus.lesson.v1"
+}

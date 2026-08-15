@@ -1,0 +1,407 @@
+{
+  "id": "dsa5105-pca-deep-dive",
+  "title": "PCA as variance and reconstruction",
+  "week": 8,
+  "minutes": 60,
+  "summary": "Move from the PCA slogan to centering, covariance eigenvectors, reconstruction error, and whitening.",
+  "objectives": [
+    "Center a data matrix before PCA",
+    "Relate covariance eigenvectors to variance",
+    "Explain reconstruction error and whitening"
+  ],
+  "sourceRefs": [
+    {
+      "sourceId": "DSA5105/Lec1.pdf",
+      "page": 39,
+      "sourceType": "lecture",
+      "role": "lecture overview",
+      "status": "current"
+    },
+    {
+      "sourceId": "DSA5105/Textbook.pdf",
+      "page": 82,
+      "sourceType": "textbook",
+      "role": "PCA formulations",
+      "status": "course-depth"
+    },
+    {
+      "sourceId": "DSA5105/Textbook.pdf",
+      "page": 88,
+      "sourceType": "textbook",
+      "role": "eigenvalue solution",
+      "status": "course-depth"
+    },
+    {
+      "sourceId": "DSA5105/Ref/Mathematics_of_Data_Science.pdf",
+      "page": 31,
+      "sourceType": "ref",
+      "role": "PCA and dimension reduction",
+      "status": "draft"
+    }
+  ],
+  "visualIds": [],
+  "sections": [
+    {
+      "title": "Lecture core · Center before projecting",
+      "body": "Compute the feature-wise mean $\\mu$ and subtract it from every row. Without centering, the first direction can mostly describe the offset of the cloud from the origin instead of the variation around its mean.",
+      "sourceType": "lecture",
+      "math": {
+        "latex": "Z=X-\\mathbf{1}\\mu^\\top",
+        "explanation": "Centering subtracts the same feature-mean row $mu^\top$ from every observation. The resulting matrix $Z$ describes deviations around the sample mean, which is the object PCA is intended to analyze.",
+        "symbols": [
+          {
+            "latex": "X",
+            "meaning": "original data matrix"
+          },
+          {
+            "latex": "\\mu",
+            "meaning": "vector of feature means"
+          },
+          {
+            "latex": "\\mathbf{1}",
+            "meaning": "column vector of ones"
+          }
+        ],
+        "sourceType": "lecture"
+      }
+    },
+    {
+      "title": "Textbook depth · Variance and eigenvectors",
+      "body": "For centered data, the unit direction that maximizes projected variance is the top eigenvector of the sample covariance matrix. The next direction is orthogonal to the first and captures the largest remaining variance.",
+      "sourceType": "textbook",
+      "math": {
+        "latex": "v_1=\\arg\\max_{\\lVert v\\rVert_2=1}v^\\top\\Sigma v",
+        "explanation": "The constraint keeps the direction from becoming arbitrarily large. Among all unit vectors, the quadratic form chooses the direction whose projection has the greatest variance; the maximizing direction is the leading covariance eigenvector.",
+        "symbols": [
+          {
+            "latex": "v",
+            "meaning": "candidate unit direction"
+          },
+          {
+            "latex": "\\Sigma",
+            "meaning": "sample covariance matrix"
+          },
+          {
+            "latex": "v^\\top\\Sigma v",
+            "meaning": "variance after projection"
+          }
+        ],
+        "sourceType": "textbook"
+      }
+    },
+    {
+      "title": "Textbook depth · Reconstruction",
+      "body": "The top k principal directions span the k-dimensional linear subspace that minimizes total squared projection error. This is why PCA can be described both as variance maximization and as lossy reconstruction with the best rank-k linear subspace.",
+      "sourceType": "textbook"
+    },
+    {
+      "title": "Reference boundary · Whitening",
+      "body": "Whitening rotates into principal coordinates and rescales each non-zero component by the inverse square root of its eigenvalue. It can help when feature scales are very uneven, but tiny eigenvalues can amplify noise; the supporting mathematics reference is marked draft.",
+      "sourceType": "ref"
+    }
+  ],
+  "examples": [
+    {
+      "title": "Worked example: PCA on two centered points",
+      "steps": [
+        "After centering, suppose the data lie mostly along the direction $(1,1)$. The covariance has a larger eigenvalue in that direction than in the perpendicular direction $(1,-1)$.",
+        "Normalize the leading eigenvector to unit length; its sign is arbitrary, so $(1,1)/\\sqrt{2}$ and its negative describe the same axis.",
+        "Project each centered row onto that axis to get a one-dimensional representation, then reconstruct by multiplying the score back by the axis."
+      ],
+      "answer": "PCA keeps the direction with the largest eigenvalue and discards orthogonal variation according to the chosen $k$.",
+      "sourceType": "textbook"
+    }
+  ],
+  "math": [],
+  "criticalQuestions": [
+    {
+      "prompt": "Why can failing to center data rotate the first principal component?",
+      "angle": "Compare the covariance around the origin with covariance around the sample mean.",
+      "modelAnswer": "The uncentered second moment includes the mean offset, so PCA may spend its first direction representing location instead of variation around the data cloud.",
+      "focus": "preprocessing"
+    },
+    {
+      "prompt": "When can whitening hurt?",
+      "angle": "Look at a very small eigenvalue and ask what happens when its inverse square root is applied.",
+      "modelAnswer": "Whitening can amplify measurement noise in low-variance directions; regularization or dropping unstable components may be safer.",
+      "focus": "stability"
+    }
+  ],
+  "courseId": "DSA5105",
+  "moduleId": "dsa5105-unsupervised",
+  "blocks": [
+    {
+      "id": "dsa5105-pca-deep-dive-section-1",
+      "type": "teaching-note",
+      "title": "Lecture core · Center before projecting",
+      "body": "Compute the feature-wise mean $\\mu$ and subtract it from every row. Without centering, the first direction can mostly describe the offset of the cloud from the origin instead of the variation around its mean.",
+      "sourceType": "lecture",
+      "sourceRefs": [
+        {
+          "sourceId": "DSA5105/Lec1.pdf",
+          "page": 39,
+          "sourceType": "lecture",
+          "role": "lecture overview",
+          "status": "current"
+        },
+        {
+          "sourceId": "DSA5105/Textbook.pdf",
+          "page": 82,
+          "sourceType": "textbook",
+          "role": "PCA formulations",
+          "status": "course-depth"
+        },
+        {
+          "sourceId": "DSA5105/Textbook.pdf",
+          "page": 88,
+          "sourceType": "textbook",
+          "role": "eigenvalue solution",
+          "status": "course-depth"
+        },
+        {
+          "sourceId": "DSA5105/Ref/Mathematics_of_Data_Science.pdf",
+          "page": 31,
+          "sourceType": "ref",
+          "role": "PCA and dimension reduction",
+          "status": "draft"
+        }
+      ]
+    },
+    {
+      "id": "dsa5105-pca-deep-dive-section-2",
+      "type": "teaching-note",
+      "title": "Textbook depth · Variance and eigenvectors",
+      "body": "For centered data, the unit direction that maximizes projected variance is the top eigenvector of the sample covariance matrix. The next direction is orthogonal to the first and captures the largest remaining variance.",
+      "sourceType": "textbook",
+      "sourceRefs": [
+        {
+          "sourceId": "DSA5105/Lec1.pdf",
+          "page": 39,
+          "sourceType": "lecture",
+          "role": "lecture overview",
+          "status": "current"
+        },
+        {
+          "sourceId": "DSA5105/Textbook.pdf",
+          "page": 82,
+          "sourceType": "textbook",
+          "role": "PCA formulations",
+          "status": "course-depth"
+        },
+        {
+          "sourceId": "DSA5105/Textbook.pdf",
+          "page": 88,
+          "sourceType": "textbook",
+          "role": "eigenvalue solution",
+          "status": "course-depth"
+        },
+        {
+          "sourceId": "DSA5105/Ref/Mathematics_of_Data_Science.pdf",
+          "page": 31,
+          "sourceType": "ref",
+          "role": "PCA and dimension reduction",
+          "status": "draft"
+        }
+      ]
+    },
+    {
+      "id": "dsa5105-pca-deep-dive-section-3",
+      "type": "teaching-note",
+      "title": "Textbook depth · Reconstruction",
+      "body": "The top k principal directions span the k-dimensional linear subspace that minimizes total squared projection error. This is why PCA can be described both as variance maximization and as lossy reconstruction with the best rank-k linear subspace.",
+      "sourceType": "textbook",
+      "sourceRefs": [
+        {
+          "sourceId": "DSA5105/Lec1.pdf",
+          "page": 39,
+          "sourceType": "lecture",
+          "role": "lecture overview",
+          "status": "current"
+        },
+        {
+          "sourceId": "DSA5105/Textbook.pdf",
+          "page": 82,
+          "sourceType": "textbook",
+          "role": "PCA formulations",
+          "status": "course-depth"
+        },
+        {
+          "sourceId": "DSA5105/Textbook.pdf",
+          "page": 88,
+          "sourceType": "textbook",
+          "role": "eigenvalue solution",
+          "status": "course-depth"
+        },
+        {
+          "sourceId": "DSA5105/Ref/Mathematics_of_Data_Science.pdf",
+          "page": 31,
+          "sourceType": "ref",
+          "role": "PCA and dimension reduction",
+          "status": "draft"
+        }
+      ]
+    },
+    {
+      "id": "dsa5105-pca-deep-dive-section-4",
+      "type": "teaching-note",
+      "title": "Reference boundary · Whitening",
+      "body": "Whitening rotates into principal coordinates and rescales each non-zero component by the inverse square root of its eigenvalue. It can help when feature scales are very uneven, but tiny eigenvalues can amplify noise; the supporting mathematics reference is marked draft.",
+      "sourceType": "ref",
+      "sourceRefs": [
+        {
+          "sourceId": "DSA5105/Lec1.pdf",
+          "page": 39,
+          "sourceType": "lecture",
+          "role": "lecture overview",
+          "status": "current"
+        },
+        {
+          "sourceId": "DSA5105/Textbook.pdf",
+          "page": 82,
+          "sourceType": "textbook",
+          "role": "PCA formulations",
+          "status": "course-depth"
+        },
+        {
+          "sourceId": "DSA5105/Textbook.pdf",
+          "page": 88,
+          "sourceType": "textbook",
+          "role": "eigenvalue solution",
+          "status": "course-depth"
+        },
+        {
+          "sourceId": "DSA5105/Ref/Mathematics_of_Data_Science.pdf",
+          "page": 31,
+          "sourceType": "ref",
+          "role": "PCA and dimension reduction",
+          "status": "draft"
+        }
+      ]
+    },
+    {
+      "id": "dsa5105-pca-deep-dive-example-1",
+      "type": "worked-example",
+      "title": "Worked example: PCA on two centered points",
+      "steps": [
+        "After centering, suppose the data lie mostly along the direction $(1,1)$. The covariance has a larger eigenvalue in that direction than in the perpendicular direction $(1,-1)$.",
+        "Normalize the leading eigenvector to unit length; its sign is arbitrary, so $(1,1)/\\sqrt{2}$ and its negative describe the same axis.",
+        "Project each centered row onto that axis to get a one-dimensional representation, then reconstruct by multiplying the score back by the axis."
+      ],
+      "answer": "PCA keeps the direction with the largest eigenvalue and discards orthogonal variation according to the chosen $k$.",
+      "sourceType": "textbook",
+      "sourceRefs": [
+        {
+          "sourceId": "DSA5105/Lec1.pdf",
+          "page": 39,
+          "sourceType": "lecture",
+          "role": "lecture overview",
+          "status": "current"
+        },
+        {
+          "sourceId": "DSA5105/Textbook.pdf",
+          "page": 82,
+          "sourceType": "textbook",
+          "role": "PCA formulations",
+          "status": "course-depth"
+        },
+        {
+          "sourceId": "DSA5105/Textbook.pdf",
+          "page": 88,
+          "sourceType": "textbook",
+          "role": "eigenvalue solution",
+          "status": "course-depth"
+        },
+        {
+          "sourceId": "DSA5105/Ref/Mathematics_of_Data_Science.pdf",
+          "page": 31,
+          "sourceType": "ref",
+          "role": "PCA and dimension reduction",
+          "status": "draft"
+        }
+      ]
+    },
+    {
+      "id": "dsa5105-pca-deep-dive-critical-1",
+      "type": "critical-question",
+      "prompt": "Why can failing to center data rotate the first principal component?",
+      "angle": "Compare the covariance around the origin with covariance around the sample mean.",
+      "modelAnswer": "The uncentered second moment includes the mean offset, so PCA may spend its first direction representing location instead of variation around the data cloud.",
+      "focus": "preprocessing",
+      "sourceRefs": [
+        {
+          "sourceId": "DSA5105/Lec1.pdf",
+          "page": 39,
+          "sourceType": "lecture",
+          "role": "lecture overview",
+          "status": "current"
+        },
+        {
+          "sourceId": "DSA5105/Textbook.pdf",
+          "page": 82,
+          "sourceType": "textbook",
+          "role": "PCA formulations",
+          "status": "course-depth"
+        },
+        {
+          "sourceId": "DSA5105/Textbook.pdf",
+          "page": 88,
+          "sourceType": "textbook",
+          "role": "eigenvalue solution",
+          "status": "course-depth"
+        },
+        {
+          "sourceId": "DSA5105/Ref/Mathematics_of_Data_Science.pdf",
+          "page": 31,
+          "sourceType": "ref",
+          "role": "PCA and dimension reduction",
+          "status": "draft"
+        }
+      ]
+    },
+    {
+      "id": "dsa5105-pca-deep-dive-critical-2",
+      "type": "critical-question",
+      "prompt": "When can whitening hurt?",
+      "angle": "Look at a very small eigenvalue and ask what happens when its inverse square root is applied.",
+      "modelAnswer": "Whitening can amplify measurement noise in low-variance directions; regularization or dropping unstable components may be safer.",
+      "focus": "stability",
+      "sourceRefs": [
+        {
+          "sourceId": "DSA5105/Lec1.pdf",
+          "page": 39,
+          "sourceType": "lecture",
+          "role": "lecture overview",
+          "status": "current"
+        },
+        {
+          "sourceId": "DSA5105/Textbook.pdf",
+          "page": 82,
+          "sourceType": "textbook",
+          "role": "PCA formulations",
+          "status": "course-depth"
+        },
+        {
+          "sourceId": "DSA5105/Textbook.pdf",
+          "page": 88,
+          "sourceType": "textbook",
+          "role": "eigenvalue solution",
+          "status": "course-depth"
+        },
+        {
+          "sourceId": "DSA5105/Ref/Mathematics_of_Data_Science.pdf",
+          "page": 31,
+          "sourceType": "ref",
+          "role": "PCA and dimension reduction",
+          "status": "draft"
+        }
+      ]
+    }
+  ],
+  "questionIds": [
+    "dsa5105-pca-q1",
+    "dsa5105-pca-q2",
+    "dsa5105-pca-q3"
+  ],
+  "labIds": [],
+  "schemaVersion": "nus.lesson.v1"
+}

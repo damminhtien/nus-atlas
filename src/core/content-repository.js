@@ -13,14 +13,19 @@
   const content = state.content && typeof state.content === "object" ? state.content : {};
   const assessments = Array.isArray(state.assessments) ? state.assessments : [];
   const labs = state.labs && typeof state.labs === "object" ? state.labs : {};
+  const artifacts = state.artifacts && typeof state.artifacts === "object" ? state.artifacts : {};
   const visuals = state.visuals && typeof state.visuals === "object" ? state.visuals : {};
   const schedule = state.schedule && typeof state.schedule === "object" ? state.schedule : { courses: {} };
   const provenance = state.provenance && typeof state.provenance === "object" ? state.provenance : {};
+  const packages = state.packages && typeof state.packages === "object" ? state.packages : {};
 
-  function catalog(courseId) { return content[courseId] || { modules: [] }; }
+  function coursePackage(courseId) { return packages[courseId] || null; }
+  function catalog(courseId) { return (coursePackage(courseId) && coursePackage(courseId).content) || content[courseId] || { modules: [] }; }
   function lessonRecord(courseId, module, lesson) {
+    const kit = artifacts[lesson.id] || {};
     return {
       ...lesson,
+      ...kit,
       courseId,
       moduleId: module.id,
       sourceRefs: Array.isArray(lesson.sourceRefs) ? lesson.sourceRefs.slice() : [],
@@ -37,6 +42,7 @@
     if (!course) return null;
     return {
       ...course,
+      ...((coursePackage(courseId) && coursePackage(courseId).course) || {}),
       schemaVersion: "nus.course.v1",
       modules: (catalog(courseId).modules || []).map(module => ({
         ...module,
@@ -48,15 +54,31 @@
     return listLessons(courseId).find(lesson => lesson.id === lessonId) || null;
   }
   function getAssessment(courseId) {
+    const packageData = courseId && coursePackage(courseId);
+    if (packageData && Array.isArray(packageData.assessments)) return packageData.assessments.slice();
     return assessments.filter(item => !courseId || item.courseCode === courseId);
   }
-  function getLab(labId) { return labs[labId] || null; }
-  function listLabs(courseId) { return Object.entries(labs).filter(([, lab]) => !courseId || lab.courseCode === courseId).map(([id, lab]) => ({ id, ...lab })); }
-  function getVisual(visualId) { return visuals[visualId] || null; }
+  function getLab(labId) {
+    for (const item of Object.values(labs)) if (item && item.lessonId === labId) return item;
+    for (const packageData of Object.values(packages)) if (packageData.labs && packageData.labs[labId]) return packageData.labs[labId];
+    return labs[labId] || null;
+  }
+  function listLabs(courseId) {
+    const merged = new Map();
+    Object.entries(labs).forEach(([id, lab]) => { if (!courseId || lab.courseCode === courseId) merged.set(id, { id, ...lab }); });
+    Object.values(packages).forEach(packageData => Object.entries(packageData.labs || {}).forEach(([id, lab]) => { if (!courseId || lab.courseCode === courseId) merged.set(id, { id, ...lab }); }));
+    return [...merged.values()];
+  }
+  function getVisual(visualId) {
+    for (const packageData of Object.values(packages)) if (packageData.visuals && packageData.visuals[visualId]) return packageData.visuals[visualId];
+    return visuals[visualId] || null;
+  }
   function getSchedule(courseId) { return courseId ? (schedule.courses || {})[courseId] || null : schedule; }
   function getSourceCatalog(courseId) {
     const course = courses.find(item => item.code === courseId);
     if (!course) return [];
+    const packageData = coursePackage(courseId);
+    if (packageData && packageData.sources) return packageData.sources.slice();
     return [course.lectureSources || [], course.textbookSources || [], course.referenceSources || []].flat();
   }
 
@@ -72,9 +94,9 @@
     getSchedule,
     getSourceCatalog,
     getSourceTypes: () => state.sourceTypes && typeof state.sourceTypes === "object" ? state.sourceTypes : {},
-    listCourses: () => courses.slice(),
-    listAssessments: () => assessments.slice(),
-    listVisuals: () => ({ ...visuals }),
+    listCourses: () => courses.map(course => getCourse(course.code) || course),
+    listAssessments: () => courses.flatMap(course => getAssessment(course.code)),
+    listVisuals: () => Object.assign({}, visuals, ...Object.values(packages).map(packageData => packageData.visuals || {})),
     getProvenance: () => provenance,
     stats: () => ({ courses: courses.length, lessons: courses.reduce((total, course) => total + listLessons(course.code).length, 0), assessments: assessments.length, labs: Object.keys(labs).length })
   });
@@ -87,10 +109,12 @@ if (typeof window === "object" && window.NUS_CONTENT_REPOSITORY) {
     courses: window.NUS_COURSES,
     content: window.NUS_CONTENT,
     assessments: window.NUS_ASSESSMENTS,
+    artifacts: window.NUS_ARTIFACTS,
     labs: window.NUS_VISUAL_LABS,
     visuals: window.NUS_VISUALS,
     schedule: window.NUS_SCHEDULE,
     sourceTypes: window.NUS_SOURCE_TYPES,
+    packages: window.NUS_CONTENT_PACKAGES,
     provenance: window.NUS_SOURCE_POLICY
   });
 }

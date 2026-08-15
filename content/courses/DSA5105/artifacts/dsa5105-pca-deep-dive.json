@@ -1,0 +1,43 @@
+{
+  "lessonId": "dsa5105-pca-deep-dive",
+  "schemaVersion": "nus.study-kit.v1",
+  "flashcards": [
+    {
+      "front": "PCA first direction?",
+      "back": "The top eigenvector of the covariance matrix of centered data."
+    },
+    {
+      "front": "PCA reconstruction view?",
+      "back": "The top-k principal subspace minimizes total squared projection error among k-dimensional linear subspaces."
+    },
+    {
+      "front": "Whitening?",
+      "back": "Rotate to principal coordinates, then scale by inverse square roots of non-zero eigenvalues."
+    }
+  ],
+  "homework": [
+    {
+      "prompt": "Work a two-feature PCA example: center the rows, form covariance, and identify the leading direction.",
+      "rubric": "Show the mean subtraction, covariance, eigenvalue ordering, and sign convention.",
+      "source": {
+        "sourceId": "DSA5105/Textbook.pdf",
+        "page": 82,
+        "sourceType": "textbook",
+        "role": "PCA depth",
+        "status": "course-depth"
+      }
+    },
+    {
+      "prompt": "Give one case where whitening helps and one case where it can amplify noise.",
+      "rubric": "Connect scaling to unequal variance and mention tiny eigenvalues or regularization.",
+      "source": {
+        "sourceId": "DSA5105/Ref/Mathematics_of_Data_Science.pdf",
+        "page": 37,
+        "sourceType": "ref",
+        "role": "PCA in high dimensions",
+        "status": "draft"
+      }
+    }
+  ],
+  "codeExercises": []
+}

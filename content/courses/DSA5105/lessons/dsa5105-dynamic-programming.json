@@ -1,0 +1,332 @@
+{
+  "id": "dsa5105-dynamic-programming",
+  "title": "Dynamic programming and shortest-path recurrences",
+  "week": 9,
+  "minutes": 65,
+  "summary": "Recognize optimal substructure, write a one- and two-step recurrence, and turn it into a table with explicit complexity.",
+  "objectives": [
+    "Identify overlapping subproblems",
+    "Derive a dynamic-programming recurrence",
+    "Fill a table and reconstruct a solution",
+    "State time and space complexity"
+  ],
+  "sourceRefs": [
+    {
+      "sourceId": "DSA5105/Textbook.pdf",
+      "page": 107,
+      "sourceType": "textbook",
+      "role": "dynamic programming pattern",
+      "status": "course-depth"
+    },
+    {
+      "sourceId": "DSA5105/Textbook.pdf",
+      "page": 115,
+      "sourceType": "textbook",
+      "role": "Bellman recursion",
+      "status": "course-depth"
+    },
+    {
+      "sourceId": "DSA5105/Ref/document.pdf",
+      "page": 6,
+      "sourceType": "ref",
+      "role": "past-exam recurrence and complexity alignment",
+      "status": "assessment-derived"
+    }
+  ],
+  "visualIds": [
+    "dsa5105-dynamic-programming"
+  ],
+  "sections": [
+    {
+      "title": "Lecture core · Optimal substructure",
+      "body": "Dynamic programming is useful when an optimal solution can be assembled from optimal solutions to smaller subproblems. Store each subproblem once so the same suffix or prefix is not recomputed exponentially many times.",
+      "sourceType": "lecture"
+    },
+    {
+      "title": "Textbook depth · One- and two-step recurrence",
+      "body": "For a path where a state can be reached from the previous one or two positions, a minimum-cost recurrence is $dp[i]=cost[i]+\\min(dp[i-1],dp[i-2])$, with base cases stated separately. The exact indexing depends on whether cost is charged on entry, departure, or an edge; define it before computing.",
+      "sourceType": "textbook",
+      "math": {
+        "latex": "dp[i]=cost[i]+\\min\\{dp[i-1],dp[i-2]\\}",
+        "explanation": "The recurrence enumerates every allowed last jump. The minimum over those alternatives is the Bellman choice for the subproblem ending at i.",
+        "symbols": [
+          {
+            "latex": "dp[i]",
+            "meaning": "optimal cost to reach position $i$"
+          },
+          {
+            "latex": "cost[i]",
+            "meaning": "cost associated with position or transition"
+          }
+        ],
+        "sourceType": "textbook"
+      }
+    },
+    {
+      "title": "Assessment habit · Table, recurrence, complexity",
+      "body": "A complete written answer should name the state, give the base cases, derive the recurrence from the final move, show enough table entries to demonstrate evaluation order, and state O(n) time with O(n) memory (or O(1) extra memory if only the last two entries are retained).",
+      "sourceType": "ref"
+    },
+    {
+      "title": "Bridge · Bellman recursion is a family resemblance",
+      "body": "Finite-horizon shortest path DP, MDP value iteration, and policy evaluation all reuse the idea of replacing a long plan with a local decision plus an optimal continuation. The state definition and boundary conditions determine whether the recurrence is correct.",
+      "sourceType": "textbook"
+    }
+  ],
+  "examples": [
+    {
+      "title": "Table for jumps of one or two",
+      "steps": [
+        "Let dp[0]=0, and let the costs of positions 1 through 4 be [1,4,2,7].",
+        "dp[1]=1. For position 2, dp[2]=4+min(1,0)=4. For position 3, dp[3]=2+min(4,1)=3.",
+        "For position 4, dp[4]=7+min(3,4)=10. The best predecessor of position 4 is position 3."
+      ],
+      "answer": "The table exposes the dependency order and makes a greedy mistake easy to detect.",
+      "sourceType": "textbook"
+    }
+  ],
+  "criticalQuestions": [
+    {
+      "prompt": "Why is a greedy nearest step not enough?",
+      "focus": "future cost",
+      "angle": "compare local and continuation costs",
+      "modelAnswer": "The cheapest immediate move can lead to an expensive suffix. DP compares all allowed final moves after storing their optimal continuation costs."
+    },
+    {
+      "prompt": "What must be stated before a recurrence?",
+      "focus": "state semantics",
+      "angle": "define cost and boundary",
+      "modelAnswer": "Define what dp[i] means, when cost is charged, and the base cases. Without these, the same-looking recurrence can have an off-by-one or wrong-terminal-state error."
+    }
+  ],
+  "courseId": "DSA5105",
+  "moduleId": "dsa5105-exam-core",
+  "blocks": [
+    {
+      "id": "dsa5105-dynamic-programming-section-1",
+      "type": "teaching-note",
+      "title": "Lecture core · Optimal substructure",
+      "body": "Dynamic programming is useful when an optimal solution can be assembled from optimal solutions to smaller subproblems. Store each subproblem once so the same suffix or prefix is not recomputed exponentially many times.",
+      "sourceType": "lecture",
+      "sourceRefs": [
+        {
+          "sourceId": "DSA5105/Textbook.pdf",
+          "page": 107,
+          "sourceType": "textbook",
+          "role": "dynamic programming pattern",
+          "status": "course-depth"
+        },
+        {
+          "sourceId": "DSA5105/Textbook.pdf",
+          "page": 115,
+          "sourceType": "textbook",
+          "role": "Bellman recursion",
+          "status": "course-depth"
+        },
+        {
+          "sourceId": "DSA5105/Ref/document.pdf",
+          "page": 6,
+          "sourceType": "ref",
+          "role": "past-exam recurrence and complexity alignment",
+          "status": "assessment-derived"
+        }
+      ]
+    },
+    {
+      "id": "dsa5105-dynamic-programming-section-2",
+      "type": "teaching-note",
+      "title": "Textbook depth · One- and two-step recurrence",
+      "body": "For a path where a state can be reached from the previous one or two positions, a minimum-cost recurrence is $dp[i]=cost[i]+\\min(dp[i-1],dp[i-2])$, with base cases stated separately. The exact indexing depends on whether cost is charged on entry, departure, or an edge; define it before computing.",
+      "sourceType": "textbook",
+      "sourceRefs": [
+        {
+          "sourceId": "DSA5105/Textbook.pdf",
+          "page": 107,
+          "sourceType": "textbook",
+          "role": "dynamic programming pattern",
+          "status": "course-depth"
+        },
+        {
+          "sourceId": "DSA5105/Textbook.pdf",
+          "page": 115,
+          "sourceType": "textbook",
+          "role": "Bellman recursion",
+          "status": "course-depth"
+        },
+        {
+          "sourceId": "DSA5105/Ref/document.pdf",
+          "page": 6,
+          "sourceType": "ref",
+          "role": "past-exam recurrence and complexity alignment",
+          "status": "assessment-derived"
+        }
+      ]
+    },
+    {
+      "id": "dsa5105-dynamic-programming-section-3",
+      "type": "teaching-note",
+      "title": "Assessment habit · Table, recurrence, complexity",
+      "body": "A complete written answer should name the state, give the base cases, derive the recurrence from the final move, show enough table entries to demonstrate evaluation order, and state O(n) time with O(n) memory (or O(1) extra memory if only the last two entries are retained).",
+      "sourceType": "ref",
+      "sourceRefs": [
+        {
+          "sourceId": "DSA5105/Textbook.pdf",
+          "page": 107,
+          "sourceType": "textbook",
+          "role": "dynamic programming pattern",
+          "status": "course-depth"
+        },
+        {
+          "sourceId": "DSA5105/Textbook.pdf",
+          "page": 115,
+          "sourceType": "textbook",
+          "role": "Bellman recursion",
+          "status": "course-depth"
+        },
+        {
+          "sourceId": "DSA5105/Ref/document.pdf",
+          "page": 6,
+          "sourceType": "ref",
+          "role": "past-exam recurrence and complexity alignment",
+          "status": "assessment-derived"
+        }
+      ]
+    },
+    {
+      "id": "dsa5105-dynamic-programming-section-4",
+      "type": "teaching-note",
+      "title": "Bridge · Bellman recursion is a family resemblance",
+      "body": "Finite-horizon shortest path DP, MDP value iteration, and policy evaluation all reuse the idea of replacing a long plan with a local decision plus an optimal continuation. The state definition and boundary conditions determine whether the recurrence is correct.",
+      "sourceType": "textbook",
+      "sourceRefs": [
+        {
+          "sourceId": "DSA5105/Textbook.pdf",
+          "page": 107,
+          "sourceType": "textbook",
+          "role": "dynamic programming pattern",
+          "status": "course-depth"
+        },
+        {
+          "sourceId": "DSA5105/Textbook.pdf",
+          "page": 115,
+          "sourceType": "textbook",
+          "role": "Bellman recursion",
+          "status": "course-depth"
+        },
+        {
+          "sourceId": "DSA5105/Ref/document.pdf",
+          "page": 6,
+          "sourceType": "ref",
+          "role": "past-exam recurrence and complexity alignment",
+          "status": "assessment-derived"
+        }
+      ]
+    },
+    {
+      "id": "dsa5105-dynamic-programming-example-1",
+      "type": "worked-example",
+      "title": "Table for jumps of one or two",
+      "steps": [
+        "Let dp[0]=0, and let the costs of positions 1 through 4 be [1,4,2,7].",
+        "dp[1]=1. For position 2, dp[2]=4+min(1,0)=4. For position 3, dp[3]=2+min(4,1)=3.",
+        "For position 4, dp[4]=7+min(3,4)=10. The best predecessor of position 4 is position 3."
+      ],
+      "answer": "The table exposes the dependency order and makes a greedy mistake easy to detect.",
+      "sourceType": "textbook",
+      "sourceRefs": [
+        {
+          "sourceId": "DSA5105/Textbook.pdf",
+          "page": 107,
+          "sourceType": "textbook",
+          "role": "dynamic programming pattern",
+          "status": "course-depth"
+        },
+        {
+          "sourceId": "DSA5105/Textbook.pdf",
+          "page": 115,
+          "sourceType": "textbook",
+          "role": "Bellman recursion",
+          "status": "course-depth"
+        },
+        {
+          "sourceId": "DSA5105/Ref/document.pdf",
+          "page": 6,
+          "sourceType": "ref",
+          "role": "past-exam recurrence and complexity alignment",
+          "status": "assessment-derived"
+        }
+      ]
+    },
+    {
+      "id": "dsa5105-dynamic-programming-critical-1",
+      "type": "critical-question",
+      "prompt": "Why is a greedy nearest step not enough?",
+      "focus": "future cost",
+      "angle": "compare local and continuation costs",
+      "modelAnswer": "The cheapest immediate move can lead to an expensive suffix. DP compares all allowed final moves after storing their optimal continuation costs.",
+      "sourceRefs": [
+        {
+          "sourceId": "DSA5105/Textbook.pdf",
+          "page": 107,
+          "sourceType": "textbook",
+          "role": "dynamic programming pattern",
+          "status": "course-depth"
+        },
+        {
+          "sourceId": "DSA5105/Textbook.pdf",
+          "page": 115,
+          "sourceType": "textbook",
+          "role": "Bellman recursion",
+          "status": "course-depth"
+        },
+        {
+          "sourceId": "DSA5105/Ref/document.pdf",
+          "page": 6,
+          "sourceType": "ref",
+          "role": "past-exam recurrence and complexity alignment",
+          "status": "assessment-derived"
+        }
+      ]
+    },
+    {
+      "id": "dsa5105-dynamic-programming-critical-2",
+      "type": "critical-question",
+      "prompt": "What must be stated before a recurrence?",
+      "focus": "state semantics",
+      "angle": "define cost and boundary",
+      "modelAnswer": "Define what dp[i] means, when cost is charged, and the base cases. Without these, the same-looking recurrence can have an off-by-one or wrong-terminal-state error.",
+      "sourceRefs": [
+        {
+          "sourceId": "DSA5105/Textbook.pdf",
+          "page": 107,
+          "sourceType": "textbook",
+          "role": "dynamic programming pattern",
+          "status": "course-depth"
+        },
+        {
+          "sourceId": "DSA5105/Textbook.pdf",
+          "page": 115,
+          "sourceType": "textbook",
+          "role": "Bellman recursion",
+          "status": "course-depth"
+        },
+        {
+          "sourceId": "DSA5105/Ref/document.pdf",
+          "page": 6,
+          "sourceType": "ref",
+          "role": "past-exam recurrence and complexity alignment",
+          "status": "assessment-derived"
+        }
+      ]
+    }
+  ],
+  "questionIds": [
+    "dsa5105-dp-q1",
+    "dsa5105-dp-q2",
+    "dsa5105-dp-q3"
+  ],
+  "labIds": [
+    "dsa5105-dynamic-programming"
+  ],
+  "schemaVersion": "nus.lesson.v1"
+}

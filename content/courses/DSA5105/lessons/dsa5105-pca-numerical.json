@@ -1,0 +1,543 @@
+{
+  "id": "dsa5105-pca-numerical",
+  "title": "PCA computation, reconstruction, and whitening",
+  "week": 6,
+  "minutes": 80,
+  "summary": "Carry PCA from a small covariance matrix to the exam links with reconstruction error, whitening, and an SVM-style formulation.",
+  "objectives": [
+    "Center data and form covariance",
+    "Find the leading eigenvector",
+    "Relate eigenvalues to reconstruction error",
+    "Explain whitening and the PCA margin formulation"
+  ],
+  "sourceRefs": [
+    {
+      "sourceId": "DSA5105/Textbook.pdf",
+      "page": 82,
+      "sourceType": "textbook",
+      "role": "PCA covariance",
+      "status": "course-depth"
+    },
+    {
+      "sourceId": "DSA5105/Textbook.pdf",
+      "page": 86,
+      "sourceType": "textbook",
+      "role": "variance maximization",
+      "status": "course-depth"
+    },
+    {
+      "sourceId": "DSA5105/Textbook.pdf",
+      "page": 88,
+      "sourceType": "textbook",
+      "role": "reconstruction",
+      "status": "course-depth"
+    },
+    {
+      "sourceId": "DSA5105/Textbook.pdf",
+      "page": 90,
+      "sourceType": "textbook",
+      "role": "whitening",
+      "status": "course-depth"
+    },
+    {
+      "sourceId": "DSA5105/Ref/document.pdf",
+      "page": 4,
+      "sourceType": "ref",
+      "role": "past-exam PCA/SVM formulation alignment",
+      "status": "assessment-derived"
+    }
+  ],
+  "visualIds": [
+    "dsa5105-pca-numerical"
+  ],
+  "sections": [
+    {
+      "title": "Lecture core · Center, then form covariance",
+      "body": "For rows $x_i$, compute $\\mu=\\frac1N\\sum_i x_i$ and $z_i=x_i-\\mu$. The sample covariance used here is $C=\\frac1N\\sum_i z_i z_i^\\top$. The factor convention may vary, but the eigenvectors are unchanged by a positive scalar factor.",
+      "sourceType": "lecture",
+      "math": {
+        "latex": "Z=X-\\mathbf{1}\\mu^\\top,\\qquad C=\\frac1N Z^\\top Z",
+        "explanation": "The centering step removes the mean offset. The covariance is symmetric positive semidefinite, so its eigenvalues are non-negative and its eigenvectors can be chosen orthonormal.",
+        "symbols": [
+          {
+            "latex": "\\mu",
+            "meaning": "feature mean"
+          },
+          {
+            "latex": "Z",
+            "meaning": "centered data matrix"
+          },
+          {
+            "latex": "C",
+            "meaning": "sample covariance"
+          }
+        ],
+        "sourceType": "lecture"
+      }
+    },
+    {
+      "title": "Textbook depth · Variance and Rayleigh quotient",
+      "body": "The variance after projecting onto a unit vector $v$ is $v^\\top Cv$. Maximizing this quadratic form gives the leading eigenvector. Repeating with orthogonality constraints gives subsequent principal directions.",
+      "sourceType": "textbook",
+      "math": {
+        "latex": "v_1=\\arg\\max_{\\lVert v\\rVert_2=1}v^\\top Cv",
+        "explanation": "The unit-norm constraint removes the trivial scaling solution. The maximum equals the largest eigenvalue of C.",
+        "symbols": [
+          {
+            "latex": "v_1",
+            "meaning": "first principal direction"
+          },
+          {
+            "latex": "\\lambda_1",
+            "meaning": "largest covariance eigenvalue"
+          }
+        ],
+        "sourceType": "textbook"
+      }
+    },
+    {
+      "title": "Textbook depth · Reconstruction error",
+      "body": "Project onto the span of the first $k$ eigenvectors and reconstruct. The total squared error discarded by PCA is the sum of the remaining eigenvalues. This gives a numerical way to choose $k$ and explains why the largest eigenvalue is the best one-dimensional direction.",
+      "sourceType": "textbook",
+      "math": {
+        "latex": "\\operatorname{MSE}_{recon}(k)\\propto\\sum_{j>k}\\lambda_j",
+        "explanation": "Keeping more principal directions removes more reconstruction error. The exact normalization depends on whether the loss is summed or averaged.",
+        "symbols": [
+          {
+            "latex": "k",
+            "meaning": "number of kept components"
+          },
+          {
+            "latex": "\\lambda_j",
+            "meaning": "ordered covariance eigenvalues"
+          }
+        ],
+        "sourceType": "textbook"
+      }
+    },
+    {
+      "title": "Reference boundary · Whitening and exam bridge",
+      "body": "Whitening maps principal coordinates by $\\Lambda^{-1/2}$, producing unit covariance for retained non-zero directions. The past exam also asks for an SVM-like constrained formulation of the maximum-variance direction; treat that as an assessment bridge and derive it from the Rayleigh quotient rather than memorizing a disconnected formula.",
+      "sourceType": "ref",
+      "math": {
+        "latex": "X_{white}=ZV\\Lambda^{-1/2}",
+        "explanation": "V contains the orthonormal eigenvectors and Lambda the diagonal eigenvalue matrix. Small eigenvalues may amplify noise, so practical whitening often clips or regularizes them.",
+        "symbols": [
+          {
+            "latex": "V",
+            "meaning": "eigenvector matrix"
+          },
+          {
+            "latex": "\\Lambda",
+            "meaning": "diagonal eigenvalue matrix"
+          }
+        ],
+        "sourceType": "ref"
+      }
+    },
+    {
+      "title": "Assessment habit · Sign and scaling conventions",
+      "body": "An eigenvector and its negative represent the same PCA axis. Covariance may be divided by N or N-1 depending on convention; compare the direction and relative eigenvalues first, then follow the convention stated in the question.",
+      "sourceType": "ref"
+    }
+  ],
+  "examples": [
+    {
+      "title": "2 by 2 covariance",
+      "steps": [
+        "Let $C=[[2,1],[1,2]]$. Its eigenvectors are $(1,1)/\\sqrt2$ and $(1,-1)/\\sqrt2$.",
+        "The corresponding eigenvalues are 3 and 1, so the first component is the diagonal direction (1,1).",
+        "A one-dimensional reconstruction discards the perpendicular eigenvalue 1; the kept variance is 3 and the discarded variance is 1 under the same normalization."
+      ],
+      "answer": "For a symmetric covariance matrix, use orthogonal eigenvectors and sort by decreasing eigenvalue.",
+      "sourceType": "textbook"
+    }
+  ],
+  "criticalQuestions": [
+    {
+      "prompt": "Why center before PCA?",
+      "focus": "geometry",
+      "angle": "separate location from variation",
+      "modelAnswer": "PCA should describe variation around the empirical mean. Without centering, a large offset from the origin can dominate the covariance-like second moment and change the selected direction."
+    },
+    {
+      "prompt": "Why does the top eigenvalue matter for one-dimensional PCA?",
+      "focus": "optimization",
+      "angle": "connect Rayleigh quotient and error",
+      "modelAnswer": "The leading eigenvalue is the maximum projected variance, and the sum of the remaining eigenvalues is the minimum discarded squared reconstruction variance for a one-dimensional subspace."
+    }
+  ],
+  "courseId": "DSA5105",
+  "moduleId": "dsa5105-exam-core",
+  "blocks": [
+    {
+      "id": "dsa5105-pca-numerical-section-1",
+      "type": "teaching-note",
+      "title": "Lecture core · Center, then form covariance",
+      "body": "For rows $x_i$, compute $\\mu=\\frac1N\\sum_i x_i$ and $z_i=x_i-\\mu$. The sample covariance used here is $C=\\frac1N\\sum_i z_i z_i^\\top$. The factor convention may vary, but the eigenvectors are unchanged by a positive scalar factor.",
+      "sourceType": "lecture",
+      "sourceRefs": [
+        {
+          "sourceId": "DSA5105/Textbook.pdf",
+          "page": 82,
+          "sourceType": "textbook",
+          "role": "PCA covariance",
+          "status": "course-depth"
+        },
+        {
+          "sourceId": "DSA5105/Textbook.pdf",
+          "page": 86,
+          "sourceType": "textbook",
+          "role": "variance maximization",
+          "status": "course-depth"
+        },
+        {
+          "sourceId": "DSA5105/Textbook.pdf",
+          "page": 88,
+          "sourceType": "textbook",
+          "role": "reconstruction",
+          "status": "course-depth"
+        },
+        {
+          "sourceId": "DSA5105/Textbook.pdf",
+          "page": 90,
+          "sourceType": "textbook",
+          "role": "whitening",
+          "status": "course-depth"
+        },
+        {
+          "sourceId": "DSA5105/Ref/document.pdf",
+          "page": 4,
+          "sourceType": "ref",
+          "role": "past-exam PCA/SVM formulation alignment",
+          "status": "assessment-derived"
+        }
+      ]
+    },
+    {
+      "id": "dsa5105-pca-numerical-section-2",
+      "type": "teaching-note",
+      "title": "Textbook depth · Variance and Rayleigh quotient",
+      "body": "The variance after projecting onto a unit vector $v$ is $v^\\top Cv$. Maximizing this quadratic form gives the leading eigenvector. Repeating with orthogonality constraints gives subsequent principal directions.",
+      "sourceType": "textbook",
+      "sourceRefs": [
+        {
+          "sourceId": "DSA5105/Textbook.pdf",
+          "page": 82,
+          "sourceType": "textbook",
+          "role": "PCA covariance",
+          "status": "course-depth"
+        },
+        {
+          "sourceId": "DSA5105/Textbook.pdf",
+          "page": 86,
+          "sourceType": "textbook",
+          "role": "variance maximization",
+          "status": "course-depth"
+        },
+        {
+          "sourceId": "DSA5105/Textbook.pdf",
+          "page": 88,
+          "sourceType": "textbook",
+          "role": "reconstruction",
+          "status": "course-depth"
+        },
+        {
+          "sourceId": "DSA5105/Textbook.pdf",
+          "page": 90,
+          "sourceType": "textbook",
+          "role": "whitening",
+          "status": "course-depth"
+        },
+        {
+          "sourceId": "DSA5105/Ref/document.pdf",
+          "page": 4,
+          "sourceType": "ref",
+          "role": "past-exam PCA/SVM formulation alignment",
+          "status": "assessment-derived"
+        }
+      ]
+    },
+    {
+      "id": "dsa5105-pca-numerical-section-3",
+      "type": "teaching-note",
+      "title": "Textbook depth · Reconstruction error",
+      "body": "Project onto the span of the first $k$ eigenvectors and reconstruct. The total squared error discarded by PCA is the sum of the remaining eigenvalues. This gives a numerical way to choose $k$ and explains why the largest eigenvalue is the best one-dimensional direction.",
+      "sourceType": "textbook",
+      "sourceRefs": [
+        {
+          "sourceId": "DSA5105/Textbook.pdf",
+          "page": 82,
+          "sourceType": "textbook",
+          "role": "PCA covariance",
+          "status": "course-depth"
+        },
+        {
+          "sourceId": "DSA5105/Textbook.pdf",
+          "page": 86,
+          "sourceType": "textbook",
+          "role": "variance maximization",
+          "status": "course-depth"
+        },
+        {
+          "sourceId": "DSA5105/Textbook.pdf",
+          "page": 88,
+          "sourceType": "textbook",
+          "role": "reconstruction",
+          "status": "course-depth"
+        },
+        {
+          "sourceId": "DSA5105/Textbook.pdf",
+          "page": 90,
+          "sourceType": "textbook",
+          "role": "whitening",
+          "status": "course-depth"
+        },
+        {
+          "sourceId": "DSA5105/Ref/document.pdf",
+          "page": 4,
+          "sourceType": "ref",
+          "role": "past-exam PCA/SVM formulation alignment",
+          "status": "assessment-derived"
+        }
+      ]
+    },
+    {
+      "id": "dsa5105-pca-numerical-section-4",
+      "type": "teaching-note",
+      "title": "Reference boundary · Whitening and exam bridge",
+      "body": "Whitening maps principal coordinates by $\\Lambda^{-1/2}$, producing unit covariance for retained non-zero directions. The past exam also asks for an SVM-like constrained formulation of the maximum-variance direction; treat that as an assessment bridge and derive it from the Rayleigh quotient rather than memorizing a disconnected formula.",
+      "sourceType": "ref",
+      "sourceRefs": [
+        {
+          "sourceId": "DSA5105/Textbook.pdf",
+          "page": 82,
+          "sourceType": "textbook",
+          "role": "PCA covariance",
+          "status": "course-depth"
+        },
+        {
+          "sourceId": "DSA5105/Textbook.pdf",
+          "page": 86,
+          "sourceType": "textbook",
+          "role": "variance maximization",
+          "status": "course-depth"
+        },
+        {
+          "sourceId": "DSA5105/Textbook.pdf",
+          "page": 88,
+          "sourceType": "textbook",
+          "role": "reconstruction",
+          "status": "course-depth"
+        },
+        {
+          "sourceId": "DSA5105/Textbook.pdf",
+          "page": 90,
+          "sourceType": "textbook",
+          "role": "whitening",
+          "status": "course-depth"
+        },
+        {
+          "sourceId": "DSA5105/Ref/document.pdf",
+          "page": 4,
+          "sourceType": "ref",
+          "role": "past-exam PCA/SVM formulation alignment",
+          "status": "assessment-derived"
+        }
+      ]
+    },
+    {
+      "id": "dsa5105-pca-numerical-section-5",
+      "type": "teaching-note",
+      "title": "Assessment habit · Sign and scaling conventions",
+      "body": "An eigenvector and its negative represent the same PCA axis. Covariance may be divided by N or N-1 depending on convention; compare the direction and relative eigenvalues first, then follow the convention stated in the question.",
+      "sourceType": "ref",
+      "sourceRefs": [
+        {
+          "sourceId": "DSA5105/Textbook.pdf",
+          "page": 82,
+          "sourceType": "textbook",
+          "role": "PCA covariance",
+          "status": "course-depth"
+        },
+        {
+          "sourceId": "DSA5105/Textbook.pdf",
+          "page": 86,
+          "sourceType": "textbook",
+          "role": "variance maximization",
+          "status": "course-depth"
+        },
+        {
+          "sourceId": "DSA5105/Textbook.pdf",
+          "page": 88,
+          "sourceType": "textbook",
+          "role": "reconstruction",
+          "status": "course-depth"
+        },
+        {
+          "sourceId": "DSA5105/Textbook.pdf",
+          "page": 90,
+          "sourceType": "textbook",
+          "role": "whitening",
+          "status": "course-depth"
+        },
+        {
+          "sourceId": "DSA5105/Ref/document.pdf",
+          "page": 4,
+          "sourceType": "ref",
+          "role": "past-exam PCA/SVM formulation alignment",
+          "status": "assessment-derived"
+        }
+      ]
+    },
+    {
+      "id": "dsa5105-pca-numerical-example-1",
+      "type": "worked-example",
+      "title": "2 by 2 covariance",
+      "steps": [
+        "Let $C=[[2,1],[1,2]]$. Its eigenvectors are $(1,1)/\\sqrt2$ and $(1,-1)/\\sqrt2$.",
+        "The corresponding eigenvalues are 3 and 1, so the first component is the diagonal direction (1,1).",
+        "A one-dimensional reconstruction discards the perpendicular eigenvalue 1; the kept variance is 3 and the discarded variance is 1 under the same normalization."
+      ],
+      "answer": "For a symmetric covariance matrix, use orthogonal eigenvectors and sort by decreasing eigenvalue.",
+      "sourceType": "textbook",
+      "sourceRefs": [
+        {
+          "sourceId": "DSA5105/Textbook.pdf",
+          "page": 82,
+          "sourceType": "textbook",
+          "role": "PCA covariance",
+          "status": "course-depth"
+        },
+        {
+          "sourceId": "DSA5105/Textbook.pdf",
+          "page": 86,
+          "sourceType": "textbook",
+          "role": "variance maximization",
+          "status": "course-depth"
+        },
+        {
+          "sourceId": "DSA5105/Textbook.pdf",
+          "page": 88,
+          "sourceType": "textbook",
+          "role": "reconstruction",
+          "status": "course-depth"
+        },
+        {
+          "sourceId": "DSA5105/Textbook.pdf",
+          "page": 90,
+          "sourceType": "textbook",
+          "role": "whitening",
+          "status": "course-depth"
+        },
+        {
+          "sourceId": "DSA5105/Ref/document.pdf",
+          "page": 4,
+          "sourceType": "ref",
+          "role": "past-exam PCA/SVM formulation alignment",
+          "status": "assessment-derived"
+        }
+      ]
+    },
+    {
+      "id": "dsa5105-pca-numerical-critical-1",
+      "type": "critical-question",
+      "prompt": "Why center before PCA?",
+      "focus": "geometry",
+      "angle": "separate location from variation",
+      "modelAnswer": "PCA should describe variation around the empirical mean. Without centering, a large offset from the origin can dominate the covariance-like second moment and change the selected direction.",
+      "sourceRefs": [
+        {
+          "sourceId": "DSA5105/Textbook.pdf",
+          "page": 82,
+          "sourceType": "textbook",
+          "role": "PCA covariance",
+          "status": "course-depth"
+        },
+        {
+          "sourceId": "DSA5105/Textbook.pdf",
+          "page": 86,
+          "sourceType": "textbook",
+          "role": "variance maximization",
+          "status": "course-depth"
+        },
+        {
+          "sourceId": "DSA5105/Textbook.pdf",
+          "page": 88,
+          "sourceType": "textbook",
+          "role": "reconstruction",
+          "status": "course-depth"
+        },
+        {
+          "sourceId": "DSA5105/Textbook.pdf",
+          "page": 90,
+          "sourceType": "textbook",
+          "role": "whitening",
+          "status": "course-depth"
+        },
+        {
+          "sourceId": "DSA5105/Ref/document.pdf",
+          "page": 4,
+          "sourceType": "ref",
+          "role": "past-exam PCA/SVM formulation alignment",
+          "status": "assessment-derived"
+        }
+      ]
+    },
+    {
+      "id": "dsa5105-pca-numerical-critical-2",
+      "type": "critical-question",
+      "prompt": "Why does the top eigenvalue matter for one-dimensional PCA?",
+      "focus": "optimization",
+      "angle": "connect Rayleigh quotient and error",
+      "modelAnswer": "The leading eigenvalue is the maximum projected variance, and the sum of the remaining eigenvalues is the minimum discarded squared reconstruction variance for a one-dimensional subspace.",
+      "sourceRefs": [
+        {
+          "sourceId": "DSA5105/Textbook.pdf",
+          "page": 82,
+          "sourceType": "textbook",
+          "role": "PCA covariance",
+          "status": "course-depth"
+        },
+        {
+          "sourceId": "DSA5105/Textbook.pdf",
+          "page": 86,
+          "sourceType": "textbook",
+          "role": "variance maximization",
+          "status": "course-depth"
+        },
+        {
+          "sourceId": "DSA5105/Textbook.pdf",
+          "page": 88,
+          "sourceType": "textbook",
+          "role": "reconstruction",
+          "status": "course-depth"
+        },
+        {
+          "sourceId": "DSA5105/Textbook.pdf",
+          "page": 90,
+          "sourceType": "textbook",
+          "role": "whitening",
+          "status": "course-depth"
+        },
+        {
+          "sourceId": "DSA5105/Ref/document.pdf",
+          "page": 4,
+          "sourceType": "ref",
+          "role": "past-exam PCA/SVM formulation alignment",
+          "status": "assessment-derived"
+        }
+      ]
+    }
+  ],
+  "questionIds": [
+    "dsa5105-pcan-q1",
+    "dsa5105-pcan-q2",
+    "dsa5105-pcan-q3",
+    "dsa5105-pcan-q4"
+  ],
+  "labIds": [
+    "dsa5105-pca-numerical"
+  ],
+  "schemaVersion": "nus.lesson.v1"
+}

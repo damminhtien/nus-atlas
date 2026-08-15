@@ -1,0 +1,74 @@
+[
+  {
+    "id": "dsa5105-dp-q1",
+    "type": "derivation",
+    "prompt": "Write a recurrence for minimum cost to reach i when the last jump is one or two positions.",
+    "accepted": [
+      "dp i equals cost i plus min dp i minus 1 dp i minus 2",
+      "cost i plus min of previous two",
+      "one or two step recurrence"
+    ],
+    "solution": "With cost charged on entry, $dp[i]=cost[i]+\\min(dp[i-1],dp[i-2])$, plus base cases.",
+    "explanation": "The recurrence must enumerate the allowed final jump lengths.",
+    "sourceRefs": [
+      {
+        "sourceId": "DSA5105/Ref/document.pdf",
+        "page": 6,
+        "sourceType": "ref",
+        "role": "dynamic programming recurrence",
+        "status": "assessment-derived"
+      }
+    ],
+    "courseId": "DSA5105",
+    "lessonId": "dsa5105-dynamic-programming",
+    "schemaVersion": "nus.question.v1"
+  },
+  {
+    "id": "dsa5105-dp-q2",
+    "type": "short",
+    "prompt": "What is the time complexity of filling an O(n) one/two-step DP table?",
+    "accepted": [
+      "o(n)",
+      "linear",
+      "O(n)"
+    ],
+    "solution": "O(n), because each state performs constant work after its predecessors are available.",
+    "explanation": "If the table is stored, space is O(n); rolling two values reduces extra space to O(1).",
+    "sourceRefs": [
+      {
+        "sourceId": "DSA5105/Ref/document.pdf",
+        "page": 6,
+        "sourceType": "ref",
+        "role": "dynamic programming complexity",
+        "status": "assessment-derived"
+      }
+    ],
+    "courseId": "DSA5105",
+    "lessonId": "dsa5105-dynamic-programming",
+    "schemaVersion": "nus.question.v1"
+  },
+  {
+    "id": "dsa5105-dp-q3",
+    "type": "short",
+    "prompt": "What is the role of base cases in a DP recurrence?",
+    "accepted": [
+      "define the boundary states",
+      "start the table",
+      "handle initial positions"
+    ],
+    "solution": "Base cases define the smallest subproblems and make every later recurrence well-defined.",
+    "explanation": "Most recurrence errors are boundary or indexing errors rather than algebra errors.",
+    "sourceRefs": [
+      {
+        "sourceId": "DSA5105/Textbook.pdf",
+        "page": 107,
+        "sourceType": "textbook",
+        "role": "DP base cases",
+        "status": "course-depth"
+      }
+    ],
+    "courseId": "DSA5105",
+    "lessonId": "dsa5105-dynamic-programming",
+    "schemaVersion": "nus.question.v1"
+  }
+]
