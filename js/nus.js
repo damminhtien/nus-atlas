@@ -328,20 +328,22 @@
     root.querySelector("#nus-explain-shuffle").addEventListener("click", () => { root.querySelector("#nus-shuffle-note").innerHTML = `<p class="nus-muted">Keys must meet on the same partition before aggregation. That exchange adds serialization, network traffic, skew risk, and a synchronization barrier.</p>`; evidence("spark-shuffle"); });
   }
 
+  const routeTable = window.NUS_ROUTE_TABLE ? window.NUS_ROUTE_TABLE({
+    dashboard: () => renderDashboard(),
+    planner: () => renderPlanner(),
+    course: parts => renderCourse(parts[1]),
+    lesson: parts => renderLesson(parts[1], parts[2]),
+    exam: parts => renderExam(parts[1], parts[2]),
+    sql: () => renderSql(),
+    simulations: () => renderSimulations()
+  }) : null;
   function renderNotFound() { root.innerHTML = pageHead("NUS", "Not found", "That study page does not exist.") + button("Back to NUS dashboard", "#/", "primary"); }
   function renderRoute(parts) {
     stopExamTimer();
     const p = parts || [];
     if (p[0] !== "lesson") setReaderMode(false);
-    let result;
-    if (!p.length || p[0] === "dashboard") result = renderDashboard();
-    else if (p[0] === "planner") result = renderPlanner();
-    else if (p[0] === "course") result = renderCourse(p[1]);
-    else if (p[0] === "lesson") result = renderLesson(p[1], p[2]);
-    else if (p[0] === "exam") result = renderExam(p[1], p[2]);
-    else if (p[0] === "sql") result = renderSql();
-    else if (p[0] === "simulations") result = renderSimulations();
-    else result = renderNotFound();
+    const handler = routeTable && routeTable.resolve(p);
+    const result = handler ? handler(p) : renderNotFound();
     typesetNus();
     return result;
   }
