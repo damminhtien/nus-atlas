@@ -1654,6 +1654,25 @@ body.nus-reading-mode .nus-study-compass { position:sticky; top:16px; z-index:20
 .nus-trace .nus-lab-step, .nus-timeline .nus-lab-step { display:grid; grid-template-columns:auto minmax(0, 1fr); gap:12px; align-items:start; padding:12px; border:1px solid var(--line); border-radius:10px; opacity:.55; }
 .nus-trace .nus-lab-step.active, .nus-timeline .nus-lab-step.active { display:grid; opacity:1; border-color:color-mix(in srgb, var(--gold) 55%, var(--line)); background:color-mix(in srgb, var(--gold) 7%, transparent); }
 .nus-trace .nus-lab-step b, .nus-timeline .nus-lab-step b { color:var(--gold); }
+.nus-lab-deep-dive { border-color:color-mix(in srgb, var(--violet) 42%, var(--line)); }
+.nus-lab-deep-tabs { display:flex; gap:7px; overflow-x:auto; margin:16px 0 12px; padding-bottom:4px; scrollbar-width:thin; }
+.nus-deep-tab { flex:none; padding:8px 11px; border:1px solid var(--line); border-radius:8px; background:var(--panel); color:var(--ink-mute); cursor:pointer; font:11px var(--font-ui); }
+.nus-deep-tab:hover, .nus-deep-tab.is-selected { border-color:color-mix(in srgb, var(--violet) 60%, var(--line)); background:color-mix(in srgb, var(--violet) 12%, var(--panel)); color:var(--ink); }
+.nus-deep-dive-stage { min-height:300px; }
+.nus-deep-panel { display:none; }
+.nus-deep-panel.is-selected { display:block; }
+.nus-deep-panel-head { display:grid; gap:5px; margin-bottom:14px; }
+.nus-deep-panel-head .eyebrow { margin:0; color:var(--violet); }
+.nus-deep-panel-head p { margin:0; color:var(--ink-soft); font:14px/1.55 var(--font-ui); }
+.nus-deep-steps { display:grid; gap:8px; margin:0; padding:0; list-style:none; }
+.nus-deep-step { display:grid; grid-template-columns:110px minmax(0, 1fr); gap:7px 12px; padding:12px; border:1px solid var(--line); border-left:3px solid transparent; border-radius:0 9px 9px 0; opacity:.48; }
+.nus-deep-step.active { opacity:1; border-left-color:var(--gold); background:color-mix(in srgb, var(--gold) 8%, var(--panel)); }
+.nus-deep-step b { color:var(--gold); font:700 11px/1.5 var(--font-ui); text-transform:uppercase; letter-spacing:.5px; }
+.nus-deep-step .nus-lab-formula { margin:0; color:var(--ink); font-size:17px; }
+.nus-deep-step span { grid-column:2; color:var(--ink-soft); font:13px/1.55 var(--font-ui); }
+.nus-deep-takeaway { margin:14px 0 0; padding:12px; border:1px solid color-mix(in srgb, var(--sage) 34%, var(--line)); border-radius:9px; background:color-mix(in srgb, var(--sage) 6%, var(--panel)); color:var(--ink-soft); font:13px/1.55 var(--font-ui); }
+.nus-deep-takeaway b { color:var(--sage); }
+@media (max-width:700px) { .nus-deep-step { grid-template-columns:1fr; }.nus-deep-step span { grid-column:auto; }.nus-deep-step .nus-lab-formula { font-size:15px; } }
 .nus-timeline .nus-lab-step > span, .nus-pipeline-builder .nus-lab-node > span { display:grid; place-items:center; width:24px; height:24px; border:1px solid var(--gold); border-radius:50%; color:var(--gold); font:600 11px var(--font-mono); }
 .nus-timeline .nus-lab-step p { margin-top:4px; }
 .nus-pipeline-builder { grid-template-columns:repeat(3, minmax(0, 1fr)); align-items:stretch; }

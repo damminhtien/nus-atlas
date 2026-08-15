@@ -74,6 +74,45 @@
     const splits = lab.splits || [];
     return shell(lab, `<div class="nus-lab-controls"><span class="nus-lab-step-count">Choose the evidence-respecting branch</span><button class="btn primary" type="button" data-lab-complete>Commit branch</button></div><div class="nus-decision-tree" role="list" aria-label="Evaluation decision branches">${splits.map(split => `<button class="nus-decision-branch" type="button" role="listitem" data-lab-choice="${esc(split.id)}" aria-pressed="false"><span><b>${esc(split.label)}</b><small>${esc(split.detail)}</small></span><i><b style="width:${Math.max(0, Math.min(100, split.impurity))}%"></b></i><em>risk ${esc(split.impurity)}</em></button>`).join("")}</div><p class="nus-lab-status-text" data-decision-summary aria-live="polite">Lower impurity is useful only when the split respects the train/validation/test protocol.</p>`);
   }
+  function deepDive(lab) {
+    const exercises = lab.exercises || [], id = "nus-lab-" + lab.lessonId;
+    const tabs = exercises.map((exercise, index) => "<button class=\"nus-deep-tab " + (index === 0 ? "is-selected" : "") + "\" type=\"button\" role=\"tab\" data-deep-tab=\"" + esc(exercise.id) + "\" aria-selected=\"" + (index === 0 ? "true" : "false") + "\">" + esc(exercise.label) + "</button>").join("");
+    const panels = exercises.map((exercise, index) => "<article class=\"nus-deep-panel " + (index === 0 ? "is-selected" : "") + "\" id=\"" + id + "-" + esc(exercise.id) + "\" data-deep-panel=\"" + esc(exercise.id) + "\" role=\"tabpanel\" aria-hidden=\"" + (index === 0 ? "false" : "true") + "\"><div class=\"nus-deep-panel-head\"><span class=\"eyebrow\">" + esc(exercise.label) + "</span><p>" + esc(exercise.prompt) + "</p></div><ol class=\"nus-deep-steps\">" + (exercise.steps || []).map((step, stepIndex) => "<li class=\"nus-deep-step " + (stepIndex === 0 ? "active" : "") + "\" data-deep-step=\"" + stepIndex + "\" aria-current=\"" + (stepIndex === 0 ? "step" : "false") + "\"><b>" + esc(step[0]) + "</b><div class=\"nus-lab-formula\">$" + step[1] + "$</div><span>" + esc(step[2]) + "</span></li>").join("") + "</ol><p class=\"nus-deep-takeaway\"><b>Interpretation</b> " + esc(exercise.takeaway || "") + "</p></article>").join("");
+    return shell(lab, "<div class=\"nus-lab-deep-tabs\" role=\"tablist\" aria-label=\"Week 1 derivation exercises\">" + tabs + "</div><div class=\"nus-lab-stage nus-deep-dive-stage\">" + panels + "</div><div class=\"nus-lab-controls\"><span class=\"nus-lab-step-count\" data-deep-count>Risk gap · step 1</span><button class=\"btn primary\" type=\"button\" data-deep-next>Reveal next step</button><button class=\"btn ghost\" type=\"button\" data-deep-complete>Commit current proof</button></div><p class=\"nus-lab-status-text\" data-deep-status aria-live=\"polite\">Reveal each transformation, then explain the assumption behind it.</p>");
+  }
+  function selectDeepDive(root, exerciseId) {
+    const panels = [...root.querySelectorAll("[data-deep-panel]")], tabs = [...root.querySelectorAll("[data-deep-tab]")];
+    const panel = panels.find(item => item.dataset.deepPanel === exerciseId) || panels[0];
+    if (!panel) return;
+    panels.forEach(item => { const selected = item === panel; item.classList.toggle("is-selected", selected); item.setAttribute("aria-hidden", selected ? "false" : "true"); });
+    tabs.forEach(tab => { const selected = tab.dataset.deepTab === panel.dataset.deepPanel; tab.classList.toggle("is-selected", selected); tab.setAttribute("aria-selected", selected ? "true" : "false"); });
+    const activeStep = [...panel.querySelectorAll("[data-deep-step]")].findIndex(step => step.classList.contains("active"));
+    const count = root.querySelector("[data-deep-count]");
+    if (count) count.textContent = (panel.querySelector(".eyebrow")?.textContent || "Exercise") + " · step " + (activeStep + 1);
+    const next = root.querySelector("[data-deep-next]");
+    if (next) next.textContent = activeStep >= panel.querySelectorAll("[data-deep-step]").length - 1 ? "Proof revealed" : "Reveal next step";
+  }
+  function advanceDeepDive(root) {
+    const panel = root.querySelector("[data-deep-panel].is-selected"), steps = panel ? [...panel.querySelectorAll("[data-deep-step]")] : [];
+    if (!panel || !steps.length) return;
+    const current = steps.findIndex(step => step.classList.contains("active")), next = Math.min(steps.length - 1, current + 1);
+    steps.forEach((step, index) => { step.classList.toggle("active", index === next); step.setAttribute("aria-current", index === next ? "step" : "false"); });
+    selectDeepDive(root, panel.dataset.deepPanel);
+    const status = root.querySelector("[data-deep-status]");
+    if (status) status.textContent = next === steps.length - 1 ? "Final step revealed. State the interpretation before committing the proof." : "Good. Explain this move before revealing the next one.";
+  }
+  function completeDeepDive(lab, root) {
+    const panel = root.querySelector("[data-deep-panel].is-selected"), steps = panel ? [...panel.querySelectorAll("[data-deep-step]")] : [];
+    const current = steps.findIndex(step => step.classList.contains("active"));
+    const status = root.querySelector("[data-lab-status]");
+    if (!panel || current < steps.length - 1) {
+      if (status) status.textContent = "Reveal the final step before committing the proof";
+      return;
+    }
+    const result = window.NUS_STORE && window.NUS_STORE.recordSimulation("dsa5105:" + lab.lessonId + ":" + panel.dataset.deepPanel, lab.courseCode, lab.lessonId);
+    if (status) status.textContent = result && result.duplicate ? "Already logged · repeat to reason" : "Proof logged · +10 XP";
+    root.classList.add("is-complete");
+  }
   function updateCompare(lab, root) {
     const value = Number(root.querySelector("input[type=range]").value);
     const train = Math.round(12 + Math.abs(value - 76) * 0.22), valid = Math.round(18 + Math.abs(value - 55) * 0.2 + Math.max(0, value - 70) * 0.25);
@@ -108,7 +147,8 @@
     .register("event-timeline", eventTimeline)
     .register("pipeline-builder", pipeline)
     .register("concept-map", conceptMap)
-    .register("decision-tree", decisionTree);
+    .register("decision-tree", decisionTree)
+    .register("deep-dive", deepDive);
   function renderLab(lesson, lab) {
     if (!lab || !lesson) return "";
     const renderer = registry.get(lab.type);
@@ -118,6 +158,13 @@
     root.querySelectorAll("[data-nus-lab]").forEach(labRoot => {
       const lab = window.NUS_VISUAL_LABS && window.NUS_VISUAL_LABS[labRoot.dataset.nusLab];
       if (!lab) return;
+      if (lab.type === "deep-dive") {
+        labRoot.querySelectorAll("[data-deep-tab]").forEach(tab => tab.addEventListener("click", () => selectDeepDive(labRoot, tab.dataset.deepTab)));
+        labRoot.querySelector("[data-deep-next]")?.addEventListener("click", () => advanceDeepDive(labRoot));
+        labRoot.querySelector("[data-deep-complete]")?.addEventListener("click", () => completeDeepDive(lab, labRoot));
+        selectDeepDive(labRoot, (lab.exercises && lab.exercises[0] || {}).id);
+        return;
+      }
       const range = labRoot.querySelector("input[type=range]");
       if (lab.type === "compare" && range) { range.addEventListener("input", () => updateCompare(lab, labRoot)); updateCompare(lab, labRoot); }
       if (lab.type === "geometry" && range) { range.addEventListener("input", () => updateGeometry(labRoot)); updateGeometry(labRoot); }
