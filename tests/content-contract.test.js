@@ -16,6 +16,13 @@ test("normalized course packages satisfy the package contract", () => {
   assert.ok(result.counts.lessons > 0);
 });
 
+test("legacy artifact registry does not mutate lesson records", () => {
+  const state = loadLegacyState();
+  const lesson = state.content.DSA5105.modules[0].lessons[0];
+  assert.equal(Object.prototype.hasOwnProperty.call(lesson, "flashcards"), false);
+  assert.ok(state.artifacts[lesson.id].flashcards.length > 0);
+});
+
 test("content contract reports duplicate lesson IDs", () => {
   const state = {
     courses: [{ code: "DSA0000", title: "Fixture" }],
