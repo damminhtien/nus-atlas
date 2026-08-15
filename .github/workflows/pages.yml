@@ -33,12 +33,14 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: 20
+      - name: Install validation dependencies
+        run: npm ci --ignore-scripts
       - name: Check release metadata and cache-busting version
         run: npm run version:check
       - name: Build normalized course packages
         run: node scripts/content-build.js --all
       - name: Validate content contracts, extraction provenance, LaTeX, and gates
-        run: node scripts/validate-content.js && node scripts/validate-extracted.js && node scripts/validate-textbook.js && node scripts/validate-latex.js && node --test tests/*.test.js && node nus-gate.js && node gate.js
+        run: node scripts/validate-content.js && node scripts/validate-extracted.js && node scripts/validate-textbook.js && node scripts/validate-latex.js && node scripts/validate-latex-render.js && node --test tests/*.test.js && node nus-gate.js && node gate.js
       - name: Prerender lesson pages + sitemap + robots
         run: node prerender.js
       - name: Configure GitHub Pages
