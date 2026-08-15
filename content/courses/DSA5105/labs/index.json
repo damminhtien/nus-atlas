@@ -27,6 +27,147 @@
     "reducedMotion": true,
     "explanation": "The useful choice is near the lowest validation risk, not necessarily the lowest training risk."
   },
+  "dsa5105-linear-week1": {
+    "courseCode": "DSA5105",
+    "lessonId": "dsa5105-linear-week1",
+    "type": "derivation-trace",
+    "title": "Linear-model reasoning trace",
+    "learningGoal": "Move from a hypothesis space to an objective, a closed-form fit, and a regularized extension.",
+    "sourceRefs": [
+      {
+        "sourceId": "DSA5105/syllabus.pdf",
+        "page": 1,
+        "sourceType": "lecture",
+        "role": "Week 1 scope",
+        "status": "current"
+      },
+      {
+        "sourceId": "DSA5105/Textbook.pdf",
+        "page": 18,
+        "sourceType": "textbook",
+        "role": "linear basis depth",
+        "status": "course-depth"
+      },
+      {
+        "sourceId": "DSA5105/Textbook.pdf",
+        "page": 29,
+        "sourceType": "textbook",
+        "role": "regularization depth",
+        "status": "course-depth"
+      }
+    ],
+    "steps": [
+      [
+        "Hypothesis",
+        "f(x)=w_0+w_1x",
+        "Start by naming the function class and its parameters."
+      ],
+      [
+        "Loss",
+        "R_hat(w)=1/N sum_i l(f_w(x_i),y_i)",
+        "ERM averages the observed losses; it does not directly reveal population risk."
+      ],
+      [
+        "OLS",
+        "w_hat=(X^T X)^-1 X^T y",
+        "Full column rank is the assumption behind uniqueness."
+      ],
+      [
+        "Ridge",
+        "w_hat=(X^T X+lambda I)^-1 X^T y",
+        "The penalty stabilizes directions that OLS cannot identify well."
+      ]
+    ],
+    "initialState": {
+      "step": 0
+    },
+    "reducedMotion": true,
+    "explanation": "A formula is easier to remember when the model, loss, assumption, and extension are kept as separate moves."
+  },
+  "dsa5105-learning-theory": {
+    "courseCode": "DSA5105",
+    "lessonId": "dsa5105-learning-theory",
+    "type": "decision-tree",
+    "title": "Generalization decision tree",
+    "learningGoal": "Choose the next evaluation move when training fit and held-out evidence disagree.",
+    "sourceRefs": [
+      {
+        "sourceId": "DSA5105/syllabus.pdf",
+        "page": 1,
+        "sourceType": "lecture",
+        "role": "current scope",
+        "status": "current"
+      },
+      {
+        "sourceId": "DSA5105/Textbook.pdf",
+        "page": 70,
+        "sourceType": "textbook",
+        "role": "PAC and risk",
+        "status": "course-depth"
+      },
+      {
+        "sourceId": "DSA5105/Ref/Understanding_Machine_Learning_From_Theory_to_Algorithms.pdf",
+        "page": 1,
+        "sourceType": "ref",
+        "role": "optional theory",
+        "status": "optional"
+      }
+    ],
+    "splits": [
+      {
+        "id": "memorize",
+        "label": "Training error is lowest",
+        "impurity": 92,
+        "detail": "Do not stop: this can be sample-specific fit."
+      },
+      {
+        "id": "balanced",
+        "label": "Validation risk is lowest",
+        "impurity": 24,
+        "detail": "Use validation for model selection, then reserve test for the final estimate."
+      },
+      {
+        "id": "ignore",
+        "label": "Test score is convenient",
+        "impurity": 86,
+        "detail": "Repeated test inspection leaks information into selection."
+      }
+    ],
+    "requiredChoice": "balanced",
+    "initialState": {
+      "choice": null
+    },
+    "reducedMotion": true,
+    "explanation": "The right branch is defined by the evaluation protocol, not by whichever score is easiest to optimize."
+  },
+  "dsa5105-linear-regularization": {
+    "courseCode": "DSA5105",
+    "lessonId": "dsa5105-linear-regularization",
+    "type": "compare",
+    "title": "Regularization trade-off explorer",
+    "learningGoal": "Compare fit and complexity as a penalty changes the model's bias–variance trade-off.",
+    "sourceRefs": [
+      {
+        "sourceId": "DSA5105/syllabus.pdf",
+        "page": 1,
+        "sourceType": "lecture",
+        "role": "current scope",
+        "status": "current"
+      },
+      {
+        "sourceId": "DSA5105/Textbook.pdf",
+        "page": 29,
+        "sourceType": "textbook",
+        "role": "ridge and lasso depth",
+        "status": "course-depth"
+      }
+    ],
+    "initialState": {
+      "complexity": 42
+    },
+    "reducedMotion": true,
+    "explanation": "A useful penalty is selected by held-out evidence: stronger regularization can reduce variance while increasing bias."
+  },
   "dsa5105-svm-margin": {
     "courseCode": "DSA5105",
     "lessonId": "dsa5105-svm-margin",
@@ -54,6 +195,78 @@
     },
     "reducedMotion": true,
     "explanation": "Support vectors anchor the boundary; changing the margin changes the trade-off between fit and robustness."
+  },
+  "dsa5105-kernel-pca-cluster": {
+    "courseCode": "DSA5105",
+    "lessonId": "dsa5105-kernel-pca-cluster",
+    "type": "concept-map",
+    "title": "Unsupervised-method concept map",
+    "learningGoal": "Choose among kernel geometry, PCA compression, K-means grouping, and GMM uncertainty by the question being asked.",
+    "sourceRefs": [
+      {
+        "sourceId": "DSA5105/syllabus.pdf",
+        "page": 1,
+        "sourceType": "lecture",
+        "role": "current scope",
+        "status": "current"
+      },
+      {
+        "sourceId": "DSA5105/Textbook.pdf",
+        "page": 82,
+        "sourceType": "textbook",
+        "role": "PCA depth",
+        "status": "course-depth"
+      },
+      {
+        "sourceId": "DSA5105/Textbook.pdf",
+        "page": 98,
+        "sourceType": "textbook",
+        "role": "GMM depth",
+        "status": "course-depth"
+      }
+    ],
+    "nodes": [
+      {
+        "id": "kernel",
+        "label": "Kernel",
+        "detail": "Compare implicit feature-space geometry."
+      },
+      {
+        "id": "pca",
+        "label": "PCA",
+        "detail": "Compress while preserving variance."
+      },
+      {
+        "id": "kmeans",
+        "label": "K-means",
+        "detail": "Assign each point to one nearest centroid."
+      },
+      {
+        "id": "gmm",
+        "label": "GMM",
+        "detail": "Return soft posterior responsibilities."
+      }
+    ],
+    "edges": [
+      [
+        "kernel",
+        "pca"
+      ],
+      [
+        "pca",
+        "kmeans"
+      ],
+      [
+        "kmeans",
+        "gmm"
+      ]
+    ],
+    "requiredChoice": "gmm",
+    "initialState": {
+      "choice": null
+    },
+    "reducedMotion": true,
+    "explanation": "The map is a method-selection exercise: output and objective matter more than memorizing algorithm names."
   },
   "dsa5105-pca-deep-dive": {
     "courseCode": "DSA5105",
@@ -744,6 +957,76 @@
     },
     "reducedMotion": true,
     "explanation": "The same regularized-linear-algebra theme appears in three exam formats: normal equations, KKT blocks, and LOO shortcuts."
+  },
+  "dsa5105-rl-gnn": {
+    "courseCode": "DSA5105",
+    "lessonId": "dsa5105-rl-gnn",
+    "type": "concept-map",
+    "title": "RL and GNN information-flow map",
+    "learningGoal": "Distinguish value propagation over transitions from representation propagation over graph neighbors.",
+    "sourceRefs": [
+      {
+        "sourceId": "DSA5105/syllabus.pdf",
+        "page": 1,
+        "sourceType": "lecture",
+        "role": "current scope",
+        "status": "current"
+      },
+      {
+        "sourceId": "DSA5105/Ref/Chapter3_Graph_Neural_Networks.pdf",
+        "page": 1,
+        "sourceType": "ref",
+        "role": "optional GNN reading",
+        "status": "optional"
+      }
+    ],
+    "nodes": [
+      {
+        "id": "state",
+        "label": "State",
+        "detail": "The current decision context."
+      },
+      {
+        "id": "bellman",
+        "label": "Bellman",
+        "detail": "Back up reward plus discounted continuation value."
+      },
+      {
+        "id": "message",
+        "label": "Message",
+        "detail": "Transform a neighbor representation."
+      },
+      {
+        "id": "aggregate",
+        "label": "Aggregate",
+        "detail": "Combine the neighbor set invariantly."
+      },
+      {
+        "id": "update",
+        "label": "Update",
+        "detail": "Mix the aggregate with the node state."
+      }
+    ],
+    "edges": [
+      [
+        "state",
+        "bellman"
+      ],
+      [
+        "message",
+        "aggregate"
+      ],
+      [
+        "aggregate",
+        "update"
+      ]
+    ],
+    "requiredChoice": "aggregate",
+    "initialState": {
+      "choice": null
+    },
+    "reducedMotion": true,
+    "explanation": "Both systems move information locally, but RL follows possible transitions while a GNN follows observed edges."
   },
   "dsa5105-rl-bellman": {
     "courseCode": "DSA5105",

@@ -1604,6 +1604,20 @@ body.nus-reading-mode .nus-study-compass { position:sticky; top:16px; z-index:20
 .nus-badge.unlocked { border-color:color-mix(in srgb, var(--sage) 55%, var(--line)); }
 .nus-lab { position:relative; overflow:hidden; margin:20px 0 26px; padding:clamp(20px, 3vw, 30px); border:1px solid color-mix(in srgb, var(--gold) 36%, var(--line)); border-radius:var(--radius); background:linear-gradient(145deg, color-mix(in srgb, var(--nus-blue) 9%, var(--panel)), color-mix(in srgb, var(--violet) 8%, var(--panel))); box-shadow:0 20px 42px -36px var(--shadow); }
 .nus-lab::before { position:absolute; inset:0 0 auto; height:3px; content:""; background:linear-gradient(90deg, var(--gold), var(--violet), var(--sage)); }
+.nus-concept-map { display:grid; grid-template-columns:repeat(auto-fit, minmax(140px, 1fr)); gap:10px; margin:16px 0; }
+.nus-concept-node, .nus-decision-branch { border:1px solid var(--line); border-radius:10px; background:color-mix(in srgb, var(--panel) 84%, transparent); color:var(--ink); text-align:left; cursor:pointer; font:inherit; }
+.nus-concept-node { display:grid; gap:7px; min-height:92px; padding:13px; }
+.nus-concept-node span, .nus-decision-branch small { color:var(--ink-mute); font-size:12px; line-height:1.45; }
+.nus-concept-node.is-selected, .nus-decision-branch.is-selected { border-color:var(--gold); background:color-mix(in srgb, var(--gold) 11%, var(--panel)); box-shadow:0 0 0 2px color-mix(in srgb, var(--gold) 18%, transparent); }
+.nus-concept-edges { display:flex; flex-wrap:wrap; gap:7px; margin:12px 0; }
+.nus-concept-edges span { padding:5px 8px; border-radius:99px; background:color-mix(in srgb, var(--violet) 12%, transparent); color:var(--ink-soft); font:11px var(--font-mono); }
+.nus-concept-edges i { color:var(--gold); font-style:normal; }
+.nus-decision-tree { display:grid; gap:10px; margin:16px 0; }
+.nus-decision-branch { display:grid; grid-template-columns:minmax(0, 1fr) minmax(90px, 160px) auto; align-items:center; gap:12px; padding:11px 13px; }
+.nus-decision-branch span { display:grid; gap:4px; }
+.nus-decision-branch i { display:block; height:7px; overflow:hidden; border-radius:99px; background:var(--line); }
+.nus-decision-branch i b { display:block; height:100%; border-radius:inherit; background:linear-gradient(90deg, var(--sage), var(--rust)); }
+.nus-decision-branch em { color:var(--ink-mute); font:11px var(--font-mono); font-style:normal; }
 .nus-lab-head, .nus-lab-controls { display:flex; align-items:center; justify-content:space-between; gap:16px; flex-wrap:wrap; }
 .nus-lab-head h3 { margin:8px 0 0; font-family:var(--font-disp); font-size:23px; font-weight:500; }
 .nus-lab-goal { max-width:760px; margin:13px 0 20px; color:var(--ink-soft); line-height:1.6; }

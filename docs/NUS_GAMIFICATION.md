@@ -75,8 +75,10 @@ Every visual lab in `data/nus/visual-labs.js` declares:
 | `algorithm-trace` | GMM / EM | Alternate E-step and M-step reasoning |
 | `event-timeline` | Bellman backup | Separate reward from continuation value |
 | `pipeline-builder` | GNN message passing | Build message → aggregate → update |
+| `concept-map` | Kernel/PCA/cluster; RL/GNN | Select the concept that matches the output and information flow |
+| `decision-tree` | Generalization protocol | Choose validation evidence without test leakage |
 
-The contract is intentionally small so future templates such as `ConceptMap`, `DecisionTree`, `AlgorithmTrace`, `DistributionExplorer`, `MistakeClinic`, `ExamReadiness`, and `SourceLens` can share the same source and completion rules.
+All 22 DSA5105 lessons now resolve to a visual lab. The contract is intentionally small so future templates such as `DistributionExplorer`, `MistakeClinic`, `ExamReadiness`, and `SourceLens` can share the same source and completion rules.
 
 ## Delivery roadmap
 

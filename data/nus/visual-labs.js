@@ -116,6 +116,40 @@
       sourceRefs: [textbook(29, "kernel ridge"), reference("DSA5105/Ref/document.pdf", "LS-SVM and LOO alignment")],
       steps: [["Ridge", "(Phi^T Phi+lambda I)w=Phi^T y", "Regularization shifts the normal-matrix spectrum."], ["KKT", "[0 y^T; y K+gamma^-1 I][b;alpha]=[0;1]", "LS-SVM equality constraints produce a block linear system."], ["Hat matrix", "y_hat=Hy", "The diagonal H_ii measures self-influence or leverage."], ["LOO", "e_i^LOO=(y_i-y_hat_i)/(1-H_ii)", "Correct the in-sample residual without refitting N separate models."]],
       initialState: { step: 0 }, check: state => state.step >= 3, reducedMotion: true, explanation: "The same regularized-linear-algebra theme appears in three exam formats: normal equations, KKT blocks, and LOO shortcuts."
+    },
+    "dsa5105-linear-week1": {
+      courseCode: "DSA5105", lessonId: "dsa5105-linear-week1", type: "derivation-trace", title: "Linear-model reasoning trace",
+      learningGoal: "Move from a hypothesis space to an objective, a closed-form fit, and a regularized extension.",
+      sourceRefs: [lecture(1, "Week 1 scope"), textbook(18, "linear basis depth"), textbook(29, "regularization depth")],
+      steps: [["Hypothesis", "f(x)=w_0+w_1x", "Start by naming the function class and its parameters."], ["Loss", "R_hat(w)=1/N sum_i l(f_w(x_i),y_i)", "ERM averages the observed losses; it does not directly reveal population risk."], ["OLS", "w_hat=(X^T X)^-1 X^T y", "Full column rank is the assumption behind uniqueness."], ["Ridge", "w_hat=(X^T X+lambda I)^-1 X^T y", "The penalty stabilizes directions that OLS cannot identify well."]],
+      initialState: { step: 0 }, check: state => state.step >= 3, reducedMotion: true, explanation: "A formula is easier to remember when the model, loss, assumption, and extension are kept as separate moves."
+    },
+    "dsa5105-learning-theory": {
+      courseCode: "DSA5105", lessonId: "dsa5105-learning-theory", type: "decision-tree", title: "Generalization decision tree",
+      learningGoal: "Choose the next evaluation move when training fit and held-out evidence disagree.",
+      sourceRefs: [lecture(1, "current scope"), textbook(70, "PAC and risk"), reference("DSA5105/Ref/Understanding_Machine_Learning_From_Theory_to_Algorithms.pdf", "optional theory")],
+      splits: [{ id: "memorize", label: "Training error is lowest", impurity: 92, detail: "Do not stop: this can be sample-specific fit." }, { id: "balanced", label: "Validation risk is lowest", impurity: 24, detail: "Use validation for model selection, then reserve test for the final estimate." }, { id: "ignore", label: "Test score is convenient", impurity: 86, detail: "Repeated test inspection leaks information into selection." }],
+      requiredChoice: "balanced", initialState: { choice: null }, check: state => state.choice === "balanced", reducedMotion: true, explanation: "The right branch is defined by the evaluation protocol, not by whichever score is easiest to optimize."
+    },
+    "dsa5105-linear-regularization": {
+      courseCode: "DSA5105", lessonId: "dsa5105-linear-regularization", type: "compare", title: "Regularization trade-off explorer",
+      learningGoal: "Compare fit and complexity as a penalty changes the model's bias–variance trade-off.",
+      sourceRefs: [lecture(1, "current scope"), textbook(29, "ridge and lasso depth")],
+      initialState: { complexity: 42 }, check: state => state.complexity >= 35 && state.complexity <= 80, reducedMotion: true, explanation: "A useful penalty is selected by held-out evidence: stronger regularization can reduce variance while increasing bias."
+    },
+    "dsa5105-kernel-pca-cluster": {
+      courseCode: "DSA5105", lessonId: "dsa5105-kernel-pca-cluster", type: "concept-map", title: "Unsupervised-method concept map",
+      learningGoal: "Choose among kernel geometry, PCA compression, K-means grouping, and GMM uncertainty by the question being asked.",
+      sourceRefs: [lecture(1, "current scope"), textbook(82, "PCA depth"), textbook(98, "GMM depth")],
+      nodes: [{ id: "kernel", label: "Kernel", detail: "Compare implicit feature-space geometry." }, { id: "pca", label: "PCA", detail: "Compress while preserving variance." }, { id: "kmeans", label: "K-means", detail: "Assign each point to one nearest centroid." }, { id: "gmm", label: "GMM", detail: "Return soft posterior responsibilities." }],
+      edges: [["kernel", "pca"], ["pca", "kmeans"], ["kmeans", "gmm"]], requiredChoice: "gmm", initialState: { choice: null }, check: state => state.choice === "gmm", reducedMotion: true, explanation: "The map is a method-selection exercise: output and objective matter more than memorizing algorithm names."
+    },
+    "dsa5105-rl-gnn": {
+      courseCode: "DSA5105", lessonId: "dsa5105-rl-gnn", type: "concept-map", title: "RL and GNN information-flow map",
+      learningGoal: "Distinguish value propagation over transitions from representation propagation over graph neighbors.",
+      sourceRefs: [lecture(1, "current scope"), reference("DSA5105/Ref/Chapter3_Graph_Neural_Networks.pdf", "optional GNN reading")],
+      nodes: [{ id: "state", label: "State", detail: "The current decision context." }, { id: "bellman", label: "Bellman", detail: "Back up reward plus discounted continuation value." }, { id: "message", label: "Message", detail: "Transform a neighbor representation." }, { id: "aggregate", label: "Aggregate", detail: "Combine the neighbor set invariantly." }, { id: "update", label: "Update", detail: "Mix the aggregate with the node state." }],
+      edges: [["state", "bellman"], ["message", "aggregate"], ["aggregate", "update"]], requiredChoice: "aggregate", initialState: { choice: null }, check: state => state.choice === "aggregate", reducedMotion: true, explanation: "Both systems move information locally, but RL follows possible transitions while a GNN follows observed edges."
     }
   };
 })();

@@ -6,7 +6,8 @@
   const shell = (lab, body) => `<section class="nus-lab nus-lab-${esc(lab.type)} reveal" data-nus-lab="${esc(lab.lessonId)}" data-reduced-motion="${lab.reducedMotion ? "true" : "false"}" aria-labelledby="nus-lab-title-${esc(lab.lessonId)}"><header class="nus-lab-head"><div><span class="pill violet">Visual learning lab</span><h3 id="nus-lab-title-${esc(lab.lessonId)}">${esc(lab.title)}</h3></div><span class="nus-lab-status" data-lab-status aria-live="polite">Not attempted</span></header><p class="nus-lab-goal"><b>Learning goal</b> ${esc(lab.learningGoal)}</p>${body}<footer class="nus-lab-foot"><div><b>Source lens</b><span class="nus-lab-source-note">Lecture remains the exam-priority core. Textbook and reference steps are labeled for depth.</span></div><div class="nus-lab-sources">${sourceRefs(lab)}</div><details><summary>Why this interaction?</summary><p>${esc(lab.explanation || "Use the controls to make one explicit reasoning move, then explain the evidence.")}</p></details></footer></section>`;
   function complete(lab, root) {
     const input = root.querySelector("input[type=range]"), steps = [...root.querySelectorAll("[data-step]")];
-    const state = { complexity: input && input.id.includes("complexity") ? Number(input.value) : null, margin: input && input.id.includes("margin") ? Number(input.value) : null, step: Math.max(0, steps.findIndex(step => step.classList.contains("active"))) };
+    const selected = root.querySelector("[data-lab-choice].is-selected");
+    const state = { complexity: input && input.id.includes("complexity") ? Number(input.value) : null, margin: input && input.id.includes("margin") ? Number(input.value) : null, choice: selected ? selected.dataset.labChoice : null, step: Math.max(0, steps.findIndex(step => step.classList.contains("active"))) };
     if (typeof lab.check === "function" && !lab.check(state)) {
       const status = root.querySelector("[data-lab-status]");
       if (status) status.textContent = "Complete the reasoning step first";
@@ -64,6 +65,14 @@
     ];
     return shell(lab, `<div class="nus-lab-controls"><span class="nus-lab-step-count" data-step-count>Stage 1 of ${steps.length}</span><button class="btn primary" type="button" data-lab-next>Build next stage</button></div><div class="nus-lab-stage nus-pipeline-builder">${steps.map((step, i) => `<article class="nus-lab-node ${i === 0 ? "active" : ""}" data-step="${i}"><span>${i + 1}</span><b>${step[0]}</b><p>${step[1]}</p></article>`).join("")}</div><p class="nus-lab-status-text" data-step-summary aria-live="polite">One layer should preserve the fact that neighbors form a set.</p>`);
   }
+  function conceptMap(lab) {
+    const nodes = lab.nodes || [], edges = lab.edges || [];
+    return shell(lab, `<div class="nus-lab-controls"><span class="nus-lab-step-count">Select one node and explain its role</span><button class="btn primary" type="button" data-lab-complete>Commit concept</button></div><div class="nus-concept-map" role="list" aria-label="Concept map">${nodes.map(node => `<button class="nus-concept-node" type="button" role="listitem" data-lab-choice="${esc(node.id)}" aria-pressed="false"><b>${esc(node.label)}</b><span>${esc(node.detail)}</span></button>`).join("")}</div><div class="nus-concept-edges" aria-label="Concept relationships">${edges.map(edge => `<span>${esc(edge[0])} <i>→</i> ${esc(edge[1])}</span>`).join("")}</div><p class="nus-lab-status-text" data-concept-summary aria-live="polite">Select a node to inspect its role in the learning pipeline.</p>`);
+  }
+  function decisionTree(lab) {
+    const splits = lab.splits || [];
+    return shell(lab, `<div class="nus-lab-controls"><span class="nus-lab-step-count">Choose the evidence-respecting branch</span><button class="btn primary" type="button" data-lab-complete>Commit branch</button></div><div class="nus-decision-tree" role="list" aria-label="Evaluation decision branches">${splits.map(split => `<button class="nus-decision-branch" type="button" role="listitem" data-lab-choice="${esc(split.id)}" aria-pressed="false"><span><b>${esc(split.label)}</b><small>${esc(split.detail)}</small></span><i><b style="width:${Math.max(0, Math.min(100, split.impurity))}%"></b></i><em>risk ${esc(split.impurity)}</em></button>`).join("")}</div><p class="nus-lab-status-text" data-decision-summary aria-live="polite">Lower impurity is useful only when the split respects the train/validation/test protocol.</p>`);
+  }
   function updateCompare(lab, root) {
     const value = Number(root.querySelector("input[type=range]").value);
     const train = Math.round(12 + Math.abs(value - 76) * 0.22), valid = Math.round(18 + Math.abs(value - 55) * 0.2 + Math.max(0, value - 70) * 0.25);
@@ -96,7 +105,9 @@
     .register("algorithm-trace", algorithmTrace)
     .register("derivation-trace", derivationTrace)
     .register("event-timeline", eventTimeline)
-    .register("pipeline-builder", pipeline);
+    .register("pipeline-builder", pipeline)
+    .register("concept-map", conceptMap)
+    .register("decision-tree", decisionTree);
   function renderLab(lesson, lab) {
     if (!lab || !lesson) return "";
     const renderer = registry.get(lab.type);
@@ -111,6 +122,12 @@
       if (lab.type === "geometry" && range) { range.addEventListener("input", () => updateGeometry(labRoot)); updateGeometry(labRoot); }
       labRoot.querySelector("[data-lab-complete]")?.addEventListener("click", () => complete(lab, labRoot));
       labRoot.querySelector("[data-lab-next]")?.addEventListener("click", () => advance(labRoot, lab));
+      labRoot.querySelectorAll("[data-lab-choice]").forEach(choice => choice.addEventListener("click", () => {
+        labRoot.querySelectorAll("[data-lab-choice]").forEach(item => { item.classList.remove("is-selected"); item.setAttribute("aria-pressed", "false"); });
+        choice.classList.add("is-selected"); choice.setAttribute("aria-pressed", "true");
+        const summary = labRoot.querySelector("[data-concept-summary], [data-decision-summary]");
+        if (summary) summary.textContent = choice.querySelector("b")?.textContent ? `Selected: ${choice.querySelector("b").textContent}. Commit when you can explain why.` : "Selected. Commit when you can explain why.";
+      }));
     });
   }
   window.NUS_COMPONENTS = { renderLab, bind, labRegistry: registry };
