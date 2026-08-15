@@ -95,6 +95,10 @@
     if (packageData && packageData.sources) return packageData.sources.slice();
     return [course.lectureSources || [], course.textbookSources || [], course.referenceSources || []].flat();
   }
+  function getTextbook(courseId) {
+    const packageData = courseId && coursePackage(courseId);
+    return packageData && packageData.textbook ? packageData.textbook : null;
+  }
 
   return Object.freeze({
     getCourse,
@@ -107,6 +111,7 @@
     getVisual,
     getSchedule,
     getSourceCatalog,
+    getTextbook,
     packageLoaded,
     needsLoad,
     registerPackage,

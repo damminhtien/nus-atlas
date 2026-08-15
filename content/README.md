@@ -9,6 +9,8 @@ Each migrated package keeps the content graph explicit:
 - `course.json`, `modules/*.json`, and `lessons/*.json` define curriculum structure.
 - `questions/*.json` and `artifacts/*.json` are joined by lesson/question IDs during the build.
 - `sources.json` preserves source type, page, role, and status.
+- `textbook.json` stores a copyright-safe chapter/section index with textbook page refs;
+  it is kept separate from lecture lessons and never includes raw textbook prose.
 - `labs/` and `visuals.json` link interactive material without embedding renderer code in lessons.
 
 The browser bundle under `data/nus/generated/` is generated with:
