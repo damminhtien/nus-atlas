@@ -19,6 +19,44 @@
     notFound
   } = options;
   let keyboardHandler = null;
+  const FOCUS_MODE_KEY = "nus.slide-focus-mode";
+
+  function focusModeOn() {
+    try {
+      return typeof localStorage !== "undefined" && localStorage.getItem(FOCUS_MODE_KEY) === "on";
+    } catch (error) {
+      return false;
+    }
+  }
+
+  function updateFocusButton() {
+    const toggle = root && typeof root.querySelector === "function" ? root.querySelector("#nus-toggle-focus") : null;
+    if (!toggle) return;
+    const enabled = focusModeOn();
+    if (typeof toggle.setAttribute === "function") {
+      toggle.setAttribute("aria-pressed", String(enabled));
+      toggle.setAttribute("aria-label", enabled ? "Exit focus reading" : "Enter focus reading");
+    }
+    toggle.innerHTML = `${enabled ? "Exit focus reading" : "Focus reading"} <kbd>F</kbd>`;
+  }
+
+  function setFocusMode(enabled) {
+    try {
+      if (typeof localStorage !== "undefined") localStorage.setItem(FOCUS_MODE_KEY, enabled ? "on" : "off");
+    } catch (error) {
+      // Private browsing or a locked-down browser may reject persistence.
+    }
+    if (typeof document !== "undefined" && document.body) document.body.classList.toggle("nus-slide-focus-mode", enabled);
+    if (enabled && root && typeof root.querySelector === "function") {
+      const sourcePanel = root.querySelector("#nus-slide-source-panel");
+      if (sourcePanel) sourcePanel.open = false;
+    }
+    updateFocusButton();
+  }
+
+  function clearFocusMode() {
+    if (typeof document !== "undefined" && document.body) document.body.classList.remove("nus-slide-focus-mode");
+  }
 
   function slideLink(slideSet, slide) {
     return `#/nus/slides/${encodeURIComponent(slideSet.courseId)}/${encodeURIComponent(slideSet.id)}/${slide.slideNumber}`;
@@ -137,6 +175,11 @@
           event.preventDefault();
           panel.open = !panel.open;
         }
+        return;
+      }
+      if (key === "f") {
+        event.preventDefault();
+        setFocusMode(!focusModeOn());
       }
     };
     document.addEventListener("keydown", keyboardHandler);
@@ -144,6 +187,7 @@
 
   function render(courseCode, slideSetId, rawSlideNumber) {
     removeKeyboard();
+    setFocusMode(focusModeOn());
     const course = getCourse(courseCode);
     const slideSet = getSlideSet(courseCode, slideSetId);
     if (!course || !slideSet) return notFound();
@@ -154,7 +198,7 @@
     const textbook = typeof getTextbook === "function" ? getTextbook(courseCode) : null;
     const lessonIds = Array.isArray(slideSet.lessonIds) ? slideSet.lessonIds : [];
     let body = `<div class="nus-slide-reader-page">${pageHead(`${course.code} · Week 1 · slide ${slide.slideNumber}/${slideSet.slides.length}`, slide.title, slideSet.summary)}`;
-    body += `<div class="nus-lesson-actions"><div class="nus-slide-study-actions">${button("← Lesson", `#/nus/lesson/${course.code}/${lessonIds[0] || "dsa5105-erm"}`, "ghost")}${button("Course map", `#/nus/course/${course.code}`, "ghost")}${button("Practice lesson", `#/nus/exam/${course.code}/${lessonIds[0] || "dsa5105-erm"}`, "primary")}<button class="btn ghost" id="nus-toggle-source" type="button" aria-controls="nus-slide-source-panel">Source layer <kbd>I</kbd></button></div><span class="nus-slide-key-hint"><kbd>←</kbd><kbd>→</kbd> or <kbd>J</kbd><kbd>K</kbd> switch slides · <kbd>I</kbd> source</span>${slideNavigation(slideSet, index)}</div>`;
+    body += `<div class="nus-lesson-actions"><div class="nus-slide-study-actions">${button("← Lesson", `#/nus/lesson/${course.code}/${lessonIds[0] || "dsa5105-erm"}`, "ghost")}${button("Course map", `#/nus/course/${course.code}`, "ghost")}${button("Practice lesson", `#/nus/exam/${course.code}/${lessonIds[0] || "dsa5105-erm"}`, "primary")}<button class="btn ghost" id="nus-toggle-focus" type="button" aria-pressed="${focusModeOn()}" aria-label="${focusModeOn() ? "Exit focus reading" : "Enter focus reading"}">${focusModeOn() ? "Exit focus reading" : "Focus reading"} <kbd>F</kbd></button><button class="btn ghost" id="nus-toggle-source" type="button" aria-controls="nus-slide-source-panel">Source layer <kbd>I</kbd></button></div><span class="nus-slide-key-hint"><kbd>←</kbd><kbd>→</kbd> or <kbd>J</kbd><kbd>K</kbd> switch slides · <kbd>F</kbd> focus · <kbd>I</kbd> source</span>${slideNavigation(slideSet, index)}</div>`;
     body += sourcePanel(slide, source);
     body += `<div class="nus-slide-reader-grid"><aside class="nus-slide-strip" aria-label="Week 1 slides"><div class="nus-slide-strip-head"><b>All slides</b><span>${slideSet.slides.length} pages</span></div>${slideSet.slides.map(item => `<a class="nus-slide-thumb ${item.slideNumber === slide.slideNumber ? "active" : ""}" href="${slideLink(slideSet, item)}" data-route aria-label="Slide ${item.slideNumber}: ${esc(item.title)}"><img loading="lazy" src="${esc(item.assetPath)}" alt=""><span><b>${String(item.slideNumber).padStart(2, "0")}</b><small>${esc(item.title)}</small></span></a>`).join("")}</aside><main class="nus-slide-main"><section class="nus-slide-canvas nus-card"><div class="nus-slide-canvas-head"><span>${sourceBadge(slide.sourceRef)}</span><span class="nus-muted">${esc(slide.kind)} · ${esc(slide.status)} · ${slide.slideNumber}/${slideSet.slides.length}</span></div><img src="${esc(slide.assetPath)}" alt="${esc(slide.title)} — slide ${slide.slideNumber}" class="nus-slide-image"><p class="nus-slide-caption">Rendered from <code>${esc(source.sourceId || slide.sourceRef.sourceId)}</code>, page ${slide.pdfPage}. The image is the visual reference; the source layer above can be opened when you need to audit extraction.</p></section></main><aside class="nus-slide-context"><section class="nus-card nus-slide-explanation"><div class="nus-slide-section-head"><div><span class="eyebrow">Atlas layer</span><h3>Explanation</h3></div><span class="pill violet">Derived note</span></div>${explanation(slide)}</section><section class="nus-card nus-slide-socratic"><div class="nus-slide-section-head"><div><span class="eyebrow">Active recall</span><h3>Socratic questions</h3></div><span class="pill gold">${(slide.socraticQuestions || []).length} prompts</span></div><p class="nus-muted">Answer before opening the hint or strong answer.</p>${questions(slide)}</section><section class="nus-card nus-slide-depth" id="nus-slide-textbook-map"><div class="nus-slide-section-head"><div><span class="eyebrow">Parallel reading</span><h3>Textbook bridge</h3></div><span class="pill sage">${(slide.textbookRefs || []).length} mapped</span></div>${textbookMapping(slide, textbook)}${textbookReadingLens(slide, textbook)}<div class="nus-slide-reference-group"><h4>Reference layer</h4>${referenceList(slide.referenceRefs)}</div><p class="nus-muted">Lecture remains the exam-priority source. Textbook and reference material add depth; they do not rewrite the lecture.</p></section></aside></div>`;
     body += `<div class="nus-slide-bottom">${slideNavigation(slideSet, index)}</div></div>`;
@@ -167,9 +211,10 @@
       const panel = root.querySelector("#nus-slide-source-panel");
       if (panel) panel.open = !panel.open;
     });
+    root.querySelector("#nus-toggle-focus")?.addEventListener("click", () => setFocusMode(!focusModeOn()));
     root.querySelectorAll(".nus-slide-thumb").forEach(item => item.addEventListener("click", () => window.scrollTo({ top: 0, behavior: "smooth" })));
     bindKeyboard(slideSet, index);
   }
 
-  return Object.freeze({ render });
+  return Object.freeze({ clearFocusMode, render });
 });

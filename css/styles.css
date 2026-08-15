@@ -1833,3 +1833,19 @@ body.nus-reading-mode .nus-study-compass { position:sticky; top:16px; z-index:20
   .nus-slide-reader-page .nus-slide-caption { display:none; }
 }
 @media (max-width:760px) { #app.nus-root:has(.nus-slide-reader-page) { padding-top:30px; padding-bottom:80px; }.nus-slide-reader-page .nus-slide-study-actions { width:100%; }.nus-slide-reader-page .nus-slide-key-hint { width:100%; }.nus-slide-reader-page .nus-slide-source-summary { grid-template-columns:auto minmax(0, 1fr); gap:8px 10px; }.nus-slide-reader-page .nus-slide-source-summary::before { grid-row:1 / span 2; }.nus-slide-reader-page .nus-slide-source-meta, .nus-slide-reader-page .nus-slide-source-action { grid-column:2; white-space:normal; }.nus-slide-reader-page .nus-slide-source-bar { display:grid; gap:10px; }.nus-slide-reader-page .nus-slide-reader-grid { height:auto; max-height:none; min-height:0; grid-template-columns:1fr; }.nus-slide-reader-page .nus-slide-strip { position:static; height:auto; max-height:220px; display:grid; grid-template-columns:repeat(2, minmax(0, 1fr)); gap:5px; overflow:auto; }.nus-slide-reader-page .nus-slide-strip-head { grid-column:1 / -1; }.nus-slide-reader-page .nus-slide-thumb { grid-template-columns:58px minmax(0, 1fr); }.nus-slide-reader-page .nus-slide-thumb img { width:58px; }.nus-slide-reader-page .nus-slide-main, .nus-slide-reader-page .nus-slide-context { height:auto; overflow:visible; }.nus-slide-reader-page .nus-slide-canvas { height:auto; }.nus-slide-reader-page .nus-slide-image { flex:none; height:auto; }.nus-slide-reader-page .nus-slide-context { grid-column:auto; grid-template-columns:1fr; padding-right:0; }.nus-slide-reader-page .nus-slide-context .nus-slide-socratic { grid-column:auto; }.nus-slide-reader-page .nus-slide-nav { align-items:stretch; }.nus-slide-reader-page .nus-slide-jump { order:-1; width:100%; }.nus-slide-reader-page .nus-slide-jump select { flex:1; max-width:none; }.nus-slide-reader-page .nus-slide-bottom { display:block; } }
+
+/* Slide focus reading keeps the visual reference and explanation in one calm workspace. */
+body.nus-slide-focus-mode .shell { display:block; }
+body.nus-slide-focus-mode .sidebar,
+body.nus-slide-focus-mode .topbar { display:none; }
+body.nus-slide-focus-mode .main { display:block; min-height:100vh; }
+body.nus-slide-focus-mode #app.nus-root { max-width:none; padding-top:28px; }
+body.nus-slide-focus-mode .nus-slide-strip { display:none; }
+body.nus-slide-focus-mode .nus-slide-reader-grid { grid-template-columns:minmax(0, 1fr) minmax(320px, 390px); gap:24px; }
+body.nus-slide-focus-mode .nus-slide-context { grid-column:auto; grid-template-columns:1fr; }
+body.nus-slide-focus-mode .nus-slide-context .nus-slide-socratic { grid-column:auto; }
+body.nus-slide-focus-mode .nus-slide-source-panel:not([open]) { display:none; }
+@media (max-width:760px) {
+  body.nus-slide-focus-mode #app.nus-root { padding-top:30px; }
+  body.nus-slide-focus-mode .nus-slide-reader-grid { grid-template-columns:1fr; }
+}

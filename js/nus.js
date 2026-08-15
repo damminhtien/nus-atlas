@@ -225,6 +225,7 @@
     stopExamTimer();
     const p = parts || [];
     if (p[0] !== "lesson") setReaderMode(false);
+    if (p[0] !== "slides") document.body.classList.remove("nus-slide-focus-mode");
     const handler = routeTable && routeTable.resolve(p);
     const result = handler ? handler(p) : renderNotFound();
     typesetNus();

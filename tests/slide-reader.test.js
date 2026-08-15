@@ -69,4 +69,6 @@ test("slide reader keeps source collapsed and resolves textbook annotations", ()
   assert.match(root.innerHTML, /Textbook reading lens/);
   assert.match(root.innerHTML, /slide 1/);
   assert.match(root.innerHTML, /Practice lesson/);
+  assert.match(root.innerHTML, /Focus reading/);
+  assert.match(root.innerHTML, /<kbd>F<\/kbd>/);
 });
