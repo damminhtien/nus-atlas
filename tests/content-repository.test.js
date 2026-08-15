@@ -19,6 +19,7 @@ function generatedPackage() {
   const context = { window: {} };
   context.window = context;
   vm.runInNewContext(fs.readFileSync(path.join(__dirname, "../data/nus/generated/content-manifest.js"), "utf8"), context);
+  vm.runInNewContext(fs.readFileSync(path.join(__dirname, "../data/nus/generated/dsa5105.js"), "utf8"), context);
   return context.NUS_CONTENT_PACKAGES;
 }
 
@@ -67,9 +68,9 @@ test("migrated package is preferred and joins ID-linked study artifacts", () => 
 test("browser script order installs the same repository boundary", () => {
   const files = [
     "data/nus/provenance.js", "data/nus/courses.js", "data/nus/schedule.js", "data/nus/assessments.js",
-    "data/nus/visuals.js", "data/nus/dsa5101.js", "data/nus/dsa5104.js", "data/nus/dsa5105.js",
+    "data/nus/visuals.js", "data/nus/dsa5101.js", "data/nus/dsa5104.js",
     "data/nus/generated/content-manifest.js", "data/nus/dsa5208.js", "data/nus/artifacts.js", "data/nus/formula-depth.js",
-    "data/nus/visual-labs.js", "src/core/content-repository.js"
+    "data/nus/visual-labs.js", "src/core/content-loader.js", "src/core/content-repository.js"
   ];
   const context = { console };
   context.window = context;
@@ -77,9 +78,12 @@ test("browser script order installs the same repository boundary", () => {
   files.forEach(file => vm.runInContext(fs.readFileSync(path.join(__dirname, "..", file), "utf8"), context, { filename: file }));
   const stats = context.NUS_REPOSITORY.stats();
   assert.equal(stats.courses, 4);
-  assert.equal(stats.lessons, 34);
+  assert.equal(stats.lessons, 12, "migrated course payload is not loaded at startup");
   assert.equal(stats.assessments, 12);
   assert.equal(stats.labs, 17);
+  vm.runInContext(fs.readFileSync(path.join(__dirname, "../data/nus/generated/dsa5105.js"), "utf8"), context, { filename: "data/nus/generated/dsa5105.js" });
+  context.NUS_REPOSITORY.registerPackage("DSA5105", context.NUS_CONTENT_PACKAGES.DSA5105);
+  assert.equal(context.NUS_REPOSITORY.stats().lessons, 34);
   assert.equal(context.NUS_REPOSITORY.getLesson("DSA5105", "dsa5105-erm").flashcards.length, 4);
 });
 
@@ -95,4 +99,25 @@ test("a package-only course is discoverable without changing the app shell", () 
   const repo = createContentRepository({ ...legacy, packages: packageOnly });
   assert.ok(repo.listCourses().some(course => course.code === "NEW5100"));
   assert.equal(repo.getLesson("NEW5100", "new-lesson").courseId, "NEW5100");
+});
+
+test("repository loads a metadata-only package through the injected loader", async () => {
+  const legacy = loadLegacyState();
+  const loaded = {
+    course: { code: "NEW5100", title: "New package course", schemaVersion: "nus.course.v1" },
+    content: { modules: [{ id: "new-module", lessons: [{ id: "new-lesson", title: "New lesson", sourceRefs: [{ sourceId: "new.pdf", page: 1 }], blocks: [{ type: "note" }], questionIds: [], labIds: [], schemaVersion: "nus.lesson.v1" }] }] },
+    assessments: [], sources: [], visuals: {}, labs: {}
+  };
+  let calls = 0;
+  const repo = createContentRepository({
+    ...legacy,
+    packages: { NEW5100: { ...loaded.course, course: loaded.course, asset: "new5100.js", counts: { lessons: 1 } } },
+    packageLoader: async courseId => { calls += 1; assert.equal(courseId, "NEW5100"); return loaded; }
+  });
+
+  assert.equal(repo.needsLoad("NEW5100"), true);
+  await repo.loadCourse("NEW5100");
+  assert.equal(calls, 1);
+  assert.equal(repo.needsLoad("NEW5100"), false);
+  assert.equal(repo.getLesson("NEW5100", "new-lesson").id, "new-lesson");
 });

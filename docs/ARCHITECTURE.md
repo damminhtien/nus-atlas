@@ -17,6 +17,8 @@ content/courses/<course>/
         ▼  scripts/content-build.js --all
 data/nus/generated/content-manifest.js
         │
+        ├── src/core/content-loader.js → data/nus/generated/<course>.js
+        │
         ▼
 src/core/content-repository.js
         │
@@ -55,9 +57,12 @@ than renderer-side mutations.
 2. Run `node scripts/content-build.js --all`.
 3. Run `node scripts/validate-content.js`, `node nus-gate.js`, and the tests.
 
-The generated content manifest is the only package script loaded by `index.html`.
-The Pages workflow rebuilds it before prerendering, so a migrated course does not
-need a new renderer, service-worker entry, or script tag.
+The generated content manifest is metadata-only and is the only package script
+loaded by `index.html`. `content-loader.js` fetches the per-course bundle when a
+course, lesson, or scoped exam route needs it. The Pages workflow loads every
+bundle for prerendering, so browser and static pages still use the same package
+shape. Course bundles are excluded from the service worker's eager asset list and
+are cached only after they are requested.
 
 The current manifest is intentionally a compatibility bundle. The next loading
 slice will separate course metadata from lesson payloads and add on-demand

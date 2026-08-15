@@ -101,6 +101,7 @@ The Pages workflow runs `node prerender.js` in CI, creates the static `dist/` ar
 
 - `index.html` — app shell and navigation.
 - `src/core/content-repository.js` — typed-compatible content boundary and legacy fallback.
+- `src/core/content-loader.js` — on-demand loader for generated course payloads.
 - `src/core/study-store.js` — versioned local study state, evidence, mastery, and migration.
 - `src/features/nus/route-table.js` — NUS route contract.
 - `src/features/nus/planner.js` / `src/features/nus/exam.js` — isolated planner and Exam Mode features.

@@ -112,7 +112,24 @@
   }) : null;
   function renderPlanner() { return plannerFeature ? plannerFeature.render() : renderNotFound(); }
 
+  function ensureCourseLoaded(code, onReady) {
+    const repo = repository();
+    if (!repo || typeof repo.needsLoad !== "function" || !repo.needsLoad(code)) return false;
+    const route = location.hash;
+    root.innerHTML = `<section class="nus-card reveal"><div class="eyebrow">Loading course package</div><h2>${esc(code)}</h2><p>Fetching the normalized lessons, questions, and study kit…</p></section>`;
+    repo.loadCourse(code).then(packageData => {
+      if (location.hash !== route) return;
+      if (packageData) onReady();
+      else root.innerHTML = `<section class="nus-card reveal"><div class="eyebrow">Course unavailable</div><h2>${esc(code)}</h2><p>The course package could not be loaded. The legacy adapter remains available for other courses.</p></section>`;
+    }).catch(error => {
+      if (location.hash !== route) return;
+      root.innerHTML = `<section class="nus-card reveal"><div class="eyebrow">Course unavailable</div><h2>${esc(code)}</h2><p>${esc(error.message || "The course package could not be loaded.")}</p></section>`;
+    });
+    return true;
+  }
+
   function renderCourse(code) {
+    if (ensureCourseLoaded(code, () => renderCourse(code))) return;
     const c = course(code);
     if (!c) return renderNotFound();
     let body = pageHead(c.code, c.title, c.description);
@@ -181,6 +198,7 @@
   }
 
   function renderLesson(code, id) {
+    if (ensureCourseLoaded(code, () => renderLesson(code, id))) return;
     const c = course(code), l = lesson(code, id);
     if (!c || !l) return renderNotFound();
     const done = window.NUS_STORE.lessonDone(l.id);
@@ -212,7 +230,10 @@
     typeset: typesetNus
   }) : null;
   function stopExamTimer() { if (examFeature) examFeature.stopTimer(); }
-  function renderExam(code, scope, internal) { return examFeature ? examFeature.render(code, scope, internal) : renderNotFound(); }
+  function renderExam(code, scope, internal) {
+    if (!internal && code && ensureCourseLoaded(code, () => renderExam(code, scope, false))) return;
+    return examFeature ? examFeature.render(code, scope, internal) : renderNotFound();
+  }
 
   function renderSql() {
     const spec = content("DSA5104").sqlPractice, ex = spec.exercises[sqlState.index];
