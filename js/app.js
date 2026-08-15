@@ -2981,19 +2981,50 @@
     btn.setAttribute("aria-pressed", c === "high" ? "true" : "false");
   }
 
-  // ---------- mobile sidebar ----------
+  // ---------- responsive sidebar ----------
+  const SIDEBAR_COLLAPSED_KEY = "atlas.sidebarCollapsed";
+  function isDesktopSidebar() { return window.innerWidth > 900; }
+  function updateSidebarToggle() {
+    const button = document.getElementById("menu-btn"); if (!button) return;
+    const collapsed = document.body.classList.contains("nus-sidebar-collapsed");
+    button.textContent = collapsed ? "→" : "☰";
+    button.setAttribute("aria-label", collapsed ? "Show left navigation" : "Hide left navigation");
+    button.title = collapsed ? "Show left navigation" : "Hide left navigation";
+    button.setAttribute("aria-expanded", collapsed ? "false" : "true");
+  }
+  function setSidebarCollapsed(collapsed) {
+    if (!isDesktopSidebar()) return;
+    document.body.classList.toggle("nus-sidebar-collapsed", collapsed);
+    try { localStorage.setItem(SIDEBAR_COLLAPSED_KEY, collapsed ? "1" : "0"); } catch (e) {}
+    updateSidebarToggle();
+  }
+  function openSidebar() {
+    const sb = document.getElementById("sidebar"); if (!sb || sb.classList.contains("open")) return;
+    sb.classList.add("open");
+    const sc = document.createElement("div"); sc.className = "scrim"; sc.id = "scrim";
+    sc.addEventListener("click", closeSidebar);
+    document.body.appendChild(sc);
+  }
+  function toggleSidebar() {
+    if (isDesktopSidebar()) return setSidebarCollapsed(!document.body.classList.contains("nus-sidebar-collapsed"));
+    openSidebar();
+  }
   function closeSidebar() {
     document.getElementById("sidebar").classList.remove("open");
     const s = document.getElementById("scrim"); if (s) s.remove();
+    updateSidebarToggle();
   }
   function initMobile() {
-    document.getElementById("menu-btn").addEventListener("click", () => {
-      const sb = document.getElementById("sidebar");
-      sb.classList.add("open");
-      const sc = document.createElement("div"); sc.className = "scrim"; sc.id = "scrim";
-      sc.addEventListener("click", closeSidebar);
-      document.body.appendChild(sc);
-    });
+    const button = document.getElementById("menu-btn"); if (!button) return;
+    button.addEventListener("click", toggleSidebar);
+    const sync = () => {
+      if (isDesktopSidebar()) {
+        try { if (localStorage.getItem(SIDEBAR_COLLAPSED_KEY) === "1") document.body.classList.add("nus-sidebar-collapsed"); } catch (e) {}
+      } else document.body.classList.remove("nus-sidebar-collapsed");
+      updateSidebarToggle();
+    };
+    sync();
+    window.addEventListener("resize", sync, { passive: true });
   }
 
   // ---------- keyboard shortcuts for the study loop ----------
@@ -3002,6 +3033,7 @@
     const tag = (e.target && e.target.tagName) || "";
     if (/INPUT|TEXTAREA|SELECT/.test(tag)) return;
     if (document.querySelector(".palette-scrim, .levelup-ov, .intro-ov, .sc-ov")) return; // a modal owns the keys
+    if (e.key === "\\") { e.preventDefault(); toggleSidebar(); return; }
     // flashcards: Space/Enter flips; once flipped, 1-4 grades
     const card = document.getElementById("card3d");
     if (card) {
@@ -3029,7 +3061,7 @@
   function showShortcuts() {
     if (shortcutsEl) return;
     const groups = [
-      ["Global", [["⌘K / Ctrl K", "Search anything — concepts, pages, and inside lessons"], ["?", "Show this shortcuts list"], ["Esc", "Close a dialog or overlay"]]],
+      ["Global", [["⌘K / Ctrl K", "Search anything — concepts, pages, and inside lessons"], ["\\", "Hide/show the left navigation"], ["?", "Show this shortcuts list"], ["Esc", "Close a dialog or overlay"]]],
       ["Lessons", [["[ / ]", "Previous · next lesson in this unit"]]],
       ["Quizzes & tests", [["1–4 / A–D", "Pick an answer"], ["Enter", "Next question · submit · continue"]]],
       ["Flashcards", [["Space / Enter", "Flip the card"], ["1–4", "Grade: Again · Hard · Good · Easy"]]],

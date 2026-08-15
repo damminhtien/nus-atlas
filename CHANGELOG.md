@@ -6,6 +6,10 @@ and refresh first-party asset URLs so browsers and the service worker pick up th
 
 ## [Unreleased]
 
+## [0.2.1] - 2026-08-15
+
+- Add collapsible reading navigation
+
 ## [0.2.0] - 2026-08-15
 
 - Add canonical release metadata and automatic cache refresh

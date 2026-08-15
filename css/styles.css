@@ -739,6 +739,14 @@ html, body, .sidebar, .palette-list { scrollbar-width: thin; scrollbar-color: co
 .menu-btn { display: none; }
 .topbar-search { display: none; }   /* one-tap search affordance, shown only when the sidebar collapses (mobile/tablet) */
 
+@media (min-width: 901px) {
+  .shell { transition: grid-template-columns .24s ease; }
+  .menu-btn { display:grid; place-items:center; width:38px; height:38px; flex:none; border:1px solid var(--line); border-radius:10px; background:var(--panel); color:var(--ink); cursor:pointer; font-size:19px; }
+  .menu-btn:hover { border-color:var(--gold); color:var(--gold); }
+  body.nus-sidebar-collapsed .shell { grid-template-columns:0 minmax(0, 1fr); }
+  body.nus-sidebar-collapsed .sidebar { width:0; min-width:0; padding:0; border-right:0; gap:0; opacity:0; pointer-events:none; overflow:hidden; }
+}
+
 /* ---------- responsive ---------- */
 @media (max-width: 900px) {
   .shell { grid-template-columns: 1fr; }
