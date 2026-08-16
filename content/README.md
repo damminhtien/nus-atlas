@@ -13,12 +13,13 @@ Each migrated package keeps the content graph explicit:
   it is kept separate from lecture lessons and never includes raw textbook prose.
 - `labs/` and `visuals.json` link interactive material without embedding renderer code in lessons.
 
-The browser bundle under `data/nus/generated/` is generated with:
+The deployment artifact under `dist/content/` is generated with:
 
 ```bash
-node scripts/content-build.js DSA5105
+npm run content:build
 ```
 
-It is a compatibility artifact. Edit the package JSON, then rebuild; do not edit
-the generated file directly. The repository adapter prefers a generated package
-and falls back to the legacy IIFE data while a course is being migrated.
+The compiler reads only the JSON under `content/` and never writes back into it.
+Edit canonical package JSON, then rebuild; never edit `dist/` or
+`data/nus/generated/` directly. Legacy IIFE data is migration input only and is
+not part of the canonical content pipeline.

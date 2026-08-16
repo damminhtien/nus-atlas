@@ -11,6 +11,22 @@ Rules:
 - Read graphify-out/GRAPH_REPORT.md only for broad architecture review or when query/path/explain do not surface enough context.
 - After modifying code, run `graphify update . --no-cluster` to keep the graph current (AST-only, no API cost).
 
+## Architecture invariants
+
+The repository follows `architecture/ownership.json` and these invariants:
+
+- `content/**` and `schemas/**` are authoritative; `Build(Content) -> dist`.
+- The compiler reads canonical content only and never writes into `content/**`.
+- `dist/**` and `data/nus/generated/**` are generated; never edit or stage them by hand.
+- Legacy `data/nus/**` is migration input only, never runtime truth for migrated courses.
+- Dashboard boot uses catalog/outline metadata; lesson payloads are lazy.
+- Feature code receives dependencies through composition boundaries and must not read `window.NUS_*` directly.
+- Graphify is for impact analysis, not correctness; schemas, deterministic validators, and tests are the truth layer.
+
+Before editing a Graphify result, classify the file as `canonical`, `source`, `legacy`, or
+`generated`. Trace legacy/generated results back to canonical source before making a patch.
+Use `npm run check:architecture` and `npm run check:source-clean` as release guards.
+
 ## Version and release workflow
 
 - `VERSION` is the canonical semantic version and must match `package.json`.
@@ -73,6 +89,13 @@ full logs, or the entire graph into the conversation.
 
 Do not run full-corpus extraction, broad memory reflection, or large-output commands by default. Escalate only when
 the focused workflow cannot answer the question or validate the change.
+
+### Content compiler workflow
+
+- `npm run content:migrate:legacy -- COURSE` is a one-way, explicit migration tool. It refuses to overwrite an existing course unless `--overwrite` is supplied.
+- `npm run content:build` compiles canonical JSON into content-addressed `dist/content/**`; it must leave `content/**`, `src/**`, and `schemas/**` byte-for-byte unchanged.
+- Keep the small catalog/outline payload separate from lesson, question, and study-kit shards. Do not restore the old all-course bundle pattern.
+- Run `npm run check:architecture`, `npm run content:build`, `npm run check:source-clean`, and the relevant purity/determinism tests after compiler changes.
 ## Token-efficient study workflow
 
 - For large local NUS sources, inspect an allowlisted course folder first; do not scan or commit the whole `/Users/macbook/Desktop/NUS` tree.
