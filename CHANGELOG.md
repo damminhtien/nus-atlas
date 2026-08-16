@@ -6,6 +6,10 @@ and refresh first-party asset URLs so browsers and the service worker pick up th
 
 ## [Unreleased]
 
+## [0.2.22] - 2026-08-16
+
+- Improve study readability
+
 ## [0.2.21] - 2026-08-16
 
 - Switch Atlas focus to DSA5208
