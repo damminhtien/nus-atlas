@@ -12,6 +12,11 @@ const IMAGE_ROOT = "assets/nus/dsa5105/week1-annotated";
 
 const MATH_SPANS = /(\$\$[\s\S]*?\$\$|\$(?:\\.|[^$])*?\$|\\\((?:\\.|[^)])*?\\\)|\\\[[\s\S]*?\\\])/g;
 const MATH_REPLACEMENTS = [
+  [/(?<!\\)\bsum_i\b/g, "$\\sum_i$"],
+  [/(?<!\\)\bargmax\b/g, "$\\operatorname{argmax}$"],
+  [/(?<!\\)\b(?:Phi|phi)\b/g, "$\\Phi$"],
+  [/(?<!\\)\bmu\b/g, "$\\mu$"],
+  [/(?<!\\)\blambda\b/g, "$\\lambda$"],
   [/\bcat=1, dog=2, and horse=3\b/g, "$\\text{cat}=1,\\;\\text{dog}=2,\\;\\text{horse}=3$"],
   [/\bD = \{\(x_i,y_i\)\} from i=1 to N\b/g, "$D=\\{(x_i,y_i)\\}_{i=1}^{N}$"],
   [/\bw-hat=\(Phi\^T Phi\)\^\(-1\)Phi\^T y\b/g, "$\\hat w=(\\Phi^\\top\\Phi)^{-1}\\Phi^\\top y$"],
@@ -184,6 +189,120 @@ const CLEAN_SLIDE_TEXT = {
   54: { questions: { 2: { prompt: String.raw`What is a numerically stable way to evaluate $\log(\sum_j\exp(z_j))$?`, answer: String.raw`Subtract the maximum logit before exponentiating, then add it back: $m+\log(\sum_j\exp(z_j-m))$.`, hint: String.raw`Use the log-sum-exp trick.` } } }
 };
 
+// Corrections for authored strings that previously mixed raw symbols with
+// inline math. Keeping these as source-side overrides makes the generated
+// slide package deterministic and lets the strict LaTeX gate inspect the
+// final reader text rather than a hand-edited JSON copy.
+const CLEAN_SLIDE_TEXT_PATCHES = {
+  4: { questions: { 0: { type: "explain", prompt: "Why must an ML definition name a measurable performance criterion before claiming that a system learned?", answer: "Without a declared criterion, there is no operational meaning of improvement and no fair way to compare experience before and after training.", hint: "Learning is a claim about change in performance, not just about producing an output." } } },
+  7: { questions: { 0: { type: "critique", prompt: "How would you distinguish a better model from a more impressive demonstration?", answer: "Hold the task, data conditions, and performance measure fixed, then require reproducible improvement on evidence beyond the examples used to create the demonstration.", hint: "Anecdotes do not define a learning curve." } } },
+  11: { questions: { 0: { type: "plan", prompt: "For a formula to be exam-ready, what must you know besides its symbols?", answer: "Know the quantity it computes, the assumptions that make it valid, the derivation move that produces it, and the failure mode that tells you when not to use it.", hint: "A formula is a tool with a contract." } } },
+  24: {
+    explanation: {
+      whatYouSee: String.raw`The slide contrasts empirical risk on the observed sample with population risk under $x\sim\mu$, labels the latter as what we really want, and shows a generalization gap between the fitted functions.`,
+      intuition: String.raw`ERM is a practical proxy because the data distribution $\mu$ is hidden. Generalization asks when that proxy is reliable.`,
+      technicalDetail: String.raw`$R_{\mathrm{pop}}(f)=\mathbb E_{x\sim\mu}[L(f(x),f^*(x))]$, while $\widehat R(f)$ averages over the finite sample. The iid assumption $x_i\overset{\mathrm{iid}}\sim\mu$ is a convenient theoretical starting point, not a universal truth.`,
+      connection: String.raw`Slide 25 decomposes the route from $f^*$ to the fitted $\hat f$; the textbook gives the population/empirical distinction and memorization example.`
+    },
+    questions: { 0: { answer: String.raw`The data distribution $\mu$ and oracle $f^*$ are unknown; we only observe a finite sample, so we use empirical risk as a proxy.` } }
+  },
+  29: {
+    explanation: { technicalDetail: String.raw`For $w_0$, the derivative gives $w_0=\bar y-w_1\bar x$. Substituting this into the $w_1$ derivative yields the covariance-like numerator over the variance-like denominator.` },
+    questions: {
+      0: { prompt: String.raw`Why does the optimal intercept satisfy $\hat w_0=\bar y-\hat w_1\bar x$?`, answer: String.raw`The derivative with respect to $w_0$ makes the average residual zero, so the fitted line passes through $(\bar x,\bar y)$.` },
+      1: { prompt: String.raw`What happens to the slope formula if all $x_i$ are equal?` }
+    }
+  },
+  30: {
+    questions: {
+      0: { answer: String.raw`The partial derivatives of empirical risk with respect to $w_0$ and $w_1$ are both zero.` },
+      1: { answer: String.raw`The centered denominator $\sum_i(x_i-\bar x)^2$ is nonzero.` }
+    }
+  },
+  31: {
+    explanation: {
+      pitfall: String.raw`Do not confuse the slope numerator with $\sum_i x_i y_i$ when an intercept is present; centering is essential.`,
+      connection: String.raw`The formula is the scalar precursor of $\hat w=(\Phi^\top\Phi)^{-1}\Phi^\top y$ on slide 46.`
+    }
+  },
+  36: { questions: { 0: { type: "diagnose", prompt: "If one point has an extreme residual, which fit should move more and why: squared-loss or Huber?", answer: "Squared loss should move more because its derivative grows with the residual, while Huber caps the per-observation derivative after the threshold.", hint: "Compare the derivatives, not only the plotted curves." } } },
+  43: {
+    explanation: {
+      intuition: String.raw`Each training example becomes a row of $\Phi$; each basis function becomes a column. Multiplying $\Phi w$ produces all $N$ predictions at once.`,
+      pitfall: String.raw`Do not write $\Phi$ as $M\times N$ when using the displayed convention, and do not multiply matrices without checking dimensions.`
+    },
+    questions: { 1: { answer: String.raw`It is $(\phi_0(x_i),\ldots,\phi_{M-1}(x_i))$. With examples as rows, $\Phi w$ produces all predictions and $\Phi^\top(\Phi w-y)$ collects feature-direction derivatives.` } }
+  },
+  44: {
+    explanation: {
+      technicalDetail: String.raw`Expanding $R(w)=\frac{1}{2N}\lVert\Phi w-y\rVert^2$ gives gradient $\frac{1}{N}\Phi^\top(\Phi w-y)$. Setting it to zero yields $\Phi^\top\Phi w=\Phi^\top y$. If $\Phi$ has full column rank, $\Phi^\top\Phi$ is invertible and the solution is unique.`,
+      pitfall: String.raw`Do not claim $\Phi^\top\Phi$ is invertible merely because $\Phi$ has entries. Check rank; duplicated or redundant basis columns can make it singular.`
+    }
+  },
+  45: {
+    questions: {
+      0: { prompt: String.raw`What condition must hold before writing $(\Phi^\top\Phi)^{-1}$?`, answer: String.raw`$\Phi^\top\Phi$ must be invertible, equivalently $\Phi$ must have full column rank under the displayed convention.` },
+      2: { answer: String.raw`The null space of $\Phi$, or equivalently the rank deficiency of the design matrix.` }
+    }
+  },
+  47: {
+    explanation: { technicalDetail: String.raw`$\Phi^\dagger$ is the Moore–Penrose pseudoinverse. $I-\Phi^\dagger\Phi$ projects $u$ onto directions invisible to $\Phi$. All members produce the same projection $\Phi w$, but norms and extrapolations can differ.` },
+    questions: { 0: { answer: String.raw`Their difference can lie in the null space of $\Phi$, so $\Phi(w_1-w_2)=0$.` }, 2: { answer: String.raw`A null-space component that does not change $\Phi w$ and therefore does not change the training fit.` } }
+  },
+  48: {
+    explanation: {
+      whatYouSee: String.raw`The slide adds $\lambda C(w)$ to the squared residual objective and lists $L_2$/ridge and $L_1$/lasso penalties.`,
+      intuition: String.raw`Among similarly fitting functions, prefer the one with smaller or simpler coefficients. $\lambda$ controls how strongly that preference competes with data fit.`,
+      pitfall: String.raw`Do not choose $\lambda$ from the test set, and do not assume $L_1$/$L_2$ have the same geometry or feature-selection behavior.`
+    },
+    questions: { 1: { prompt: String.raw`What happens as $\lambda$ becomes very large, and why is that not automatically desirable?`, answer: String.raw`The penalty dominates the fit term, shrinking coefficients toward zero and increasing bias. It can reduce variance but eventually underfit, so $\lambda$ must be selected with validation evidence.` } }
+  },
+  49: {
+    explanation: { pitfall: String.raw`Do not interpret smoother-looking curves as automatic proof of lower test error; $\lambda$ still requires validation and the target metric still matters.` },
+    questions: { 1: { answer: String.raw`The regularization strength $\lambda$, the basis scale, or the feature family; use validation rather than training fit alone.` } }
+  },
+  50: {
+    explanation: { whatYouSee: String.raw`The slide switches from scalar regression targets to $K$-class labels and represents the class $k_i$ target as the canonical one-hot vector $e_{k_i}\in\mathbb R^K$.`, technicalDetail: String.raw`For $K$ classes, $e_k$ has a 1 at coordinate $k$ and 0 elsewhere. The linear basis model will output a $K$-dimensional score vector for each $x$.` }
+  },
+  51: {
+    explanation: {
+      whatYouSee: String.raw`The slide defines a $K$-dimensional output using the same basis functions, with $w_j\in\mathbb R^K$ and $W\in\mathbb R^{M\times K}$, then writes a general ERM and asks which loss to choose.`,
+      technicalDetail: String.raw`With the displayed convention, $\phi(x)$ is an $M$-vector and $W^\top\phi(x)$ is $K$-dimensional. The loss receives this score vector and the one-hot or class-index target.`,
+      pitfall: String.raw`Do not confuse $W$'s row/column convention across derivations. Check whether scores are $W^\top\Phi(x)$ or $W\Phi(x)$ before multiplying.`
+    },
+    questions: { 0: { prompt: String.raw`If $W$ is $M\times K$ and $\Phi(x)$ is $M\times1$, what is the dimension of $W^\top\Phi(x)$, and what does that vector represent?`, answer: String.raw`$W^\top\Phi(x)\in\mathbb R^K$: it contains one raw score/logit for each class, before a loss such as softmax cross-entropy is applied.` } }
+  },
+  52: { explanation: { technicalDetail: String.raw`The objective averages $\lVert W^\top\Phi(x_i)-y_i\rVert^2$. Because the target is one-hot, a wrong score geometry can be penalized in ways unrelated to decision correctness.` } },
+  53: {
+    explanation: { whatYouSee: String.raw`The slide defines 0–1 loss as an indicator that the $\arg\max$ score is not the true class, then notes that it directly measures classification performance but has an uninformative or undefined gradient.`, technicalDetail: String.raw`$L(z,k)=\mathbf 1\{\arg\max_j z_j\ne k\}$. The argmax creates a piecewise-constant objective, so gradient-based optimization cannot use a useful local direction in most regions.` },
+    questions: { 1: { answer: "It is easier to optimize and is chosen so that improving it tends to improve the task-relevant classification behavior." } }
+  },
+  54: { explanation: { whatYouSee: String.raw`The slide maps $K$ logits through softmax to a probability vector, notes that $\arg\max$ order is preserved, and defines cross-entropy as $-\log$ of the probability assigned to the true class. Handwritten notes identify logits and the log-sum-exp form.` } }
+};
+
+const KEY_FORMULAS = {
+  20: { name: "Training set and oracle model", latex: String.raw`\mathcal D=\{(x_i,y_i)\}_{i=1}^{N},\qquad y_i=f^*(x_i)\ \text{or}\ y_i\sim p^*(\cdot\mid x_i)`, purpose: "Use it to distinguish finite observations from the deterministic or random process that generates targets." },
+  23: { name: "Empirical-risk minimization", latex: String.raw`\widehat R(f)=\frac{1}{N}\sum_{i=1}^{N}\ell(f(x_i),y_i)`, purpose: "Use it to turn observed prediction errors into the finite-sample objective that can actually be optimized." },
+  24: { name: "Population risk", latex: String.raw`R_{\mathrm{pop}}(f)=\mathbb E_{x\sim\mu}[\ell(f(x),f^*(x))]`, purpose: "Use it to state the expected loss on future draws and contrast it with the computable empirical average." },
+  25: { name: "Lecture three-source error map", latex: String.raw`f^*\to\tilde f\ (\text{approximation}),\quad\tilde f\to\hat f\ (\text{estimation}),\quad f_0\to\hat f\ (\text{optimization})`, purpose: "Use the object transition to diagnose whether the class, finite sample, or algorithm is responsible for a gap." },
+  27: { name: "Affine hypothesis", latex: String.raw`f(x)=w_0+w_1x`, purpose: "Use it to define the two-parameter line before choosing a loss or deriving OLS." },
+  28: { name: "Squared loss", latex: String.raw`\ell(y',y)=\frac12(y'-y)^2`, purpose: "Use it when a smooth quadratic penalty is appropriate and large residuals should receive disproportionately large weight." },
+  29: { name: "OLS stationarity conditions", latex: String.raw`\frac{\partial\widehat R}{\partial w_0}=0,\qquad\frac{\partial\widehat R}{\partial w_1}=0`, purpose: "Use the two zero-gradient equations to derive centering, the slope, and the intercept instead of memorizing the result." },
+  31: { name: "Centered simple-OLS estimator", latex: String.raw`\hat w_1=\frac{\sum_i(x_i-\bar x)(y_i-\bar y)}{\sum_i(x_i-\bar x)^2},\qquad\hat w_0=\bar y-\hat w_1\bar x`, purpose: "Use it to calculate the line when the centered input spread is nonzero and interpret slope as normalized co-movement." },
+  38: { name: "Basis-function hypothesis", latex: String.raw`f(x)=\sum_{j=0}^{M-1}w_j\phi_j(x)=w^\top\phi(x)`, purpose: "Use it to represent nonlinear input effects while keeping optimization linear in the trainable weights." },
+  40: { name: "Quadratic basis prediction", latex: String.raw`\phi(x)=(1,x,x^2)\quad\Longrightarrow\quad f(x)=w_0+w_1x+w_2x^2`, purpose: "Use it to show concretely how a curved predictor remains linear in its coefficients." },
+  41: { name: "Basis-family examples", latex: String.raw`\phi_j(x)=x^j,\quad\exp\!\left(-\frac{(x-m_j)^2}{2s^2}\right),\quad\sigma\!\left(\frac{x-m_j}{s}\right)`, purpose: "Use the family choice to control global shape, locality, or smooth transitions in the feature geometry." },
+  43: { name: "Design-matrix convention", latex: String.raw`\Phi\in\mathbb R^{N\times M},\qquad\Phi_{ij}=\phi_j(x_i),\qquad\Phi w\in\mathbb R^N`, purpose: "Use it to check dimensions and keep examples as rows and basis functions as columns." },
+  46: { name: "Full-rank OLS solution", latex: String.raw`\hat w=(\Phi^\top\Phi)^{-1}\Phi^\top y`, purpose: "Use it only after stating that the normal matrix is invertible, equivalently that the design has full column rank." },
+  47: { name: "Singular OLS solution family", latex: String.raw`\hat w(u)=\Phi^\dagger y+(I-\Phi^\dagger\Phi)u`, purpose: "Use it to describe all least-squares minimizers and identify the null-space directions invisible to the training predictions." },
+  48: { name: "Regularized objective", latex: String.raw`\min_w\ \frac{1}{2N}\lVert\Phi w-y\rVert_2^2+\lambda C(w)`, purpose: "Use it to express the fit-versus-complexity trade-off before specializing to ridge or lasso." },
+  50: { name: "One-hot target", latex: String.raw`y_i=e_{k_i}\in\mathbb R^K`, purpose: "Use it for nominal class identity so the target does not invent an ordering between class names." },
+  51: { name: "Multiclass score model", latex: String.raw`z=W^\top\phi(x)\in\mathbb R^K,\qquad W\in\mathbb R^{M\times K}`, purpose: "Use it to produce one raw logit per class before choosing a classification loss." },
+  52: { name: "One-hot least-squares classifier", latex: String.raw`\min_W\frac{1}{N}\sum_i\lVert W^\top\phi(x_i)-e_{k_i}\rVert_2^2`, purpose: "Use it as a convex classification baseline while remembering that Euclidean target distance is only a surrogate for correctness." },
+  53: { name: "Multiclass 0–1 loss", latex: String.raw`L(z,k)=\mathbf 1\{\arg\max_j z_j\ne k\}`, purpose: "Use it to define the final classification error and explain why it is awkward for gradient-based training." },
+  54: { name: "Softmax cross-entropy", latex: String.raw`p_k=\frac{e^{z_k}}{\sum_j e^{z_j}},\qquad L(z,k)=-\log p_k`, purpose: "Use it as a smooth surrogate that rewards probability on the true class and supplies useful score gradients." }
+};
+
 function build() {
   const extracted = JSON.parse(fs.readFileSync(EXTRACTION, "utf8"));
   if (extracted.sourceId !== SOURCE_ID || extracted.pageCount !== 55) {
@@ -192,7 +311,7 @@ function build() {
   const slides = extracted.pages.map(page => {
     const authored = notes[page.page];
     if (!authored) throw new Error(`Missing authored note for slide ${page.page}`);
-    const clean = CLEAN_SLIDE_TEXT[page.page] || {};
+    const clean = { ...(CLEAN_SLIDE_TEXT[page.page] || {}), ...(CLEAN_SLIDE_TEXT_PATCHES[page.page] || {}) };
     const explanation = { ...authored, ...(clean.explanation || {}) };
     const questions = authored.questions.map((question, index) => ({ ...question, ...((clean.questions && clean.questions[index]) || {}) }));
     const blocks = page.blocks.map(block => ({
@@ -230,6 +349,7 @@ function build() {
         pitfall: formatAuthoredText(explanation.pitfall),
         connection: formatAuthoredText(explanation.connection)
       },
+      keyFormula: KEY_FORMULAS[page.page] || null,
       textbookRefs: authored.textbookRefs,
       referenceRefs: [],
       socraticQuestions: questions.map(formatQuestion),

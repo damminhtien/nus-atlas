@@ -34,6 +34,7 @@ test("slide reader keeps source collapsed and resolves textbook annotations", ()
           whatYouSee: "A training set maps inputs to labels.",
           whyItMatters: "This defines the supervised learning problem."
         },
+        keyFormula: { name: "Training-set model", latex: "\\mathcal D=\\{(x_i,y_i)\\}", purpose: "Use it to keep observed examples separate from the unknown target rule." },
         textbookRefs: [{ sourceId: "Textbook.pdf", sourceType: "textbook", page: 13, role: "depth" }],
         referenceRefs: [],
         socraticQuestions: [{ type: "recall", prompt: "What is the target relationship?", hint: "Start with x and y.", answer: "Learn a mapping from inputs to outputs." }]
@@ -79,6 +80,8 @@ test("slide reader keeps source collapsed and resolves textbook annotations", ()
   assert.match(root.innerHTML, /Supervised Learning/);
   assert.match(root.innerHTML, /Linear Models/);
   assert.match(root.innerHTML, /Dynamic Atlas annotation/);
+  assert.match(root.innerHTML, /Training-set model/);
+  assert.match(root.innerHTML, /Use it for/);
   assert.match(root.innerHTML, /Textbook reading lens/);
   assert.doesNotMatch(root.innerHTML, /nus-socratic-checkpoint/);
   assert.match(root.innerHTML, /nus-slide-focus-bar/);

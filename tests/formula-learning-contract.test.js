@@ -25,6 +25,31 @@ test("every authored formula has a name and a use case", () => {
   assert.deepEqual(missing, []);
 });
 
+test("DSA5105 lecture cores expose a teachable reasoning contract", () => {
+  const lessonCore = loadLegacyState().content.DSA5105;
+  const missing = [];
+  for (const module of lessonCore.modules || []) {
+    for (const lesson of module.lessons || []) {
+      for (const section of lesson.sections || []) {
+        if (!/^(?:Lecture core|Core derivation)/.test(section.title)) continue;
+        for (const field of ["concept", "useWhen", "examMove", "trap"]) {
+          if (!section.teaching || typeof section.teaching[field] !== "string" || section.teaching[field].trim().length < 30) {
+            missing.push(`${lesson.id}/${section.title}: ${field}`);
+          }
+        }
+      }
+    }
+  }
+  assert.deepEqual(missing, []);
+});
+
+test("DSA5105 Week 1 formula cards are named and actionable", () => {
+  const slides = JSON.parse(fs.readFileSync("content/courses/DSA5105/slides/dsa5105-week1-annotated.json", "utf8")).slides;
+  const cards = slides.map(slide => slide.keyFormula).filter(Boolean);
+  assert.ok(cards.length >= 20);
+  assert.ok(cards.every(card => card.name && card.latex && card.purpose && card.purpose.length >= 30));
+});
+
 test("DSA5208 slide notes teach the page instead of repeating extraction metadata", () => {
   const files = ["content/courses/DSA5208/slides/dsa5208-lec0.json", "content/courses/DSA5208/slides/dsa5208-lec1.json"];
   const slides = files.flatMap(file => JSON.parse(fs.readFileSync(file, "utf8")).slides);

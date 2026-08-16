@@ -171,14 +171,18 @@
   function explanation(slide) {
     const value = slide.explanation || {};
     const fields = [
-      ["Slide claim", value.whatYouSee],
-      ["Why it matters", value.whyItMatters],
+      ["What you need to learn", value.whyItMatters],
+      ["Mechanism / derivation", value.technicalDetail],
       ["Mental model", value.intuition],
-      ["Mechanism", value.technicalDetail],
-      ["Failure mode", value.pitfall],
-      ["Use it to reason", value.connection]
+      ["Use it to reason", value.connection],
+      ["Common failure mode", value.pitfall],
+      ["Source observation", value.whatYouSee]
     ];
-    return fields.filter(([, body]) => body).map(([title, body]) => `<section class="nus-slide-note"><h4>${esc(title)}</h4><p>${text(body)}</p></section>`).join("");
+    const formula = slide.keyFormula;
+    const formulaHtml = formula && formula.name && formula.latex
+      ? `<section class="nus-slide-key-formula"><div class="nus-slide-key-formula-label">Key formula</div><h4>${esc(formula.name)}</h4><div class="nus-slide-key-formula-math">$$${esc(formula.latex)}$$</div>${formula.purpose ? `<p><b>Use it for:</b> ${text(formula.purpose)}</p>` : ""}</section>`
+      : "";
+    return formulaHtml + fields.filter(([, body]) => body).map(([title, body]) => `<section class="nus-slide-note"><h4>${esc(title)}</h4><p>${text(body)}</p></section>`).join("");
   }
 
   function questions(slide) {
