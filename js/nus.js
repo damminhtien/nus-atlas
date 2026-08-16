@@ -57,6 +57,18 @@
   }
   function allUpcoming() { return assessments().filter(a => a.date).sort((a, b) => new Date(a.date) - new Date(b.date)); }
   function firstOpenLesson() { for (const c of courses()) { const l = lessons(c.code).find(x => !window.NUS_STORE.lessonDone(x.id)); if (l) return { course: c, lesson: l }; } return null; }
+  function syncRetrievalSchedules() {
+    if (!window.NUS_STORE || typeof window.NUS_STORE.ensureRetrievalSchedules !== "function") return;
+    courses().forEach(c => window.NUS_STORE.ensureRetrievalSchedules(lessons(c.code)));
+  }
+  function retrievalCard() {
+    syncRetrievalSchedules();
+    const store = window.NUS_STORE;
+    const due = store && typeof store.dueRetrievals === "function" ? store.dueRetrievals().length : 0;
+    const next = store && typeof store.upcomingRetrievals === "function" ? store.upcomingRetrievals(null, 120)[0] : null;
+    const status = due ? `${due} concept${due === 1 ? "" : "s"} due now` : next ? `Next: ${fmtDate(next.dueAt)}` : "Mastered concepts will be scheduled automatically.";
+    return card("Spaced retrieval", `<p>Keep mastered ideas active with <b>1–2 questions</b>. No lesson reread is required.</p><p class="nus-muted">${esc(status)}</p>${button(due ? "Start retrieval" : "Open retrieval queue", "#/nus/review", due ? "primary" : "ghost")}`, "reveal");
+  }
   function examCountdownCards() { return courses().map(c => ({ code: c.code, exam: (schedule().courses[c.code] || {}).exam })).map(x => `<div class="nus-exam-count"><b>${esc(x.code)}</b><span>${x.exam && x.exam.date ? esc(fmtDate(x.exam.date)) : "Date pending"}</span><small>${x.exam && x.exam.date ? `${Math.max(0, dayCount(x.exam.date))} days left` : "Check course announcement"}</small></div>`).join(""); }
   function bindDashboard() {
     root.querySelectorAll("[data-nus-focus]").forEach(b => b.addEventListener("click", () => startFocus(Number(b.dataset.nusFocus))));
@@ -80,6 +92,7 @@
     body += `<section class="nus-hero nus-study-hero reveal"><div><div class="eyebrow">Start here · today’s lesson</div><h3>${open ? esc(open.lesson.title) : "Your seeded lessons are complete"}</h3><p>${open ? `${esc(open.course.code)} · ${esc(open.lesson.summary)}` : "Use Exam Mode for maintenance or revisit a weak topic."}</p>${nearest ? `<small class="nus-hero-deadline">Next deadline: ${esc(nearest.title)} · ${nearestDays < 0 ? "overdue" : `${nearestDays} days left`}</small>` : ""}</div><div class="nus-hero-actions">${open ? button("Read lesson", `#/nus/lesson/${open.course.code}/${open.lesson.id}`, "primary") : button("Open planner", "#/nus/planner", "primary")}${button("Start exam mode", "#/nus/exam", "ghost")}</div></section>`;
     body += `<div class="nus-grid nus-grid-4">${courses().map(c => `<article class="nus-course-card reveal" style="--course:${esc(c.color)}"><div class="nus-course-top"><span class="nus-code">${esc(c.code)}</span><span class="pill">${progress(c.code).pct}%</span></div><h3>${esc(c.title)}</h3><p>${text(c.description)}</p>${courseProgressBar(c.code)}<div class="nus-card-actions">${button("Study course", `#/nus/course/${c.code}`, "ghost")}${button("Practice", `#/nus/exam/${c.code}`, "ghost")}</div></article>`).join("")}</div>`;
     body += learningSignals();
+    body += retrievalCard();
     body += `<div class="nus-two-col"><div>${card("Today’s focus", `<p>${open ? `Continue <b>${esc(open.lesson.title)}</b> in ${esc(open.course.code)}.` : "All seeded lessons are complete — use Exam Mode for maintenance."}</p><div class="nus-focus-clock"><b id="nus-focus-time">25:00</b><span id="nus-focus-state">Choose a focus block</span></div><div class="nus-tool-grid"><button class="btn ghost" data-nus-focus="25">25 min</button><button class="btn ghost" data-nus-focus="50">50 min</button>${open ? button("Open lesson", `#/nus/lesson/${open.course.code}/${open.lesson.id}`, "ghost") : ""}</div>`, "reveal")}</div><div>${card("Exam countdown", `<div class="nus-exam-counts">${examCountdownCards()}</div><p class="nus-muted">DSA5208 remains date pending until an official date is available.</p>`, "reveal")}</div></div>`;
     body += card("Practice history", latest ? `<p>Latest ${esc(latest.courseCode)} attempt: <b>${latest.score}/${latest.total}</b>. Use the review deck after each attempt to target misses.</p>${button("Practice again", `#/nus/exam/${latest.courseCode}`, "ghost")}` : `<p class="nus-muted">No NUS attempt yet. Start a short scoped run to create a personal weak-topic signal.</p>${button("Start a practice run", "#/nus/exam", "ghost")}`, "reveal");
     body += `<div class="nus-two-col"><div>${card("Upcoming work", upcoming.length ? `<div class="nus-list">${upcoming.map(a => assessmentRow(a)).join("")}</div>` : `<div class="nus-empty">No confirmed dates.</div>`, "reveal")}</div><div>${card("What needs confirmation", `<p class="nus-muted">${pending} assessment milestone${pending === 1 ? "" : "s"} still has a date pending.</p><p class="nus-muted">Reminders are shown at 7, 3, and 1 day before a confirmed date. The app never invents a deadline.</p>${button("Review planner", "#/nus/planner", "ghost")}`, "reveal")}</div></div>`;
@@ -186,6 +199,24 @@
     return examFeature ? examFeature.renderMistakes(code) : renderNotFound();
   }
 
+  const retrievalFeature = window.NUS_RETRIEVAL_FEATURE ? window.NUS_RETRIEVAL_FEATURE({
+    root,
+    getCourses: courses,
+    getLessons: lessons,
+    getStore: () => window.NUS_STORE,
+    pageHead,
+    sourceItem,
+    text,
+    esc,
+    button,
+    typeset: typesetNus,
+    answerKey: examFeature && examFeature.answerKey
+  }) : null;
+  function renderRetrieval(code) {
+    if (code && ensureCourseLoaded(code, () => renderRetrieval(code))) return;
+    return retrievalFeature ? retrievalFeature.render(code) : renderNotFound();
+  }
+
   const contrastFeature = window.NUS_CONTRAST_DRILLS_FEATURE ? window.NUS_CONTRAST_DRILLS_FEATURE({
     root,
     getCourses: courses,
@@ -232,6 +263,7 @@
     course: parts => renderCourse(parts[1]),
     lesson: parts => renderLesson(parts[1], parts[2]),
     exam: parts => renderExam(parts[1], parts[2]),
+    review: parts => renderRetrieval(parts[1]),
     mistakes: parts => renderMistakes(parts[1] || "DSA5105"),
     contrast: parts => renderContrast(parts[1] || "DSA5105", parts[2]),
     slides: parts => renderSlides(parts[1], parts[2], parts[3]),

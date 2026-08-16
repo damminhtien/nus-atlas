@@ -49,6 +49,12 @@ When a concept has both lecture and exercise evidence, open **Why is this examin
 
 The data contract is `sourceLens: { status, whyExaminable, lecture, officialExercise, textbook, reference }`. `sourceRefs` answers “where is this stated?”; `sourceLens` answers “what level should I prepare, and why?”.
 
+### Automatic spaced retrieval
+
+Once a lesson reaches 80% evidence mastery, the study store creates a private retrieval schedule. The first prompt is due one day later, then successful high-confidence recalls move through `+3`, `+7`, `+14`, `+30`, and longer intervals. A review session shows at most two questions and does not require reopening the lesson.
+
+The schedule is deliberately conservative: a miss halves the current interval, down to one day; a correct answer with low confidence keeps the current interval; a correct answer with good or high confidence advances it. This keeps Week 1 active through the midterm without turning review into rereading.
+
 ## DSA5105 assessment alignment
 
 The local AY2024/25 and AY2025/26 exam PDFs are used as primary assessment evidence for topic coverage. They cover, among other items, K-means/PCA, SVM dual and KKT, neural backpropagation, AdaBoost, MDP/value iteration, spectral clustering, GMM, dynamic programming, PageRank, graph kernels, and LS-SVM. Public previews of Fall 2025 Homework 1/2, 2023 Homework 2/3, and the 2024 midterm are stored only as `assessment-derived` topic signals; their solutions are not copied into the public bundle.
@@ -75,7 +81,8 @@ Each lesson also has at least two critical-thinking prompts. A good prompt asks 
 6. Run a 5–15 question Exam Mode attempt. Choose **Weak topics** when repairing gaps or **New concepts** when expanding coverage.
 7. Send misses to Mistake Clinic, read the misconception cue and source-backed repair, then mark the idea redeemed or retry the weak topic.
 8. Use the DSA5105 readiness card to balance coverage with accuracy; a high score on a tiny sample is not exam readiness.
-9. Record confirmed assessment dates in Planner; leave unknown dates pending rather than guessing.
+9. Open **Spaced retrieval** for the one or two concepts due today; answer from memory and record confidence.
+10. Record confirmed assessment dates in Planner; leave unknown dates pending rather than guessing.
 
 ## Adding or editing content
 

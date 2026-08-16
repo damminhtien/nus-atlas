@@ -57,6 +57,7 @@
       ["Study desk", "#/"],
       [courseCode, `#/nus/course/${courseCode}`],
       ["Practice", `#/nus/exam/${courseCode}`],
+      ["Spaced retrieval", "#/nus/review"],
       ["Mistakes", `#/nus/mistakes/${courseCode}`],
       ["Planner", "#/nus/planner"]
     ];

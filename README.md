@@ -28,6 +28,7 @@ The study layer currently contains 34 normalized lessons. Assessment dates remai
 - Reading-first lesson pages with editorial typography, a four-step Read/Work/Reason/Recall compass, and Focus Reading mode.
 - Derived visual study cues that explain what a referenced diagram, table, chart, or screenshot is meant to teach without publishing raw course slides.
 - Evidence-based daily quests, a private DSA5105 mastery map, and recognition for retrieval and reasoning habits. Page views never award XP.
+- Automatic spaced retrieval that schedules mastered concepts for `+1`, `+3`, `+7`, `+14`, and later intervals; each review asks only 1–2 questions and adapts to correctness and confidence.
 - Reusable visual-learning labs for ERM comparison, SVM geometry, derivation traces, PCA, GMM/EM, Bellman backups, DP tables, graph kernels, spectral clustering, and GNN message passing.
 - General Atlas remains available at `#/atlas`.
 
@@ -37,6 +38,7 @@ Useful routes:
 #/                         NUS dashboard
 #/nus/planner              assessment planner
 #/nus/exam                 timed practice
+#/nus/review               automatic spaced retrieval queue
 #/nus/course/DSA5105       course map
 #/nus/lesson/DSA5105/...   lesson study page
 #/nus/sql                  DSA5104 SQL Studio
@@ -128,6 +130,7 @@ The Pages workflow runs `node prerender.js` in CI, creates the static `dist/` ar
 - `src/features/nus/presentation.js` — reusable NUS lesson/source/visual presenters.
 - `src/features/nus/sql.js` / `src/features/nus/simulations.js` — isolated interactive labs.
 - `src/features/nus/planner.js` / `src/features/nus/exam.js` — isolated planner and Exam Mode features.
+- `src/features/nus/retrieval.js` — adaptive 1–2 question spaced-retrieval session.
 - `src/ui/labs/registry.js` — visual-learning lab plugin registry.
 - `js/nus.js` — NUS views using the repository boundary.
 - `js/nus-store.js` — local study progress and attempts.
