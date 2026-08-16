@@ -48,6 +48,7 @@ function validateSlideSet(set, file, root = ROOT) {
     if (!Array.isArray(slide && slide.socraticQuestions) || !slide.socraticQuestions.length) errors.push(`slide has no Socratic questions: ${label}`);
     for (const question of slide && slide.socraticQuestions || []) {
       if (!question.type || !question.prompt || !question.answer || !question.hint) errors.push(`incomplete Socratic question: ${label}`);
+      if (/Which invariant or guarantee is being tested|What would change if the system became larger or less reliable/.test(question.prompt || "")) errors.push(`generic Socratic prompt: ${label}`);
     }
     if (!slide.assetPath || !fs.existsSync(path.join(root, slide.assetPath))) errors.push(`missing slide asset: ${label} -> ${slide.assetPath || "<none>"}`);
   }

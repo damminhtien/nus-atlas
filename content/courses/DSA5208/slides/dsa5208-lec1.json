@@ -165,12 +165,12 @@
         ]
       },
       "explanation": {
-        "whatYouSee": "This rendered page belongs to the “Distributed-system models” block. Its source layer contains 6 page-aware extraction blocks; inspect it when exact wording or layout matters.",
-        "whyItMatters": "These pages define independent processes, private memory, message passing, and event histories.",
-        "intuition": "The model tells you which facts are local and which must travel in a message.",
-        "technicalDetail": "Atlas preserves the rendered page, extracted text, block type, bounding box, image ID, and parser reference for DSA5208/Lec1.pdf page 1.",
+        "whatYouSee": "A distributed system is modeled as independent processes with private state that interact through messages; a global event history is assembled from local histories.",
+        "whyItMatters": "Every later ordering claim depends on this boundary: processes cannot observe another process's state without communication.",
+        "intuition": "The diagram's lines are local timelines; only a message edge carries knowledge between timelines.",
+        "technicalDetail": "Write the local history of each process first, then add send-to-receive edges. Do not add an edge merely because two events are drawn at the same height.",
         "pitfall": "Do not assume shared memory or a global clock when the lecture explicitly removes both.",
-        "connection": "Use this page with the distributed-models study track. Answer the Socratic checkpoint before moving on."
+        "connection": "Use this model before tracing causality, clock updates, or delivery guarantees."
       },
       "textbookRefs": [
         {
@@ -183,16 +183,16 @@
       "referenceRefs": [],
       "socraticQuestions": [
         {
-          "type": "distinguish",
-          "prompt": "Which invariant or guarantee is being tested on “Lecture 1: Physical and Logical Times”?",
-          "answer": "State the process, causal, time, delivery, or storage boundary before naming an implementation detail.",
-          "hint": "Name the semantic boundary first."
+          "type": "derive",
+          "prompt": "A diagram aligns two events vertically on different processes but shows no message. Can you infer an order?",
+          "answer": "No. Visual alignment is not a causal rule; without a message path, local-order path, or transitive chain, the events may be concurrent.",
+          "hint": "List the allowed generators of the relation."
         },
         {
           "type": "transfer",
-          "prompt": "What would change if the system became larger or less reliable on “Lecture 1: Physical and Logical Times”?",
-          "answer": "State which failure, communication, synchronization, or measurement assumption becomes important and what evidence would test it.",
-          "hint": "Connect the rule to system behavior."
+          "prompt": "What information must a process send if another process is expected to reason about its past?",
+          "answer": "It must send a message carrying enough state or metadata for the receiver to infer the relevant causal history.",
+          "hint": "Private memory makes knowledge transfer explicit."
         }
       ],
       "lecturePriority": "core",
@@ -368,12 +368,12 @@
         ]
       },
       "explanation": {
-        "whatYouSee": "This rendered page belongs to the “Distributed-system models” block. Its source layer contains 9 page-aware extraction blocks; inspect it when exact wording or layout matters.",
-        "whyItMatters": "These pages define independent processes, private memory, message passing, and event histories.",
-        "intuition": "The model tells you which facts are local and which must travel in a message.",
-        "technicalDetail": "Atlas preserves the rendered page, extracted text, block type, bounding box, image ID, and parser reference for DSA5208/Lec1.pdf page 2.",
+        "whatYouSee": "A distributed system is modeled as independent processes with private state that interact through messages; a global event history is assembled from local histories.",
+        "whyItMatters": "Every later ordering claim depends on this boundary: processes cannot observe another process's state without communication.",
+        "intuition": "The diagram's lines are local timelines; only a message edge carries knowledge between timelines.",
+        "technicalDetail": "Write the local history of each process first, then add send-to-receive edges. Do not add an edge merely because two events are drawn at the same height.",
         "pitfall": "Do not assume shared memory or a global clock when the lecture explicitly removes both.",
-        "connection": "Use this page with the distributed-models study track. Answer the Socratic checkpoint before moving on."
+        "connection": "Use this model before tracing causality, clock updates, or delivery guarantees."
       },
       "textbookRefs": [
         {
@@ -386,16 +386,16 @@
       "referenceRefs": [],
       "socraticQuestions": [
         {
-          "type": "distinguish",
-          "prompt": "Which invariant or guarantee is being tested on “Lecture 1: Physical and Logical Times”?",
-          "answer": "State the process, causal, time, delivery, or storage boundary before naming an implementation detail.",
-          "hint": "Name the semantic boundary first."
+          "type": "derive",
+          "prompt": "A diagram aligns two events vertically on different processes but shows no message. Can you infer an order?",
+          "answer": "No. Visual alignment is not a causal rule; without a message path, local-order path, or transitive chain, the events may be concurrent.",
+          "hint": "List the allowed generators of the relation."
         },
         {
           "type": "transfer",
-          "prompt": "What would change if the system became larger or less reliable on “Lecture 1: Physical and Logical Times”?",
-          "answer": "State which failure, communication, synchronization, or measurement assumption becomes important and what evidence would test it.",
-          "hint": "Connect the rule to system behavior."
+          "prompt": "What information must a process send if another process is expected to reason about its past?",
+          "answer": "It must send a message carrying enough state or metadata for the receiver to infer the relevant causal history.",
+          "hint": "Private memory makes knowledge transfer explicit."
         }
       ],
       "lecturePriority": "core",
@@ -507,12 +507,12 @@
         ]
       },
       "explanation": {
-        "whatYouSee": "This rendered page belongs to the “Distributed-system models” block. Its source layer contains 5 page-aware extraction blocks; inspect it when exact wording or layout matters.",
-        "whyItMatters": "These pages define independent processes, private memory, message passing, and event histories.",
-        "intuition": "The model tells you which facts are local and which must travel in a message.",
-        "technicalDetail": "Atlas preserves the rendered page, extracted text, block type, bounding box, image ID, and parser reference for DSA5208/Lec1.pdf page 3.",
+        "whatYouSee": "A distributed system is modeled as independent processes with private state that interact through messages; a global event history is assembled from local histories.",
+        "whyItMatters": "Every later ordering claim depends on this boundary: processes cannot observe another process's state without communication.",
+        "intuition": "The diagram's lines are local timelines; only a message edge carries knowledge between timelines.",
+        "technicalDetail": "Write the local history of each process first, then add send-to-receive edges. Do not add an edge merely because two events are drawn at the same height.",
         "pitfall": "Do not assume shared memory or a global clock when the lecture explicitly removes both.",
-        "connection": "Use this page with the distributed-models study track. Answer the Socratic checkpoint before moving on."
+        "connection": "Use this model before tracing causality, clock updates, or delivery guarantees."
       },
       "textbookRefs": [
         {
@@ -525,16 +525,16 @@
       "referenceRefs": [],
       "socraticQuestions": [
         {
-          "type": "distinguish",
-          "prompt": "Which invariant or guarantee is being tested on “Lecture 1: Physical and Logical Times”?",
-          "answer": "State the process, causal, time, delivery, or storage boundary before naming an implementation detail.",
-          "hint": "Name the semantic boundary first."
+          "type": "derive",
+          "prompt": "A diagram aligns two events vertically on different processes but shows no message. Can you infer an order?",
+          "answer": "No. Visual alignment is not a causal rule; without a message path, local-order path, or transitive chain, the events may be concurrent.",
+          "hint": "List the allowed generators of the relation."
         },
         {
           "type": "transfer",
-          "prompt": "What would change if the system became larger or less reliable on “Lecture 1: Physical and Logical Times”?",
-          "answer": "State which failure, communication, synchronization, or measurement assumption becomes important and what evidence would test it.",
-          "hint": "Connect the rule to system behavior."
+          "prompt": "What information must a process send if another process is expected to reason about its past?",
+          "answer": "It must send a message carrying enough state or metadata for the receiver to infer the relevant causal history.",
+          "hint": "Private memory makes knowledge transfer explicit."
         }
       ],
       "lecturePriority": "core",
@@ -918,12 +918,12 @@
         ]
       },
       "explanation": {
-        "whatYouSee": "This rendered page belongs to the “Distributed-system models” block. Its source layer contains 22 page-aware extraction blocks; inspect it when exact wording or layout matters.",
-        "whyItMatters": "These pages define independent processes, private memory, message passing, and event histories.",
-        "intuition": "The model tells you which facts are local and which must travel in a message.",
-        "technicalDetail": "Atlas preserves the rendered page, extracted text, block type, bounding box, image ID, and parser reference for DSA5208/Lec1.pdf page 4.",
+        "whatYouSee": "A distributed system is modeled as independent processes with private state that interact through messages; a global event history is assembled from local histories.",
+        "whyItMatters": "Every later ordering claim depends on this boundary: processes cannot observe another process's state without communication.",
+        "intuition": "The diagram's lines are local timelines; only a message edge carries knowledge between timelines.",
+        "technicalDetail": "Write the local history of each process first, then add send-to-receive edges. Do not add an edge merely because two events are drawn at the same height.",
         "pitfall": "Do not assume shared memory or a global clock when the lecture explicitly removes both.",
-        "connection": "Use this page with the distributed-models study track. Answer the Socratic checkpoint before moving on."
+        "connection": "Use this model before tracing causality, clock updates, or delivery guarantees."
       },
       "textbookRefs": [
         {
@@ -936,16 +936,16 @@
       "referenceRefs": [],
       "socraticQuestions": [
         {
-          "type": "distinguish",
-          "prompt": "Which invariant or guarantee is being tested on “Lecture 1: Physical and Logical Times”?",
-          "answer": "State the process, causal, time, delivery, or storage boundary before naming an implementation detail.",
-          "hint": "Name the semantic boundary first."
+          "type": "derive",
+          "prompt": "A diagram aligns two events vertically on different processes but shows no message. Can you infer an order?",
+          "answer": "No. Visual alignment is not a causal rule; without a message path, local-order path, or transitive chain, the events may be concurrent.",
+          "hint": "List the allowed generators of the relation."
         },
         {
           "type": "transfer",
-          "prompt": "What would change if the system became larger or less reliable on “Lecture 1: Physical and Logical Times”?",
-          "answer": "State which failure, communication, synchronization, or measurement assumption becomes important and what evidence would test it.",
-          "hint": "Connect the rule to system behavior."
+          "prompt": "What information must a process send if another process is expected to reason about its past?",
+          "answer": "It must send a message carrying enough state or metadata for the receiver to infer the relevant causal history.",
+          "hint": "Private memory makes knowledge transfer explicit."
         }
       ],
       "lecturePriority": "core",
@@ -1137,12 +1137,12 @@
         ]
       },
       "explanation": {
-        "whatYouSee": "This rendered page belongs to the “Happens-before and concurrency” block. Its source layer contains 10 page-aware extraction blocks; inspect it when exact wording or layout matters.",
-        "whyItMatters": "These pages define causal precedence and the positive test for concurrency.",
-        "intuition": "Causality is a partial order generated by local execution and communication.",
-        "technicalDetail": "Atlas preserves the rendered page, extracted text, block type, bounding box, image ID, and parser reference for DSA5208/Lec1.pdf page 5.",
+        "whatYouSee": "Happens-before is a partial order generated by local order, send-before-receive, and transitive closure; concurrency means neither direction is derivable.",
+        "whyItMatters": "This relation is the semantic target that logical clocks approximate or represent.",
+        "intuition": "Causality is a path question: can influence travel from one event to the other through permitted edges?",
+        "technicalDetail": "To prove order, exhibit a path. To prove concurrency, rule out both directed paths; failing to find one path is not enough.",
         "pitfall": "Not proving one direction is not enough; concurrency requires neither direction.",
-        "connection": "Use this page with the happens-before study track. Answer the Socratic checkpoint before moving on."
+        "connection": "Use it to grade an event trace, justify a delivery order, or test whether a timestamp comparison is too strong."
       },
       "textbookRefs": [
         {
@@ -1162,16 +1162,16 @@
       ],
       "socraticQuestions": [
         {
-          "type": "distinguish",
-          "prompt": "Which invariant or guarantee is being tested on “Lecture 1: Physical and Logical Times”?",
-          "answer": "State the process, causal, time, delivery, or storage boundary before naming an implementation detail.",
-          "hint": "Name the semantic boundary first."
+          "type": "prove",
+          "prompt": "What is the shortest proof that one event happens-before another?",
+          "answer": "Give one valid local, message, or transitive path from the first event to the second.",
+          "hint": "A proof needs a path, not a visual impression."
         },
         {
-          "type": "transfer",
-          "prompt": "What would change if the system became larger or less reliable on “Lecture 1: Physical and Logical Times”?",
-          "answer": "State which failure, communication, synchronization, or measurement assumption becomes important and what evidence would test it.",
-          "hint": "Connect the rule to system behavior."
+          "type": "counterexample",
+          "prompt": "Construct two events that are concurrent even though a total order could place one before the other.",
+          "answer": "Choose one event on each process with no message path in either direction. A tie-breaker may serialize them, but it does not create causality.",
+          "hint": "Separate implementation order from semantic order."
         }
       ],
       "lecturePriority": "core",
@@ -1667,12 +1667,12 @@
         ]
       },
       "explanation": {
-        "whatYouSee": "This rendered page belongs to the “Happens-before and concurrency” block. Its source layer contains 29 page-aware extraction blocks; inspect it when exact wording or layout matters.",
-        "whyItMatters": "These pages define causal precedence and the positive test for concurrency.",
-        "intuition": "Causality is a partial order generated by local execution and communication.",
-        "technicalDetail": "Atlas preserves the rendered page, extracted text, block type, bounding box, image ID, and parser reference for DSA5208/Lec1.pdf page 6.",
+        "whatYouSee": "Happens-before is a partial order generated by local order, send-before-receive, and transitive closure; concurrency means neither direction is derivable.",
+        "whyItMatters": "This relation is the semantic target that logical clocks approximate or represent.",
+        "intuition": "Causality is a path question: can influence travel from one event to the other through permitted edges?",
+        "technicalDetail": "To prove order, exhibit a path. To prove concurrency, rule out both directed paths; failing to find one path is not enough.",
         "pitfall": "Not proving one direction is not enough; concurrency requires neither direction.",
-        "connection": "Use this page with the happens-before study track. Answer the Socratic checkpoint before moving on."
+        "connection": "Use it to grade an event trace, justify a delivery order, or test whether a timestamp comparison is too strong."
       },
       "textbookRefs": [
         {
@@ -1692,16 +1692,16 @@
       ],
       "socraticQuestions": [
         {
-          "type": "distinguish",
-          "prompt": "Which invariant or guarantee is being tested on “Lecture 1: Physical and Logical Times”?",
-          "answer": "State the process, causal, time, delivery, or storage boundary before naming an implementation detail.",
-          "hint": "Name the semantic boundary first."
+          "type": "prove",
+          "prompt": "What is the shortest proof that one event happens-before another?",
+          "answer": "Give one valid local, message, or transitive path from the first event to the second.",
+          "hint": "A proof needs a path, not a visual impression."
         },
         {
-          "type": "transfer",
-          "prompt": "What would change if the system became larger or less reliable on “Lecture 1: Physical and Logical Times”?",
-          "answer": "State which failure, communication, synchronization, or measurement assumption becomes important and what evidence would test it.",
-          "hint": "Connect the rule to system behavior."
+          "type": "counterexample",
+          "prompt": "Construct two events that are concurrent even though a total order could place one before the other.",
+          "answer": "Choose one event on each process with no message path in either direction. A tie-breaker may serialize them, but it does not create causality.",
+          "hint": "Separate implementation order from semantic order."
         }
       ],
       "lecturePriority": "core",
@@ -2181,12 +2181,12 @@
         ]
       },
       "explanation": {
-        "whatYouSee": "This rendered page belongs to the “Communication ordering” block. Its source layer contains 28 page-aware extraction blocks; inspect it when exact wording or layout matters.",
-        "whyItMatters": "These pages compare non-FIFO, FIFO, and causal-ordering guarantees.",
-        "intuition": "A delivery guarantee is a contract about which dependencies the receiver must respect.",
-        "technicalDetail": "Atlas preserves the rendered page, extracted text, block type, bounding box, image ID, and parser reference for DSA5208/Lec1.pdf page 7.",
+        "whatYouSee": "Non-FIFO, FIFO, and causal ordering provide progressively stronger delivery guarantees; FIFO constrains one channel, while causal order can cross channels.",
+        "whyItMatters": "Exam questions often ask which guarantee is sufficient for a dependency and what metadata or waiting it costs.",
+        "intuition": "A receiver may see messages in an order different from the order in which their causes were created unless the protocol delays delivery.",
+        "technicalDetail": "For every guarantee, state its scope, the dependency it preserves, and the state needed to decide whether a message is safe to release.",
         "pitfall": "FIFO is channel-local; it does not automatically preserve cross-process causal order.",
-        "connection": "Use this page with the communication-ordering study track. Answer the Socratic checkpoint before moving on."
+        "connection": "Use it to choose a delivery contract or explain why one channel-local rule fails for a cross-process dependency."
       },
       "textbookRefs": [
         {
@@ -2199,16 +2199,16 @@
       "referenceRefs": [],
       "socraticQuestions": [
         {
-          "type": "distinguish",
-          "prompt": "Which invariant or guarantee is being tested on “Lecture 1: Physical and Logical Times”?",
-          "answer": "State the process, causal, time, delivery, or storage boundary before naming an implementation detail.",
-          "hint": "Name the semantic boundary first."
+          "type": "counterexample",
+          "prompt": "Why can FIFO deliver a causally newer message before an older cause?",
+          "answer": "The two messages may travel on different channels, so FIFO constrains each channel separately and says nothing about their cross-channel causal dependency.",
+          "hint": "Draw two senders and one receiver."
         },
         {
-          "type": "transfer",
-          "prompt": "What would change if the system became larger or less reliable on “Lecture 1: Physical and Logical Times”?",
-          "answer": "State which failure, communication, synchronization, or measurement assumption becomes important and what evidence would test it.",
-          "hint": "Connect the rule to system behavior."
+          "type": "design",
+          "prompt": "What must a causal-delivery protocol decide before releasing a message?",
+          "answer": "It must check whether all messages that causally precede the candidate have been delivered, or buffer the candidate until that condition holds.",
+          "hint": "The guarantee becomes a release condition."
         }
       ],
       "lecturePriority": "core",
@@ -2384,12 +2384,12 @@
         ]
       },
       "explanation": {
-        "whatYouSee": "This rendered page belongs to the “Communication ordering” block. Its source layer contains 9 page-aware extraction blocks; inspect it when exact wording or layout matters.",
-        "whyItMatters": "These pages compare non-FIFO, FIFO, and causal-ordering guarantees.",
-        "intuition": "A delivery guarantee is a contract about which dependencies the receiver must respect.",
-        "technicalDetail": "Atlas preserves the rendered page, extracted text, block type, bounding box, image ID, and parser reference for DSA5208/Lec1.pdf page 8.",
+        "whatYouSee": "Non-FIFO, FIFO, and causal ordering provide progressively stronger delivery guarantees; FIFO constrains one channel, while causal order can cross channels.",
+        "whyItMatters": "Exam questions often ask which guarantee is sufficient for a dependency and what metadata or waiting it costs.",
+        "intuition": "A receiver may see messages in an order different from the order in which their causes were created unless the protocol delays delivery.",
+        "technicalDetail": "For every guarantee, state its scope, the dependency it preserves, and the state needed to decide whether a message is safe to release.",
         "pitfall": "FIFO is channel-local; it does not automatically preserve cross-process causal order.",
-        "connection": "Use this page with the communication-ordering study track. Answer the Socratic checkpoint before moving on."
+        "connection": "Use it to choose a delivery contract or explain why one channel-local rule fails for a cross-process dependency."
       },
       "textbookRefs": [
         {
@@ -2402,16 +2402,16 @@
       "referenceRefs": [],
       "socraticQuestions": [
         {
-          "type": "distinguish",
-          "prompt": "Which invariant or guarantee is being tested on “Lecture 1: Physical and Logical Times”?",
-          "answer": "State the process, causal, time, delivery, or storage boundary before naming an implementation detail.",
-          "hint": "Name the semantic boundary first."
+          "type": "counterexample",
+          "prompt": "Why can FIFO deliver a causally newer message before an older cause?",
+          "answer": "The two messages may travel on different channels, so FIFO constrains each channel separately and says nothing about their cross-channel causal dependency.",
+          "hint": "Draw two senders and one receiver."
         },
         {
-          "type": "transfer",
-          "prompt": "What would change if the system became larger or less reliable on “Lecture 1: Physical and Logical Times”?",
-          "answer": "State which failure, communication, synchronization, or measurement assumption becomes important and what evidence would test it.",
-          "hint": "Connect the rule to system behavior."
+          "type": "design",
+          "prompt": "What must a causal-delivery protocol decide before releasing a message?",
+          "answer": "It must check whether all messages that causally precede the candidate have been delivered, or buffer the candidate until that condition holds.",
+          "hint": "The guarantee becomes a release condition."
         }
       ],
       "lecturePriority": "core",
@@ -2587,12 +2587,12 @@
         ]
       },
       "explanation": {
-        "whatYouSee": "This rendered page belongs to the “Communication ordering” block. Its source layer contains 9 page-aware extraction blocks; inspect it when exact wording or layout matters.",
-        "whyItMatters": "These pages compare non-FIFO, FIFO, and causal-ordering guarantees.",
-        "intuition": "A delivery guarantee is a contract about which dependencies the receiver must respect.",
-        "technicalDetail": "Atlas preserves the rendered page, extracted text, block type, bounding box, image ID, and parser reference for DSA5208/Lec1.pdf page 9.",
+        "whatYouSee": "Non-FIFO, FIFO, and causal ordering provide progressively stronger delivery guarantees; FIFO constrains one channel, while causal order can cross channels.",
+        "whyItMatters": "Exam questions often ask which guarantee is sufficient for a dependency and what metadata or waiting it costs.",
+        "intuition": "A receiver may see messages in an order different from the order in which their causes were created unless the protocol delays delivery.",
+        "technicalDetail": "For every guarantee, state its scope, the dependency it preserves, and the state needed to decide whether a message is safe to release.",
         "pitfall": "FIFO is channel-local; it does not automatically preserve cross-process causal order.",
-        "connection": "Use this page with the communication-ordering study track. Answer the Socratic checkpoint before moving on."
+        "connection": "Use it to choose a delivery contract or explain why one channel-local rule fails for a cross-process dependency."
       },
       "textbookRefs": [
         {
@@ -2605,16 +2605,16 @@
       "referenceRefs": [],
       "socraticQuestions": [
         {
-          "type": "distinguish",
-          "prompt": "Which invariant or guarantee is being tested on “Lecture 1: Physical and Logical Times”?",
-          "answer": "State the process, causal, time, delivery, or storage boundary before naming an implementation detail.",
-          "hint": "Name the semantic boundary first."
+          "type": "counterexample",
+          "prompt": "Why can FIFO deliver a causally newer message before an older cause?",
+          "answer": "The two messages may travel on different channels, so FIFO constrains each channel separately and says nothing about their cross-channel causal dependency.",
+          "hint": "Draw two senders and one receiver."
         },
         {
-          "type": "transfer",
-          "prompt": "What would change if the system became larger or less reliable on “Lecture 1: Physical and Logical Times”?",
-          "answer": "State which failure, communication, synchronization, or measurement assumption becomes important and what evidence would test it.",
-          "hint": "Connect the rule to system behavior."
+          "type": "design",
+          "prompt": "What must a causal-delivery protocol decide before releasing a message?",
+          "answer": "It must check whether all messages that causally precede the candidate have been delivered, or buffer the candidate until that condition holds.",
+          "hint": "The guarantee becomes a release condition."
         }
       ],
       "lecturePriority": "core",
@@ -2918,12 +2918,12 @@
         ]
       },
       "explanation": {
-        "whatYouSee": "This rendered page belongs to the “Communication ordering” block. Its source layer contains 17 page-aware extraction blocks; inspect it when exact wording or layout matters.",
-        "whyItMatters": "These pages compare non-FIFO, FIFO, and causal-ordering guarantees.",
-        "intuition": "A delivery guarantee is a contract about which dependencies the receiver must respect.",
-        "technicalDetail": "Atlas preserves the rendered page, extracted text, block type, bounding box, image ID, and parser reference for DSA5208/Lec1.pdf page 10.",
+        "whatYouSee": "Non-FIFO, FIFO, and causal ordering provide progressively stronger delivery guarantees; FIFO constrains one channel, while causal order can cross channels.",
+        "whyItMatters": "Exam questions often ask which guarantee is sufficient for a dependency and what metadata or waiting it costs.",
+        "intuition": "A receiver may see messages in an order different from the order in which their causes were created unless the protocol delays delivery.",
+        "technicalDetail": "For every guarantee, state its scope, the dependency it preserves, and the state needed to decide whether a message is safe to release.",
         "pitfall": "FIFO is channel-local; it does not automatically preserve cross-process causal order.",
-        "connection": "Use this page with the communication-ordering study track. Answer the Socratic checkpoint before moving on."
+        "connection": "Use it to choose a delivery contract or explain why one channel-local rule fails for a cross-process dependency."
       },
       "textbookRefs": [
         {
@@ -2936,16 +2936,16 @@
       "referenceRefs": [],
       "socraticQuestions": [
         {
-          "type": "distinguish",
-          "prompt": "Which invariant or guarantee is being tested on “Lecture 1: Physical and Logical Times”?",
-          "answer": "State the process, causal, time, delivery, or storage boundary before naming an implementation detail.",
-          "hint": "Name the semantic boundary first."
+          "type": "counterexample",
+          "prompt": "Why can FIFO deliver a causally newer message before an older cause?",
+          "answer": "The two messages may travel on different channels, so FIFO constrains each channel separately and says nothing about their cross-channel causal dependency.",
+          "hint": "Draw two senders and one receiver."
         },
         {
-          "type": "transfer",
-          "prompt": "What would change if the system became larger or less reliable on “Lecture 1: Physical and Logical Times”?",
-          "answer": "State which failure, communication, synchronization, or measurement assumption becomes important and what evidence would test it.",
-          "hint": "Connect the rule to system behavior."
+          "type": "design",
+          "prompt": "What must a causal-delivery protocol decide before releasing a message?",
+          "answer": "It must check whether all messages that causally precede the candidate have been delivered, or buffer the candidate until that condition holds.",
+          "hint": "The guarantee becomes a release condition."
         }
       ],
       "lecturePriority": "core",
@@ -3105,12 +3105,12 @@
         ]
       },
       "explanation": {
-        "whatYouSee": "This rendered page belongs to the “Physical clocks and NTP” block. Its source layer contains 8 page-aware extraction blocks; inspect it when exact wording or layout matters.",
-        "whyItMatters": "These pages separate local physical clocks, drift, and network-delay estimation from logical ordering.",
-        "intuition": "Synchronization estimates wall time; it does not establish causality.",
-        "technicalDetail": "Atlas preserves the rendered page, extracted text, block type, bounding box, image ID, and parser reference for DSA5208/Lec1.pdf page 11.",
+        "whatYouSee": "Physical-clock synchronization estimates wall time from exchanged timestamps, but drift and asymmetric delay leave uncertainty and do not prove causality.",
+        "whyItMatters": "The distinction between physical time and logical time is a central conceptual boundary in the lecture.",
+        "intuition": "Two clocks can agree closely and still observe events without a causal path; time closeness is not influence.",
+        "technicalDetail": "Compute round-trip delay from the four timestamps, state the symmetric-delay assumption, and keep the resulting uncertainty visible.",
         "pitfall": "Do not use a physical timestamp comparison as a causal proof.",
-        "connection": "Use this page with the physical-clocks study track. Answer the Socratic checkpoint before moving on."
+        "connection": "Use it for wall-clock coordination or delay estimation, not as a replacement for causal ordering."
       },
       "textbookRefs": [
         {
@@ -3123,16 +3123,16 @@
       "referenceRefs": [],
       "socraticQuestions": [
         {
-          "type": "distinguish",
-          "prompt": "Which invariant or guarantee is being tested on “Lecture 1: Physical and Logical Times”?",
-          "answer": "State the process, causal, time, delivery, or storage boundary before naming an implementation detail.",
-          "hint": "Name the semantic boundary first."
+          "type": "calculate",
+          "prompt": "If the measured round trip becomes much larger, what part of the clock estimate becomes less trustworthy?",
+          "answer": "The delay split becomes more uncertain, especially if the two directions are not symmetric or queues change during the exchange.",
+          "hint": "Arithmetic can be correct while the model is weak."
         },
         {
-          "type": "transfer",
-          "prompt": "What would change if the system became larger or less reliable on “Lecture 1: Physical and Logical Times”?",
-          "answer": "State which failure, communication, synchronization, or measurement assumption becomes important and what evidence would test it.",
-          "hint": "Connect the rule to system behavior."
+          "type": "compare",
+          "prompt": "Give one event-order question NTP cannot answer but a logical clock can address.",
+          "answer": "NTP cannot prove whether one event could have influenced another; a logical relation can preserve that causal-precedence implication.",
+          "hint": "Ask about influence rather than wall time."
         }
       ],
       "lecturePriority": "core",
@@ -3308,12 +3308,12 @@
         ]
       },
       "explanation": {
-        "whatYouSee": "This rendered page belongs to the “Physical clocks and NTP” block. Its source layer contains 9 page-aware extraction blocks; inspect it when exact wording or layout matters.",
-        "whyItMatters": "These pages separate local physical clocks, drift, and network-delay estimation from logical ordering.",
-        "intuition": "Synchronization estimates wall time; it does not establish causality.",
-        "technicalDetail": "Atlas preserves the rendered page, extracted text, block type, bounding box, image ID, and parser reference for DSA5208/Lec1.pdf page 12.",
+        "whatYouSee": "Physical-clock synchronization estimates wall time from exchanged timestamps, but drift and asymmetric delay leave uncertainty and do not prove causality.",
+        "whyItMatters": "The distinction between physical time and logical time is a central conceptual boundary in the lecture.",
+        "intuition": "Two clocks can agree closely and still observe events without a causal path; time closeness is not influence.",
+        "technicalDetail": "Compute round-trip delay from the four timestamps, state the symmetric-delay assumption, and keep the resulting uncertainty visible.",
         "pitfall": "Do not use a physical timestamp comparison as a causal proof.",
-        "connection": "Use this page with the physical-clocks study track. Answer the Socratic checkpoint before moving on."
+        "connection": "Use it for wall-clock coordination or delay estimation, not as a replacement for causal ordering."
       },
       "textbookRefs": [
         {
@@ -3326,16 +3326,16 @@
       "referenceRefs": [],
       "socraticQuestions": [
         {
-          "type": "distinguish",
-          "prompt": "Which invariant or guarantee is being tested on “Lecture 1: Physical and Logical Times”?",
-          "answer": "State the process, causal, time, delivery, or storage boundary before naming an implementation detail.",
-          "hint": "Name the semantic boundary first."
+          "type": "calculate",
+          "prompt": "If the measured round trip becomes much larger, what part of the clock estimate becomes less trustworthy?",
+          "answer": "The delay split becomes more uncertain, especially if the two directions are not symmetric or queues change during the exchange.",
+          "hint": "Arithmetic can be correct while the model is weak."
         },
         {
-          "type": "transfer",
-          "prompt": "What would change if the system became larger or less reliable on “Lecture 1: Physical and Logical Times”?",
-          "answer": "State which failure, communication, synchronization, or measurement assumption becomes important and what evidence would test it.",
-          "hint": "Connect the rule to system behavior."
+          "type": "compare",
+          "prompt": "Give one event-order question NTP cannot answer but a logical clock can address.",
+          "answer": "NTP cannot prove whether one event could have influenced another; a logical relation can preserve that causal-precedence implication.",
+          "hint": "Ask about influence rather than wall time."
         }
       ],
       "lecturePriority": "core",
@@ -3591,12 +3591,12 @@
         ]
       },
       "explanation": {
-        "whatYouSee": "This rendered page belongs to the “Physical clocks and NTP” block. Its source layer contains 14 page-aware extraction blocks; inspect it when exact wording or layout matters.",
-        "whyItMatters": "These pages separate local physical clocks, drift, and network-delay estimation from logical ordering.",
-        "intuition": "Synchronization estimates wall time; it does not establish causality.",
-        "technicalDetail": "Atlas preserves the rendered page, extracted text, block type, bounding box, image ID, and parser reference for DSA5208/Lec1.pdf page 13.",
+        "whatYouSee": "Physical-clock synchronization estimates wall time from exchanged timestamps, but drift and asymmetric delay leave uncertainty and do not prove causality.",
+        "whyItMatters": "The distinction between physical time and logical time is a central conceptual boundary in the lecture.",
+        "intuition": "Two clocks can agree closely and still observe events without a causal path; time closeness is not influence.",
+        "technicalDetail": "Compute round-trip delay from the four timestamps, state the symmetric-delay assumption, and keep the resulting uncertainty visible.",
         "pitfall": "Do not use a physical timestamp comparison as a causal proof.",
-        "connection": "Use this page with the physical-clocks study track. Answer the Socratic checkpoint before moving on."
+        "connection": "Use it for wall-clock coordination or delay estimation, not as a replacement for causal ordering."
       },
       "textbookRefs": [
         {
@@ -3609,16 +3609,16 @@
       "referenceRefs": [],
       "socraticQuestions": [
         {
-          "type": "distinguish",
-          "prompt": "Which invariant or guarantee is being tested on “Lecture 1: Physical and Logical Times”?",
-          "answer": "State the process, causal, time, delivery, or storage boundary before naming an implementation detail.",
-          "hint": "Name the semantic boundary first."
+          "type": "calculate",
+          "prompt": "If the measured round trip becomes much larger, what part of the clock estimate becomes less trustworthy?",
+          "answer": "The delay split becomes more uncertain, especially if the two directions are not symmetric or queues change during the exchange.",
+          "hint": "Arithmetic can be correct while the model is weak."
         },
         {
-          "type": "transfer",
-          "prompt": "What would change if the system became larger or less reliable on “Lecture 1: Physical and Logical Times”?",
-          "answer": "State which failure, communication, synchronization, or measurement assumption becomes important and what evidence would test it.",
-          "hint": "Connect the rule to system behavior."
+          "type": "compare",
+          "prompt": "Give one event-order question NTP cannot answer but a logical clock can address.",
+          "answer": "NTP cannot prove whether one event could have influenced another; a logical relation can preserve that causal-precedence implication.",
+          "hint": "Ask about influence rather than wall time."
         }
       ],
       "lecturePriority": "core",
@@ -3826,12 +3826,12 @@
         ]
       },
       "explanation": {
-        "whatYouSee": "This rendered page belongs to the “Physical clocks and NTP” block. Its source layer contains 11 page-aware extraction blocks; inspect it when exact wording or layout matters.",
-        "whyItMatters": "These pages separate local physical clocks, drift, and network-delay estimation from logical ordering.",
-        "intuition": "Synchronization estimates wall time; it does not establish causality.",
-        "technicalDetail": "Atlas preserves the rendered page, extracted text, block type, bounding box, image ID, and parser reference for DSA5208/Lec1.pdf page 14.",
+        "whatYouSee": "Physical-clock synchronization estimates wall time from exchanged timestamps, but drift and asymmetric delay leave uncertainty and do not prove causality.",
+        "whyItMatters": "The distinction between physical time and logical time is a central conceptual boundary in the lecture.",
+        "intuition": "Two clocks can agree closely and still observe events without a causal path; time closeness is not influence.",
+        "technicalDetail": "Compute round-trip delay from the four timestamps, state the symmetric-delay assumption, and keep the resulting uncertainty visible.",
         "pitfall": "Do not use a physical timestamp comparison as a causal proof.",
-        "connection": "Use this page with the physical-clocks study track. Answer the Socratic checkpoint before moving on."
+        "connection": "Use it for wall-clock coordination or delay estimation, not as a replacement for causal ordering."
       },
       "textbookRefs": [
         {
@@ -3844,16 +3844,16 @@
       "referenceRefs": [],
       "socraticQuestions": [
         {
-          "type": "distinguish",
-          "prompt": "Which invariant or guarantee is being tested on “Lecture 1: Physical and Logical Times”?",
-          "answer": "State the process, causal, time, delivery, or storage boundary before naming an implementation detail.",
-          "hint": "Name the semantic boundary first."
+          "type": "calculate",
+          "prompt": "If the measured round trip becomes much larger, what part of the clock estimate becomes less trustworthy?",
+          "answer": "The delay split becomes more uncertain, especially if the two directions are not symmetric or queues change during the exchange.",
+          "hint": "Arithmetic can be correct while the model is weak."
         },
         {
-          "type": "transfer",
-          "prompt": "What would change if the system became larger or less reliable on “Lecture 1: Physical and Logical Times”?",
-          "answer": "State which failure, communication, synchronization, or measurement assumption becomes important and what evidence would test it.",
-          "hint": "Connect the rule to system behavior."
+          "type": "compare",
+          "prompt": "Give one event-order question NTP cannot answer but a logical clock can address.",
+          "answer": "NTP cannot prove whether one event could have influenced another; a logical relation can preserve that causal-precedence implication.",
+          "hint": "Ask about influence rather than wall time."
         }
       ],
       "lecturePriority": "core",
@@ -4077,12 +4077,12 @@
         ]
       },
       "explanation": {
-        "whatYouSee": "This rendered page belongs to the “Logical clocks and Lamport scalar time” block. Its source layer contains 12 page-aware extraction blocks; inspect it when exact wording or layout matters.",
-        "whyItMatters": "These pages define logical-clock consistency, scalar updates, total ordering, and the one-way guarantee.",
-        "intuition": "A scalar clock preserves causal precedence but may impose an arbitrary order on concurrent events.",
-        "technicalDetail": "Atlas preserves the rendered page, extracted text, block type, bounding box, image ID, and parser reference for DSA5208/Lec1.pdf page 15.",
+        "whatYouSee": "Lamport scalar clocks update on local events and message receipt so causal precedence implies increasing timestamps, but the converse fails for concurrent events.",
+        "whyItMatters": "The one-way guarantee is the exact distinction between a causal-preserving clock and a complete representation of concurrency.",
+        "intuition": "A scalar clock remembers ‘how late’ an event is in one number, not which process histories produced that number.",
+        "technicalDetail": "On receipt, take the maximum of local and received time, then increment. For any timestamp comparison, test whether it is a necessary implication or an invalid converse.",
         "pitfall": "The converse of the Lamport implication is not generally true.",
-        "connection": "Use this page with the lamport-scalar study track. Answer the Socratic checkpoint before moving on."
+        "connection": "Use it to construct a causal-consistent total order or explain why scalar timestamps cannot detect every concurrent pair."
       },
       "textbookRefs": [
         {
@@ -4102,16 +4102,16 @@
       ],
       "socraticQuestions": [
         {
-          "type": "distinguish",
-          "prompt": "Which invariant or guarantee is being tested on “Lecture 1: Physical and Logical Times”?",
-          "answer": "State the process, causal, time, delivery, or storage boundary before naming an implementation detail.",
-          "hint": "Name the semantic boundary first."
+          "type": "trace",
+          "prompt": "Why is incrementing after taking the maximum necessary at a receive event?",
+          "answer": "Without the increment, the receive could tie with the greatest known time; the strict increase is needed to place the receive after both local history and the received event.",
+          "hint": "Check the strict inequality required by causality."
         },
         {
-          "type": "transfer",
-          "prompt": "What would change if the system became larger or less reliable on “Lecture 1: Physical and Logical Times”?",
-          "answer": "State which failure, communication, synchronization, or measurement assumption becomes important and what evidence would test it.",
-          "hint": "Connect the rule to system behavior."
+          "type": "counterexample",
+          "prompt": "Can two concurrent events receive different scalar timestamps? If so, what does that show?",
+          "answer": "Yes. Independent local progress can produce different numbers even without a causal path, so scalar order alone cannot prove causality.",
+          "hint": "The converse is the trap."
         }
       ],
       "lecturePriority": "core",
@@ -4367,12 +4367,12 @@
         ]
       },
       "explanation": {
-        "whatYouSee": "This rendered page belongs to the “Logical clocks and Lamport scalar time” block. Its source layer contains 14 page-aware extraction blocks; inspect it when exact wording or layout matters.",
-        "whyItMatters": "These pages define logical-clock consistency, scalar updates, total ordering, and the one-way guarantee.",
-        "intuition": "A scalar clock preserves causal precedence but may impose an arbitrary order on concurrent events.",
-        "technicalDetail": "Atlas preserves the rendered page, extracted text, block type, bounding box, image ID, and parser reference for DSA5208/Lec1.pdf page 16.",
+        "whatYouSee": "Lamport scalar clocks update on local events and message receipt so causal precedence implies increasing timestamps, but the converse fails for concurrent events.",
+        "whyItMatters": "The one-way guarantee is the exact distinction between a causal-preserving clock and a complete representation of concurrency.",
+        "intuition": "A scalar clock remembers ‘how late’ an event is in one number, not which process histories produced that number.",
+        "technicalDetail": "On receipt, take the maximum of local and received time, then increment. For any timestamp comparison, test whether it is a necessary implication or an invalid converse.",
         "pitfall": "The converse of the Lamport implication is not generally true.",
-        "connection": "Use this page with the lamport-scalar study track. Answer the Socratic checkpoint before moving on."
+        "connection": "Use it to construct a causal-consistent total order or explain why scalar timestamps cannot detect every concurrent pair."
       },
       "textbookRefs": [
         {
@@ -4392,16 +4392,16 @@
       ],
       "socraticQuestions": [
         {
-          "type": "distinguish",
-          "prompt": "Which invariant or guarantee is being tested on “Lecture 1: Physical and Logical Times”?",
-          "answer": "State the process, causal, time, delivery, or storage boundary before naming an implementation detail.",
-          "hint": "Name the semantic boundary first."
+          "type": "trace",
+          "prompt": "Why is incrementing after taking the maximum necessary at a receive event?",
+          "answer": "Without the increment, the receive could tie with the greatest known time; the strict increase is needed to place the receive after both local history and the received event.",
+          "hint": "Check the strict inequality required by causality."
         },
         {
-          "type": "transfer",
-          "prompt": "What would change if the system became larger or less reliable on “Lecture 1: Physical and Logical Times”?",
-          "answer": "State which failure, communication, synchronization, or measurement assumption becomes important and what evidence would test it.",
-          "hint": "Connect the rule to system behavior."
+          "type": "counterexample",
+          "prompt": "Can two concurrent events receive different scalar timestamps? If so, what does that show?",
+          "answer": "Yes. Independent local progress can produce different numbers even without a causal path, so scalar order alone cannot prove causality.",
+          "hint": "The converse is the trap."
         }
       ],
       "lecturePriority": "core",
@@ -4625,12 +4625,12 @@
         ]
       },
       "explanation": {
-        "whatYouSee": "This rendered page belongs to the “Logical clocks and Lamport scalar time” block. Its source layer contains 12 page-aware extraction blocks; inspect it when exact wording or layout matters.",
-        "whyItMatters": "These pages define logical-clock consistency, scalar updates, total ordering, and the one-way guarantee.",
-        "intuition": "A scalar clock preserves causal precedence but may impose an arbitrary order on concurrent events.",
-        "technicalDetail": "Atlas preserves the rendered page, extracted text, block type, bounding box, image ID, and parser reference for DSA5208/Lec1.pdf page 17.",
+        "whatYouSee": "Lamport scalar clocks update on local events and message receipt so causal precedence implies increasing timestamps, but the converse fails for concurrent events.",
+        "whyItMatters": "The one-way guarantee is the exact distinction between a causal-preserving clock and a complete representation of concurrency.",
+        "intuition": "A scalar clock remembers ‘how late’ an event is in one number, not which process histories produced that number.",
+        "technicalDetail": "On receipt, take the maximum of local and received time, then increment. For any timestamp comparison, test whether it is a necessary implication or an invalid converse.",
         "pitfall": "The converse of the Lamport implication is not generally true.",
-        "connection": "Use this page with the lamport-scalar study track. Answer the Socratic checkpoint before moving on."
+        "connection": "Use it to construct a causal-consistent total order or explain why scalar timestamps cannot detect every concurrent pair."
       },
       "textbookRefs": [
         {
@@ -4650,16 +4650,16 @@
       ],
       "socraticQuestions": [
         {
-          "type": "distinguish",
-          "prompt": "Which invariant or guarantee is being tested on “Lecture 1: Physical and Logical Times”?",
-          "answer": "State the process, causal, time, delivery, or storage boundary before naming an implementation detail.",
-          "hint": "Name the semantic boundary first."
+          "type": "trace",
+          "prompt": "Why is incrementing after taking the maximum necessary at a receive event?",
+          "answer": "Without the increment, the receive could tie with the greatest known time; the strict increase is needed to place the receive after both local history and the received event.",
+          "hint": "Check the strict inequality required by causality."
         },
         {
-          "type": "transfer",
-          "prompt": "What would change if the system became larger or less reliable on “Lecture 1: Physical and Logical Times”?",
-          "answer": "State which failure, communication, synchronization, or measurement assumption becomes important and what evidence would test it.",
-          "hint": "Connect the rule to system behavior."
+          "type": "counterexample",
+          "prompt": "Can two concurrent events receive different scalar timestamps? If so, what does that show?",
+          "answer": "Yes. Independent local progress can produce different numbers even without a causal path, so scalar order alone cannot prove causality.",
+          "hint": "The converse is the trap."
         }
       ],
       "lecturePriority": "core",
@@ -4947,12 +4947,12 @@
         ]
       },
       "explanation": {
-        "whatYouSee": "This rendered page belongs to the “Logical clocks and Lamport scalar time” block. Its source layer contains 16 page-aware extraction blocks; inspect it when exact wording or layout matters.",
-        "whyItMatters": "These pages define logical-clock consistency, scalar updates, total ordering, and the one-way guarantee.",
-        "intuition": "A scalar clock preserves causal precedence but may impose an arbitrary order on concurrent events.",
-        "technicalDetail": "Atlas preserves the rendered page, extracted text, block type, bounding box, image ID, and parser reference for DSA5208/Lec1.pdf page 18.",
+        "whatYouSee": "Lamport scalar clocks update on local events and message receipt so causal precedence implies increasing timestamps, but the converse fails for concurrent events.",
+        "whyItMatters": "The one-way guarantee is the exact distinction between a causal-preserving clock and a complete representation of concurrency.",
+        "intuition": "A scalar clock remembers ‘how late’ an event is in one number, not which process histories produced that number.",
+        "technicalDetail": "On receipt, take the maximum of local and received time, then increment. For any timestamp comparison, test whether it is a necessary implication or an invalid converse.",
         "pitfall": "The converse of the Lamport implication is not generally true.",
-        "connection": "Use this page with the lamport-scalar study track. Answer the Socratic checkpoint before moving on."
+        "connection": "Use it to construct a causal-consistent total order or explain why scalar timestamps cannot detect every concurrent pair."
       },
       "textbookRefs": [
         {
@@ -4972,16 +4972,16 @@
       ],
       "socraticQuestions": [
         {
-          "type": "distinguish",
-          "prompt": "Which invariant or guarantee is being tested on “Lecture 1: Physical and Logical Times”?",
-          "answer": "State the process, causal, time, delivery, or storage boundary before naming an implementation detail.",
-          "hint": "Name the semantic boundary first."
+          "type": "trace",
+          "prompt": "Why is incrementing after taking the maximum necessary at a receive event?",
+          "answer": "Without the increment, the receive could tie with the greatest known time; the strict increase is needed to place the receive after both local history and the received event.",
+          "hint": "Check the strict inequality required by causality."
         },
         {
-          "type": "transfer",
-          "prompt": "What would change if the system became larger or less reliable on “Lecture 1: Physical and Logical Times”?",
-          "answer": "State which failure, communication, synchronization, or measurement assumption becomes important and what evidence would test it.",
-          "hint": "Connect the rule to system behavior."
+          "type": "counterexample",
+          "prompt": "Can two concurrent events receive different scalar timestamps? If so, what does that show?",
+          "answer": "Yes. Independent local progress can produce different numbers even without a causal path, so scalar order alone cannot prove causality.",
+          "hint": "The converse is the trap."
         }
       ],
       "lecturePriority": "core",
@@ -5109,12 +5109,12 @@
         ]
       },
       "explanation": {
-        "whatYouSee": "This rendered page belongs to the “Logical clocks and Lamport scalar time” block. Its source layer contains 6 page-aware extraction blocks; inspect it when exact wording or layout matters.",
-        "whyItMatters": "These pages define logical-clock consistency, scalar updates, total ordering, and the one-way guarantee.",
-        "intuition": "A scalar clock preserves causal precedence but may impose an arbitrary order on concurrent events.",
-        "technicalDetail": "Atlas preserves the rendered page, extracted text, block type, bounding box, image ID, and parser reference for DSA5208/Lec1.pdf page 19.",
+        "whatYouSee": "Lamport scalar clocks update on local events and message receipt so causal precedence implies increasing timestamps, but the converse fails for concurrent events.",
+        "whyItMatters": "The one-way guarantee is the exact distinction between a causal-preserving clock and a complete representation of concurrency.",
+        "intuition": "A scalar clock remembers ‘how late’ an event is in one number, not which process histories produced that number.",
+        "technicalDetail": "On receipt, take the maximum of local and received time, then increment. For any timestamp comparison, test whether it is a necessary implication or an invalid converse.",
         "pitfall": "The converse of the Lamport implication is not generally true.",
-        "connection": "Use this page with the lamport-scalar study track. Answer the Socratic checkpoint before moving on."
+        "connection": "Use it to construct a causal-consistent total order or explain why scalar timestamps cannot detect every concurrent pair."
       },
       "textbookRefs": [
         {
@@ -5134,16 +5134,16 @@
       ],
       "socraticQuestions": [
         {
-          "type": "distinguish",
-          "prompt": "Which invariant or guarantee is being tested on “Lecture 1: Physical and Logical Times”?",
-          "answer": "State the process, causal, time, delivery, or storage boundary before naming an implementation detail.",
-          "hint": "Name the semantic boundary first."
+          "type": "trace",
+          "prompt": "Why is incrementing after taking the maximum necessary at a receive event?",
+          "answer": "Without the increment, the receive could tie with the greatest known time; the strict increase is needed to place the receive after both local history and the received event.",
+          "hint": "Check the strict inequality required by causality."
         },
         {
-          "type": "transfer",
-          "prompt": "What would change if the system became larger or less reliable on “Lecture 1: Physical and Logical Times”?",
-          "answer": "State which failure, communication, synchronization, or measurement assumption becomes important and what evidence would test it.",
-          "hint": "Connect the rule to system behavior."
+          "type": "counterexample",
+          "prompt": "Can two concurrent events receive different scalar timestamps? If so, what does that show?",
+          "answer": "Yes. Independent local progress can produce different numbers even without a causal path, so scalar order alone cannot prove causality.",
+          "hint": "The converse is the trap."
         }
       ],
       "lecturePriority": "core",
@@ -5495,12 +5495,12 @@
         ]
       },
       "explanation": {
-        "whatYouSee": "This rendered page belongs to the “Vector time” block. Its source layer contains 20 page-aware extraction blocks; inspect it when exact wording or layout matters.",
-        "whyItMatters": "These pages define vector updates, componentwise comparison, causal isomorphism, and message complexity.",
-        "intuition": "Each component records one process's causal progress, making concurrency visible as incomparability.",
-        "technicalDetail": "Atlas preserves the rendered page, extracted text, block type, bounding box, image ID, and parser reference for DSA5208/Lec1.pdf page 20.",
+        "whatYouSee": "Vector clocks keep one causal-progress component per process, so componentwise dominance represents order and incomparability exposes concurrency.",
+        "whyItMatters": "Vector time supplies the information that scalar time discards, at a metadata cost that grows with the number of processes.",
+        "intuition": "Each component answers ‘how much of process k's history is known?’; conflicting components mean independent progress.",
+        "technicalDetail": "Update the local component for local/send events, merge componentwise maxima on receipt, then compare every component before declaring order.",
         "pitfall": "Vector order is componentwise, not lexicographic.",
-        "connection": "Use this page with the vector-clocks study track. Answer the Socratic checkpoint before moving on."
+        "connection": "Use it to distinguish causal order from concurrency and to quantify the metadata cost of that distinction."
       },
       "textbookRefs": [
         {
@@ -5520,16 +5520,16 @@
       ],
       "socraticQuestions": [
         {
-          "type": "distinguish",
-          "prompt": "Which invariant or guarantee is being tested on “Lecture 1: Physical and Logical Times”?",
-          "answer": "State the process, causal, time, delivery, or storage boundary before naming an implementation detail.",
-          "hint": "Name the semantic boundary first."
+          "type": "compare",
+          "prompt": "What does it mean when one vector is larger in one component and smaller in another?",
+          "answer": "Neither vector dominates the other, so the corresponding events are concurrent under the tracked process set.",
+          "hint": "Check all components, not the first difference."
         },
         {
-          "type": "transfer",
-          "prompt": "What would change if the system became larger or less reliable on “Lecture 1: Physical and Logical Times”?",
-          "answer": "Revisit metadata size, message cost, receiver state, and whether the causal guarantee is preserved.",
-          "hint": "Connect the rule to system behavior."
+          "type": "tradeoff",
+          "prompt": "What grows when the number of processes grows, even if the application payload stays fixed?",
+          "answer": "The vector dimension and therefore the timestamp metadata carried or stored with events grow with the process count.",
+          "hint": "Count one component per process."
         }
       ],
       "lecturePriority": "core",
@@ -5817,12 +5817,12 @@
         ]
       },
       "explanation": {
-        "whatYouSee": "This rendered page belongs to the “Vector time” block. Its source layer contains 16 page-aware extraction blocks; inspect it when exact wording or layout matters.",
-        "whyItMatters": "These pages define vector updates, componentwise comparison, causal isomorphism, and message complexity.",
-        "intuition": "Each component records one process's causal progress, making concurrency visible as incomparability.",
-        "technicalDetail": "Atlas preserves the rendered page, extracted text, block type, bounding box, image ID, and parser reference for DSA5208/Lec1.pdf page 21.",
+        "whatYouSee": "Vector clocks keep one causal-progress component per process, so componentwise dominance represents order and incomparability exposes concurrency.",
+        "whyItMatters": "Vector time supplies the information that scalar time discards, at a metadata cost that grows with the number of processes.",
+        "intuition": "Each component answers ‘how much of process k's history is known?’; conflicting components mean independent progress.",
+        "technicalDetail": "Update the local component for local/send events, merge componentwise maxima on receipt, then compare every component before declaring order.",
         "pitfall": "Vector order is componentwise, not lexicographic.",
-        "connection": "Use this page with the vector-clocks study track. Answer the Socratic checkpoint before moving on."
+        "connection": "Use it to distinguish causal order from concurrency and to quantify the metadata cost of that distinction."
       },
       "textbookRefs": [
         {
@@ -5842,16 +5842,16 @@
       ],
       "socraticQuestions": [
         {
-          "type": "distinguish",
-          "prompt": "Which invariant or guarantee is being tested on “Lecture 1: Physical and Logical Times”?",
-          "answer": "State the process, causal, time, delivery, or storage boundary before naming an implementation detail.",
-          "hint": "Name the semantic boundary first."
+          "type": "compare",
+          "prompt": "What does it mean when one vector is larger in one component and smaller in another?",
+          "answer": "Neither vector dominates the other, so the corresponding events are concurrent under the tracked process set.",
+          "hint": "Check all components, not the first difference."
         },
         {
-          "type": "transfer",
-          "prompt": "What would change if the system became larger or less reliable on “Lecture 1: Physical and Logical Times”?",
-          "answer": "Revisit metadata size, message cost, receiver state, and whether the causal guarantee is preserved.",
-          "hint": "Connect the rule to system behavior."
+          "type": "tradeoff",
+          "prompt": "What grows when the number of processes grows, even if the application payload stays fixed?",
+          "answer": "The vector dimension and therefore the timestamp metadata carried or stored with events grow with the process count.",
+          "hint": "Count one component per process."
         }
       ],
       "lecturePriority": "core",
@@ -6059,12 +6059,12 @@
         ]
       },
       "explanation": {
-        "whatYouSee": "This rendered page belongs to the “Vector time” block. Its source layer contains 11 page-aware extraction blocks; inspect it when exact wording or layout matters.",
-        "whyItMatters": "These pages define vector updates, componentwise comparison, causal isomorphism, and message complexity.",
-        "intuition": "Each component records one process's causal progress, making concurrency visible as incomparability.",
-        "technicalDetail": "Atlas preserves the rendered page, extracted text, block type, bounding box, image ID, and parser reference for DSA5208/Lec1.pdf page 22.",
+        "whatYouSee": "Vector clocks keep one causal-progress component per process, so componentwise dominance represents order and incomparability exposes concurrency.",
+        "whyItMatters": "Vector time supplies the information that scalar time discards, at a metadata cost that grows with the number of processes.",
+        "intuition": "Each component answers ‘how much of process k's history is known?’; conflicting components mean independent progress.",
+        "technicalDetail": "Update the local component for local/send events, merge componentwise maxima on receipt, then compare every component before declaring order.",
         "pitfall": "Vector order is componentwise, not lexicographic.",
-        "connection": "Use this page with the vector-clocks study track. Answer the Socratic checkpoint before moving on."
+        "connection": "Use it to distinguish causal order from concurrency and to quantify the metadata cost of that distinction."
       },
       "textbookRefs": [
         {
@@ -6084,16 +6084,16 @@
       ],
       "socraticQuestions": [
         {
-          "type": "distinguish",
-          "prompt": "Which invariant or guarantee is being tested on “Lecture 1: Physical and Logical Times”?",
-          "answer": "State the process, causal, time, delivery, or storage boundary before naming an implementation detail.",
-          "hint": "Name the semantic boundary first."
+          "type": "compare",
+          "prompt": "What does it mean when one vector is larger in one component and smaller in another?",
+          "answer": "Neither vector dominates the other, so the corresponding events are concurrent under the tracked process set.",
+          "hint": "Check all components, not the first difference."
         },
         {
-          "type": "transfer",
-          "prompt": "What would change if the system became larger or less reliable on “Lecture 1: Physical and Logical Times”?",
-          "answer": "Revisit metadata size, message cost, receiver state, and whether the causal guarantee is preserved.",
-          "hint": "Connect the rule to system behavior."
+          "type": "tradeoff",
+          "prompt": "What grows when the number of processes grows, even if the application payload stays fixed?",
+          "answer": "The vector dimension and therefore the timestamp metadata carried or stored with events grow with the process count.",
+          "hint": "Count one component per process."
         }
       ],
       "lecturePriority": "core",
@@ -6605,12 +6605,12 @@
         ]
       },
       "explanation": {
-        "whatYouSee": "This rendered page belongs to the “Vector time” block. Its source layer contains 30 page-aware extraction blocks; inspect it when exact wording or layout matters.",
-        "whyItMatters": "These pages define vector updates, componentwise comparison, causal isomorphism, and message complexity.",
-        "intuition": "Each component records one process's causal progress, making concurrency visible as incomparability.",
-        "technicalDetail": "Atlas preserves the rendered page, extracted text, block type, bounding box, image ID, and parser reference for DSA5208/Lec1.pdf page 23.",
+        "whatYouSee": "Vector clocks keep one causal-progress component per process, so componentwise dominance represents order and incomparability exposes concurrency.",
+        "whyItMatters": "Vector time supplies the information that scalar time discards, at a metadata cost that grows with the number of processes.",
+        "intuition": "Each component answers ‘how much of process k's history is known?’; conflicting components mean independent progress.",
+        "technicalDetail": "Update the local component for local/send events, merge componentwise maxima on receipt, then compare every component before declaring order.",
         "pitfall": "Vector order is componentwise, not lexicographic.",
-        "connection": "Use this page with the vector-clocks study track. Answer the Socratic checkpoint before moving on."
+        "connection": "Use it to distinguish causal order from concurrency and to quantify the metadata cost of that distinction."
       },
       "textbookRefs": [
         {
@@ -6630,16 +6630,16 @@
       ],
       "socraticQuestions": [
         {
-          "type": "distinguish",
-          "prompt": "Which invariant or guarantee is being tested on “Lecture 1: Physical and Logical Times”?",
-          "answer": "State the process, causal, time, delivery, or storage boundary before naming an implementation detail.",
-          "hint": "Name the semantic boundary first."
+          "type": "compare",
+          "prompt": "What does it mean when one vector is larger in one component and smaller in another?",
+          "answer": "Neither vector dominates the other, so the corresponding events are concurrent under the tracked process set.",
+          "hint": "Check all components, not the first difference."
         },
         {
-          "type": "transfer",
-          "prompt": "What would change if the system became larger or less reliable on “Lecture 1: Physical and Logical Times”?",
-          "answer": "Revisit metadata size, message cost, receiver state, and whether the causal guarantee is preserved.",
-          "hint": "Connect the rule to system behavior."
+          "type": "tradeoff",
+          "prompt": "What grows when the number of processes grows, even if the application payload stays fixed?",
+          "answer": "The vector dimension and therefore the timestamp metadata carried or stored with events grow with the process count.",
+          "hint": "Count one component per process."
         }
       ],
       "lecturePriority": "core",
@@ -7039,12 +7039,12 @@
         ]
       },
       "explanation": {
-        "whatYouSee": "This rendered page belongs to the “Compressed timestamps” block. Its source layer contains 23 page-aware extraction blocks; inspect it when exact wording or layout matters.",
-        "whyItMatters": "These pages reduce repeated vector metadata and introduce the differential technique.",
-        "intuition": "Compression changes what is transmitted and stored while preserving the causal knowledge needed by the receiver.",
-        "technicalDetail": "Atlas preserves the rendered page, extracted text, block type, bounding box, image ID, and parser reference for DSA5208/Lec1.pdf page 24.",
+        "whatYouSee": "Differential timestamping removes repeated vector entries while retaining the receiver-specific causal knowledge needed for correct reconstruction.",
+        "whyItMatters": "This is the implementation bridge from a semantically useful vector clock to a system that cannot afford to resend the full vector repeatedly.",
+        "intuition": "Compression removes repetition, not evidence: the receiver must still know which causal progress it has already observed.",
+        "technicalDetail": "Track Last Sent and Last Update state per receiver, send only changed components, and preserve the reconstruction invariant after every delivery.",
         "pitfall": "Do not confuse lower metadata cost with lower causal fidelity.",
-        "connection": "Use this page with the compressed-timestamps study track. Answer the Socratic checkpoint before moving on."
+        "connection": "Use it to reason about metadata cost without accidentally weakening the causal guarantee."
       },
       "textbookRefs": [
         {
@@ -7057,16 +7057,16 @@
       "referenceRefs": [],
       "socraticQuestions": [
         {
-          "type": "distinguish",
-          "prompt": "Which invariant or guarantee is being tested on “Lecture 1: Physical and Logical Times”?",
-          "answer": "State the process, causal, time, delivery, or storage boundary before naming an implementation detail.",
-          "hint": "Name the semantic boundary first."
+          "type": "invariant",
+          "prompt": "What would be a correctness failure in differential timestamping?",
+          "answer": "The receiver reconstructs a timestamp that omits a dependency it has not actually observed, allowing an event to be delivered too early.",
+          "hint": "Compression must preserve knowledge, not just values."
         },
         {
-          "type": "transfer",
-          "prompt": "What would change if the system became larger or less reliable on “Lecture 1: Physical and Logical Times”?",
-          "answer": "Revisit metadata size, message cost, receiver state, and whether the causal guarantee is preserved.",
-          "hint": "Connect the rule to system behavior."
+          "type": "design",
+          "prompt": "Why must the sender remember state separately for different receivers?",
+          "answer": "Receivers may have observed different portions of the sender's history, so the changed entries are destination-specific.",
+          "hint": "Knowledge is not globally identical across receivers."
         }
       ],
       "lecturePriority": "core",
@@ -7258,12 +7258,12 @@
         ]
       },
       "explanation": {
-        "whatYouSee": "This rendered page belongs to the “Compressed timestamps” block. Its source layer contains 10 page-aware extraction blocks; inspect it when exact wording or layout matters.",
-        "whyItMatters": "These pages reduce repeated vector metadata and introduce the differential technique.",
-        "intuition": "Compression changes what is transmitted and stored while preserving the causal knowledge needed by the receiver.",
-        "technicalDetail": "Atlas preserves the rendered page, extracted text, block type, bounding box, image ID, and parser reference for DSA5208/Lec1.pdf page 25.",
+        "whatYouSee": "Differential timestamping removes repeated vector entries while retaining the receiver-specific causal knowledge needed for correct reconstruction.",
+        "whyItMatters": "This is the implementation bridge from a semantically useful vector clock to a system that cannot afford to resend the full vector repeatedly.",
+        "intuition": "Compression removes repetition, not evidence: the receiver must still know which causal progress it has already observed.",
+        "technicalDetail": "Track Last Sent and Last Update state per receiver, send only changed components, and preserve the reconstruction invariant after every delivery.",
         "pitfall": "Do not confuse lower metadata cost with lower causal fidelity.",
-        "connection": "Use this page with the compressed-timestamps study track. Answer the Socratic checkpoint before moving on."
+        "connection": "Use it to reason about metadata cost without accidentally weakening the causal guarantee."
       },
       "textbookRefs": [
         {
@@ -7276,16 +7276,16 @@
       "referenceRefs": [],
       "socraticQuestions": [
         {
-          "type": "distinguish",
-          "prompt": "Which invariant or guarantee is being tested on “Lecture 1: Physical and Logical Times”?",
-          "answer": "State the process, causal, time, delivery, or storage boundary before naming an implementation detail.",
-          "hint": "Name the semantic boundary first."
+          "type": "invariant",
+          "prompt": "What would be a correctness failure in differential timestamping?",
+          "answer": "The receiver reconstructs a timestamp that omits a dependency it has not actually observed, allowing an event to be delivered too early.",
+          "hint": "Compression must preserve knowledge, not just values."
         },
         {
-          "type": "transfer",
-          "prompt": "What would change if the system became larger or less reliable on “Lecture 1: Physical and Logical Times”?",
-          "answer": "Revisit metadata size, message cost, receiver state, and whether the causal guarantee is preserved.",
-          "hint": "Connect the rule to system behavior."
+          "type": "design",
+          "prompt": "Why must the sender remember state separately for different receivers?",
+          "answer": "Receivers may have observed different portions of the sender's history, so the changed entries are destination-specific.",
+          "hint": "Knowledge is not globally identical across receivers."
         }
       ],
       "lecturePriority": "core",
@@ -7493,12 +7493,12 @@
         ]
       },
       "explanation": {
-        "whatYouSee": "This rendered page belongs to the “Compressed timestamps” block. Its source layer contains 11 page-aware extraction blocks; inspect it when exact wording or layout matters.",
-        "whyItMatters": "These pages reduce repeated vector metadata and introduce the differential technique.",
-        "intuition": "Compression changes what is transmitted and stored while preserving the causal knowledge needed by the receiver.",
-        "technicalDetail": "Atlas preserves the rendered page, extracted text, block type, bounding box, image ID, and parser reference for DSA5208/Lec1.pdf page 26.",
+        "whatYouSee": "Differential timestamping removes repeated vector entries while retaining the receiver-specific causal knowledge needed for correct reconstruction.",
+        "whyItMatters": "This is the implementation bridge from a semantically useful vector clock to a system that cannot afford to resend the full vector repeatedly.",
+        "intuition": "Compression removes repetition, not evidence: the receiver must still know which causal progress it has already observed.",
+        "technicalDetail": "Track Last Sent and Last Update state per receiver, send only changed components, and preserve the reconstruction invariant after every delivery.",
         "pitfall": "Do not confuse lower metadata cost with lower causal fidelity.",
-        "connection": "Use this page with the compressed-timestamps study track. Answer the Socratic checkpoint before moving on."
+        "connection": "Use it to reason about metadata cost without accidentally weakening the causal guarantee."
       },
       "textbookRefs": [
         {
@@ -7511,16 +7511,16 @@
       "referenceRefs": [],
       "socraticQuestions": [
         {
-          "type": "distinguish",
-          "prompt": "Which invariant or guarantee is being tested on “Lecture 1: Physical and Logical Times”?",
-          "answer": "State the process, causal, time, delivery, or storage boundary before naming an implementation detail.",
-          "hint": "Name the semantic boundary first."
+          "type": "invariant",
+          "prompt": "What would be a correctness failure in differential timestamping?",
+          "answer": "The receiver reconstructs a timestamp that omits a dependency it has not actually observed, allowing an event to be delivered too early.",
+          "hint": "Compression must preserve knowledge, not just values."
         },
         {
-          "type": "transfer",
-          "prompt": "What would change if the system became larger or less reliable on “Lecture 1: Physical and Logical Times”?",
-          "answer": "Revisit metadata size, message cost, receiver state, and whether the causal guarantee is preserved.",
-          "hint": "Connect the rule to system behavior."
+          "type": "design",
+          "prompt": "Why must the sender remember state separately for different receivers?",
+          "answer": "Receivers may have observed different portions of the sender's history, so the changed entries are destination-specific.",
+          "hint": "Knowledge is not globally identical across receivers."
         }
       ],
       "lecturePriority": "core",
@@ -7824,12 +7824,12 @@
         ]
       },
       "explanation": {
-        "whatYouSee": "This rendered page belongs to the “Compressed timestamps” block. Its source layer contains 17 page-aware extraction blocks; inspect it when exact wording or layout matters.",
-        "whyItMatters": "These pages reduce repeated vector metadata and introduce the differential technique.",
-        "intuition": "Compression changes what is transmitted and stored while preserving the causal knowledge needed by the receiver.",
-        "technicalDetail": "Atlas preserves the rendered page, extracted text, block type, bounding box, image ID, and parser reference for DSA5208/Lec1.pdf page 27.",
+        "whatYouSee": "Differential timestamping removes repeated vector entries while retaining the receiver-specific causal knowledge needed for correct reconstruction.",
+        "whyItMatters": "This is the implementation bridge from a semantically useful vector clock to a system that cannot afford to resend the full vector repeatedly.",
+        "intuition": "Compression removes repetition, not evidence: the receiver must still know which causal progress it has already observed.",
+        "technicalDetail": "Track Last Sent and Last Update state per receiver, send only changed components, and preserve the reconstruction invariant after every delivery.",
         "pitfall": "Do not confuse lower metadata cost with lower causal fidelity.",
-        "connection": "Use this page with the compressed-timestamps study track. Answer the Socratic checkpoint before moving on."
+        "connection": "Use it to reason about metadata cost without accidentally weakening the causal guarantee."
       },
       "textbookRefs": [
         {
@@ -7842,16 +7842,16 @@
       "referenceRefs": [],
       "socraticQuestions": [
         {
-          "type": "distinguish",
-          "prompt": "Which invariant or guarantee is being tested on “Lecture 1: Physical and Logical Times”?",
-          "answer": "State the process, causal, time, delivery, or storage boundary before naming an implementation detail.",
-          "hint": "Name the semantic boundary first."
+          "type": "invariant",
+          "prompt": "What would be a correctness failure in differential timestamping?",
+          "answer": "The receiver reconstructs a timestamp that omits a dependency it has not actually observed, allowing an event to be delivered too early.",
+          "hint": "Compression must preserve knowledge, not just values."
         },
         {
-          "type": "transfer",
-          "prompt": "What would change if the system became larger or less reliable on “Lecture 1: Physical and Logical Times”?",
-          "answer": "Revisit metadata size, message cost, receiver state, and whether the causal guarantee is preserved.",
-          "hint": "Connect the rule to system behavior."
+          "type": "design",
+          "prompt": "Why must the sender remember state separately for different receivers?",
+          "answer": "Receivers may have observed different portions of the sender's history, so the changed entries are destination-specific.",
+          "hint": "Knowledge is not globally identical across receivers."
         }
       ],
       "lecturePriority": "core",
@@ -8155,12 +8155,12 @@
         ]
       },
       "explanation": {
-        "whatYouSee": "This rendered page belongs to the “Compressed timestamps” block. Its source layer contains 17 page-aware extraction blocks; inspect it when exact wording or layout matters.",
-        "whyItMatters": "These pages reduce repeated vector metadata and introduce the differential technique.",
-        "intuition": "Compression changes what is transmitted and stored while preserving the causal knowledge needed by the receiver.",
-        "technicalDetail": "Atlas preserves the rendered page, extracted text, block type, bounding box, image ID, and parser reference for DSA5208/Lec1.pdf page 28.",
+        "whatYouSee": "Differential timestamping removes repeated vector entries while retaining the receiver-specific causal knowledge needed for correct reconstruction.",
+        "whyItMatters": "This is the implementation bridge from a semantically useful vector clock to a system that cannot afford to resend the full vector repeatedly.",
+        "intuition": "Compression removes repetition, not evidence: the receiver must still know which causal progress it has already observed.",
+        "technicalDetail": "Track Last Sent and Last Update state per receiver, send only changed components, and preserve the reconstruction invariant after every delivery.",
         "pitfall": "Do not confuse lower metadata cost with lower causal fidelity.",
-        "connection": "Use this page with the compressed-timestamps study track. Answer the Socratic checkpoint before moving on."
+        "connection": "Use it to reason about metadata cost without accidentally weakening the causal guarantee."
       },
       "textbookRefs": [
         {
@@ -8173,16 +8173,16 @@
       "referenceRefs": [],
       "socraticQuestions": [
         {
-          "type": "distinguish",
-          "prompt": "Which invariant or guarantee is being tested on “Lecture 1: Physical and Logical Times”?",
-          "answer": "State the process, causal, time, delivery, or storage boundary before naming an implementation detail.",
-          "hint": "Name the semantic boundary first."
+          "type": "invariant",
+          "prompt": "What would be a correctness failure in differential timestamping?",
+          "answer": "The receiver reconstructs a timestamp that omits a dependency it has not actually observed, allowing an event to be delivered too early.",
+          "hint": "Compression must preserve knowledge, not just values."
         },
         {
-          "type": "transfer",
-          "prompt": "What would change if the system became larger or less reliable on “Lecture 1: Physical and Logical Times”?",
-          "answer": "Revisit metadata size, message cost, receiver state, and whether the causal guarantee is preserved.",
-          "hint": "Connect the rule to system behavior."
+          "type": "design",
+          "prompt": "Why must the sender remember state separately for different receivers?",
+          "answer": "Receivers may have observed different portions of the sender's history, so the changed entries are destination-specific.",
+          "hint": "Knowledge is not globally identical across receivers."
         }
       ],
       "lecturePriority": "core",
@@ -8502,12 +8502,12 @@
         ]
       },
       "explanation": {
-        "whatYouSee": "This rendered page belongs to the “Compressed timestamps” block. Its source layer contains 18 page-aware extraction blocks; inspect it when exact wording or layout matters.",
-        "whyItMatters": "These pages reduce repeated vector metadata and introduce the differential technique.",
-        "intuition": "Compression changes what is transmitted and stored while preserving the causal knowledge needed by the receiver.",
-        "technicalDetail": "Atlas preserves the rendered page, extracted text, block type, bounding box, image ID, and parser reference for DSA5208/Lec1.pdf page 29.",
+        "whatYouSee": "Differential timestamping removes repeated vector entries while retaining the receiver-specific causal knowledge needed for correct reconstruction.",
+        "whyItMatters": "This is the implementation bridge from a semantically useful vector clock to a system that cannot afford to resend the full vector repeatedly.",
+        "intuition": "Compression removes repetition, not evidence: the receiver must still know which causal progress it has already observed.",
+        "technicalDetail": "Track Last Sent and Last Update state per receiver, send only changed components, and preserve the reconstruction invariant after every delivery.",
         "pitfall": "Do not confuse lower metadata cost with lower causal fidelity.",
-        "connection": "Use this page with the compressed-timestamps study track. Answer the Socratic checkpoint before moving on."
+        "connection": "Use it to reason about metadata cost without accidentally weakening the causal guarantee."
       },
       "textbookRefs": [
         {
@@ -8520,16 +8520,16 @@
       "referenceRefs": [],
       "socraticQuestions": [
         {
-          "type": "distinguish",
-          "prompt": "Which invariant or guarantee is being tested on “Lecture 1: Physical and Logical Times”?",
-          "answer": "State the process, causal, time, delivery, or storage boundary before naming an implementation detail.",
-          "hint": "Name the semantic boundary first."
+          "type": "invariant",
+          "prompt": "What would be a correctness failure in differential timestamping?",
+          "answer": "The receiver reconstructs a timestamp that omits a dependency it has not actually observed, allowing an event to be delivered too early.",
+          "hint": "Compression must preserve knowledge, not just values."
         },
         {
-          "type": "transfer",
-          "prompt": "What would change if the system became larger or less reliable on “Lecture 1: Physical and Logical Times”?",
-          "answer": "Revisit metadata size, message cost, receiver state, and whether the causal guarantee is preserved.",
-          "hint": "Connect the rule to system behavior."
+          "type": "design",
+          "prompt": "Why must the sender remember state separately for different receivers?",
+          "answer": "Receivers may have observed different portions of the sender's history, so the changed entries are destination-specific.",
+          "hint": "Knowledge is not globally identical across receivers."
         }
       ],
       "lecturePriority": "core",
@@ -8641,12 +8641,12 @@
         ]
       },
       "explanation": {
-        "whatYouSee": "This rendered page belongs to the “Compressed timestamps” block. Its source layer contains 5 page-aware extraction blocks; inspect it when exact wording or layout matters.",
-        "whyItMatters": "These pages reduce repeated vector metadata and introduce the differential technique.",
-        "intuition": "Compression changes what is transmitted and stored while preserving the causal knowledge needed by the receiver.",
-        "technicalDetail": "Atlas preserves the rendered page, extracted text, block type, bounding box, image ID, and parser reference for DSA5208/Lec1.pdf page 30.",
+        "whatYouSee": "Differential timestamping removes repeated vector entries while retaining the receiver-specific causal knowledge needed for correct reconstruction.",
+        "whyItMatters": "This is the implementation bridge from a semantically useful vector clock to a system that cannot afford to resend the full vector repeatedly.",
+        "intuition": "Compression removes repetition, not evidence: the receiver must still know which causal progress it has already observed.",
+        "technicalDetail": "Track Last Sent and Last Update state per receiver, send only changed components, and preserve the reconstruction invariant after every delivery.",
         "pitfall": "Do not confuse lower metadata cost with lower causal fidelity.",
-        "connection": "Use this page with the compressed-timestamps study track. Answer the Socratic checkpoint before moving on."
+        "connection": "Use it to reason about metadata cost without accidentally weakening the causal guarantee."
       },
       "textbookRefs": [
         {
@@ -8659,16 +8659,16 @@
       "referenceRefs": [],
       "socraticQuestions": [
         {
-          "type": "distinguish",
-          "prompt": "Which invariant or guarantee is being tested on “Lecture 1: Physical and Logical Times”?",
-          "answer": "State the process, causal, time, delivery, or storage boundary before naming an implementation detail.",
-          "hint": "Name the semantic boundary first."
+          "type": "invariant",
+          "prompt": "What would be a correctness failure in differential timestamping?",
+          "answer": "The receiver reconstructs a timestamp that omits a dependency it has not actually observed, allowing an event to be delivered too early.",
+          "hint": "Compression must preserve knowledge, not just values."
         },
         {
-          "type": "transfer",
-          "prompt": "What would change if the system became larger or less reliable on “Lecture 1: Physical and Logical Times”?",
-          "answer": "Revisit metadata size, message cost, receiver state, and whether the causal guarantee is preserved.",
-          "hint": "Connect the rule to system behavior."
+          "type": "design",
+          "prompt": "Why must the sender remember state separately for different receivers?",
+          "answer": "Receivers may have observed different portions of the sender's history, so the changed entries are destination-specific.",
+          "hint": "Knowledge is not globally identical across receivers."
         }
       ],
       "lecturePriority": "core",
@@ -8876,12 +8876,12 @@
         ]
       },
       "explanation": {
-        "whatYouSee": "This rendered page belongs to the “Compressed timestamps” block. Its source layer contains 11 page-aware extraction blocks; inspect it when exact wording or layout matters.",
-        "whyItMatters": "These pages reduce repeated vector metadata and introduce the differential technique.",
-        "intuition": "Compression changes what is transmitted and stored while preserving the causal knowledge needed by the receiver.",
-        "technicalDetail": "Atlas preserves the rendered page, extracted text, block type, bounding box, image ID, and parser reference for DSA5208/Lec1.pdf page 31.",
+        "whatYouSee": "Differential timestamping removes repeated vector entries while retaining the receiver-specific causal knowledge needed for correct reconstruction.",
+        "whyItMatters": "This is the implementation bridge from a semantically useful vector clock to a system that cannot afford to resend the full vector repeatedly.",
+        "intuition": "Compression removes repetition, not evidence: the receiver must still know which causal progress it has already observed.",
+        "technicalDetail": "Track Last Sent and Last Update state per receiver, send only changed components, and preserve the reconstruction invariant after every delivery.",
         "pitfall": "Do not confuse lower metadata cost with lower causal fidelity.",
-        "connection": "Use this page with the compressed-timestamps study track. Answer the Socratic checkpoint before moving on."
+        "connection": "Use it to reason about metadata cost without accidentally weakening the causal guarantee."
       },
       "textbookRefs": [
         {
@@ -8894,16 +8894,16 @@
       "referenceRefs": [],
       "socraticQuestions": [
         {
-          "type": "distinguish",
-          "prompt": "Which invariant or guarantee is being tested on “Lecture 1: Physical and Logical Times”?",
-          "answer": "State the process, causal, time, delivery, or storage boundary before naming an implementation detail.",
-          "hint": "Name the semantic boundary first."
+          "type": "invariant",
+          "prompt": "What would be a correctness failure in differential timestamping?",
+          "answer": "The receiver reconstructs a timestamp that omits a dependency it has not actually observed, allowing an event to be delivered too early.",
+          "hint": "Compression must preserve knowledge, not just values."
         },
         {
-          "type": "transfer",
-          "prompt": "What would change if the system became larger or less reliable on “Lecture 1: Physical and Logical Times”?",
-          "answer": "Revisit metadata size, message cost, receiver state, and whether the causal guarantee is preserved.",
-          "hint": "Connect the rule to system behavior."
+          "type": "design",
+          "prompt": "Why must the sender remember state separately for different receivers?",
+          "answer": "Receivers may have observed different portions of the sender's history, so the changed entries are destination-specific.",
+          "hint": "Knowledge is not globally identical across receivers."
         }
       ],
       "lecturePriority": "core",
@@ -9159,12 +9159,12 @@
         ]
       },
       "explanation": {
-        "whatYouSee": "This rendered page belongs to the “Compressed timestamps” block. Its source layer contains 14 page-aware extraction blocks; inspect it when exact wording or layout matters.",
-        "whyItMatters": "These pages reduce repeated vector metadata and introduce the differential technique.",
-        "intuition": "Compression changes what is transmitted and stored while preserving the causal knowledge needed by the receiver.",
-        "technicalDetail": "Atlas preserves the rendered page, extracted text, block type, bounding box, image ID, and parser reference for DSA5208/Lec1.pdf page 32.",
+        "whatYouSee": "Differential timestamping removes repeated vector entries while retaining the receiver-specific causal knowledge needed for correct reconstruction.",
+        "whyItMatters": "This is the implementation bridge from a semantically useful vector clock to a system that cannot afford to resend the full vector repeatedly.",
+        "intuition": "Compression removes repetition, not evidence: the receiver must still know which causal progress it has already observed.",
+        "technicalDetail": "Track Last Sent and Last Update state per receiver, send only changed components, and preserve the reconstruction invariant after every delivery.",
         "pitfall": "Do not confuse lower metadata cost with lower causal fidelity.",
-        "connection": "Use this page with the compressed-timestamps study track. Answer the Socratic checkpoint before moving on."
+        "connection": "Use it to reason about metadata cost without accidentally weakening the causal guarantee."
       },
       "textbookRefs": [
         {
@@ -9177,16 +9177,16 @@
       "referenceRefs": [],
       "socraticQuestions": [
         {
-          "type": "distinguish",
-          "prompt": "Which invariant or guarantee is being tested on “Lecture 1: Physical and Logical Times”?",
-          "answer": "State the process, causal, time, delivery, or storage boundary before naming an implementation detail.",
-          "hint": "Name the semantic boundary first."
+          "type": "invariant",
+          "prompt": "What would be a correctness failure in differential timestamping?",
+          "answer": "The receiver reconstructs a timestamp that omits a dependency it has not actually observed, allowing an event to be delivered too early.",
+          "hint": "Compression must preserve knowledge, not just values."
         },
         {
-          "type": "transfer",
-          "prompt": "What would change if the system became larger or less reliable on “Lecture 1: Physical and Logical Times”?",
-          "answer": "Revisit metadata size, message cost, receiver state, and whether the causal guarantee is preserved.",
-          "hint": "Connect the rule to system behavior."
+          "type": "design",
+          "prompt": "Why must the sender remember state separately for different receivers?",
+          "answer": "Receivers may have observed different portions of the sender's history, so the changed entries are destination-specific.",
+          "hint": "Knowledge is not globally identical across receivers."
         }
       ],
       "lecturePriority": "core",
@@ -9554,12 +9554,12 @@
         ]
       },
       "explanation": {
-        "whatYouSee": "This rendered page belongs to the “Lecture synthesis” block. Its source layer contains 21 page-aware extraction blocks; inspect it when exact wording or layout matters.",
-        "whyItMatters": "The summary reconnects causal precedence, physical time, logical time, and implementations.",
-        "intuition": "The study chain is model to relation to clock representation to implementation trade-off.",
-        "technicalDetail": "Atlas preserves the rendered page, extracted text, block type, bounding box, image ID, and parser reference for DSA5208/Lec1.pdf page 33.",
+        "whatYouSee": "The lecture chain is model, causal relation, physical-time limitation, logical representation, and metadata trade-off.",
+        "whyItMatters": "A synthesis page should let you choose the right abstraction for a new system scenario rather than repeat isolated definitions.",
+        "intuition": "Ask first what must be guaranteed, then choose the smallest time representation that preserves that guarantee.",
+        "technicalDetail": "Wall time estimates physical alignment; scalar time preserves causal order one-way; vector time exposes concurrency; compression reduces repetition while preserving causal knowledge.",
         "pitfall": "A summary page is a retrieval checkpoint, not a substitute for tracing the rules.",
-        "connection": "Use this page with the lamport-scalar and vector-clocks and compressed-timestamps study track. Answer the Socratic checkpoint before moving on."
+        "connection": "Use it as a retrieval checkpoint: explain the guarantee, counterexample, cost, and failure mode for each representation."
       },
       "textbookRefs": [
         {
@@ -9572,16 +9572,16 @@
       "referenceRefs": [],
       "socraticQuestions": [
         {
-          "type": "distinguish",
-          "prompt": "Which invariant or guarantee is being tested on “Lecture 1: Physical and Logical Times”?",
-          "answer": "State the process, causal, time, delivery, or storage boundary before naming an implementation detail.",
-          "hint": "Name the semantic boundary first."
+          "type": "select",
+          "prompt": "A system needs to detect concurrent updates, not only produce a deterministic display order. Which representation is the better starting point?",
+          "answer": "Vector time, because componentwise incomparability can represent concurrency; a scalar clock would impose an order without revealing whether it is causal.",
+          "hint": "Match the representation to the guarantee."
         },
         {
-          "type": "transfer",
-          "prompt": "What would change if the system became larger or less reliable on “Lecture 1: Physical and Logical Times”?",
-          "answer": "State which failure, communication, synchronization, or measurement assumption becomes important and what evidence would test it.",
-          "hint": "Connect the rule to system behavior."
+          "type": "synthesis",
+          "prompt": "State the trade-off that appears when moving from scalar to vector time and then to differential compression.",
+          "answer": "Vector time adds causal information at linear metadata cost per process; differential compression reduces repeated transmission or storage while preserving the causal information the receiver needs.",
+          "hint": "Track information and cost separately."
         }
       ],
       "lecturePriority": "core",
@@ -9933,12 +9933,12 @@
         ]
       },
       "explanation": {
-        "whatYouSee": "This rendered page belongs to the “Lecture synthesis” block. Its source layer contains 20 page-aware extraction blocks; inspect it when exact wording or layout matters.",
-        "whyItMatters": "The summary reconnects causal precedence, physical time, logical time, and implementations.",
-        "intuition": "The study chain is model to relation to clock representation to implementation trade-off.",
-        "technicalDetail": "Atlas preserves the rendered page, extracted text, block type, bounding box, image ID, and parser reference for DSA5208/Lec1.pdf page 34.",
+        "whatYouSee": "The lecture chain is model, causal relation, physical-time limitation, logical representation, and metadata trade-off.",
+        "whyItMatters": "A synthesis page should let you choose the right abstraction for a new system scenario rather than repeat isolated definitions.",
+        "intuition": "Ask first what must be guaranteed, then choose the smallest time representation that preserves that guarantee.",
+        "technicalDetail": "Wall time estimates physical alignment; scalar time preserves causal order one-way; vector time exposes concurrency; compression reduces repetition while preserving causal knowledge.",
         "pitfall": "A summary page is a retrieval checkpoint, not a substitute for tracing the rules.",
-        "connection": "Use this page with the lamport-scalar and vector-clocks and compressed-timestamps study track. Answer the Socratic checkpoint before moving on."
+        "connection": "Use it as a retrieval checkpoint: explain the guarantee, counterexample, cost, and failure mode for each representation."
       },
       "textbookRefs": [
         {
@@ -9951,16 +9951,16 @@
       "referenceRefs": [],
       "socraticQuestions": [
         {
-          "type": "distinguish",
-          "prompt": "Which invariant or guarantee is being tested on “Lecture 1: Physical and Logical Times”?",
-          "answer": "State the process, causal, time, delivery, or storage boundary before naming an implementation detail.",
-          "hint": "Name the semantic boundary first."
+          "type": "select",
+          "prompt": "A system needs to detect concurrent updates, not only produce a deterministic display order. Which representation is the better starting point?",
+          "answer": "Vector time, because componentwise incomparability can represent concurrency; a scalar clock would impose an order without revealing whether it is causal.",
+          "hint": "Match the representation to the guarantee."
         },
         {
-          "type": "transfer",
-          "prompt": "What would change if the system became larger or less reliable on “Lecture 1: Physical and Logical Times”?",
-          "answer": "State which failure, communication, synchronization, or measurement assumption becomes important and what evidence would test it.",
-          "hint": "Connect the rule to system behavior."
+          "type": "synthesis",
+          "prompt": "State the trade-off that appears when moving from scalar to vector time and then to differential compression.",
+          "answer": "Vector time adds causal information at linear metadata cost per process; differential compression reduces repeated transmission or storage while preserving the causal information the receiver needs.",
+          "hint": "Track information and cost separately."
         }
       ],
       "lecturePriority": "core",
@@ -10136,12 +10136,12 @@
         ]
       },
       "explanation": {
-        "whatYouSee": "This rendered page belongs to the “Lecture synthesis” block. Its source layer contains 9 page-aware extraction blocks; inspect it when exact wording or layout matters.",
-        "whyItMatters": "The summary reconnects causal precedence, physical time, logical time, and implementations.",
-        "intuition": "The study chain is model to relation to clock representation to implementation trade-off.",
-        "technicalDetail": "Atlas preserves the rendered page, extracted text, block type, bounding box, image ID, and parser reference for DSA5208/Lec1.pdf page 35.",
+        "whatYouSee": "The lecture chain is model, causal relation, physical-time limitation, logical representation, and metadata trade-off.",
+        "whyItMatters": "A synthesis page should let you choose the right abstraction for a new system scenario rather than repeat isolated definitions.",
+        "intuition": "Ask first what must be guaranteed, then choose the smallest time representation that preserves that guarantee.",
+        "technicalDetail": "Wall time estimates physical alignment; scalar time preserves causal order one-way; vector time exposes concurrency; compression reduces repetition while preserving causal knowledge.",
         "pitfall": "A summary page is a retrieval checkpoint, not a substitute for tracing the rules.",
-        "connection": "Use this page with the lamport-scalar and vector-clocks and compressed-timestamps study track. Answer the Socratic checkpoint before moving on."
+        "connection": "Use it as a retrieval checkpoint: explain the guarantee, counterexample, cost, and failure mode for each representation."
       },
       "textbookRefs": [
         {
@@ -10154,16 +10154,16 @@
       "referenceRefs": [],
       "socraticQuestions": [
         {
-          "type": "distinguish",
-          "prompt": "Which invariant or guarantee is being tested on “Lecture 1: Physical and Logical Times”?",
-          "answer": "State the process, causal, time, delivery, or storage boundary before naming an implementation detail.",
-          "hint": "Name the semantic boundary first."
+          "type": "select",
+          "prompt": "A system needs to detect concurrent updates, not only produce a deterministic display order. Which representation is the better starting point?",
+          "answer": "Vector time, because componentwise incomparability can represent concurrency; a scalar clock would impose an order without revealing whether it is causal.",
+          "hint": "Match the representation to the guarantee."
         },
         {
-          "type": "transfer",
-          "prompt": "What would change if the system became larger or less reliable on “Lecture 1: Physical and Logical Times”?",
-          "answer": "State which failure, communication, synchronization, or measurement assumption becomes important and what evidence would test it.",
-          "hint": "Connect the rule to system behavior."
+          "type": "synthesis",
+          "prompt": "State the trade-off that appears when moving from scalar to vector time and then to differential compression.",
+          "answer": "Vector time adds causal information at linear metadata cost per process; differential compression reduces repeated transmission or storage while preserving the causal information the receiver needs.",
+          "hint": "Track information and cost separately."
         }
       ],
       "lecturePriority": "core",
@@ -10307,12 +10307,12 @@
         ]
       },
       "explanation": {
-        "whatYouSee": "This rendered page belongs to the “Lecture synthesis” block. Its source layer contains 7 page-aware extraction blocks; inspect it when exact wording or layout matters.",
-        "whyItMatters": "The summary reconnects causal precedence, physical time, logical time, and implementations.",
-        "intuition": "The study chain is model to relation to clock representation to implementation trade-off.",
-        "technicalDetail": "Atlas preserves the rendered page, extracted text, block type, bounding box, image ID, and parser reference for DSA5208/Lec1.pdf page 36.",
+        "whatYouSee": "The lecture chain is model, causal relation, physical-time limitation, logical representation, and metadata trade-off.",
+        "whyItMatters": "A synthesis page should let you choose the right abstraction for a new system scenario rather than repeat isolated definitions.",
+        "intuition": "Ask first what must be guaranteed, then choose the smallest time representation that preserves that guarantee.",
+        "technicalDetail": "Wall time estimates physical alignment; scalar time preserves causal order one-way; vector time exposes concurrency; compression reduces repetition while preserving causal knowledge.",
         "pitfall": "A summary page is a retrieval checkpoint, not a substitute for tracing the rules.",
-        "connection": "Use this page with the lamport-scalar and vector-clocks and compressed-timestamps study track. Answer the Socratic checkpoint before moving on."
+        "connection": "Use it as a retrieval checkpoint: explain the guarantee, counterexample, cost, and failure mode for each representation."
       },
       "textbookRefs": [
         {
@@ -10325,16 +10325,16 @@
       "referenceRefs": [],
       "socraticQuestions": [
         {
-          "type": "distinguish",
-          "prompt": "Which invariant or guarantee is being tested on “Lecture 1: Physical and Logical Times”?",
-          "answer": "State the process, causal, time, delivery, or storage boundary before naming an implementation detail.",
-          "hint": "Name the semantic boundary first."
+          "type": "select",
+          "prompt": "A system needs to detect concurrent updates, not only produce a deterministic display order. Which representation is the better starting point?",
+          "answer": "Vector time, because componentwise incomparability can represent concurrency; a scalar clock would impose an order without revealing whether it is causal.",
+          "hint": "Match the representation to the guarantee."
         },
         {
-          "type": "transfer",
-          "prompt": "What would change if the system became larger or less reliable on “Lecture 1: Physical and Logical Times”?",
-          "answer": "State which failure, communication, synchronization, or measurement assumption becomes important and what evidence would test it.",
-          "hint": "Connect the rule to system behavior."
+          "type": "synthesis",
+          "prompt": "State the trade-off that appears when moving from scalar to vector time and then to differential compression.",
+          "answer": "Vector time adds causal information at linear metadata cost per process; differential compression reduces repeated transmission or storage while preserving the causal information the receiver needs.",
+          "hint": "Track information and cost separately."
         }
       ],
       "lecturePriority": "core",

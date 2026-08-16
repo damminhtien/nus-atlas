@@ -176,12 +176,12 @@
         ]
       },
       "explanation": {
-        "whatYouSee": "This rendered page belongs to the “Course scope and assessment” block. Its source layer contains 7 page-aware extraction blocks; inspect it when exact wording or layout matters.",
-        "whyItMatters": "These pages establish the course, assessment structure, and evidence boundary.",
-        "intuition": "Before studying an algorithm, identify the system claim and how it will be measured.",
-        "technicalDetail": "Atlas preserves the rendered page, extracted text, block type, bounding box, image ID, and parser reference for DSA5208/Lec0.pdf page 1.",
+        "whatYouSee": "The course frames distributed computing as a systems problem: scale, communication, coordination, and failure must be reasoned about together.",
+        "whyItMatters": "These pages define the boundary of what a later algorithm claim must explain and how project evidence should be collected.",
+        "intuition": "A distributed result is never only an algorithm; it is an algorithm under a system model and measurement protocol.",
+        "technicalDetail": "Read every performance claim as a tuple: workload, partitioning, worker count, communication behavior, coordination behavior, and failure assumptions.",
         "pitfall": "Do not invent dates or later lecture details that are not present in the supplied overview.",
-        "connection": "Use this page with the orientation study track. Answer the Socratic checkpoint before moving on."
+        "connection": "Use this page to turn a vague claim such as ‘scales well’ into a testable experiment."
       },
       "textbookRefs": [
         {
@@ -194,19 +194,19 @@
       "referenceRefs": [],
       "socraticQuestions": [
         {
-          "type": "distinguish",
-          "prompt": "Which invariant or guarantee is being tested on “Lecture 0: Overview”?",
-          "answer": "State the process, causal, time, delivery, or storage boundary before naming an implementation detail.",
-          "hint": "Name the semantic boundary first."
+          "type": "scope",
+          "prompt": "What three pieces must accompany a claim that a distributed design is faster?",
+          "answer": "State the workload and partitioning, the system conditions such as worker count and network, and the metric or experiment that supports the comparison.",
+          "hint": "A runtime number without conditions is not a reproducible claim."
         },
         {
-          "type": "transfer",
-          "prompt": "What would change if the system became larger or less reliable on “Lecture 0: Overview”?",
-          "answer": "State which failure, communication, synchronization, or measurement assumption becomes important and what evidence would test it.",
-          "hint": "Connect the rule to system behavior."
+          "type": "counterexample",
+          "prompt": "Give one situation in which a locally faster algorithm loses after deployment across workers.",
+          "answer": "A design with lower local compute can still lose if it causes more shuffle, serialization, synchronization, or recovery traffic.",
+          "hint": "Separate local work from system work."
         }
       ],
-      "lecturePriority": "core",
+      "lecturePriority": "context",
       "sourceNote": "Extracted text is a reader layer; the rendered slide remains authoritative."
     },
     {
@@ -379,12 +379,12 @@
         ]
       },
       "explanation": {
-        "whatYouSee": "This rendered page belongs to the “Course scope and assessment” block. Its source layer contains 9 page-aware extraction blocks; inspect it when exact wording or layout matters.",
-        "whyItMatters": "These pages establish the course, assessment structure, and evidence boundary.",
-        "intuition": "Before studying an algorithm, identify the system claim and how it will be measured.",
-        "technicalDetail": "Atlas preserves the rendered page, extracted text, block type, bounding box, image ID, and parser reference for DSA5208/Lec0.pdf page 2.",
+        "whatYouSee": "The course frames distributed computing as a systems problem: scale, communication, coordination, and failure must be reasoned about together.",
+        "whyItMatters": "These pages define the boundary of what a later algorithm claim must explain and how project evidence should be collected.",
+        "intuition": "A distributed result is never only an algorithm; it is an algorithm under a system model and measurement protocol.",
+        "technicalDetail": "Read every performance claim as a tuple: workload, partitioning, worker count, communication behavior, coordination behavior, and failure assumptions.",
         "pitfall": "Do not invent dates or later lecture details that are not present in the supplied overview.",
-        "connection": "Use this page with the orientation study track. Answer the Socratic checkpoint before moving on."
+        "connection": "Use this page to turn a vague claim such as ‘scales well’ into a testable experiment."
       },
       "textbookRefs": [
         {
@@ -397,19 +397,19 @@
       "referenceRefs": [],
       "socraticQuestions": [
         {
-          "type": "distinguish",
-          "prompt": "Which invariant or guarantee is being tested on “Lecture 0: Overview”?",
-          "answer": "State the process, causal, time, delivery, or storage boundary before naming an implementation detail.",
-          "hint": "Name the semantic boundary first."
+          "type": "scope",
+          "prompt": "What three pieces must accompany a claim that a distributed design is faster?",
+          "answer": "State the workload and partitioning, the system conditions such as worker count and network, and the metric or experiment that supports the comparison.",
+          "hint": "A runtime number without conditions is not a reproducible claim."
         },
         {
-          "type": "transfer",
-          "prompt": "What would change if the system became larger or less reliable on “Lecture 0: Overview”?",
-          "answer": "State which failure, communication, synchronization, or measurement assumption becomes important and what evidence would test it.",
-          "hint": "Connect the rule to system behavior."
+          "type": "counterexample",
+          "prompt": "Give one situation in which a locally faster algorithm loses after deployment across workers.",
+          "answer": "A design with lower local compute can still lose if it causes more shuffle, serialization, synchronization, or recovery traffic.",
+          "hint": "Separate local work from system work."
         }
       ],
-      "lecturePriority": "core",
+      "lecturePriority": "context",
       "sourceNote": "Extracted text is a reader layer; the rendered slide remains authoritative."
     },
     {
@@ -550,12 +550,12 @@
         ]
       },
       "explanation": {
-        "whatYouSee": "This rendered page belongs to the “Scale, applications, hardware, and failure” block. Its source layer contains 7 page-aware extraction blocks; inspect it when exact wording or layout matters.",
-        "whyItMatters": "These pages motivate distributed computation through data growth, hardware limits, and failure.",
-        "intuition": "Scale-out is a response to capacity and reliability constraints, not a free speed multiplier.",
-        "technicalDetail": "Atlas preserves the rendered page, extracted text, block type, bounding box, image ID, and parser reference for DSA5208/Lec0.pdf page 3.",
+        "whatYouSee": "Distributed computation is motivated by data and workload demands that exceed the capacity, throughput, or reliability of one machine.",
+        "whyItMatters": "The motivation explains why scale-out introduces new bottlenecks instead of simply multiplying single-machine speed.",
+        "intuition": "Adding machines buys capacity and parallelism, but it also adds links, boundaries, and more places to fail.",
+        "technicalDetail": "Trace the critical path: partition input, execute local work, move data when dependencies cross partitions, synchronize stages, and recover when a worker fails.",
         "pitfall": "Do not report one runtime without partition, network, coordination, and failure context.",
-        "connection": "Use this page with the orientation study track. Answer the Socratic checkpoint before moving on."
+        "connection": "Use this page when deciding whether a workload should be partitioned, replicated, streamed, or kept local."
       },
       "textbookRefs": [
         {
@@ -568,19 +568,19 @@
       "referenceRefs": [],
       "socraticQuestions": [
         {
-          "type": "distinguish",
-          "prompt": "Which invariant or guarantee is being tested on “Lecture 0: Overview”?",
-          "answer": "State the process, causal, time, delivery, or storage boundary before naming an implementation detail.",
-          "hint": "Name the semantic boundary first."
+          "type": "diagnose",
+          "prompt": "Throughput stops improving after adding workers. Which measurements distinguish communication saturation from data skew?",
+          "answer": "Inspect bytes transferred and network wait for communication saturation; inspect partition sizes, task durations, and the slowest worker for skew.",
+          "hint": "Measure the distribution across workers, not only the average."
         },
         {
           "type": "transfer",
-          "prompt": "What would change if the system became larger or less reliable on “Lecture 0: Overview”?",
-          "answer": "State which failure, communication, synchronization, or measurement assumption becomes important and what evidence would test it.",
-          "hint": "Connect the rule to system behavior."
+          "prompt": "Why can replication improve availability while increasing the cost of an update?",
+          "answer": "Replicas provide another copy after a failure, but an update may need additional messages, ordering, or coordination to keep copies consistent.",
+          "hint": "Availability and update coordination pull in different directions."
         }
       ],
-      "lecturePriority": "core",
+      "lecturePriority": "context",
       "sourceNote": "Extracted text is a reader layer; the rendered slide remains authoritative."
     },
     {
@@ -705,12 +705,12 @@
         ]
       },
       "explanation": {
-        "whatYouSee": "This rendered page belongs to the “Scale, applications, hardware, and failure” block. Its source layer contains 6 page-aware extraction blocks; inspect it when exact wording or layout matters.",
-        "whyItMatters": "These pages motivate distributed computation through data growth, hardware limits, and failure.",
-        "intuition": "Scale-out is a response to capacity and reliability constraints, not a free speed multiplier.",
-        "technicalDetail": "Atlas preserves the rendered page, extracted text, block type, bounding box, image ID, and parser reference for DSA5208/Lec0.pdf page 4.",
+        "whatYouSee": "Distributed computation is motivated by data and workload demands that exceed the capacity, throughput, or reliability of one machine.",
+        "whyItMatters": "The motivation explains why scale-out introduces new bottlenecks instead of simply multiplying single-machine speed.",
+        "intuition": "Adding machines buys capacity and parallelism, but it also adds links, boundaries, and more places to fail.",
+        "technicalDetail": "Trace the critical path: partition input, execute local work, move data when dependencies cross partitions, synchronize stages, and recover when a worker fails.",
         "pitfall": "Do not report one runtime without partition, network, coordination, and failure context.",
-        "connection": "Use this page with the orientation study track. Answer the Socratic checkpoint before moving on."
+        "connection": "Use this page when deciding whether a workload should be partitioned, replicated, streamed, or kept local."
       },
       "textbookRefs": [
         {
@@ -723,19 +723,19 @@
       "referenceRefs": [],
       "socraticQuestions": [
         {
-          "type": "distinguish",
-          "prompt": "Which invariant or guarantee is being tested on “Lecture 0: Overview”?",
-          "answer": "State the process, causal, time, delivery, or storage boundary before naming an implementation detail.",
-          "hint": "Name the semantic boundary first."
+          "type": "diagnose",
+          "prompt": "Throughput stops improving after adding workers. Which measurements distinguish communication saturation from data skew?",
+          "answer": "Inspect bytes transferred and network wait for communication saturation; inspect partition sizes, task durations, and the slowest worker for skew.",
+          "hint": "Measure the distribution across workers, not only the average."
         },
         {
           "type": "transfer",
-          "prompt": "What would change if the system became larger or less reliable on “Lecture 0: Overview”?",
-          "answer": "State which failure, communication, synchronization, or measurement assumption becomes important and what evidence would test it.",
-          "hint": "Connect the rule to system behavior."
+          "prompt": "Why can replication improve availability while increasing the cost of an update?",
+          "answer": "Replicas provide another copy after a failure, but an update may need additional messages, ordering, or coordination to keep copies consistent.",
+          "hint": "Availability and update coordination pull in different directions."
         }
       ],
-      "lecturePriority": "core",
+      "lecturePriority": "context",
       "sourceNote": "Extracted text is a reader layer; the rendered slide remains authoritative."
     },
     {
@@ -924,12 +924,12 @@
         ]
       },
       "explanation": {
-        "whatYouSee": "This rendered page belongs to the “Scale, applications, hardware, and failure” block. Its source layer contains 10 page-aware extraction blocks; inspect it when exact wording or layout matters.",
-        "whyItMatters": "These pages motivate distributed computation through data growth, hardware limits, and failure.",
-        "intuition": "Scale-out is a response to capacity and reliability constraints, not a free speed multiplier.",
-        "technicalDetail": "Atlas preserves the rendered page, extracted text, block type, bounding box, image ID, and parser reference for DSA5208/Lec0.pdf page 5.",
+        "whatYouSee": "Distributed computation is motivated by data and workload demands that exceed the capacity, throughput, or reliability of one machine.",
+        "whyItMatters": "The motivation explains why scale-out introduces new bottlenecks instead of simply multiplying single-machine speed.",
+        "intuition": "Adding machines buys capacity and parallelism, but it also adds links, boundaries, and more places to fail.",
+        "technicalDetail": "Trace the critical path: partition input, execute local work, move data when dependencies cross partitions, synchronize stages, and recover when a worker fails.",
         "pitfall": "Do not report one runtime without partition, network, coordination, and failure context.",
-        "connection": "Use this page with the orientation study track. Answer the Socratic checkpoint before moving on."
+        "connection": "Use this page when deciding whether a workload should be partitioned, replicated, streamed, or kept local."
       },
       "textbookRefs": [
         {
@@ -942,19 +942,19 @@
       "referenceRefs": [],
       "socraticQuestions": [
         {
-          "type": "distinguish",
-          "prompt": "Which invariant or guarantee is being tested on “Lecture 0: Overview”?",
-          "answer": "State the process, causal, time, delivery, or storage boundary before naming an implementation detail.",
-          "hint": "Name the semantic boundary first."
+          "type": "diagnose",
+          "prompt": "Throughput stops improving after adding workers. Which measurements distinguish communication saturation from data skew?",
+          "answer": "Inspect bytes transferred and network wait for communication saturation; inspect partition sizes, task durations, and the slowest worker for skew.",
+          "hint": "Measure the distribution across workers, not only the average."
         },
         {
           "type": "transfer",
-          "prompt": "What would change if the system became larger or less reliable on “Lecture 0: Overview”?",
-          "answer": "State which failure, communication, synchronization, or measurement assumption becomes important and what evidence would test it.",
-          "hint": "Connect the rule to system behavior."
+          "prompt": "Why can replication improve availability while increasing the cost of an update?",
+          "answer": "Replicas provide another copy after a failure, but an update may need additional messages, ordering, or coordination to keep copies consistent.",
+          "hint": "Availability and update coordination pull in different directions."
         }
       ],
-      "lecturePriority": "core",
+      "lecturePriority": "context",
       "sourceNote": "Extracted text is a reader layer; the rendered slide remains authoritative."
     },
     {
@@ -1079,12 +1079,12 @@
         ]
       },
       "explanation": {
-        "whatYouSee": "This rendered page belongs to the “Scale, applications, hardware, and failure” block. Its source layer contains 6 page-aware extraction blocks; inspect it when exact wording or layout matters.",
-        "whyItMatters": "These pages motivate distributed computation through data growth, hardware limits, and failure.",
-        "intuition": "Scale-out is a response to capacity and reliability constraints, not a free speed multiplier.",
-        "technicalDetail": "Atlas preserves the rendered page, extracted text, block type, bounding box, image ID, and parser reference for DSA5208/Lec0.pdf page 6.",
+        "whatYouSee": "Distributed computation is motivated by data and workload demands that exceed the capacity, throughput, or reliability of one machine.",
+        "whyItMatters": "The motivation explains why scale-out introduces new bottlenecks instead of simply multiplying single-machine speed.",
+        "intuition": "Adding machines buys capacity and parallelism, but it also adds links, boundaries, and more places to fail.",
+        "technicalDetail": "Trace the critical path: partition input, execute local work, move data when dependencies cross partitions, synchronize stages, and recover when a worker fails.",
         "pitfall": "Do not report one runtime without partition, network, coordination, and failure context.",
-        "connection": "Use this page with the orientation study track. Answer the Socratic checkpoint before moving on."
+        "connection": "Use this page when deciding whether a workload should be partitioned, replicated, streamed, or kept local."
       },
       "textbookRefs": [
         {
@@ -1097,19 +1097,19 @@
       "referenceRefs": [],
       "socraticQuestions": [
         {
-          "type": "distinguish",
-          "prompt": "Which invariant or guarantee is being tested on “Lecture 0: Overview”?",
-          "answer": "State the process, causal, time, delivery, or storage boundary before naming an implementation detail.",
-          "hint": "Name the semantic boundary first."
+          "type": "diagnose",
+          "prompt": "Throughput stops improving after adding workers. Which measurements distinguish communication saturation from data skew?",
+          "answer": "Inspect bytes transferred and network wait for communication saturation; inspect partition sizes, task durations, and the slowest worker for skew.",
+          "hint": "Measure the distribution across workers, not only the average."
         },
         {
           "type": "transfer",
-          "prompt": "What would change if the system became larger or less reliable on “Lecture 0: Overview”?",
-          "answer": "State which failure, communication, synchronization, or measurement assumption becomes important and what evidence would test it.",
-          "hint": "Connect the rule to system behavior."
+          "prompt": "Why can replication improve availability while increasing the cost of an update?",
+          "answer": "Replicas provide another copy after a failure, but an update may need additional messages, ordering, or coordination to keep copies consistent.",
+          "hint": "Availability and update coordination pull in different directions."
         }
       ],
-      "lecturePriority": "core",
+      "lecturePriority": "context",
       "sourceNote": "Extracted text is a reader layer; the rendered slide remains authoritative."
     },
     {
@@ -1314,12 +1314,12 @@
         ]
       },
       "explanation": {
-        "whatYouSee": "This rendered page belongs to the “Scale, applications, hardware, and failure” block. Its source layer contains 11 page-aware extraction blocks; inspect it when exact wording or layout matters.",
-        "whyItMatters": "These pages motivate distributed computation through data growth, hardware limits, and failure.",
-        "intuition": "Scale-out is a response to capacity and reliability constraints, not a free speed multiplier.",
-        "technicalDetail": "Atlas preserves the rendered page, extracted text, block type, bounding box, image ID, and parser reference for DSA5208/Lec0.pdf page 7.",
+        "whatYouSee": "Distributed computation is motivated by data and workload demands that exceed the capacity, throughput, or reliability of one machine.",
+        "whyItMatters": "The motivation explains why scale-out introduces new bottlenecks instead of simply multiplying single-machine speed.",
+        "intuition": "Adding machines buys capacity and parallelism, but it also adds links, boundaries, and more places to fail.",
+        "technicalDetail": "Trace the critical path: partition input, execute local work, move data when dependencies cross partitions, synchronize stages, and recover when a worker fails.",
         "pitfall": "Do not report one runtime without partition, network, coordination, and failure context.",
-        "connection": "Use this page with the orientation study track. Answer the Socratic checkpoint before moving on."
+        "connection": "Use this page when deciding whether a workload should be partitioned, replicated, streamed, or kept local."
       },
       "textbookRefs": [
         {
@@ -1332,19 +1332,19 @@
       "referenceRefs": [],
       "socraticQuestions": [
         {
-          "type": "distinguish",
-          "prompt": "Which invariant or guarantee is being tested on “Lecture 0: Overview”?",
-          "answer": "State the process, causal, time, delivery, or storage boundary before naming an implementation detail.",
-          "hint": "Name the semantic boundary first."
+          "type": "diagnose",
+          "prompt": "Throughput stops improving after adding workers. Which measurements distinguish communication saturation from data skew?",
+          "answer": "Inspect bytes transferred and network wait for communication saturation; inspect partition sizes, task durations, and the slowest worker for skew.",
+          "hint": "Measure the distribution across workers, not only the average."
         },
         {
           "type": "transfer",
-          "prompt": "What would change if the system became larger or less reliable on “Lecture 0: Overview”?",
-          "answer": "State which failure, communication, synchronization, or measurement assumption becomes important and what evidence would test it.",
-          "hint": "Connect the rule to system behavior."
+          "prompt": "Why can replication improve availability while increasing the cost of an update?",
+          "answer": "Replicas provide another copy after a failure, but an update may need additional messages, ordering, or coordination to keep copies consistent.",
+          "hint": "Availability and update coordination pull in different directions."
         }
       ],
-      "lecturePriority": "core",
+      "lecturePriority": "context",
       "sourceNote": "Extracted text is a reader layer; the rendered slide remains authoritative."
     },
     {
@@ -1469,12 +1469,12 @@
         ]
       },
       "explanation": {
-        "whatYouSee": "This rendered page belongs to the “Scale, applications, hardware, and failure” block. Its source layer contains 6 page-aware extraction blocks; inspect it when exact wording or layout matters.",
-        "whyItMatters": "These pages motivate distributed computation through data growth, hardware limits, and failure.",
-        "intuition": "Scale-out is a response to capacity and reliability constraints, not a free speed multiplier.",
-        "technicalDetail": "Atlas preserves the rendered page, extracted text, block type, bounding box, image ID, and parser reference for DSA5208/Lec0.pdf page 8.",
+        "whatYouSee": "Distributed computation is motivated by data and workload demands that exceed the capacity, throughput, or reliability of one machine.",
+        "whyItMatters": "The motivation explains why scale-out introduces new bottlenecks instead of simply multiplying single-machine speed.",
+        "intuition": "Adding machines buys capacity and parallelism, but it also adds links, boundaries, and more places to fail.",
+        "technicalDetail": "Trace the critical path: partition input, execute local work, move data when dependencies cross partitions, synchronize stages, and recover when a worker fails.",
         "pitfall": "Do not report one runtime without partition, network, coordination, and failure context.",
-        "connection": "Use this page with the orientation study track. Answer the Socratic checkpoint before moving on."
+        "connection": "Use this page when deciding whether a workload should be partitioned, replicated, streamed, or kept local."
       },
       "textbookRefs": [
         {
@@ -1487,19 +1487,19 @@
       "referenceRefs": [],
       "socraticQuestions": [
         {
-          "type": "distinguish",
-          "prompt": "Which invariant or guarantee is being tested on “Lecture 0: Overview”?",
-          "answer": "State the process, causal, time, delivery, or storage boundary before naming an implementation detail.",
-          "hint": "Name the semantic boundary first."
+          "type": "diagnose",
+          "prompt": "Throughput stops improving after adding workers. Which measurements distinguish communication saturation from data skew?",
+          "answer": "Inspect bytes transferred and network wait for communication saturation; inspect partition sizes, task durations, and the slowest worker for skew.",
+          "hint": "Measure the distribution across workers, not only the average."
         },
         {
           "type": "transfer",
-          "prompt": "What would change if the system became larger or less reliable on “Lecture 0: Overview”?",
-          "answer": "State which failure, communication, synchronization, or measurement assumption becomes important and what evidence would test it.",
-          "hint": "Connect the rule to system behavior."
+          "prompt": "Why can replication improve availability while increasing the cost of an update?",
+          "answer": "Replicas provide another copy after a failure, but an update may need additional messages, ordering, or coordination to keep copies consistent.",
+          "hint": "Availability and update coordination pull in different directions."
         }
       ],
-      "lecturePriority": "core",
+      "lecturePriority": "context",
       "sourceNote": "Extracted text is a reader layer; the rendered slide remains authoritative."
     },
     {
@@ -1640,12 +1640,12 @@
         ]
       },
       "explanation": {
-        "whatYouSee": "This rendered page belongs to the “Scale, applications, hardware, and failure” block. Its source layer contains 7 page-aware extraction blocks; inspect it when exact wording or layout matters.",
-        "whyItMatters": "These pages motivate distributed computation through data growth, hardware limits, and failure.",
-        "intuition": "Scale-out is a response to capacity and reliability constraints, not a free speed multiplier.",
-        "technicalDetail": "Atlas preserves the rendered page, extracted text, block type, bounding box, image ID, and parser reference for DSA5208/Lec0.pdf page 9.",
+        "whatYouSee": "Distributed computation is motivated by data and workload demands that exceed the capacity, throughput, or reliability of one machine.",
+        "whyItMatters": "The motivation explains why scale-out introduces new bottlenecks instead of simply multiplying single-machine speed.",
+        "intuition": "Adding machines buys capacity and parallelism, but it also adds links, boundaries, and more places to fail.",
+        "technicalDetail": "Trace the critical path: partition input, execute local work, move data when dependencies cross partitions, synchronize stages, and recover when a worker fails.",
         "pitfall": "Do not report one runtime without partition, network, coordination, and failure context.",
-        "connection": "Use this page with the orientation study track. Answer the Socratic checkpoint before moving on."
+        "connection": "Use this page when deciding whether a workload should be partitioned, replicated, streamed, or kept local."
       },
       "textbookRefs": [
         {
@@ -1658,19 +1658,19 @@
       "referenceRefs": [],
       "socraticQuestions": [
         {
-          "type": "distinguish",
-          "prompt": "Which invariant or guarantee is being tested on “Lecture 0: Overview”?",
-          "answer": "State the process, causal, time, delivery, or storage boundary before naming an implementation detail.",
-          "hint": "Name the semantic boundary first."
+          "type": "diagnose",
+          "prompt": "Throughput stops improving after adding workers. Which measurements distinguish communication saturation from data skew?",
+          "answer": "Inspect bytes transferred and network wait for communication saturation; inspect partition sizes, task durations, and the slowest worker for skew.",
+          "hint": "Measure the distribution across workers, not only the average."
         },
         {
           "type": "transfer",
-          "prompt": "What would change if the system became larger or less reliable on “Lecture 0: Overview”?",
-          "answer": "State which failure, communication, synchronization, or measurement assumption becomes important and what evidence would test it.",
-          "hint": "Connect the rule to system behavior."
+          "prompt": "Why can replication improve availability while increasing the cost of an update?",
+          "answer": "Replicas provide another copy after a failure, but an update may need additional messages, ordering, or coordination to keep copies consistent.",
+          "hint": "Availability and update coordination pull in different directions."
         }
       ],
-      "lecturePriority": "core",
+      "lecturePriority": "context",
       "sourceNote": "Extracted text is a reader layer; the rendered slide remains authoritative."
     },
     {
@@ -1859,12 +1859,12 @@
         ]
       },
       "explanation": {
-        "whatYouSee": "This rendered page belongs to the “Distributed-algorithm challenges” block. Its source layer contains 10 page-aware extraction blocks; inspect it when exact wording or layout matters.",
-        "whyItMatters": "The challenge list becomes the vocabulary for later ordering, consistency, and scalability work.",
-        "intuition": "Synchronization, storage, consistency, faults, and scale are coupled design constraints.",
-        "technicalDetail": "Atlas preserves the rendered page, extracted text, block type, bounding box, image ID, and parser reference for DSA5208/Lec0.pdf page 10.",
+        "whatYouSee": "The lecture's challenge list is a dependency map: synchronization, consistency, storage, faults, and scalability constrain one another.",
+        "whyItMatters": "Later clock and ordering algorithms solve only a selected part of this larger systems problem.",
+        "intuition": "Improving one axis can make another axis more expensive: stronger ordering usually needs more metadata or waiting.",
+        "technicalDetail": "For each proposed mechanism, name the guarantee it adds, the state it stores, the messages it sends, and the failure case it covers.",
         "pitfall": "A faster local computation can still lose to communication or coordination overhead.",
-        "connection": "Use this page with the orientation study track. Answer the Socratic checkpoint before moving on."
+        "connection": "Use this page to compare two designs without collapsing all trade-offs into ‘faster’ or ‘more consistent’."
       },
       "textbookRefs": [
         {
@@ -1877,19 +1877,19 @@
       "referenceRefs": [],
       "socraticQuestions": [
         {
-          "type": "distinguish",
-          "prompt": "Which invariant or guarantee is being tested on “Lecture 0: Overview”?",
-          "answer": "State the process, causal, time, delivery, or storage boundary before naming an implementation detail.",
-          "hint": "Name the semantic boundary first."
+          "type": "compare",
+          "prompt": "What must you name before claiming that one consistency mechanism is stronger than another?",
+          "answer": "State the observable ordering or visibility guarantee, the execution model, and the additional metadata, waiting, or messages required.",
+          "hint": "Strength is relative to a guarantee."
         },
         {
-          "type": "transfer",
-          "prompt": "What would change if the system became larger or less reliable on “Lecture 0: Overview”?",
-          "answer": "State which failure, communication, synchronization, or measurement assumption becomes important and what evidence would test it.",
-          "hint": "Connect the rule to system behavior."
+          "type": "failure",
+          "prompt": "Which question exposes whether a proposed mechanism handles failures or only normal execution?",
+          "answer": "Ask what happens when a message is delayed, duplicated, lost, or a process stops between two protocol steps.",
+          "hint": "Insert one failure into the protocol trace."
         }
       ],
-      "lecturePriority": "core",
+      "lecturePriority": "context",
       "sourceNote": "Extracted text is a reader layer; the rendered slide remains authoritative."
     },
     {
@@ -2030,12 +2030,12 @@
         ]
       },
       "explanation": {
-        "whatYouSee": "This rendered page belongs to the “Distributed-algorithm challenges” block. Its source layer contains 7 page-aware extraction blocks; inspect it when exact wording or layout matters.",
-        "whyItMatters": "The challenge list becomes the vocabulary for later ordering, consistency, and scalability work.",
-        "intuition": "Synchronization, storage, consistency, faults, and scale are coupled design constraints.",
-        "technicalDetail": "Atlas preserves the rendered page, extracted text, block type, bounding box, image ID, and parser reference for DSA5208/Lec0.pdf page 11.",
+        "whatYouSee": "The lecture's challenge list is a dependency map: synchronization, consistency, storage, faults, and scalability constrain one another.",
+        "whyItMatters": "Later clock and ordering algorithms solve only a selected part of this larger systems problem.",
+        "intuition": "Improving one axis can make another axis more expensive: stronger ordering usually needs more metadata or waiting.",
+        "technicalDetail": "For each proposed mechanism, name the guarantee it adds, the state it stores, the messages it sends, and the failure case it covers.",
         "pitfall": "A faster local computation can still lose to communication or coordination overhead.",
-        "connection": "Use this page with the orientation study track. Answer the Socratic checkpoint before moving on."
+        "connection": "Use this page to compare two designs without collapsing all trade-offs into ‘faster’ or ‘more consistent’."
       },
       "textbookRefs": [
         {
@@ -2048,19 +2048,19 @@
       "referenceRefs": [],
       "socraticQuestions": [
         {
-          "type": "distinguish",
-          "prompt": "Which invariant or guarantee is being tested on “Lecture 0: Overview”?",
-          "answer": "State the process, causal, time, delivery, or storage boundary before naming an implementation detail.",
-          "hint": "Name the semantic boundary first."
+          "type": "compare",
+          "prompt": "What must you name before claiming that one consistency mechanism is stronger than another?",
+          "answer": "State the observable ordering or visibility guarantee, the execution model, and the additional metadata, waiting, or messages required.",
+          "hint": "Strength is relative to a guarantee."
         },
         {
-          "type": "transfer",
-          "prompt": "What would change if the system became larger or less reliable on “Lecture 0: Overview”?",
-          "answer": "State which failure, communication, synchronization, or measurement assumption becomes important and what evidence would test it.",
-          "hint": "Connect the rule to system behavior."
+          "type": "failure",
+          "prompt": "Which question exposes whether a proposed mechanism handles failures or only normal execution?",
+          "answer": "Ask what happens when a message is delayed, duplicated, lost, or a process stops between two protocol steps.",
+          "hint": "Insert one failure into the protocol trace."
         }
       ],
-      "lecturePriority": "core",
+      "lecturePriority": "context",
       "sourceNote": "Extracted text is a reader layer; the rendered slide remains authoritative."
     },
     {
@@ -2233,12 +2233,12 @@
         ]
       },
       "explanation": {
-        "whatYouSee": "This rendered page belongs to the “First six lecture themes” block. Its source layer contains 9 page-aware extraction blocks; inspect it when exact wording or layout matters.",
-        "whyItMatters": "The roadmap names physical/logical time, delivery, consistency, Spark, distributed algorithms, MLlib, and cloud work.",
-        "intuition": "This is a map of the course, not a replacement for the detailed lectures that are not yet supplied.",
-        "technicalDetail": "Atlas preserves the rendered page, extracted text, block type, bounding box, image ID, and parser reference for DSA5208/Lec0.pdf page 12.",
+        "whatYouSee": "The roadmap links physical time, logical time, delivery order, consistency, Spark, distributed algorithms, MLlib, and cloud work into one course sequence.",
+        "whyItMatters": "The roadmap is examinable as scope and dependency information, but it is not evidence for derivations whose detailed lectures are not supplied.",
+        "intuition": "A roadmap tells you what concept should follow; it does not give enough information to solve its later exercises.",
+        "technicalDetail": "Separate three statuses while studying: current source derivation, textbook depth, and roadmap pointer awaiting its own lecture source.",
         "pitfall": "Keep roadmap context separate from fully taught lecture derivations.",
-        "connection": "Use this page with the orientation and consistency-spark study track. Answer the Socratic checkpoint before moving on."
+        "connection": "Use this page to plan retrieval and avoid learning a roadmap label as if it were a completed algorithm."
       },
       "textbookRefs": [
         {
@@ -2251,19 +2251,19 @@
       "referenceRefs": [],
       "socraticQuestions": [
         {
-          "type": "distinguish",
-          "prompt": "Which invariant or guarantee is being tested on “Lecture 0: Overview”?",
-          "answer": "State the process, causal, time, delivery, or storage boundary before naming an implementation detail.",
-          "hint": "Name the semantic boundary first."
+          "type": "provenance",
+          "prompt": "What would be missing if the overview names Spark but no Spark lecture or exercise is supplied?",
+          "answer": "The topic has scope evidence but lacks the definitions, assumptions, derivations, examples, and source pages needed for full lecture coverage.",
+          "hint": "A topic label is not a study package."
         },
         {
-          "type": "transfer",
-          "prompt": "What would change if the system became larger or less reliable on “Lecture 0: Overview”?",
-          "answer": "State which failure, communication, synchronization, or measurement assumption becomes important and what evidence would test it.",
-          "hint": "Connect the rule to system behavior."
+          "type": "planning",
+          "prompt": "How should you schedule a roadmap topic whose detailed source is still pending?",
+          "answer": "Keep a short context note and mark detailed coverage pending; do not fill the gap with unlabeled material that looks official.",
+          "hint": "Preserve source boundaries."
         }
       ],
-      "lecturePriority": "core",
+      "lecturePriority": "context",
       "sourceNote": "Extracted text is a reader layer; the rendered slide remains authoritative."
     },
     {
@@ -2404,12 +2404,12 @@
         ]
       },
       "explanation": {
-        "whatYouSee": "This rendered page belongs to the “First six lecture themes” block. Its source layer contains 7 page-aware extraction blocks; inspect it when exact wording or layout matters.",
-        "whyItMatters": "The roadmap names physical/logical time, delivery, consistency, Spark, distributed algorithms, MLlib, and cloud work.",
-        "intuition": "This is a map of the course, not a replacement for the detailed lectures that are not yet supplied.",
-        "technicalDetail": "Atlas preserves the rendered page, extracted text, block type, bounding box, image ID, and parser reference for DSA5208/Lec0.pdf page 13.",
+        "whatYouSee": "The roadmap links physical time, logical time, delivery order, consistency, Spark, distributed algorithms, MLlib, and cloud work into one course sequence.",
+        "whyItMatters": "The roadmap is examinable as scope and dependency information, but it is not evidence for derivations whose detailed lectures are not supplied.",
+        "intuition": "A roadmap tells you what concept should follow; it does not give enough information to solve its later exercises.",
+        "technicalDetail": "Separate three statuses while studying: current source derivation, textbook depth, and roadmap pointer awaiting its own lecture source.",
         "pitfall": "Keep roadmap context separate from fully taught lecture derivations.",
-        "connection": "Use this page with the orientation and consistency-spark study track. Answer the Socratic checkpoint before moving on."
+        "connection": "Use this page to plan retrieval and avoid learning a roadmap label as if it were a completed algorithm."
       },
       "textbookRefs": [
         {
@@ -2422,19 +2422,19 @@
       "referenceRefs": [],
       "socraticQuestions": [
         {
-          "type": "distinguish",
-          "prompt": "Which invariant or guarantee is being tested on “Lecture 0: Overview”?",
-          "answer": "State the process, causal, time, delivery, or storage boundary before naming an implementation detail.",
-          "hint": "Name the semantic boundary first."
+          "type": "provenance",
+          "prompt": "What would be missing if the overview names Spark but no Spark lecture or exercise is supplied?",
+          "answer": "The topic has scope evidence but lacks the definitions, assumptions, derivations, examples, and source pages needed for full lecture coverage.",
+          "hint": "A topic label is not a study package."
         },
         {
-          "type": "transfer",
-          "prompt": "What would change if the system became larger or less reliable on “Lecture 0: Overview”?",
-          "answer": "State which failure, communication, synchronization, or measurement assumption becomes important and what evidence would test it.",
-          "hint": "Connect the rule to system behavior."
+          "type": "planning",
+          "prompt": "How should you schedule a roadmap topic whose detailed source is still pending?",
+          "answer": "Keep a short context note and mark detailed coverage pending; do not fill the gap with unlabeled material that looks official.",
+          "hint": "Preserve source boundaries."
         }
       ],
-      "lecturePriority": "core",
+      "lecturePriority": "context",
       "sourceNote": "Extracted text is a reader layer; the rendered slide remains authoritative."
     },
     {
@@ -2799,12 +2799,12 @@
         ]
       },
       "explanation": {
-        "whatYouSee": "This rendered page belongs to the “First six lecture themes” block. Its source layer contains 21 page-aware extraction blocks; inspect it when exact wording or layout matters.",
-        "whyItMatters": "The roadmap names physical/logical time, delivery, consistency, Spark, distributed algorithms, MLlib, and cloud work.",
-        "intuition": "This is a map of the course, not a replacement for the detailed lectures that are not yet supplied.",
-        "technicalDetail": "Atlas preserves the rendered page, extracted text, block type, bounding box, image ID, and parser reference for DSA5208/Lec0.pdf page 14.",
+        "whatYouSee": "The roadmap links physical time, logical time, delivery order, consistency, Spark, distributed algorithms, MLlib, and cloud work into one course sequence.",
+        "whyItMatters": "The roadmap is examinable as scope and dependency information, but it is not evidence for derivations whose detailed lectures are not supplied.",
+        "intuition": "A roadmap tells you what concept should follow; it does not give enough information to solve its later exercises.",
+        "technicalDetail": "Separate three statuses while studying: current source derivation, textbook depth, and roadmap pointer awaiting its own lecture source.",
         "pitfall": "Keep roadmap context separate from fully taught lecture derivations.",
-        "connection": "Use this page with the orientation and consistency-spark study track. Answer the Socratic checkpoint before moving on."
+        "connection": "Use this page to plan retrieval and avoid learning a roadmap label as if it were a completed algorithm."
       },
       "textbookRefs": [
         {
@@ -2817,19 +2817,19 @@
       "referenceRefs": [],
       "socraticQuestions": [
         {
-          "type": "distinguish",
-          "prompt": "Which invariant or guarantee is being tested on “Lecture 0: Overview”?",
-          "answer": "State the process, causal, time, delivery, or storage boundary before naming an implementation detail.",
-          "hint": "Name the semantic boundary first."
+          "type": "provenance",
+          "prompt": "What would be missing if the overview names Spark but no Spark lecture or exercise is supplied?",
+          "answer": "The topic has scope evidence but lacks the definitions, assumptions, derivations, examples, and source pages needed for full lecture coverage.",
+          "hint": "A topic label is not a study package."
         },
         {
-          "type": "transfer",
-          "prompt": "What would change if the system became larger or less reliable on “Lecture 0: Overview”?",
-          "answer": "State which failure, communication, synchronization, or measurement assumption becomes important and what evidence would test it.",
-          "hint": "Connect the rule to system behavior."
+          "type": "planning",
+          "prompt": "How should you schedule a roadmap topic whose detailed source is still pending?",
+          "answer": "Keep a short context note and mark detailed coverage pending; do not fill the gap with unlabeled material that looks official.",
+          "hint": "Preserve source boundaries."
         }
       ],
-      "lecturePriority": "core",
+      "lecturePriority": "context",
       "sourceNote": "Extracted text is a reader layer; the rendered slide remains authoritative."
     },
     {
@@ -2986,12 +2986,12 @@
         ]
       },
       "explanation": {
-        "whatYouSee": "This rendered page belongs to the “First six lecture themes” block. Its source layer contains 8 page-aware extraction blocks; inspect it when exact wording or layout matters.",
-        "whyItMatters": "The roadmap names physical/logical time, delivery, consistency, Spark, distributed algorithms, MLlib, and cloud work.",
-        "intuition": "This is a map of the course, not a replacement for the detailed lectures that are not yet supplied.",
-        "technicalDetail": "Atlas preserves the rendered page, extracted text, block type, bounding box, image ID, and parser reference for DSA5208/Lec0.pdf page 15.",
+        "whatYouSee": "The roadmap links physical time, logical time, delivery order, consistency, Spark, distributed algorithms, MLlib, and cloud work into one course sequence.",
+        "whyItMatters": "The roadmap is examinable as scope and dependency information, but it is not evidence for derivations whose detailed lectures are not supplied.",
+        "intuition": "A roadmap tells you what concept should follow; it does not give enough information to solve its later exercises.",
+        "technicalDetail": "Separate three statuses while studying: current source derivation, textbook depth, and roadmap pointer awaiting its own lecture source.",
         "pitfall": "Keep roadmap context separate from fully taught lecture derivations.",
-        "connection": "Use this page with the orientation and consistency-spark study track. Answer the Socratic checkpoint before moving on."
+        "connection": "Use this page to plan retrieval and avoid learning a roadmap label as if it were a completed algorithm."
       },
       "textbookRefs": [
         {
@@ -3004,19 +3004,19 @@
       "referenceRefs": [],
       "socraticQuestions": [
         {
-          "type": "distinguish",
-          "prompt": "Which invariant or guarantee is being tested on “Lecture 0: Overview”?",
-          "answer": "State the process, causal, time, delivery, or storage boundary before naming an implementation detail.",
-          "hint": "Name the semantic boundary first."
+          "type": "provenance",
+          "prompt": "What would be missing if the overview names Spark but no Spark lecture or exercise is supplied?",
+          "answer": "The topic has scope evidence but lacks the definitions, assumptions, derivations, examples, and source pages needed for full lecture coverage.",
+          "hint": "A topic label is not a study package."
         },
         {
-          "type": "transfer",
-          "prompt": "What would change if the system became larger or less reliable on “Lecture 0: Overview”?",
-          "answer": "State which failure, communication, synchronization, or measurement assumption becomes important and what evidence would test it.",
-          "hint": "Connect the rule to system behavior."
+          "type": "planning",
+          "prompt": "How should you schedule a roadmap topic whose detailed source is still pending?",
+          "answer": "Keep a short context note and mark detailed coverage pending; do not fill the gap with unlabeled material that looks official.",
+          "hint": "Preserve source boundaries."
         }
       ],
-      "lecturePriority": "core",
+      "lecturePriority": "context",
       "sourceNote": "Extracted text is a reader layer; the rendered slide remains authoritative."
     },
     {
@@ -3189,12 +3189,12 @@
         ]
       },
       "explanation": {
-        "whatYouSee": "This rendered page belongs to the “Project themes” block. Its source layer contains 9 page-aware extraction blocks; inspect it when exact wording or layout matters.",
-        "whyItMatters": "The project page connects consistency testing and Spark machine learning to the course roadmap.",
-        "intuition": "A project becomes a learning artifact when its claim, system setting, and measurement are explicit.",
-        "technicalDetail": "Atlas preserves the rendered page, extracted text, block type, bounding box, image ID, and parser reference for DSA5208/Lec0.pdf page 16.",
+        "whatYouSee": "A project becomes a learning experiment when its system setting, claim, workload, and measurements are explicit.",
+        "whyItMatters": "The project themes connect lecture vocabulary to evidence that can be inspected rather than to a demo alone.",
+        "intuition": "A good project is a controlled argument: change one system factor, observe a consequence, and state the boundary of the result.",
+        "technicalDetail": "Record input size, partitioning, worker count, shuffle or coordination cost, failure behavior, and the metric used to accept or reject the claim.",
         "pitfall": "Do not mark later project topics as source-complete until their materials are added.",
-        "connection": "Use this page with the orientation and consistency-spark study track. Answer the Socratic checkpoint before moving on."
+        "connection": "Use this page when turning a project idea into an experiment plan or interpreting a benchmark plot."
       },
       "textbookRefs": [
         {
@@ -3207,19 +3207,19 @@
       "referenceRefs": [],
       "socraticQuestions": [
         {
-          "type": "distinguish",
-          "prompt": "Which invariant or guarantee is being tested on “Lecture 0: Overview”?",
-          "answer": "State the process, causal, time, delivery, or storage boundary before naming an implementation detail.",
-          "hint": "Name the semantic boundary first."
+          "type": "design",
+          "prompt": "What evidence would turn ‘consistency affects performance’ into a testable project question?",
+          "answer": "Choose a consistency mechanism and workload, vary the relevant system condition, measure latency or throughput plus coordination cost, and state the observed guarantee.",
+          "hint": "Define the intervention and the measurement."
         },
         {
-          "type": "transfer",
-          "prompt": "What would change if the system became larger or less reliable on “Lecture 0: Overview”?",
-          "answer": "State which failure, communication, synchronization, or measurement assumption becomes important and what evidence would test it.",
-          "hint": "Connect the rule to system behavior."
+          "type": "critique",
+          "prompt": "Why is a single successful demo weak evidence for a distributed-system claim?",
+          "answer": "It does not reveal how the result changes with scale, partitioning, contention, failures, or a different workload.",
+          "hint": "Ask what happens outside the demo path."
         }
       ],
-      "lecturePriority": "core",
+      "lecturePriority": "context",
       "sourceNote": "Extracted text is a reader layer; the rendered slide remains authoritative."
     }
   ]

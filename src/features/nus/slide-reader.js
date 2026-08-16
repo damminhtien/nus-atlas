@@ -125,12 +125,12 @@
   function explanation(slide) {
     const value = slide.explanation || {};
     const fields = [
-      ["What you see", value.whatYouSee],
+      ["Slide claim", value.whatYouSee],
       ["Why it matters", value.whyItMatters],
-      ["Intuition", value.intuition],
-      ["Technical detail", value.technicalDetail],
-      ["Common pitfall", value.pitfall],
-      ["Connection", value.connection]
+      ["Mental model", value.intuition],
+      ["Mechanism", value.technicalDetail],
+      ["Failure mode", value.pitfall],
+      ["Use it to reason", value.connection]
     ];
     return fields.filter(([, body]) => body).map(([title, body]) => `<section class="nus-slide-note"><h4>${esc(title)}</h4><p>${text(body)}</p></section>`).join("");
   }
