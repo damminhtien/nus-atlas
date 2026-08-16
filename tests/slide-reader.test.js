@@ -158,3 +158,88 @@ test("slide reader shows saved progress and a resume action", () => {
   assert.match(root.innerHTML, /Lecture reading progress colour key/);
   assert.match(root.innerHTML, /50–74% · Halfway/);
 });
+
+test("Socratic checkpoint typesets formulas inserted after the slide render", () => {
+  const previousDocument = global.document;
+  const previousLocation = global.location;
+  const typesetTargets = [];
+  const nav = {
+    handler: null,
+    dataset: { slideNumber: "2" },
+    addEventListener(type, handler) {
+      if (type === "click") this.handler = handler;
+    }
+  };
+  const root = {
+    innerHTML: "",
+    querySelector: () => null,
+    querySelectorAll: selector => selector === "[data-slide-nav]" ? [nav] : []
+  };
+  const overlay = {
+    innerHTML: "",
+    setAttribute() {},
+    querySelector: () => ({ addEventListener() {}, focus() {} }),
+    addEventListener() {},
+    remove() {}
+  };
+  global.document = {
+    body: { appendChild() {}, classList: { toggle() {} } },
+    createElement: () => overlay,
+    addEventListener() {},
+    removeEventListener() {},
+    getElementById: () => null
+  };
+  global.location = { hash: "" };
+
+  const slide = (slideNumber, socraticQuestions) => ({
+    slideNumber,
+    pdfPage: slideNumber,
+    title: "Slide " + slideNumber,
+    kind: "lecture",
+    status: "reviewed",
+    assetPath: "slide-" + slideNumber + ".jpg",
+    sourceRef: { sourceId: "lecture.pdf", sourceType: "lecture", page: slideNumber },
+    extraction: { blocks: [] },
+    explanation: { whatYouSee: "A claim." },
+    textbookRefs: [],
+    referenceRefs: [],
+    socraticQuestions
+  });
+
+  try {
+    const feature = createSlideReaderFeature({
+      root,
+      getCourse: () => ({ code: "DSA5105" }),
+      getSlideSet: () => ({
+        courseId: "DSA5105",
+        id: "week1",
+        summary: "Week 1",
+        lessonIds: [],
+        source: { fileName: "Lecture.pdf", sourceId: "lecture.pdf", access: "local-only" },
+        slides: [
+          slide(1, [{ type: "derive", prompt: "What is $x$?", hint: "Read the symbol.", answer: "The input." }]),
+          slide(2, [])
+        ]
+      }),
+      getTextbook: () => null,
+      pageHead: (_kicker, title) => "<h1>" + title + "</h1>",
+      sourceBadge: ref => "<span>" + (ref.sourceType || "source") + "</span>",
+      button: (label, href) => "<a href=\"" + href + "\">" + label + "</a>",
+      text: value => String(value || ""),
+      esc: value => String(value || ""),
+      typeset: target => typesetTargets.push(target),
+      notFound() {}
+    });
+
+    feature.render("DSA5105", "week1", 1);
+    nav.handler({ preventDefault() {} });
+
+    assert.equal(typesetTargets.length, 2);
+    assert.equal(typesetTargets[1], overlay);
+  } finally {
+    if (previousDocument === undefined) delete global.document;
+    else global.document = previousDocument;
+    if (previousLocation === undefined) delete global.location;
+    else global.location = previousLocation;
+  }
+});

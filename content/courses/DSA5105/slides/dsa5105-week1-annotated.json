@@ -1301,14 +1301,14 @@
       "socraticQuestions": [
         {
           "type": "derive",
-          "prompt": "Give an example of E, T, and P for an image classifier.",
-          "answer": "E: labeled image examples; T: classify a new image; P: accuracy, log loss, or another declared metric on held-out images.",
+          "prompt": "Give an example of $E$, $T$, and $P$ for an image classifier.",
+          "answer": "$E$: labeled image examples; $T$: classify a new image; $P$: accuracy, log loss, or another declared metric on held-out images.",
           "hint": "Name all three explicitly."
         },
         {
           "type": "critique",
           "prompt": "Why is a performance measure necessary even if the model's predictions look plausible?",
-          "answer": "P defines what counts as improvement and makes competing models comparable.",
+          "answer": "$P$ defines what counts as improvement and makes competing models comparable.",
           "hint": "P turns a vague impression into evidence."
         }
       ],
@@ -2104,7 +2104,7 @@
         {
           "type": "derive",
           "prompt": "Write the one-hot vector for the third category in a four-class problem.",
-          "answer": "(0, 0, 1, 0)^T, assuming positions are ordered by the four class names.",
+          "answer": "$(0, 0, 1, 0)^\\top$, assuming positions are ordered by the four class names.",
           "hint": "Put the only 1 in the target class position."
         },
         {
@@ -2563,7 +2563,7 @@
         {
           "type": "predict",
           "prompt": "What is the first object we need before choosing a loss?",
-          "answer": "A clear dataset and target relationship, including what x, y, and the unknown oracle mean.",
+          "answer": "A clear dataset and target relationship, including what $x$, $y$, and the unknown oracle $f^*$ mean.",
           "hint": "Start with the problem statement, not the optimizer."
         }
       ],
@@ -3296,14 +3296,14 @@
       "socraticQuestions": [
         {
           "type": "predict",
-          "prompt": "If $f*$ is nonlinear but H contains only affine functions, which error source appears first?",
-          "answer": "Approximation error, because the best function available inside H may still be far from $f*$.",
+          "prompt": "If $f^*$ is nonlinear but $\\mathcal H$ contains only affine functions, which error source appears first?",
+          "answer": "Approximation error, because the best function available inside $\\mathcal H$ may still be far from $f^*$.",
           "hint": "Ask whether the menu contains a good candidate."
         },
         {
           "type": "compare",
-          "prompt": "What is the difference between choosing H and choosing an optimizer?",
-          "answer": "H determines what functions are representable; the optimizer determines how we search within H.",
+          "prompt": "What is the difference between choosing $\\mathcal H$ and choosing an optimizer?",
+          "answer": "$\\mathcal H$ determines what functions are representable; the optimizer determines how we search within $\\mathcal H$.",
           "hint": "Model capacity versus search procedure."
         }
       ],
@@ -3474,7 +3474,7 @@
         },
         {
           "type": "explain",
-          "prompt": "How does enlarging H help and hurt at the same time?",
+          "prompt": "How does enlarging $\\mathcal H$ help and hurt at the same time?",
           "answer": "It can reduce approximation error but increase variance and the chance of fitting sample-specific noise.",
           "hint": "Capacity has a two-sided effect."
         }
@@ -4960,7 +4960,7 @@
       "socraticQuestions": [
         {
           "type": "derive",
-          "prompt": "Why is the factor $1/2$ included in squared loss?",
+          "prompt": "Why is the factor $\\frac{1}{2}$ included in squared loss?",
           "answer": "It cancels the factor 2 produced by differentiating a square, making gradients cleaner without changing the minimizer.",
           "hint": "It is a convenience factor."
         },
@@ -5134,7 +5134,7 @@
           "type": "diagnose",
           "prompt": "What happens to the slope formula if all $x_i$ are equal?",
           "answer": "The denominator is zero, so the slope is not identified by OLS; only the mean prediction is determined.",
-          "hint": "Check the centered spread of x."
+          "hint": "Check the centered spread of $x$."
         }
       ],
       "lecturePriority": "core",
@@ -5674,7 +5674,7 @@
         {
           "type": "calculate",
           "prompt": "For $x=\\{0,1,2\\}$ and $y=\\{1,2,2\\}$, compute the OLS slope and intercept.",
-          "answer": "$\\bar x=1$, $\\bar y=5/3$, slope $=1/2$, intercept $=7/6$.",
+          "answer": "$\\bar x=1$, $\\bar y=\\frac{5}{3}$, slope $=\\frac{1}{2}$, intercept $=\\frac{7}{6}$.",
           "hint": "Compute centered numerator and denominator."
         },
         {
@@ -6450,7 +6450,7 @@
         {
           "type": "compare",
           "prompt": "How do the gradients of squared and L1 loss behave for large residuals?",
-          "answer": "Squared-loss gradient grows in magnitude with the residual; L1 has a bounded-magnitude subgradient away from zero.",
+          "answer": "Squared-loss gradient grows in magnitude with the residual; $L_1$ has a bounded-magnitude subgradient away from zero.",
           "hint": "Different tail growth produces different sensitivity."
         },
         {
@@ -6933,7 +6933,7 @@
       "socraticQuestions": [
         {
           "type": "compare",
-          "prompt": "What is the difference between making f nonlinear in x and nonlinear in w?",
+          "prompt": "What is the difference between making $f$ nonlinear in $x$ and nonlinear in $w$?",
           "answer": "A basis model can be nonlinear in the input through $\\phi_j(x)$ while remaining linear in the weights; nonlinear parameters change optimization substantially.",
           "hint": "Inspect where the weights appear."
         },
@@ -7560,7 +7560,7 @@
         {
           "type": "compare",
           "prompt": "Which basis is naturally localized around a center $m_j$?",
-          "answer": "The Gaussian basis, because it decays as x moves away from $m_j$.",
+          "answer": "The Gaussian basis, because it decays as $x$ moves away from $m_j$.",
           "hint": "Inspect dependence on $x-m_j$."
         },
         {
@@ -8047,7 +8047,7 @@
         },
         {
           "type": "compare",
-          "prompt": "What remains convex when the basis functions are nonlinear in x?",
+          "prompt": "What remains convex when the basis functions are nonlinear in $x$?",
           "answer": "The squared-loss objective remains convex in $w$ because the prediction is linear in the trainable weights, even when each fixed feature $\\phi_j(x)$ is nonlinear in $x$.",
           "hint": "Convexity is with respect to parameters."
         }
@@ -8565,7 +8565,7 @@
         },
         {
           "type": "derive",
-          "prompt": "What does the i-th row of $\\Phi$ represent, and why does that orientation matter?",
+          "prompt": "What does the $i$-th row of $\\Phi$ represent, and why does that orientation matter?",
           "answer": "It is $(\\phi_0(x_i),\\ldots,\\phi_{M-1}(x_i))$. With examples as rows, $\\Phi w$ produces all predictions and $\\Phi^\\top(\\Phi w-y)$ collects feature-direction derivatives.",
           "hint": "Read across one example and then check the multiplication."
         }
@@ -10561,7 +10561,7 @@
         {
           "type": "critique",
           "prompt": "What information does squared loss use that 0–1 loss ignores?",
-          "answer": "It uses the magnitude of every score error, not just whether the top-scoring class is correct.",
+          "answer": "It uses the magnitude of every score error, not just whether the top-scoring class is correct under $0$–$1$ loss.",
           "hint": "Look at the target vector geometry."
         }
       ],
@@ -11101,7 +11101,7 @@
           "type": "explain",
           "prompt": "Why does cross-entropy punish a confident wrong prediction more than a mildly wrong one?",
           "answer": "The negative log grows as the true-class probability approaches zero, so assigning tiny probability to the true class incurs a large penalty.",
-          "hint": "Inspect -log $p_{\\mathrm{true}}$."
+          "hint": "Inspect $-\\log p_{\\mathrm{true}}$."
         },
         {
           "type": "check",
@@ -11248,7 +11248,7 @@
         {
           "type": "transfer",
           "prompt": "How would the same pipeline change when moving from regression to K-class classification?",
-          "answer": "Targets become one-hot/class labels, outputs become K scores, and the loss changes from a regression loss to a classification loss such as cross-entropy.",
+          "answer": "Targets become one-hot/class labels, outputs become $K$ scores, and the loss changes from a regression loss to a classification loss such as cross-entropy.",
           "hint": "The pipeline remains; the output and loss change."
         }
       ],

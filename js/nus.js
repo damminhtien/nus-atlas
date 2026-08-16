@@ -202,7 +202,7 @@
     root.innerHTML = body;
   }
 
-  function typesetNus() { if (window.typeset) window.typeset(root); }
+  function typesetNus(target = root) { if (window.typeset) window.typeset(target); }
   function bindLessonInteractions(code, id) {
     root.querySelector("#nus-reader-toggle")?.addEventListener("click", () => {
       setReaderMode(!readerModeOn());

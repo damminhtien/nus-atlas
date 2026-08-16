@@ -218,6 +218,7 @@
     overlay.setAttribute("aria-labelledby", "nus-socratic-modal-title");
     overlay.innerHTML = `<div class="nus-socratic-modal-card"><div class="nus-socratic-modal-head"><div><span class="eyebrow">Before slide ${target.slideNumber}</span><h2 id="nus-socratic-modal-title">Socratic checkpoint</h2></div><span class="pill gold">${prompts.length} prompt${prompts.length === 1 ? "" : "s"}</span></div><p class="nus-muted">Answer aloud or on paper while the current visual is fresh, then continue.</p><div class="nus-socratic-modal-questions">${questions(current)}</div><div class="nus-socratic-modal-actions"><button type="button" class="btn ghost" data-socratic-cancel>Stay on slide</button><button type="button" class="btn primary" data-socratic-continue>Continue to slide ${target.slideNumber} →</button></div></div>`;
     document.body.appendChild(overlay);
+    if (typeof typeset === "function") typeset(overlay);
     checkpointOverlay = overlay;
     const continueButton = overlay.querySelector("[data-socratic-continue]");
     const continueToSlide = () => {
