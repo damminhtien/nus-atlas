@@ -77,6 +77,340 @@
   "visualIds": [
     "dsa5105-ordinal-nominal"
   ],
+  "contrastDrills": [
+    {
+      "id": "dsa5105-contrast-splits",
+      "type": "contrast",
+      "kind": "concept-contrast",
+      "pair": "Train vs validation vs test",
+      "prompt": "A model has been fit. Which split should choose model size or $\\lambda$ before the final report?",
+      "choices": [
+        "Training",
+        "Validation",
+        "Test",
+        "None"
+      ],
+      "answer": 1,
+      "explanation": "Training fits parameters; validation selects settings; the test split stays untouched for the final estimate.",
+      "estimatedSeconds": 45,
+      "difficulty": "medium",
+      "skill": "concept-contrast",
+      "cognitiveLevel": "distinguish",
+      "misconception": "Name the boundary between the two concepts before choosing.",
+      "sourceRefs": [
+        {
+          "sourceId": "DSA5105/Lec1_annotated.pdf",
+          "page": 17,
+          "sourceType": "lecture",
+          "role": "evaluation split",
+          "status": "current"
+        }
+      ]
+    },
+    {
+      "id": "dsa5105-contrast-risk",
+      "type": "contrast",
+      "kind": "concept-contrast",
+      "pair": "Empirical vs population risk",
+      "prompt": "Which quantity averages loss over the observed training sample rather than over future draws?",
+      "choices": [
+        "Empirical risk",
+        "Population risk",
+        "Optimization error",
+        "Approximation error"
+      ],
+      "answer": 0,
+      "explanation": "Empirical risk is the sample average. Population risk is the expectation under the data-generating distribution.",
+      "estimatedSeconds": 45,
+      "difficulty": "medium",
+      "skill": "concept-contrast",
+      "cognitiveLevel": "distinguish",
+      "misconception": "Name the boundary between the two concepts before choosing.",
+      "sourceRefs": [
+        {
+          "sourceId": "DSA5105/Lec1_annotated.pdf",
+          "page": 23,
+          "sourceType": "lecture",
+          "role": "empirical risk",
+          "status": "current"
+        },
+        {
+          "sourceId": "DSA5105/Lec1_annotated.pdf",
+          "page": 24,
+          "sourceType": "lecture",
+          "role": "population risk",
+          "status": "current"
+        }
+      ]
+    },
+    {
+      "id": "dsa5105-contrast-error-sources",
+      "type": "contrast",
+      "kind": "concept-contrast",
+      "pair": "Approximation vs estimation vs optimization",
+      "prompt": "The hypothesis class cannot represent the oracle, even with unlimited data and a perfect optimizer. Which source of error dominates?",
+      "choices": [
+        "Approximation",
+        "Estimation",
+        "Optimization",
+        "Validation leakage"
+      ],
+      "answer": 0,
+      "explanation": "Approximation is the mismatch between the oracle and the best population-risk member available inside the hypothesis class.",
+      "estimatedSeconds": 45,
+      "difficulty": "medium",
+      "skill": "concept-contrast",
+      "cognitiveLevel": "distinguish",
+      "misconception": "Name the boundary between the two concepts before choosing.",
+      "sourceRefs": [
+        {
+          "sourceId": "DSA5105/Lec1_annotated.pdf",
+          "page": 25,
+          "sourceType": "lecture",
+          "role": "three sources of error",
+          "status": "current"
+        }
+      ]
+    },
+    {
+      "id": "dsa5105-contrast-oracle",
+      "type": "contrast",
+      "kind": "concept-contrast",
+      "pair": "Deterministic vs random oracle",
+      "prompt": "The same input can have several plausible targets, described by $p^*(\\cdot\\mid x)$. Which oracle is this?",
+      "choices": [
+        "Deterministic oracle",
+        "Random oracle",
+        "Empirical-risk minimizer",
+        "Validation oracle"
+      ],
+      "answer": 1,
+      "explanation": "A random oracle specifies a conditional target distribution. A deterministic oracle maps each input to one target value.",
+      "estimatedSeconds": 45,
+      "difficulty": "medium",
+      "skill": "concept-contrast",
+      "cognitiveLevel": "distinguish",
+      "misconception": "Name the boundary between the two concepts before choosing.",
+      "sourceRefs": [
+        {
+          "sourceId": "DSA5105/Lec1_annotated.pdf",
+          "page": 20,
+          "sourceType": "lecture",
+          "role": "deterministic and random oracle",
+          "status": "current"
+        }
+      ]
+    },
+    {
+      "id": "dsa5105-contrast-fit",
+      "type": "contrast",
+      "kind": "concept-contrast",
+      "pair": "Underfitting vs overfitting",
+      "prompt": "Training error is low but population error is high. What is the primary diagnosis?",
+      "choices": [
+        "Underfitting",
+        "Overfitting",
+        "Optimization has converged",
+        "The test set is too large"
+      ],
+      "answer": 1,
+      "explanation": "The model fits sample-specific detail that does not transfer to the population: a generalization failure commonly called overfitting.",
+      "estimatedSeconds": 45,
+      "difficulty": "medium",
+      "skill": "concept-contrast",
+      "cognitiveLevel": "distinguish",
+      "misconception": "Name the boundary between the two concepts before choosing.",
+      "sourceRefs": [
+        {
+          "sourceId": "DSA5105/Lec1_annotated.pdf",
+          "page": 33,
+          "sourceType": "lecture",
+          "role": "capacity and overfitting",
+          "status": "current"
+        },
+        {
+          "sourceId": "DSA5105/Lec1_annotated.pdf",
+          "page": 34,
+          "sourceType": "lecture",
+          "role": "Goodhart and overfitting",
+          "status": "current"
+        }
+      ]
+    },
+    {
+      "id": "dsa5105-contrast-penalties",
+      "type": "contrast",
+      "kind": "concept-contrast",
+      "pair": "$L_2$ vs $L_1$",
+      "prompt": "Which penalty is most directly associated with encouraging exact zero coefficients?",
+      "choices": [
+        "$L_2$",
+        "$L_1$",
+        "Neither penalty",
+        "Squared loss"
+      ],
+      "answer": 1,
+      "explanation": "$L_1$ penalizes the absolute values and can produce sparse solutions with exact zeros; $L_2$ usually shrinks weights continuously.",
+      "estimatedSeconds": 45,
+      "difficulty": "medium",
+      "skill": "concept-contrast",
+      "cognitiveLevel": "distinguish",
+      "misconception": "Name the boundary between the two concepts before choosing.",
+      "sourceRefs": [
+        {
+          "sourceId": "DSA5105/Lec1_annotated.pdf",
+          "page": 48,
+          "sourceType": "lecture",
+          "role": "L1 and L2 regularization",
+          "status": "current"
+        }
+      ]
+    },
+    {
+      "id": "dsa5105-contrast-ols-ridge",
+      "type": "contrast",
+      "kind": "concept-contrast",
+      "pair": "OLS vs ridge",
+      "prompt": "The design is rank-deficient and the unregularized least-squares solution is not unique. Which method adds a positive diagonal shift and restores uniqueness?",
+      "choices": [
+        "OLS with the same objective",
+        "Ridge",
+        "0–1 loss",
+        "Validation"
+      ],
+      "answer": 1,
+      "explanation": "Ridge adds $\\lambda I$ to the normal matrix. For $\\lambda>0$, this makes the system positive definite even when OLS is non-unique.",
+      "estimatedSeconds": 45,
+      "difficulty": "medium",
+      "skill": "concept-contrast",
+      "cognitiveLevel": "distinguish",
+      "misconception": "Name the boundary between the two concepts before choosing.",
+      "sourceRefs": [
+        {
+          "sourceId": "DSA5105/Lec1_annotated.pdf",
+          "page": 47,
+          "sourceType": "lecture",
+          "role": "singular OLS",
+          "status": "current"
+        },
+        {
+          "sourceId": "DSA5105/Lec1_annotated.pdf",
+          "page": 48,
+          "sourceType": "lecture",
+          "role": "regularization",
+          "status": "current"
+        }
+      ]
+    },
+    {
+      "id": "dsa5105-contrast-rank",
+      "type": "contrast",
+      "kind": "concept-contrast",
+      "pair": "Invertible vs singular $\\Phi^\\top\\Phi$",
+      "prompt": "When is it valid to write $(\\Phi^\\top\\Phi)^{-1}$ for the OLS solution?",
+      "choices": [
+        "When $\\Phi^\topPhi$ is invertible",
+        "When $\\Phi^\topPhi$ is singular",
+        "Whenever $N<M$",
+        "Only after adding $L_1$"
+      ],
+      "answer": 0,
+      "explanation": "The inverse requires an invertible normal matrix, equivalently full column rank of $\\Phi$ under the lecture convention. A singular matrix leads to a non-unique OLS family.",
+      "estimatedSeconds": 45,
+      "difficulty": "medium",
+      "skill": "concept-contrast",
+      "cognitiveLevel": "distinguish",
+      "misconception": "Name the boundary between the two concepts before choosing.",
+      "sourceRefs": [
+        {
+          "sourceId": "DSA5105/Lec1_annotated.pdf",
+          "page": 46,
+          "sourceType": "lecture",
+          "role": "general OLS",
+          "status": "current"
+        },
+        {
+          "sourceId": "DSA5105/Lec1_annotated.pdf",
+          "page": 47,
+          "sourceType": "lecture",
+          "role": "singular OLS",
+          "status": "current"
+        }
+      ]
+    },
+    {
+      "id": "dsa5105-contrast-loss",
+      "type": "contrast",
+      "kind": "concept-contrast",
+      "pair": "0–1 loss vs cross-entropy",
+      "prompt": "Which loss is smooth and useful as a gradient-based surrogate for classification error?",
+      "choices": [
+        "0–1 loss",
+        "Cross-entropy",
+        "Population risk",
+        "Validation error"
+      ],
+      "answer": 1,
+      "explanation": "0–1 loss matches the final classification metric but is discontinuous. Cross-entropy is a smooth surrogate with useful gradients.",
+      "estimatedSeconds": 45,
+      "difficulty": "medium",
+      "skill": "concept-contrast",
+      "cognitiveLevel": "distinguish",
+      "misconception": "Name the boundary between the two concepts before choosing.",
+      "sourceRefs": [
+        {
+          "sourceId": "DSA5105/Lec1_annotated.pdf",
+          "page": 53,
+          "sourceType": "lecture",
+          "role": "classification error and surrogate",
+          "status": "current"
+        },
+        {
+          "sourceId": "DSA5105/Lec1_annotated.pdf",
+          "page": 54,
+          "sourceType": "lecture",
+          "role": "softmax and cross-entropy",
+          "status": "current"
+        }
+      ]
+    },
+    {
+      "id": "dsa5105-contrast-logits",
+      "type": "contrast",
+      "kind": "concept-contrast",
+      "pair": "Logits vs probabilities",
+      "prompt": "Which statement correctly distinguishes logits from probabilities?",
+      "choices": [
+        "Logits are unconstrained scores; probabilities are non-negative and sum to one",
+        "Logits always sum to one; probabilities can be negative",
+        "They are different names for the same vector",
+        "Probabilities are the pre-softmax scores"
+      ],
+      "answer": 0,
+      "explanation": "Logits are raw model scores. Softmax maps them to probabilities, preserving the argmax while enforcing non-negativity and unit sum.",
+      "estimatedSeconds": 45,
+      "difficulty": "medium",
+      "skill": "concept-contrast",
+      "cognitiveLevel": "distinguish",
+      "misconception": "Name the boundary between the two concepts before choosing.",
+      "sourceRefs": [
+        {
+          "sourceId": "DSA5105/Lec1_annotated.pdf",
+          "page": 51,
+          "sourceType": "lecture",
+          "role": "multiclass score model",
+          "status": "current"
+        },
+        {
+          "sourceId": "DSA5105/Lec1_annotated.pdf",
+          "page": 54,
+          "sourceType": "lecture",
+          "role": "softmax and cross-entropy",
+          "status": "current"
+        }
+      ]
+    }
+  ],
   "sections": [
     {
       "title": "Lecture core · What is being learned?",
