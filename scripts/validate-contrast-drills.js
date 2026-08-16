@@ -38,7 +38,7 @@ function validateContrastDrills(state) {
     if (!Array.isArray(drill.sourceRefs) || !drill.sourceRefs.length) errors.push(`${owner}: sourceRefs are required`);
     (drill.sourceRefs || []).forEach(ref => {
       if (!ref.sourceId || !Number.isInteger(ref.page) || ref.page < 1) errors.push(`${owner}: invalid source ref`);
-      if (!ref.sourceType || !["lecture", "textbook", "ref"].includes(ref.sourceType)) errors.push(`${owner}: source ref must identify lecture, textbook, or ref`);
+      if (!ref.sourceType || !["lecture", "exercise", "textbook", "ref"].includes(ref.sourceType)) errors.push(`${owner}: source ref must identify lecture, exercise, textbook, or ref`);
     });
   }
   REQUIRED_PAIRS.forEach(pair => { if (!pairs.has(pair)) errors.push(`missing required pair: ${pair}`); });

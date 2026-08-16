@@ -7,6 +7,12 @@
       tone: "sage",
       priority: "Exam priority: current lecture and syllabus scope."
     },
+    exercise: {
+      label: "Official exercise depth",
+      shortLabel: "Exercise",
+      tone: "gold",
+      priority: "Official exercise and solution depth; use it to prepare derivations beyond the lecture statement."
+    },
     textbook: {
       label: "Textbook depth",
       shortLabel: "Textbook",
@@ -26,9 +32,11 @@
       { sourceId: "DSA5105/syllabus.pdf", sourceType: "lecture", role: "current syllabus", status: "current" },
       { sourceId: "DSA5105/Lec1_annotated.pdf", sourceType: "lecture", role: "canonical annotated Week 1 lecture", status: "current" },
       { sourceId: "DSA5105/Lec1.pdf", sourceType: "lecture", role: "unannotated Week 1 comparison copy", status: "comparison" },
-      { sourceId: "DSA5105/Ref/week1_DSA5105_lecture1_with_note.pdf", sourceType: "lecture", role: "alternate Week 1 annotated export", status: "comparison" },
-      { sourceId: "DSA5105/Lec1_exercises.pdf", sourceType: "lecture", role: "Week 1 exercise sheet", status: "current-context" },
-      { sourceId: "DSA5105/Lec1_exercises-solutions.pdf", sourceType: "lecture", role: "Week 1 worked solutions", status: "current-context" }
+      { sourceId: "DSA5105/Ref/week1_DSA5105_lecture1_with_note.pdf", sourceType: "lecture", role: "alternate Week 1 annotated export", status: "comparison" }
+    ],
+    exercise: [
+      { sourceId: "DSA5105/Lec1_exercises.pdf", sourceType: "exercise", role: "Week 1 official exercise sheet", status: "current-context" },
+      { sourceId: "DSA5105/Lec1_exercises-solutions.pdf", sourceType: "exercise", role: "Week 1 official worked solutions", status: "current-context" }
     ],
     textbook: [
       { sourceId: "DSA5105/Textbook.pdf", sourceType: "textbook", role: "course textbook", status: "course-depth" }

@@ -104,23 +104,23 @@
     {
       "sourceId": "DSA5105/Lec1_exercises-solutions.pdf",
       "page": 1,
-      "sourceType": "lecture",
+      "sourceType": "exercise",
       "role": "Huber derivative",
-      "status": "current"
+      "status": "current-context"
     },
     {
       "sourceId": "DSA5105/Lec1_exercises-solutions.pdf",
       "page": 2,
-      "sourceType": "lecture",
+      "sourceType": "exercise",
       "role": "ridge spectral filter and logistic setup",
-      "status": "current"
+      "status": "current-context"
     },
     {
       "sourceId": "DSA5105/Lec1_exercises-solutions.pdf",
       "page": 3,
-      "sourceType": "lecture",
+      "sourceType": "exercise",
       "role": "logistic convexity",
-      "status": "current"
+      "status": "current-context"
     }
   ],
   "visualIds": [],
@@ -238,7 +238,7 @@
     {
       "title": "Official exercise · Huber ψ-function",
       "body": "Differentiate the Huber loss instead of stopping at the phrase linear tails. Call $\\psi_\\delta=\\rho_\\delta'$ the Huber $\\psi$-function or score contribution. Its per-observation contribution to the stationarity equation is bounded by $\\delta$ outside the quadratic region.",
-      "sourceType": "lecture",
+      "sourceType": "exercise",
       "math": {
         "latex": "\\psi_\\delta(r)=\\rho_\\delta'(r)=\\begin{cases}r,&|r|\\le\\delta\\\\\\delta\\operatorname{sign}(r),&|r|>\\delta\\end{cases},\\qquad\\sum_{i=1}^{N}\\psi_\\delta(\\hat m-y_i)=0",
         "explanation": "For squared loss, $\\psi(r)=r$. Huber caps the first-order contribution at plus or minus $\\delta$; this is a bounded score contribution, not a claim about the full statistical influence function.",
@@ -260,7 +260,7 @@
             "meaning": "transition threshold"
           }
         ],
-        "sourceType": "lecture"
+        "sourceType": "exercise"
       },
       "sourceRefs": [
         {
@@ -273,16 +273,40 @@
         {
           "sourceId": "DSA5105/Lec1_exercises-solutions.pdf",
           "page": 1,
-          "sourceType": "lecture",
+          "sourceType": "exercise",
           "role": "Huber derivative",
-          "status": "current"
+          "status": "current-context"
         }
-      ]
+      ],
+      "sourceLens": {
+        "status": "core Week-1 derivation",
+        "whyExaminable": "Lecture recognition becomes an Exercise 1 derivation: differentiate Huber, state stationarity, and explain the bounded contribution.",
+        "lecture": [
+          {
+            "sourceId": "DSA5105/Lec1_annotated.pdf",
+            "page": 35,
+            "sourceType": "lecture",
+            "role": "loss definition",
+            "status": "current"
+          }
+        ],
+        "officialExercise": [
+          {
+            "sourceId": "DSA5105/Lec1_exercises-solutions.pdf",
+            "page": 1,
+            "sourceType": "exercise",
+            "role": "Exercise 1 · derivative + stationarity",
+            "status": "current-context"
+          }
+        ],
+        "textbook": [],
+        "reference": []
+      }
     },
     {
       "title": "Official exercise · Singular OLS and the null space",
       "body": "When the design matrix is rank deficient, the normal equation can have infinitely many parameter solutions. The pseudoinverse gives one particular solution; the null-space term changes parameters without changing the fitted training vector. This is why identical training predictions do not imply identical parameter behavior off-sample.",
-      "sourceType": "lecture",
+      "sourceType": "exercise",
       "math": {
         "latex": "\\hat w(u)=\\Phi^\\dagger y+\\left(I-\\Phi^\\dagger\\Phi\\right)u,\\qquad u\\in\\mathbb{R}^{M}",
         "explanation": "The matrix $I-\\Phi^\\dagger\\Phi$ Phi projects onto the null space of Phi. The exact family is on lecture page 47; page 46 supplies the full-rank OLS context.",
@@ -304,7 +328,7 @@
             "meaning": "directions invisible on the training rows"
           }
         ],
-        "sourceType": "lecture"
+        "sourceType": "exercise"
       },
       "sourceRefs": [
         {
@@ -326,7 +350,7 @@
     {
       "title": "Official exercise · Ridge as a spectral filter",
       "body": "Use the exercise-sheet convention $\\frac{\\lambda}{2}\\lVert w\\rVert^2$. The lecture writes the more general $\\lambda C(w)$ with $C(w)=\\lVert w\\rVert^2$, so the numerical definition of $\\lambda$ can differ by a constant factor between the two conventions.",
-      "sourceType": "lecture",
+      "sourceType": "exercise",
       "math": {
         "latex": "A=\\frac{1}{N}\\Phi^\\top\\Phi,\\quad b=\\frac{1}{N}\\Phi^\\top y,\\quad (A+\\lambda I)\\hat w_\\lambda=b,\\quad A v_j=\\mu_jv_j",
         "explanation": "For comparison with the unique OLS solution, assume $A\\succ0$, equivalently $\\mu_j>0$ for every $j$. Then $\\langle\\hat w_\\lambda,v_j\\rangle/\\langle\\hat w_0,v_j\\rangle=\\mu_j/(\\mu_j+\\lambda)$. If $A$ is singular, OLS can be non-unique, but $A+\\lambda I\\succ0$ for $\\lambda>0$, so ridge remains unique. The bridge is rank deficiency $\\to$ non-identifiability $\\to$ ridge $\\to$ positive definiteness.",
@@ -348,7 +372,7 @@
             "meaning": "ridge strength"
           }
         ],
-        "sourceType": "lecture"
+        "sourceType": "exercise"
       },
       "sourceRefs": [
         {
@@ -368,11 +392,50 @@
         {
           "sourceId": "DSA5105/Lec1_exercises-solutions.pdf",
           "page": 2,
-          "sourceType": "lecture",
+          "sourceType": "exercise",
           "role": "ridge spectral filter",
-          "status": "current"
+          "status": "current-context"
         }
-      ]
+      ],
+      "sourceLens": {
+        "status": "core Week-1 derivation",
+        "whyExaminable": "Lecture p48 introduces regularization; Exercise 2 requires closed form plus eigen analysis. This is the distinction between lecture scope and A+ exercise depth.",
+        "lecture": [
+          {
+            "sourceId": "DSA5105/Lec1_annotated.pdf",
+            "page": 48,
+            "sourceType": "lecture",
+            "role": "regularization",
+            "status": "current"
+          },
+          {
+            "sourceId": "DSA5105/Lec1_annotated.pdf",
+            "page": 49,
+            "sourceType": "lecture",
+            "role": "generalization trade-off",
+            "status": "current"
+          }
+        ],
+        "officialExercise": [
+          {
+            "sourceId": "DSA5105/Lec1_exercises-solutions.pdf",
+            "page": 2,
+            "sourceType": "exercise",
+            "role": "Exercise 2 · closed form + eigen analysis",
+            "status": "current-context"
+          }
+        ],
+        "textbook": [
+          {
+            "sourceId": "DSA5105/Textbook.pdf",
+            "page": 29,
+            "sourceType": "textbook",
+            "role": "regularization depth",
+            "status": "course-depth"
+          }
+        ],
+        "reference": []
+      }
     },
     {
       "title": "Lecture bridge · One-hot least squares to cross-entropy",
@@ -478,7 +541,7 @@
     {
       "title": "Official exercise · Logistic loss and convexity",
       "body": "For a binary score s and label y in {-1,+1}, the logistic loss is softplus(-ys). Its second derivative is non-negative, which gives a convex one-dimensional loss in the score. The decision rule is piecewise for $s>0$ and $s<0$; the tie case $s=0$ must be resolved separately.",
-      "sourceType": "lecture",
+      "sourceType": "exercise",
       "math": {
         "latex": "\\ell(s,y)=\\log(1+e^{-ys}),\\qquad\\hat y=\\begin{cases}+1,&s>0\\\\-1,&s<0\\end{cases},\\qquad\\frac{\\partial^2\\ell}{\\partial s^2}=\\frac{e^{ys}}{(1+e^{ys})^2}\\ge0",
         "explanation": "The tie at $s=0$ is a convention, not a hidden third class. The second derivative is non-negative for either label, so the score-level logistic loss is convex.",
@@ -500,24 +563,55 @@
             "meaning": "logistic loss"
           }
         ],
-        "sourceType": "lecture"
+        "sourceType": "exercise"
       },
       "sourceRefs": [
         {
           "sourceId": "DSA5105/Lec1_exercises-solutions.pdf",
           "page": 2,
-          "sourceType": "lecture",
+          "sourceType": "exercise",
           "role": "binary logistic setup",
-          "status": "current"
+          "status": "current-context"
         },
         {
           "sourceId": "DSA5105/Lec1_exercises-solutions.pdf",
           "page": 3,
-          "sourceType": "lecture",
+          "sourceType": "exercise",
           "role": "logistic convexity",
-          "status": "current"
+          "status": "current-context"
         }
-      ]
+      ],
+      "sourceLens": {
+        "status": "core Week-1 derivation",
+        "whyExaminable": "Lecture introduces softmax and cross-entropy; official solutions complete the binary reduction and convexity proof.",
+        "lecture": [
+          {
+            "sourceId": "DSA5105/Lec1_annotated.pdf",
+            "page": 54,
+            "sourceType": "lecture",
+            "role": "softmax and cross-entropy",
+            "status": "current"
+          }
+        ],
+        "officialExercise": [
+          {
+            "sourceId": "DSA5105/Lec1_exercises-solutions.pdf",
+            "page": 2,
+            "sourceType": "exercise",
+            "role": "Exercise 2 · binary setup",
+            "status": "current-context"
+          },
+          {
+            "sourceId": "DSA5105/Lec1_exercises-solutions.pdf",
+            "page": 3,
+            "sourceType": "exercise",
+            "role": "Exercise 2 · second derivative",
+            "status": "current-context"
+          }
+        ],
+        "textbook": [],
+        "reference": []
+      }
     },
     {
       "title": "Week 1 synthesis map",
@@ -655,7 +749,7 @@
       "type": "teaching-note",
       "title": "Official exercise · Huber ψ-function",
       "body": "Differentiate the Huber loss instead of stopping at the phrase linear tails. Call $\\psi_\\delta=\\rho_\\delta'$ the Huber $\\psi$-function or score contribution. Its per-observation contribution to the stationarity equation is bounded by $\\delta$ outside the quadratic region.",
-      "sourceType": "lecture",
+      "sourceType": "exercise",
       "sourceRefs": [
         {
           "sourceId": "DSA5105/Lec1_annotated.pdf",
@@ -667,9 +761,9 @@
         {
           "sourceId": "DSA5105/Lec1_exercises-solutions.pdf",
           "page": 1,
-          "sourceType": "lecture",
+          "sourceType": "exercise",
           "role": "Huber derivative",
-          "status": "current"
+          "status": "current-context"
         }
       ]
     },
@@ -678,7 +772,7 @@
       "type": "teaching-note",
       "title": "Official exercise · Singular OLS and the null space",
       "body": "When the design matrix is rank deficient, the normal equation can have infinitely many parameter solutions. The pseudoinverse gives one particular solution; the null-space term changes parameters without changing the fitted training vector. This is why identical training predictions do not imply identical parameter behavior off-sample.",
-      "sourceType": "lecture",
+      "sourceType": "exercise",
       "sourceRefs": [
         {
           "sourceId": "DSA5105/Lec1_annotated.pdf",
@@ -701,7 +795,7 @@
       "type": "teaching-note",
       "title": "Official exercise · Ridge as a spectral filter",
       "body": "Use the exercise-sheet convention $\\frac{\\lambda}{2}\\lVert w\\rVert^2$. The lecture writes the more general $\\lambda C(w)$ with $C(w)=\\lVert w\\rVert^2$, so the numerical definition of $\\lambda$ can differ by a constant factor between the two conventions.",
-      "sourceType": "lecture",
+      "sourceType": "exercise",
       "sourceRefs": [
         {
           "sourceId": "DSA5105/Lec1_annotated.pdf",
@@ -720,9 +814,9 @@
         {
           "sourceId": "DSA5105/Lec1_exercises-solutions.pdf",
           "page": 2,
-          "sourceType": "lecture",
+          "sourceType": "exercise",
           "role": "ridge spectral filter",
-          "status": "current"
+          "status": "current-context"
         }
       ]
     },
@@ -798,21 +892,21 @@
       "type": "teaching-note",
       "title": "Official exercise · Logistic loss and convexity",
       "body": "For a binary score s and label y in {-1,+1}, the logistic loss is softplus(-ys). Its second derivative is non-negative, which gives a convex one-dimensional loss in the score. The decision rule is piecewise for $s>0$ and $s<0$; the tie case $s=0$ must be resolved separately.",
-      "sourceType": "lecture",
+      "sourceType": "exercise",
       "sourceRefs": [
         {
           "sourceId": "DSA5105/Lec1_exercises-solutions.pdf",
           "page": 2,
-          "sourceType": "lecture",
+          "sourceType": "exercise",
           "role": "binary logistic setup",
-          "status": "current"
+          "status": "current-context"
         },
         {
           "sourceId": "DSA5105/Lec1_exercises-solutions.pdf",
           "page": 3,
-          "sourceType": "lecture",
+          "sourceType": "exercise",
           "role": "logistic convexity",
-          "status": "current"
+          "status": "current-context"
         }
       ]
     },
@@ -917,23 +1011,23 @@
         {
           "sourceId": "DSA5105/Lec1_exercises-solutions.pdf",
           "page": 1,
-          "sourceType": "lecture",
+          "sourceType": "exercise",
           "role": "Huber derivative",
-          "status": "current"
+          "status": "current-context"
         },
         {
           "sourceId": "DSA5105/Lec1_exercises-solutions.pdf",
           "page": 2,
-          "sourceType": "lecture",
+          "sourceType": "exercise",
           "role": "ridge spectral filter and logistic setup",
-          "status": "current"
+          "status": "current-context"
         },
         {
           "sourceId": "DSA5105/Lec1_exercises-solutions.pdf",
           "page": 3,
-          "sourceType": "lecture",
+          "sourceType": "exercise",
           "role": "logistic convexity",
-          "status": "current"
+          "status": "current-context"
         }
       ]
     },
@@ -1038,23 +1132,23 @@
         {
           "sourceId": "DSA5105/Lec1_exercises-solutions.pdf",
           "page": 1,
-          "sourceType": "lecture",
+          "sourceType": "exercise",
           "role": "Huber derivative",
-          "status": "current"
+          "status": "current-context"
         },
         {
           "sourceId": "DSA5105/Lec1_exercises-solutions.pdf",
           "page": 2,
-          "sourceType": "lecture",
+          "sourceType": "exercise",
           "role": "ridge spectral filter and logistic setup",
-          "status": "current"
+          "status": "current-context"
         },
         {
           "sourceId": "DSA5105/Lec1_exercises-solutions.pdf",
           "page": 3,
-          "sourceType": "lecture",
+          "sourceType": "exercise",
           "role": "logistic convexity",
-          "status": "current"
+          "status": "current-context"
         }
       ]
     },
@@ -1165,23 +1259,23 @@
         {
           "sourceId": "DSA5105/Lec1_exercises-solutions.pdf",
           "page": 1,
-          "sourceType": "lecture",
+          "sourceType": "exercise",
           "role": "Huber derivative",
-          "status": "current"
+          "status": "current-context"
         },
         {
           "sourceId": "DSA5105/Lec1_exercises-solutions.pdf",
           "page": 2,
-          "sourceType": "lecture",
+          "sourceType": "exercise",
           "role": "ridge spectral filter and logistic setup",
-          "status": "current"
+          "status": "current-context"
         },
         {
           "sourceId": "DSA5105/Lec1_exercises-solutions.pdf",
           "page": 3,
-          "sourceType": "lecture",
+          "sourceType": "exercise",
           "role": "logistic convexity",
-          "status": "current"
+          "status": "current-context"
         }
       ]
     },
@@ -1287,23 +1381,23 @@
         {
           "sourceId": "DSA5105/Lec1_exercises-solutions.pdf",
           "page": 1,
-          "sourceType": "lecture",
+          "sourceType": "exercise",
           "role": "Huber derivative",
-          "status": "current"
+          "status": "current-context"
         },
         {
           "sourceId": "DSA5105/Lec1_exercises-solutions.pdf",
           "page": 2,
-          "sourceType": "lecture",
+          "sourceType": "exercise",
           "role": "ridge spectral filter and logistic setup",
-          "status": "current"
+          "status": "current-context"
         },
         {
           "sourceId": "DSA5105/Lec1_exercises-solutions.pdf",
           "page": 3,
-          "sourceType": "lecture",
+          "sourceType": "exercise",
           "role": "logistic convexity",
-          "status": "current"
+          "status": "current-context"
         }
       ]
     },
@@ -1409,23 +1503,23 @@
         {
           "sourceId": "DSA5105/Lec1_exercises-solutions.pdf",
           "page": 1,
-          "sourceType": "lecture",
+          "sourceType": "exercise",
           "role": "Huber derivative",
-          "status": "current"
+          "status": "current-context"
         },
         {
           "sourceId": "DSA5105/Lec1_exercises-solutions.pdf",
           "page": 2,
-          "sourceType": "lecture",
+          "sourceType": "exercise",
           "role": "ridge spectral filter and logistic setup",
-          "status": "current"
+          "status": "current-context"
         },
         {
           "sourceId": "DSA5105/Lec1_exercises-solutions.pdf",
           "page": 3,
-          "sourceType": "lecture",
+          "sourceType": "exercise",
           "role": "logistic convexity",
-          "status": "current"
+          "status": "current-context"
         }
       ]
     },
@@ -1531,23 +1625,23 @@
         {
           "sourceId": "DSA5105/Lec1_exercises-solutions.pdf",
           "page": 1,
-          "sourceType": "lecture",
+          "sourceType": "exercise",
           "role": "Huber derivative",
-          "status": "current"
+          "status": "current-context"
         },
         {
           "sourceId": "DSA5105/Lec1_exercises-solutions.pdf",
           "page": 2,
-          "sourceType": "lecture",
+          "sourceType": "exercise",
           "role": "ridge spectral filter and logistic setup",
-          "status": "current"
+          "status": "current-context"
         },
         {
           "sourceId": "DSA5105/Lec1_exercises-solutions.pdf",
           "page": 3,
-          "sourceType": "lecture",
+          "sourceType": "exercise",
           "role": "logistic convexity",
-          "status": "current"
+          "status": "current-context"
         }
       ]
     },
@@ -1653,23 +1747,23 @@
         {
           "sourceId": "DSA5105/Lec1_exercises-solutions.pdf",
           "page": 1,
-          "sourceType": "lecture",
+          "sourceType": "exercise",
           "role": "Huber derivative",
-          "status": "current"
+          "status": "current-context"
         },
         {
           "sourceId": "DSA5105/Lec1_exercises-solutions.pdf",
           "page": 2,
-          "sourceType": "lecture",
+          "sourceType": "exercise",
           "role": "ridge spectral filter and logistic setup",
-          "status": "current"
+          "status": "current-context"
         },
         {
           "sourceId": "DSA5105/Lec1_exercises-solutions.pdf",
           "page": 3,
-          "sourceType": "lecture",
+          "sourceType": "exercise",
           "role": "logistic convexity",
-          "status": "current"
+          "status": "current-context"
         }
       ]
     }

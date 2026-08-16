@@ -5,7 +5,7 @@ const { loadLegacyState } = require("./validate-content");
 const ROOT = path.resolve(__dirname, "..");
 const TYPES = new Set(["mcq", "short", "derivation", "calculation"]);
 const DIFFICULTIES = new Set(["easy", "medium", "hard"]);
-const SOURCE_TYPES = new Set(["lecture", "textbook", "ref", "assessment-derived"]);
+const SOURCE_TYPES = new Set(["lecture", "exercise", "textbook", "ref", "assessment-derived"]);
 
 function readQuestionBank(courseId = "DSA5105", root = ROOT) {
   const file = path.join(root, "content", "courses", courseId, "questions", "bank.json");

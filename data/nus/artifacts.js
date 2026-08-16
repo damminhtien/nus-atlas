@@ -1,6 +1,9 @@
 (function () {
   "use strict";
-  const source = (sourceId, page, sourceType, role, status) => ({ sourceId, page, ...(sourceType ? { sourceType } : {}), ...(role ? { role } : {}), ...(status ? { status } : {}) });
+  const source = (sourceId, page, sourceType, role, status) => {
+    const isExercise = sourceId.includes("Lec1_exercises");
+    return { sourceId, page, ...(sourceType || isExercise ? { sourceType: isExercise ? "exercise" : sourceType } : {}), ...(role ? { role } : {}), ...(status || isExercise ? { status: isExercise ? "current-context" : status } : {}) };
+  };
   const artifacts = {};
   const add = (id, flashcards, homework, codeExercises) => {
     artifacts[id] = { lessonId: id, flashcards, homework, codeExercises: codeExercises || [], schemaVersion: "nus.study-kit.v1" };
@@ -31,11 +34,11 @@
   add("dsa5105-week1-derivations", [
     { front: "Empirical versus population risk?", back: "Empirical risk averages loss on observed examples; population risk averages over future draws.", source: source("DSA5105/Lec1_annotated.pdf", 23, "lecture", "population risk", "current") },
     { front: "What is bounded in Huber's score equation?", back: "The Huber psi-function is linear inside the threshold and capped at plus or minus delta outside, so each residual has a bounded score contribution.", source: source("DSA5105/Lec1_annotated.pdf", 35, "lecture", "Huber psi-function", "current") },
-    { front: "What does the ridge spectral filter do?", back: "In an eigen-direction with eigenvalue mu, the coefficient is multiplied by mu divided by mu plus lambda; weak directions shrink most.", source: source("DSA5105/Lec1_exercises-solutions.pdf", 2, "lecture", "ridge spectral filter", "current") },
-    { front: "Why is binary logistic loss convex in the score?", back: "Its second derivative is non-negative everywhere, so the score-level objective is convex.", source: source("DSA5105/Lec1_exercises-solutions.pdf", 3, "lecture", "logistic convexity", "current") }
+    { front: "What does the ridge spectral filter do?", back: "In an eigen-direction with eigenvalue mu, the coefficient is multiplied by mu divided by mu plus lambda; weak directions shrink most.", source: source("DSA5105/Lec1_exercises-solutions.pdf", 2, "exercise", "ridge spectral filter", "current-context") },
+    { front: "Why is binary logistic loss convex in the score?", back: "Its second derivative is non-negative everywhere, so the score-level objective is convex.", source: source("DSA5105/Lec1_exercises-solutions.pdf", 3, "exercise", "logistic convexity", "current-context") }
   ], [
-    { prompt: "Derive the stationarity equation for Huber location and explain why an extreme residual cannot dominate it.", rubric: "Differentiate the two regions, write the sum of psi terms as zero, and connect the capped derivative to a bounded score contribution.", source: source("DSA5105/Lec1_exercises-solutions.pdf", 1, "lecture", "Huber derivative", "current") },
-    { prompt: "Show the null-space family of singular least-squares solutions and compare it with ridge in the eigenbasis.", rubric: "Use the pseudoinverse plus a null-space component, then derive the mu divided by mu plus lambda shrinkage factor and interpret weak directions.", sourceRefs: [source("DSA5105/Lec1_annotated.pdf", 47, "lecture", "singular OLS", "current"), source("DSA5105/Lec1_exercises-solutions.pdf", 2, "lecture", "ridge spectral filter", "current")] }
+    { prompt: "Derive the stationarity equation for Huber location and explain why an extreme residual cannot dominate it.", rubric: "Differentiate the two regions, write the sum of psi terms as zero, and connect the capped derivative to a bounded score contribution.", source: source("DSA5105/Lec1_exercises-solutions.pdf", 1, "exercise", "Huber derivative", "current-context") },
+    { prompt: "Show the null-space family of singular least-squares solutions and compare it with ridge in the eigenbasis.", rubric: "Use the pseudoinverse plus a null-space component, then derive the mu divided by mu plus lambda shrinkage factor and interpret weak directions.", sourceRefs: [source("DSA5105/Lec1_annotated.pdf", 47, "lecture", "singular OLS", "current"), source("DSA5105/Lec1_exercises-solutions.pdf", 2, "exercise", "ridge spectral filter", "current-context")] }
   ], []);
   window.NUS_ARTIFACTS = artifacts;
 })();

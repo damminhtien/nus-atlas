@@ -32,6 +32,7 @@
       nusmods: { url: "https://nusmods.com/courses/DSA5105/principles-of-machine-learning", apiModule: "https://api.nusmods.com/v2/2026-2027/modules/DSA5105.json", apiSemester: "https://api.nusmods.com/v2/2026-2027/semesters/1/DSA5105/semesterData.json" },
       localSources: ["DSA5105/syllabus.pdf", "DSA5105/Lec1_annotated.pdf", "DSA5105/Lec1.pdf", "DSA5105/Ref/week1_DSA5105_lecture1_with_note.pdf", "DSA5105/Lec1_exercises.pdf", "DSA5105/Lec1_exercises-solutions.pdf", "DSA5105/Textbook.pdf", "DSA5105/Ref/DSA5105_Syllabus.pdf", "DSA5105/Ref/document.pdf"],
       lectureSources: window.NUS_DSA5105_SOURCES.lecture,
+      exerciseSources: window.NUS_DSA5105_SOURCES.exercise,
       textbookSources: window.NUS_DSA5105_SOURCES.textbook,
       referenceSources: window.NUS_DSA5105_SOURCES.ref,
       sourceNote: "The local Lec1.pdf cover visibly says DSA5102; folder and current syllabus context identify this study source as DSA5105. Verify before citing the slide title."
