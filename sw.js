@@ -12,7 +12,7 @@ self.addEventListener("install", e => {
   e.waitUntil(
     fetch(MANIFEST, { cache: "no-store" })
       .then(response => response.json())
-      .then(manifest => caches.open(CACHE).then(cache => cache.addAll(CORE.concat(manifest.assets || []))))
+      .then(manifest => caches.open(CACHE).then(cache => cache.addAll(CORE.concat(manifest.eager || manifest.assets || []))))
       .catch(() => caches.open(CACHE).then(cache => cache.addAll(CORE)).catch(() => {}))
       .then(() => self.skipWaiting())
   );

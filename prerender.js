@@ -234,10 +234,12 @@ function walkFiles(dir, prefix = "") {
   });
 }
 const assets = walkFiles(OUT).filter(file => !file.startsWith("l/") && !file.startsWith("nus/") && !["sw.js", "asset-manifest.json", "sitemap.xml", "robots.txt"].includes(file));
-const manifest = { schemaVersion: "atlas.asset-manifest.v1", version: VERSION, assets: assets.map(file => `./${file}`) };
+const eager = assets.filter(file => !file.startsWith("content/"));
+const lazy = assets.filter(file => file.startsWith("content/"));
+const manifest = { schemaVersion: "atlas.asset-manifest.v2", version: VERSION, eager: eager.map(file => `./${file}`), lazy: lazy.map(file => `./${file}`) };
 fs.writeFileSync(path.join(OUT, "asset-manifest.json"), `${JSON.stringify(manifest, null, 2)}\n`);
 const cache = `atlas-${VERSION}-${crypto.createHash("sha1").update(JSON.stringify(manifest)).digest("hex").slice(0, 12)}`;
 const serviceWorker = fs.readFileSync(path.join(OUT, "sw.js"), "utf8").replace('"__ATLAS_CACHE__"', JSON.stringify(cache));
 fs.writeFileSync(path.join(OUT, "sw.js"), serviceWorker);
 
-console.log(`PRERENDER — ${pages} lesson pages · ${urls.length} sitemap urls · ${manifest.assets.length} manifest assets · base ${BASE} · out ${path.relative(__dirname, OUT)}/`);
+console.log(`PRERENDER — ${pages} lesson pages · ${urls.length} sitemap urls · ${eager.length} eager assets · ${lazy.length} lazy content assets · base ${BASE} · out ${path.relative(__dirname, OUT)}/`);

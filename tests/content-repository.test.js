@@ -28,7 +28,7 @@ test("repository exposes catalog and outline without loading lesson bodies", () 
   assert.deepEqual(repo.listCourses().map(course => course.code), ["DSA5101", "DSA5104", "DSA5105", "DSA5208"]);
   assert.equal(repo.stats().loadedCourses, 0);
   assert.equal(repo.listLessons("DSA5105").length, 23);
-  assert.equal(repo.getLesson("DSA5105", "dsa5105-erm").questions.length, 0);
+  assert.equal(repo.peekLesson("DSA5105", "dsa5105-erm").questions.length, 0);
 });
 
 test("repository joins lazy lesson, questions, study kit, and course artifacts", async () => {
@@ -39,7 +39,9 @@ test("repository joins lazy lesson, questions, study kit, and course artifacts",
   assert.ok(lesson.flashcards.length > 0);
   assert.equal(repo.getAssessment("DSA5105").length, 3);
   assert.equal(repo.getAssessmentMap("DSA5105").topics.length, 12);
-  assert.equal(repo.getSlideSets("DSA5105")[0].slides.length, 55);
+  const slideSets = await repo.loadSlides("DSA5105");
+  assert.equal(slideSets[0].slides.length, 55);
+  assert.ok(await repo.loadTextbook("DSA5105"));
 });
 
 test("missing course and lesson are safe async lookups", async () => {

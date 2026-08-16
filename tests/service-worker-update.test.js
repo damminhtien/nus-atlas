@@ -25,3 +25,8 @@ test("service worker update files bypass runtime cache", () => {
   assert.match(serviceWorker, /sw\\\.js\|asset-manifest\\\.json/);
   assert.match(serviceWorker, /if \(isControlFile\) return/);
 });
+
+test("service worker installs only eager shell assets", () => {
+  assert.match(serviceWorker, /manifest\.eager \|\| manifest\.assets/);
+  assert.match(fs.readFileSync(path.join(root, "prerender.js"), "utf8"), /const lazy = assets\.filter\(file => file\.startsWith\("content\//);
+});

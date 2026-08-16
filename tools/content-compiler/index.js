@@ -42,6 +42,7 @@ function normalizeQuestion(question, courseId, lessonId) {
   const defaults = QUESTION_DEFAULTS[question.type] || QUESTION_DEFAULTS.short;
   return {
     ...cleanObject(question),
+    entityKey: `question:${courseId}/${lessonId}/${question.id}`,
     courseId,
     lessonId,
     difficulty: question.difficulty || defaults.difficulty,
@@ -81,8 +82,11 @@ function normalizeLesson(courseId, module, lesson, questions, kit) {
   return {
     lesson: {
       ...core,
+      entityKey: `lesson:${courseId}/${lesson.id}`,
       courseId,
       moduleId: module.id,
+      slideSetIds: Array.isArray(lesson.slideSetIds) ? lesson.slideSetIds.slice() : [],
+      visualIds: Array.isArray(lesson.visualIds) ? lesson.visualIds.slice() : [],
       blocks: Array.isArray(core.blocks) && core.blocks.length ? core.blocks : lessonBlocks(lesson),
       sourceRefs: Array.isArray(lesson.sourceRefs) ? lesson.sourceRefs : [],
       questionIds: normalizedQuestions.map(question => question.id),
@@ -135,7 +139,7 @@ function loadCourseSource(root, courseId) {
 }
 
 function courseManifest(course) {
-  const fields = ["code", "title", "semester", "color", "description", "prerequisites", "workload", "department", "faculty", "nusmods"];
+  const fields = ["code", "entityKey", "title", "semester", "color", "description", "prerequisites", "workload", "department", "faculty", "nusmods"];
   return Object.fromEntries(fields.filter(field => course[field] !== undefined).map(field => [field, cleanObject(course[field])]));
 }
 
@@ -154,8 +158,8 @@ function collectSources(course, modules) {
   return [...byKey.values()];
 }
 
-function compileCourse(root, courseId) {
-  const source = loadCourseSource(root, courseId);
+function compileCourseSource(source, courseId = source && source.course && source.course.code) {
+  if (!source || !source.course || !courseId) throw new TypeError("compileCourseSource requires a course source and course id");
   const course = source.course;
   const modules = [];
   const lessons = {};
@@ -168,21 +172,23 @@ function compileCourse(root, courseId) {
     const lessonMeta = [];
     const joinedLessons = [];
     for (const rawLesson of module.lessons || []) {
-      const normalized = normalizeLesson(courseId, module, rawLesson, rawLesson.questions, rawLesson);
+      const slideSetIds = source.slideSets.filter(slideSet => (slideSet.lessonIds || []).includes(rawLesson.id)).map(slideSet => slideSet.id);
+      const normalized = normalizeLesson(courseId, module, { ...rawLesson, slideSetIds }, rawLesson.questions, rawLesson);
       lessons[rawLesson.id] = normalized.lesson;
       questions[rawLesson.id] = normalized.questions;
       studyKits[rawLesson.id] = normalized.artifacts;
-      lessonMeta.push({ id: rawLesson.id, title: rawLesson.title, week: rawLesson.week, minutes: rawLesson.minutes, summary: rawLesson.summary, objectiveCount: (rawLesson.objectives || []).length, questionCount: normalized.questions.length, questionIds: normalized.questions.map(question => question.id), hasVisualLab: !!source.labs[rawLesson.id], visualIds: rawLesson.visualIds || [] });
+      lessonMeta.push({ id: rawLesson.id, title: rawLesson.title, week: rawLesson.week, minutes: rawLesson.minutes, summary: rawLesson.summary, objectiveCount: (rawLesson.objectives || []).length, questionCount: normalized.questions.length, questionIds: normalized.questions.map(question => question.id), hasVisualLab: !!source.labs[rawLesson.id], visualIds: rawLesson.visualIds || [], slideSetIds });
       joinedLessons.push({ ...normalized.lesson, questions: normalized.questions, ...normalized.artifacts });
       (rawLesson.visualIds || []).forEach(id => visualIds.add(id));
       if (source.labs[rawLesson.id]) labIds.add(rawLesson.id);
     }
-    modules.push({ id: module.id, title: module.title, schemaVersion: "nus.module.v1", lessonIds: lessonMeta.map(lesson => lesson.id) });
+    modules.push({ id: module.id, entityKey: `module:${courseId}/${module.id}`, title: module.title, schemaVersion: "nus.module.v1", lessonIds: lessonMeta.map(lesson => lesson.id) });
     joinedModules.push({ id: module.id, title: module.title, schemaVersion: "nus.module.v1", lessons: joinedLessons });
   }
   const packageCourse = {
     ...cleanObject(course),
     code: courseId,
+    entityKey: `course:${courseId}/course`,
     schemaVersion: "nus.course.v1",
     moduleIds: modules.map(module => module.id),
     assessmentIds: source.assessments.map(item => item.id),
@@ -208,8 +214,12 @@ function compileCourse(root, courseId) {
     schedule: source.schedule || null,
     counts: { modules: modules.length, lessons: Object.keys(lessons).length, questions: Object.values(questions).reduce((n, list) => n + list.length, 0), questionBank: source.questionBank ? source.questionBank.questions.length : 0, artifacts: Object.keys(studyKits).length, slideSets: source.slideSets.length, slides: source.slideSets.reduce((total, set) => total + (set.slides || []).length, 0) }
   };
-  const outline = { schemaVersion: "nus.course-outline.v1", courseId, course: courseManifest(packageCourse), modules: modules.map((module, index) => ({ ...module, title: source.modules[index].title, lessons: source.modules[index].lessons.map(lesson => ({ id: lesson.id, title: lesson.title, week: lesson.week, minutes: lesson.minutes, summary: lesson.summary, objectiveCount: (lesson.objectives || []).length, questionCount: questions[lesson.id].length, questionIds: questions[lesson.id].map(question => question.id), hasVisualLab: !!source.labs[lesson.id], visualIds: lesson.visualIds || [] })) })), labs: Object.values(source.labs).map(lab => ({ id: lab.id || lab.lessonId, courseCode: lab.courseCode, lessonId: lab.lessonId, title: lab.title, type: lab.type })) };
+  const outline = { schemaVersion: "nus.course-outline.v1", courseId, entityKey: `course:${courseId}/outline`, course: courseManifest(packageCourse), modules: modules.map((module, index) => ({ ...module, title: source.modules[index].title, lessons: source.modules[index].lessons.map(lesson => ({ id: lesson.id, entityKey: `lesson:${courseId}/${lesson.id}`, title: lesson.title, courseId, moduleId: module.id, week: lesson.week, minutes: lesson.minutes, summary: lesson.summary, objectiveCount: (lesson.objectives || []).length, questionCount: questions[lesson.id].length, questionIds: questions[lesson.id].map(question => question.id), hasVisualLab: !!source.labs[lesson.id], visualIds: lesson.visualIds || [], slideSetIds: source.slideSets.filter(slideSet => (slideSet.lessonIds || []).includes(lesson.id)).map(slideSet => slideSet.id), schemaVersion: "nus.lesson-outline.v1" })) })), labs: Object.values(source.labs).map(lab => ({ id: lab.id || lab.lessonId, courseCode: lab.courseCode, lessonId: lab.lessonId, title: lab.title, type: lab.type })) };
   return { source, package: joined, outline, lessons, questions, studyKits };
+}
+
+function compileCourse(root, courseId) {
+  return compileCourseSource(loadCourseSource(root, courseId), courseId);
 }
 
 function writeJson(file, value) {
@@ -223,27 +233,76 @@ function writeCourseArtifacts(outputRoot, compiled) {
   const lessonAssets = {};
   const questionAssets = {};
   const studyKitAssets = {};
+  const labAssets = {};
+  const visualAssets = {};
   for (const id of Object.keys(compiled.lessons).sort()) {
     const lesson = compiled.lessons[id];
     const questionList = compiled.questions[id] || [];
     const studyKit = compiled.studyKits[id] || {};
+    const visualIds = Array.isArray(lesson.visualIds) ? lesson.visualIds : [];
+    const labs = compiled.source.labs[id] ? { [id]: cleanObject(compiled.source.labs[id]) } : {};
+    const visuals = Object.fromEntries(visualIds.filter(visualId => compiled.source.visuals[visualId]).map(visualId => [visualId, cleanObject(compiled.source.visuals[visualId])]));
     const lessonAsset = `lessons/${id}.${hash(lesson)}.json`;
     const questionAsset = `questions/${id}.${hash(questionList)}.json`;
     const studyKitAsset = `study-kits/${id}.${hash(studyKit)}.json`;
-    writeJson(path.join(courseRoot, lessonAsset), { schemaVersion: "nus.lesson-payload.v1", lesson, questionsAsset: questionAsset, studyKitAsset });
+    let labAsset;
+    let visualAsset;
+    if (Object.keys(labs).length) {
+      labAsset = `labs/${id}.${hash(labs)}.json`;
+      writeJson(path.join(courseRoot, labAsset), { schemaVersion: "nus.lab-payload.v1", labs });
+      labAssets[id] = labAsset;
+    }
+    if (Object.keys(visuals).length) {
+      visualAsset = `visuals/${id}.${hash(visuals)}.json`;
+      writeJson(path.join(courseRoot, visualAsset), { schemaVersion: "nus.visual-payload.v1", visuals });
+      visualAssets[id] = visualAsset;
+    }
+    writeJson(path.join(courseRoot, lessonAsset), { schemaVersion: "nus.lesson-payload.v1", lesson, questionsAsset: questionAsset, studyKitAsset, ...(labAsset ? { labAsset } : {}), ...(visualAsset ? { visualAsset } : {}) });
     writeJson(path.join(courseRoot, questionAsset), { schemaVersion: "nus.question-payload.v1", questions: questionList });
     writeJson(path.join(courseRoot, studyKitAsset), studyKit);
     lessonAssets[id] = lessonAsset;
     questionAssets[id] = questionAsset;
     studyKitAssets[id] = studyKitAsset;
   }
-  const courseAssetValue = { ...compiled.package, content: undefined, lessonAssets, questionAssets, studyKitAssets };
-  delete courseAssetValue.content;
+  const slideAssets = {};
+  for (const slideSet of compiled.source.slideSets) {
+    const asset = `slides/${slideSet.id}.${hash(slideSet)}.json`;
+    writeJson(path.join(courseRoot, asset), { schemaVersion: "nus.slide-set-payload.v1", slideSet: cleanObject(slideSet) });
+    slideAssets[slideSet.id] = asset;
+  }
+  let textbookAsset;
+  if (compiled.source.textbook) {
+    textbookAsset = `textbook.${hash(compiled.source.textbook)}.json`;
+    writeJson(path.join(courseRoot, textbookAsset), { schemaVersion: "nus.textbook-payload.v1", textbook: cleanObject(compiled.source.textbook) });
+  }
+  let sourceManifestAsset;
+  if (compiled.source.sourceManifest) {
+    sourceManifestAsset = `source-manifest.${hash(compiled.source.sourceManifest)}.json`;
+    writeJson(path.join(courseRoot, sourceManifestAsset), { schemaVersion: "nus.source-manifest-payload.v1", sourceManifest: cleanObject(compiled.source.sourceManifest) });
+  }
+  const courseAssetValue = {
+    course: compiled.package.course,
+    assessments: compiled.package.assessments,
+    sources: compiled.package.sources,
+    assessmentMap: compiled.package.assessmentMap,
+    questionBank: compiled.package.questionBank,
+    schedule: compiled.package.schedule,
+    counts: compiled.package.counts,
+    lessonAssets,
+    questionAssets,
+    studyKitAssets,
+    labAssets,
+    visualAssets,
+    slideAssets,
+    ...(textbookAsset ? { textbookAsset } : {}),
+    ...(sourceManifestAsset ? { sourceManifestAsset } : {}),
+    schemaVersion: "nus.course-payload.v1"
+  };
   const courseAsset = `course.${hash(courseAssetValue)}.json`;
   writeJson(path.join(courseRoot, courseAsset), courseAssetValue);
-  const outline = { ...compiled.outline, courseAsset, lessonAssets, questionAssets, studyKitAssets };
+  const outline = { ...compiled.outline, courseAsset, lessonAssets, questionAssets, studyKitAssets, labAssets, visualAssets, slideAssets, ...(textbookAsset ? { textbookAsset } : {}) };
   writeJson(path.join(courseRoot, "outline.json"), outline);
-  return { code: courseId, courseId, course: compiled.outline.course, modules: compiled.outline.modules, labs: compiled.outline.labs, assessments: compiled.package.assessments, schedule: compiled.package.schedule, outline: `${courseId}/outline.json`, courseAsset: `${courseId}/${courseAsset}`, lessonAssets: Object.fromEntries(Object.entries(lessonAssets).map(([id, asset]) => [id, `${courseId}/${asset}`])), questionAssets: Object.fromEntries(Object.entries(questionAssets).map(([id, asset]) => [id, `${courseId}/${asset}`])), studyKitAssets: Object.fromEntries(Object.entries(studyKitAssets).map(([id, asset]) => [id, `${courseId}/${asset}`])), counts: compiled.package.counts, version: hash({ outline, courseAssetValue }), schemaVersion: "nus.content-course-manifest.v1" };
+  return { code: courseId, courseId, course: compiled.outline.course, modules: compiled.outline.modules, labs: compiled.outline.labs, assessments: compiled.package.assessments, schedule: compiled.package.schedule, outline: `${courseId}/outline.json`, courseAsset: `${courseId}/${courseAsset}`, lessonAssets: Object.fromEntries(Object.entries(lessonAssets).map(([id, asset]) => [id, `${courseId}/${asset}`])), questionAssets: Object.fromEntries(Object.entries(questionAssets).map(([id, asset]) => [id, `${courseId}/${asset}`])), studyKitAssets: Object.fromEntries(Object.entries(studyKitAssets).map(([id, asset]) => [id, `${courseId}/${asset}`])), labAssets: Object.fromEntries(Object.entries(labAssets).map(([id, asset]) => [id, `${courseId}/${asset}`])), visualAssets: Object.fromEntries(Object.entries(visualAssets).map(([id, asset]) => [id, `${courseId}/${asset}`])), slideAssets: Object.fromEntries(Object.entries(slideAssets).map(([id, asset]) => [id, `${courseId}/${asset}`])), ...(textbookAsset ? { textbookAsset: `${courseId}/${textbookAsset}` } : {}), ...(sourceManifestAsset ? { sourceManifestAsset: `${courseId}/${sourceManifestAsset}` } : {}), hasTextbook: !!textbookAsset, counts: compiled.package.counts, version: hash({ outline, courseAssetValue }), schemaVersion: "nus.content-course-manifest.v1" };
 }
 
 function compileAll(root, outputRoot) {
@@ -268,4 +327,4 @@ function validateCanonical(root, courseId) {
   if (errors.length) throw new Error(`Canonical authored math contract failed for ${courseId}:\n- ${errors.slice(0, 10).map(error => `${error.location} [${error.label}: ${error.token}]`).join("\n- ")}`);
 }
 
-module.exports = { compileAll, compileCourse, loadCourseSource, stableStringify, hash, validateCanonical, writeCourseArtifacts, normalizeLesson };
+module.exports = { compileAll, compileCourse, compileCourseSource, loadCourseSource, stableStringify, hash, validateCanonical, writeCourseArtifacts, normalizeLesson };

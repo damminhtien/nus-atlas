@@ -10,6 +10,9 @@
   const lessons = new Map();
   const pendingCourses = new Map();
   const pendingLessons = new Map();
+  const pendingSlides = new Map();
+  const pendingTextbooks = new Map();
+  const pendingSourceManifests = new Map();
   const sourceTypes = config.sourceTypes || catalog.sourceTypes || {};
   const schedule = config.schedule || {};
 
@@ -40,6 +43,11 @@
       schemaVersion: (payload.lesson || payload).schemaVersion || "nus.lesson.v1"
     };
     lessons.set(`${courseId}/${lessonId}`, lesson);
+    const packageData = packageFor(courseId);
+    if (packageData) {
+      if (payload.labs) packageData.labs = { ...(packageData.labs || {}), ...payload.labs };
+      if (payload.visuals) packageData.visuals = { ...(packageData.visuals || {}), ...payload.visuals };
+    }
     return lesson;
   }
   function courseOutline(courseId) {
@@ -73,7 +81,7 @@
     const modules = packageData && packageData.content ? packageData.content.modules || [] : getCatalog(courseId).modules;
     return modules.flatMap(module => (module.lessons || []).map(lesson => cachedLesson(courseId, lesson.id) || { ...lesson }));
   }
-  function getLesson(courseId, lessonId) { return cachedLesson(courseId, lessonId) || listLessons(courseId).find(lesson => lesson.id === lessonId) || null; }
+  function peekLesson(courseId, lessonId) { return cachedLesson(courseId, lessonId) || listLessons(courseId).find(lesson => lesson.id === lessonId) || null; }
   function needsLoad(courseId) { return !!entry(courseId) && !packageFor(courseId); }
   function isLessonLoaded(courseId, lessonId) { return !!cachedLesson(courseId, lessonId); }
   async function loadCourse(courseId) {
@@ -96,8 +104,41 @@
     pendingLessons.set(key, request);
     return request;
   }
+  async function getLesson(courseId, lessonId) { return loadLesson(courseId, lessonId); }
   async function getQuestions(courseId, lessonId) { const lesson = await loadLesson(courseId, lessonId); return lesson ? lesson.questions || [] : []; }
   async function getStudyKit(courseId, lessonId) { const lesson = await loadLesson(courseId, lessonId); return lesson ? { lessonId, flashcards: lesson.flashcards || [], homework: lesson.homework || [], codeExercises: lesson.codeExercises || [] } : null; }
+  async function loadSlides(courseId) {
+    const packageData = await loadCourse(courseId);
+    if (!packageData) return [];
+    if (Array.isArray(packageData.slideSets)) return packageData.slideSets;
+    if (pendingSlides.has(courseId)) return pendingSlides.get(courseId);
+    const request = transport.loadSlides(courseId).then(slideSets => {
+      packageData.slideSets = slideSets || [];
+      return packageData.slideSets;
+    }).finally(() => pendingSlides.delete(courseId));
+    pendingSlides.set(courseId, request);
+    return request;
+  }
+  async function loadTextbook(courseId) {
+    const packageData = await loadCourse(courseId);
+    if (!packageData) return null;
+    if (packageData.textbook) return packageData.textbook;
+    if (!packageData.textbookAsset || typeof transport.loadTextbook !== "function") return null;
+    if (pendingTextbooks.has(courseId)) return pendingTextbooks.get(courseId);
+    const request = transport.loadTextbook(courseId).then(textbook => { packageData.textbook = textbook; return textbook; }).finally(() => pendingTextbooks.delete(courseId));
+    pendingTextbooks.set(courseId, request);
+    return request;
+  }
+  async function loadSourceManifest(courseId) {
+    const packageData = await loadCourse(courseId);
+    if (!packageData) return null;
+    if (packageData.sourceManifest) return packageData.sourceManifest;
+    if (!packageData.sourceManifestAsset || typeof transport.loadSourceManifest !== "function") return null;
+    if (pendingSourceManifests.has(courseId)) return pendingSourceManifests.get(courseId);
+    const request = transport.loadSourceManifest(courseId).then(value => { packageData.sourceManifest = value; return value; }).finally(() => pendingSourceManifests.delete(courseId));
+    pendingSourceManifests.set(courseId, request);
+    return request;
+  }
   function getAssessment(courseId) { const packageData = packageFor(courseId); const item = entry(courseId); return packageData && Array.isArray(packageData.assessments) ? packageData.assessments.slice() : item && Array.isArray(item.assessments) ? item.assessments.slice() : []; }
   function listAssessments() { return listCourses().flatMap(course => getAssessment(course.code)); }
   function getAssessmentMap(courseId) { const packageData = packageFor(courseId); return packageData && packageData.assessmentMap ? packageData.assessmentMap : null; }
@@ -112,9 +153,11 @@
   function getQuestionBank(courseId) { const packageData = packageFor(courseId); return packageData && packageData.questionBank ? packageData.questionBank : null; }
   function getSourceManifest(courseId) { const packageData = packageFor(courseId); return packageData && packageData.sourceManifest ? packageData.sourceManifest : null; }
   function getSlideSets(courseId) { const packageData = packageFor(courseId); return packageData && Array.isArray(packageData.slideSets) ? packageData.slideSets.slice() : []; }
+  function listSlideSets(courseId) { const item = entry(courseId); return item ? Object.keys(item.slideAssets || {}).map(id => ({ id })) : []; }
   function getSlideSet(courseId, slideSetId) { return getSlideSets(courseId).find(item => item.id === slideSetId) || null; }
   function getSlide(courseId, slideSetId, slideNumber) { const set = getSlideSet(courseId, slideSetId); return set && set.slides ? set.slides.find(slide => Number(slide.number) === Number(slideNumber)) || null : null; }
+  function hasTextbook(courseId) { const item = entry(courseId); const packageData = packageFor(courseId); return !!((packageData && packageData.textbookAsset) || (item && item.hasTextbook)); }
   function stats() { return { courses: listCourses().length, lessons: listCourses().reduce((count, course) => count + listLessons(course.code).length, 0), loadedCourses: packages.size, loadedLessons: lessons.size }; }
 
-  return Object.freeze({ listCourses, getCourse, getCourseOutline, getCatalog, listLessons, getLesson, loadCourse, loadLesson, getQuestions, getStudyKit, needsLoad, isLessonLoaded, getAssessment, listAssessments, getAssessmentMap, getLab, listLabs, getVisual, listVisuals, getSchedule, getSourceTypes, getSourceCatalog, getTextbook, getQuestionBank, getSourceManifest, getSlideSets, getSlideSet, getSlide, stats });
+  return Object.freeze({ listCourses, getCourse, peekCourse: getCourse, getCourseOutline, getCatalog, listLessons, peekLesson, getLesson, loadCourse, loadLesson, getQuestions, getStudyKit, loadSlides, loadTextbook, loadSourceManifest, needsLoad, isLessonLoaded, getAssessment, listAssessments, getAssessmentMap, getLab, listLabs, getVisual, listVisuals, getSchedule, getSourceTypes, getSourceCatalog, getTextbook, hasTextbook, getQuestionBank, getSourceManifest, listSlideSets, getSlideSets, getSlideSet, getSlide, stats });
 });

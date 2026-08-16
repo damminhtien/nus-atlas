@@ -2892,7 +2892,7 @@
     const p = parts[0];
     if (p === "nus") {
       if (parts[1] === "course") { const c = nusRepository() ? nusRepository().getCourse(parts[2]) : nusCourses().find(x => x.code === parts[2]); return (c ? c.code + " · " + c.title : "NUS Course") + " · " + BASE; }
-      if (parts[1] === "lesson") { const l = nusRepository() ? nusRepository().getLesson(parts[2], parts[3]) : (nusContent(parts[2]).modules || []).flatMap(m => m.lessons || []).find(x => x.id === parts[3]); return (l ? l.title : "NUS Lesson") + " · " + BASE; }
+      if (parts[1] === "lesson") { const repo = nusRepository(); const l = repo ? (repo.peekLesson ? repo.peekLesson(parts[2], parts[3]) : null) : (nusContent(parts[2]).modules || []).flatMap(m => m.lessons || []).find(x => x.id === parts[3]); return (l ? l.title : "NUS Lesson") + " · " + BASE; }
       const np = { planner: "NUS Planner", exam: "NUS Exam Mode", review: "Spaced Retrieval", contrast: "Concept Contrast Drills", sql: "SQL Studio", simulations: "Distributed Simulations" };
       return (np[parts[1]] || "NUS Dashboard") + " · " + BASE;
     }

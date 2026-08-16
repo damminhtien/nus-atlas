@@ -3,9 +3,10 @@
   "$id": "https://nus-atlas.local/schemas/course.schema.json",
   "title": "NUS Atlas course package",
   "type": "object",
-  "required": ["code", "title", "schemaVersion"],
+  "required": ["code", "entityKey", "title", "schemaVersion", "moduleIds", "assessmentIds", "slideSetIds", "sourceCatalog", "sourcePolicy"],
   "properties": {
     "code": { "type": "string", "minLength": 1 },
+    "entityKey": { "type": "string", "pattern": "^[^:]+:[^/]+/.+$" },
     "title": { "type": "string", "minLength": 1 },
     "semester": { "type": "string", "minLength": 1 },
     "modules": { "type": "array" },

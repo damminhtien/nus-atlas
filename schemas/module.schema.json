@@ -1,0 +1,15 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://nus-atlas.local/schemas/module.schema.json",
+  "title": "NUS Atlas module",
+  "type": "object",
+  "required": ["id", "entityKey", "title", "lessonIds", "schemaVersion"],
+  "properties": {
+    "id": { "type": "string", "minLength": 1 },
+    "entityKey": { "type": "string", "pattern": "^[^:]+:[^/]+/.+$" },
+    "title": { "type": "string", "minLength": 1 },
+    "lessonIds": { "type": "array", "items": { "type": "string", "minLength": 1 } },
+    "schemaVersion": { "const": "nus.module.v1" }
+  },
+  "additionalProperties": false
+}

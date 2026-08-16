@@ -74,8 +74,35 @@
     const studyKit = entry.studyKitAssets && entry.studyKitAssets[lessonId]
       ? await requestJson(assetUrl(entry.studyKitAssets[lessonId]))
       : null;
-    return { lesson: payload.lesson || payload, questions: questions.questions || [], studyKit };
+    const lab = payload.labAsset ? await requestJson(assetUrl(`${entry.code}/${payload.labAsset}`)) : null;
+    const visuals = payload.visualAsset ? await requestJson(assetUrl(`${entry.code}/${payload.visualAsset}`)) : null;
+    return { lesson: payload.lesson || payload, questions: questions.questions || [], studyKit, labs: lab && lab.labs || {}, visuals: visuals && visuals.visuals || {} };
   }
 
-  return Object.freeze({ loadManifest, entryFor, loadCourse, loadLesson });
+  async function loadSlides(courseId) {
+    const entry = await entryFor(courseId);
+    if (!entry) return [];
+    const assets = entry.slideAssets || {};
+    const payloads = await Promise.all(Object.entries(assets).sort(([a], [b]) => a.localeCompare(b)).map(async ([id, asset]) => {
+      const payload = await requestJson(assetUrl(asset));
+      return payload.slideSet || { id };
+    }));
+    return payloads;
+  }
+
+  async function loadTextbook(courseId) {
+    const entry = await entryFor(courseId);
+    if (!entry || !entry.textbookAsset) return null;
+    const payload = await requestJson(assetUrl(entry.textbookAsset));
+    return payload.textbook || payload;
+  }
+
+  async function loadSourceManifest(courseId) {
+    const entry = await entryFor(courseId);
+    if (!entry || !entry.sourceManifestAsset) return null;
+    const payload = await requestJson(assetUrl(entry.sourceManifestAsset));
+    return payload.sourceManifest || payload;
+  }
+
+  return Object.freeze({ loadManifest, entryFor, loadCourse, loadLesson, loadSlides, loadTextbook, loadSourceManifest });
 });

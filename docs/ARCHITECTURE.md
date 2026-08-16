@@ -8,7 +8,8 @@ content/courses/<COURSE>/ + schemas/
                 ▼  tools/content-compiler
       dist/content/manifest.json
       dist/content/<COURSE>/outline.json
-      dist/content/<COURSE>/{course,lessons,questions,study-kits}/*.<hash>.json
+      dist/content/<COURSE>/{course,lessons,questions,study-kits,slides,labs,visuals}/*.<hash>.json
+      dist/content/<COURSE>/{textbook,source-manifest}.<hash>.json
                 │
                 ▼  src/app/bootstrap.js
    transport → async ContentRepository → NUS features and views
@@ -20,6 +21,8 @@ content/courses/<COURSE>/ + schemas/
 
 - `content/**` and `schemas/**` are canonical, editable truth.
 - `src/**`, `tools/**`, `scripts/**`, and `tests/**` are implementation or test source.
+- `schemas/**` defines the discriminated runtime payload contract; `scripts/validate-schemas.js`
+  checks the compiled representation and namespaced entity keys.
 - `dist/**` is a generated deployment artifact and is ignored by Git.
 - `data/nus/**` is legacy migration input only. It is never loaded by the production runtime.
 
@@ -36,13 +39,16 @@ the app shell. `src/core/content/transport.js` supports `fetch` and the browser
 XHR fallback; `src/core/content/repository.js` provides:
 
 - synchronous catalog and outline metadata for a cold dashboard;
-- asynchronous course, lesson, question, and study-kit loading;
+- asynchronous course, lesson, question, study-kit, slide, and textbook loading;
 - cached payloads with in-flight request deduplication;
 - course-scoped assessments, schedules, slides, textbook indexes, labs, and source metadata.
 
 The dashboard can therefore render course cards and lesson counts without
-loading every lesson. A lesson route loads one course package and one lesson
-payload. Practice routes deliberately load the lesson shards they need.
+loading every lesson, slide, textbook, lab, or visual payload. A lesson route
+loads one course package and one lesson payload; slide and textbook routes add
+their own shard only when opened. Practice routes deliberately load the lesson
+shards they need. The service worker installs only eager shell assets and
+caches content shards on demand.
 
 Feature modules receive repository and study-state accessors from the NUS entry
 point. They do not read canonical files, generated bundles, or legacy content

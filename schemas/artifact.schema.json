@@ -1,0 +1,15 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://nus-atlas.local/schemas/artifact.schema.json",
+  "title": "NUS Atlas study kit",
+  "type": "object",
+  "required": ["lessonId", "schemaVersion", "flashcards", "homework", "codeExercises"],
+  "properties": {
+    "lessonId": { "type": "string", "minLength": 1 },
+    "schemaVersion": { "const": "nus.study-kit.v1" },
+    "flashcards": { "type": "array" },
+    "homework": { "type": "array" },
+    "codeExercises": { "type": "array" }
+  },
+  "additionalProperties": true
+}

@@ -20,8 +20,9 @@ function fakeFetch(url) {
 }
 
 function makeRepository() {
-  const transport = createTransport({ roots: ["test-content/"], fetcher: fakeFetch });
-  return { transport, repository: createRepository({ catalog: manifest, transport, sourceTypes: manifest.sourceTypes }) };
+  const calls = [];
+  const transport = createTransport({ roots: ["test-content/"], fetcher: async (...args) => { calls.push(args[0]); return fakeFetch(...args); } });
+  return { calls, transport, repository: createRepository({ catalog: manifest, transport, sourceTypes: manifest.sourceTypes }) };
 }
 
 test("transport loads a small catalog, then course and lesson shards", async () => {
@@ -38,7 +39,7 @@ test("transport loads a small catalog, then course and lesson shards", async () 
 });
 
 test("repository keeps dashboard metadata cold and lazy-loads lesson payloads", async () => {
-  const { repository } = makeRepository();
+  const { calls, repository } = makeRepository();
   assert.equal(repository.listCourses().length, 4);
   assert.equal(repository.stats().loadedCourses, 0);
   const stubs = repository.listLessons("DSA5105");
@@ -46,9 +47,14 @@ test("repository keeps dashboard metadata cold and lazy-loads lesson payloads", 
   assert.equal(stubs[0].questions.length, 0);
   assert.ok(stubs[0].questionIds.length > 0);
   assert.equal(repository.stats().loadedLessons, 0);
+  assert.deepEqual(calls, []);
   const lesson = await repository.loadLesson("DSA5105", "dsa5105-erm");
   assert.equal(lesson.id, "dsa5105-erm");
   assert.ok(lesson.questions.length > 0);
   assert.equal(repository.stats().loadedCourses, 1);
   assert.equal(repository.stats().loadedLessons, 1);
+  assert.ok(calls.some(url => url.includes("lessons/dsa5105-erm.")));
+  assert.ok(!calls.some(url => url.includes("slides/")), "lesson load must not preload slides");
+  await repository.loadSlides("DSA5105");
+  assert.ok(calls.some(url => url.includes("slides/dsa5105-week1-annotated.")));
 });

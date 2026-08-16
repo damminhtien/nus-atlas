@@ -39,12 +39,18 @@ jobs:
         run: npm run version:check
       - name: Check architecture ownership and source boundaries
         run: npm run check:architecture
+      - name: Validate canonical authoring before compilation
+        run: npm run content:validate
+      - name: Check TypeScript contracts
+        run: npm run typecheck
       - name: Build normalized course packages
         run: npm run content:build
+      - name: Validate compiled schema and identity contracts
+        run: npm run schemas:validate
       - name: Confirm the compiler did not mutate source
         run: npm run check:source-clean
       - name: Validate content contracts, extraction provenance, LaTeX, contrast drills, and gates
-        run: node scripts/validate-content.js && node scripts/validate-extracted.js && node scripts/validate-textbook.js && node scripts/validate-latex.js && node scripts/validate-latex-render.js && node scripts/validate-contrast-drills.js && node --test tests/*.test.js && node nus-gate.js && node gate.js
+        run: node scripts/validate-content.js && node scripts/validate-extracted.js && node scripts/validate-textbook.js && node scripts/validate-slides.js && node scripts/validate-latex.js && node scripts/validate-latex-render.js && node scripts/validate-contrast-drills.js && node --test tests/*.test.js && node nus-gate.js && node gate.js
       - name: Prerender lesson pages + sitemap + robots
         run: node prerender.js
       - name: Configure GitHub Pages
@@ -65,3 +71,17 @@ jobs:
     steps:
       - id: deployment
         uses: actions/deploy-pages@v4
+
+  smoke:
+    if: (github.event_name == 'push' || github.event_name == 'workflow_dispatch') && github.ref == format('refs/heads/{0}', github.event.repository.default_branch)
+    needs: deploy
+    runs-on: ubuntu-latest
+    env:
+      SITE_URL: https://${{ github.repository_owner }}.github.io/${{ github.event.repository.name }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+      - name: Smoke-test production content boundary
+        run: npm run smoke:production

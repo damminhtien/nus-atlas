@@ -9,7 +9,7 @@ Rules:
 - `graphify-out/` is local-only and ignored by Git; generated changes are expected and must not be staged or committed.
 - If graphify-out/wiki/index.md exists, use it for broad navigation instead of raw source browsing.
 - Read graphify-out/GRAPH_REPORT.md only for broad architecture review or when query/path/explain do not surface enough context.
-- After modifying code, run `graphify update . --no-cluster` to keep the graph current (AST-only, no API cost).
+- After modifying code, run the narrow Graphify scope (`npm run graphify:code`, `npm run graphify:content`, or `npm run graphify:full`) to keep the graph current (AST-only, no API cost). Never index `dist/**`, `graphify-out/**`, `data/nus/**`, or `legacy/**`.
 
 ## Architecture invariants
 
@@ -25,7 +25,7 @@ The repository follows `architecture/ownership.json` and these invariants:
 
 Before editing a Graphify result, classify the file as `canonical`, `source`, `legacy`, or
 `generated`. Trace legacy/generated results back to canonical source before making a patch.
-Use `npm run check:architecture`, `npm run check:source-clean`, and `npm run verify` as release guards.
+Use `npm run agent:check` for the affected loop, `npm run check:full`/`npm run verify` for the release guard, and `npm run check:source-clean` to confirm generated artifacts are not tracked.
 
 ## Version and release workflow
 
@@ -62,8 +62,8 @@ full logs, or the entire graph into the conversation.
   and `graphify affected "Symbol" --depth 2` for change impact.
 - Read only the returned `file:line` locations. Open `GRAPH_REPORT.md` or raw `graph.json` only for broad review or
   when a focused query is insufficient.
-- After code changes, run `graphify update . --no-cluster` for a fast AST refresh. Run `graphify cluster-only .`
-  only when community structure or the human-readable report must also change.
+- After code changes, run the relevant scoped Graphify script for a fast AST refresh. Run the full scope only when
+  community structure or the human-readable report must also change.
 - If the CLI is missing, use `uvx --from graphifyy graphify ...`; do not install unrelated packages named
   `graphify` or `graphtify`.
 
@@ -84,7 +84,7 @@ full logs, or the entire graph into the conversation.
 3. Use RTK for narrow search/read and inspect only the necessary lines.
 4. Apply the smallest readable patch; avoid unrelated refactors.
 5. Run the narrowest relevant validation through RTK, then the repository gate when the change is cross-cutting.
-6. Refresh Graphify with `graphify update . --no-cluster` and inspect the compact diff.
+6. Refresh the relevant scoped Graphify graph and inspect the compact diff.
 7. Save one concise AgentMemory lesson only if the result is likely to help a future task.
 
 Do not run full-corpus extraction, broad memory reflection, or large-output commands by default. Escalate only when
@@ -96,7 +96,9 @@ the focused workflow cannot answer the question or validate the change.
 - `npm run content:build` compiles canonical JSON into content-addressed `dist/content/**`; it must leave `content/**`, `src/**`, and `schemas/**` byte-for-byte unchanged.
 - Keep the small catalog/outline payload separate from lesson, question, and study-kit shards. Do not restore the old all-course bundle pattern.
 - Runtime feature registries are `ATLAS_*` composition symbols; do not introduce new `window.NUS_*` production globals.
-- `npm run check:affected` is the fast package/contract/test loop; `npm run verify` is the full release gate.
+- `npm run check:affected` computes changed course packages and runs the safe contract/test loop; `npm run check:full` is the full release gate.
+- `npm run schemas:validate` checks compiled discriminated payloads and namespaced entity keys. Run it after `npm run content:build`.
+- `npm run graphify:code` and `npm run graphify:content` are explicit scoped updates; `npm run graphify:full` is reserved for architecture review.
 - Run `npm run check:architecture`, `npm run content:build`, `npm run check:source-clean`, and the relevant purity/determinism tests after compiler changes.
 ## Token-efficient study workflow
 
@@ -105,7 +107,7 @@ the focused workflow cannot answer the question or validate the change.
 - Use Graphify for code relationships, RTK when it is installed for compact command output, and AgentMemory only for durable study/workflow context—not as a substitute for source verification.
 - Keep raw PDFs, textbooks, Canvas exports, screenshots, and personal documents outside the repo. Commit normalized notes plus `sourceId`, page/slide, and a short derived observation.
 - Authored math is a strict data contract: wrap every formula in explanations, Atlas layers (including `whatYouSee`), questions/answers, flashcards, homework, visual-learning text, and lab derivation steps with `$...$`, `$$...$$`, `\\(...\\)`, or `\\[...\\]`. Keep bare LaTeX only in dedicated `math.latex` fields; never rewrite PDF extraction/source-layer text. Every new or changed formula must render successfully with KaTeX; unsupported commands, broken delimiters, double escaping, and raw math are release-blocking errors. Run both `node scripts/validate-latex.js` and `node scripts/validate-latex-render.js --course <COURSE>` before accepting content.
-- Run `node scripts/validate-latex.js`, `node scripts/validate-latex-render.js --course <COURSE>`, `node nus-gate.js`, `node gate.js`, `git diff --check`, and `graphify update . --no-cluster` after content or UI changes.
+- Run `node scripts/validate-latex.js`, `node scripts/validate-latex-render.js --course <COURSE>`, `node scripts/validate-schemas.js`, `node nus-gate.js`, `node gate.js`, `git diff --check`, and the relevant scoped Graphify command after content or UI changes.
 
 ## Lecture PDF extraction workflow
 
