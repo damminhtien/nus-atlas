@@ -20,6 +20,7 @@ npm run content:build
 ```
 
 The compiler reads only the JSON under `content/` and never writes back into it.
-Edit canonical package JSON, then rebuild; never edit `dist/` or
-`data/nus/generated/` directly. Legacy IIFE data is migration input only and is
-not part of the canonical content pipeline.
+Edit canonical package JSON, then rebuild; never edit `dist/` directly. Legacy
+IIFE data under `data/nus/` is migration input only and is not part of the
+canonical content pipeline. Run `npm run content:migrate:legacy -- COURSE` only
+when intentionally importing an unmigrated course.

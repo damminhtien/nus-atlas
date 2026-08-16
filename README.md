@@ -131,8 +131,9 @@ The Pages workflow runs `node prerender.js` in CI, creates the static `dist/` ar
 ## Repository map
 
 - `index.html` — app shell and navigation.
-- `src/core/content-repository.js` — typed-compatible content boundary and legacy fallback.
-- `src/core/content-loader.js` — on-demand loader for generated course payloads.
+- `src/core/content/repository.js` — async catalog, outline, course, and lesson repository.
+- `src/core/content/transport.js` — manifest and content-addressed JSON transport.
+- `src/app/bootstrap.js` — composition root that loads the catalog before views start.
 - `src/core/study-store.js` — versioned local study state, evidence, mastery, and migration.
 - `src/core/router.js` — framework-free hash route lifecycle used by the app shell.
 - `src/features/nus/route-table.js` — NUS route contract.
@@ -145,8 +146,9 @@ The Pages workflow runs `node prerender.js` in CI, creates the static `dist/` ar
 - `js/nus-store.js` — local study progress and attempts.
 - `js/nus-components.js` — reusable visual-learning lab templates.
 - `content/courses/` — normalized course packages for DSA5101, DSA5104, DSA5105, and DSA5208.
-- `data/nus/` — legacy registries, provenance, and generated content manifest.
-- `scripts/content-build.js` — joins package IDs into the browser compatibility bundle.
+- `content/` — canonical course packages and source metadata.
+- `data/nus/` — legacy migration input only; it is not loaded by the production runtime.
+- `scripts/content-build.js` — thin adapter that compiles canonical packages into ignored `dist/content/` shards.
 - `scripts/validate-latex.js` — blocks raw math fragments in authored study content.
 - `scripts/latex-utils.js` — shared authored-content normalization and field rules.
 - `scripts/normalize-latex.js` — one-time migration helper for JSON content packages.

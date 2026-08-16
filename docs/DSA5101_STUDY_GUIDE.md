@@ -30,7 +30,7 @@ Each track has a source-backed lab, source lens, retrieval questions, flashcards
 
 ## Provenance and authoring
 
-Use `content/courses/DSA5101` as the editable package source. Rebuild the browser payload with `node scripts/content-build.js DSA5101`. Do not hand-edit generated lesson JSON or `data/nus/generated/dsa5101.js`.
+Use `content/courses/DSA5101` as the editable package source. Rebuild the deployable shards with `npm run content:build`. Do not hand-edit `dist/content/`; it is generated and ignored.
 
 Before committing DSA5101 content, run:
 

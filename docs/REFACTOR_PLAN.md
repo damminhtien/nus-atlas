@@ -1,107 +1,76 @@
 # Refactor plan
 
-Atlas is moving from a large browser-side IIFE registry to a package-oriented
-study application. The goal is to add courses, textbook depth, assessments, and
-labs by adding data and feature modules—not by editing the app shell.
+The content/runtime refactor is implemented as a strangler migration. New
+course work is authored in JSON packages and compiled into lazy deployment
+shards; the historical IIFE registry remains only as an explicit migration
+input.
 
-## What is already in place
+## Completed slices
 
-- JSON schemas and referential-integrity checks for courses, lessons, sources,
-  assessments, questions, artifacts, and labs.
-- `ContentRepository` as the runtime boundary, with a legacy adapter for safe
-  rollback during migration.
-- DSA5101 and DSA5105 as normalized packages. Lesson content, questions, study
-  kits, slide readers, visuals, and labs are joined by IDs; artifacts do not
-  mutate lessons.
-- A route table and lab registry with focused tests.
-- A framework-free core router that separates hash lifecycle from page rendering.
-- Shared NUS presentation helpers extracted from the route entrypoint.
-- SQL Studio and distributed simulations extracted as injected interactive features.
-- Planner and Exam Mode extracted from `js/nus.js` into independently testable
-  feature modules.
-- One generated content manifest shared by browser runtime, prerender, and the
-  Pages build. Extracted PDF JSON retains source, page, block, bbox, and image
-  provenance.
+1. Canonical ownership is declared in `architecture/ownership.json`.
+2. `tools/content-compiler` reads only `content/**`, validates authored math,
+   and emits deterministic content-addressed assets under ignored `dist/`.
+3. `src/app/bootstrap.js` is the composition root for the async transport and
+   repository.
+4. The repository exposes a cold catalog/outline plus lazy course, lesson,
+   question, study-kit, assessment, slide, textbook, lab, and source APIs.
+5. Runtime content globals and tracked generated bundles were removed. Feature
+   registries use `ATLAS_*` composition symbols rather than `window.NUS_*`.
+6. Canonical validation, source-boundary checks, deterministic-build tests,
+   add/remove-course tests, and cold-start tests run in CI.
 
-## Next refactor slices
-
-### 1. Finish the app boundary
-
-The generic hash lifecycle is now isolated in `src/core/router.js`. Extract the remaining NUS views into `dashboard`, `course`, `lesson`, `sql`, and
-`simulations` feature modules. Keep `js/nus.js` responsible only for dependency
-injection and route registration. Move the generic Atlas routes in `js/app.js`
-behind an `app-shell` and `legacy-atlas` boundary.
-
-### 2. Make study state a core service
-
-`src/core/study-store.js` now provides the contract for lesson completion,
-attempts, evidence, mastery, tasks, and migration. Keep localStorage details in
-one implementation and pass the service into features. Migration tests protect
-learner progress when the state schema changes.
-
-### 3. Add course packages without shell edits
-
-Treat `content/courses/<COURSE>/` as the authoring boundary:
+## Current package contract
 
 ```text
-course.json
-modules/*.json
-lessons/*.json
-questions/*.json
-artifacts/*.json
-assessments.json
-sources.json
-labs/
+content/courses/<COURSE>/
+  course.json
+  modules/*.json
+  lessons/*.json
+  questions/*.json
+  artifacts/*.json
+  assessments.json
+  sources.json
+  sources/manifest.json
+  labs/index.json
+  slides/*.json
+  textbook.json
 ```
 
-Adding or removing a course must require only package files plus validation. The
-renderer, `index.html`, service worker, and gates should discover package IDs
-from generated metadata rather than maintaining course allowlists.
+The compiler joins these records by stable IDs. `manifest.json` contains only
+course metadata, outline metadata, counts, and asset URLs. Lesson bodies,
+questions, and study kits use separate hash-addressed files and are fetched only
+when a route needs them.
 
-### 4. Separate package metadata from payload
+## Operating workflow
 
-The build now emits a metadata-only manifest containing course metadata, counts,
-content hashes, and asset URLs. `content-loader.js` loads lesson/question
-payloads on demand when a course, lesson, or scoped exam opens. Prerender loads
-all generated bundles through the same package shape, while the service worker
-does not eagerly cache course payloads. Keep a legacy fallback until all four
-current courses are migrated.
+For a content change:
 
-### 5. Expand ingestion safely
-
-Use the established PDF flow:
-
-```text
-PDF → triage → PyMuPDF JSON → selected Docling/MinerU fallback
-    → nus-lecture.v1 → normalized lesson package → gates
+```bash
+npm run check:architecture
+npm run content:build
+npm run content:validate
+npm test
+npm run validate
+node prerender.js
+git diff --check
 ```
 
-Textbook material remains `textbook` provenance and is used for depth, not as an
-automatic change to lecture scope. Assessment-derived material can prioritize
-practice but cannot invent an official date or redefine current lecture truth.
-Raw PDFs, textbooks, and personal exports stay outside Git.
+For a fast affected-course check, use `npm run check:affected`. For a release
+gate after the change is committed, use `npm run verify`; the source-clean check
+is intentionally expected to pass only when the compiler has not mutated
+canonical source.
 
-## Commit sequence
+## Remaining follow-up work
 
-Keep commits small and independently deployable:
+- Replace the remaining monolithic `js/nus.js` view orchestration with injected
+  dashboard, course, lesson, and practice controllers.
+- Add a browser-level production smoke test for the first route, one lazy lesson
+  route, and one practice route after Pages deployment.
+- Move the final compatibility-only validators into `tools/migrations` once all
+  historical content audits are archived.
+- Add schema validation for every discriminated lesson-block variant, not just
+  the shared authored-content and provenance contracts.
 
-1. `refactor: split remaining NUS views`
-2. `refactor: introduce study store contract`
-3. `perf: load course payloads on demand`
-4. `feat: add textbook chapter index`
-5. `refactor: isolate app-shell route lifecycle`
-6. `test: add package migration and production smoke checks`
-
-Work stays on `main`. Each commit that changes production runs content build,
-contract tests, extraction provenance, NUS gate, Atlas gate, prerender, and
-`git diff --check`; push to `main` then triggers GitHub Pages deployment.
-
-## Definition of done
-
-- A new course can be added without changing an existing renderer or shell file.
-- A textbook chapter can be indexed with source/page/block provenance without
-  copying the textbook into the public bundle.
-- Removing a course does not crash startup or unrelated routes.
-- Planner, exam, labs, and study state are independently testable.
-- Browser runtime and prerender resolve content through the same repository API.
-- CI validates the package graph before Pages deployment.
+Work remains on `main`. Each push is validated and deployed by the Pages
+workflow; `graphify update . --no-cluster` refreshes the local impact index but
+its output is never committed.

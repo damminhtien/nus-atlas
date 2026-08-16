@@ -49,4 +49,4 @@ node nus-gate.js
 node gate.js
 ```
 
-Rebuild the browser package with `node scripts/content-build.js DSA5104`; do not hand-edit generated lesson JSON or `data/nus/generated/dsa5104.js`.
+Rebuild the deployable shards with `npm run content:build`; do not hand-edit `dist/content/`, which is generated and ignored.

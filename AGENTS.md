@@ -17,7 +17,7 @@ The repository follows `architecture/ownership.json` and these invariants:
 
 - `content/**` and `schemas/**` are authoritative; `Build(Content) -> dist`.
 - The compiler reads canonical content only and never writes into `content/**`.
-- `dist/**` and `data/nus/generated/**` are generated; never edit or stage them by hand.
+- `dist/**` and `data/nus/generated/**` are generated and ignored; never edit or stage them by hand.
 - Legacy `data/nus/**` is migration input only, never runtime truth for migrated courses.
 - Dashboard boot uses catalog/outline metadata; lesson payloads are lazy.
 - Feature code receives dependencies through composition boundaries and must not read `window.NUS_*` directly.
@@ -25,7 +25,7 @@ The repository follows `architecture/ownership.json` and these invariants:
 
 Before editing a Graphify result, classify the file as `canonical`, `source`, `legacy`, or
 `generated`. Trace legacy/generated results back to canonical source before making a patch.
-Use `npm run check:architecture` and `npm run check:source-clean` as release guards.
+Use `npm run check:architecture`, `npm run check:source-clean`, and `npm run verify` as release guards.
 
 ## Version and release workflow
 
@@ -95,6 +95,8 @@ the focused workflow cannot answer the question or validate the change.
 - `npm run content:migrate:legacy -- COURSE` is a one-way, explicit migration tool. It refuses to overwrite an existing course unless `--overwrite` is supplied.
 - `npm run content:build` compiles canonical JSON into content-addressed `dist/content/**`; it must leave `content/**`, `src/**`, and `schemas/**` byte-for-byte unchanged.
 - Keep the small catalog/outline payload separate from lesson, question, and study-kit shards. Do not restore the old all-course bundle pattern.
+- Runtime feature registries are `ATLAS_*` composition symbols; do not introduce new `window.NUS_*` production globals.
+- `npm run check:affected` is the fast package/contract/test loop; `npm run verify` is the full release gate.
 - Run `npm run check:architecture`, `npm run content:build`, `npm run check:source-clean`, and the relevant purity/determinism tests after compiler changes.
 ## Token-efficient study workflow
 

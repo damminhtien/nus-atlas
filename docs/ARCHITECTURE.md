@@ -1,104 +1,84 @@
 # Atlas architecture
 
-Atlas is being migrated incrementally from a static IIFE registry to package-based
-content. The migration keeps the current browser app working while making the
-content boundary explicit.
+Atlas has one authoring boundary and one runtime content boundary:
 
 ```text
-content/courses/<course>/
-  course.json
-  modules/*.json
-  lessons/*.json
-  questions/*.json
-  artifacts/*.json
-  sources.json
-  textbook.json
-  labs/
-        │
-        ▼  scripts/content-build.js --all
-data/nus/generated/content-manifest.js
-        │
-        ├── src/core/content-loader.js → data/nus/generated/<course>.js
-        │
-        ▼
-src/core/content-repository.js
-        │
-        ├── src/core/study-store.js
-        ├── src/core/router.js
-        ├── src/features/nus/route-table.js
-        ├── src/features/nus/presentation.js
-        ├── src/features/nus/sql.js
-        ├── src/features/nus/simulations.js
-        ├── src/features/nus/planner.js
-        ├── src/features/nus/exam.js
-        ├── src/ui/labs/registry.js
-        └── js/nus.js / js/app.js (legacy-compatible views)
+content/courses/<COURSE>/ + schemas/
+                │
+                ▼  tools/content-compiler
+      dist/content/manifest.json
+      dist/content/<COURSE>/outline.json
+      dist/content/<COURSE>/{course,lessons,questions,study-kits}/*.<hash>.json
+                │
+                ▼  src/app/bootstrap.js
+   transport → async ContentRepository → NUS features and views
 ```
+
+## Ownership invariants
+
+`architecture/ownership.json` classifies every project area:
+
+- `content/**` and `schemas/**` are canonical, editable truth.
+- `src/**`, `tools/**`, `scripts/**`, and `tests/**` are implementation or test source.
+- `dist/**` is a generated deployment artifact and is ignored by Git.
+- `data/nus/**` is legacy migration input only. It is never loaded by the production runtime.
+
+The compiler reads canonical JSON and writes only `dist/content/**`. It produces
+stable, content-addressed shard names, so a changed lesson invalidates only its
+own payload and the manifest references that changed hash. The build never
+modifies canonical content.
 
 ## Runtime boundary
 
-Views use `window.NUS_REPOSITORY` for courses, lessons, assessments, labs,
-visuals, schedule, textbook indexes, and source types. If a package is not available, the adapter
-reads the legacy `window.NUS_*` registries. This makes course migration reversible.
+`src/app/bootstrap.js` is the composition root. It loads the small manifest,
+constructs the transport and repository, and exposes the ready promise used by
+the app shell. `src/core/content/transport.js` supports `fetch` and the browser
+XHR fallback; `src/core/content/repository.js` provides:
 
-The NUS entrypoint injects repository and study-store helpers into feature
-modules. Planner owns assessment checklists and reminders; Exam Mode owns
-question selection, timer, scoring, and review. Neither feature reads the
-content files directly, which keeps course and textbook changes data-driven.
+- synchronous catalog and outline metadata for a cold dashboard;
+- asynchronous course, lesson, question, and study-kit loading;
+- cached payloads with in-flight request deduplication;
+- course-scoped assessments, schedules, slides, textbook indexes, labs, and source metadata.
 
-`src/core/router.js` owns only hash parsing and the route lifecycle hooks. The
-app shell supplies route rendering and chrome behavior; feature route tables
-resolve their own page handlers.
+The dashboard can therefore render course cards and lesson counts without
+loading every lesson. A lesson route loads one course package and one lesson
+payload. Practice routes deliberately load the lesson shards they need.
 
-`src/features/nus/presentation.js` contains the escaped HTML presenters for
-source badges, formulas, lesson blocks, visual cues, and study-kit sections.
-It receives source/visual accessors as dependencies and does not own course
-data or learner state.
+Feature modules receive repository and study-state accessors from the NUS entry
+point. They do not read canonical files, generated bundles, or legacy content
+globals. Generic UI and interactive labs remain separate from content data.
 
-`src/features/nus/sql.js` and `src/features/nus/simulations.js` own the
-DSA5104/DSA5208 interactive state and event binding. Adding another lab follows
-the same injected-feature pattern instead of adding more global state to the
-NUS entrypoint.
+## Adding or removing a course
 
-`src/core/study-store.js` owns the browser-local evidence ledger, mastery,
-planner tasks, and attempts. The legacy `js/nus-store.js` file is now only a
-bootstrap adapter; existing `nus.v1` data is migrated in memory to
-`nus.study.v2` and persisted on the next write.
+Add a directory under `content/courses/<COURSE>/`, then run:
 
-`data/nus/artifacts.js` now publishes `window.NUS_ARTIFACTS`; it does not mutate
-lesson objects. The repository joins study-kit artifacts by lesson ID. Questions,
-flashcards, homework, and code exercises therefore remain data concerns rather
-than renderer-side mutations.
+```bash
+npm run content:build
+npm run content:validate
+npm run check:architecture
+npm test
+```
 
-## Adding a migrated course
+No course allowlist in `index.html`, the repository, or the service worker is
+required. Removing a course from the canonical directory removes its manifest
+entry on the next build; the repository returns `null` for stale deep links and
+the remaining catalog still boots.
 
-1. Add `content/courses/<COURSE>/` with the package contract.
-2. Run `node scripts/content-build.js --all`.
-3. Run `node scripts/validate-content.js`, `node nus-gate.js`, and the tests.
+## Migration boundary
 
-The generated content manifest is metadata-only and is the only package script
-loaded by `index.html`. `content-loader.js` fetches the per-course bundle when a
-course, lesson, or scoped exam route needs it. The Pages workflow loads every
-bundle for prerendering, so browser and static pages still use the same package
-shape. Course bundles are excluded from the service worker's eager asset list and
-are cached only after they are requested.
-
-The current manifest is intentionally a compatibility bundle. The next loading
-slice will separate course metadata from lesson payloads and add on-demand
-loading while preserving this fallback path.
-
-Textbook indexes are package data, not lecture content. A textbook chapter or
-section is linked by `sourceId` and page, while lecture scope and assessment
-priority remain owned by the lesson and assessment packages.
+`tools/migrations/legacy-nus/import.js` is intentionally one-way. It can create
+a canonical package from the historical IIFE registries when a course has not
+yet been migrated, but normal validation and production builds do not import
+those files. This keeps migration concerns out of the compiler and runtime.
 
 ## Build and deploy
 
-The Pages workflow runs:
+The Pages workflow runs version checks, architecture checks, canonical build and
+validation, tests, the NUS and generic gates, and prerendering. `prerender.js`
+uses the same canonical compiler and writes the same `dist/content` shards that
+the browser loads. The final `dist/` directory is uploaded to GitHub Pages; no
+generated content is committed.
 
-```text
-content-build → contract/tests → NUS gate → Atlas gate → prerender
-```
-
-`prerender.js` uses the same repository as the browser and generates generic and
-NUS lesson pages. It also emits `asset-manifest.json`; the service worker consumes
-that manifest and receives a content-derived cache name during the build.
+Graphify is used for scoped impact analysis and refreshed after source changes,
+but schema validation, deterministic build tests, and runtime contract tests
+remain the correctness gates.

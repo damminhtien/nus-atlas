@@ -6,6 +6,10 @@ and refresh first-party asset URLs so browsers and the service worker pick up th
 
 ## [Unreleased]
 
+## [0.2.33] - 2026-08-16
+
+- enforce architecture boundaries in CI
+
 ## [0.2.32] - 2026-08-16
 
 - canonical async content runtime

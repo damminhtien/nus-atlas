@@ -37,8 +37,12 @@ jobs:
         run: npm ci --ignore-scripts
       - name: Check release metadata and cache-busting version
         run: npm run version:check
+      - name: Check architecture ownership and source boundaries
+        run: npm run check:architecture
       - name: Build normalized course packages
-        run: node scripts/content-build.js --all
+        run: npm run content:build
+      - name: Confirm the compiler did not mutate source
+        run: npm run check:source-clean
       - name: Validate content contracts, extraction provenance, LaTeX, contrast drills, and gates
         run: node scripts/validate-content.js && node scripts/validate-extracted.js && node scripts/validate-textbook.js && node scripts/validate-latex.js && node scripts/validate-latex-render.js && node scripts/validate-contrast-drills.js && node --test tests/*.test.js && node nus-gate.js && node gate.js
       - name: Prerender lesson pages + sitemap + robots
