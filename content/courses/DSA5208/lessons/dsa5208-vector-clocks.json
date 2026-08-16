@@ -201,6 +201,8 @@
           "meaning": "own component"
         }
       ],
+      "name": "Vector-clock local update",
+      "purpose": "Use it to record the local process's causal progress before a local or send event.",
       "sourceType": "lecture"
     },
     {
@@ -212,6 +214,8 @@
           "meaning": "process-component index"
         }
       ],
+      "name": "Vector-clock comparison",
+      "purpose": "Use it to test componentwise causal order and detect concurrency when neither vector dominates.",
       "sourceType": "lecture"
     }
   ],
@@ -274,6 +278,8 @@
     {
       "id": "dsa5208-vector-clocks-formula-1",
       "type": "formula",
+      "name": "Vector-clock local update",
+      "purpose": "Use it to record the local process's causal progress before a local or send event.",
       "latex": "vt_i[i] := vt_i[i]+d",
       "explanation": "Before a local or send event, process i increments its own vector component. On receive, it first takes componentwise maxima and then performs the same local update.",
       "symbols": [
@@ -314,6 +320,8 @@
     {
       "id": "dsa5208-vector-clocks-formula-2",
       "type": "formula",
+      "name": "Vector-clock comparison",
+      "purpose": "Use it to test componentwise causal order and detect concurrency when neither vector dominates.",
       "latex": "vt_1<vt_2\\ \\Longleftrightarrow\\ (\\forall k,\\ vt_1[k]\\le vt_2[k])\\land(\\exists k,\\ vt_1[k]<vt_2[k])",
       "explanation": "Strict vector order requires every component to be no larger and at least one component to be strictly smaller. If each vector exceeds the other somewhere, they are incomparable.",
       "symbols": [

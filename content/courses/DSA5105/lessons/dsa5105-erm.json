@@ -433,6 +433,8 @@
             "meaning": "empirical risk"
           }
         ],
+        "name": "Empirical-risk minimization rule",
+        "purpose": "Use it to state the fitting problem: choose the hypothesis in the allowed class with the smallest observed loss.",
         "sourceType": "lecture"
       },
       "sourceRefs": [
@@ -466,6 +468,8 @@
             "meaning": "performance measure"
           }
         ],
+        "name": "E–T–P learning definition",
+        "purpose": "Use it to audit whether a learning claim names the experience, task, and performance measure.",
         "sourceType": "lecture"
       },
       "sourceRefs": [
@@ -511,6 +515,8 @@
             "meaning": "conditional target distribution"
           }
         ],
+        "name": "Training-set and oracle model",
+        "purpose": "Use it to distinguish observed examples from the deterministic or random process that generates targets.",
         "sourceType": "lecture"
       },
       "sourceRefs": [
@@ -565,6 +571,8 @@
             "meaning": "the i-th observed input and target"
           }
         ],
+        "name": "Empirical risk",
+        "purpose": "Use it to compute the average loss on the finite sample used for fitting.",
         "sourceType": "lecture"
       },
       "sourceRefs": [
@@ -616,6 +624,8 @@
             "meaning": "optimization initialization"
           }
         ],
+        "name": "Lecture three-source error map",
+        "purpose": "Use it to diagnose whether a gap comes from the hypothesis class, finite data, or the optimization procedure.",
         "sourceType": "lecture"
       },
       "sourceRefs": [
@@ -645,6 +655,8 @@
             "meaning": "population risk"
           }
         ],
+        "name": "Textbook three-paradigm map",
+        "purpose": "Use it as textbook context; do not substitute it for the lecture's estimation-based error decomposition.",
         "sourceType": "textbook"
       },
       "sourceRefs": [
@@ -711,6 +723,38 @@
       ]
     },
     {
+      "id": "dsa5105-erm-section-1-formula",
+      "type": "formula",
+      "name": "Empirical-risk minimization rule",
+      "purpose": "Use it to state the fitting problem: choose the hypothesis in the allowed class with the smallest observed loss.",
+      "latex": "\\hat h = \\arg\\min_{h \\in \\mathcal{H}} \\widehat{R}(h)",
+      "explanation": "The learner searches the allowed hypothesis class and selects the function with the smallest observed average loss.",
+      "symbols": [
+        {
+          "latex": "\\hat h",
+          "meaning": "the fitted hypothesis"
+        },
+        {
+          "latex": "\\mathcal{H}",
+          "meaning": "the allowed hypothesis class"
+        },
+        {
+          "latex": "\\widehat{R}(h)",
+          "meaning": "empirical risk"
+        }
+      ],
+      "sourceType": "lecture",
+      "sourceRefs": [
+        {
+          "sourceId": "DSA5105/Lec1_annotated.pdf",
+          "page": 9,
+          "sourceType": "lecture",
+          "role": "learning definition and motivation",
+          "status": "current"
+        }
+      ]
+    },
+    {
       "id": "dsa5105-erm-section-2",
       "type": "teaching-note",
       "title": "Lecture core · Mitchell's E–T–P definition",
@@ -727,10 +771,86 @@
       ]
     },
     {
+      "id": "dsa5105-erm-section-2-formula",
+      "type": "formula",
+      "name": "E–T–P learning definition",
+      "purpose": "Use it to audit whether a learning claim names the experience, task, and performance measure.",
+      "latex": "(E,T,P)=\\text{experience, task, performance measure}",
+      "explanation": "This is the lecture's operational definition of learning, not a claim that every model is supervised.",
+      "symbols": [
+        {
+          "latex": "E",
+          "meaning": "experience or data"
+        },
+        {
+          "latex": "T",
+          "meaning": "task"
+        },
+        {
+          "latex": "P",
+          "meaning": "performance measure"
+        }
+      ],
+      "sourceType": "lecture",
+      "sourceRefs": [
+        {
+          "sourceId": "DSA5105/Lec1_annotated.pdf",
+          "page": 9,
+          "sourceType": "lecture",
+          "role": "Mitchell E-T-P definition",
+          "status": "current"
+        }
+      ]
+    },
+    {
       "id": "dsa5105-erm-section-3",
       "type": "teaching-note",
       "title": "Lecture core · Training set and oracle",
       "body": "The training set contains N observed input-target pairs. The input $x_{i}$ is what the model receives; $y_{i}$ is the output or label it should predict. Learning means using the sample to approximate the relationship from x to y. The oracle $f^*$ names the unknown target relationship: it can be deterministic, or the target can be sampled from a conditional distribution when the same input may have multiple plausible outputs.",
+      "sourceType": "lecture",
+      "sourceRefs": [
+        {
+          "sourceId": "DSA5105/Lec1_annotated.pdf",
+          "page": 20,
+          "sourceType": "lecture",
+          "role": "deterministic and random oracle",
+          "status": "current"
+        }
+      ]
+    },
+    {
+      "id": "dsa5105-erm-section-3-formula",
+      "type": "formula",
+      "name": "Training-set and oracle model",
+      "purpose": "Use it to distinguish observed examples from the deterministic or random process that generates targets.",
+      "latex": "\\mathcal{D}=\\{(x_i,y_i)\\}_{i=1}^{N},\\qquad y_i=f^*(x_i)\\quad\\text{or}\\quad y_i\\sim p^*(\\cdot\\mid x_i)",
+      "explanation": "The first case is a deterministic oracle. A noisy regression view writes $y_i=f^*(x_i)+\\epsilon_i$; the second case makes randomness explicit through a conditional target distribution. Do not confuse an observed label with the unknown oracle itself.",
+      "symbols": [
+        {
+          "latex": "\\mathcal{D}",
+          "meaning": "training set"
+        },
+        {
+          "latex": "x_i",
+          "meaning": "i-th input"
+        },
+        {
+          "latex": "y_i",
+          "meaning": "i-th output or label"
+        },
+        {
+          "latex": "N",
+          "meaning": "training-set size"
+        },
+        {
+          "latex": "f^*",
+          "meaning": "oracle or target relationship"
+        },
+        {
+          "latex": "p^*(\\cdot\\mid x_i)",
+          "meaning": "conditional target distribution"
+        }
+      ],
       "sourceType": "lecture",
       "sourceRefs": [
         {
@@ -782,6 +902,38 @@
       ]
     },
     {
+      "id": "dsa5105-erm-section-5-formula",
+      "type": "formula",
+      "name": "Empirical risk",
+      "purpose": "Use it to compute the average loss on the finite sample used for fitting.",
+      "latex": "\\widehat{R}(h) = \\frac{1}{N}\\sum_{i=1}^{N}\\ell\\bigl(h(x_i), y_i\\bigr)",
+      "explanation": "Add the loss made on each observed example, then divide by the number of examples. This still says nothing by itself about unseen data.",
+      "symbols": [
+        {
+          "latex": "N",
+          "meaning": "number of training examples"
+        },
+        {
+          "latex": "\\ell",
+          "meaning": "loss assigned to one prediction"
+        },
+        {
+          "latex": "(x_i,y_i)",
+          "meaning": "the i-th observed input and target"
+        }
+      ],
+      "sourceType": "lecture",
+      "sourceRefs": [
+        {
+          "sourceId": "DSA5105/Lec1_annotated.pdf",
+          "page": 23,
+          "sourceType": "lecture",
+          "role": "empirical risk",
+          "status": "current"
+        }
+      ]
+    },
+    {
       "id": "dsa5105-erm-section-6",
       "type": "teaching-note",
       "title": "Lecture core · Train, validation, test",
@@ -814,10 +966,74 @@
       ]
     },
     {
+      "id": "dsa5105-erm-section-7-formula",
+      "type": "formula",
+      "name": "Lecture three-source error map",
+      "purpose": "Use it to diagnose whether a gap comes from the hypothesis class, finite data, or the optimization procedure.",
+      "latex": "\\text{Approximation}+\\text{Estimation}+\\text{Optimization}",
+      "explanation": "Approximation compares the oracle $f^*$ with the best population-risk member $\\tilde f$ in $\\mathcal H$. Estimation is the finite-sample move from $\\tilde f$ to $\\hat f$, where $\\hat f\\in\\arg\\min_{f\\in\\mathcal H}\\widehat R(f)$. Optimization is the algorithmic move from initialization $f_0$ toward $\\hat f$.",
+      "symbols": [
+        {
+          "latex": "f^*",
+          "meaning": "oracle"
+        },
+        {
+          "latex": "\\tilde f",
+          "meaning": "population-risk minimizer in the hypothesis class"
+        },
+        {
+          "latex": "\\hat f",
+          "meaning": "empirical-risk minimizer or fitted model"
+        },
+        {
+          "latex": "f_0",
+          "meaning": "optimization initialization"
+        }
+      ],
+      "sourceType": "lecture",
+      "sourceRefs": [
+        {
+          "sourceId": "DSA5105/Lec1_annotated.pdf",
+          "page": 25,
+          "sourceType": "lecture",
+          "role": "three sources of error",
+          "status": "current"
+        }
+      ]
+    },
+    {
       "id": "dsa5105-erm-section-8",
       "type": "teaching-note",
       "title": "Textbook depth · Three broader paradigms",
       "body": "The textbook uses a different organizing frame: approximation, optimization, and generalization. It is a useful broader discussion, but it must not be merged with the lecture's slide-25 label “Three sources of error.”",
+      "sourceType": "textbook",
+      "sourceRefs": [
+        {
+          "sourceId": "DSA5105/Textbook.pdf",
+          "page": 11,
+          "sourceType": "textbook",
+          "role": "Three Paradigms of Supervised Learning",
+          "status": "course-depth"
+        }
+      ]
+    },
+    {
+      "id": "dsa5105-erm-section-8-formula",
+      "type": "formula",
+      "name": "Textbook three-paradigm map",
+      "purpose": "Use it as textbook context; do not substitute it for the lecture's estimation-based error decomposition.",
+      "latex": "\\text{Approximation}+\\text{Optimization}+\\text{Generalization}",
+      "explanation": "This textbook note is supporting context; the lecture-aligned decomposition remains approximation, estimation, and optimization.",
+      "symbols": [
+        {
+          "latex": "mathcal H",
+          "meaning": "hypothesis class"
+        },
+        {
+          "latex": "R_{\\mathrm{pop}}",
+          "meaning": "population risk"
+        }
+      ],
       "sourceType": "textbook",
       "sourceRefs": [
         {

@@ -68,6 +68,8 @@
             "meaning": "arbitrary real Gram coefficients"
           }
         ],
+        "name": "Kernel PSD by feature map formula",
+        "purpose": "Use it to make the kernel psd by feature map claim operational; state its assumptions before applying it.",
         "sourceType": "textbook"
       }
     },
@@ -84,6 +86,8 @@
             "meaning": "opposite-orientation similarity parameter"
           }
         ],
+        "name": "Assessment bridge · Opposite-edge parameter formula",
+        "purpose": "Use it to make the assessment bridge · opposite-edge parameter claim operational; state its assumptions before applying it.",
         "sourceType": "ref"
       }
     },
@@ -108,6 +112,8 @@
             "meaning": "damping or continuation probability"
           }
         ],
+        "name": "PageRank as a fixed point formula",
+        "purpose": "Use it to make the pagerank as a fixed point claim operational; state its assumptions before applying it.",
         "sourceType": "ref"
       }
     },
@@ -201,6 +207,62 @@
       ]
     },
     {
+      "id": "dsa5105-graph-kernel-pagerank-section-1-formula",
+      "type": "formula",
+      "name": "Kernel PSD by feature map formula",
+      "purpose": "Use it to make the kernel psd by feature map claim operational; state its assumptions before applying it.",
+      "latex": "\\sum_{i,j}c_ic_jK(G_i,G_j)=\\left\\lVert\\sum_i c_i\\Psi(G_i)\\right\\rVert_2^2\\ge0",
+      "explanation": "The quadratic-form test proves PSD directly once the feature map is identified. For graph kernels, coordinates can count node labels, edge patterns, walks, or other substructures.",
+      "symbols": [
+        {
+          "latex": "\\Psi(G)",
+          "meaning": "graph feature map"
+        },
+        {
+          "latex": "c_i",
+          "meaning": "arbitrary real Gram coefficients"
+        }
+      ],
+      "sourceType": "textbook",
+      "sourceRefs": [
+        {
+          "sourceId": "DSA5105/Textbook.pdf",
+          "page": 25,
+          "sourceType": "textbook",
+          "role": "positive-semidefinite kernels",
+          "status": "course-depth"
+        },
+        {
+          "sourceId": "DSA5105/Textbook.pdf",
+          "page": 28,
+          "sourceType": "textbook",
+          "role": "kernel proof exercise",
+          "status": "course-depth"
+        },
+        {
+          "sourceId": "DSA5105/Ref/Mathematics_of_Data_Science.pdf",
+          "page": 47,
+          "sourceType": "ref",
+          "role": "PageRank",
+          "status": "draft"
+        },
+        {
+          "sourceId": "DSA5105/Ref/Mathematics_of_Data_Science.pdf",
+          "page": 50,
+          "sourceType": "ref",
+          "role": "graph theory",
+          "status": "draft"
+        },
+        {
+          "sourceId": "DSA5105/Ref/document.pdf",
+          "page": 2,
+          "sourceType": "ref",
+          "role": "past-exam graph kernel and PageRank alignment",
+          "status": "assessment-derived"
+        }
+      ]
+    },
+    {
       "id": "dsa5105-graph-kernel-pagerank-section-2",
       "type": "teaching-note",
       "title": "Assessment bridge · Opposite-edge parameter",
@@ -245,10 +307,122 @@
       ]
     },
     {
+      "id": "dsa5105-graph-kernel-pagerank-section-2-formula",
+      "type": "formula",
+      "name": "Assessment bridge · Opposite-edge parameter formula",
+      "purpose": "Use it to make the assessment bridge · opposite-edge parameter claim operational; state its assumptions before applying it.",
+      "latex": "\\lambda_\\pm=1\\pm q\\quad\\Longrightarrow\\quad -1\\le q\\le1",
+      "explanation": "Both eigenvalues must be non-negative. The boundary values are PSD but can make the feature representation linearly dependent.",
+      "symbols": [
+        {
+          "latex": "q",
+          "meaning": "opposite-orientation similarity parameter"
+        }
+      ],
+      "sourceType": "ref",
+      "sourceRefs": [
+        {
+          "sourceId": "DSA5105/Textbook.pdf",
+          "page": 25,
+          "sourceType": "textbook",
+          "role": "positive-semidefinite kernels",
+          "status": "course-depth"
+        },
+        {
+          "sourceId": "DSA5105/Textbook.pdf",
+          "page": 28,
+          "sourceType": "textbook",
+          "role": "kernel proof exercise",
+          "status": "course-depth"
+        },
+        {
+          "sourceId": "DSA5105/Ref/Mathematics_of_Data_Science.pdf",
+          "page": 47,
+          "sourceType": "ref",
+          "role": "PageRank",
+          "status": "draft"
+        },
+        {
+          "sourceId": "DSA5105/Ref/Mathematics_of_Data_Science.pdf",
+          "page": 50,
+          "sourceType": "ref",
+          "role": "graph theory",
+          "status": "draft"
+        },
+        {
+          "sourceId": "DSA5105/Ref/document.pdf",
+          "page": 2,
+          "sourceType": "ref",
+          "role": "past-exam graph kernel and PageRank alignment",
+          "status": "assessment-derived"
+        }
+      ]
+    },
+    {
       "id": "dsa5105-graph-kernel-pagerank-section-3",
       "type": "teaching-note",
       "title": "Reference depth · PageRank as a fixed point",
       "body": "Construct a column- or row-stochastic transition matrix $P$, repair dangling nodes, and apply damping: $r_{t+1}=\\alpha P^\\top r_t+(1-\\alpha)\\frac1n\\mathbf1$. The stationary ranking is an eigenvector/fixed point normalized to sum to one.",
+      "sourceType": "ref",
+      "sourceRefs": [
+        {
+          "sourceId": "DSA5105/Textbook.pdf",
+          "page": 25,
+          "sourceType": "textbook",
+          "role": "positive-semidefinite kernels",
+          "status": "course-depth"
+        },
+        {
+          "sourceId": "DSA5105/Textbook.pdf",
+          "page": 28,
+          "sourceType": "textbook",
+          "role": "kernel proof exercise",
+          "status": "course-depth"
+        },
+        {
+          "sourceId": "DSA5105/Ref/Mathematics_of_Data_Science.pdf",
+          "page": 47,
+          "sourceType": "ref",
+          "role": "PageRank",
+          "status": "draft"
+        },
+        {
+          "sourceId": "DSA5105/Ref/Mathematics_of_Data_Science.pdf",
+          "page": 50,
+          "sourceType": "ref",
+          "role": "graph theory",
+          "status": "draft"
+        },
+        {
+          "sourceId": "DSA5105/Ref/document.pdf",
+          "page": 2,
+          "sourceType": "ref",
+          "role": "past-exam graph kernel and PageRank alignment",
+          "status": "assessment-derived"
+        }
+      ]
+    },
+    {
+      "id": "dsa5105-graph-kernel-pagerank-section-3-formula",
+      "type": "formula",
+      "name": "PageRank as a fixed point formula",
+      "purpose": "Use it to make the pagerank as a fixed point claim operational; state its assumptions before applying it.",
+      "latex": "r=\\alpha P^\\top r+(1-\\alpha)\\frac1n\\mathbf1",
+      "explanation": "Damping makes the random-surfer chain well behaved even when the raw graph has sinks or disconnected structure. Check the orientation convention: whether vectors are columns or rows changes where the transpose appears.",
+      "symbols": [
+        {
+          "latex": "r",
+          "meaning": "PageRank vector"
+        },
+        {
+          "latex": "P",
+          "meaning": "stochastic transition matrix"
+        },
+        {
+          "latex": "\\alpha",
+          "meaning": "damping or continuation probability"
+        }
+      ],
       "sourceType": "ref",
       "sourceRefs": [
         {

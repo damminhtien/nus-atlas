@@ -201,6 +201,8 @@
           "meaning": "barrier, scheduling, and coordination time"
         }
       ],
+      "name": "Distributed-job cost decomposition",
+      "purpose": "Use it to measure useful work separately from network movement and coordination overhead.",
       "sourceType": "lecture"
     },
     {
@@ -216,6 +218,8 @@
           "meaning": "time spent waiting for synchronization or scheduling"
         }
       ],
+      "name": "Distributed-job cost decomposition",
+      "purpose": "Use it to diagnose whether compute, network movement, or coordination dominates a distributed workload.",
       "sourceType": "lecture",
       "caveat": "The lecture overview motivates these dimensions but does not present this exact equation."
     }
@@ -286,6 +290,8 @@
     {
       "id": "dsa5208-orientation-formula-1",
       "type": "formula",
+      "name": "Distributed-job cost decomposition",
+      "purpose": "Use it to measure useful work separately from network movement and coordination overhead.",
       "latex": "T_{\\mathrm{job}} = T_{\\mathrm{compute}} + T_{\\mathrm{network}} + T_{\\mathrm{coordination}}",
       "explanation": "A distributed experiment should report more than compute time. Network transfer and coordination barriers can dominate as the worker count grows, so record them separately whenever the system exposes them.",
       "symbols": [
@@ -326,6 +332,8 @@
     {
       "id": "dsa5208-orientation-formula-2",
       "type": "formula",
+      "name": "Distributed-job cost decomposition",
+      "purpose": "Use it to diagnose whether compute, network movement, or coordination dominates a distributed workload.",
       "latex": "T_{\\mathrm{total}} \\approx T_{\\mathrm{compute}} + T_{\\mathrm{network}} + T_{\\mathrm{coordination}}",
       "explanation": "Use this as a diagnostic decomposition for a distributed experiment. It is a study model, not a universal runtime identity: storage, skew, failures, and serialization may add further terms.",
       "symbols": [

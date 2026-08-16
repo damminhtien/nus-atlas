@@ -148,6 +148,8 @@
           "meaning": "number of outgoing links from $j$"
         }
       ],
+      "name": "PageRank update",
+      "purpose": "Use it to distribute rank through incoming links while retaining teleportation mass.",
       "sourceType": "lecture",
       "caveat": "Dangling nodes need an explicit convention, such as redistributing their mass uniformly."
     },
@@ -164,6 +166,8 @@
           "meaning": "approximate number of distinct items"
         }
       ],
+      "name": "Distinct-count sketch estimate",
+      "purpose": "Use it as a teaching approximation linking an extreme hash observation to stream cardinality.",
       "sourceType": "lecture",
       "caveat": "The one-register expression is a teaching approximation and has high variance."
     }
@@ -211,6 +215,8 @@
     {
       "id": "dsa5101-ranking-streams-formula-1",
       "type": "formula",
+      "name": "PageRank update",
+      "purpose": "Use it to distribute rank through incoming links while retaining teleportation mass.",
       "latex": "\\operatorname{PR}(i) = \\frac{1-d}{N} + d\\sum_{j\\to i}\\frac{\\operatorname{PR}(j)}{\\operatorname{outdeg}(j)}",
       "explanation": "PageRank combines a uniform teleportation term with rank flowing through incoming links. The damping factor $d$ prevents the walk from getting trapped forever in a sink or closed component.",
       "symbols": [
@@ -248,6 +254,8 @@
     {
       "id": "dsa5101-ranking-streams-formula-2",
       "type": "formula",
+      "name": "Distinct-count sketch estimate",
+      "purpose": "Use it as a teaching approximation linking an extreme hash observation to stream cardinality.",
       "latex": "\\widehat{n}_{\\mathrm{distinct}} \\approx 2^R",
       "explanation": "Flajolet–Martin-style reasoning uses the longest observed zero-prefix $R$ in hashed stream values. A long zero-prefix is rare for one item, so it suggests that many distinct items were sampled; practical estimators use bias correction and multiple registers.",
       "symbols": [

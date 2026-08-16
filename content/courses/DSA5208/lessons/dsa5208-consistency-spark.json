@@ -228,6 +228,8 @@
           "meaning": "waiting for stage coordination"
         }
       ],
+      "name": "Distributed-pipeline cost model",
+      "purpose": "Use it to separate partition-local work, shuffle, and barrier waiting when comparing implementations.",
       "sourceType": "lecture"
     },
     {
@@ -239,6 +241,8 @@
           "meaning": "time moving records between partitions"
         }
       ],
+      "name": "Distributed-job cost decomposition",
+      "purpose": "Use it to measure compute, shuffle, and coordination as separate contributors to job time.",
       "sourceType": "lecture",
       "caveat": "This is a derived study model; the supplied overview names Spark but does not provide the later lecture derivation."
     }
@@ -309,6 +313,8 @@
     {
       "id": "dsa5208-consistency-spark-formula-1",
       "type": "formula",
+      "name": "Distributed-pipeline cost model",
+      "purpose": "Use it to separate partition-local work, shuffle, and barrier waiting when comparing implementations.",
       "latex": "T_{\\mathrm{pipeline}} \\approx T_{\\mathrm{local}} + T_{\\mathrm{shuffle}} + T_{\\mathrm{barrier}}",
       "explanation": "Map-like operations can often stay partition-local, while joins, group-bys, and global sorts may require a shuffle. The equation forces the experiment to name the data movement and synchronization costs instead of treating the pipeline as one opaque step.",
       "symbols": [
@@ -349,6 +355,8 @@
     {
       "id": "dsa5208-consistency-spark-formula-2",
       "type": "formula",
+      "name": "Distributed-job cost decomposition",
+      "purpose": "Use it to measure compute, shuffle, and coordination as separate contributors to job time.",
       "latex": "T_{\\mathrm{job}}\\approx T_{\\mathrm{compute}}+T_{\\mathrm{shuffle}}+T_{\\mathrm{coordination}}",
       "explanation": "Use this as a bridge from the course overview to Spark experiments: local computation, data movement, and coordination should be measured separately.",
       "symbols": [

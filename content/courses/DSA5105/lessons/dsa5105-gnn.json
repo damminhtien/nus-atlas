@@ -48,6 +48,8 @@
             "meaning": "permutation-invariant aggregation"
           }
         ],
+        "name": "Message passing formula",
+        "purpose": "Use it to make the message passing claim operational; state its assumptions before applying it.",
         "sourceType": "ref"
       }
     },
@@ -97,6 +99,45 @@
       "type": "teaching-note",
       "title": "Reference depth · Message passing",
       "body": "A typical layer builds a message from each neighbor, aggregates the messages with sum, mean, or max, and combines the result with the node’s own state. Because the neighborhood is a set, reordering its nodes should not change the output.",
+      "sourceType": "ref",
+      "sourceRefs": [
+        {
+          "sourceId": "DSA5105/syllabus.pdf",
+          "page": 1,
+          "sourceType": "lecture",
+          "role": "current scope",
+          "status": "current"
+        },
+        {
+          "sourceId": "DSA5105/Ref/Chapter3_Graph_Neural_Networks.pdf",
+          "page": 1,
+          "sourceType": "ref",
+          "role": "optional GNN reading",
+          "status": "optional"
+        }
+      ]
+    },
+    {
+      "id": "dsa5105-gnn-section-1-formula",
+      "type": "formula",
+      "name": "Message passing formula",
+      "purpose": "Use it to make the message passing claim operational; state its assumptions before applying it.",
+      "latex": "h_v'=\\sigma\\!\\left(W_0h_v+\\operatorname{AGG}_{u\\in N(v)}W_1h_u\\right)",
+      "explanation": "The self-state contribution and the aggregated neighbor message are combined before the nonlinearity. Because $N(v)$ is a set, the aggregator must give the same result after any permutation of the neighbor list.",
+      "symbols": [
+        {
+          "latex": "h_v",
+          "meaning": "current representation of node $v$"
+        },
+        {
+          "latex": "N(v)",
+          "meaning": "neighbors of node $v$"
+        },
+        {
+          "latex": "\\operatorname{AGG}",
+          "meaning": "permutation-invariant aggregation"
+        }
+      ],
       "sourceType": "ref",
       "sourceRefs": [
         {

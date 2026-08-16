@@ -59,6 +59,8 @@
             "meaning": "cost associated with position or transition"
           }
         ],
+        "name": "One- and two-step recurrence formula",
+        "purpose": "Use it to make the one- and two-step recurrence claim operational; state its assumptions before applying it.",
         "sourceType": "textbook"
       }
     },
@@ -137,6 +139,48 @@
       "type": "teaching-note",
       "title": "Textbook depth · One- and two-step recurrence",
       "body": "For a path where a state can be reached from the previous one or two positions, a minimum-cost recurrence is $dp[i]=cost[i]+\\min(dp[i-1],dp[i-2])$, with base cases stated separately. The exact indexing depends on whether cost is charged on entry, departure, or an edge; define it before computing.",
+      "sourceType": "textbook",
+      "sourceRefs": [
+        {
+          "sourceId": "DSA5105/Textbook.pdf",
+          "page": 107,
+          "sourceType": "textbook",
+          "role": "dynamic programming pattern",
+          "status": "course-depth"
+        },
+        {
+          "sourceId": "DSA5105/Textbook.pdf",
+          "page": 115,
+          "sourceType": "textbook",
+          "role": "Bellman recursion",
+          "status": "course-depth"
+        },
+        {
+          "sourceId": "DSA5105/Ref/document.pdf",
+          "page": 6,
+          "sourceType": "ref",
+          "role": "past-exam recurrence and complexity alignment",
+          "status": "assessment-derived"
+        }
+      ]
+    },
+    {
+      "id": "dsa5105-dynamic-programming-section-2-formula",
+      "type": "formula",
+      "name": "One- and two-step recurrence formula",
+      "purpose": "Use it to make the one- and two-step recurrence claim operational; state its assumptions before applying it.",
+      "latex": "dp[i]=cost[i]+\\min\\{dp[i-1],dp[i-2]\\}",
+      "explanation": "The recurrence enumerates every allowed last jump. The minimum over those alternatives is the Bellman choice for the subproblem ending at i.",
+      "symbols": [
+        {
+          "latex": "dp[i]",
+          "meaning": "optimal cost to reach position $i$"
+        },
+        {
+          "latex": "cost[i]",
+          "meaning": "cost associated with position or transition"
+        }
+      ],
       "sourceType": "textbook",
       "sourceRefs": [
         {

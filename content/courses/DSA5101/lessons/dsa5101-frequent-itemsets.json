@@ -200,6 +200,8 @@
           "meaning": "basket $t$ contains every item in $I$"
         }
       ],
+      "name": "Itemset support",
+      "purpose": "Use it to measure how often an itemset occurs in the transaction population.",
       "sourceType": "lecture"
     },
     {
@@ -215,6 +217,8 @@
           "meaning": "baskets containing both sides"
         }
       ],
+      "name": "Itemset support",
+      "purpose": "Use it to measure how often an itemset occurs in the transaction population.",
       "sourceType": "lecture"
     },
     {
@@ -230,6 +234,8 @@
           "meaning": "positive association under this measure"
         }
       ],
+      "name": "Itemset support",
+      "purpose": "Use it to measure how often an itemset occurs in the transaction population.",
       "sourceType": "lecture",
       "caveat": "Lift is sensitive to rare consequents and should be read with support counts."
     }
@@ -314,6 +320,8 @@
     {
       "id": "dsa5101-frequent-itemsets-formula-1",
       "type": "formula",
+      "name": "Itemset support",
+      "purpose": "Use it to measure how often an itemset occurs in the transaction population.",
       "latex": "\\operatorname{supp}(I) = \\frac{|\\{t \\in \\mathcal{T}: I \\subseteq t\\}|}{|\\mathcal{T}|}",
       "explanation": "Support asks how often every item in $I$ appears together. The numerator counts qualifying baskets; the denominator is the full transaction count. Keep the count and normalized fraction distinct when reporting an answer.",
       "symbols": [
@@ -358,6 +366,8 @@
     {
       "id": "dsa5101-frequent-itemsets-formula-2",
       "type": "formula",
+      "name": "Itemset support",
+      "purpose": "Use it to measure how often an itemset occurs in the transaction population.",
       "latex": "\\operatorname{conf}(A \\to B) = \\frac{\\operatorname{supp}(A \\cup B)}{\\operatorname{supp}(A)}",
       "explanation": "Confidence conditions on baskets that already contain $A$. That is why the denominator is $\\operatorname{supp}(A)$ rather than the total number of baskets. A high confidence can still be uninteresting when $B$ is common everywhere.",
       "symbols": [
@@ -398,6 +408,8 @@
     {
       "id": "dsa5101-frequent-itemsets-formula-3",
       "type": "formula",
+      "name": "Itemset support",
+      "purpose": "Use it to measure how often an itemset occurs in the transaction population.",
       "latex": "\\operatorname{lift}(A \\to B) = \\frac{\\operatorname{conf}(A \\to B)}{\\operatorname{supp}(B)}",
       "explanation": "Lift compares the rule's conditional rate with the base rate of $B$. A value above $1$ means $B$ is more common when $A$ is present than it is overall; it does not prove causation.",
       "symbols": [

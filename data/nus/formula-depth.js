@@ -3,7 +3,45 @@
 (function () {
   "use strict";
   const sym = (latex, meaning) => ({ latex, meaning });
-  const eq = (latex, explanation, symbols, sourceType, caveat) => ({ latex, explanation, symbols: symbols || [], sourceType: sourceType || "lecture", ...(caveat ? { caveat } : {}) });
+  const formulaMetadata = latex => {
+    const rules = [
+      [/operatorname\{supp\}/, "Itemset support", "Use it to measure how often an itemset occurs in the transaction population."],
+      [/operatorname\{conf\}/, "Association-rule confidence", "Use it to measure the conditional frequency of the consequent among baskets containing the antecedent."],
+      [/operatorname\{lift\}/, "Association-rule lift", "Use it to compare conditional frequency with the consequent's base rate; it is not a causal claim."],
+      [/h_\{\\pi\}/, "MinHash collision identity", "Use it to estimate Jaccard similarity from repeated minimum-hash collisions."],
+      [/P_\{\\mathrm\{candidate\}\}/, "LSH candidate probability", "Use it to quantify the false-positive/false-negative trade-off created by bands and rows."],
+      [/operatorname\{PR\}/, "PageRank update", "Use it to distribute rank through incoming links while retaining teleportation mass."],
+      [/distinct/, "Distinct-count sketch estimate", "Use it as a teaching approximation linking an extreme hash observation to stream cardinality."],
+      [/T_\{\\mathrm\{total\}\}/, "Distributed scan cost decomposition", "Use it to diagnose repeated scans, data movement, and synchronization in a large-data workflow."],
+      [/r \\subseteq D_1/, "Relation-instance definition", "Use it to distinguish a relation schema's domains from the finite tuple instance stored in the database."],
+      [/forall t_1/, "Candidate-key uniqueness condition", "Use it to test whether a set of attributes uniquely identifies every tuple."],
+      [/xrightarrow.*mathrm\{FK\}/, "Foreign-key placement", "Use it to encode the referenced key on the many side of a one-to-many relationship."],
+      [/department.*COUNT/, "Relational grouping operator", "Use it to express grouping by department and compute one aggregate per group."],
+      [/mathrm\{WHERE\}/, "SQL logical filtering order", "Use it to decide whether a predicate belongs before grouping or after an aggregate is formed."],
+      [/T_\{\\mathrm\{parse\}\}/, "Semi-structured pipeline cost", "Use it to audit parsing, movement, computation, and materialization separately in a data workflow."],
+      [/R_1\(K_1/, "Many-to-many junction schema", "Use it to represent a relationship with a separate relation containing both endpoint keys."],
+      [/parse\/translate/, "Query-processing pipeline", "Use it to preserve the logical result while moving from a declared query to an optimized physical plan."],
+      [/mathrm\{transfer\}/, "Atomic transfer invariant", "Use it to show why both account updates belong to one transaction."],
+      [/T_\{\\mathrm\{job\}\}/, "Distributed-job cost decomposition", "Use it to measure useful work separately from network movement and coordination overhead."],
+      [/e \\to f/, "Happens-before relation", "Use it to derive causal precedence from local order, communication, and transitivity."],
+      [/e_i\^x/, "Indexed happens-before rule", "Use it to check whether two events are ordered by process identity, message edges, or transitive closure."],
+      [/m_1\\to m_2/, "Causal-delivery guarantee", "Use it to test whether a receiver may deliver messages without violating a known causal dependency."],
+      [/delta = \(T_4/, "NTP round-trip delay estimate", "Use it to estimate message delay from the four timestamps in a clock-synchronization exchange."],
+      [/widehat\{T\}_\{\\mathrm\{server\}\}/, "NTP server-time estimate", "Use it under the symmetric-delay assumption to estimate the remote wall-clock time."],
+      [/C_i :=/, "Lamport receive-clock update", "Use it on message receipt to place the receive event after both local and received logical time."],
+      [/C\(e_i\)/, "Lamport causality guarantee", "Use it in the forward direction only: causal precedence implies increasing scalar timestamps."],
+      [/vt_i\[i\]/, "Vector-clock local update", "Use it to record one process's causal progress before a local or send event."],
+      [/vt_1</, "Vector-clock comparison", "Use it to decide causal order by componentwise dominance and identify concurrency by incomparability."],
+      [/storage.*recent/, "Recent-vector storage cost", "Use it as the quadratic baseline for retaining receiver-specific vector metadata."],
+      [/storage.*differential/, "Differential timestamp storage cost", "Use it to describe the linear-state target of Last Sent and Last Update metadata."],
+      [/T_\{\\mathrm\{pipeline\}\}/, "Distributed-pipeline cost model", "Use it to separate partition-local work, shuffle, and barrier waiting when comparing implementations."],
+      [/k\(x,z\)/, "Kernel inner-product identity", "Use it to reason about an implicit feature map without constructing its coordinates explicitly."],
+      [/operatorname\{Var\}/, "Projected variance quadratic form", "Use it to compute the variance visible along a unit PCA direction."],
+    ];
+    const match = rules.find(([pattern]) => pattern.test(latex));
+    return match ? { name: match[1], purpose: match[2] } : { name: "Named formula", purpose: "Use it only after identifying the quantity it computes and the assumptions that make it valid." };
+  };
+  const eq = (latex, explanation, symbols, sourceType, caveat) => ({ latex, explanation, symbols: symbols || [], ...formulaMetadata(latex), sourceType: sourceType || "lecture", ...(caveat ? { caveat } : {}) });
   const crit = (prompt, angle, modelAnswer, focus) => ({ prompt, angle, modelAnswer, focus: focus || "assumption" });
   const lessonById = id => Object.values(window.NUS_CONTENT || {}).flatMap(c => (c.modules || []).flatMap(m => m.lessons || [])).find(l => l.id === id);
   const add = (id, math, criticalQuestions) => {
@@ -189,7 +227,26 @@
 (function () {
   "use strict";
   const sym = (latex, meaning) => ({ latex, meaning });
-  const eq = (latex, explanation, symbols, sourceType = "lecture", caveat) => ({ latex, explanation, symbols: symbols || [], sourceType, ...(caveat ? { caveat } : {}) });
+  const formulaMetadata = latex => {
+    const rules = [
+      [/T_\{\\mathrm\{total\}\}/, "Distributed-job cost decomposition", "Use it to diagnose whether compute, network movement, or coordination dominates a distributed workload."],
+      [/H =/, "Global event-history union", "Use it to define the distributed event universe without assuming shared memory or a global clock."],
+      [/e_i\^x/, "Indexed happens-before rule", "Use it to derive causal order from local execution, message delivery, and transitive closure."],
+      [/m_1\\to m_2/, "Causal-delivery guarantee", "Use it to check whether delivery order preserves a known dependency between messages."],
+      [/delta = \(T_4/, "NTP round-trip delay estimate", "Use it to estimate network delay from the four timestamps in the synchronization exchange."],
+      [/widehat\{T\}_\{\\mathrm\{server\}\}/, "NTP server-time estimate", "Use it under the symmetric-delay assumption to estimate remote physical time, not causality."],
+      [/C_i :=/, "Lamport receive-clock update", "Use it on receipt to move logical time beyond both local history and the timestamp carried by the message."],
+      [/e_i\\to e_j/, "Lamport causality guarantee", "Use it in the forward direction to prove that causal order receives increasing scalar timestamps."],
+      [/vt_i\[i\]/, "Vector-clock local update", "Use it to record the local process's causal progress before a local or send event."],
+      [/vt_1</, "Vector-clock comparison", "Use it to test componentwise causal order and detect concurrency when neither vector dominates."],
+      [/storage.*recent/, "Recent-vector storage cost", "Use it as the quadratic metadata baseline before introducing differential compression."],
+      [/storage.*differential/, "Differential timestamp storage cost", "Use it to explain how receiver-specific Last Sent and Last Update state targets linear storage."],
+      [/T_\{\\mathrm\{job\}\}/, "Distributed-job cost decomposition", "Use it to measure compute, shuffle, and coordination as separate contributors to job time."],
+    ];
+    const match = rules.find(([pattern]) => pattern.test(latex));
+    return match ? { name: match[1], purpose: match[2] } : { name: "Named formula", purpose: "Use it only after identifying the quantity it computes and the assumptions that make it valid." };
+  };
+  const eq = (latex, explanation, symbols, sourceType = "lecture", caveat) => ({ latex, explanation, symbols: symbols || [], ...formulaMetadata(latex), sourceType, ...(caveat ? { caveat } : {}) });
   const crit = (prompt, angle, modelAnswer, focus) => ({ prompt, angle, modelAnswer, focus: focus || "assumption" });
   const lessonById = id => Object.values(window.NUS_CONTENT || {}).flatMap(course => (course.modules || []).flatMap(module => module.lessons || [])).find(lesson => lesson.id === id);
   const add = (id, math, criticalQuestions) => {

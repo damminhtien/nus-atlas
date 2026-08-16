@@ -55,6 +55,8 @@
             "meaning": "signed geometric margin"
           }
         ],
+        "name": "Geometry first formula",
+        "purpose": "Use it to make the geometry first claim operational; state its assumptions before applying it.",
         "sourceType": "textbook"
       }
     },
@@ -75,6 +77,8 @@
             "meaning": "correct classification with fixed scale"
           }
         ],
+        "name": "Hard margin formula",
+        "purpose": "Use it to make the hard margin claim operational; state its assumptions before applying it.",
         "sourceType": "textbook"
       }
     },
@@ -150,10 +154,98 @@
       ]
     },
     {
+      "id": "dsa5105-svm-margin-section-1-formula",
+      "type": "formula",
+      "name": "Geometry first formula",
+      "purpose": "Use it to make the geometry first claim operational; state its assumptions before applying it.",
+      "latex": "\\gamma_i=\\frac{y_i(w^\\top x_i+b)}{\\lVert w\\rVert_2}",
+      "explanation": "The numerator is the signed classifier score after multiplying by the label, so a correctly classified point has a positive value. Dividing by the normal-vector length converts that score into a geometric distance.",
+      "symbols": [
+        {
+          "latex": "y_i\\in\\{-1,+1\\}",
+          "meaning": "binary class label"
+        },
+        {
+          "latex": "w^\\top x_i+b",
+          "meaning": "signed hyperplane score"
+        },
+        {
+          "latex": "\\gamma_i",
+          "meaning": "signed geometric margin"
+        }
+      ],
+      "sourceType": "textbook",
+      "sourceRefs": [
+        {
+          "sourceId": "DSA5105/Textbook.pdf",
+          "page": 31,
+          "sourceType": "textbook",
+          "role": "linear SVM geometry",
+          "status": "course-depth"
+        },
+        {
+          "sourceId": "DSA5105/Textbook.pdf",
+          "page": 35,
+          "sourceType": "textbook",
+          "role": "dual and support vectors",
+          "status": "course-depth"
+        },
+        {
+          "sourceId": "DSA5105/Textbook.pdf",
+          "page": 36,
+          "sourceType": "textbook",
+          "role": "soft margin and hinge loss",
+          "status": "course-depth"
+        }
+      ]
+    },
+    {
       "id": "dsa5105-svm-margin-section-2",
       "type": "teaching-note",
       "title": "Textbook depth · Hard margin",
       "body": "With labels in $\\{-1,+1\\}$, require $y_i(w^\\top x_i+b)\\ge 1$. The closest feasible points then have geometric margin $1/\\lVert w\\rVert_2$, so maximizing margin is equivalent to minimizing the norm under the constraints.",
+      "sourceType": "textbook",
+      "sourceRefs": [
+        {
+          "sourceId": "DSA5105/Textbook.pdf",
+          "page": 31,
+          "sourceType": "textbook",
+          "role": "linear SVM geometry",
+          "status": "course-depth"
+        },
+        {
+          "sourceId": "DSA5105/Textbook.pdf",
+          "page": 35,
+          "sourceType": "textbook",
+          "role": "dual and support vectors",
+          "status": "course-depth"
+        },
+        {
+          "sourceId": "DSA5105/Textbook.pdf",
+          "page": 36,
+          "sourceType": "textbook",
+          "role": "soft margin and hinge loss",
+          "status": "course-depth"
+        }
+      ]
+    },
+    {
+      "id": "dsa5105-svm-margin-section-2-formula",
+      "type": "formula",
+      "name": "Hard margin formula",
+      "purpose": "Use it to make the hard margin claim operational; state its assumptions before applying it.",
+      "latex": "\\min_{w,b}\\;\\frac{1}{2}\\lVert w\\rVert_2^2\\quad\\text{subject to}\\quad y_i(w^\\top x_i+b)\\ge 1\\ \\forall i",
+      "explanation": "The constraint fixes the arbitrary scale by placing the closest correct points at score one. Once scale is fixed, a smaller norm means a wider geometric margin.",
+      "symbols": [
+        {
+          "latex": "\\frac12\\lVert w\\rVert_2^2",
+          "meaning": "smooth objective equivalent to minimizing the norm"
+        },
+        {
+          "latex": "y_i(w^\\top x_i+b)\\ge1",
+          "meaning": "correct classification with fixed scale"
+        }
+      ],
       "sourceType": "textbook",
       "sourceRefs": [
         {

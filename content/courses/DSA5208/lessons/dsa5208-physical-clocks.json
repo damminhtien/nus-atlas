@@ -175,6 +175,8 @@
           "meaning": "round-trip delay estimate"
         }
       ],
+      "name": "NTP round-trip delay estimate",
+      "purpose": "Use it to estimate network delay from the four timestamps in the synchronization exchange.",
       "sourceType": "lecture"
     },
     {
@@ -186,6 +188,8 @@
           "meaning": "estimated server time"
         }
       ],
+      "name": "NTP server-time estimate",
+      "purpose": "Use it under the symmetric-delay assumption to estimate remote physical time, not causality.",
       "sourceType": "lecture",
       "caveat": "The estimate depends on network-delay assumptions and does not establish causal precedence."
     }
@@ -242,6 +246,8 @@
     {
       "id": "dsa5208-physical-clocks-formula-1",
       "type": "formula",
+      "name": "NTP round-trip delay estimate",
+      "purpose": "Use it to estimate network delay from the four timestamps in the synchronization exchange.",
       "latex": "\\delta = (T_4-T_3)-(T_2-T_1)",
       "explanation": "NTP estimates round-trip delay by subtracting the server-side elapsed interval from the client-side elapsed interval.",
       "symbols": [
@@ -279,6 +285,8 @@
     {
       "id": "dsa5208-physical-clocks-formula-2",
       "type": "formula",
+      "name": "NTP server-time estimate",
+      "purpose": "Use it under the symmetric-delay assumption to estimate remote physical time, not causality.",
       "latex": "\\widehat{T}_{\\mathrm{server}} = T_2 + \\frac{\\delta}{2}",
       "explanation": "Under the lecture's delay-symmetry approximation, the client estimates the server time at receipt by adding half the round-trip delay to the server receive timestamp.",
       "symbols": [

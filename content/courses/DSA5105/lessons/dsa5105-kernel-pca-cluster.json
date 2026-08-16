@@ -53,6 +53,8 @@
             "meaning": "inner product"
           }
         ],
+        "name": "Kernel idea formula",
+        "purpose": "Use it to make the kernel idea claim operational; state its assumptions before applying it.",
         "sourceType": "lecture"
       }
     },
@@ -92,6 +94,8 @@
           "meaning": "inner product"
         }
       ],
+      "name": "Kernel inner-product identity",
+      "purpose": "Use it to reason about an implicit feature map without constructing its coordinates explicitly.",
       "sourceType": "lecture",
       "caveat": "A kernel is not automatically a probability or a distance; its role depends on the algorithm using it."
     },
@@ -112,6 +116,8 @@
           "meaning": "projected data"
         }
       ],
+      "name": "Projected variance quadratic form",
+      "purpose": "Use it to compute the variance visible along a unit PCA direction.",
       "sourceType": "lecture"
     }
   ],
@@ -179,6 +185,45 @@
       ]
     },
     {
+      "id": "dsa5105-kernel-pca-cluster-section-2-formula",
+      "type": "formula",
+      "name": "Kernel idea formula",
+      "purpose": "Use it to make the kernel idea claim operational; state its assumptions before applying it.",
+      "latex": "k(x,z)=\\langle\\phi(x),\\phi(z)\\rangle",
+      "explanation": "The kernel value is the inner product of the inputs after the implicit feature map. A method can therefore use richer geometry without storing every transformed coordinate explicitly.",
+      "symbols": [
+        {
+          "latex": "k(x,z)",
+          "meaning": "kernel similarity"
+        },
+        {
+          "latex": "\\phi",
+          "meaning": "implicit feature map"
+        },
+        {
+          "latex": "\\langle\\cdot,\\cdot\\rangle",
+          "meaning": "inner product"
+        }
+      ],
+      "sourceType": "lecture",
+      "sourceRefs": [
+        {
+          "sourceId": "DSA5105/Lec1.pdf",
+          "page": 31,
+          "sourceType": "lecture",
+          "role": "kernel methods",
+          "status": "current"
+        },
+        {
+          "sourceId": "DSA5105/Lec1.pdf",
+          "page": 39,
+          "sourceType": "lecture",
+          "role": "unsupervised overview",
+          "status": "current"
+        }
+      ]
+    },
+    {
       "id": "dsa5105-kernel-pca-cluster-section-3",
       "type": "teaching-note",
       "title": "Textbook depth · Do not conflate objectives",
@@ -204,6 +249,8 @@
     {
       "id": "dsa5105-kernel-pca-cluster-formula-1",
       "type": "formula",
+      "name": "Kernel inner-product identity",
+      "purpose": "Use it to reason about an implicit feature map without constructing its coordinates explicitly.",
       "latex": "k(x,z)=\\langle\\phi(x),\\phi(z)\\rangle",
       "explanation": "A valid kernel gives the inner product that would be obtained after mapping inputs through $\\phi$, without requiring us to build the transformed coordinates explicitly. The kernel changes the geometry available to a method such as a kernel SVM or kernel PCA.",
       "symbols": [
@@ -241,6 +288,8 @@
     {
       "id": "dsa5105-kernel-pca-cluster-formula-2",
       "type": "formula",
+      "name": "Projected variance quadratic form",
+      "purpose": "Use it to compute the variance visible along a unit PCA direction.",
       "latex": "\\operatorname{Var}(v^\\top X)=v^\\top\\Sigma v",
       "explanation": "PCA evaluates how much centered data varies after projection onto a unit direction $v$. The covariance matrix stores pairwise feature variation; the quadratic form selects the variance visible along $v$.",
       "symbols": [

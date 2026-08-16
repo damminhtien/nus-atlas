@@ -48,6 +48,8 @@
             "meaning": "target vector"
           }
         ],
+        "name": "OLS baseline formula",
+        "purpose": "Use it to make the ols baseline claim operational; state its assumptions before applying it.",
         "sourceType": "lecture"
       }
     },
@@ -72,6 +74,8 @@
             "meaning": "sum of absolute coefficient values"
           }
         ],
+        "name": "Ridge and lasso formula",
+        "purpose": "Use it to make the ridge and lasso claim operational; state its assumptions before applying it.",
         "sourceType": "lecture"
       }
     },
@@ -135,10 +139,88 @@
       ]
     },
     {
+      "id": "dsa5105-linear-regularization-section-1-formula",
+      "type": "formula",
+      "name": "OLS baseline formula",
+      "purpose": "Use it to make the ols baseline claim operational; state its assumptions before applying it.",
+      "latex": "\\hat w = \\arg\\min_w \\lVert Xw-y\\rVert_2^2",
+      "explanation": "The model predicts $Xw$ and compares it with the target vector $y$. Squaring and summing the residuals penalizes large mistakes and gives a smooth objective.",
+      "symbols": [
+        {
+          "latex": "X",
+          "meaning": "design matrix"
+        },
+        {
+          "latex": "w",
+          "meaning": "learned coefficient vector"
+        },
+        {
+          "latex": "y",
+          "meaning": "target vector"
+        }
+      ],
+      "sourceType": "lecture",
+      "sourceRefs": [
+        {
+          "sourceId": "DSA5105/Lec1.pdf",
+          "page": 24,
+          "sourceType": "lecture",
+          "role": "linear models",
+          "status": "current"
+        },
+        {
+          "sourceId": "DSA5105/Lec1_exercises-solutions.pdf",
+          "page": 2,
+          "sourceType": "exercise",
+          "role": "worked regularization exercise",
+          "status": "current-context"
+        }
+      ]
+    },
+    {
       "id": "dsa5105-linear-regularization-section-2",
       "type": "teaching-note",
       "title": "Lecture core · Ridge and lasso",
       "body": "Ridge adds an L2 penalty, shrinking weights toward zero while usually keeping correlated predictors together. Lasso adds an L1 penalty, whose corners make exact zeros possible. Both trade a little bias for lower variance when the unregularized fit is too sensitive.",
+      "sourceType": "lecture",
+      "sourceRefs": [
+        {
+          "sourceId": "DSA5105/Lec1.pdf",
+          "page": 24,
+          "sourceType": "lecture",
+          "role": "linear models",
+          "status": "current"
+        },
+        {
+          "sourceId": "DSA5105/Lec1_exercises-solutions.pdf",
+          "page": 2,
+          "sourceType": "exercise",
+          "role": "worked regularization exercise",
+          "status": "current-context"
+        }
+      ]
+    },
+    {
+      "id": "dsa5105-linear-regularization-section-2-formula",
+      "type": "formula",
+      "name": "Ridge and lasso formula",
+      "purpose": "Use it to make the ridge and lasso claim operational; state its assumptions before applying it.",
+      "latex": "\\min_w\\;\\lVert Xw-y\\rVert_2^2+\\lambda\\lVert w\\rVert_2^2\\;\\text{(ridge)},\\qquad \\min_w\\;\\lVert Xw-y\\rVert_2^2+\\lambda\\lVert w\\rVert_1\\;\\text{(lasso)}",
+      "explanation": "The first term rewards fit to the data; the penalty charges for coefficient size. Increasing $\\lambda$ makes complexity more expensive. The L2 norm is smooth, while the L1 norm has corners that allow exact zeros.",
+      "symbols": [
+        {
+          "latex": "\\lambda",
+          "meaning": "regularization strength"
+        },
+        {
+          "latex": "\\lVert w\\rVert_2^2",
+          "meaning": "sum of squared coefficients"
+        },
+        {
+          "latex": "\\lVert w\\rVert_1",
+          "meaning": "sum of absolute coefficient values"
+        }
+      ],
       "sourceType": "lecture",
       "sourceRefs": [
         {

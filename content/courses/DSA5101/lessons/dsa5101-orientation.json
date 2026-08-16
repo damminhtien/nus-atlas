@@ -148,6 +148,8 @@
           "meaning": "time spent waiting for coordination"
         }
       ],
+      "name": "Distributed scan cost decomposition",
+      "purpose": "Use it to diagnose repeated scans, data movement, and synchronization in a large-data workflow.",
       "sourceType": "lecture",
       "caveat": "The decomposition is a diagnostic lens; real runtimes also depend on skew, caching, serialization, and hardware."
     }
@@ -195,6 +197,8 @@
     {
       "id": "dsa5101-orientation-formula-1",
       "type": "formula",
+      "name": "Distributed scan cost decomposition",
+      "purpose": "Use it to diagnose repeated scans, data movement, and synchronization in a large-data workflow.",
       "latex": "T_{\\mathrm{total}} \\approx p\\,T_{\\mathrm{scan}} + T_{\\mathrm{shuffle}} + T_{\\mathrm{sync}}",
       "explanation": "Use this as a study model, not a universal theorem. A scalable algorithm tries to keep the number of full scans $p$ small and makes network movement and synchronization visible instead of hiding them inside a single runtime number.",
       "symbols": [

@@ -227,6 +227,8 @@
           "meaning": "positive increment"
         }
       ],
+      "name": "Lamport receive-clock update",
+      "purpose": "Use it on receipt to move logical time beyond both local history and the timestamp carried by the message.",
       "sourceType": "lecture"
     },
     {
@@ -238,6 +240,8 @@
           "meaning": "scalar timestamp of event e"
         }
       ],
+      "name": "Lamport causality guarantee",
+      "purpose": "Use it in the forward direction to prove that causal order receives increasing scalar timestamps.",
       "sourceType": "lecture"
     }
   ],
@@ -293,6 +297,8 @@
     {
       "id": "dsa5208-lamport-scalar-formula-1",
       "type": "formula",
+      "name": "Lamport receive-clock update",
+      "purpose": "Use it on receipt to move logical time beyond both local history and the timestamp carried by the message.",
       "latex": "C_i := \\max(C_i,C_{\\mathrm{msg}})+d",
       "explanation": "On receipt, a process moves its scalar clock beyond both its local history and the received timestamp. The usual teaching choice is $d=1$.",
       "symbols": [
@@ -337,6 +343,8 @@
     {
       "id": "dsa5208-lamport-scalar-formula-2",
       "type": "formula",
+      "name": "Lamport causality guarantee",
+      "purpose": "Use it in the forward direction to prove that causal order receives increasing scalar timestamps.",
       "latex": "e_i\\to e_j\\ \\Longrightarrow\\ C(e_i)<C(e_j)",
       "explanation": "Lamport scalar clocks are consistent with causality in the forward direction. The converse is not guaranteed: an ordered scalar pair can still be concurrent.",
       "symbols": [

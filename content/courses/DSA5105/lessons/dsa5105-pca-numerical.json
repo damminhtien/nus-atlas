@@ -72,6 +72,8 @@
             "meaning": "sample covariance"
           }
         ],
+        "name": "Center, then form covariance formula",
+        "purpose": "Use it to make the center, then form covariance claim operational; state its assumptions before applying it.",
         "sourceType": "lecture"
       }
     },
@@ -92,6 +94,8 @@
             "meaning": "largest covariance eigenvalue"
           }
         ],
+        "name": "Variance and Rayleigh quotient formula",
+        "purpose": "Use it to make the variance and rayleigh quotient claim operational; state its assumptions before applying it.",
         "sourceType": "textbook"
       }
     },
@@ -112,6 +116,8 @@
             "meaning": "ordered covariance eigenvalues"
           }
         ],
+        "name": "Reconstruction error formula",
+        "purpose": "Use it to make the reconstruction error claim operational; state its assumptions before applying it.",
         "sourceType": "textbook"
       }
     },
@@ -132,6 +138,8 @@
             "meaning": "diagonal eigenvalue matrix"
           }
         ],
+        "name": "Reference boundary · Whitening and exam bridge formula",
+        "purpose": "Use it to make the reference boundary · whitening and exam bridge claim operational; state its assumptions before applying it.",
         "sourceType": "ref"
       }
     },
@@ -175,6 +183,66 @@
       "type": "teaching-note",
       "title": "Lecture core · Center, then form covariance",
       "body": "For rows $x_i$, compute $\\mu=\\frac1N\\sum_i x_i$ and $z_i=x_i-\\mu$. The sample covariance used here is $C=\\frac1N\\sum_i z_i z_i^\\top$. The factor convention may vary, but the eigenvectors are unchanged by a positive scalar factor.",
+      "sourceType": "lecture",
+      "sourceRefs": [
+        {
+          "sourceId": "DSA5105/Textbook.pdf",
+          "page": 82,
+          "sourceType": "textbook",
+          "role": "PCA covariance",
+          "status": "course-depth"
+        },
+        {
+          "sourceId": "DSA5105/Textbook.pdf",
+          "page": 86,
+          "sourceType": "textbook",
+          "role": "variance maximization",
+          "status": "course-depth"
+        },
+        {
+          "sourceId": "DSA5105/Textbook.pdf",
+          "page": 88,
+          "sourceType": "textbook",
+          "role": "reconstruction",
+          "status": "course-depth"
+        },
+        {
+          "sourceId": "DSA5105/Textbook.pdf",
+          "page": 90,
+          "sourceType": "textbook",
+          "role": "whitening",
+          "status": "course-depth"
+        },
+        {
+          "sourceId": "DSA5105/Ref/document.pdf",
+          "page": 4,
+          "sourceType": "ref",
+          "role": "past-exam PCA/SVM formulation alignment",
+          "status": "assessment-derived"
+        }
+      ]
+    },
+    {
+      "id": "dsa5105-pca-numerical-section-1-formula",
+      "type": "formula",
+      "name": "Center, then form covariance formula",
+      "purpose": "Use it to make the center, then form covariance claim operational; state its assumptions before applying it.",
+      "latex": "Z=X-\\mathbf{1}\\mu^\\top,\\qquad C=\\frac1N Z^\\top Z",
+      "explanation": "The centering step removes the mean offset. The covariance is symmetric positive semidefinite, so its eigenvalues are non-negative and its eigenvectors can be chosen orthonormal.",
+      "symbols": [
+        {
+          "latex": "\\mu",
+          "meaning": "feature mean"
+        },
+        {
+          "latex": "Z",
+          "meaning": "centered data matrix"
+        },
+        {
+          "latex": "C",
+          "meaning": "sample covariance"
+        }
+      ],
       "sourceType": "lecture",
       "sourceRefs": [
         {
@@ -259,6 +327,62 @@
       ]
     },
     {
+      "id": "dsa5105-pca-numerical-section-2-formula",
+      "type": "formula",
+      "name": "Variance and Rayleigh quotient formula",
+      "purpose": "Use it to make the variance and rayleigh quotient claim operational; state its assumptions before applying it.",
+      "latex": "v_1=\\arg\\max_{\\lVert v\\rVert_2=1}v^\\top Cv",
+      "explanation": "The unit-norm constraint removes the trivial scaling solution. The maximum equals the largest eigenvalue of C.",
+      "symbols": [
+        {
+          "latex": "v_1",
+          "meaning": "first principal direction"
+        },
+        {
+          "latex": "\\lambda_1",
+          "meaning": "largest covariance eigenvalue"
+        }
+      ],
+      "sourceType": "textbook",
+      "sourceRefs": [
+        {
+          "sourceId": "DSA5105/Textbook.pdf",
+          "page": 82,
+          "sourceType": "textbook",
+          "role": "PCA covariance",
+          "status": "course-depth"
+        },
+        {
+          "sourceId": "DSA5105/Textbook.pdf",
+          "page": 86,
+          "sourceType": "textbook",
+          "role": "variance maximization",
+          "status": "course-depth"
+        },
+        {
+          "sourceId": "DSA5105/Textbook.pdf",
+          "page": 88,
+          "sourceType": "textbook",
+          "role": "reconstruction",
+          "status": "course-depth"
+        },
+        {
+          "sourceId": "DSA5105/Textbook.pdf",
+          "page": 90,
+          "sourceType": "textbook",
+          "role": "whitening",
+          "status": "course-depth"
+        },
+        {
+          "sourceId": "DSA5105/Ref/document.pdf",
+          "page": 4,
+          "sourceType": "ref",
+          "role": "past-exam PCA/SVM formulation alignment",
+          "status": "assessment-derived"
+        }
+      ]
+    },
+    {
       "id": "dsa5105-pca-numerical-section-3",
       "type": "teaching-note",
       "title": "Textbook depth · Reconstruction error",
@@ -303,10 +427,122 @@
       ]
     },
     {
+      "id": "dsa5105-pca-numerical-section-3-formula",
+      "type": "formula",
+      "name": "Reconstruction error formula",
+      "purpose": "Use it to make the reconstruction error claim operational; state its assumptions before applying it.",
+      "latex": "\\operatorname{MSE}_{recon}(k)\\propto\\sum_{j>k}\\lambda_j",
+      "explanation": "Keeping more principal directions removes more reconstruction error. The exact normalization depends on whether the loss is summed or averaged.",
+      "symbols": [
+        {
+          "latex": "k",
+          "meaning": "number of kept components"
+        },
+        {
+          "latex": "\\lambda_j",
+          "meaning": "ordered covariance eigenvalues"
+        }
+      ],
+      "sourceType": "textbook",
+      "sourceRefs": [
+        {
+          "sourceId": "DSA5105/Textbook.pdf",
+          "page": 82,
+          "sourceType": "textbook",
+          "role": "PCA covariance",
+          "status": "course-depth"
+        },
+        {
+          "sourceId": "DSA5105/Textbook.pdf",
+          "page": 86,
+          "sourceType": "textbook",
+          "role": "variance maximization",
+          "status": "course-depth"
+        },
+        {
+          "sourceId": "DSA5105/Textbook.pdf",
+          "page": 88,
+          "sourceType": "textbook",
+          "role": "reconstruction",
+          "status": "course-depth"
+        },
+        {
+          "sourceId": "DSA5105/Textbook.pdf",
+          "page": 90,
+          "sourceType": "textbook",
+          "role": "whitening",
+          "status": "course-depth"
+        },
+        {
+          "sourceId": "DSA5105/Ref/document.pdf",
+          "page": 4,
+          "sourceType": "ref",
+          "role": "past-exam PCA/SVM formulation alignment",
+          "status": "assessment-derived"
+        }
+      ]
+    },
+    {
       "id": "dsa5105-pca-numerical-section-4",
       "type": "teaching-note",
       "title": "Reference boundary · Whitening and exam bridge",
       "body": "Whitening maps principal coordinates by $\\Lambda^{-\\frac{1}{2}}$, producing unit covariance for retained non-zero directions. The past exam also asks for an SVM-like constrained formulation of the maximum-variance direction; treat that as an assessment bridge and derive it from the Rayleigh quotient rather than memorizing a disconnected formula.",
+      "sourceType": "ref",
+      "sourceRefs": [
+        {
+          "sourceId": "DSA5105/Textbook.pdf",
+          "page": 82,
+          "sourceType": "textbook",
+          "role": "PCA covariance",
+          "status": "course-depth"
+        },
+        {
+          "sourceId": "DSA5105/Textbook.pdf",
+          "page": 86,
+          "sourceType": "textbook",
+          "role": "variance maximization",
+          "status": "course-depth"
+        },
+        {
+          "sourceId": "DSA5105/Textbook.pdf",
+          "page": 88,
+          "sourceType": "textbook",
+          "role": "reconstruction",
+          "status": "course-depth"
+        },
+        {
+          "sourceId": "DSA5105/Textbook.pdf",
+          "page": 90,
+          "sourceType": "textbook",
+          "role": "whitening",
+          "status": "course-depth"
+        },
+        {
+          "sourceId": "DSA5105/Ref/document.pdf",
+          "page": 4,
+          "sourceType": "ref",
+          "role": "past-exam PCA/SVM formulation alignment",
+          "status": "assessment-derived"
+        }
+      ]
+    },
+    {
+      "id": "dsa5105-pca-numerical-section-4-formula",
+      "type": "formula",
+      "name": "Reference boundary · Whitening and exam bridge formula",
+      "purpose": "Use it to make the reference boundary · whitening and exam bridge claim operational; state its assumptions before applying it.",
+      "latex": "X_{white}=ZV\\Lambda^{-1/2}",
+      "explanation": "V contains the orthonormal eigenvectors and Lambda the diagonal eigenvalue matrix. Small eigenvalues may amplify noise, so practical whitening often clips or regularizes them.",
+      "symbols": [
+        {
+          "latex": "V",
+          "meaning": "eigenvector matrix"
+        },
+        {
+          "latex": "\\Lambda",
+          "meaning": "diagonal eigenvalue matrix"
+        }
+      ],
       "sourceType": "ref",
       "sourceRefs": [
         {

@@ -12,12 +12,43 @@
   const textbook = (page, role) => source("DSA5105/Textbook.pdf", page, "textbook", role || "textbook depth", "course-depth");
   const reference = (sourceId, page, role, status) => source(sourceId, page, "ref", role || "optional reading", status || "optional");
   const assessmentRef = (sourceId, page, role) => reference(sourceId, page, role || "assessment-derived alignment", "assessment-derived");
+  const FORMULA_METADATA = [
+    [/What is being learned\?/, "Empirical-risk minimization rule", "Use it to state the fitting problem: choose the hypothesis in the allowed class with the smallest observed loss."],
+    [/Mitchell's E–T–P/, "E–T–P learning definition", "Use it to audit whether a learning claim names the experience, task, and performance measure."],
+    [/Training set and oracle/, "Training-set and oracle model", "Use it to distinguish observed examples from the deterministic or random process that generates targets."],
+    [/Empirical risk/, "Empirical risk", "Use it to compute the average loss on the finite sample used for fitting."],
+    [/Three sources of error/, "Lecture three-source error map", "Use it to diagnose whether a gap comes from the hypothesis class, finite data, or the optimization procedure."],
+    [/Three broader paradigms/, "Textbook three-paradigm map", "Use it as textbook context; do not substitute it for the lecture's estimation-based error decomposition."],
+    [/Simple linear regression/, "Affine hypothesis and squared loss", "Use it to specify the line, its parameters, and the residual penalty before deriving OLS."],
+    [/Ordinary least squares/, "Centered OLS estimator", "Use it to compute the slope and intercept when the centered input spread is nonzero."],
+    [/Capacity and loss/, "Huber loss", "Use it when large residuals should have linear rather than quadratic penalty while the fit remains smooth near zero."],
+    [/Basis functions and matrix form/, "Linear basis-function model", "Use it to represent nonlinear input effects while keeping the trainable parameters linear."],
+    [/Basis-function families/, "Polynomial, Gaussian, and sigmoid bases", "Use it to choose a feature geometry and reason about localization, smoothness, and capacity."],
+    [/Regularization/, "Ridge objective", "Use it to stabilize an underdetermined or ill-conditioned least-squares fit by penalizing large weights."],
+    [/Multiclass linear classification/, "Softmax cross-entropy model", "Use it to map class scores to probabilities and train against one-hot targets."],
+    [/ERM versus population risk/, "Empirical versus population risk", "Use it to separate the computable sample objective from expected loss on future draws."],
+    [/Why iid matters/, "IID sampling assumption", "Use it to state when a sample average is intended to estimate an expectation for the same population."],
+    [/Official exercise · Huber/, "Huber psi-function and stationarity", "Use it to derive the robust first-order condition and show how an extreme residual is capped."],
+    [/Singular OLS and the null space/, "Singular OLS solution family", "Use it to describe every coefficient vector with the same fitted training values when the design is rank deficient."],
+    [/Ridge as a spectral filter/, "Ridge normal equations and spectral filter", "Use it to derive the unique ridge solution and quantify shrinkage in each eigen-direction."],
+    [/One-hot least squares/, "One-hot linear classification", "Use it to connect class encoding, vector logits, and the least-squares classification baseline."],
+    [/From 0–1 loss to a surrogate/, "Classification loss-to-surrogate chain", "Use it to explain why a smooth training objective replaces discontinuous 0–1 error without changing the final metric."],
+    [/Logistic loss and convexity/, "Binary logistic loss and convexity", "Use it to derive the binary score loss, make the tie rule explicit, and verify non-negative curvature."],
+    [/Week 1 synthesis map/, "Week 1 learning pipeline", "Use it to reconstruct the complete path from data and modeling choices to fitted and population risk."],
+  ];
+  const formulaMetadata = title => {
+    const match = FORMULA_METADATA.find(([pattern]) => pattern.test(title));
+    if (match) return { name: match[1], purpose: match[2] };
+    const clean = title.replace(/^(?:Lecture core|Lecture bridge|Official exercise|Textbook depth|Reference depth|Core derivation)\s*·\s*/, "");
+    return { name: `${clean} formula`, purpose: `Use it to make the ${clean.toLowerCase()} claim operational; state its assumptions before applying it.` };
+  };
   const equation = (latex, explanation, symbols) => ({ latex, explanation, symbols: symbols || [] });
   const symbol = (latex, meaning) => ({ latex, meaning });
   const sourceLens = (status, whyExaminable, lectureRefs, officialExercise, textbookRefs, referenceRefs) => ({ status, whyExaminable, lecture: lectureRefs || [], officialExercise: officialExercise || [], textbook: textbookRefs || [], reference: referenceRefs || [] });
   const note = (title, body, sourceType, math, sourceRefs, lens) => {
     const resolvedSourceType = title.startsWith("Official exercise") ? "exercise" : sourceType;
-    return { title, body, sourceType: resolvedSourceType, ...(math ? { math: { ...math, sourceType: math.sourceType || resolvedSourceType } } : {}), ...(sourceRefs ? { sourceRefs } : {}), ...(lens ? { sourceLens: lens } : {}) };
+    const metadata = math ? formulaMetadata(title) : null;
+    return { title, body, sourceType: resolvedSourceType, ...(math ? { math: { ...math, ...metadata, sourceType: math.sourceType || resolvedSourceType } } : {}), ...(sourceRefs ? { sourceRefs } : {}), ...(lens ? { sourceLens: lens } : {}) };
   };
   const worked = (title, steps, answer, sourceType) => ({ title, steps, answer, sourceType });
   const contrastDrill = (id, pair, prompt, choices, answer, explanation, sourceRefs) => ({

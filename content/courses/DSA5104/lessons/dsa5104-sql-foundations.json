@@ -244,6 +244,8 @@
           "meaning": "count produced for each group"
         }
       ],
+      "name": "Relational grouping operator",
+      "purpose": "Use it to express grouping by department and compute one aggregate per group.",
       "sourceType": "lecture"
     },
     {
@@ -255,6 +257,8 @@
           "meaning": "conceptually happens before"
         }
       ],
+      "name": "SQL logical filtering order",
+      "purpose": "Use it to decide whether a predicate belongs before grouping or after an aggregate is formed.",
       "sourceType": "lecture",
       "caveat": "SQL optimizers may rewrite execution plans while preserving relational semantics."
     }
@@ -318,6 +322,8 @@
     {
       "id": "dsa5104-sql-foundations-formula-1",
       "type": "formula",
+      "name": "Relational grouping operator",
+      "purpose": "Use it to express grouping by department and compute one aggregate per group.",
       "latex": "\\gamma_{\\mathrm{department\\_id};\\ \\operatorname{COUNT}(*)\\to n}(\\mathrm{Student})",
       "explanation": "The grouping operator partitions rows by department and computes one count per group. Conceptually, `WHERE` reduces rows before grouping, while `HAVING` filters the grouped result after the aggregate exists.",
       "symbols": [
@@ -365,6 +371,8 @@
     {
       "id": "dsa5104-sql-foundations-formula-2",
       "type": "formula",
+      "name": "SQL logical filtering order",
+      "purpose": "Use it to decide whether a predicate belongs before grouping or after an aggregate is formed.",
       "latex": "\\mathrm{WHERE}\\ \\prec\\ \\mathrm{GROUP\\ BY}\\ \\prec\\ \\mathrm{HAVING}",
       "explanation": "This is a reasoning order, not a claim about the textual order of every SQL implementation. First decide which rows participate, then form groups, then filter aggregate groups.",
       "symbols": [

@@ -37,7 +37,7 @@ courses.forEach(c => {
     if (!Array.isArray(l.criticalQuestions) || l.criticalQuestions.length < 2) errors.push("missing critical-thinking questions: " + l.id);
     if (!lessonMath.length) errors.push("missing LaTeX formula: " + l.id);
     lessonMath.forEach(m => {
-      if (!m.latex || !m.explanation || !Array.isArray(m.symbols) || !m.symbols.length || !m.sourceType || !sourceTypes.has(m.sourceType)) errors.push("incomplete LaTeX formula model: " + l.id);
+      if (!m.name || !m.purpose || !m.latex || !m.explanation || !Array.isArray(m.symbols) || !m.symbols.length || !m.sourceType || !sourceTypes.has(m.sourceType)) errors.push("incomplete named LaTeX formula model: " + l.id);
       (m.symbols || []).forEach(s => { if (!s.latex || !s.meaning) errors.push("incomplete formula symbol: " + l.id); });
     });
     if (unicodeFormula.test(JSON.stringify(l))) errors.push("Unicode formula detected; use LaTeX: " + l.id);

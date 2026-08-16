@@ -75,6 +75,8 @@
             "meaning": "value estimate at sweep t"
           }
         ],
+        "name": "Finite MDP backup formula",
+        "purpose": "Use it to make the finite mdp backup claim operational; state its assumptions before applying it.",
         "sourceType": "lecture"
       }
     },
@@ -95,6 +97,8 @@
             "meaning": "optimal fixed-point value"
           }
         ],
+        "name": "Contraction and policy extraction formula",
+        "purpose": "Use it to make the contraction and policy extraction claim operational; state its assumptions before applying it.",
         "sourceType": "textbook"
       }
     },
@@ -115,6 +119,8 @@
             "meaning": "TD learning rate"
           }
         ],
+        "name": "TD(0) formula",
+        "purpose": "Use it to make the td(0) claim operational; state its assumptions before applying it.",
         "sourceType": "textbook"
       }
     },
@@ -220,6 +226,69 @@
       ]
     },
     {
+      "id": "dsa5105-mdp-value-iteration-section-1-formula",
+      "type": "formula",
+      "name": "Finite MDP backup formula",
+      "purpose": "Use it to make the finite mdp backup claim operational; state its assumptions before applying it.",
+      "latex": "V_{t+1}=T^*V_t",
+      "explanation": "The Bellman optimality operator maps one value estimate to a one-step lookahead estimate. The max is over the current action choice; the transition model still averages over possible outcomes.",
+      "symbols": [
+        {
+          "latex": "T^*",
+          "meaning": "optimal Bellman operator"
+        },
+        {
+          "latex": "V_t",
+          "meaning": "value estimate at sweep t"
+        }
+      ],
+      "sourceType": "lecture",
+      "sourceRefs": [
+        {
+          "sourceId": "DSA5105/Textbook.pdf",
+          "page": 105,
+          "sourceType": "textbook",
+          "role": "MDP components",
+          "status": "course-depth"
+        },
+        {
+          "sourceId": "DSA5105/Textbook.pdf",
+          "page": 108,
+          "sourceType": "textbook",
+          "role": "Bellman equations",
+          "status": "course-depth"
+        },
+        {
+          "sourceId": "DSA5105/Textbook.pdf",
+          "page": 115,
+          "sourceType": "textbook",
+          "role": "value iteration",
+          "status": "course-depth"
+        },
+        {
+          "sourceId": "DSA5105/Textbook.pdf",
+          "page": 117,
+          "sourceType": "textbook",
+          "role": "contraction and convergence",
+          "status": "course-depth"
+        },
+        {
+          "sourceId": "DSA5105/Ref/Reinforcement_Learning_an_Introduction.pdf",
+          "page": 98,
+          "sourceType": "ref",
+          "role": "TD learning",
+          "status": "optional"
+        },
+        {
+          "sourceId": "DSA5105/Ref/document.pdf",
+          "page": 1,
+          "sourceType": "ref",
+          "role": "past-exam RL and Bellman alignment",
+          "status": "assessment-derived"
+        }
+      ]
+    },
+    {
       "id": "dsa5105-mdp-value-iteration-section-2",
       "type": "teaching-note",
       "title": "Textbook depth · Contraction and policy extraction",
@@ -271,10 +340,136 @@
       ]
     },
     {
+      "id": "dsa5105-mdp-value-iteration-section-2-formula",
+      "type": "formula",
+      "name": "Contraction and policy extraction formula",
+      "purpose": "Use it to make the contraction and policy extraction claim operational; state its assumptions before applying it.",
+      "latex": "\\lVert T^*V-T^*U\\rVert_\\infty\\le\\gamma\\lVert V-U\\rVert_\\infty",
+      "explanation": "The contraction explains why errors shrink geometrically under exact value iteration. It is a convergence statement for the value update, not a statement that every approximate neural optimizer is globally optimal.",
+      "symbols": [
+        {
+          "latex": "\\lVert\\cdot\\rVert_\\infty",
+          "meaning": "maximum state-wise difference"
+        },
+        {
+          "latex": "V^*",
+          "meaning": "optimal fixed-point value"
+        }
+      ],
+      "sourceType": "textbook",
+      "sourceRefs": [
+        {
+          "sourceId": "DSA5105/Textbook.pdf",
+          "page": 105,
+          "sourceType": "textbook",
+          "role": "MDP components",
+          "status": "course-depth"
+        },
+        {
+          "sourceId": "DSA5105/Textbook.pdf",
+          "page": 108,
+          "sourceType": "textbook",
+          "role": "Bellman equations",
+          "status": "course-depth"
+        },
+        {
+          "sourceId": "DSA5105/Textbook.pdf",
+          "page": 115,
+          "sourceType": "textbook",
+          "role": "value iteration",
+          "status": "course-depth"
+        },
+        {
+          "sourceId": "DSA5105/Textbook.pdf",
+          "page": 117,
+          "sourceType": "textbook",
+          "role": "contraction and convergence",
+          "status": "course-depth"
+        },
+        {
+          "sourceId": "DSA5105/Ref/Reinforcement_Learning_an_Introduction.pdf",
+          "page": 98,
+          "sourceType": "ref",
+          "role": "TD learning",
+          "status": "optional"
+        },
+        {
+          "sourceId": "DSA5105/Ref/document.pdf",
+          "page": 1,
+          "sourceType": "ref",
+          "role": "past-exam RL and Bellman alignment",
+          "status": "assessment-derived"
+        }
+      ]
+    },
+    {
       "id": "dsa5105-mdp-value-iteration-section-3",
       "type": "teaching-note",
       "title": "Textbook depth · TD(0)",
       "body": "TD(0) updates one visited state toward a sampled one-step target: $V(s_t)\\leftarrow V(s_t)+\\alpha[r_{t+1}+\\gamma V(s_{t+1})-V(s_t)]$. It does not need a complete transition model, so it is model-free and sample-based.",
+      "sourceType": "textbook",
+      "sourceRefs": [
+        {
+          "sourceId": "DSA5105/Textbook.pdf",
+          "page": 105,
+          "sourceType": "textbook",
+          "role": "MDP components",
+          "status": "course-depth"
+        },
+        {
+          "sourceId": "DSA5105/Textbook.pdf",
+          "page": 108,
+          "sourceType": "textbook",
+          "role": "Bellman equations",
+          "status": "course-depth"
+        },
+        {
+          "sourceId": "DSA5105/Textbook.pdf",
+          "page": 115,
+          "sourceType": "textbook",
+          "role": "value iteration",
+          "status": "course-depth"
+        },
+        {
+          "sourceId": "DSA5105/Textbook.pdf",
+          "page": 117,
+          "sourceType": "textbook",
+          "role": "contraction and convergence",
+          "status": "course-depth"
+        },
+        {
+          "sourceId": "DSA5105/Ref/Reinforcement_Learning_an_Introduction.pdf",
+          "page": 98,
+          "sourceType": "ref",
+          "role": "TD learning",
+          "status": "optional"
+        },
+        {
+          "sourceId": "DSA5105/Ref/document.pdf",
+          "page": 1,
+          "sourceType": "ref",
+          "role": "past-exam RL and Bellman alignment",
+          "status": "assessment-derived"
+        }
+      ]
+    },
+    {
+      "id": "dsa5105-mdp-value-iteration-section-3-formula",
+      "type": "formula",
+      "name": "TD(0) formula",
+      "purpose": "Use it to make the td(0) claim operational; state its assumptions before applying it.",
+      "latex": "\\delta_t=r_{t+1}+\\gamma V(s_{t+1})-V(s_t)",
+      "explanation": "The temporal-difference error is the gap between the one-step bootstrap target and the current estimate. The learning rate $\\alpha$ controls how much of this error is applied.",
+      "symbols": [
+        {
+          "latex": "\\delta_t",
+          "meaning": "TD error"
+        },
+        {
+          "latex": "\\alpha",
+          "meaning": "TD learning rate"
+        }
+      ],
       "sourceType": "textbook",
       "sourceRefs": [
         {

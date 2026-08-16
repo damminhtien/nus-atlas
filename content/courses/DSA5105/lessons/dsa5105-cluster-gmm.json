@@ -69,6 +69,8 @@
             "meaning": "number of data points"
           }
         ],
+        "name": "K-means loop formula",
+        "purpose": "Use it to make the k-means loop claim operational; state its assumptions before applying it.",
         "sourceType": "lecture"
       }
     },
@@ -97,6 +99,8 @@
             "meaning": "current mixture parameters"
           }
         ],
+        "name": "GMM responsibilities formula",
+        "purpose": "Use it to make the gmm responsibilities claim operational; state its assumptions before applying it.",
         "sourceType": "textbook"
       }
     },
@@ -186,10 +190,134 @@
       ]
     },
     {
+      "id": "dsa5105-cluster-gmm-section-1-formula",
+      "type": "formula",
+      "name": "K-means loop formula",
+      "purpose": "Use it to make the k-means loop claim operational; state its assumptions before applying it.",
+      "latex": "\\min_{\\{c_k\\},\\{z_i\\}}\\sum_{i=1}^{n}\\lVert x_i-c_{z_i}\\rVert_2^2",
+      "explanation": "For each data point, choose a cluster index $z_i$ and pay the squared distance to that cluster's centroid. The assignment step lowers the objective by choosing the nearest centroid; the update step lowers it by replacing each centroid with the mean of its assigned points.",
+      "symbols": [
+        {
+          "latex": "c_k",
+          "meaning": "centroid of cluster $k$"
+        },
+        {
+          "latex": "z_i",
+          "meaning": "cluster assigned to point $i$"
+        },
+        {
+          "latex": "n",
+          "meaning": "number of data points"
+        }
+      ],
+      "sourceType": "lecture",
+      "sourceRefs": [
+        {
+          "sourceId": "DSA5105/Lec1.pdf",
+          "page": 39,
+          "sourceType": "lecture",
+          "role": "unsupervised overview",
+          "status": "current"
+        },
+        {
+          "sourceId": "DSA5105/Textbook.pdf",
+          "page": 92,
+          "sourceType": "textbook",
+          "role": "K-means",
+          "status": "course-depth"
+        },
+        {
+          "sourceId": "DSA5105/Textbook.pdf",
+          "page": 98,
+          "sourceType": "textbook",
+          "role": "Gaussian mixture models",
+          "status": "course-depth"
+        },
+        {
+          "sourceId": "DSA5105/Textbook.pdf",
+          "page": 102,
+          "sourceType": "textbook",
+          "role": "EM update pattern",
+          "status": "course-depth"
+        },
+        {
+          "sourceId": "DSA5105/Ref/Mathematics_of_Data_Science.pdf",
+          "page": 51,
+          "sourceType": "ref",
+          "role": "clustering context",
+          "status": "draft"
+        }
+      ]
+    },
+    {
       "id": "dsa5105-cluster-gmm-section-2",
       "type": "teaching-note",
       "title": "Textbook depth · GMM responsibilities",
       "body": "A Gaussian mixture assigns each point a responsibility for every component. Responsibilities are soft: overlapping clusters can both receive meaningful probability, and covariance matrices can represent elongated uncertainty that K-means cannot.",
+      "sourceType": "textbook",
+      "sourceRefs": [
+        {
+          "sourceId": "DSA5105/Lec1.pdf",
+          "page": 39,
+          "sourceType": "lecture",
+          "role": "unsupervised overview",
+          "status": "current"
+        },
+        {
+          "sourceId": "DSA5105/Textbook.pdf",
+          "page": 92,
+          "sourceType": "textbook",
+          "role": "K-means",
+          "status": "course-depth"
+        },
+        {
+          "sourceId": "DSA5105/Textbook.pdf",
+          "page": 98,
+          "sourceType": "textbook",
+          "role": "Gaussian mixture models",
+          "status": "course-depth"
+        },
+        {
+          "sourceId": "DSA5105/Textbook.pdf",
+          "page": 102,
+          "sourceType": "textbook",
+          "role": "EM update pattern",
+          "status": "course-depth"
+        },
+        {
+          "sourceId": "DSA5105/Ref/Mathematics_of_Data_Science.pdf",
+          "page": 51,
+          "sourceType": "ref",
+          "role": "clustering context",
+          "status": "draft"
+        }
+      ]
+    },
+    {
+      "id": "dsa5105-cluster-gmm-section-2-formula",
+      "type": "formula",
+      "name": "GMM responsibilities formula",
+      "purpose": "Use it to make the gmm responsibilities claim operational; state its assumptions before applying it.",
+      "latex": "\\gamma_{ik}=P(z_i=k\\mid x_i,\\theta)=\\frac{\\pi_k\\,p(x_i\\mid\\theta_k)}{\\sum_j\\pi_j\\,p(x_i\\mid\\theta_j)}",
+      "explanation": "The responsibility is a posterior probability, so the responsibilities for one point sum to one across components. The numerator combines the component prior with the point's likelihood under that component; the denominator normalizes across all components.",
+      "symbols": [
+        {
+          "latex": "\\gamma_{ik}",
+          "meaning": "responsibility of component $k$ for point $i$"
+        },
+        {
+          "latex": "\\pi_k",
+          "meaning": "prior weight of component $k$"
+        },
+        {
+          "latex": "p(x_i\\mid\\theta_k)",
+          "meaning": "likelihood of point $i$ under component $k$"
+        },
+        {
+          "latex": "\\theta",
+          "meaning": "current mixture parameters"
+        }
+      ],
       "sourceType": "textbook",
       "sourceRefs": [
         {

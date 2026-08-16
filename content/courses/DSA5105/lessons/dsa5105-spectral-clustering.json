@@ -58,6 +58,8 @@
             "meaning": "graph Laplacian"
           }
         ],
+        "name": "Laplacian construction formula",
+        "purpose": "Use it to make the laplacian construction claim operational; state its assumptions before applying it.",
         "sourceType": "ref"
       }
     },
@@ -78,6 +80,8 @@
             "meaning": "edge weight between i and j"
           }
         ],
+        "name": "Smoothness and cuts formula",
+        "purpose": "Use it to make the smoothness and cuts claim operational; state its assumptions before applying it.",
         "sourceType": "ref"
       }
     },
@@ -152,10 +156,98 @@
       ]
     },
     {
+      "id": "dsa5105-spectral-clustering-section-1-formula",
+      "type": "formula",
+      "name": "Laplacian construction formula",
+      "purpose": "Use it to make the laplacian construction claim operational; state its assumptions before applying it.",
+      "latex": "L=D-A",
+      "explanation": "The diagonal counts incident edge weight and the off-diagonal adjacency subtracts connections. Each row of L sums to zero for the unnormalized Laplacian.",
+      "symbols": [
+        {
+          "latex": "A",
+          "meaning": "adjacency matrix"
+        },
+        {
+          "latex": "D",
+          "meaning": "degree matrix"
+        },
+        {
+          "latex": "L",
+          "meaning": "graph Laplacian"
+        }
+      ],
+      "sourceType": "ref",
+      "sourceRefs": [
+        {
+          "sourceId": "DSA5105/Ref/Mathematics_of_Data_Science.pdf",
+          "page": 50,
+          "sourceType": "ref",
+          "role": "graph theory",
+          "status": "draft"
+        },
+        {
+          "sourceId": "DSA5105/Ref/Mathematics_of_Data_Science.pdf",
+          "page": 53,
+          "sourceType": "ref",
+          "role": "spectral clustering",
+          "status": "draft"
+        },
+        {
+          "sourceId": "DSA5105/Ref/document.pdf",
+          "page": 5,
+          "sourceType": "ref",
+          "role": "past-exam Laplacian alignment",
+          "status": "assessment-derived"
+        }
+      ]
+    },
+    {
       "id": "dsa5105-spectral-clustering-section-2",
       "type": "teaching-note",
       "title": "Reference depth · Smoothness and cuts",
       "body": "For a symmetric graph, $f^\\top Lf=\\frac12\\sum_{i,j}A_{ij}(f_i-f_j)^2$. A low value means connected nodes receive similar scalar values. The constant vector is the zero-eigenvalue direction; the next eigenvector, often called the Fiedler vector for a connected graph, gives a relaxed two-way partition signal.",
+      "sourceType": "ref",
+      "sourceRefs": [
+        {
+          "sourceId": "DSA5105/Ref/Mathematics_of_Data_Science.pdf",
+          "page": 50,
+          "sourceType": "ref",
+          "role": "graph theory",
+          "status": "draft"
+        },
+        {
+          "sourceId": "DSA5105/Ref/Mathematics_of_Data_Science.pdf",
+          "page": 53,
+          "sourceType": "ref",
+          "role": "spectral clustering",
+          "status": "draft"
+        },
+        {
+          "sourceId": "DSA5105/Ref/document.pdf",
+          "page": 5,
+          "sourceType": "ref",
+          "role": "past-exam Laplacian alignment",
+          "status": "assessment-derived"
+        }
+      ]
+    },
+    {
+      "id": "dsa5105-spectral-clustering-section-2-formula",
+      "type": "formula",
+      "name": "Smoothness and cuts formula",
+      "purpose": "Use it to make the smoothness and cuts claim operational; state its assumptions before applying it.",
+      "latex": "f^\\top Lf=\\frac12\\sum_{i,j}A_{ij}(f_i-f_j)^2",
+      "explanation": "The quadratic form turns graph connectivity into an energy. Spectral clustering relaxes a discrete cut problem into an eigenvector problem, then clusters rows of the selected eigenvector embedding.",
+      "symbols": [
+        {
+          "latex": "f",
+          "meaning": "node score vector"
+        },
+        {
+          "latex": "A_{ij}",
+          "meaning": "edge weight between i and j"
+        }
+      ],
       "sourceType": "ref",
       "sourceRefs": [
         {

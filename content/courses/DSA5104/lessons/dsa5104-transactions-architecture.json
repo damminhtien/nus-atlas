@@ -219,6 +219,8 @@
           "meaning": "transfer amount"
         }
       ],
+      "name": "Atomic transfer invariant",
+      "purpose": "Use it to show why both account updates belong to one transaction.",
       "sourceType": "lecture"
     }
   ],
@@ -281,6 +283,8 @@
     {
       "id": "dsa5104-transactions-architecture-formula-1",
       "type": "formula",
+      "name": "Atomic transfer invariant",
+      "purpose": "Use it to show why both account updates belong to one transaction.",
       "latex": "\\mathrm{transfer}(A,B,a):\\quad A\\leftarrow A-a,\\quad B\\leftarrow B+a",
       "explanation": "A transfer is one logical function even though it contains multiple reads and writes. Atomic transaction semantics prevent a failure between the updates from exposing only one side of the transfer.",
       "symbols": [

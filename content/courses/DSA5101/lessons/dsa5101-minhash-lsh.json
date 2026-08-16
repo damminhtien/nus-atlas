@@ -179,6 +179,8 @@
           "meaning": "shared elements"
         }
       ],
+      "name": "MinHash collision identity",
+      "purpose": "Use it to estimate Jaccard similarity from repeated minimum-hash collisions.",
       "sourceType": "lecture"
     },
     {
@@ -198,6 +200,8 @@
           "meaning": "number of bands"
         }
       ],
+      "name": "LSH candidate probability",
+      "purpose": "Use it to quantify the false-positive/false-negative trade-off created by bands and rows.",
       "sourceType": "lecture",
       "caveat": "LSH trades false positives and false negatives by changing $b$ and $r$; it is not an exact similarity test."
     }
@@ -245,6 +249,8 @@
     {
       "id": "dsa5101-minhash-lsh-formula-1",
       "type": "formula",
+      "name": "MinHash collision identity",
+      "purpose": "Use it to estimate Jaccard similarity from repeated minimum-hash collisions.",
       "latex": "\\Pr\\bigl[h_{\\pi}(A)=h_{\\pi}(B)\\bigr] = J(A,B) = \\frac{|A\\cap B|}{|A\\cup B|}",
       "explanation": "Under a random permutation, the probability that the minimum hashed element agrees is exactly the Jaccard similarity. Repeating permutations gives an estimator whose collision frequency approaches $J(A,B)$.",
       "symbols": [
@@ -282,6 +288,8 @@
     {
       "id": "dsa5101-minhash-lsh-formula-2",
       "type": "formula",
+      "name": "LSH candidate probability",
+      "purpose": "Use it to quantify the false-positive/false-negative trade-off created by bands and rows.",
       "latex": "P_{\\mathrm{candidate}} = 1 - \\bigl(1-s^r\\bigr)^b",
       "explanation": "A band matches when all $r$ rows in that band match. The pair becomes a candidate if at least one of the $b$ bands matches, so compute one-minus-the-probability that every band fails.",
       "symbols": [

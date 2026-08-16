@@ -239,6 +239,8 @@
           "meaning": "materialization cost"
         }
       ],
+      "name": "Distributed scan cost decomposition",
+      "purpose": "Use it to diagnose repeated scans, data movement, and synchronization in a large-data workflow.",
       "sourceType": "lecture",
       "caveat": "This is an engineering decomposition, not an exact runtime law."
     }
@@ -309,6 +311,8 @@
     {
       "id": "dsa5104-semi-structured-formula-1",
       "type": "formula",
+      "name": "Distributed scan cost decomposition",
+      "purpose": "Use it to diagnose repeated scans, data movement, and synchronization in a large-data workflow.",
       "latex": "T_{\\mathrm{total}} \\approx T_{\\mathrm{parse}} + T_{\\mathrm{shuffle}} + T_{\\mathrm{compute}} + T_{\\mathrm{write}}",
       "explanation": "Semi-structured and distributed workflows add costs beyond the logical query. Parsing nested records, moving rows across partitions, computing the transformation, and writing the result are separate places to measure.",
       "symbols": [

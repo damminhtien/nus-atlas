@@ -48,6 +48,8 @@
             "meaning": "discount factor"
           }
         ],
+        "name": "Bellman backup formula",
+        "purpose": "Use it to make the bellman backup claim operational; state its assumptions before applying it.",
         "sourceType": "lecture"
       }
     },
@@ -72,6 +74,8 @@
             "meaning": "permutation-invariant aggregation"
           }
         ],
+        "name": "Message passing formula",
+        "purpose": "Use it to make the message passing claim operational; state its assumptions before applying it.",
         "sourceType": "ref"
       }
     },
@@ -135,10 +139,88 @@
       ]
     },
     {
+      "id": "dsa5105-rl-gnn-section-1-formula",
+      "type": "formula",
+      "name": "Bellman backup formula",
+      "purpose": "Use it to make the bellman backup claim operational; state its assumptions before applying it.",
+      "latex": "Q^*(s,a)=r+\\gamma\\max_{a'}Q^*(s',a')",
+      "explanation": "Start with the immediate reward $r$. Then look at the next state and take the largest available action value. The discount $\\gamma$ controls how much that future estimate contributes to the target.",
+      "symbols": [
+        {
+          "latex": "Q^*(s,a)",
+          "meaning": "optimal value of taking action $a$ in state $s$"
+        },
+        {
+          "latex": "r",
+          "meaning": "immediate reward"
+        },
+        {
+          "latex": "\\gamma",
+          "meaning": "discount factor"
+        }
+      ],
+      "sourceType": "lecture",
+      "sourceRefs": [
+        {
+          "sourceId": "DSA5105/syllabus.pdf",
+          "page": 1,
+          "sourceType": "lecture",
+          "role": "current scope",
+          "status": "current"
+        },
+        {
+          "sourceId": "DSA5105/Ref/Chapter3_Graph_Neural_Networks.pdf",
+          "page": 1,
+          "sourceType": "ref",
+          "role": "optional GNN reading",
+          "status": "optional"
+        }
+      ]
+    },
+    {
       "id": "dsa5105-rl-gnn-section-2",
       "type": "teaching-note",
       "title": "Reference depth · Message passing",
       "body": "A GNN updates a node by transforming neighboring representations, aggregating that summary with a permutation-invariant operation, and combining it with the node’s own state. The graph edge structure is the source of locality.",
+      "sourceType": "ref",
+      "sourceRefs": [
+        {
+          "sourceId": "DSA5105/syllabus.pdf",
+          "page": 1,
+          "sourceType": "lecture",
+          "role": "current scope",
+          "status": "current"
+        },
+        {
+          "sourceId": "DSA5105/Ref/Chapter3_Graph_Neural_Networks.pdf",
+          "page": 1,
+          "sourceType": "ref",
+          "role": "optional GNN reading",
+          "status": "optional"
+        }
+      ]
+    },
+    {
+      "id": "dsa5105-rl-gnn-section-2-formula",
+      "type": "formula",
+      "name": "Message passing formula",
+      "purpose": "Use it to make the message passing claim operational; state its assumptions before applying it.",
+      "latex": "h_v'=\\sigma\\!\\left(W_0h_v+\\operatorname{AGG}_{u\\in N(v)}W_1h_u\\right)",
+      "explanation": "The self-state contribution and the aggregated neighbor message are combined, then passed through a learnable nonlinearity. The aggregator must not depend on the arbitrary order in which neighbors are listed.",
+      "symbols": [
+        {
+          "latex": "h_v",
+          "meaning": "current representation of node $v$"
+        },
+        {
+          "latex": "N(v)",
+          "meaning": "neighbors of $v$"
+        },
+        {
+          "latex": "\\operatorname{AGG}",
+          "meaning": "permutation-invariant aggregation"
+        }
+      ],
       "sourceType": "ref",
       "sourceRefs": [
         {

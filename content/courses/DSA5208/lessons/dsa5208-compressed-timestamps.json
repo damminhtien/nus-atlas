@@ -231,6 +231,8 @@
           "meaning": "number of processes"
         }
       ],
+      "name": "Recent-vector storage cost",
+      "purpose": "Use it as the quadratic metadata baseline before introducing differential compression.",
       "sourceType": "lecture"
     },
     {
@@ -246,6 +248,8 @@
           "meaning": "Last Update vector"
         }
       ],
+      "name": "Differential timestamp storage cost",
+      "purpose": "Use it to explain how receiver-specific Last Sent and Last Update state targets linear storage.",
       "sourceType": "lecture"
     }
   ],
@@ -315,6 +319,8 @@
     {
       "id": "dsa5208-compressed-timestamps-formula-1",
       "type": "formula",
+      "name": "Recent-vector storage cost",
+      "purpose": "Use it as the quadratic metadata baseline before introducing differential compression.",
       "latex": "\\mathrm{storage}_{\\mathrm{recent}}=O(n^2)",
       "explanation": "Keeping a recent vector timestamp for every sender-receiver pair creates quadratic storage in the number of processes.",
       "symbols": [
@@ -351,6 +357,8 @@
     {
       "id": "dsa5208-compressed-timestamps-formula-2",
       "type": "formula",
+      "name": "Differential timestamp storage cost",
+      "purpose": "Use it to explain how receiver-specific Last Sent and Last Update state targets linear storage.",
       "latex": "\\mathrm{storage}_{\\mathrm{differential}}=O(n)",
       "explanation": "The Singhal-Kshemkalyani differential technique reduces storage by maintaining only Last Sent and Last Update vectors at each process.",
       "symbols": [

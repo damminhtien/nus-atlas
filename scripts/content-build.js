@@ -93,17 +93,32 @@ function blockRefs(lesson) {
 function lessonBlocks(lesson) {
   const blocks = [];
   const refsFor = block => Array.isArray(block && block.sourceRefs) && block.sourceRefs.length ? block.sourceRefs : blockRefs(lesson);
-  (lesson.sections || []).forEach((section, index) => blocks.push({
-    id: `${lesson.id}-section-${index + 1}`,
-    type: "teaching-note",
-    title: section.title,
-    body: section.body,
-    sourceType: section.sourceType,
-    sourceRefs: refsFor(section)
-  }));
+  (lesson.sections || []).forEach((section, index) => {
+    blocks.push({
+      id: `${lesson.id}-section-${index + 1}`,
+      type: "teaching-note",
+      title: section.title,
+      body: section.body,
+      sourceType: section.sourceType,
+      sourceRefs: refsFor(section)
+    });
+    if (section.math) blocks.push({
+      id: `${lesson.id}-section-${index + 1}-formula`,
+      type: "formula",
+      name: section.math.name,
+      purpose: section.math.purpose,
+      latex: section.math.latex,
+      explanation: section.math.explanation,
+      symbols: section.math.symbols || [],
+      sourceType: section.math.sourceType || section.sourceType,
+      sourceRefs: refsFor(section)
+    });
+  });
   (lesson.math || []).forEach((formula, index) => blocks.push({
     id: `${lesson.id}-formula-${index + 1}`,
     type: "formula",
+    name: formula.name,
+    purpose: formula.purpose,
     latex: formula.latex,
     explanation: formula.explanation,
     symbols: formula.symbols || [],
