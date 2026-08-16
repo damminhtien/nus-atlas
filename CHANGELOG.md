@@ -6,6 +6,10 @@ and refresh first-party asset URLs so browsers and the service worker pick up th
 
 ## [Unreleased]
 
+## [0.2.27] - 2026-08-16
+
+- Make visual study cues actionable
+
 ## [0.2.26] - 2026-08-16
 
 - Deepen DSA5105 teaching content and Week 1 Atlas layer

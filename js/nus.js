@@ -12,6 +12,7 @@
   const { esc, text, sourceLabel, sourceBadge, sourceItem, sourceGroups, pageHead, card, button, statusPill,
     visualCard, mathBlock, sourceDisclosure, lessonSection, workedExample, recallItem, criticalThinking, studyKit, studyCompass } = presentation;
   const DEFAULT_FOCUS_COURSE = "DSA5208";
+  const VISUAL_CUE_KEY = "nus.visual-cues.v1";
   let focusTimer = null;
 
   function course(code) { return repository() ? repository().getCourse(code) : courses().find(c => c.code === code) || null; }
@@ -70,6 +71,39 @@
   function readerButton() {
     const enabled = readerModeOn();
     return `<button class="btn ghost nus-reader-toggle" id="nus-reader-toggle" type="button" aria-pressed="${enabled}">${enabled ? "Exit focus reading" : "Focus reading"}</button>`;
+  }
+  function readVisualCueState() {
+    try {
+      const value = JSON.parse(localStorage.getItem(VISUAL_CUE_KEY) || "{}");
+      return value && typeof value === "object" ? value : {};
+    } catch (_) { return {}; }
+  }
+  function writeVisualCueState(state) {
+    try { localStorage.setItem(VISUAL_CUE_KEY, JSON.stringify(state)); } catch (_) { /* progress is optional */ }
+  }
+  function syncVisualCueProgress() {
+    const state = readVisualCueState();
+    const buttons = [...root.querySelectorAll("[data-nus-visual-practice]")];
+    const practiced = buttons.filter(button => !!state[button.dataset.nusVisualPractice]);
+    buttons.forEach(button => {
+      const done = !!state[button.dataset.nusVisualPractice];
+      button.setAttribute("aria-pressed", done ? "true" : "false");
+      button.textContent = done ? "Practiced ✓" : "Mark practiced";
+      button.closest("[data-nus-visual-card]")?.classList.toggle("is-practiced", done);
+      const status = button.closest("[data-nus-visual-card]")?.querySelector("[data-nus-visual-status]");
+      if (status) status.textContent = done ? "Practiced" : "Not practiced";
+    });
+    const progress = root.querySelector("[data-nus-visual-progress]");
+    if (progress) progress.textContent = `${practiced.length}/${buttons.length} practiced`;
+  }
+  function bindVisualCueProgress() {
+    root.querySelectorAll("[data-nus-visual-practice]").forEach(button => button.addEventListener("click", () => {
+      const state = readVisualCueState(), id = button.dataset.nusVisualPractice;
+      if (state[id]) delete state[id]; else state[id] = true;
+      writeVisualCueState(state);
+      syncVisualCueProgress();
+    }));
+    syncVisualCueProgress();
   }
   function allUpcoming() { return assessments().filter(a => a.date).sort((a, b) => new Date(a.date) - new Date(b.date)); }
   function firstOpenLesson() { for (const c of courses()) { const l = lessons(c.code).find(x => !window.NUS_STORE.lessonDone(x.id)); if (l) return { course: c, lesson: l }; } return null; }
@@ -176,6 +210,7 @@
     root.querySelectorAll("[data-nus-jump]").forEach(buttonEl => buttonEl.addEventListener("click", () => {
       document.getElementById(buttonEl.dataset.nusJump)?.scrollIntoView({ behavior: "smooth", block: "start" });
     }));
+    bindVisualCueProgress();
   }
   function renderLesson(code, id) {
     if (ensureCourseLoaded(code, () => renderLesson(code, id))) return;
@@ -191,7 +226,9 @@
     body += `<div class="nus-lesson-actions">${button("← Course", `#/nus/course/${c.code}`, "ghost")}<button class="btn ${done ? "ghost" : "primary"}" id="nus-mark-lesson">${done ? "✓ Completed" : "Mark complete"}</button>${slideSet ? button(slideResumeState.label, `#/nus/slides/${c.code}/${slideSet.id}/${slideResumeState.number}`, "primary") : ""}${l.contrastDrills && l.contrastDrills.length ? button("Concept contrasts", `#/nus/contrast/${c.code}/${l.id}`, "ghost") : ""}${button("Exam mode", `#/nus/exam/${c.code}/${l.id}`, "ghost")}${button("Mistake Clinic", `#/nus/mistakes/${c.code}`, "ghost")}${readerButton()}</div>`;
     body += studyCompass(l);
     const lab = repository() ? repository().getLab(l.id) : window.NUS_VISUAL_LABS && window.NUS_VISUAL_LABS[l.id];
-    body += `<div class="nus-lesson-grid"><main><section class="nus-card nus-objectives reveal"><div class="nus-teach-head"><h3>What you should be able to do</h3><span class="pill gold">${esc(l.minutes)} min</span></div><ul>${(l.objectives || []).map(objective => `<li>${esc(objective)}</li>`).join("")}</ul></section>${lab && window.NUS_COMPONENTS ? window.NUS_COMPONENTS.renderLab(l, lab) : ""}<div id="nus-lesson-read">${(l.sections || []).map(lessonSection).join("")}${(l.math || []).map(mathBlock).join("")}</div><div id="nus-lesson-work">${(l.examples || []).map(workedExample).join("")}</div>${criticalThinking(l)}<section class="nus-card nus-recall reveal" id="nus-lesson-recall"><div class="nus-teach-head"><h3>Recall before you test</h3><span class="pill">${l.questions.length} prompts</span></div><p class="nus-muted">Answer on paper first. Open each prompt only after you commit to an answer.</p><div class="nus-question-list">${l.questions.map(recallItem).join("")}</div>${button("Start this lesson in Exam Mode", `#/nus/exam/${c.code}/${l.id}`, "primary")}</section>${studyKit(l)}<div class="nus-lesson-nav">${previous ? button(`← ${previous.title}`, `#/nus/lesson/${c.code}/${previous.id}`, "ghost") : `<span></span>`}${next ? button(`Next: ${next.title} →`, `#/nus/lesson/${c.code}/${next.id}`, "primary") : button("Back to course", `#/nus/course/${c.code}`, "primary")}</div></main><aside>${l.visualIds && l.visualIds.length ? card("Visual study cues", l.visualIds.map(visualCard).join(""), "reveal") : ""}${card("Provenance", sourceDisclosure(l.sourceRefs, "Open source pages"), "reveal")}</aside></div>`;
+    const visualCueIds = Array.isArray(l.visualIds) ? l.visualIds : [];
+    const visualCueBody = visualCueIds.length ? `<p class="nus-visual-cue-intro">Use each cue as a short loop: <b>look → predict → explain</b>. <span data-nus-visual-progress>0/${visualCueIds.length} practiced</span></p>${visualCueIds.map(visualId => visualCard(visualId, { courseCode: c.code, lessonId: l.id, hasLab: !!lab })).join("")}` : "";
+    body += `<div class="nus-lesson-grid"><main><section class="nus-card nus-objectives reveal"><div class="nus-teach-head"><h3>What you should be able to do</h3><span class="pill gold">${esc(l.minutes)} min</span></div><ul>${(l.objectives || []).map(objective => `<li>${esc(objective)}</li>`).join("")}</ul></section>${lab && window.NUS_COMPONENTS ? window.NUS_COMPONENTS.renderLab(l, lab) : ""}<div id="nus-lesson-read">${(l.sections || []).map(lessonSection).join("")}${(l.math || []).map(mathBlock).join("")}</div><div id="nus-lesson-work">${(l.examples || []).map(workedExample).join("")}</div>${criticalThinking(l)}<section class="nus-card nus-recall reveal" id="nus-lesson-recall"><div class="nus-teach-head"><h3>Recall before you test</h3><span class="pill">${l.questions.length} prompts</span></div><p class="nus-muted">Answer on paper first. Open each prompt only after you commit to an answer.</p><div class="nus-question-list">${l.questions.map(recallItem).join("")}</div>${button("Start this lesson in Exam Mode", `#/nus/exam/${c.code}/${l.id}`, "primary")}</section>${studyKit(l)}<div class="nus-lesson-nav">${previous ? button(`← ${previous.title}`, `#/nus/lesson/${c.code}/${previous.id}`, "ghost") : `<span></span>`}${next ? button(`Next: ${next.title} →`, `#/nus/lesson/${c.code}/${next.id}`, "primary") : button("Back to course", `#/nus/course/${c.code}`, "primary")}</div></main><aside>${visualCueIds.length ? card("Visual study cues", visualCueBody, "reveal") : ""}${card("Provenance", sourceDisclosure(l.sourceRefs, "Open source pages"), "reveal")}</aside></div>`;
     root.innerHTML = body;
     typesetNus();
     if (window.NUS_COMPONENTS) window.NUS_COMPONENTS.bind(root);

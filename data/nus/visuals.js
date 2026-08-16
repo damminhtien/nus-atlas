@@ -28,6 +28,113 @@
   };
 })();
 
+/* Structured study cues: the thumbnail is only the entry point; these fields
+ * turn each visual into a short predict-observe-explain retrieval task. */
+(function () {
+  "use strict";
+  const cues = {
+    "dsa5105-ordinal-nominal": {
+      learningGoal: "Classify a feature by whether its categories have meaningful order, without inventing numeric distance.",
+      lookFor: ["Ordinal levels preserve order, but adjacent levels need not be equally spaced.", "Nominal categories have no natural ranking; permuting their labels does not change meaning.", "One-hot encoding preserves category identity without treating labels as scalar targets."],
+      prompt: String.raw`A rating changes from $2$ to $3$, while a class label changes from cat to dog. Which comparison is meaningful, and what encoding would you choose?`,
+      nextMove: "Write one ordinal feature and one nominal feature from a real dataset, then state the representation for each.",
+      check: String.raw`$2<3$ is meaningful for ordinal data, but cat and dog have no order. Use an order-aware representation only when order is real; use one-hot indicators for nominal categories.`,
+      labId: "dsa5105-erm"
+    },
+    "dsa5105-weighted-ols": {
+      learningGoal: String.raw`Move from weighted residuals to the normal equations, then check the rank assumption that makes the solution unique.`,
+      lookFor: [String.raw`The diagonal weight matrix $A$ changes how strongly each row contributes to the objective.`, String.raw`The normal system is $\Phi^\top A\Phi\hat w=\Phi^\top Ay$.`, String.raw`Positive weights change emphasis but do not repair a rank-deficient design by themselves.`],
+      prompt: String.raw`If one example's weight doubles, which row changes in the objective? Does that alone make $\Phi^\top A\Phi$ invertible?`,
+      nextMove: String.raw`Name the matrix whose null-space you must inspect, then state the full-column-rank condition before using an inverse.`,
+      check: String.raw`The row's residual receives more emphasis. Uniqueness still requires the weighted design to have full column rank; positive diagonal weights preserve the relevant null-space test but do not create missing information.`,
+      labId: "dsa5105-weighted-ols"
+    },
+    "dsa5105-svm-dual-kkt": {
+      learningGoal: String.raw`Use KKT activity to connect dual coefficients, margin position, and the points that determine the SVM boundary.`,
+      lookFor: [String.raw`$α_i=0$ means the point is inactive in the dual representation.`, String.raw`$0<\alpha_i<C$ identifies a point on the soft-margin boundary under the usual convention.`, String.raw`$α_i=C$ signals a margin violation or a point inside the margin, subject to the exact constraints.`],
+      prompt: String.raw`A point has $0<\alpha_i<C$. What geometric condition should you check before calling it a support vector?`,
+      nextMove: String.raw`Write the complementary-slackness case beside the point's signed margin, rather than inferring geometry from $α_i$ alone.`,
+      check: String.raw`It is an active support vector and typically lies exactly on a margin boundary, so its complementary-slackness case should be consistent with $y_i(w^\top x_i+b)=1$ in the normalized hard-margin-style convention.`,
+      labId: "dsa5105-svm-dual-kkt"
+    },
+    "dsa5105-trees-ensembles": {
+      learningGoal: "Separate a local tree split from the statistical reason bagging and boosting can improve a weak learner.",
+      lookFor: ["A split creates purer child groups according to the chosen impurity measure.", "Bagging fits varied bootstrap samples and averages their predictions to reduce variance.", "Boosting changes example weights or residual focus so later learners target earlier mistakes."],
+      prompt: "A hard example receives more weight after a weak learner. Which ensemble mechanism does that describe, and what changes next?",
+      nextMove: "Predict whether the next learner should focus more or less on the misclassified example, then name the ensemble invariant.",
+      check: "That is boosting: later learners focus more on mistakes through updated weights or residuals. Bagging does not sequentially reweight examples from one learner to the next.",
+      labId: "dsa5105-trees-ensembles"
+    },
+    "dsa5105-neural-backprop": {
+      learningGoal: "Trace a neural computation forward and a gradient backward, keeping local derivatives separate from the optimization update.",
+      lookFor: ["Forward pass values are cached before the backward pass starts.", "Backprop multiplies local derivatives along each path by the chain rule.", "A correct gradient is not a certificate of a global optimum; the optimizer still chooses the update."],
+      prompt: "If one intermediate derivative is zero, which downstream parameter gradients can disappear, and why?",
+      nextMove: "Circle the path from the loss to one weight and write the product of local derivatives along that path.",
+      check: "Every gradient path containing the zero local derivative contributes zero through the chain rule. Other independent paths may still contribute, so inspect the graph rather than declaring every gradient zero.",
+      labId: "dsa5105-neural-backprop"
+    },
+    "dsa5105-pca-numerical": {
+      learningGoal: String.raw`Connect centering, covariance eigenvectors, explained variance, and reconstruction error in one pipeline.`,
+      lookFor: [String.raw`Center the data before forming the covariance matrix.`, String.raw`The eigenvector with the largest eigenvalue captures the largest projected variance.`, String.raw`Discarded eigenvalues quantify variance omitted by the lower-dimensional reconstruction.`],
+      prompt: String.raw`With two centered features and $k=1$, what evidence tells you which direction to keep and what information is discarded?`,
+      nextMove: String.raw`Read the ordered eigenvalues first; only then compute the retained variance ratio and discuss reconstruction.`,
+      check: String.raw`Keep the eigenvector with the largest eigenvalue. The retained variance ratio is the kept eigenvalue divided by the sum of eigenvalues; the remaining eigenvalue represents discarded variance, not automatically predictive error.`,
+      labId: "dsa5105-pca-numerical"
+    },
+    "dsa5105-gmm-em-numerical": {
+      learningGoal: String.raw`Keep the E-step's soft responsibilities separate from the M-step's weighted parameter update.`,
+      lookFor: [String.raw`For a fixed point, responsibilities across components sum to $1$.`, "The E-step assigns probabilities using prior weights and likelihoods.", "The M-step treats responsibilities as weights when updating means, covariances, and mixture weights."],
+      prompt: String.raw`A point has responsibilities $0.8$ and $0.2$. What do those numbers weight in the next update, and what must they sum to?`,
+      nextMove: "Write the numerator and denominator of one weighted mean before substituting any numbers.",
+      check: String.raw`They weight the point's contribution to each component's M-step statistics, and the responsibilities for that point must sum to $1$. They are soft memberships, not two independent binary labels.`,
+      labId: "dsa5105-gmm-em-numerical"
+    },
+    "dsa5105-mdp-value-iteration": {
+      learningGoal: String.raw`Read a value-iteration sweep as a one-step lookahead backup before extracting a greedy policy.`,
+      lookFor: ["Each candidate action combines immediate reward with discounted successor value.", String.raw`The maximum is taken only after all action candidates have been computed.`, "The policy is read from the maximizing action after the value estimate is updated."],
+      prompt: String.raw`What changes in the backup when $γ=0$, and what does the resulting policy optimize?`,
+      nextMove: "List the action values in a row, circle the maximum, then copy its action label into the policy.",
+      check: String.raw`With $γ=0$, future values vanish, so the backup chooses the action with the largest immediate expected reward. The policy is myopic because no continuation value is counted.`,
+      labId: "dsa5105-mdp-value-iteration"
+    },
+    "dsa5105-dynamic-programming": {
+      learningGoal: "Turn a recurrence into an auditable table by naming the state, base cases, final move, and complexity.",
+      lookFor: ["The state stores exactly the subproblem needed by later decisions.", "Base cases anchor the recurrence before any table entry is filled.", "The recurrence enumerates the allowed final moves instead of guessing a formula from the table."],
+      prompt: "If a recurrence is correct but its base case is missing, which part of the algorithm can you no longer verify?",
+      nextMove: "Point from one table cell to every predecessor it depends on, then state the evaluation order and memory cost.",
+      check: "Without a base case, the table has no grounded starting values, so the recurrence cannot produce a well-defined solution. A complete answer must also state evaluation order and complexity.",
+      labId: "dsa5105-dynamic-programming"
+    },
+    "dsa5105-graph-kernel-pagerank": {
+      learningGoal: String.raw`Separate a graph-kernel PSD eigenvalue argument from PageRank's stochastic power iteration.`,
+      lookFor: [String.raw`For a Gram block with eigenvalues $1+q$ and $1-q$, both must be non-negative.`, "PageRank requires a normalized transition convention and a treatment for dangling nodes.", String.raw`A PageRank iteration preserves a probability interpretation when the rank vector remains non-negative and sums to $1$.`],
+      prompt: String.raw`Before running a PageRank power iteration, what matrix and normalization checks should you make?`,
+      nextMove: "Label whether your transition matrix is row- or column-stochastic, then place the transpose consistently in the update.",
+      check: String.raw`Check the stochastic orientation, repair dangling nodes, apply damping, and verify non-negativity plus unit sum after an iteration. The $q$ eigenvalue bound belongs to the separate PSD Gram argument.`,
+      labId: "dsa5105-graph-kernel-pagerank"
+    },
+    "dsa5105-spectral-clustering": {
+      learningGoal: String.raw`Use the Laplacian quadratic form to explain smooth graph signals and the steps that follow the spectral embedding.`,
+      lookFor: [String.raw`The energy $f^\top Lf$ grows when adjacent nodes receive very different values.`, "Low non-trivial Laplacian eigenvectors provide a smooth embedding of graph nodes.", "K-means is a separate final step applied to rows of the embedding; eigenvectors do not assign cluster names by themselves."],
+      prompt: String.raw`If two strongly connected nodes receive very different values, what happens to the Laplacian energy and why?`,
+      nextMove: String.raw`Trace the pipeline: build $L$, select eigenvectors, embed nodes, then cluster the embedded rows.`,
+      check: String.raw`The edge contributes a larger squared difference to $f^\top Lf$, so the energy rises. Spectral clustering prefers embeddings that keep strongly connected nodes close before the separate K-means approximation.`,
+      labId: "dsa5105-spectral-clustering"
+    },
+    "dsa5105-ls-svm-loo": {
+      learningGoal: "Compare three regularized fitting views without confusing ridge normal equations, LS-SVM equality constraints, and LOO correction.",
+      lookFor: [String.raw`Ridge adds $λ I$ to a normal system and stabilizes inversion.`, "LS-SVM uses equality constraints with squared errors, producing a block KKT system.", String.raw`The LOO correction depends on the hat-matrix diagonal $H_{ii}$, which measures leverage.`],
+      prompt: String.raw`Which quantity warns that an observation's LOO residual may become large: the ridge penalty, the KKT equality, or $H_{ii}$?`,
+      nextMove: String.raw`Write the three objects in separate columns: normal matrix, KKT block, and smoothing matrix.`,
+      check: String.raw`$H_{ii}$ is the leverage signal; as it approaches $1$, the denominator in $e_i^{\mathrm{LOO}}=e_i/(1-H_{ii})$ can amplify the residual. The other two objects describe different parts of the fitting system.`,
+      labId: "dsa5105-ls-svm-loo"
+    }
+  };
+  Object.entries(cues).forEach(([id, cue]) => {
+    if (window.NUS_VISUALS[id]) Object.assign(window.NUS_VISUALS[id], cue);
+  });
+})();
+
 (function () {
   "use strict";
   const local = (sourceId, page) => ({ sourceId, page, access: "local source; not copied to public bundle" });

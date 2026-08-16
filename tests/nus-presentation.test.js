@@ -58,7 +58,11 @@ test("course source groups keep official exercises out of lecture core", () => {
 
 test("presentation helpers render visual cues without owning data", () => {
   const view = presentation();
-  assert.match(view.visualCard("visual"), /nus-visual-table/);
+  const html = view.visualCard("visual");
+  assert.match(html, /nus-visual-table/);
+  assert.match(html, /Study target/);
+  assert.match(html, /Try before revealing the answer/);
+  assert.match(html, /data-nus-visual-practice="visual"/);
   assert.match(view.visualCard("missing"), /^$/);
   assert.match(view.studyCompass({ sections: [], examples: [], criticalQuestions: [], questions: [] }), /Read/);
 });

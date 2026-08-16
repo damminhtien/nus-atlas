@@ -87,10 +87,19 @@
     if (normalized.includes("screenshot")) return "screen";
     return "diagram";
   }
-  function visualCard(id) {
+  function visualCard(id, context = {}) {
     const visual = getVisuals()[id]; if (!visual) return "";
     const kind = visualCueKind(visual.kind);
-    return `<article class="nus-visual nus-visual-${kind}"><div class="nus-visual-cue" aria-hidden="true"><i></i><i></i><i></i></div><div class="nus-visual-copy"><div class="nus-visual-head"><span class="pill violet">${esc(visual.kind)}</span><b>${esc(visual.title)}</b></div><p><strong>Use it to see:</strong> ${text(visual.observation)}</p><small>Source: ${esc(sourceLabel(visual.source))}${visual.source && visual.source.externalUrl ? ` · <a href="${esc(visual.source.externalUrl)}" target="_blank" rel="noreferrer">external attribution ↗</a>` : ""}</small></div></article>`;
+    const lookFor = Array.isArray(visual.lookFor) && visual.lookFor.length ? visual.lookFor : [visual.observation || "Identify the relationship this visual makes easier to inspect."];
+    const learningGoal = visual.learningGoal || visual.observation || "Turn the visual into one testable claim.";
+    const prompt = visual.prompt || "What should you be able to explain after inspecting this visual?";
+    const check = visual.check || "State the relationship, the assumption behind it, and one way it could fail.";
+    const labId = visual.labId || context.lessonId;
+    const courseCode = context.courseCode || visual.courseCode;
+    const sameLessonLab = !!(context.hasLab && context.lessonId && context.lessonId === labId);
+    const labHref = labId && courseCode ? (sameLessonLab ? `#nus-lab-${labId}` : `#/nus/lesson/${courseCode}/${labId}`) : "";
+    const labLink = labHref ? `<a class="btn ghost nus-visual-lab-link" href="${esc(labHref)}"${labHref.startsWith("#/") ? " data-route" : ""}>${sameLessonLab ? "Open interactive lab" : "Open linked lab"} ↗</a>` : "";
+    return `<article class="nus-visual nus-visual-${kind}" data-nus-visual-card="${esc(id)}"><div class="nus-visual-cue" aria-hidden="true"><i></i><i></i><i></i></div><div class="nus-visual-copy"><div class="nus-visual-head"><span class="pill violet">Visual study cue</span><b>${esc(visual.title)}</b><span class="nus-visual-status" data-nus-visual-status>Not practiced</span></div><div class="nus-visual-goal"><b>Study target</b><p>${text(learningGoal)}</p></div><div class="nus-visual-look"><b>Look for</b><ol>${lookFor.map(item => `<li>${text(item)}</li>`).join("")}</ol></div><details class="nus-visual-check"><summary><span>Try before revealing the answer</span><small>30–60 sec</small></summary><p><b>Prompt:</b> ${text(prompt)}</p>${visual.nextMove ? `<p><b>Make the move:</b> ${text(visual.nextMove)}</p>` : ""}<div class="nus-visual-answer"><b>Strong answer:</b> ${text(check)}</div></details><div class="nus-visual-actions">${labLink}<button class="btn ghost" type="button" data-nus-visual-practice="${esc(id)}" aria-pressed="false">Mark practiced</button></div><small>Source: ${esc(sourceLabel(visual.source))}${visual.source && visual.source.externalUrl ? ` · <a href="${esc(visual.source.externalUrl)}" target="_blank" rel="noreferrer">external attribution ↗</a>` : ""}</small></div></article>`;
   }
   function paragraphs(value) { return String(value || "").split(/\n\s*\n/).filter(Boolean).map(paragraph => `<p>${text(paragraph)}</p>`).join(""); }
   function mathBlock(math) {
