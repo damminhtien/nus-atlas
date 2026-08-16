@@ -70,6 +70,8 @@ test("migrated package is preferred and joins ID-linked study artifacts", () => 
   assert.equal(repo.getTextbook("DSA5105").chapters.length, 4);
   assert.equal(repo.getTextbook("DSA5105").source.sourceType, "textbook");
   assert.equal(repo.getQuestionBank("DSA5105").extensionCount, 44);
+  assert.equal(repo.getAssessmentMap("DSA5105").schemaVersion, "nus.assessment-map.v1");
+  assert.equal(repo.getAssessmentMap("DSA5105").topics.length, 12);
 });
 
 test("DSA5101 package joins textbook, labs, and source-backed questions", () => {

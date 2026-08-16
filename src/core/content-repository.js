@@ -72,6 +72,10 @@
     if (packageData && Array.isArray(packageData.assessments)) return packageData.assessments.slice();
     return assessments.filter(item => !courseId || item.courseCode === courseId);
   }
+  function getAssessmentMap(courseId) {
+    const packageData = courseId && coursePackage(courseId);
+    return packageData && packageData.assessmentMap ? packageData.assessmentMap : null;
+  }
   function getLab(labId) {
     for (const item of Object.values(labs)) if (item && item.lessonId === labId) return item;
     for (const packageData of Object.values(packages)) if (packageData.labs && packageData.labs[labId]) return packageData.labs[labId];
@@ -125,6 +129,7 @@
     getLesson,
     listLessons,
     getAssessment,
+    getAssessmentMap,
     getLab,
     listLabs,
     getVisual,

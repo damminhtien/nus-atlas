@@ -197,7 +197,7 @@
     let body = pageHead(c.code, c.title, c.description);
     const hasContrasts = lessons(c.code).some(item => Array.isArray(item.contrastDrills) && item.contrastDrills.length);
     const courseTextbook = repository() && repository().getTextbook ? repository().getTextbook(c.code) : null;
-    body += `<div class="nus-course-meta"><span>${esc(c.department)} · ${esc(c.faculty)}</span><span>Workload ${esc(c.workload.join(" / "))}</span>${hasContrasts ? button("Concept contrasts", `#/nus/contrast/${c.code}`, "ghost") : ""}${courseTextbook && courseTextbook.reader ? button("Textbook PDF", `#/nus/textbook/${c.code}/1`, "ghost") : ""}${button("Exam mode", `#/nus/exam/${c.code}`, "primary")}</div>`;
+    body += `<div class="nus-course-meta"><span>${esc(c.department)} · ${esc(c.faculty)}</span><span>Workload ${esc(c.workload.join(" / "))}</span>${c.code === "DSA5105" ? button("Exam & homework map", `#/nus/assessment-map/${c.code}`, "ghost") : ""}${hasContrasts ? button("Concept contrasts", `#/nus/contrast/${c.code}`, "ghost") : ""}${courseTextbook && courseTextbook.reader ? button("Textbook PDF", `#/nus/textbook/${c.code}/1`, "ghost") : ""}${button("Exam mode", `#/nus/exam/${c.code}`, "primary")}</div>`;
     body += `<div class="nus-course-layout"><div><div class="nus-course-progress"><b>Course progress</b>${courseProgressBar(c.code)}</div>${content(c.code).modules.map(m => `<section class="nus-module reveal"><div class="eyebrow">${esc(m.title)}</div>${(m.lessons || []).map(l => `<a class="nus-lesson-row" href="#/nus/lesson/${esc(c.code)}/${esc(l.id)}" data-route><span class="nus-lesson-dot ${window.NUS_STORE.lessonDone(l.id) ? "done" : ""}">${window.NUS_STORE.lessonDone(l.id) ? "✓" : ""}</span><div><b>${esc(l.title)}</b><span>Week ${esc(l.week)} · ${esc(l.minutes)} min · ${(l.questions || []).length} practice prompts${(repository() ? repository().getLab(l.id) : window.NUS_VISUAL_LABS && window.NUS_VISUAL_LABS[l.id]) ? " · visual lab" : ""}</span></div><span>→</span></a>`).join("")}</section>`).join("")}</div><aside>${card("Assessment weight", assessments().filter(a => a.courseCode === c.code).map(a => `<div class="nus-weight"><span>${esc(a.title)}</span><b>${a.weight}%</b></div>`).join(""), "reveal")}${card("Sources", sourceGroups(c).map(g => `<div class="nus-source-group"><b>${esc(g.label)}</b><ul class="nus-source-list">${g.refs.map(r => `<li>${sourceItem(r)}</li>`).join("")}</ul></div>`).join("")+`<a class="nus-external" href="${esc(c.nusmods.url)}" target="_blank" rel="noreferrer">NUSMods course page ↗</a>`, "reveal")}</aside></div>`;
     root.innerHTML = body;
   }
@@ -258,6 +258,22 @@
   function renderMistakes(code) {
     if (ensureCourseLoaded(code, () => renderMistakes(code))) return;
     return examFeature ? examFeature.renderMistakes(code) : renderNotFound();
+  }
+
+  const assessmentMapFeature = window.NUS_ASSESSMENT_MAP_FEATURE ? window.NUS_ASSESSMENT_MAP_FEATURE({
+    root,
+    getAssessmentMap: code => repository() && repository().getAssessmentMap ? repository().getAssessmentMap(code) : null,
+    getLessons: lessons,
+    pageHead,
+    sourceItem,
+    text,
+    esc,
+    button,
+    notFound: renderNotFound
+  }) : null;
+  function renderAssessmentMap(code) {
+    if (ensureCourseLoaded(code, () => renderAssessmentMap(code))) return;
+    return assessmentMapFeature ? assessmentMapFeature.render(code || "DSA5105") : renderNotFound();
   }
 
   const retrievalFeature = window.NUS_RETRIEVAL_FEATURE ? window.NUS_RETRIEVAL_FEATURE({
@@ -344,6 +360,7 @@
     course: parts => renderCourse(parts[1]),
     lesson: parts => renderLesson(parts[1], parts[2]),
     exam: parts => renderExam(parts[1], parts[2]),
+    "assessment-map": parts => renderAssessmentMap(parts[1] || "DSA5105"),
     review: parts => renderRetrieval(parts[1]),
     mistakes: parts => renderMistakes(parts[1] || focusCourseCode()),
     contrast: parts => renderContrast(parts[1] || focusCourseCode(), parts[2]),

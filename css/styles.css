@@ -2114,3 +2114,47 @@ body.nus-slide-focus-mode #app.nus-root .nus-slide-note p { font-size:clamp(16px
 @media (max-width:700px) {
   .nus-teaching-guide { grid-template-columns:1fr; }
 }
+
+/* Assessment map: evidence first, then the lesson and practice move. */
+.nus-assessment-map-intro { margin-bottom:18px; }
+.nus-assessment-map-intro-head, .nus-assessment-topic-head, .nus-assessment-evidence-head { display:flex; align-items:flex-start; justify-content:space-between; gap:14px; }
+.nus-assessment-map-intro-head h3, .nus-assessment-topic-head h3 { margin:4px 0 0; }
+.nus-assessment-map-rule { display:flex; gap:10px; align-items:flex-start; margin-top:16px; padding:12px 14px; border-left:3px solid var(--gold); border-radius:0 10px 10px 0; background:color-mix(in srgb, var(--gold) 7%, transparent); color:var(--ink-soft); font-size:14px; line-height:1.55; }
+.nus-assessment-map-rule b { color:var(--ink); white-space:nowrap; }
+.nus-assessment-map-stats { display:grid; grid-template-columns:repeat(4, minmax(0, 1fr)); gap:12px; margin-bottom:18px; }
+.nus-assessment-map-stats .nus-card { display:grid; gap:5px; padding:16px; }
+.nus-assessment-map-stats b { color:var(--nus-blue); font:600 27px var(--font-mono); }
+.nus-assessment-map-stats span { color:var(--ink-mute); font-size:12px; }
+.nus-assessment-map-controls { display:flex; align-items:end; justify-content:space-between; gap:18px; margin-bottom:18px; }
+.nus-assessment-map-controls label { display:grid; gap:6px; min-width:220px; color:var(--ink-soft); font-size:13px; }
+.nus-assessment-map-controls select { padding:9px 11px; border:1px solid var(--line); border-radius:8px; background:var(--bg); color:var(--ink); font:inherit; }
+.nus-assessment-map-controls .nus-muted { max-width:68ch; margin:0; }
+.nus-assessment-map-topics { display:grid; gap:14px; }
+.nus-assessment-topic { padding:20px; border:1px solid var(--line); border-radius:var(--radius); background:var(--bg-2); }
+.nus-assessment-topic-aplus { border-color:color-mix(in srgb, var(--gold) 58%, var(--line)); box-shadow:0 14px 32px -28px var(--gold); }
+.nus-assessment-topic-high { border-color:color-mix(in srgb, var(--nus-blue) 35%, var(--line)); }
+.nus-assessment-topic-scope { max-width:85ch; margin:14px 0; color:var(--ink-soft); line-height:1.65; }
+.nus-assessment-topic-scope b, .nus-assessment-topic-grid b { color:var(--ink); }
+.nus-assessment-topic-grid { display:grid; grid-template-columns:repeat(2, minmax(0, 1fr)); gap:10px; }
+.nus-assessment-topic-grid section { padding:12px; border:1px solid var(--line); border-radius:10px; background:color-mix(in srgb, var(--panel) 66%, transparent); }
+.nus-assessment-topic-grid p { margin:6px 0 0; color:var(--ink-soft); font-size:14px; line-height:1.58; }
+.nus-assessment-topic-links { display:flex; flex-wrap:wrap; gap:8px; margin:14px 0 0; }
+.nus-assessment-evidence { margin-top:14px; border-top:1px solid var(--line); padding-top:12px; }
+.nus-assessment-evidence summary { display:flex; align-items:center; justify-content:space-between; gap:10px; cursor:pointer; color:var(--ink-soft); }
+.nus-assessment-evidence summary span { color:var(--gold); font:600 12px var(--font-ui); text-transform:uppercase; letter-spacing:.06em; }
+.nus-assessment-evidence summary small { color:var(--ink-mute); }
+.nus-assessment-evidence-list { display:grid; grid-template-columns:repeat(auto-fit, minmax(250px, 1fr)); gap:10px; margin-top:10px; }
+.nus-assessment-evidence-list article { padding:12px; border:1px solid var(--line); border-radius:10px; background:color-mix(in srgb, var(--bg) 74%, transparent); }
+.nus-assessment-evidence-list p { margin:8px 0; color:var(--ink-soft); font-size:13px; line-height:1.55; }
+.nus-assessment-evidence-head { align-items:center; }
+.nus-assessment-evidence-head b { color:var(--ink); font-size:14px; }
+.nus-assessment-source { font-size:11px !important; }
+.nus-assessment-map-order { margin-top:18px; }
+.nus-assessment-map-order-grid { display:grid; grid-template-columns:repeat(4, minmax(0, 1fr)); gap:10px; }
+.nus-assessment-map-order-grid article { display:grid; grid-template-columns:30px minmax(0, 1fr); gap:10px; padding:12px; border:1px solid var(--line); border-radius:10px; }
+.nus-assessment-map-order-grid article > span { display:grid; place-items:center; width:28px; height:28px; border-radius:50%; background:var(--nus-blue); color:#fff; font:600 12px var(--font-mono); }
+.nus-assessment-map-order-grid h4 { margin:2px 0 5px; color:var(--ink); font-size:14px; }
+.nus-assessment-map-order-grid p { margin:0 0 7px; color:var(--ink-soft); font-size:12px; line-height:1.5; }
+.nus-assessment-map-order-grid small { color:var(--ink-mute); font-size:11px; }
+@media (max-width:900px) { .nus-assessment-map-order-grid { grid-template-columns:repeat(2, minmax(0, 1fr)); } }
+@media (max-width:700px) { .nus-assessment-map-rule, .nus-assessment-map-controls { align-items:stretch; flex-direction:column; }.nus-assessment-map-stats { grid-template-columns:repeat(2, minmax(0, 1fr)); }.nus-assessment-topic-grid, .nus-assessment-map-order-grid { grid-template-columns:1fr; }.nus-assessment-map-controls label { min-width:0; } }

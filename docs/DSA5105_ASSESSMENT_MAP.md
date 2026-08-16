@@ -2,6 +2,17 @@
 
 This map turns past-paper evidence into a revision index. It is not an official NUS assessment specification. Local exam PDFs are the strongest assessment evidence in the study folder; public student-upload previews are marked `assessment-derived` and are used only to prioritize practice topics.
 
+## Interactive map
+
+Open the production study map at [DSA5105 Exam & Homework Map](#/nus/assessment-map/DSA5105). The structured source is [assessment-map.json](../content/courses/DSA5105/assessment-map.json); the UI exposes the same evidence graph with filters for past exams, homework, midterm previews, and A+ focus clusters.
+
+The map deliberately keeps four layers separate:
+
+- lecture scope: what the learner must understand;
+- local exam evidence: stronger signals from the supplied exam PDFs;
+- public previews: assessment-derived signals, not official course scope;
+- revision move: the exact derivation, numerical calculation, or explanation to practise.
+
 ## Coverage map
 
 | Evidence | Topics visible in the source | Atlas lessons to revise |
@@ -13,6 +24,14 @@ This map turns past-paper evidence into a revision index. It is not an official 
 | 2023 Homework 2 preview | Numerical PCA, GMM/EM, shallow neural network, K-means coding | `dsa5105-pca-numerical`, `dsa5105-gmm-em-numerical`, `dsa5105-neural-backprop`, `dsa5105-cluster-gmm` |
 | 2023 Homework 3 preview | Computation graph/backprop and MDP value iteration | `dsa5105-neural-backprop`, `dsa5105-mdp-value-iteration` |
 | 05/10/2024 midterm preview | Format signal: 5 MCQ + 4 written; decision-tree item is the only public content treated as verified | `dsa5105-trees-ensembles`; use the full local exams for broader topic coverage |
+
+### Public preview links
+
+- [Fall 2025 Homework 1](https://www.studocu.com/sg/document/national-university-of-singapore/scalable-distributed-computing-for-data-science/dsa5105-homework-1-written-assignment-fall-2025-solutions/145862443)
+- [Fall 2025 Homework 2](https://www.studocu.com/sg/document/national-university-of-singapore/scalable-distributed-computing-for-data-science/dsa5105-homework-2-written-assignment-solutions-fall-2025/145862450)
+- [2023 Homework 2](https://www.coursesidekick.com/computer-science/27344375)
+- [2023 Homework 3](https://www.cliffsnotes.com/study-notes/22388019)
+- [05/10/2024 midterm preview](https://www.coursehero.com/file/243887732/DSA5105/)
 
 ## Source boundary
 

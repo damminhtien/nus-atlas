@@ -198,6 +198,7 @@ function packageCourse(state, courseId) {
   const catalog = mergeQuestionBank(state.content[courseId], questionBank);
   if (!course || !catalog) throw new Error(`Cannot build missing course: ${courseId}`);
   const packageRoot = path.join(ROOT, "content", "courses", courseId);
+  const assessmentMap = readJsonIfExists(path.join(packageRoot, "assessment-map.json"));
   const textbookFile = path.join(packageRoot, "textbook.json");
   const textbook = fs.existsSync(textbookFile)
     ? JSON.parse(fs.readFileSync(textbookFile, "utf8"))
@@ -262,6 +263,7 @@ function packageCourse(state, courseId) {
     course: packageCourse,
     content: { modules: joinedModules },
     assessments: state.assessments.filter(item => item.courseCode === courseId),
+    ...(assessmentMap ? { assessmentMap: cleanObject(assessmentMap) } : {}),
     sources: packageCourse.sourceCatalog,
     ...(sourceManifest ? { sourceManifest: cleanObject(sourceManifest) } : {}),
     slideSets: cleanObject(slideSets),

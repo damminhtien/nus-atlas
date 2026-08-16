@@ -6,6 +6,10 @@ and refresh first-party asset URLs so browsers and the service worker pick up th
 
 ## [Unreleased]
 
+## [0.2.31] - 2026-08-16
+
+- Add DSA5105 assessment map
+
 ## [0.2.30] - 2026-08-16
 
 - Fix Socratic checkpoint LaTeX rendering
