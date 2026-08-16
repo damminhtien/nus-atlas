@@ -13,6 +13,15 @@ test("DSA5105 question bank covers every lesson with metadata", () => {
   assert.equal(new Set(bank.questions.map(question => question.id)).size, bank.questions.length);
 });
 
+test("DSA5101 question bank covers every lesson with metadata", () => {
+  const bank = readQuestionBank("DSA5101");
+  const result = validateQuestionBank(bank, loadLegacyState());
+  assert.equal(result.ok, true, result.errors.join("\n"));
+  assert.ok(result.counts.questions >= 12);
+  assert.equal(result.counts.lessons, 4);
+  assert.equal(new Set(bank.questions.map(question => question.id)).size, bank.questions.length);
+});
+
 test("content build exposes question bank metadata and merged questions", () => {
   const packageData = build("DSA5105");
   assert.equal(packageData.questionBank.extensionCount, 44);

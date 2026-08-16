@@ -12,7 +12,7 @@ test("legacy NUS data satisfies the content contract", () => {
 test("normalized course packages satisfy the package contract", () => {
   const result = validatePackageDirectory();
   assert.equal(result.ok, true, result.errors.join("\n"));
-  assert.equal(result.counts.courses, 1);
+  assert.equal(result.counts.courses, 2);
   assert.ok(result.counts.lessons > 0);
 });
 

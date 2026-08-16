@@ -39,7 +39,7 @@
       if (status) status.textContent = "Complete the reasoning step first";
       return;
     }
-    const result = window.NUS_STORE && window.NUS_STORE.recordSimulation(`dsa5105:${lab.lessonId}`, lab.courseCode, lab.lessonId);
+    const result = window.NUS_STORE && window.NUS_STORE.recordSimulation(`${lab.courseCode || "nus"}:${lab.lessonId}`, lab.courseCode, lab.lessonId);
     const status = root.querySelector("[data-lab-status]");
     if (status) status.textContent = result && result.duplicate ? "Already logged · repeat to reason" : "Evidence logged · +10 XP";
     root.classList.add("is-complete");
@@ -134,7 +134,7 @@
       if (status) status.textContent = "Reveal the final step before committing the proof";
       return;
     }
-    const result = window.NUS_STORE && window.NUS_STORE.recordSimulation("dsa5105:" + lab.lessonId + ":" + panel.dataset.deepPanel, lab.courseCode, lab.lessonId);
+    const result = window.NUS_STORE && window.NUS_STORE.recordSimulation((lab.courseCode || "nus") + ":" + lab.lessonId + ":" + panel.dataset.deepPanel, lab.courseCode, lab.lessonId);
     if (status) status.textContent = result && result.duplicate ? "Already logged · repeat to reason" : "Proof logged · +10 XP";
     root.classList.add("is-complete");
   }

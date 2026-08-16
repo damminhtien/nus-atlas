@@ -10,8 +10,9 @@ labs by adding data and feature modules—not by editing the app shell.
   assessments, questions, artifacts, and labs.
 - `ContentRepository` as the runtime boundary, with a legacy adapter for safe
   rollback during migration.
-- DSA5105 as the first normalized package. Lesson content, questions, study kits,
-  visuals, and labs are joined by IDs; artifacts do not mutate lessons.
+- DSA5101 and DSA5105 as normalized packages. Lesson content, questions, study
+  kits, slide readers, visuals, and labs are joined by IDs; artifacts do not
+  mutate lessons.
 - A route table and lab registry with focused tests.
 - A framework-free core router that separates hash lifecycle from page rendering.
 - Shared NUS presentation helpers extracted from the route entrypoint.

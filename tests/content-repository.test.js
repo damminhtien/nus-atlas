@@ -19,6 +19,7 @@ function generatedPackage() {
   const context = { window: {} };
   context.window = context;
   vm.runInNewContext(fs.readFileSync(path.join(__dirname, "../data/nus/generated/content-manifest.js"), "utf8"), context);
+  vm.runInNewContext(fs.readFileSync(path.join(__dirname, "../data/nus/generated/dsa5101.js"), "utf8"), context);
   vm.runInNewContext(fs.readFileSync(path.join(__dirname, "../data/nus/generated/dsa5105.js"), "utf8"), context);
   return context.NUS_CONTENT_PACKAGES;
 }
@@ -69,6 +70,18 @@ test("migrated package is preferred and joins ID-linked study artifacts", () => 
   assert.equal(repo.getQuestionBank("DSA5105").extensionCount, 44);
 });
 
+test("DSA5101 package joins textbook, labs, and source-backed questions", () => {
+  const repo = createContentRepository({ ...loadLegacyState(), packages: generatedPackage() });
+  const lesson = repo.getLesson("DSA5101", "dsa5101-minhash-lsh");
+  assert.equal(lesson.schemaVersion, "nus.lesson.v1");
+  assert.ok(lesson.questionIds.length >= 3);
+  assert.ok(repo.getLab("dsa5101-minhash-lsh"));
+  assert.equal(repo.getSlideSets("DSA5101").length, 1);
+  assert.equal(repo.getSlideSets("DSA5101")[0].slides.length, 90);
+  assert.equal(repo.getTextbook("DSA5101").source.sourceType, "textbook");
+  assert.ok(repo.getQuestionBank("DSA5101").extensionCount >= 12);
+});
+
 test("browser script order installs the same repository boundary", () => {
   const files = [
     "data/nus/provenance.js", "data/nus/courses.js", "data/nus/schedule.js", "data/nus/assessments.js",
@@ -84,7 +97,7 @@ test("browser script order installs the same repository boundary", () => {
   assert.equal(stats.courses, 4);
   assert.equal(stats.lessons, 12, "migrated course payload is not loaded at startup");
   assert.equal(stats.assessments, 12);
-  assert.equal(stats.labs, 23);
+  assert.equal(stats.labs, 27);
   vm.runInContext(fs.readFileSync(path.join(__dirname, "../data/nus/generated/dsa5105.js"), "utf8"), context, { filename: "data/nus/generated/dsa5105.js" });
   context.NUS_REPOSITORY.registerPackage("DSA5105", context.NUS_CONTENT_PACKAGES.DSA5105);
   assert.equal(context.NUS_REPOSITORY.stats().lessons, 35);

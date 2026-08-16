@@ -45,13 +45,20 @@ function validateQuestionBank(bank, state = loadLegacyState(ROOT)) {
 }
 
 if (require.main === module) {
-  const result = validateQuestionBank(readQuestionBank());
-  if (!result.ok) {
+  const files = fs.readdirSync(path.join(ROOT, "content", "courses"), { withFileTypes: true })
+    .filter(entry => entry.isDirectory())
+    .map(entry => entry.name)
+    .map(courseId => ({ courseId, file: path.join(ROOT, "content", "courses", courseId, "questions", "bank.json") }))
+    .filter(item => fs.existsSync(item.file));
+  const results = files.map(({ courseId }) => ({ courseId, result: validateQuestionBank(readQuestionBank(courseId)) }));
+  const failed = results.filter(item => !item.result.ok);
+  if (failed.length) {
     console.error("QUESTION BANK CONTRACT FAILED");
-    result.errors.forEach(error => console.error(`- ${error}`));
+    failed.forEach(({ courseId, result }) => result.errors.forEach(error => console.error(`- ${courseId}: ${error}`)));
     process.exitCode = 1;
   } else {
-    console.log(`QUESTION BANK GREEN · ${result.counts.questions} questions · ${result.counts.lessons} lessons`);
+    const questions = results.reduce((sum, item) => sum + item.result.counts.questions, 0);
+    console.log(`QUESTION BANK GREEN · ${results.length} course banks · ${questions} questions`);
   }
 }
 

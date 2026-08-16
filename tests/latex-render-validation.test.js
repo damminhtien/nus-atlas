@@ -12,3 +12,9 @@ test("all DSA5105 authored formulas render with KaTeX", () => {
   assert.ok(result.formulas.length > 1000);
   assert.deepEqual(result.errors, []);
 });
+
+test("all DSA5101 authored formulas render with KaTeX", () => {
+  const result = validateCourse("DSA5101");
+  assert.ok(result.formulas.length > 0);
+  assert.deepEqual(result.errors, []);
+});

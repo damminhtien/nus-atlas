@@ -52,7 +52,7 @@
     ].filter(group => group.refs.length);
   }
   function quickNav(kicker) {
-    const courseCode = String(kicker || "").match(/DSA\d{4}/)?.[0] || "DSA5105";
+    const courseCode = String(kicker || "").match(/DSA\d{4}/)?.[0] || "DSA5101";
     const links = [
       ["Study desk", "#/"],
       [courseCode, `#/nus/course/${courseCode}`],
@@ -61,9 +61,13 @@
       ["Mistakes", `#/nus/mistakes/${courseCode}`],
       ["Planner", "#/nus/planner"]
     ];
+    if (["DSA5101", "DSA5105"].includes(courseCode)) {
+      links.splice(3, 0, ["Contrast drills", `#/nus/contrast/${courseCode}`]);
+    }
     if (courseCode === "DSA5105") {
-      links.splice(3, 0, ["Contrast drills", "#/nus/contrast/DSA5105"]);
       links.push(["Week 1 slides", "#/nus/slides/DSA5105/dsa5105-week1-annotated/1"]);
+    } else if (courseCode === "DSA5101") {
+      links.push(["Lecture 1 slides", "#/nus/slides/DSA5101/dsa5101-lecture1/1"]);
     }
     return `<nav class="nus-quick-nav" aria-label="Quick navigation"><span>Quick nav</span>${links.map(([label, href]) => `<a href="${esc(href)}" data-route>${esc(label)}</a>`).join("")}</nav>`;
   }
