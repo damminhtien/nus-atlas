@@ -1,0 +1,463 @@
+{
+  "id": "dsa5104-database-design",
+  "title": "Database design and ER translation",
+  "week": 3,
+  "minutes": 60,
+  "summary": "Move from requirements to entities, relationships, relational schemas, and explicit integrity constraints.",
+  "objectives": [
+    "Separate logical from physical design",
+    "Translate one-to-many and many-to-many relationships",
+    "Spot redundancy and missing constraints before writing SQL"
+  ],
+  "sourceRefs": [
+    {
+      "sourceId": "DSA5104/chapter1.pdf",
+      "page": 33,
+      "sourceType": "lecture",
+      "role": "logical and physical design",
+      "status": "current"
+    },
+    {
+      "sourceId": "DSA5104/chapter1.pdf",
+      "page": 44,
+      "sourceType": "lecture",
+      "role": "two-tier and three-tier applications",
+      "status": "current"
+    },
+    {
+      "sourceId": "DSA5104/chapter1.pdf",
+      "page": 45,
+      "sourceType": "lecture",
+      "role": "architecture trade-offs",
+      "status": "current"
+    },
+    {
+      "sourceId": "DSA5104/Homework Solutions/Ch06_Database_Design_Using_the_ER_Model/6.23.md",
+      "page": 1,
+      "sourceType": "exercise",
+      "role": "ER design exercise",
+      "status": "current-context"
+    }
+  ],
+  "sections": [
+    {
+      "title": "Design is a chain of decisions",
+      "sourceType": "lecture",
+      "body": "Logical design chooses a good collection of relation schemas and distributes attributes according to business meaning and integrity requirements. Physical design chooses storage layout and access methods later.",
+      "sourceRefs": [
+        {
+          "sourceId": "DSA5104/chapter1.pdf",
+          "page": 33,
+          "sourceType": "lecture",
+          "role": "database design",
+          "status": "current"
+        }
+      ],
+      "sourceLens": {
+        "status": "core DSA5104",
+        "whyExaminable": "Design questions test whether you can preserve meaning and constraints through a representation change, not merely draw boxes.",
+        "lecture": [
+          {
+            "sourceId": "DSA5104/chapter1.pdf",
+            "page": 33,
+            "sourceType": "lecture",
+            "role": "logical and physical design",
+            "status": "current"
+          }
+        ],
+        "officialExercise": [
+          {
+            "sourceId": "DSA5104/Homework Solutions/Ch06_Database_Design_Using_the_ER_Model/6.23.md",
+            "page": 1,
+            "sourceType": "exercise",
+            "role": "schema and constraint design",
+            "status": "current-context"
+          }
+        ],
+        "textbook": [
+          {
+            "sourceId": "DSA5104/Database System Concepts, 7th edition",
+            "page": 350,
+            "sourceType": "textbook",
+            "role": "Database design",
+            "status": "course-depth"
+          }
+        ],
+        "reference": []
+      }
+    },
+    {
+      "title": "Application boundary",
+      "sourceType": "lecture",
+      "body": "A two-tier application lets a client invoke database functionality directly; a three-tier application inserts an application server. The extra layer can improve development, scalability, reliability, and security, but it also introduces another boundary to reason about.",
+      "sourceRefs": [
+        {
+          "sourceId": "DSA5104/chapter1.pdf",
+          "page": 44,
+          "sourceType": "lecture",
+          "role": "application architecture",
+          "status": "current"
+        },
+        {
+          "sourceId": "DSA5104/chapter1.pdf",
+          "page": 45,
+          "sourceType": "lecture",
+          "role": "three-tier advantages",
+          "status": "current"
+        }
+      ],
+      "sourceLens": {
+        "status": "core DSA5104",
+        "whyExaminable": "Architecture is examinable when a data design must explain where validation, authorization, and query logic live.",
+        "lecture": [
+          {
+            "sourceId": "DSA5104/chapter1.pdf",
+            "page": 44,
+            "sourceType": "lecture",
+            "role": "application architecture",
+            "status": "current"
+          },
+          {
+            "sourceId": "DSA5104/chapter1.pdf",
+            "page": 45,
+            "sourceType": "lecture",
+            "role": "three-tier advantages",
+            "status": "current"
+          }
+        ],
+        "officialExercise": [],
+        "textbook": [
+          {
+            "sourceId": "DSA5104/Database System Concepts, 7th edition",
+            "page": 40,
+            "sourceType": "textbook",
+            "role": "Application architecture",
+            "status": "course-depth"
+          }
+        ],
+        "reference": []
+      }
+    }
+  ],
+  "examples": [
+    {
+      "title": "Many-to-many relationship",
+      "sourceType": "exercise",
+      "steps": [
+        "Represent each entity with its own relation and primary key.",
+        "Create a relationship relation containing both referenced keys.",
+        "Use the pair of keys as a composite primary key when one pair should occur once.",
+        "Add foreign-key constraints to both entity relations."
+      ],
+      "answer": "A relationship relation preserves multiplicity without storing a repeating group inside either entity tuple."
+    }
+  ],
+  "contrastDrills": [
+    {
+      "id": "dsa5104-contrast-logical-physical",
+      "type": "contrast",
+      "kind": "concept-contrast",
+      "pair": "Logical vs physical design",
+      "prompt": "Choosing relation schemas and constraints belongs to which design stage?",
+      "choices": [
+        "Logical design",
+        "Physical design",
+        "Query evaluation",
+        "Transaction recovery"
+      ],
+      "answer": 0,
+      "explanation": "Logical design chooses what the data means and how relations are structured; physical design chooses storage and access details.",
+      "estimatedSeconds": 45,
+      "difficulty": "medium",
+      "skill": "concept-contrast",
+      "cognitiveLevel": "distinguish",
+      "misconception": "Name the boundary between the two concepts before choosing.",
+      "sourceRefs": [
+        {
+          "sourceId": "DSA5104/chapter1.pdf",
+          "page": 33,
+          "sourceType": "lecture",
+          "role": "logical and physical design",
+          "status": "current"
+        }
+      ]
+    },
+    {
+      "id": "dsa5104-contrast-two-three-tier",
+      "type": "contrast",
+      "kind": "concept-contrast",
+      "pair": "Two-tier vs three-tier architecture",
+      "prompt": "Which architecture inserts an application server between the client and the database?",
+      "choices": [
+        "Two-tier",
+        "Three-tier",
+        "Shared-nothing",
+        "View level"
+      ],
+      "answer": 1,
+      "explanation": "Three-tier architecture separates the client interface from direct database calls by introducing an application server.",
+      "estimatedSeconds": 45,
+      "difficulty": "medium",
+      "skill": "concept-contrast",
+      "cognitiveLevel": "distinguish",
+      "misconception": "Name the boundary between the two concepts before choosing.",
+      "sourceRefs": [
+        {
+          "sourceId": "DSA5104/chapter1.pdf",
+          "page": 44,
+          "sourceType": "lecture",
+          "role": "application architecture",
+          "status": "current"
+        }
+      ]
+    }
+  ],
+  "math": [
+    {
+      "latex": "R_1(K_1, A),\\quad R_2(K_2, B),\\quad R_{AB}(K_1,K_2)",
+      "explanation": "A many-to-many relationship is represented by a relationship relation containing the keys of both participating entities. Add relationship attributes to the same relation and enforce both foreign-key links.",
+      "symbols": [
+        {
+          "latex": "K_1,K_2",
+          "meaning": "referenced entity keys"
+        },
+        {
+          "latex": "R_{AB}",
+          "meaning": "relationship relation"
+        }
+      ],
+      "sourceType": "exercise"
+    }
+  ],
+  "criticalQuestions": [
+    {
+      "prompt": "Why is a composite key useful in the relationship relation?",
+      "angle": "Ask which duplicate relationship instance should be rejected.",
+      "modelAnswer": "The pair $(K_1,K_2)$ identifies one relationship occurrence, so the same two entities cannot be linked twice unless the model includes another distinguishing attribute.",
+      "focus": "integrity"
+    },
+    {
+      "prompt": "When should a relationship attribute live in the relationship relation rather than an entity relation?",
+      "angle": "Place the attribute where one value describes the association itself, not either endpoint alone.",
+      "modelAnswer": "An attribute such as enrollment date belongs with $R_{AB}$ because it describes the pair of participating entities; placing it on one entity would lose the possibility of different values for different relationships.",
+      "focus": "attribute ownership"
+    }
+  ],
+  "courseId": "DSA5104",
+  "moduleId": "dsa5104-models",
+  "blocks": [
+    {
+      "id": "dsa5104-database-design-section-1",
+      "type": "teaching-note",
+      "title": "Design is a chain of decisions",
+      "body": "Logical design chooses a good collection of relation schemas and distributes attributes according to business meaning and integrity requirements. Physical design chooses storage layout and access methods later.",
+      "sourceType": "lecture",
+      "sourceRefs": [
+        {
+          "sourceId": "DSA5104/chapter1.pdf",
+          "page": 33,
+          "sourceType": "lecture",
+          "role": "database design",
+          "status": "current"
+        }
+      ]
+    },
+    {
+      "id": "dsa5104-database-design-section-2",
+      "type": "teaching-note",
+      "title": "Application boundary",
+      "body": "A two-tier application lets a client invoke database functionality directly; a three-tier application inserts an application server. The extra layer can improve development, scalability, reliability, and security, but it also introduces another boundary to reason about.",
+      "sourceType": "lecture",
+      "sourceRefs": [
+        {
+          "sourceId": "DSA5104/chapter1.pdf",
+          "page": 44,
+          "sourceType": "lecture",
+          "role": "application architecture",
+          "status": "current"
+        },
+        {
+          "sourceId": "DSA5104/chapter1.pdf",
+          "page": 45,
+          "sourceType": "lecture",
+          "role": "three-tier advantages",
+          "status": "current"
+        }
+      ]
+    },
+    {
+      "id": "dsa5104-database-design-formula-1",
+      "type": "formula",
+      "latex": "R_1(K_1, A),\\quad R_2(K_2, B),\\quad R_{AB}(K_1,K_2)",
+      "explanation": "A many-to-many relationship is represented by a relationship relation containing the keys of both participating entities. Add relationship attributes to the same relation and enforce both foreign-key links.",
+      "symbols": [
+        {
+          "latex": "K_1,K_2",
+          "meaning": "referenced entity keys"
+        },
+        {
+          "latex": "R_{AB}",
+          "meaning": "relationship relation"
+        }
+      ],
+      "sourceType": "exercise",
+      "sourceRefs": [
+        {
+          "sourceId": "DSA5104/chapter1.pdf",
+          "page": 33,
+          "sourceType": "lecture",
+          "role": "logical and physical design",
+          "status": "current"
+        },
+        {
+          "sourceId": "DSA5104/chapter1.pdf",
+          "page": 44,
+          "sourceType": "lecture",
+          "role": "two-tier and three-tier applications",
+          "status": "current"
+        },
+        {
+          "sourceId": "DSA5104/chapter1.pdf",
+          "page": 45,
+          "sourceType": "lecture",
+          "role": "architecture trade-offs",
+          "status": "current"
+        },
+        {
+          "sourceId": "DSA5104/Homework Solutions/Ch06_Database_Design_Using_the_ER_Model/6.23.md",
+          "page": 1,
+          "sourceType": "exercise",
+          "role": "ER design exercise",
+          "status": "current-context"
+        }
+      ]
+    },
+    {
+      "id": "dsa5104-database-design-example-1",
+      "type": "worked-example",
+      "title": "Many-to-many relationship",
+      "sourceType": "exercise",
+      "steps": [
+        "Represent each entity with its own relation and primary key.",
+        "Create a relationship relation containing both referenced keys.",
+        "Use the pair of keys as a composite primary key when one pair should occur once.",
+        "Add foreign-key constraints to both entity relations."
+      ],
+      "answer": "A relationship relation preserves multiplicity without storing a repeating group inside either entity tuple.",
+      "sourceRefs": [
+        {
+          "sourceId": "DSA5104/chapter1.pdf",
+          "page": 33,
+          "sourceType": "lecture",
+          "role": "logical and physical design",
+          "status": "current"
+        },
+        {
+          "sourceId": "DSA5104/chapter1.pdf",
+          "page": 44,
+          "sourceType": "lecture",
+          "role": "two-tier and three-tier applications",
+          "status": "current"
+        },
+        {
+          "sourceId": "DSA5104/chapter1.pdf",
+          "page": 45,
+          "sourceType": "lecture",
+          "role": "architecture trade-offs",
+          "status": "current"
+        },
+        {
+          "sourceId": "DSA5104/Homework Solutions/Ch06_Database_Design_Using_the_ER_Model/6.23.md",
+          "page": 1,
+          "sourceType": "exercise",
+          "role": "ER design exercise",
+          "status": "current-context"
+        }
+      ]
+    },
+    {
+      "id": "dsa5104-database-design-critical-1",
+      "type": "critical-question",
+      "prompt": "Why is a composite key useful in the relationship relation?",
+      "angle": "Ask which duplicate relationship instance should be rejected.",
+      "modelAnswer": "The pair $(K_1,K_2)$ identifies one relationship occurrence, so the same two entities cannot be linked twice unless the model includes another distinguishing attribute.",
+      "focus": "integrity",
+      "sourceRefs": [
+        {
+          "sourceId": "DSA5104/chapter1.pdf",
+          "page": 33,
+          "sourceType": "lecture",
+          "role": "logical and physical design",
+          "status": "current"
+        },
+        {
+          "sourceId": "DSA5104/chapter1.pdf",
+          "page": 44,
+          "sourceType": "lecture",
+          "role": "two-tier and three-tier applications",
+          "status": "current"
+        },
+        {
+          "sourceId": "DSA5104/chapter1.pdf",
+          "page": 45,
+          "sourceType": "lecture",
+          "role": "architecture trade-offs",
+          "status": "current"
+        },
+        {
+          "sourceId": "DSA5104/Homework Solutions/Ch06_Database_Design_Using_the_ER_Model/6.23.md",
+          "page": 1,
+          "sourceType": "exercise",
+          "role": "ER design exercise",
+          "status": "current-context"
+        }
+      ]
+    },
+    {
+      "id": "dsa5104-database-design-critical-2",
+      "type": "critical-question",
+      "prompt": "When should a relationship attribute live in the relationship relation rather than an entity relation?",
+      "angle": "Place the attribute where one value describes the association itself, not either endpoint alone.",
+      "modelAnswer": "An attribute such as enrollment date belongs with $R_{AB}$ because it describes the pair of participating entities; placing it on one entity would lose the possibility of different values for different relationships.",
+      "focus": "attribute ownership",
+      "sourceRefs": [
+        {
+          "sourceId": "DSA5104/chapter1.pdf",
+          "page": 33,
+          "sourceType": "lecture",
+          "role": "logical and physical design",
+          "status": "current"
+        },
+        {
+          "sourceId": "DSA5104/chapter1.pdf",
+          "page": 44,
+          "sourceType": "lecture",
+          "role": "two-tier and three-tier applications",
+          "status": "current"
+        },
+        {
+          "sourceId": "DSA5104/chapter1.pdf",
+          "page": 45,
+          "sourceType": "lecture",
+          "role": "architecture trade-offs",
+          "status": "current"
+        },
+        {
+          "sourceId": "DSA5104/Homework Solutions/Ch06_Database_Design_Using_the_ER_Model/6.23.md",
+          "page": 1,
+          "sourceType": "exercise",
+          "role": "ER design exercise",
+          "status": "current-context"
+        }
+      ]
+    }
+  ],
+  "questionIds": [
+    "dsa5104-dd-q1",
+    "dsa5104-dd-q2",
+    "dsa5104-bank-005",
+    "dsa5104-bank-006"
+  ],
+  "labIds": [],
+  "schemaVersion": "nus.lesson.v1"
+}

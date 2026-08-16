@@ -1,0 +1,52 @@
+{
+  "lessonId": "dsa5104-query-processing",
+  "schemaVersion": "nus.study-kit.v1",
+  "flashcards": [
+    {
+      "front": "Query-processing stages?",
+      "back": "Parsing and translation, optimization, then evaluation."
+    },
+    {
+      "front": "What does an index change?",
+      "back": "The physical access path, not the logical relation result promised by the query."
+    },
+    {
+      "front": "Why count block transfers?",
+      "back": "Disk and memory movement can dominate the time of a logically simple query."
+    }
+  ],
+  "homework": [
+    {
+      "prompt": "Trace one SQL query from text to result relation and identify what optimization is allowed to change.",
+      "rubric": "Name internal representation, candidate plans, chosen plan, and semantic preservation.",
+      "source": {
+        "sourceId": "DSA5104/chapter1.pdf",
+        "page": 40,
+        "sourceType": "lecture",
+        "role": "query processing",
+        "status": "current"
+      }
+    },
+    {
+      "prompt": "Explain when an index can help and when it may not be selected.",
+      "rubric": "Mention selectivity, statistics, access cost, and that the optimizer chooses the plan.",
+      "source": {
+        "sourceId": "DSA5104/chapter1.pdf",
+        "page": 38,
+        "sourceType": "lecture",
+        "role": "indexes",
+        "status": "current"
+      }
+    }
+  ],
+  "codeExercises": [
+    {
+      "id": "dsa5104-plan-code",
+      "language": "text",
+      "prompt": "Write a three-line query plan explanation for a selective key lookup.",
+      "starter": "1. Parse query\n2. Choose index lookup\n3. Evaluate and return tuples",
+      "expected": "parse|optimize|evaluate",
+      "solution": "Keep logical semantics separate from the physical access path."
+    }
+  ]
+}

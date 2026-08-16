@@ -1,0 +1,93 @@
+[
+  {
+    "id": "dsa5104-ta-q1",
+    "type": "short",
+    "prompt": "Why should a bank transfer be one transaction rather than two independent updates?",
+    "accepted": [
+      "avoid partial update",
+      "all or nothing",
+      "atomicity"
+    ],
+    "solution": "Atomicity prevents a failure between the two writes from leaving only one account updated.",
+    "explanation": "The transaction boundary matches the logical business function.",
+    "sourceRefs": [
+      {
+        "sourceId": "DSA5104/chapter1.pdf",
+        "page": 41,
+        "sourceType": "lecture",
+        "role": "transaction management",
+        "status": "current"
+      }
+    ],
+    "difficulty": "medium",
+    "skill": "explain",
+    "cognitiveLevel": "understand",
+    "estimatedSeconds": 90,
+    "misconception": "Check the assumption behind your answer.",
+    "visualHook": "Explain the idea with a small diagram or example.",
+    "courseId": "DSA5104",
+    "lessonId": "dsa5104-transactions-architecture",
+    "schemaVersion": "nus.question.v1"
+  },
+  {
+    "id": "dsa5104-ta-q2",
+    "type": "mcq",
+    "prompt": "What does concurrency control primarily manage?",
+    "choices": [
+      "The order and interaction of concurrent transactions",
+      "The names of columns",
+      "The syntax of SELECT",
+      "The textbook index"
+    ],
+    "answer": 0,
+    "explanation": "Concurrency control coordinates concurrent transactions to preserve consistency.",
+    "sourceRefs": [
+      {
+        "sourceId": "DSA5104/chapter1.pdf",
+        "page": 41,
+        "sourceType": "lecture",
+        "role": "concurrency control",
+        "status": "current"
+      }
+    ],
+    "difficulty": "easy",
+    "skill": "recall",
+    "cognitiveLevel": "understand",
+    "estimatedSeconds": 60,
+    "misconception": "Check the assumption behind your answer.",
+    "visualHook": "Explain the idea with a small diagram or example.",
+    "courseId": "DSA5104",
+    "lessonId": "dsa5104-transactions-architecture",
+    "schemaVersion": "nus.question.v1"
+  },
+  {
+    "id": "dsa5104-bank-011",
+    "lessonId": "dsa5104-transactions-architecture",
+    "type": "derivation",
+    "prompt": "Explain why a transfer of amount a should update A and B within one transaction.",
+    "accepted": [
+      "avoid partial update",
+      "atomicity",
+      "all or nothing"
+    ],
+    "solution": "The updates $A\\leftarrow A-a$ and $B\\leftarrow B+a$ implement one logical function. A single transaction prevents a crash between them from committing only one update.",
+    "explanation": "Transaction boundaries follow business invariants rather than statement count.",
+    "difficulty": "medium",
+    "skill": "derive",
+    "cognitiveLevel": "analyze",
+    "estimatedSeconds": 120,
+    "misconception": "Two individually valid writes can still violate a cross-row invariant when separated.",
+    "visualHook": "Use the transaction safety map.",
+    "sourceRefs": [
+      {
+        "sourceId": "DSA5104/chapter1.pdf",
+        "page": 41,
+        "sourceType": "lecture",
+        "role": "transaction management",
+        "status": "current"
+      }
+    ],
+    "courseId": "DSA5104",
+    "schemaVersion": "nus.question.v1"
+  }
+]

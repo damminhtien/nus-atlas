@@ -1,0 +1,129 @@
+[
+  {
+    "id": "dsa5104-rm-q1",
+    "type": "mcq",
+    "prompt": "What does a foreign key primarily express?",
+    "choices": [
+      "A sort order",
+      "A reference to a candidate key in another relation",
+      "A duplicate row",
+      "A compressed column"
+    ],
+    "answer": 1,
+    "explanation": "A foreign key constrains values to refer to a key in a referenced relation.",
+    "sourceRefs": [
+      {
+        "sourceId": "DSA5104/chapter1.pdf",
+        "page": 25,
+        "sourceType": "lecture",
+        "role": "foreign-key integrity",
+        "status": "current"
+      }
+    ],
+    "difficulty": "easy",
+    "skill": "recall",
+    "cognitiveLevel": "understand",
+    "estimatedSeconds": 60,
+    "misconception": "Check the assumption behind your answer.",
+    "visualHook": "Explain the idea with a small diagram or example.",
+    "courseId": "DSA5104",
+    "lessonId": "dsa5104-relational-model",
+    "schemaVersion": "nus.question.v1"
+  },
+  {
+    "id": "dsa5104-rm-q2",
+    "type": "derivation",
+    "prompt": "How do you map a one-to-many relationship from Department to Student?",
+    "accepted": [
+      "put department key as foreign key in student",
+      "foreign key in student",
+      "student has department_id foreign key"
+    ],
+    "solution": "Place the primary key of Department as a foreign key in Student, the many-side relation.",
+    "explanation": "The foreign key belongs on the many side for a simple one-to-many mapping.",
+    "sourceRefs": [
+      {
+        "sourceId": "DSA5104/Homework Solutions/Ch06_Database_Design_Using_the_ER_Model/6.23.md",
+        "page": 1,
+        "sourceType": "exercise",
+        "role": "ER-to-relational mapping",
+        "status": "current-context"
+      }
+    ],
+    "difficulty": "hard",
+    "skill": "derive",
+    "cognitiveLevel": "analyze",
+    "estimatedSeconds": 150,
+    "misconception": "Check the assumption behind your answer.",
+    "visualHook": "Explain the idea with a small diagram or example.",
+    "courseId": "DSA5104",
+    "lessonId": "dsa5104-relational-model",
+    "schemaVersion": "nus.question.v1"
+  },
+  {
+    "id": "dsa5104-bank-003",
+    "lessonId": "dsa5104-relational-model",
+    "type": "derivation",
+    "prompt": "$Given Department(id) and Student(id, department_id), state the key and foreign-key constraints for a one-to-many relationship.$",
+    "accepted": [
+      "Department.id primary key and Student.department_id foreign key references Department.id",
+      "student department_id references department id"
+    ],
+    "solution": "Declare Department.id as the primary key and Student.$department_{id}$ as a foreign key referencing Department.id. The foreign key is on the many side.",
+    "explanation": "The mapping preserves one department with many student tuples while enforcing referential integrity.",
+    "difficulty": "medium",
+    "skill": "derive",
+    "cognitiveLevel": "apply",
+    "estimatedSeconds": 120,
+    "misconception": "The foreign key does not belong on the one-side relation for this simple mapping.",
+    "visualHook": "Follow the identity edge in the keys lab.",
+    "sourceRefs": [
+      {
+        "sourceId": "DSA5104/chapter1.pdf",
+        "page": 25,
+        "sourceType": "lecture",
+        "role": "integrity constraints",
+        "status": "current"
+      },
+      {
+        "sourceId": "DSA5104/Homework Solutions/Ch06_Database_Design_Using_the_ER_Model/6.23.md",
+        "page": 1,
+        "sourceType": "exercise",
+        "role": "ER translation",
+        "status": "current-context"
+      }
+    ],
+    "courseId": "DSA5104",
+    "schemaVersion": "nus.question.v1"
+  },
+  {
+    "id": "dsa5104-bank-004",
+    "lessonId": "dsa5104-relational-model",
+    "type": "short",
+    "prompt": "Why is a generated numeric identifier not automatically a good business key?",
+    "accepted": [
+      "unique is not stable meaning",
+      "identity lifecycle matters",
+      "it may not be stable across systems"
+    ],
+    "solution": "Uniqueness is only one requirement. A business key also needs appropriate stability, integration behavior, and meaning for the system's lifecycle.",
+    "explanation": "Database identity and business identity can be different design decisions.",
+    "difficulty": "hard",
+    "skill": "critique",
+    "cognitiveLevel": "evaluate",
+    "estimatedSeconds": 90,
+    "misconception": "Unique does not imply meaningful or stable.",
+    "visualHook": "Compare candidate-key choices before selecting a primary key.",
+    "sourceRefs": [
+      {
+        "sourceId": "DSA5104/chapter1.pdf",
+        "page": 25,
+        "sourceType": "lecture",
+        "role": "primary-key integrity",
+        "status": "current"
+      }
+    ],
+    "courseId": "DSA5104",
+    "schemaVersion": "nus.question.v1"
+  }
+]

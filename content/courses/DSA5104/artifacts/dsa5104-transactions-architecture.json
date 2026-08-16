@@ -1,0 +1,43 @@
+{
+  "lessonId": "dsa5104-transactions-architecture",
+  "schemaVersion": "nus.study-kit.v1",
+  "flashcards": [
+    {
+      "front": "Atomicity?",
+      "back": "A transaction's logical function is all-or-nothing with respect to committed state."
+    },
+    {
+      "front": "Transaction management versus concurrency control?",
+      "back": "Transaction management handles failure consistency; concurrency control coordinates simultaneous transactions."
+    },
+    {
+      "front": "Shared-nothing trade-off?",
+      "back": "Independent nodes can scale, but partitioning, network movement, and coordination become explicit costs."
+    }
+  ],
+  "homework": [
+    {
+      "prompt": "Write the operation sequence for a bank transfer and mark its transaction boundary.",
+      "rubric": "Include both account updates and explain why a failure between them must not commit a partial result.",
+      "source": {
+        "sourceId": "DSA5104/chapter1.pdf",
+        "page": 41,
+        "sourceType": "lecture",
+        "role": "transaction management",
+        "status": "current"
+      }
+    },
+    {
+      "prompt": "Compare centralized and distributed database architectures for a geographically distributed application.",
+      "rubric": "Discuss placement, communication, heterogeneity, failure, and coordination.",
+      "source": {
+        "sourceId": "DSA5104/chapter1.pdf",
+        "page": 42,
+        "sourceType": "lecture",
+        "role": "database architecture",
+        "status": "current"
+      }
+    }
+  ],
+  "codeExercises": []
+}

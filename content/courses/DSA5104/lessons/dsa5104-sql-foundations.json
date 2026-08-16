@@ -1,0 +1,538 @@
+{
+  "id": "dsa5104-sql-foundations",
+  "title": "SQL foundations: select, join, and group",
+  "week": 4,
+  "minutes": 65,
+  "summary": "Write declarative SQL that makes row filtering, joins, grouping, NULL behavior, and aggregate filtering explicit.",
+  "objectives": [
+    "Write single-table and multi-table queries",
+    "Join through keys rather than row position",
+    "Explain WHERE, GROUP BY, HAVING, and NULL semantics"
+  ],
+  "sourceRefs": [
+    {
+      "sourceId": "DSA5104/chapter1.pdf",
+      "page": 25,
+      "sourceType": "lecture",
+      "role": "DDL and constraints",
+      "status": "current"
+    },
+    {
+      "sourceId": "DSA5104/chapter1.pdf",
+      "page": 28,
+      "sourceType": "lecture",
+      "role": "DML",
+      "status": "current"
+    },
+    {
+      "sourceId": "DSA5104/chapter1.pdf",
+      "page": 30,
+      "sourceType": "lecture",
+      "role": "SQL query language",
+      "status": "current"
+    },
+    {
+      "sourceId": "DSA5104/Homework Solutions/Ch03_Introduction_to_SQL/3.2.md",
+      "page": 1,
+      "sourceType": "exercise",
+      "role": "SQL exercise",
+      "status": "current-context"
+    }
+  ],
+  "visualIds": [
+    "dsa5104-sql-flow"
+  ],
+  "sections": [
+    {
+      "title": "Declarative query thinking",
+      "sourceType": "lecture",
+      "body": "SQL states what table result is required rather than prescribing every low-level access step. A query takes tables as input and returns a table, while the engine chooses an evaluation plan.",
+      "sourceRefs": [
+        {
+          "sourceId": "DSA5104/chapter1.pdf",
+          "page": 28,
+          "sourceType": "lecture",
+          "role": "declarative DML",
+          "status": "current"
+        },
+        {
+          "sourceId": "DSA5104/chapter1.pdf",
+          "page": 30,
+          "sourceType": "lecture",
+          "role": "SQL query language",
+          "status": "current"
+        }
+      ],
+      "sourceLens": {
+        "status": "core DSA5104",
+        "whyExaminable": "The lecture establishes SQL semantics; Chapter 3 solutions supply the multi-table and subquery depth that makes those semantics operational.",
+        "lecture": [
+          {
+            "sourceId": "DSA5104/chapter1.pdf",
+            "page": 28,
+            "sourceType": "lecture",
+            "role": "declarative DML",
+            "status": "current"
+          },
+          {
+            "sourceId": "DSA5104/chapter1.pdf",
+            "page": 30,
+            "sourceType": "lecture",
+            "role": "SQL query language",
+            "status": "current"
+          }
+        ],
+        "officialExercise": [
+          {
+            "sourceId": "DSA5104/Homework Solutions/Ch03_Introduction_to_SQL/3.2.md",
+            "page": 1,
+            "sourceType": "exercise",
+            "role": "SQL query practice",
+            "status": "current-context"
+          }
+        ],
+        "textbook": [
+          {
+            "sourceId": "DSA5104/Database System Concepts, 7th edition",
+            "page": 95,
+            "sourceType": "textbook",
+            "role": "SQL",
+            "status": "course-depth"
+          }
+        ],
+        "reference": []
+      }
+    },
+    {
+      "title": "Row filtering versus group filtering",
+      "sourceType": "lecture",
+      "body": "Use `WHERE` for predicates on rows before grouping. Use `HAVING` for predicates on aggregate groups after `GROUP BY`. A robust answer also states how NULL values affect comparisons and aggregates.",
+      "sourceRefs": [
+        {
+          "sourceId": "DSA5104/chapter1.pdf",
+          "page": 30,
+          "sourceType": "lecture",
+          "role": "SQL query language",
+          "status": "current"
+        }
+      ],
+      "sourceLens": {
+        "status": "core DSA5104",
+        "whyExaminable": "WHERE versus HAVING is a high-frequency distinction because it tests the logical meaning of an aggregate query, not memorized syntax.",
+        "lecture": [
+          {
+            "sourceId": "DSA5104/chapter1.pdf",
+            "page": 30,
+            "sourceType": "lecture",
+            "role": "SQL query language",
+            "status": "current"
+          }
+        ],
+        "officialExercise": [
+          {
+            "sourceId": "DSA5104/Homework Solutions/Ch03_Introduction_to_SQL/3.2.md",
+            "page": 1,
+            "sourceType": "exercise",
+            "role": "aggregate query",
+            "status": "current-context"
+          }
+        ],
+        "textbook": [
+          {
+            "sourceId": "DSA5104/Database System Concepts, 7th edition",
+            "page": 105,
+            "sourceType": "textbook",
+            "role": "Aggregation",
+            "status": "course-depth"
+          }
+        ],
+        "reference": []
+      }
+    }
+  ],
+  "examples": [
+    {
+      "title": "Departments with at least two students",
+      "sourceType": "exercise",
+      "steps": [
+        "Join Student to Department through the key relationship.",
+        "Group by the department identity and display name.",
+        "Compute $\\operatorname{COUNT}(*)$ for each group.",
+        "Use `HAVING $COUNT(*) \\ge  2$` to keep completed groups."
+      ],
+      "answer": "The aggregate predicate belongs in HAVING because the count does not exist until grouping has happened."
+    }
+  ],
+  "contrastDrills": [
+    {
+      "id": "dsa5104-contrast-ddl-dml",
+      "type": "contrast",
+      "kind": "concept-contrast",
+      "pair": "DDL vs DML",
+      "prompt": "Which language category defines tables and integrity constraints?",
+      "choices": [
+        "DDL",
+        "DML",
+        "DCL only",
+        "Transaction log"
+      ],
+      "answer": 0,
+      "explanation": "DDL defines schema objects and constraints; DML queries and updates data under that schema.",
+      "estimatedSeconds": 45,
+      "difficulty": "medium",
+      "skill": "concept-contrast",
+      "cognitiveLevel": "distinguish",
+      "misconception": "Name the boundary between the two concepts before choosing.",
+      "sourceRefs": [
+        {
+          "sourceId": "DSA5104/chapter1.pdf",
+          "page": 25,
+          "sourceType": "lecture",
+          "role": "DDL",
+          "status": "current"
+        },
+        {
+          "sourceId": "DSA5104/chapter1.pdf",
+          "page": 28,
+          "sourceType": "lecture",
+          "role": "DML",
+          "status": "current"
+        }
+      ]
+    },
+    {
+      "id": "dsa5104-contrast-where-having",
+      "type": "contrast",
+      "kind": "concept-contrast",
+      "pair": "WHERE vs HAVING",
+      "prompt": "A query should keep departments whose student count is at least two. Where should the aggregate predicate go?",
+      "choices": [
+        "WHERE",
+        "ON",
+        "HAVING",
+        "ORDER BY"
+      ],
+      "answer": 2,
+      "explanation": "HAVING filters groups after aggregation; WHERE filters individual rows before groups are formed.",
+      "estimatedSeconds": 45,
+      "difficulty": "medium",
+      "skill": "concept-contrast",
+      "cognitiveLevel": "distinguish",
+      "misconception": "Name the boundary between the two concepts before choosing.",
+      "sourceRefs": [
+        {
+          "sourceId": "DSA5104/chapter1.pdf",
+          "page": 30,
+          "sourceType": "lecture",
+          "role": "SQL query language",
+          "status": "current"
+        }
+      ]
+    }
+  ],
+  "math": [
+    {
+      "latex": "\\gamma_{\\mathrm{department\\_id};\\ \\operatorname{COUNT}(*)\\to n}(\\mathrm{Student})",
+      "explanation": "The grouping operator partitions rows by department and computes one count per group. Conceptually, `WHERE` reduces rows before grouping, while `HAVING` filters the grouped result after the aggregate exists.",
+      "symbols": [
+        {
+          "latex": "\\gamma",
+          "meaning": "grouping and aggregation"
+        },
+        {
+          "latex": "n",
+          "meaning": "count produced for each group"
+        }
+      ],
+      "sourceType": "lecture"
+    },
+    {
+      "latex": "\\mathrm{WHERE}\\ \\prec\\ \\mathrm{GROUP\\ BY}\\ \\prec\\ \\mathrm{HAVING}",
+      "explanation": "This is a reasoning order, not a claim about the textual order of every SQL implementation. First decide which rows participate, then form groups, then filter aggregate groups.",
+      "symbols": [
+        {
+          "latex": "\\prec",
+          "meaning": "conceptually happens before"
+        }
+      ],
+      "sourceType": "lecture",
+      "caveat": "SQL optimizers may rewrite execution plans while preserving relational semantics."
+    }
+  ],
+  "criticalQuestions": [
+    {
+      "prompt": "Why can moving an aggregate predicate from `HAVING` to `WHERE` change the answer?",
+      "angle": "Ask whether the predicate refers to an individual row or to a group summary.",
+      "modelAnswer": "`WHERE` cannot use the final group count because it runs before grouping. Moving the predicate changes which rows enter the groups rather than filtering completed groups.",
+      "focus": "query semantics"
+    },
+    {
+      "prompt": "When could an optimizer move a filter earlier without changing the result?",
+      "angle": "Look for predicates that reference only row-local attributes and preserve NULL/join semantics.",
+      "modelAnswer": "A safe pushdown is possible when the predicate is independent of aggregates and does not alter outer-join behavior; correctness comes before speed.",
+      "focus": "optimization"
+    }
+  ],
+  "courseId": "DSA5104",
+  "moduleId": "dsa5104-sql",
+  "blocks": [
+    {
+      "id": "dsa5104-sql-foundations-section-1",
+      "type": "teaching-note",
+      "title": "Declarative query thinking",
+      "body": "SQL states what table result is required rather than prescribing every low-level access step. A query takes tables as input and returns a table, while the engine chooses an evaluation plan.",
+      "sourceType": "lecture",
+      "sourceRefs": [
+        {
+          "sourceId": "DSA5104/chapter1.pdf",
+          "page": 28,
+          "sourceType": "lecture",
+          "role": "declarative DML",
+          "status": "current"
+        },
+        {
+          "sourceId": "DSA5104/chapter1.pdf",
+          "page": 30,
+          "sourceType": "lecture",
+          "role": "SQL query language",
+          "status": "current"
+        }
+      ]
+    },
+    {
+      "id": "dsa5104-sql-foundations-section-2",
+      "type": "teaching-note",
+      "title": "Row filtering versus group filtering",
+      "body": "Use `WHERE` for predicates on rows before grouping. Use `HAVING` for predicates on aggregate groups after `GROUP BY`. A robust answer also states how NULL values affect comparisons and aggregates.",
+      "sourceType": "lecture",
+      "sourceRefs": [
+        {
+          "sourceId": "DSA5104/chapter1.pdf",
+          "page": 30,
+          "sourceType": "lecture",
+          "role": "SQL query language",
+          "status": "current"
+        }
+      ]
+    },
+    {
+      "id": "dsa5104-sql-foundations-formula-1",
+      "type": "formula",
+      "latex": "\\gamma_{\\mathrm{department\\_id};\\ \\operatorname{COUNT}(*)\\to n}(\\mathrm{Student})",
+      "explanation": "The grouping operator partitions rows by department and computes one count per group. Conceptually, `WHERE` reduces rows before grouping, while `HAVING` filters the grouped result after the aggregate exists.",
+      "symbols": [
+        {
+          "latex": "\\gamma",
+          "meaning": "grouping and aggregation"
+        },
+        {
+          "latex": "n",
+          "meaning": "count produced for each group"
+        }
+      ],
+      "sourceType": "lecture",
+      "sourceRefs": [
+        {
+          "sourceId": "DSA5104/chapter1.pdf",
+          "page": 25,
+          "sourceType": "lecture",
+          "role": "DDL and constraints",
+          "status": "current"
+        },
+        {
+          "sourceId": "DSA5104/chapter1.pdf",
+          "page": 28,
+          "sourceType": "lecture",
+          "role": "DML",
+          "status": "current"
+        },
+        {
+          "sourceId": "DSA5104/chapter1.pdf",
+          "page": 30,
+          "sourceType": "lecture",
+          "role": "SQL query language",
+          "status": "current"
+        },
+        {
+          "sourceId": "DSA5104/Homework Solutions/Ch03_Introduction_to_SQL/3.2.md",
+          "page": 1,
+          "sourceType": "exercise",
+          "role": "SQL exercise",
+          "status": "current-context"
+        }
+      ]
+    },
+    {
+      "id": "dsa5104-sql-foundations-formula-2",
+      "type": "formula",
+      "latex": "\\mathrm{WHERE}\\ \\prec\\ \\mathrm{GROUP\\ BY}\\ \\prec\\ \\mathrm{HAVING}",
+      "explanation": "This is a reasoning order, not a claim about the textual order of every SQL implementation. First decide which rows participate, then form groups, then filter aggregate groups.",
+      "symbols": [
+        {
+          "latex": "\\prec",
+          "meaning": "conceptually happens before"
+        }
+      ],
+      "sourceType": "lecture",
+      "sourceRefs": [
+        {
+          "sourceId": "DSA5104/chapter1.pdf",
+          "page": 25,
+          "sourceType": "lecture",
+          "role": "DDL and constraints",
+          "status": "current"
+        },
+        {
+          "sourceId": "DSA5104/chapter1.pdf",
+          "page": 28,
+          "sourceType": "lecture",
+          "role": "DML",
+          "status": "current"
+        },
+        {
+          "sourceId": "DSA5104/chapter1.pdf",
+          "page": 30,
+          "sourceType": "lecture",
+          "role": "SQL query language",
+          "status": "current"
+        },
+        {
+          "sourceId": "DSA5104/Homework Solutions/Ch03_Introduction_to_SQL/3.2.md",
+          "page": 1,
+          "sourceType": "exercise",
+          "role": "SQL exercise",
+          "status": "current-context"
+        }
+      ]
+    },
+    {
+      "id": "dsa5104-sql-foundations-example-1",
+      "type": "worked-example",
+      "title": "Departments with at least two students",
+      "sourceType": "exercise",
+      "steps": [
+        "Join Student to Department through the key relationship.",
+        "Group by the department identity and display name.",
+        "Compute $\\operatorname{COUNT}(*)$ for each group.",
+        "Use `HAVING $COUNT(*) \\ge  2$` to keep completed groups."
+      ],
+      "answer": "The aggregate predicate belongs in HAVING because the count does not exist until grouping has happened.",
+      "sourceRefs": [
+        {
+          "sourceId": "DSA5104/chapter1.pdf",
+          "page": 25,
+          "sourceType": "lecture",
+          "role": "DDL and constraints",
+          "status": "current"
+        },
+        {
+          "sourceId": "DSA5104/chapter1.pdf",
+          "page": 28,
+          "sourceType": "lecture",
+          "role": "DML",
+          "status": "current"
+        },
+        {
+          "sourceId": "DSA5104/chapter1.pdf",
+          "page": 30,
+          "sourceType": "lecture",
+          "role": "SQL query language",
+          "status": "current"
+        },
+        {
+          "sourceId": "DSA5104/Homework Solutions/Ch03_Introduction_to_SQL/3.2.md",
+          "page": 1,
+          "sourceType": "exercise",
+          "role": "SQL exercise",
+          "status": "current-context"
+        }
+      ]
+    },
+    {
+      "id": "dsa5104-sql-foundations-critical-1",
+      "type": "critical-question",
+      "prompt": "Why can moving an aggregate predicate from `HAVING` to `WHERE` change the answer?",
+      "angle": "Ask whether the predicate refers to an individual row or to a group summary.",
+      "modelAnswer": "`WHERE` cannot use the final group count because it runs before grouping. Moving the predicate changes which rows enter the groups rather than filtering completed groups.",
+      "focus": "query semantics",
+      "sourceRefs": [
+        {
+          "sourceId": "DSA5104/chapter1.pdf",
+          "page": 25,
+          "sourceType": "lecture",
+          "role": "DDL and constraints",
+          "status": "current"
+        },
+        {
+          "sourceId": "DSA5104/chapter1.pdf",
+          "page": 28,
+          "sourceType": "lecture",
+          "role": "DML",
+          "status": "current"
+        },
+        {
+          "sourceId": "DSA5104/chapter1.pdf",
+          "page": 30,
+          "sourceType": "lecture",
+          "role": "SQL query language",
+          "status": "current"
+        },
+        {
+          "sourceId": "DSA5104/Homework Solutions/Ch03_Introduction_to_SQL/3.2.md",
+          "page": 1,
+          "sourceType": "exercise",
+          "role": "SQL exercise",
+          "status": "current-context"
+        }
+      ]
+    },
+    {
+      "id": "dsa5104-sql-foundations-critical-2",
+      "type": "critical-question",
+      "prompt": "When could an optimizer move a filter earlier without changing the result?",
+      "angle": "Look for predicates that reference only row-local attributes and preserve NULL/join semantics.",
+      "modelAnswer": "A safe pushdown is possible when the predicate is independent of aggregates and does not alter outer-join behavior; correctness comes before speed.",
+      "focus": "optimization",
+      "sourceRefs": [
+        {
+          "sourceId": "DSA5104/chapter1.pdf",
+          "page": 25,
+          "sourceType": "lecture",
+          "role": "DDL and constraints",
+          "status": "current"
+        },
+        {
+          "sourceId": "DSA5104/chapter1.pdf",
+          "page": 28,
+          "sourceType": "lecture",
+          "role": "DML",
+          "status": "current"
+        },
+        {
+          "sourceId": "DSA5104/chapter1.pdf",
+          "page": 30,
+          "sourceType": "lecture",
+          "role": "SQL query language",
+          "status": "current"
+        },
+        {
+          "sourceId": "DSA5104/Homework Solutions/Ch03_Introduction_to_SQL/3.2.md",
+          "page": 1,
+          "sourceType": "exercise",
+          "role": "SQL exercise",
+          "status": "current-context"
+        }
+      ]
+    }
+  ],
+  "questionIds": [
+    "dsa5104-sql-q1",
+    "dsa5104-sql-q2",
+    "dsa5104-bank-007",
+    "dsa5104-bank-008"
+  ],
+  "labIds": [
+    "dsa5104-sql-flow"
+  ],
+  "schemaVersion": "nus.lesson.v1"
+}

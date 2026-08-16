@@ -1,0 +1,130 @@
+[
+  {
+    "id": "dsa5104-sql-q1",
+    "type": "mcq",
+    "prompt": "Which clause filters groups after aggregation?",
+    "choices": [
+      "WHERE",
+      "ON",
+      "HAVING",
+      "ORDER BY"
+    ],
+    "answer": 2,
+    "explanation": "WHERE filters rows before grouping; HAVING filters grouped results.",
+    "sourceRefs": [
+      {
+        "sourceId": "DSA5104/chapter1.pdf",
+        "page": 30,
+        "sourceType": "lecture",
+        "role": "SQL query language",
+        "status": "current"
+      }
+    ],
+    "difficulty": "easy",
+    "skill": "recall",
+    "cognitiveLevel": "understand",
+    "estimatedSeconds": 60,
+    "misconception": "Check the assumption behind your answer.",
+    "visualHook": "Explain the idea with a small diagram or example.",
+    "courseId": "DSA5104",
+    "lessonId": "dsa5104-sql-foundations",
+    "schemaVersion": "nus.question.v1"
+  },
+  {
+    "id": "dsa5104-sql-q2",
+    "type": "short",
+    "prompt": "Why should a join use keys rather than row position?",
+    "accepted": [
+      "row order is not identity",
+      "keys preserve identity under reorder",
+      "join on primary and foreign keys"
+    ],
+    "solution": "Keys express identity and relationships; row order can change under filtering, sorting, partitioning, or storage changes.",
+    "explanation": "A key-based join preserves meaning across execution plans and data rearrangements.",
+    "sourceRefs": [
+      {
+        "sourceId": "DSA5104/chapter1.pdf",
+        "page": 25,
+        "sourceType": "lecture",
+        "role": "integrity constraints",
+        "status": "current"
+      },
+      {
+        "sourceId": "DSA5104/Homework Solutions/Ch03_Introduction_to_SQL/3.2.md",
+        "page": 1,
+        "sourceType": "exercise",
+        "role": "join practice",
+        "status": "current-context"
+      }
+    ],
+    "difficulty": "medium",
+    "skill": "explain",
+    "cognitiveLevel": "understand",
+    "estimatedSeconds": 90,
+    "misconception": "Check the assumption behind your answer.",
+    "visualHook": "Explain the idea with a small diagram or example.",
+    "courseId": "DSA5104",
+    "lessonId": "dsa5104-sql-foundations",
+    "schemaVersion": "nus.question.v1"
+  },
+  {
+    "id": "dsa5104-bank-007",
+    "lessonId": "dsa5104-sql-foundations",
+    "type": "calculation",
+    "prompt": "A joined table has department counts 2, 1, and 3. Which groups remain after HAVING $COUNT(*) \\ge  2$?",
+    "accepted": [
+      "departments with counts 2 and 3",
+      "2 and 3",
+      "two groups"
+    ],
+    "solution": "The groups with counts 2 and 3 remain; the group with count 1 is filtered after aggregation.",
+    "explanation": "HAVING evaluates the aggregate result for each completed group.",
+    "difficulty": "easy",
+    "skill": "calculate",
+    "cognitiveLevel": "apply",
+    "estimatedSeconds": 60,
+    "misconception": "The count does not exist at the row-filtering stage.",
+    "visualHook": "Advance the SQL semantics trace to the aggregate-filter step.",
+    "sourceRefs": [
+      {
+        "sourceId": "DSA5104/chapter1.pdf",
+        "page": 30,
+        "sourceType": "lecture",
+        "role": "SQL query language",
+        "status": "current"
+      }
+    ],
+    "courseId": "DSA5104",
+    "schemaVersion": "nus.question.v1"
+  },
+  {
+    "id": "dsa5104-bank-008",
+    "lessonId": "dsa5104-sql-foundations",
+    "type": "short",
+    "prompt": "Why can moving a predicate from HAVING to WHERE change the result?",
+    "accepted": [
+      "where filters rows before grouping",
+      "having filters groups after aggregation",
+      "aggregate is not available in where"
+    ],
+    "solution": "WHERE changes which rows enter each group, while HAVING removes completed groups. An aggregate predicate therefore belongs in HAVING.",
+    "explanation": "The distinction is semantic even if an optimizer later rewrites a safe row-local predicate.",
+    "difficulty": "medium",
+    "skill": "explain",
+    "cognitiveLevel": "analyze",
+    "estimatedSeconds": 90,
+    "misconception": "Textual clause order and logical evaluation meaning are related but not identical.",
+    "visualHook": "Compare the WHERE and HAVING nodes in the lab.",
+    "sourceRefs": [
+      {
+        "sourceId": "DSA5104/Homework Solutions/Ch03_Introduction_to_SQL/3.2.md",
+        "page": 1,
+        "sourceType": "exercise",
+        "role": "aggregate SQL",
+        "status": "current-context"
+      }
+    ],
+    "courseId": "DSA5104",
+    "schemaVersion": "nus.question.v1"
+  }
+]

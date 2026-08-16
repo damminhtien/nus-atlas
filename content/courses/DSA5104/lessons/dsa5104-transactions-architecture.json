@@ -1,0 +1,456 @@
+{
+  "id": "dsa5104-transactions-architecture",
+  "title": "Transactions, concurrency, and architecture",
+  "week": 6,
+  "minutes": 55,
+  "summary": "Explain atomic updates, concurrent access, transaction management, and the trade-offs of centralized, parallel, and distributed architectures.",
+  "objectives": [
+    "Explain atomicity with a transfer example",
+    "Separate transaction management from concurrency control",
+    "Compare centralized, parallel, and distributed deployment models"
+  ],
+  "sourceRefs": [
+    {
+      "sourceId": "DSA5104/chapter1.pdf",
+      "page": 8,
+      "sourceType": "lecture",
+      "role": "integrity and failure motivation",
+      "status": "current"
+    },
+    {
+      "sourceId": "DSA5104/chapter1.pdf",
+      "page": 41,
+      "sourceType": "lecture",
+      "role": "transaction management",
+      "status": "current"
+    },
+    {
+      "sourceId": "DSA5104/chapter1.pdf",
+      "page": 42,
+      "sourceType": "lecture",
+      "role": "database architectures",
+      "status": "current"
+    },
+    {
+      "sourceId": "DSA5104/chapter1.pdf",
+      "page": 43,
+      "sourceType": "lecture",
+      "role": "database engine architecture",
+      "status": "current"
+    }
+  ],
+  "sections": [
+    {
+      "title": "One logical function, one consistent outcome",
+      "sourceType": "lecture",
+      "body": "A transaction is a collection of operations that performs one logical function. A transfer should either complete as a whole or leave the database unchanged; partial writes create an inconsistent state.",
+      "sourceRefs": [
+        {
+          "sourceId": "DSA5104/chapter1.pdf",
+          "page": 41,
+          "sourceType": "lecture",
+          "role": "transaction management",
+          "status": "current"
+        }
+      ],
+      "sourceLens": {
+        "status": "core DSA5104",
+        "whyExaminable": "Atomicity and concurrency are the bridge from a schema/query answer to a safe multi-user system.",
+        "lecture": [
+          {
+            "sourceId": "DSA5104/chapter1.pdf",
+            "page": 41,
+            "sourceType": "lecture",
+            "role": "transaction management",
+            "status": "current"
+          }
+        ],
+        "officialExercise": [],
+        "textbook": [
+          {
+            "sourceId": "DSA5104/Database System Concepts, 7th edition",
+            "page": 370,
+            "sourceType": "textbook",
+            "role": "Transactions",
+            "status": "course-depth"
+          }
+        ],
+        "reference": []
+      }
+    },
+    {
+      "title": "Architecture changes the cost model",
+      "sourceType": "lecture",
+      "body": "Centralized, client-server, parallel, and distributed systems differ in where data and computation live and how nodes communicate. A shared-nothing design can scale, but network coordination and data movement become explicit costs.",
+      "sourceRefs": [
+        {
+          "sourceId": "DSA5104/chapter1.pdf",
+          "page": 42,
+          "sourceType": "lecture",
+          "role": "database architecture",
+          "status": "current"
+        },
+        {
+          "sourceId": "DSA5104/chapter1.pdf",
+          "page": 43,
+          "sourceType": "lecture",
+          "role": "engine architecture",
+          "status": "current"
+        }
+      ],
+      "sourceLens": {
+        "status": "core DSA5104",
+        "whyExaminable": "Architecture questions ask you to connect a logical operation to failure, coordination, and placement assumptions.",
+        "lecture": [
+          {
+            "sourceId": "DSA5104/chapter1.pdf",
+            "page": 42,
+            "sourceType": "lecture",
+            "role": "database architecture",
+            "status": "current"
+          },
+          {
+            "sourceId": "DSA5104/chapter1.pdf",
+            "page": 43,
+            "sourceType": "lecture",
+            "role": "engine architecture",
+            "status": "current"
+          }
+        ],
+        "officialExercise": [],
+        "textbook": [
+          {
+            "sourceId": "DSA5104/Database System Concepts, 7th edition",
+            "page": 760,
+            "sourceType": "textbook",
+            "role": "Parallel and distributed databases",
+            "status": "course-depth"
+          }
+        ],
+        "reference": []
+      }
+    }
+  ],
+  "examples": [
+    {
+      "title": "Bank transfer as a transaction",
+      "sourceType": "lecture",
+      "steps": [
+        "Read account A and subtract the amount.",
+        "Write the new value of A.",
+        "Read account B and add the amount.",
+        "Write the new value of B.",
+        "Commit only when the logical function is complete."
+      ],
+      "answer": "Transaction management protects the database from failure; concurrency control protects interactions among concurrent transactions."
+    }
+  ],
+  "contrastDrills": [
+    {
+      "id": "dsa5104-contrast-atomic-concurrent",
+      "type": "contrast",
+      "kind": "concept-contrast",
+      "pair": "Atomicity vs concurrency control",
+      "prompt": "Which property says a transfer is all-or-nothing?",
+      "choices": [
+        "Atomicity",
+        "Concurrency control",
+        "Indexing",
+        "Normalization"
+      ],
+      "answer": 0,
+      "explanation": "Atomicity treats a transaction as one indivisible logical unit; concurrency control manages interactions among simultaneous transactions.",
+      "estimatedSeconds": 45,
+      "difficulty": "medium",
+      "skill": "concept-contrast",
+      "cognitiveLevel": "distinguish",
+      "misconception": "Name the boundary between the two concepts before choosing.",
+      "sourceRefs": [
+        {
+          "sourceId": "DSA5104/chapter1.pdf",
+          "page": 41,
+          "sourceType": "lecture",
+          "role": "transaction management",
+          "status": "current"
+        }
+      ]
+    },
+    {
+      "id": "dsa5104-contrast-central-distributed",
+      "type": "contrast",
+      "kind": "concept-contrast",
+      "pair": "Centralized vs distributed database",
+      "prompt": "Which architecture explicitly includes geographical distribution or heterogeneous schemas?",
+      "choices": [
+        "Centralized",
+        "Distributed",
+        "Single-user view",
+        "Logical schema"
+      ],
+      "answer": 1,
+      "explanation": "The lecture distinguishes distributed databases by geographical placement and possible schema/data heterogeneity.",
+      "estimatedSeconds": 45,
+      "difficulty": "medium",
+      "skill": "concept-contrast",
+      "cognitiveLevel": "distinguish",
+      "misconception": "Name the boundary between the two concepts before choosing.",
+      "sourceRefs": [
+        {
+          "sourceId": "DSA5104/chapter1.pdf",
+          "page": 42,
+          "sourceType": "lecture",
+          "role": "distributed databases",
+          "status": "current"
+        }
+      ]
+    }
+  ],
+  "math": [
+    {
+      "latex": "\\mathrm{transfer}(A,B,a):\\quad A\\leftarrow A-a,\\quad B\\leftarrow B+a",
+      "explanation": "A transfer is one logical function even though it contains multiple reads and writes. Atomic transaction semantics prevent a failure between the updates from exposing only one side of the transfer.",
+      "symbols": [
+        {
+          "latex": "A,B",
+          "meaning": "account states"
+        },
+        {
+          "latex": "a",
+          "meaning": "transfer amount"
+        }
+      ],
+      "sourceType": "lecture"
+    }
+  ],
+  "criticalQuestions": [
+    {
+      "prompt": "Why does transaction scope follow the business function rather than one SQL statement?",
+      "angle": "Find the failure point between two individually valid updates.",
+      "modelAnswer": "The business invariant links both updates. A transaction groups them so the database cannot commit only one half after a crash or abort.",
+      "focus": "atomicity"
+    },
+    {
+      "prompt": "How is isolation different from atomicity in the transfer example?",
+      "angle": "Separate an all-or-nothing outcome from the visibility of concurrent intermediate states.",
+      "modelAnswer": "Atomicity prevents a partial transfer from committing; isolation controls whether another transaction can observe or interfere with intermediate work before the transfer commits.",
+      "focus": "concurrency"
+    }
+  ],
+  "courseId": "DSA5104",
+  "moduleId": "dsa5104-modern",
+  "blocks": [
+    {
+      "id": "dsa5104-transactions-architecture-section-1",
+      "type": "teaching-note",
+      "title": "One logical function, one consistent outcome",
+      "body": "A transaction is a collection of operations that performs one logical function. A transfer should either complete as a whole or leave the database unchanged; partial writes create an inconsistent state.",
+      "sourceType": "lecture",
+      "sourceRefs": [
+        {
+          "sourceId": "DSA5104/chapter1.pdf",
+          "page": 41,
+          "sourceType": "lecture",
+          "role": "transaction management",
+          "status": "current"
+        }
+      ]
+    },
+    {
+      "id": "dsa5104-transactions-architecture-section-2",
+      "type": "teaching-note",
+      "title": "Architecture changes the cost model",
+      "body": "Centralized, client-server, parallel, and distributed systems differ in where data and computation live and how nodes communicate. A shared-nothing design can scale, but network coordination and data movement become explicit costs.",
+      "sourceType": "lecture",
+      "sourceRefs": [
+        {
+          "sourceId": "DSA5104/chapter1.pdf",
+          "page": 42,
+          "sourceType": "lecture",
+          "role": "database architecture",
+          "status": "current"
+        },
+        {
+          "sourceId": "DSA5104/chapter1.pdf",
+          "page": 43,
+          "sourceType": "lecture",
+          "role": "engine architecture",
+          "status": "current"
+        }
+      ]
+    },
+    {
+      "id": "dsa5104-transactions-architecture-formula-1",
+      "type": "formula",
+      "latex": "\\mathrm{transfer}(A,B,a):\\quad A\\leftarrow A-a,\\quad B\\leftarrow B+a",
+      "explanation": "A transfer is one logical function even though it contains multiple reads and writes. Atomic transaction semantics prevent a failure between the updates from exposing only one side of the transfer.",
+      "symbols": [
+        {
+          "latex": "A,B",
+          "meaning": "account states"
+        },
+        {
+          "latex": "a",
+          "meaning": "transfer amount"
+        }
+      ],
+      "sourceType": "lecture",
+      "sourceRefs": [
+        {
+          "sourceId": "DSA5104/chapter1.pdf",
+          "page": 8,
+          "sourceType": "lecture",
+          "role": "integrity and failure motivation",
+          "status": "current"
+        },
+        {
+          "sourceId": "DSA5104/chapter1.pdf",
+          "page": 41,
+          "sourceType": "lecture",
+          "role": "transaction management",
+          "status": "current"
+        },
+        {
+          "sourceId": "DSA5104/chapter1.pdf",
+          "page": 42,
+          "sourceType": "lecture",
+          "role": "database architectures",
+          "status": "current"
+        },
+        {
+          "sourceId": "DSA5104/chapter1.pdf",
+          "page": 43,
+          "sourceType": "lecture",
+          "role": "database engine architecture",
+          "status": "current"
+        }
+      ]
+    },
+    {
+      "id": "dsa5104-transactions-architecture-example-1",
+      "type": "worked-example",
+      "title": "Bank transfer as a transaction",
+      "sourceType": "lecture",
+      "steps": [
+        "Read account A and subtract the amount.",
+        "Write the new value of A.",
+        "Read account B and add the amount.",
+        "Write the new value of B.",
+        "Commit only when the logical function is complete."
+      ],
+      "answer": "Transaction management protects the database from failure; concurrency control protects interactions among concurrent transactions.",
+      "sourceRefs": [
+        {
+          "sourceId": "DSA5104/chapter1.pdf",
+          "page": 8,
+          "sourceType": "lecture",
+          "role": "integrity and failure motivation",
+          "status": "current"
+        },
+        {
+          "sourceId": "DSA5104/chapter1.pdf",
+          "page": 41,
+          "sourceType": "lecture",
+          "role": "transaction management",
+          "status": "current"
+        },
+        {
+          "sourceId": "DSA5104/chapter1.pdf",
+          "page": 42,
+          "sourceType": "lecture",
+          "role": "database architectures",
+          "status": "current"
+        },
+        {
+          "sourceId": "DSA5104/chapter1.pdf",
+          "page": 43,
+          "sourceType": "lecture",
+          "role": "database engine architecture",
+          "status": "current"
+        }
+      ]
+    },
+    {
+      "id": "dsa5104-transactions-architecture-critical-1",
+      "type": "critical-question",
+      "prompt": "Why does transaction scope follow the business function rather than one SQL statement?",
+      "angle": "Find the failure point between two individually valid updates.",
+      "modelAnswer": "The business invariant links both updates. A transaction groups them so the database cannot commit only one half after a crash or abort.",
+      "focus": "atomicity",
+      "sourceRefs": [
+        {
+          "sourceId": "DSA5104/chapter1.pdf",
+          "page": 8,
+          "sourceType": "lecture",
+          "role": "integrity and failure motivation",
+          "status": "current"
+        },
+        {
+          "sourceId": "DSA5104/chapter1.pdf",
+          "page": 41,
+          "sourceType": "lecture",
+          "role": "transaction management",
+          "status": "current"
+        },
+        {
+          "sourceId": "DSA5104/chapter1.pdf",
+          "page": 42,
+          "sourceType": "lecture",
+          "role": "database architectures",
+          "status": "current"
+        },
+        {
+          "sourceId": "DSA5104/chapter1.pdf",
+          "page": 43,
+          "sourceType": "lecture",
+          "role": "database engine architecture",
+          "status": "current"
+        }
+      ]
+    },
+    {
+      "id": "dsa5104-transactions-architecture-critical-2",
+      "type": "critical-question",
+      "prompt": "How is isolation different from atomicity in the transfer example?",
+      "angle": "Separate an all-or-nothing outcome from the visibility of concurrent intermediate states.",
+      "modelAnswer": "Atomicity prevents a partial transfer from committing; isolation controls whether another transaction can observe or interfere with intermediate work before the transfer commits.",
+      "focus": "concurrency",
+      "sourceRefs": [
+        {
+          "sourceId": "DSA5104/chapter1.pdf",
+          "page": 8,
+          "sourceType": "lecture",
+          "role": "integrity and failure motivation",
+          "status": "current"
+        },
+        {
+          "sourceId": "DSA5104/chapter1.pdf",
+          "page": 41,
+          "sourceType": "lecture",
+          "role": "transaction management",
+          "status": "current"
+        },
+        {
+          "sourceId": "DSA5104/chapter1.pdf",
+          "page": 42,
+          "sourceType": "lecture",
+          "role": "database architectures",
+          "status": "current"
+        },
+        {
+          "sourceId": "DSA5104/chapter1.pdf",
+          "page": 43,
+          "sourceType": "lecture",
+          "role": "database engine architecture",
+          "status": "current"
+        }
+      ]
+    }
+  ],
+  "questionIds": [
+    "dsa5104-ta-q1",
+    "dsa5104-ta-q2",
+    "dsa5104-bank-011"
+  ],
+  "labIds": [],
+  "schemaVersion": "nus.lesson.v1"
+}

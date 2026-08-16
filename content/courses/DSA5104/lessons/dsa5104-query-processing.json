@@ -1,0 +1,545 @@
+{
+  "id": "dsa5104-query-processing",
+  "title": "Query processor and storage manager",
+  "week": 5,
+  "minutes": 55,
+  "summary": "Trace SQL from parsing through optimization and evaluation, and connect physical storage decisions to query cost.",
+  "objectives": [
+    "Name the query-processing stages",
+    "Explain the storage manager's responsibilities",
+    "Reason about indexes, blocks, and data movement"
+  ],
+  "sourceRefs": [
+    {
+      "sourceId": "DSA5104/chapter1.pdf",
+      "page": 34,
+      "sourceType": "lecture",
+      "role": "database engine",
+      "status": "current"
+    },
+    {
+      "sourceId": "DSA5104/chapter1.pdf",
+      "page": 36,
+      "sourceType": "lecture",
+      "role": "storage manager",
+      "status": "current"
+    },
+    {
+      "sourceId": "DSA5104/chapter1.pdf",
+      "page": 37,
+      "sourceType": "lecture",
+      "role": "block-transfer cost",
+      "status": "current"
+    },
+    {
+      "sourceId": "DSA5104/chapter1.pdf",
+      "page": 39,
+      "sourceType": "lecture",
+      "role": "query processor",
+      "status": "current"
+    },
+    {
+      "sourceId": "DSA5104/chapter1.pdf",
+      "page": 40,
+      "sourceType": "lecture",
+      "role": "query processing",
+      "status": "current"
+    }
+  ],
+  "visualIds": [
+    "dsa5104-query-pipeline"
+  ],
+  "sections": [
+    {
+      "title": "Logical query, physical plan",
+      "sourceType": "lecture",
+      "body": "The query processor parses and translates a declarative query, chooses an evaluation plan, and executes it. The optimizer may rewrite the plan while preserving relational semantics.",
+      "sourceRefs": [
+        {
+          "sourceId": "DSA5104/chapter1.pdf",
+          "page": 39,
+          "sourceType": "lecture",
+          "role": "query processor",
+          "status": "current"
+        },
+        {
+          "sourceId": "DSA5104/chapter1.pdf",
+          "page": 40,
+          "sourceType": "lecture",
+          "role": "query processing",
+          "status": "current"
+        }
+      ],
+      "sourceLens": {
+        "status": "core DSA5104",
+        "whyExaminable": "The three-stage pipeline gives a compact explanation for why identical SQL can have different runtime costs and why indexes matter.",
+        "lecture": [
+          {
+            "sourceId": "DSA5104/chapter1.pdf",
+            "page": 39,
+            "sourceType": "lecture",
+            "role": "query processor",
+            "status": "current"
+          },
+          {
+            "sourceId": "DSA5104/chapter1.pdf",
+            "page": 40,
+            "sourceType": "lecture",
+            "role": "query processing",
+            "status": "current"
+          }
+        ],
+        "officialExercise": [],
+        "textbook": [
+          {
+            "sourceId": "DSA5104/Database System Concepts, 7th edition",
+            "page": 220,
+            "sourceType": "textbook",
+            "role": "Query processing",
+            "status": "course-depth"
+          }
+        ],
+        "reference": []
+      }
+    },
+    {
+      "title": "Storage and block movement",
+      "sourceType": "lecture",
+      "body": "The storage manager mediates between low-level data and applications. Buffer, file, authorization/integrity, and transaction managers each contribute to efficient and safe access. Disk movement and block transfers can dominate the time of a logically simple query.",
+      "sourceRefs": [
+        {
+          "sourceId": "DSA5104/chapter1.pdf",
+          "page": 36,
+          "sourceType": "lecture",
+          "role": "storage manager",
+          "status": "current"
+        },
+        {
+          "sourceId": "DSA5104/chapter1.pdf",
+          "page": 37,
+          "sourceType": "lecture",
+          "role": "block-transfer cost",
+          "status": "current"
+        },
+        {
+          "sourceId": "DSA5104/chapter1.pdf",
+          "page": 38,
+          "sourceType": "lecture",
+          "role": "indexes",
+          "status": "current"
+        }
+      ],
+      "sourceLens": {
+        "status": "core DSA5104",
+        "whyExaminable": "These pages turn performance into a systems question: count blocks, indexes, buffering, and coordination rather than SQL tokens.",
+        "lecture": [
+          {
+            "sourceId": "DSA5104/chapter1.pdf",
+            "page": 36,
+            "sourceType": "lecture",
+            "role": "storage manager",
+            "status": "current"
+          },
+          {
+            "sourceId": "DSA5104/chapter1.pdf",
+            "page": 37,
+            "sourceType": "lecture",
+            "role": "block-transfer cost",
+            "status": "current"
+          },
+          {
+            "sourceId": "DSA5104/chapter1.pdf",
+            "page": 38,
+            "sourceType": "lecture",
+            "role": "indexes",
+            "status": "current"
+          }
+        ],
+        "officialExercise": [],
+        "textbook": [
+          {
+            "sourceId": "DSA5104/Database System Concepts, 7th edition",
+            "page": 440,
+            "sourceType": "textbook",
+            "role": "Storage and indexing",
+            "status": "course-depth"
+          }
+        ],
+        "reference": []
+      }
+    }
+  ],
+  "examples": [
+    {
+      "title": "Query-processing trace",
+      "sourceType": "lecture",
+      "steps": [
+        "Parse and translate the SQL into an internal representation.",
+        "Enumerate plausible plans such as an index lookup or a scan.",
+        "Choose a low-cost plan using statistics and physical access methods.",
+        "Execute the plan and return a relation."
+      ],
+      "answer": "Optimization changes execution strategy, not the declared relational result."
+    }
+  ],
+  "contrastDrills": [
+    {
+      "id": "dsa5104-contrast-query-stages",
+      "type": "contrast",
+      "kind": "concept-contrast",
+      "pair": "Parsing vs optimization vs evaluation",
+      "prompt": "Which stage chooses among alternative low-level plans?",
+      "choices": [
+        "Parsing and translation",
+        "Optimization",
+        "Evaluation",
+        "View definition"
+      ],
+      "answer": 1,
+      "explanation": "Optimization compares alternative evaluation plans; parsing builds the internal representation and evaluation runs the selected plan.",
+      "estimatedSeconds": 45,
+      "difficulty": "medium",
+      "skill": "concept-contrast",
+      "cognitiveLevel": "distinguish",
+      "misconception": "Name the boundary between the two concepts before choosing.",
+      "sourceRefs": [
+        {
+          "sourceId": "DSA5104/chapter1.pdf",
+          "page": 40,
+          "sourceType": "lecture",
+          "role": "query processing",
+          "status": "current"
+        }
+      ]
+    },
+    {
+      "id": "dsa5104-contrast-index-table",
+      "type": "contrast",
+      "kind": "concept-contrast",
+      "pair": "Index lookup vs full scan",
+      "prompt": "What is the main purpose of an index?",
+      "choices": [
+        "Change the logical schema",
+        "Provide pointers for faster access",
+        "Guarantee a correct join",
+        "Replace constraints"
+      ],
+      "answer": 1,
+      "explanation": "An index provides an access path to data items; it does not replace logical integrity constraints.",
+      "estimatedSeconds": 45,
+      "difficulty": "medium",
+      "skill": "concept-contrast",
+      "cognitiveLevel": "distinguish",
+      "misconception": "Name the boundary between the two concepts before choosing.",
+      "sourceRefs": [
+        {
+          "sourceId": "DSA5104/chapter1.pdf",
+          "page": 38,
+          "sourceType": "lecture",
+          "role": "indexes",
+          "status": "current"
+        }
+      ]
+    }
+  ],
+  "math": [
+    {
+      "latex": "Q \\xrightarrow{\\mathrm{parse/translate}} Q' \\xrightarrow{\\mathrm{optimize}} P \\xrightarrow{\\mathrm{evaluate}} r",
+      "explanation": "The query processor turns a declarative query into an internal form, selects a physical plan, and evaluates that plan to produce a relation. The stages can be optimized internally while preserving the same logical result.",
+      "symbols": [
+        {
+          "latex": "Q",
+          "meaning": "declared SQL query"
+        },
+        {
+          "latex": "P",
+          "meaning": "chosen physical evaluation plan"
+        },
+        {
+          "latex": "r",
+          "meaning": "result relation"
+        }
+      ],
+      "sourceType": "lecture"
+    }
+  ],
+  "criticalQuestions": [
+    {
+      "prompt": "What must remain invariant when the optimizer changes the plan?",
+      "angle": "Separate the access path and operator order from the relation the query promises.",
+      "modelAnswer": "The logical result relation must remain the same; only the physical route, such as an index lookup versus a scan, changes.",
+      "focus": "semantic preservation"
+    },
+    {
+      "prompt": "Why is an index not automatically faster than a full table scan?",
+      "angle": "Compare the number of qualifying rows, index locality, and the cost of fetching the base tuples.",
+      "modelAnswer": "For a highly selective predicate an index can avoid most pages, but when many rows qualify the random lookups and index traversal can cost more than a sequential scan.",
+      "focus": "access-path trade-off"
+    }
+  ],
+  "courseId": "DSA5104",
+  "moduleId": "dsa5104-sql",
+  "blocks": [
+    {
+      "id": "dsa5104-query-processing-section-1",
+      "type": "teaching-note",
+      "title": "Logical query, physical plan",
+      "body": "The query processor parses and translates a declarative query, chooses an evaluation plan, and executes it. The optimizer may rewrite the plan while preserving relational semantics.",
+      "sourceType": "lecture",
+      "sourceRefs": [
+        {
+          "sourceId": "DSA5104/chapter1.pdf",
+          "page": 39,
+          "sourceType": "lecture",
+          "role": "query processor",
+          "status": "current"
+        },
+        {
+          "sourceId": "DSA5104/chapter1.pdf",
+          "page": 40,
+          "sourceType": "lecture",
+          "role": "query processing",
+          "status": "current"
+        }
+      ]
+    },
+    {
+      "id": "dsa5104-query-processing-section-2",
+      "type": "teaching-note",
+      "title": "Storage and block movement",
+      "body": "The storage manager mediates between low-level data and applications. Buffer, file, authorization/integrity, and transaction managers each contribute to efficient and safe access. Disk movement and block transfers can dominate the time of a logically simple query.",
+      "sourceType": "lecture",
+      "sourceRefs": [
+        {
+          "sourceId": "DSA5104/chapter1.pdf",
+          "page": 36,
+          "sourceType": "lecture",
+          "role": "storage manager",
+          "status": "current"
+        },
+        {
+          "sourceId": "DSA5104/chapter1.pdf",
+          "page": 37,
+          "sourceType": "lecture",
+          "role": "block-transfer cost",
+          "status": "current"
+        },
+        {
+          "sourceId": "DSA5104/chapter1.pdf",
+          "page": 38,
+          "sourceType": "lecture",
+          "role": "indexes",
+          "status": "current"
+        }
+      ]
+    },
+    {
+      "id": "dsa5104-query-processing-formula-1",
+      "type": "formula",
+      "latex": "Q \\xrightarrow{\\mathrm{parse/translate}} Q' \\xrightarrow{\\mathrm{optimize}} P \\xrightarrow{\\mathrm{evaluate}} r",
+      "explanation": "The query processor turns a declarative query into an internal form, selects a physical plan, and evaluates that plan to produce a relation. The stages can be optimized internally while preserving the same logical result.",
+      "symbols": [
+        {
+          "latex": "Q",
+          "meaning": "declared SQL query"
+        },
+        {
+          "latex": "P",
+          "meaning": "chosen physical evaluation plan"
+        },
+        {
+          "latex": "r",
+          "meaning": "result relation"
+        }
+      ],
+      "sourceType": "lecture",
+      "sourceRefs": [
+        {
+          "sourceId": "DSA5104/chapter1.pdf",
+          "page": 34,
+          "sourceType": "lecture",
+          "role": "database engine",
+          "status": "current"
+        },
+        {
+          "sourceId": "DSA5104/chapter1.pdf",
+          "page": 36,
+          "sourceType": "lecture",
+          "role": "storage manager",
+          "status": "current"
+        },
+        {
+          "sourceId": "DSA5104/chapter1.pdf",
+          "page": 37,
+          "sourceType": "lecture",
+          "role": "block-transfer cost",
+          "status": "current"
+        },
+        {
+          "sourceId": "DSA5104/chapter1.pdf",
+          "page": 39,
+          "sourceType": "lecture",
+          "role": "query processor",
+          "status": "current"
+        },
+        {
+          "sourceId": "DSA5104/chapter1.pdf",
+          "page": 40,
+          "sourceType": "lecture",
+          "role": "query processing",
+          "status": "current"
+        }
+      ]
+    },
+    {
+      "id": "dsa5104-query-processing-example-1",
+      "type": "worked-example",
+      "title": "Query-processing trace",
+      "sourceType": "lecture",
+      "steps": [
+        "Parse and translate the SQL into an internal representation.",
+        "Enumerate plausible plans such as an index lookup or a scan.",
+        "Choose a low-cost plan using statistics and physical access methods.",
+        "Execute the plan and return a relation."
+      ],
+      "answer": "Optimization changes execution strategy, not the declared relational result.",
+      "sourceRefs": [
+        {
+          "sourceId": "DSA5104/chapter1.pdf",
+          "page": 34,
+          "sourceType": "lecture",
+          "role": "database engine",
+          "status": "current"
+        },
+        {
+          "sourceId": "DSA5104/chapter1.pdf",
+          "page": 36,
+          "sourceType": "lecture",
+          "role": "storage manager",
+          "status": "current"
+        },
+        {
+          "sourceId": "DSA5104/chapter1.pdf",
+          "page": 37,
+          "sourceType": "lecture",
+          "role": "block-transfer cost",
+          "status": "current"
+        },
+        {
+          "sourceId": "DSA5104/chapter1.pdf",
+          "page": 39,
+          "sourceType": "lecture",
+          "role": "query processor",
+          "status": "current"
+        },
+        {
+          "sourceId": "DSA5104/chapter1.pdf",
+          "page": 40,
+          "sourceType": "lecture",
+          "role": "query processing",
+          "status": "current"
+        }
+      ]
+    },
+    {
+      "id": "dsa5104-query-processing-critical-1",
+      "type": "critical-question",
+      "prompt": "What must remain invariant when the optimizer changes the plan?",
+      "angle": "Separate the access path and operator order from the relation the query promises.",
+      "modelAnswer": "The logical result relation must remain the same; only the physical route, such as an index lookup versus a scan, changes.",
+      "focus": "semantic preservation",
+      "sourceRefs": [
+        {
+          "sourceId": "DSA5104/chapter1.pdf",
+          "page": 34,
+          "sourceType": "lecture",
+          "role": "database engine",
+          "status": "current"
+        },
+        {
+          "sourceId": "DSA5104/chapter1.pdf",
+          "page": 36,
+          "sourceType": "lecture",
+          "role": "storage manager",
+          "status": "current"
+        },
+        {
+          "sourceId": "DSA5104/chapter1.pdf",
+          "page": 37,
+          "sourceType": "lecture",
+          "role": "block-transfer cost",
+          "status": "current"
+        },
+        {
+          "sourceId": "DSA5104/chapter1.pdf",
+          "page": 39,
+          "sourceType": "lecture",
+          "role": "query processor",
+          "status": "current"
+        },
+        {
+          "sourceId": "DSA5104/chapter1.pdf",
+          "page": 40,
+          "sourceType": "lecture",
+          "role": "query processing",
+          "status": "current"
+        }
+      ]
+    },
+    {
+      "id": "dsa5104-query-processing-critical-2",
+      "type": "critical-question",
+      "prompt": "Why is an index not automatically faster than a full table scan?",
+      "angle": "Compare the number of qualifying rows, index locality, and the cost of fetching the base tuples.",
+      "modelAnswer": "For a highly selective predicate an index can avoid most pages, but when many rows qualify the random lookups and index traversal can cost more than a sequential scan.",
+      "focus": "access-path trade-off",
+      "sourceRefs": [
+        {
+          "sourceId": "DSA5104/chapter1.pdf",
+          "page": 34,
+          "sourceType": "lecture",
+          "role": "database engine",
+          "status": "current"
+        },
+        {
+          "sourceId": "DSA5104/chapter1.pdf",
+          "page": 36,
+          "sourceType": "lecture",
+          "role": "storage manager",
+          "status": "current"
+        },
+        {
+          "sourceId": "DSA5104/chapter1.pdf",
+          "page": 37,
+          "sourceType": "lecture",
+          "role": "block-transfer cost",
+          "status": "current"
+        },
+        {
+          "sourceId": "DSA5104/chapter1.pdf",
+          "page": 39,
+          "sourceType": "lecture",
+          "role": "query processor",
+          "status": "current"
+        },
+        {
+          "sourceId": "DSA5104/chapter1.pdf",
+          "page": 40,
+          "sourceType": "lecture",
+          "role": "query processing",
+          "status": "current"
+        }
+      ]
+    }
+  ],
+  "questionIds": [
+    "dsa5104-qp-q1",
+    "dsa5104-qp-q2",
+    "dsa5104-bank-009",
+    "dsa5104-bank-010"
+  ],
+  "labIds": [
+    "dsa5104-query-pipeline"
+  ],
+  "schemaVersion": "nus.lesson.v1"
+}

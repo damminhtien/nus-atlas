@@ -1,0 +1,124 @@
+[
+  {
+    "id": "dsa5104-dd-q1",
+    "type": "short",
+    "prompt": "Why should a many-to-many relationship usually become its own relation?",
+    "accepted": [
+      "it stores both foreign keys",
+      "relationship relation with two foreign keys",
+      "avoid repeating groups"
+    ],
+    "solution": "A separate relation stores the identities of both participating entities and can use their pair as a composite key.",
+    "explanation": "This preserves multiplicity and makes the relationship attributes explicit.",
+    "sourceRefs": [
+      {
+        "sourceId": "DSA5104/Homework Solutions/Ch06_Database_Design_Using_the_ER_Model/6.23.md",
+        "page": 1,
+        "sourceType": "exercise",
+        "role": "many-to-many mapping",
+        "status": "current-context"
+      }
+    ],
+    "difficulty": "medium",
+    "skill": "explain",
+    "cognitiveLevel": "understand",
+    "estimatedSeconds": 90,
+    "misconception": "Check the assumption behind your answer.",
+    "visualHook": "Explain the idea with a small diagram or example.",
+    "courseId": "DSA5104",
+    "lessonId": "dsa5104-database-design",
+    "schemaVersion": "nus.question.v1"
+  },
+  {
+    "id": "dsa5104-dd-q2",
+    "type": "mcq",
+    "prompt": "Which decision is physical design?",
+    "choices": [
+      "Choosing whether salary is an attribute",
+      "Choosing relation schemas",
+      "Choosing an index or storage layout",
+      "Choosing the business meaning of a key"
+    ],
+    "answer": 2,
+    "explanation": "Physical design concerns layout and access methods after the logical schema is chosen.",
+    "sourceRefs": [
+      {
+        "sourceId": "DSA5104/chapter1.pdf",
+        "page": 33,
+        "sourceType": "lecture",
+        "role": "physical design",
+        "status": "current"
+      }
+    ],
+    "difficulty": "easy",
+    "skill": "recall",
+    "cognitiveLevel": "understand",
+    "estimatedSeconds": 60,
+    "misconception": "Check the assumption behind your answer.",
+    "visualHook": "Explain the idea with a small diagram or example.",
+    "courseId": "DSA5104",
+    "lessonId": "dsa5104-database-design",
+    "schemaVersion": "nus.question.v1"
+  },
+  {
+    "id": "dsa5104-bank-005",
+    "lessonId": "dsa5104-database-design",
+    "type": "derivation",
+    "prompt": "Translate a many-to-many Student–Club relationship into a relational schema.",
+    "accepted": [
+      "membership relation with student_id and club_id",
+      "create relationship table with both foreign keys",
+      "composite key student_id club_id"
+    ],
+    "solution": "$Create Student and Club relations with their keys, then Membership(student_id, club_id, ...) with foreign keys to both and typically a composite primary key.$",
+    "explanation": "A relationship relation preserves multiplicity and makes relationship attributes explicit.",
+    "difficulty": "hard",
+    "skill": "derive",
+    "cognitiveLevel": "apply",
+    "estimatedSeconds": 150,
+    "misconception": "Do not store an unbounded repeating list inside one entity tuple.",
+    "visualHook": "Use the ER-to-relational design decision tree.",
+    "sourceRefs": [
+      {
+        "sourceId": "DSA5104/Homework Solutions/Ch06_Database_Design_Using_the_ER_Model/6.23.md",
+        "page": 1,
+        "sourceType": "exercise",
+        "role": "many-to-many design",
+        "status": "current-context"
+      }
+    ],
+    "courseId": "DSA5104",
+    "schemaVersion": "nus.question.v1"
+  },
+  {
+    "id": "dsa5104-bank-006",
+    "lessonId": "dsa5104-database-design",
+    "type": "mcq",
+    "prompt": "Which choice belongs to physical design?",
+    "choices": [
+      "Choose entity attributes",
+      "Choose relation schemas",
+      "Choose an index or storage layout",
+      "Define a business relationship"
+    ],
+    "answer": 2,
+    "explanation": "Physical design chooses layout and access methods after logical meaning and constraints are established.",
+    "difficulty": "easy",
+    "skill": "classify",
+    "cognitiveLevel": "understand",
+    "estimatedSeconds": 45,
+    "misconception": "Indexes are physical access methods, not a substitute for logical modeling.",
+    "visualHook": "Place the choice on the logical-to-physical design boundary.",
+    "sourceRefs": [
+      {
+        "sourceId": "DSA5104/chapter1.pdf",
+        "page": 33,
+        "sourceType": "lecture",
+        "role": "database design",
+        "status": "current"
+      }
+    ],
+    "courseId": "DSA5104",
+    "schemaVersion": "nus.question.v1"
+  }
+]

@@ -1,0 +1,489 @@
+{
+  "id": "dsa5104-orientation",
+  "title": "Database systems, abstraction, and evidence",
+  "week": 1,
+  "minutes": 45,
+  "summary": "Build the database vocabulary: DBMS purpose, data models, abstraction levels, schema versus instance, and a reproducible evidence trail.",
+  "objectives": [
+    "Explain why a DBMS is more than a file collection",
+    "Distinguish physical, logical, and view levels",
+    "Separate schema design from the current database instance"
+  ],
+  "sourceRefs": [
+    {
+      "sourceId": "DSA5104/chapter1.pdf",
+      "page": 1,
+      "sourceType": "lecture",
+      "role": "course scope and DBMS purpose",
+      "status": "current"
+    },
+    {
+      "sourceId": "DSA5104/chapter1.pdf",
+      "page": 12,
+      "sourceType": "lecture",
+      "role": "view of data",
+      "status": "current"
+    },
+    {
+      "sourceId": "DSA5104/chapter1.pdf",
+      "page": 18,
+      "sourceType": "lecture",
+      "role": "levels of abstraction",
+      "status": "current"
+    },
+    {
+      "sourceId": "DSA5104/chapter1.pdf",
+      "page": 22,
+      "sourceType": "lecture",
+      "role": "schema and instance",
+      "status": "current"
+    }
+  ],
+  "visualIds": [
+    "dsa5104-data-abstraction"
+  ],
+  "sections": [
+    {
+      "title": "Lecture core · the database boundary",
+      "sourceType": "lecture",
+      "body": "A DBMS combines interrelated data with programs that provide convenient, efficient, concurrent, and controlled access. Start every answer by naming the data model, the constraints, and the evidence used to validate the result.",
+      "sourceRefs": [
+        {
+          "sourceId": "DSA5104/chapter1.pdf",
+          "page": 1,
+          "sourceType": "lecture",
+          "role": "DBMS purpose",
+          "status": "current"
+        },
+        {
+          "sourceId": "DSA5104/chapter1.pdf",
+          "page": 12,
+          "sourceType": "lecture",
+          "role": "data model and abstraction",
+          "status": "current"
+        }
+      ],
+      "sourceLens": {
+        "status": "core DSA5104",
+        "whyExaminable": "The opening lecture pages define the vocabulary used by every later SQL and design question. Homework depth adds concrete schemas without changing this scope.",
+        "lecture": [
+          {
+            "sourceId": "DSA5104/chapter1.pdf",
+            "page": 1,
+            "sourceType": "lecture",
+            "role": "DBMS purpose",
+            "status": "current"
+          },
+          {
+            "sourceId": "DSA5104/chapter1.pdf",
+            "page": 12,
+            "sourceType": "lecture",
+            "role": "data model and abstraction",
+            "status": "current"
+          }
+        ],
+        "officialExercise": [],
+        "textbook": [
+          {
+            "sourceId": "DSA5104/Database System Concepts, 7th edition",
+            "page": 1,
+            "sourceType": "textbook",
+            "role": "Introduction",
+            "status": "course-depth"
+          }
+        ],
+        "reference": []
+      }
+    },
+    {
+      "title": "Schema, instance, and abstraction",
+      "sourceType": "lecture",
+      "body": "The schema is the design and constraint boundary; the instance is the data stored at a particular moment. Physical, logical, and view levels hide different kinds of implementation detail, so a view can change without exposing storage layout.",
+      "sourceRefs": [
+        {
+          "sourceId": "DSA5104/chapter1.pdf",
+          "page": 18,
+          "sourceType": "lecture",
+          "role": "abstraction levels",
+          "status": "current"
+        },
+        {
+          "sourceId": "DSA5104/chapter1.pdf",
+          "page": 22,
+          "sourceType": "lecture",
+          "role": "schema and instance",
+          "status": "current"
+        }
+      ],
+      "sourceLens": {
+        "status": "core DSA5104",
+        "whyExaminable": "Schema-versus-instance and abstraction-level distinctions are short-answer foundations: they test whether a learner can separate a model from its current contents.",
+        "lecture": [
+          {
+            "sourceId": "DSA5104/chapter1.pdf",
+            "page": 18,
+            "sourceType": "lecture",
+            "role": "abstraction levels",
+            "status": "current"
+          },
+          {
+            "sourceId": "DSA5104/chapter1.pdf",
+            "page": 22,
+            "sourceType": "lecture",
+            "role": "schema and instance",
+            "status": "current"
+          }
+        ],
+        "officialExercise": [],
+        "textbook": [
+          {
+            "sourceId": "DSA5104/Database System Concepts, 7th edition",
+            "page": 12,
+            "sourceType": "textbook",
+            "role": "data abstraction",
+            "status": "course-depth"
+          }
+        ],
+        "reference": []
+      }
+    }
+  ],
+  "examples": [
+    {
+      "title": "Evidence trail for a database answer",
+      "sourceType": "lecture",
+      "steps": [
+        "Name the relation schema and key constraints.",
+        "State the query or transformation in a reproducible form.",
+        "Show the expected output shape and one edge case.",
+        "Validate with a small result or invariant."
+      ],
+      "answer": "A correct result is not enough: the model, assumptions, query, and validation evidence must be inspectable."
+    }
+  ],
+  "contrastDrills": [
+    {
+      "id": "dsa5104-contrast-schema-instance",
+      "type": "contrast",
+      "kind": "concept-contrast",
+      "pair": "Schema vs instance",
+      "prompt": "A new row is inserted without changing the table definition. What changed?",
+      "choices": [
+        "The schema",
+        "The instance",
+        "The data model",
+        "The view definition"
+      ],
+      "answer": 1,
+      "explanation": "The instance is the current contents; the schema describes the structure and constraints.",
+      "estimatedSeconds": 45,
+      "difficulty": "medium",
+      "skill": "concept-contrast",
+      "cognitiveLevel": "distinguish",
+      "misconception": "Name the boundary between the two concepts before choosing.",
+      "sourceRefs": [
+        {
+          "sourceId": "DSA5104/chapter1.pdf",
+          "page": 22,
+          "sourceType": "lecture",
+          "role": "schema and instance",
+          "status": "current"
+        }
+      ]
+    },
+    {
+      "id": "dsa5104-contrast-abstraction",
+      "type": "contrast",
+      "kind": "concept-contrast",
+      "pair": "Physical vs logical vs view level",
+      "prompt": "Which level is closest to the tailored data a particular application is allowed to see?",
+      "choices": [
+        "Physical",
+        "Logical",
+        "View",
+        "Buffer"
+      ],
+      "answer": 2,
+      "explanation": "The view level presents an application-specific projection and can also hide sensitive attributes.",
+      "estimatedSeconds": 45,
+      "difficulty": "medium",
+      "skill": "concept-contrast",
+      "cognitiveLevel": "distinguish",
+      "misconception": "Name the boundary between the two concepts before choosing.",
+      "sourceRefs": [
+        {
+          "sourceId": "DSA5104/chapter1.pdf",
+          "page": 18,
+          "sourceType": "lecture",
+          "role": "levels of abstraction",
+          "status": "current"
+        }
+      ]
+    }
+  ],
+  "math": [
+    {
+      "latex": "r \\subseteq D_1 \\times D_2 \\times \\cdots \\times D_n",
+      "explanation": "A relation is a set of tuples drawn from attribute domains. The schema describes the domains and constraints; the instance is the finite set of tuples currently stored.",
+      "symbols": [
+        {
+          "latex": "r",
+          "meaning": "relation instance"
+        },
+        {
+          "latex": "D_i",
+          "meaning": "domain of attribute $i$"
+        },
+        {
+          "latex": "\\times",
+          "meaning": "Cartesian product of possible values"
+        }
+      ],
+      "sourceType": "lecture"
+    }
+  ],
+  "criticalQuestions": [
+    {
+      "prompt": "Why is a database schema more than a list of column names?",
+      "angle": "Look for domains, keys, nullability, and integrity constraints that rule out invalid states.",
+      "modelAnswer": "A schema defines the allowed structure and constraints. Without them, the system can store ambiguous or contradictory instances even if the columns look correct.",
+      "focus": "data integrity"
+    },
+    {
+      "prompt": "What evidence would make a data-cleaning decision reproducible?",
+      "angle": "Ask what changed, why it changed, and how another person can verify the result.",
+      "modelAnswer": "Record the input rule, transformation, rejected or imputed rows, and a validation query or summary statistic.",
+      "focus": "auditability"
+    }
+  ],
+  "courseId": "DSA5104",
+  "moduleId": "dsa5104-foundations",
+  "blocks": [
+    {
+      "id": "dsa5104-orientation-section-1",
+      "type": "teaching-note",
+      "title": "Lecture core · the database boundary",
+      "body": "A DBMS combines interrelated data with programs that provide convenient, efficient, concurrent, and controlled access. Start every answer by naming the data model, the constraints, and the evidence used to validate the result.",
+      "sourceType": "lecture",
+      "sourceRefs": [
+        {
+          "sourceId": "DSA5104/chapter1.pdf",
+          "page": 1,
+          "sourceType": "lecture",
+          "role": "DBMS purpose",
+          "status": "current"
+        },
+        {
+          "sourceId": "DSA5104/chapter1.pdf",
+          "page": 12,
+          "sourceType": "lecture",
+          "role": "data model and abstraction",
+          "status": "current"
+        }
+      ]
+    },
+    {
+      "id": "dsa5104-orientation-section-2",
+      "type": "teaching-note",
+      "title": "Schema, instance, and abstraction",
+      "body": "The schema is the design and constraint boundary; the instance is the data stored at a particular moment. Physical, logical, and view levels hide different kinds of implementation detail, so a view can change without exposing storage layout.",
+      "sourceType": "lecture",
+      "sourceRefs": [
+        {
+          "sourceId": "DSA5104/chapter1.pdf",
+          "page": 18,
+          "sourceType": "lecture",
+          "role": "abstraction levels",
+          "status": "current"
+        },
+        {
+          "sourceId": "DSA5104/chapter1.pdf",
+          "page": 22,
+          "sourceType": "lecture",
+          "role": "schema and instance",
+          "status": "current"
+        }
+      ]
+    },
+    {
+      "id": "dsa5104-orientation-formula-1",
+      "type": "formula",
+      "latex": "r \\subseteq D_1 \\times D_2 \\times \\cdots \\times D_n",
+      "explanation": "A relation is a set of tuples drawn from attribute domains. The schema describes the domains and constraints; the instance is the finite set of tuples currently stored.",
+      "symbols": [
+        {
+          "latex": "r",
+          "meaning": "relation instance"
+        },
+        {
+          "latex": "D_i",
+          "meaning": "domain of attribute $i$"
+        },
+        {
+          "latex": "\\times",
+          "meaning": "Cartesian product of possible values"
+        }
+      ],
+      "sourceType": "lecture",
+      "sourceRefs": [
+        {
+          "sourceId": "DSA5104/chapter1.pdf",
+          "page": 1,
+          "sourceType": "lecture",
+          "role": "course scope and DBMS purpose",
+          "status": "current"
+        },
+        {
+          "sourceId": "DSA5104/chapter1.pdf",
+          "page": 12,
+          "sourceType": "lecture",
+          "role": "view of data",
+          "status": "current"
+        },
+        {
+          "sourceId": "DSA5104/chapter1.pdf",
+          "page": 18,
+          "sourceType": "lecture",
+          "role": "levels of abstraction",
+          "status": "current"
+        },
+        {
+          "sourceId": "DSA5104/chapter1.pdf",
+          "page": 22,
+          "sourceType": "lecture",
+          "role": "schema and instance",
+          "status": "current"
+        }
+      ]
+    },
+    {
+      "id": "dsa5104-orientation-example-1",
+      "type": "worked-example",
+      "title": "Evidence trail for a database answer",
+      "sourceType": "lecture",
+      "steps": [
+        "Name the relation schema and key constraints.",
+        "State the query or transformation in a reproducible form.",
+        "Show the expected output shape and one edge case.",
+        "Validate with a small result or invariant."
+      ],
+      "answer": "A correct result is not enough: the model, assumptions, query, and validation evidence must be inspectable.",
+      "sourceRefs": [
+        {
+          "sourceId": "DSA5104/chapter1.pdf",
+          "page": 1,
+          "sourceType": "lecture",
+          "role": "course scope and DBMS purpose",
+          "status": "current"
+        },
+        {
+          "sourceId": "DSA5104/chapter1.pdf",
+          "page": 12,
+          "sourceType": "lecture",
+          "role": "view of data",
+          "status": "current"
+        },
+        {
+          "sourceId": "DSA5104/chapter1.pdf",
+          "page": 18,
+          "sourceType": "lecture",
+          "role": "levels of abstraction",
+          "status": "current"
+        },
+        {
+          "sourceId": "DSA5104/chapter1.pdf",
+          "page": 22,
+          "sourceType": "lecture",
+          "role": "schema and instance",
+          "status": "current"
+        }
+      ]
+    },
+    {
+      "id": "dsa5104-orientation-critical-1",
+      "type": "critical-question",
+      "prompt": "Why is a database schema more than a list of column names?",
+      "angle": "Look for domains, keys, nullability, and integrity constraints that rule out invalid states.",
+      "modelAnswer": "A schema defines the allowed structure and constraints. Without them, the system can store ambiguous or contradictory instances even if the columns look correct.",
+      "focus": "data integrity",
+      "sourceRefs": [
+        {
+          "sourceId": "DSA5104/chapter1.pdf",
+          "page": 1,
+          "sourceType": "lecture",
+          "role": "course scope and DBMS purpose",
+          "status": "current"
+        },
+        {
+          "sourceId": "DSA5104/chapter1.pdf",
+          "page": 12,
+          "sourceType": "lecture",
+          "role": "view of data",
+          "status": "current"
+        },
+        {
+          "sourceId": "DSA5104/chapter1.pdf",
+          "page": 18,
+          "sourceType": "lecture",
+          "role": "levels of abstraction",
+          "status": "current"
+        },
+        {
+          "sourceId": "DSA5104/chapter1.pdf",
+          "page": 22,
+          "sourceType": "lecture",
+          "role": "schema and instance",
+          "status": "current"
+        }
+      ]
+    },
+    {
+      "id": "dsa5104-orientation-critical-2",
+      "type": "critical-question",
+      "prompt": "What evidence would make a data-cleaning decision reproducible?",
+      "angle": "Ask what changed, why it changed, and how another person can verify the result.",
+      "modelAnswer": "Record the input rule, transformation, rejected or imputed rows, and a validation query or summary statistic.",
+      "focus": "auditability",
+      "sourceRefs": [
+        {
+          "sourceId": "DSA5104/chapter1.pdf",
+          "page": 1,
+          "sourceType": "lecture",
+          "role": "course scope and DBMS purpose",
+          "status": "current"
+        },
+        {
+          "sourceId": "DSA5104/chapter1.pdf",
+          "page": 12,
+          "sourceType": "lecture",
+          "role": "view of data",
+          "status": "current"
+        },
+        {
+          "sourceId": "DSA5104/chapter1.pdf",
+          "page": 18,
+          "sourceType": "lecture",
+          "role": "levels of abstraction",
+          "status": "current"
+        },
+        {
+          "sourceId": "DSA5104/chapter1.pdf",
+          "page": 22,
+          "sourceType": "lecture",
+          "role": "schema and instance",
+          "status": "current"
+        }
+      ]
+    }
+  ],
+  "questionIds": [
+    "dsa5104-o-q1",
+    "dsa5104-o-q2",
+    "dsa5104-bank-001",
+    "dsa5104-bank-002"
+  ],
+  "labIds": [
+    "dsa5104-data-abstraction"
+  ],
+  "schemaVersion": "nus.lesson.v1"
+}

@@ -1,0 +1,43 @@
+{
+  "lessonId": "dsa5104-relational-model",
+  "schemaVersion": "nus.study-kit.v1",
+  "flashcards": [
+    {
+      "front": "Primary key versus foreign key?",
+      "back": "A primary key identifies tuples locally; a foreign key references a key in another relation."
+    },
+    {
+      "front": "Where does the foreign key go in one-to-many?",
+      "back": "On the many-side relation, pointing to the one-side key."
+    },
+    {
+      "front": "Why is row position not identity?",
+      "back": "Rows can be reordered, filtered, partitioned, or stored differently; keys preserve meaning."
+    }
+  ],
+  "homework": [
+    {
+      "prompt": "Translate a one-to-many Department–Student ER relationship into relations and constraints.",
+      "rubric": "$Give both primary keys, place department_id in Student, and state the foreign-key reference.$",
+      "source": {
+        "sourceId": "DSA5104/Homework Solutions/Ch06_Database_Design_Using_the_ER_Model/6.23.md",
+        "page": 1,
+        "sourceType": "exercise",
+        "role": "ER translation",
+        "status": "current-context"
+      }
+    },
+    {
+      "prompt": "Construct a counterexample showing why an unkeyed table can contain ambiguous duplicate tuples.",
+      "rubric": "Show two rows that cannot be distinguished by the proposed identifier and name the missing constraint.",
+      "source": {
+        "sourceId": "DSA5104/chapter1.pdf",
+        "page": 25,
+        "sourceType": "lecture",
+        "role": "integrity constraints",
+        "status": "current"
+      }
+    }
+  ],
+  "codeExercises": []
+}

@@ -33,7 +33,11 @@
       description: "Database models, relational design, SQL, semi-structured data, data integration, Spark SQL, and retrieval-oriented data systems.", prerequisites: ["DSA5101"],
       workload: [3, 0, 0, 3, 4], department: "Mathematics", faculty: "Science",
       nusmods: { url: "https://nusmods.com/courses/DSA5104/principles-of-data-management-and-retrieval", apiModule: "https://api.nusmods.com/v2/2026-2027/modules/DSA5104.json", apiSemester: "https://api.nusmods.com/v2/2026-2027/semesters/1/DSA5104/semesterData.json" },
-      localSources: ["DSA5104/chapter1.pdf", "DSA5104/chapter1_appendix_codex.pdf", "DSA5104/Homework Solutions/Ch06 ER", "DSA5104/chapter1_appendix_codex_data_analytics/reports/codex_data_analysis.pptx"]
+      localSources: ["DSA5104/chapter1.pdf", "DSA5104/chapter1_appendix_codex.pdf", "DSA5104/Homework Solutions/Ch02_Introduction_to_the_Relational_Model", "DSA5104/Homework Solutions/Ch03_Introduction_to_SQL", "DSA5104/Homework Solutions/Ch06_Database_Design_Using_the_ER_Model", "DSA5104/chapter1_appendix_codex_data_analytics/reports/codex_data_analysis.pptx"],
+      lectureSources: [{ sourceId: "DSA5104/chapter1.pdf", sourceType: "lecture", role: "current first-half lecture deck", status: "current" }, { sourceId: "DSA5104/chapter1_appendix_codex.pdf", sourceType: "lecture", role: "Codex data-analytics appendix", status: "supplementary" }],
+      exerciseSources: [{ sourceId: "DSA5104/Homework Solutions/Ch02_Introduction_to_the_Relational_Model", sourceType: "exercise", role: "relational-model homework solutions", status: "current-context" }, { sourceId: "DSA5104/Homework Solutions/Ch03_Introduction_to_SQL", sourceType: "exercise", role: "SQL homework solutions", status: "current-context" }, { sourceId: "DSA5104/Homework Solutions/Ch06_Database_Design_Using_the_ER_Model", sourceType: "exercise", role: "ER design homework solutions", status: "current-context" }],
+      textbookSources: [{ sourceId: "DSA5104/Database System Concepts, 7th edition", sourceType: "textbook", role: "course textbook for Chapters 1–5, 7–8", status: "course-depth" }],
+      sourceNote: "The chapter1 lecture deck defines the current DSA5104 scope. Homework solutions provide exercise depth, while the Database System Concepts pointer index is labeled textbook depth and never presented as lecture authority."
     },
     {
       code: "DSA5105", title: "Principles of Machine Learning", semester: "AY2026/27 · Semester 1", color: "#8d68ad",

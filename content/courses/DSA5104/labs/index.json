@@ -1,0 +1,632 @@
+{
+  "dsa5104-orientation": {
+    "courseCode": "DSA5104",
+    "lessonId": "dsa5104-orientation",
+    "type": "concept-map",
+    "title": "Data-abstraction map",
+    "learningGoal": "Choose the correct abstraction level before explaining a database result.",
+    "sourceRefs": [
+      {
+        "sourceId": "DSA5104/chapter1.pdf",
+        "page": 18,
+        "sourceType": "lecture",
+        "role": "abstraction levels",
+        "status": "current"
+      },
+      {
+        "sourceId": "DSA5104/chapter1.pdf",
+        "page": 22,
+        "sourceType": "lecture",
+        "role": "schema and instance",
+        "status": "current"
+      }
+    ],
+    "sourceLens": {
+      "status": "core DSA5104",
+      "whyExaminable": "The lecture uses abstraction and schema/instance distinctions as the foundation for every later database decision.",
+      "lecture": [
+        {
+          "sourceId": "DSA5104/chapter1.pdf",
+          "page": 18,
+          "sourceType": "lecture",
+          "role": "abstraction levels",
+          "status": "current"
+        },
+        {
+          "sourceId": "DSA5104/chapter1.pdf",
+          "page": 22,
+          "sourceType": "lecture",
+          "role": "schema and instance",
+          "status": "current"
+        }
+      ],
+      "officialExercise": [],
+      "textbook": [
+        {
+          "sourceId": "DSA5104/Database System Concepts, 7th edition",
+          "page": 12,
+          "sourceType": "textbook",
+          "role": "data abstraction",
+          "status": "course-depth"
+        }
+      ],
+      "reference": []
+    },
+    "nodes": [
+      {
+        "id": "physical",
+        "label": "Physical",
+        "detail": "How bytes and blocks are stored."
+      },
+      {
+        "id": "logical",
+        "label": "Logical",
+        "detail": "What data and relationships exist."
+      },
+      {
+        "id": "view",
+        "label": "View",
+        "detail": "What one application is allowed to see."
+      },
+      {
+        "id": "instance",
+        "label": "Instance",
+        "detail": "The current contents at one moment."
+      }
+    ],
+    "edges": [
+      [
+        "physical",
+        "logical"
+      ],
+      [
+        "logical",
+        "view"
+      ],
+      [
+        "logical",
+        "instance"
+      ]
+    ],
+    "requiredChoice": "view",
+    "initialState": {
+      "choice": null
+    },
+    "reducedMotion": true,
+    "explanation": "The map separates levels of abstraction from the schema/instance distinction so the terms do not collapse into one vague idea."
+  },
+  "dsa5104-relational-model": {
+    "courseCode": "DSA5104",
+    "lessonId": "dsa5104-relational-model",
+    "type": "concept-map",
+    "title": "Keys and integrity map",
+    "learningGoal": "Trace identity from a primary key to a referenced foreign key.",
+    "sourceRefs": [
+      {
+        "sourceId": "DSA5104/chapter1.pdf",
+        "page": 14,
+        "sourceType": "lecture",
+        "role": "relational model",
+        "status": "current"
+      },
+      {
+        "sourceId": "DSA5104/chapter1.pdf",
+        "page": 25,
+        "sourceType": "lecture",
+        "role": "integrity constraints",
+        "status": "current"
+      },
+      {
+        "sourceId": "DSA5104/Homework Solutions/Ch06_Database_Design_Using_the_ER_Model/6.10.md",
+        "page": 1,
+        "sourceType": "exercise",
+        "role": "foreign-key constraints",
+        "status": "current-context"
+      }
+    ],
+    "sourceLens": {
+      "status": "core DSA5104",
+      "whyExaminable": "Key and constraint questions recur in relational, ER, SQL DDL, and normalization exercises.",
+      "lecture": [
+        {
+          "sourceId": "DSA5104/chapter1.pdf",
+          "page": 14,
+          "sourceType": "lecture",
+          "role": "relational model",
+          "status": "current"
+        },
+        {
+          "sourceId": "DSA5104/chapter1.pdf",
+          "page": 25,
+          "sourceType": "lecture",
+          "role": "integrity constraints",
+          "status": "current"
+        }
+      ],
+      "officialExercise": [
+        {
+          "sourceId": "DSA5104/Homework Solutions/Ch06_Database_Design_Using_the_ER_Model/6.10.md",
+          "page": 1,
+          "sourceType": "exercise",
+          "role": "foreign-key constraints",
+          "status": "current-context"
+        }
+      ],
+      "textbook": [
+        {
+          "sourceId": "DSA5104/Database System Concepts, 7th edition",
+          "page": 70,
+          "sourceType": "textbook",
+          "role": "Integrity constraints",
+          "status": "course-depth"
+        }
+      ],
+      "reference": []
+    },
+    "nodes": [
+      {
+        "id": "candidate",
+        "label": "Candidate key",
+        "detail": "A minimal unique identity."
+      },
+      {
+        "id": "primary",
+        "label": "Primary key",
+        "detail": "The chosen identity constraint."
+      },
+      {
+        "id": "foreign",
+        "label": "Foreign key",
+        "detail": "A reference to another relation's key."
+      },
+      {
+        "id": "integrity",
+        "label": "Integrity",
+        "detail": "Reject impossible references."
+      }
+    ],
+    "edges": [
+      [
+        "candidate",
+        "primary"
+      ],
+      [
+        "primary",
+        "foreign"
+      ],
+      [
+        "foreign",
+        "integrity"
+      ]
+    ],
+    "requiredChoice": "foreign",
+    "initialState": {
+      "choice": null
+    },
+    "reducedMotion": true,
+    "explanation": "Follow the identity boundary: the primary key identifies locally, and the foreign key carries that identity across a relationship."
+  },
+  "dsa5104-database-design": {
+    "courseCode": "DSA5104",
+    "lessonId": "dsa5104-database-design",
+    "type": "decision-tree",
+    "title": "ER-to-relational design studio",
+    "learningGoal": "Choose the relation structure that preserves multiplicity and constraints.",
+    "sourceRefs": [
+      {
+        "sourceId": "DSA5104/chapter1.pdf",
+        "page": 33,
+        "sourceType": "lecture",
+        "role": "database design",
+        "status": "current"
+      },
+      {
+        "sourceId": "DSA5104/Homework Solutions/Ch06_Database_Design_Using_the_ER_Model/6.23.md",
+        "page": 1,
+        "sourceType": "exercise",
+        "role": "ER design exercise",
+        "status": "current-context"
+      }
+    ],
+    "sourceLens": {
+      "status": "core DSA5104",
+      "whyExaminable": "The lecture supplies the logical/physical distinction; ER homework checks whether the design preserves identity and relationship multiplicity.",
+      "lecture": [
+        {
+          "sourceId": "DSA5104/chapter1.pdf",
+          "page": 33,
+          "sourceType": "lecture",
+          "role": "database design",
+          "status": "current"
+        }
+      ],
+      "officialExercise": [
+        {
+          "sourceId": "DSA5104/Homework Solutions/Ch06_Database_Design_Using_the_ER_Model/6.23.md",
+          "page": 1,
+          "sourceType": "exercise",
+          "role": "ER design exercise",
+          "status": "current-context"
+        }
+      ],
+      "textbook": [
+        {
+          "sourceId": "DSA5104/Database System Concepts, 7th edition",
+          "page": 350,
+          "sourceType": "textbook",
+          "role": "Database design",
+          "status": "course-depth"
+        }
+      ],
+      "reference": []
+    },
+    "splits": [
+      {
+        "id": "one-many",
+        "label": "One-to-many",
+        "impurity": 15,
+        "detail": "Put the referenced key on the many-side relation."
+      },
+      {
+        "id": "many-many",
+        "label": "Many-to-many",
+        "impurity": 22,
+        "detail": "Create a relationship relation with both keys."
+      },
+      {
+        "id": "physical",
+        "label": "Storage choice",
+        "impurity": 70,
+        "detail": "Do not choose indexes before the logical meaning is clear."
+      }
+    ],
+    "requiredChoice": "many-many",
+    "initialState": {
+      "choice": null
+    },
+    "reducedMotion": true,
+    "explanation": "The first design move is determined by cardinality and identity; storage optimization comes after the logical schema."
+  },
+  "dsa5104-sql-foundations": {
+    "courseCode": "DSA5104",
+    "lessonId": "dsa5104-sql-foundations",
+    "type": "derivation-trace",
+    "title": "SQL semantics trace",
+    "learningGoal": "Follow rows from source tables through joins, grouping, and aggregate filtering.",
+    "sourceRefs": [
+      {
+        "sourceId": "DSA5104/chapter1.pdf",
+        "page": 28,
+        "sourceType": "lecture",
+        "role": "DML",
+        "status": "current"
+      },
+      {
+        "sourceId": "DSA5104/chapter1.pdf",
+        "page": 30,
+        "sourceType": "lecture",
+        "role": "SQL query language",
+        "status": "current"
+      },
+      {
+        "sourceId": "DSA5104/Homework Solutions/Ch03_Introduction_to_SQL/3.2.md",
+        "page": 1,
+        "sourceType": "exercise",
+        "role": "SQL query practice",
+        "status": "current-context"
+      }
+    ],
+    "sourceLens": {
+      "status": "core DSA5104",
+      "whyExaminable": "WHERE/HAVING and key-based joins are compact distinctions that transfer directly to SQL homework and closed-book exam answers.",
+      "lecture": [
+        {
+          "sourceId": "DSA5104/chapter1.pdf",
+          "page": 28,
+          "sourceType": "lecture",
+          "role": "DML",
+          "status": "current"
+        },
+        {
+          "sourceId": "DSA5104/chapter1.pdf",
+          "page": 30,
+          "sourceType": "lecture",
+          "role": "SQL query language",
+          "status": "current"
+        }
+      ],
+      "officialExercise": [
+        {
+          "sourceId": "DSA5104/Homework Solutions/Ch03_Introduction_to_SQL/3.2.md",
+          "page": 1,
+          "sourceType": "exercise",
+          "role": "SQL query practice",
+          "status": "current-context"
+        }
+      ],
+      "textbook": [
+        {
+          "sourceId": "DSA5104/Database System Concepts, 7th edition",
+          "page": 95,
+          "sourceType": "textbook",
+          "role": "SQL",
+          "status": "course-depth"
+        }
+      ],
+      "reference": []
+    },
+    "steps": [
+      [
+        "Rows",
+        "FROM and JOIN",
+        "Build the input relation through key-based joins."
+      ],
+      [
+        "Filter",
+        "WHERE",
+        "Remove rows before grouping."
+      ],
+      [
+        "Groups",
+        "GROUP BY",
+        "Partition the remaining rows by the requested identity."
+      ],
+      [
+        "Aggregate filter",
+        "HAVING",
+        "Keep groups whose aggregate satisfies the condition."
+      ]
+    ],
+    "initialState": {
+      "step": 0
+    },
+    "reducedMotion": true,
+    "explanation": "The trace makes the semantic boundary visible: WHERE sees rows, while HAVING sees completed groups."
+  },
+  "dsa5104-query-processing": {
+    "courseCode": "DSA5104",
+    "lessonId": "dsa5104-query-processing",
+    "type": "derivation-trace",
+    "title": "Query processor pipeline",
+    "learningGoal": "Separate declarative semantics from physical execution strategy.",
+    "sourceRefs": [
+      {
+        "sourceId": "DSA5104/chapter1.pdf",
+        "page": 39,
+        "sourceType": "lecture",
+        "role": "query processor",
+        "status": "current"
+      },
+      {
+        "sourceId": "DSA5104/chapter1.pdf",
+        "page": 40,
+        "sourceType": "lecture",
+        "role": "query processing",
+        "status": "current"
+      },
+      {
+        "sourceId": "DSA5104/chapter1.pdf",
+        "page": 38,
+        "sourceType": "lecture",
+        "role": "indexes",
+        "status": "current"
+      }
+    ],
+    "sourceLens": {
+      "status": "core DSA5104",
+      "whyExaminable": "The pipeline is the bridge from SQL syntax to cost reasoning: parse the request, choose the plan, then evaluate it.",
+      "lecture": [
+        {
+          "sourceId": "DSA5104/chapter1.pdf",
+          "page": 39,
+          "sourceType": "lecture",
+          "role": "query processor",
+          "status": "current"
+        },
+        {
+          "sourceId": "DSA5104/chapter1.pdf",
+          "page": 40,
+          "sourceType": "lecture",
+          "role": "query processing",
+          "status": "current"
+        }
+      ],
+      "officialExercise": [],
+      "textbook": [
+        {
+          "sourceId": "DSA5104/Database System Concepts, 7th edition",
+          "page": 220,
+          "sourceType": "textbook",
+          "role": "Query processing",
+          "status": "course-depth"
+        }
+      ],
+      "reference": []
+    },
+    "steps": [
+      [
+        "Input",
+        "SQL query",
+        "The user declares the desired relation."
+      ],
+      [
+        "Translate",
+        "Internal representation",
+        "The processor parses and translates the statement."
+      ],
+      [
+        "Optimize",
+        "Candidate plans",
+        "Use statistics and access paths to choose a low-cost plan."
+      ],
+      [
+        "Evaluate",
+        "Result relation",
+        "Execute the chosen plan without changing logical semantics."
+      ]
+    ],
+    "initialState": {
+      "step": 0
+    },
+    "reducedMotion": true,
+    "explanation": "A plan can change while the logical answer stays fixed; that is the key distinction between semantics and performance."
+  },
+  "dsa5104-transactions-architecture": {
+    "courseCode": "DSA5104",
+    "lessonId": "dsa5104-transactions-architecture",
+    "type": "concept-map",
+    "title": "Transaction safety map",
+    "learningGoal": "Match a database failure mode to the manager or guarantee that addresses it.",
+    "sourceRefs": [
+      {
+        "sourceId": "DSA5104/chapter1.pdf",
+        "page": 41,
+        "sourceType": "lecture",
+        "role": "transaction management",
+        "status": "current"
+      },
+      {
+        "sourceId": "DSA5104/chapter1.pdf",
+        "page": 42,
+        "sourceType": "lecture",
+        "role": "database architecture",
+        "status": "current"
+      }
+    ],
+    "sourceLens": {
+      "status": "core DSA5104",
+      "whyExaminable": "Transaction and architecture questions test which system boundary protects consistency, failure recovery, and scale.",
+      "lecture": [
+        {
+          "sourceId": "DSA5104/chapter1.pdf",
+          "page": 41,
+          "sourceType": "lecture",
+          "role": "transaction management",
+          "status": "current"
+        },
+        {
+          "sourceId": "DSA5104/chapter1.pdf",
+          "page": 42,
+          "sourceType": "lecture",
+          "role": "database architecture",
+          "status": "current"
+        }
+      ],
+      "officialExercise": [],
+      "textbook": [
+        {
+          "sourceId": "DSA5104/Database System Concepts, 7th edition",
+          "page": 370,
+          "sourceType": "textbook",
+          "role": "Transactions",
+          "status": "course-depth"
+        }
+      ],
+      "reference": []
+    },
+    "nodes": [
+      {
+        "id": "atomicity",
+        "label": "Atomicity",
+        "detail": "All-or-nothing logical function."
+      },
+      {
+        "id": "concurrency",
+        "label": "Concurrency",
+        "detail": "Coordinate simultaneous transactions."
+      },
+      {
+        "id": "placement",
+        "label": "Placement",
+        "detail": "Where data and computation live."
+      },
+      {
+        "id": "network",
+        "label": "Network",
+        "detail": "Communication cost in distributed systems."
+      }
+    ],
+    "edges": [
+      [
+        "atomicity",
+        "concurrency"
+      ],
+      [
+        "placement",
+        "network"
+      ]
+    ],
+    "requiredChoice": "atomicity",
+    "initialState": {
+      "choice": null
+    },
+    "reducedMotion": true,
+    "explanation": "The map keeps transaction semantics separate from deployment architecture while showing how both affect system behavior."
+  },
+  "dsa5104-semi-structured": {
+    "courseCode": "DSA5104",
+    "lessonId": "dsa5104-semi-structured",
+    "type": "compare",
+    "title": "Schema flexibility explorer",
+    "learningGoal": "Choose a representation by weighing nesting, validation timing, and execution cost.",
+    "sourceRefs": [
+      {
+        "sourceId": "DSA5104/chapter1.pdf",
+        "page": 13,
+        "sourceType": "lecture",
+        "role": "data-model categories",
+        "status": "current"
+      },
+      {
+        "sourceId": "DSA5104/chapter1.pdf",
+        "page": 16,
+        "sourceType": "lecture",
+        "role": "XML and JSON",
+        "status": "current"
+      },
+      {
+        "sourceId": "DSA5104/chapter1.pdf",
+        "page": 50,
+        "sourceType": "lecture",
+        "role": "big-data analysis beyond SQL",
+        "status": "current"
+      }
+    ],
+    "sourceLens": {
+      "status": "core DSA5104",
+      "whyExaminable": "The lecture introduces a representation trade-off; the lab makes the downstream validation and movement costs explicit.",
+      "lecture": [
+        {
+          "sourceId": "DSA5104/chapter1.pdf",
+          "page": 13,
+          "sourceType": "lecture",
+          "role": "data-model categories",
+          "status": "current"
+        },
+        {
+          "sourceId": "DSA5104/chapter1.pdf",
+          "page": 16,
+          "sourceType": "lecture",
+          "role": "XML and JSON",
+          "status": "current"
+        }
+      ],
+      "officialExercise": [],
+      "textbook": [
+        {
+          "sourceId": "DSA5104/Database System Concepts, 7th edition",
+          "page": 1020,
+          "sourceType": "textbook",
+          "role": "Semi-structured data",
+          "status": "course-depth"
+        }
+      ],
+      "reference": []
+    },
+    "initialState": {
+      "flexibility": 55
+    },
+    "reducedMotion": true,
+    "explanation": "More ingestion flexibility can be useful for nested data, but it shifts agreement and validation work toward query time."
+  }
+}

@@ -27,3 +27,12 @@
     "dsa5208-spark-pipeline": { courseCode: "DSA5208", title: "Spark and scalable ML topic map", kind: "diagram+links", source: local("DSA5208/Lec0.pdf", 8), observation: "Use the lecture map to connect Spark introduction, distributed algorithms, and MLlib/cloud work." }
   };
 })();
+
+(function () {
+  "use strict";
+  const local = (sourceId, page) => ({ sourceId, page, access: "local source; not copied to public bundle" });
+  window.NUS_VISUALS = window.NUS_VISUALS || {};
+  window.NUS_VISUALS["dsa5104-sql-flow"] = { courseCode: "DSA5104", title: "SQL row-to-group flow", kind: "flow+table", source: local("DSA5104/chapter1.pdf", 30), observation: "Trace rows through a key-based join, WHERE filtering, GROUP BY, and HAVING. Use the flow to explain why aggregate predicates cannot move into WHERE." };
+  window.NUS_VISUALS["dsa5104-query-pipeline"] = { courseCode: "DSA5104", title: "Query processor pipeline", kind: "flow+diagram", source: local("DSA5104/chapter1.pdf", 40), observation: "Keep parsing, optimization, and evaluation distinct. A physical plan can change while the logical relation result stays fixed." };
+  window.NUS_VISUALS["dsa5104-semi-structured"] = { courseCode: "DSA5104", title: "Relational versus nested data", kind: "diagram+comparison", source: local("DSA5104/chapter1.pdf", 16), observation: "Compare tabular identity and constraints with XML/JSON nesting and deferred validation before choosing a representation." };
+})();

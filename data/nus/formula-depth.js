@@ -75,6 +75,27 @@
     crit("Why can a short SQL query still trigger an expensive distributed job?", "Trace partitioning, joins, shuffles, serialization, and synchronization rather than counting SQL tokens.", "The logical query hides physical movement. A group-by or join can require a wide exchange even when the query text is only a few lines.", "physical plan")
   ]);
 
+  add("dsa5104-database-design", [
+    eq(String.raw`R_1(K_1, A),\quad R_2(K_2, B),\quad R_{AB}(K_1,K_2)`, "A many-to-many relationship is represented by a relationship relation containing the keys of both participating entities. Add relationship attributes to the same relation and enforce both foreign-key links.", [sym(String.raw`K_1,K_2`, "referenced entity keys"), sym(String.raw`R_{AB}`, "relationship relation")], "exercise"),
+  ], [
+    crit("Why is a composite key useful in the relationship relation?", "Ask which duplicate relationship instance should be rejected.", "The pair $(K_1,K_2)$ identifies one relationship occurrence, so the same two entities cannot be linked twice unless the model includes another distinguishing attribute.", "integrity"),
+    crit("When should a relationship attribute live in the relationship relation rather than an entity relation?", "Place the attribute where one value describes the association itself, not either endpoint alone.", "An attribute such as enrollment date belongs with $R_{AB}$ because it describes the pair of participating entities; placing it on one entity would lose the possibility of different values for different relationships.", "attribute ownership")
+  ]);
+
+  add("dsa5104-query-processing", [
+    eq(String.raw`Q ` + "\\xrightarrow{\\mathrm{parse/translate}} Q' " + "\\xrightarrow{\\mathrm{optimize}} P " + "\\xrightarrow{\\mathrm{evaluate}} r", "The query processor turns a declarative query into an internal form, selects a physical plan, and evaluates that plan to produce a relation. The stages can be optimized internally while preserving the same logical result.", [sym(String.raw`Q`, "declared SQL query"), sym(String.raw`P`, "chosen physical evaluation plan"), sym(String.raw`r`, "result relation")], "lecture"),
+  ], [
+    crit("What must remain invariant when the optimizer changes the plan?", "Separate the access path and operator order from the relation the query promises.", "The logical result relation must remain the same; only the physical route, such as an index lookup versus a scan, changes.", "semantic preservation"),
+    crit("Why is an index not automatically faster than a full table scan?", "Compare the number of qualifying rows, index locality, and the cost of fetching the base tuples.", "For a highly selective predicate an index can avoid most pages, but when many rows qualify the random lookups and index traversal can cost more than a sequential scan.", "access-path trade-off")
+  ]);
+
+  add("dsa5104-transactions-architecture", [
+    eq(String.raw`\mathrm{transfer}(A,B,a):\quad A\leftarrow A-a,\quad B\leftarrow B+a`, "A transfer is one logical function even though it contains multiple reads and writes. Atomic transaction semantics prevent a failure between the updates from exposing only one side of the transfer.", [sym(String.raw`A,B`, "account states"), sym(String.raw`a`, "transfer amount")], "lecture"),
+  ], [
+    crit("Why does transaction scope follow the business function rather than one SQL statement?", "Find the failure point between two individually valid updates.", "The business invariant links both updates. A transaction groups them so the database cannot commit only one half after a crash or abort.", "atomicity"),
+    crit("How is isolation different from atomicity in the transfer example?", "Separate an all-or-nothing outcome from the visibility of concurrent intermediate states.", "Atomicity prevents a partial transfer from committing; isolation controls whether another transaction can observe or interfere with intermediate work before the transfer commits.", "concurrency")
+  ]);
+
   add("dsa5208-orientation", [
     eq(String.raw`T_{\mathrm{job}} = T_{\mathrm{compute}} + T_{\mathrm{network}} + T_{\mathrm{coordination}}`, "A distributed experiment should report more than compute time. Network transfer and coordination barriers can dominate as the worker count grows, so record them separately whenever the system exposes them.", [sym(String.raw`T_{\mathrm{network}}`, "communication time"), sym(String.raw`T_{\mathrm{coordination}}`, "barrier, scheduling, and coordination time")], "lecture"),
   ], [

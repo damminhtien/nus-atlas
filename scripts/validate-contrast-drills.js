@@ -25,6 +25,22 @@ const DSA5101_REQUIRED_PAIRS = [
   "PageRank vs indegree",
   "Exact storage vs sketch summary"
 ];
+const DSA5104_REQUIRED_PAIRS = [
+  "Schema vs instance",
+  "Physical vs logical vs view level",
+  "Primary key vs foreign key",
+  "Relational model vs ER model",
+  "Logical vs physical design",
+  "Two-tier vs three-tier architecture",
+  "DDL vs DML",
+  "WHERE vs HAVING",
+  "Parsing vs optimization vs evaluation",
+  "Index lookup vs full scan",
+  "Atomicity vs concurrency control",
+  "Centralized vs distributed database",
+  "Relational vs semi-structured",
+  "Schema-on-write vs schema-on-read"
+];
 
 function validateContrastDrills(state) {
   const errors = [];
@@ -32,7 +48,7 @@ function validateContrastDrills(state) {
   const ids = new Set();
   const pairs = new Set();
   const byCourse = {};
-  const requiredPairsByCourse = { DSA5101: DSA5101_REQUIRED_PAIRS, DSA5105: REQUIRED_PAIRS };
+  const requiredPairsByCourse = { DSA5101: DSA5101_REQUIRED_PAIRS, DSA5104: DSA5104_REQUIRED_PAIRS, DSA5105: REQUIRED_PAIRS };
   for (const [courseId, requiredPairs] of Object.entries(requiredPairsByCourse)) {
     const course = state && state.content && state.content[courseId];
     const lessons = course ? course.modules.flatMap(module => module.lessons || []) : [];
@@ -85,4 +101,4 @@ if (require.main === module) {
   }
 }
 
-module.exports = { REQUIRED_PAIRS, DSA5101_REQUIRED_PAIRS, validateContrastDrills };
+module.exports = { REQUIRED_PAIRS, DSA5101_REQUIRED_PAIRS, DSA5104_REQUIRED_PAIRS, validateContrastDrills };

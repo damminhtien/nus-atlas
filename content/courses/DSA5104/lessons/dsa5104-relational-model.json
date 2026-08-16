@@ -1,0 +1,588 @@
+{
+  "id": "dsa5104-relational-model",
+  "title": "Relational model and keys",
+  "week": 2,
+  "minutes": 55,
+  "summary": "Read tables as relations, distinguish schema from tuples, identify keys, and reason about integrity constraints.",
+  "objectives": [
+    "Identify attributes, tuples, domains, and relations",
+    "Distinguish primary, candidate, and foreign keys",
+    "Explain why identity and referential integrity matter"
+  ],
+  "sourceRefs": [
+    {
+      "sourceId": "DSA5104/chapter1.pdf",
+      "page": 13,
+      "sourceType": "lecture",
+      "role": "data-model categories",
+      "status": "current"
+    },
+    {
+      "sourceId": "DSA5104/chapter1.pdf",
+      "page": 14,
+      "sourceType": "lecture",
+      "role": "relational model",
+      "status": "current"
+    },
+    {
+      "sourceId": "DSA5104/chapter1.pdf",
+      "page": 15,
+      "sourceType": "lecture",
+      "role": "sample database",
+      "status": "current"
+    },
+    {
+      "sourceId": "DSA5104/chapter1.pdf",
+      "page": 25,
+      "sourceType": "lecture",
+      "role": "integrity constraints",
+      "status": "current"
+    },
+    {
+      "sourceId": "DSA5104/Homework Solutions/Ch02_Introduction_to_the_Relational_Model/2.3.md",
+      "page": 1,
+      "sourceType": "exercise",
+      "role": "relational-model exercise",
+      "status": "current-context"
+    }
+  ],
+  "visualIds": [
+    "dsa5104-relational-model"
+  ],
+  "sections": [
+    {
+      "title": "Lecture core · relations are not spreadsheets",
+      "sourceType": "lecture",
+      "body": "A relation has a schema and an instance. Tuples are identified by attributes, and domains constrain the values that attributes may take. Row position is not identity: keys are.",
+      "sourceRefs": [
+        {
+          "sourceId": "DSA5104/chapter1.pdf",
+          "page": 14,
+          "sourceType": "lecture",
+          "role": "relational model",
+          "status": "current"
+        },
+        {
+          "sourceId": "DSA5104/chapter1.pdf",
+          "page": 15,
+          "sourceType": "lecture",
+          "role": "sample database",
+          "status": "current"
+        }
+      ],
+      "sourceLens": {
+        "status": "core DSA5104",
+        "whyExaminable": "The lecture establishes the relational vocabulary; Chapter 2 homework makes key and relational-algebra reasoning concrete.",
+        "lecture": [
+          {
+            "sourceId": "DSA5104/chapter1.pdf",
+            "page": 14,
+            "sourceType": "lecture",
+            "role": "relational model",
+            "status": "current"
+          },
+          {
+            "sourceId": "DSA5104/chapter1.pdf",
+            "page": 15,
+            "sourceType": "lecture",
+            "role": "sample database",
+            "status": "current"
+          }
+        ],
+        "officialExercise": [
+          {
+            "sourceId": "DSA5104/Homework Solutions/Ch02_Introduction_to_the_Relational_Model/2.3.md",
+            "page": 1,
+            "sourceType": "exercise",
+            "role": "key identification",
+            "status": "current-context"
+          }
+        ],
+        "textbook": [
+          {
+            "sourceId": "DSA5104/Database System Concepts, 7th edition",
+            "page": 55,
+            "sourceType": "textbook",
+            "role": "Relational model",
+            "status": "course-depth"
+          }
+        ],
+        "reference": []
+      }
+    },
+    {
+      "title": "Identity and referential integrity",
+      "sourceType": "lecture",
+      "body": "A primary key chooses a stable unique identity for each tuple. A foreign key carries a referenced identity into another relation and constrains links to existing keys unless nullability is explicitly allowed.",
+      "sourceRefs": [
+        {
+          "sourceId": "DSA5104/chapter1.pdf",
+          "page": 25,
+          "sourceType": "lecture",
+          "role": "primary-key integrity constraint",
+          "status": "current"
+        }
+      ],
+      "sourceLens": {
+        "status": "core DSA5104",
+        "whyExaminable": "Key placement and integrity constraints are directly reusable in ER translation, SQL DDL, and exam design questions.",
+        "lecture": [
+          {
+            "sourceId": "DSA5104/chapter1.pdf",
+            "page": 25,
+            "sourceType": "lecture",
+            "role": "integrity constraints",
+            "status": "current"
+          }
+        ],
+        "officialExercise": [
+          {
+            "sourceId": "DSA5104/Homework Solutions/Ch06_Database_Design_Using_the_ER_Model/6.10.md",
+            "page": 1,
+            "sourceType": "exercise",
+            "role": "foreign-key constraints",
+            "status": "current-context"
+          }
+        ],
+        "textbook": [
+          {
+            "sourceId": "DSA5104/Database System Concepts, 7th edition",
+            "page": 70,
+            "sourceType": "textbook",
+            "role": "Integrity constraints",
+            "status": "course-depth"
+          }
+        ],
+        "reference": []
+      }
+    }
+  ],
+  "examples": [
+    {
+      "title": "Department–Student relationship",
+      "sourceType": "exercise",
+      "steps": [
+        "Department has primary key $\\text{id}$.",
+        "Student stores $\\text{department\\_id}$ as a foreign key.",
+        "The foreign key belongs on the many side of a one-to-many relationship.",
+        "A constraint check rejects a student row that references a missing department."
+      ],
+      "answer": "The design preserves one student per tuple while allowing many students to reference one department."
+    }
+  ],
+  "contrastDrills": [
+    {
+      "id": "dsa5104-contrast-key-fk",
+      "type": "contrast",
+      "kind": "concept-contrast",
+      "pair": "Primary key vs foreign key",
+      "prompt": "Which constraint primarily expresses a link to an identity in another relation?",
+      "choices": [
+        "Primary key",
+        "Foreign key",
+        "Check constraint",
+        "View"
+      ],
+      "answer": 1,
+      "explanation": "A foreign key references a candidate or primary key in another relation; a primary key identifies tuples in its own relation.",
+      "estimatedSeconds": 45,
+      "difficulty": "medium",
+      "skill": "concept-contrast",
+      "cognitiveLevel": "distinguish",
+      "misconception": "Name the boundary between the two concepts before choosing.",
+      "sourceRefs": [
+        {
+          "sourceId": "DSA5104/chapter1.pdf",
+          "page": 25,
+          "sourceType": "lecture",
+          "role": "integrity constraints",
+          "status": "current"
+        }
+      ]
+    },
+    {
+      "id": "dsa5104-contrast-relational-er",
+      "type": "contrast",
+      "kind": "concept-contrast",
+      "pair": "Relational model vs ER model",
+      "prompt": "Which representation is mainly used to design entities and relationships before implementation tables?",
+      "choices": [
+        "Relational model",
+        "Entity–Relationship model",
+        "Physical storage model",
+        "Data dictionary"
+      ],
+      "answer": 1,
+      "explanation": "The ER model is a design representation; the relational model is the table-based implementation model.",
+      "estimatedSeconds": 45,
+      "difficulty": "medium",
+      "skill": "concept-contrast",
+      "cognitiveLevel": "distinguish",
+      "misconception": "Name the boundary between the two concepts before choosing.",
+      "sourceRefs": [
+        {
+          "sourceId": "DSA5104/chapter1.pdf",
+          "page": 13,
+          "sourceType": "lecture",
+          "role": "data-model categories",
+          "status": "current"
+        }
+      ]
+    }
+  ],
+  "math": [
+    {
+      "latex": "\\forall t_1,t_2\\in r:\\ t_1[K]=t_2[K]\\Rightarrow t_1=t_2",
+      "explanation": "A candidate key $K$ uniquely identifies a tuple: if two rows agree on all key attributes, they must be the same row. A primary key chooses one candidate key to enforce as the main identity.",
+      "symbols": [
+        {
+          "latex": "K",
+          "meaning": "candidate key attributes"
+        },
+        {
+          "latex": "t[K]",
+          "meaning": "projection of tuple $t$ onto $K$"
+        },
+        {
+          "latex": "\\Rightarrow",
+          "meaning": "logical implication"
+        }
+      ],
+      "sourceType": "lecture"
+    },
+    {
+      "latex": "\\mathrm{Student.department\\_id}\\ \\xrightarrow{\\mathrm{FK}}\\ \\mathrm{Department.id}",
+      "explanation": "For a one-to-many relationship, place the referenced key on the many side. Many students can carry the same department identifier, while each identifier must point to an existing department unless nullability is explicitly allowed.",
+      "symbols": [
+        {
+          "latex": "\\mathrm{FK}",
+          "meaning": "foreign-key constraint"
+        },
+        {
+          "latex": "\\mathrm{PK}",
+          "meaning": "primary-key identity"
+        }
+      ],
+      "sourceType": "lecture"
+    }
+  ],
+  "criticalQuestions": [
+    {
+      "prompt": "What goes wrong if the foreign key is placed on the one side of a one-to-many relationship?",
+      "angle": "Try representing one department with many students without repeating or nesting values.",
+      "modelAnswer": "A single department row cannot hold an unbounded set of student identities in a first-normal-form relation; placing the key on Student preserves one value per row and avoids repeating department data.",
+      "focus": "schema design"
+    },
+    {
+      "prompt": "Can a primary key be technically unique but still be a bad business identifier?",
+      "angle": "Separate database uniqueness from stable, meaningful identity.",
+      "modelAnswer": "Yes. A generated row number may be unique but not stable across systems or meaningful to users; the choice depends on lifecycle, integration, and update requirements.",
+      "focus": "identity"
+    }
+  ],
+  "courseId": "DSA5104",
+  "moduleId": "dsa5104-models",
+  "blocks": [
+    {
+      "id": "dsa5104-relational-model-section-1",
+      "type": "teaching-note",
+      "title": "Lecture core · relations are not spreadsheets",
+      "body": "A relation has a schema and an instance. Tuples are identified by attributes, and domains constrain the values that attributes may take. Row position is not identity: keys are.",
+      "sourceType": "lecture",
+      "sourceRefs": [
+        {
+          "sourceId": "DSA5104/chapter1.pdf",
+          "page": 14,
+          "sourceType": "lecture",
+          "role": "relational model",
+          "status": "current"
+        },
+        {
+          "sourceId": "DSA5104/chapter1.pdf",
+          "page": 15,
+          "sourceType": "lecture",
+          "role": "sample database",
+          "status": "current"
+        }
+      ]
+    },
+    {
+      "id": "dsa5104-relational-model-section-2",
+      "type": "teaching-note",
+      "title": "Identity and referential integrity",
+      "body": "A primary key chooses a stable unique identity for each tuple. A foreign key carries a referenced identity into another relation and constrains links to existing keys unless nullability is explicitly allowed.",
+      "sourceType": "lecture",
+      "sourceRefs": [
+        {
+          "sourceId": "DSA5104/chapter1.pdf",
+          "page": 25,
+          "sourceType": "lecture",
+          "role": "primary-key integrity constraint",
+          "status": "current"
+        }
+      ]
+    },
+    {
+      "id": "dsa5104-relational-model-formula-1",
+      "type": "formula",
+      "latex": "\\forall t_1,t_2\\in r:\\ t_1[K]=t_2[K]\\Rightarrow t_1=t_2",
+      "explanation": "A candidate key $K$ uniquely identifies a tuple: if two rows agree on all key attributes, they must be the same row. A primary key chooses one candidate key to enforce as the main identity.",
+      "symbols": [
+        {
+          "latex": "K",
+          "meaning": "candidate key attributes"
+        },
+        {
+          "latex": "t[K]",
+          "meaning": "projection of tuple $t$ onto $K$"
+        },
+        {
+          "latex": "\\Rightarrow",
+          "meaning": "logical implication"
+        }
+      ],
+      "sourceType": "lecture",
+      "sourceRefs": [
+        {
+          "sourceId": "DSA5104/chapter1.pdf",
+          "page": 13,
+          "sourceType": "lecture",
+          "role": "data-model categories",
+          "status": "current"
+        },
+        {
+          "sourceId": "DSA5104/chapter1.pdf",
+          "page": 14,
+          "sourceType": "lecture",
+          "role": "relational model",
+          "status": "current"
+        },
+        {
+          "sourceId": "DSA5104/chapter1.pdf",
+          "page": 15,
+          "sourceType": "lecture",
+          "role": "sample database",
+          "status": "current"
+        },
+        {
+          "sourceId": "DSA5104/chapter1.pdf",
+          "page": 25,
+          "sourceType": "lecture",
+          "role": "integrity constraints",
+          "status": "current"
+        },
+        {
+          "sourceId": "DSA5104/Homework Solutions/Ch02_Introduction_to_the_Relational_Model/2.3.md",
+          "page": 1,
+          "sourceType": "exercise",
+          "role": "relational-model exercise",
+          "status": "current-context"
+        }
+      ]
+    },
+    {
+      "id": "dsa5104-relational-model-formula-2",
+      "type": "formula",
+      "latex": "\\mathrm{Student.department\\_id}\\ \\xrightarrow{\\mathrm{FK}}\\ \\mathrm{Department.id}",
+      "explanation": "For a one-to-many relationship, place the referenced key on the many side. Many students can carry the same department identifier, while each identifier must point to an existing department unless nullability is explicitly allowed.",
+      "symbols": [
+        {
+          "latex": "\\mathrm{FK}",
+          "meaning": "foreign-key constraint"
+        },
+        {
+          "latex": "\\mathrm{PK}",
+          "meaning": "primary-key identity"
+        }
+      ],
+      "sourceType": "lecture",
+      "sourceRefs": [
+        {
+          "sourceId": "DSA5104/chapter1.pdf",
+          "page": 13,
+          "sourceType": "lecture",
+          "role": "data-model categories",
+          "status": "current"
+        },
+        {
+          "sourceId": "DSA5104/chapter1.pdf",
+          "page": 14,
+          "sourceType": "lecture",
+          "role": "relational model",
+          "status": "current"
+        },
+        {
+          "sourceId": "DSA5104/chapter1.pdf",
+          "page": 15,
+          "sourceType": "lecture",
+          "role": "sample database",
+          "status": "current"
+        },
+        {
+          "sourceId": "DSA5104/chapter1.pdf",
+          "page": 25,
+          "sourceType": "lecture",
+          "role": "integrity constraints",
+          "status": "current"
+        },
+        {
+          "sourceId": "DSA5104/Homework Solutions/Ch02_Introduction_to_the_Relational_Model/2.3.md",
+          "page": 1,
+          "sourceType": "exercise",
+          "role": "relational-model exercise",
+          "status": "current-context"
+        }
+      ]
+    },
+    {
+      "id": "dsa5104-relational-model-example-1",
+      "type": "worked-example",
+      "title": "Department–Student relationship",
+      "sourceType": "exercise",
+      "steps": [
+        "Department has primary key $\\text{id}$.",
+        "Student stores $\\text{department\\_id}$ as a foreign key.",
+        "The foreign key belongs on the many side of a one-to-many relationship.",
+        "A constraint check rejects a student row that references a missing department."
+      ],
+      "answer": "The design preserves one student per tuple while allowing many students to reference one department.",
+      "sourceRefs": [
+        {
+          "sourceId": "DSA5104/chapter1.pdf",
+          "page": 13,
+          "sourceType": "lecture",
+          "role": "data-model categories",
+          "status": "current"
+        },
+        {
+          "sourceId": "DSA5104/chapter1.pdf",
+          "page": 14,
+          "sourceType": "lecture",
+          "role": "relational model",
+          "status": "current"
+        },
+        {
+          "sourceId": "DSA5104/chapter1.pdf",
+          "page": 15,
+          "sourceType": "lecture",
+          "role": "sample database",
+          "status": "current"
+        },
+        {
+          "sourceId": "DSA5104/chapter1.pdf",
+          "page": 25,
+          "sourceType": "lecture",
+          "role": "integrity constraints",
+          "status": "current"
+        },
+        {
+          "sourceId": "DSA5104/Homework Solutions/Ch02_Introduction_to_the_Relational_Model/2.3.md",
+          "page": 1,
+          "sourceType": "exercise",
+          "role": "relational-model exercise",
+          "status": "current-context"
+        }
+      ]
+    },
+    {
+      "id": "dsa5104-relational-model-critical-1",
+      "type": "critical-question",
+      "prompt": "What goes wrong if the foreign key is placed on the one side of a one-to-many relationship?",
+      "angle": "Try representing one department with many students without repeating or nesting values.",
+      "modelAnswer": "A single department row cannot hold an unbounded set of student identities in a first-normal-form relation; placing the key on Student preserves one value per row and avoids repeating department data.",
+      "focus": "schema design",
+      "sourceRefs": [
+        {
+          "sourceId": "DSA5104/chapter1.pdf",
+          "page": 13,
+          "sourceType": "lecture",
+          "role": "data-model categories",
+          "status": "current"
+        },
+        {
+          "sourceId": "DSA5104/chapter1.pdf",
+          "page": 14,
+          "sourceType": "lecture",
+          "role": "relational model",
+          "status": "current"
+        },
+        {
+          "sourceId": "DSA5104/chapter1.pdf",
+          "page": 15,
+          "sourceType": "lecture",
+          "role": "sample database",
+          "status": "current"
+        },
+        {
+          "sourceId": "DSA5104/chapter1.pdf",
+          "page": 25,
+          "sourceType": "lecture",
+          "role": "integrity constraints",
+          "status": "current"
+        },
+        {
+          "sourceId": "DSA5104/Homework Solutions/Ch02_Introduction_to_the_Relational_Model/2.3.md",
+          "page": 1,
+          "sourceType": "exercise",
+          "role": "relational-model exercise",
+          "status": "current-context"
+        }
+      ]
+    },
+    {
+      "id": "dsa5104-relational-model-critical-2",
+      "type": "critical-question",
+      "prompt": "Can a primary key be technically unique but still be a bad business identifier?",
+      "angle": "Separate database uniqueness from stable, meaningful identity.",
+      "modelAnswer": "Yes. A generated row number may be unique but not stable across systems or meaningful to users; the choice depends on lifecycle, integration, and update requirements.",
+      "focus": "identity",
+      "sourceRefs": [
+        {
+          "sourceId": "DSA5104/chapter1.pdf",
+          "page": 13,
+          "sourceType": "lecture",
+          "role": "data-model categories",
+          "status": "current"
+        },
+        {
+          "sourceId": "DSA5104/chapter1.pdf",
+          "page": 14,
+          "sourceType": "lecture",
+          "role": "relational model",
+          "status": "current"
+        },
+        {
+          "sourceId": "DSA5104/chapter1.pdf",
+          "page": 15,
+          "sourceType": "lecture",
+          "role": "sample database",
+          "status": "current"
+        },
+        {
+          "sourceId": "DSA5104/chapter1.pdf",
+          "page": 25,
+          "sourceType": "lecture",
+          "role": "integrity constraints",
+          "status": "current"
+        },
+        {
+          "sourceId": "DSA5104/Homework Solutions/Ch02_Introduction_to_the_Relational_Model/2.3.md",
+          "page": 1,
+          "sourceType": "exercise",
+          "role": "relational-model exercise",
+          "status": "current-context"
+        }
+      ]
+    }
+  ],
+  "questionIds": [
+    "dsa5104-rm-q1",
+    "dsa5104-rm-q2",
+    "dsa5104-bank-003",
+    "dsa5104-bank-004"
+  ],
+  "labIds": [
+    "dsa5104-relational-model"
+  ],
+  "schemaVersion": "nus.lesson.v1"
+}

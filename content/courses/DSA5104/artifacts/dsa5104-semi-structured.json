@@ -1,0 +1,43 @@
+{
+  "lessonId": "dsa5104-semi-structured",
+  "schemaVersion": "nus.study-kit.v1",
+  "flashcards": [
+    {
+      "front": "XML versus JSON?",
+      "back": "Both can represent nested semi-structured data; XML uses tags, while JSON uses objects, arrays, and key–value pairs."
+    },
+    {
+      "front": "Schema-on-read trade-off?",
+      "back": "Flexible ingestion delays some schema and validation work until query time."
+    },
+    {
+      "front": "Why inspect distributed SQL movement?",
+      "back": "Joins, grouping, and sorting may shuffle data across partitions even when the SQL is short."
+    }
+  ],
+  "homework": [
+    {
+      "prompt": "Choose relational, XML, or JSON for three workloads and justify each choice by structure and constraints.",
+      "rubric": "Name nesting/variation, stable identity, validation timing, and consumer needs.",
+      "source": {
+        "sourceId": "DSA5104/chapter1.pdf",
+        "page": 16,
+        "sourceType": "lecture",
+        "role": "XML and JSON",
+        "status": "current"
+      }
+    },
+    {
+      "prompt": "Design a measurement plan for a distributed query whose average runtime is acceptable but one partition is slow.",
+      "rubric": "Measure partition sizes, skew, shuffle bytes, and stage/barrier time.",
+      "source": {
+        "sourceId": "DSA5104/chapter1.pdf",
+        "page": 50,
+        "sourceType": "lecture",
+        "role": "big-data analysis beyond SQL",
+        "status": "current"
+      }
+    }
+  ],
+  "codeExercises": []
+}

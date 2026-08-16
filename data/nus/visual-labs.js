@@ -215,3 +215,74 @@
   derivationById.get("ridge").sourceLens = lens("core Week-1 derivation", "Lecture p48 introduces regularization; Exercise 2 requires the closed form and eigen analysis. The spectral factor is exercise depth attached to a lecture-core concept.", [lecture(48, "regularization"), lecture(49, "generalization trade-off")], [exercise(2, "Exercise 2 · closed form + eigen analysis")], [textbook(29, "regularization depth")]);
   derivationById.get("logistic").sourceLens = lens("core Week-1 derivation", "Lecture introduces softmax and cross-entropy; the official solutions complete the binary reduction and convexity proof.", [lecture(54, "softmax and cross-entropy")], [exercise(2, "Exercise 2 · binary setup"), exercise(3, "Exercise 2 · second derivative")]);
 })();
+
+(function () {
+  "use strict";
+  const lecture = (page, role) => ({ sourceId: "DSA5104/chapter1.pdf", page, sourceType: "lecture", role, status: "current" });
+  const exercise = (sourceId, role) => ({ sourceId, page: 1, sourceType: "exercise", role, status: "current-context" });
+  const textbook = (page, role) => ({ sourceId: "DSA5104/Database System Concepts, 7th edition", page, sourceType: "textbook", role, status: "course-depth" });
+  const lens = (why, lectureRefs, exerciseRefs = [], textbookRefs = []) => ({ status: "core DSA5104", whyExaminable: why, lecture: lectureRefs, officialExercise: exerciseRefs, textbook: textbookRefs, reference: [] });
+  window.NUS_VISUAL_LABS = window.NUS_VISUAL_LABS || {};
+  window.NUS_VISUAL_LABS["dsa5104-orientation"] = {
+    courseCode: "DSA5104", lessonId: "dsa5104-orientation", type: "concept-map", title: "Data-abstraction map",
+    learningGoal: "Choose the correct abstraction level before explaining a database result.",
+    sourceRefs: [lecture(18, "abstraction levels"), lecture(22, "schema and instance")],
+    sourceLens: lens("The lecture uses abstraction and schema/instance distinctions as the foundation for every later database decision.", [lecture(18, "abstraction levels"), lecture(22, "schema and instance")], [], [textbook(12, "data abstraction")]),
+    nodes: [{ id: "physical", label: "Physical", detail: "How bytes and blocks are stored." }, { id: "logical", label: "Logical", detail: "What data and relationships exist." }, { id: "view", label: "View", detail: "What one application is allowed to see." }, { id: "instance", label: "Instance", detail: "The current contents at one moment." }],
+    edges: [["physical", "logical"], ["logical", "view"], ["logical", "instance"]], requiredChoice: "view", initialState: { choice: null }, check: state => state.choice === "view", reducedMotion: true,
+    explanation: "The map separates levels of abstraction from the schema/instance distinction so the terms do not collapse into one vague idea."
+  };
+  window.NUS_VISUAL_LABS["dsa5104-relational-model"] = {
+    courseCode: "DSA5104", lessonId: "dsa5104-relational-model", type: "concept-map", title: "Keys and integrity map",
+    learningGoal: "Trace identity from a primary key to a referenced foreign key.",
+    sourceRefs: [lecture(14, "relational model"), lecture(25, "integrity constraints"), exercise("DSA5104/Homework Solutions/Ch06_Database_Design_Using_the_ER_Model/6.10.md", "foreign-key constraints")],
+    sourceLens: lens("Key and constraint questions recur in relational, ER, SQL DDL, and normalization exercises.", [lecture(14, "relational model"), lecture(25, "integrity constraints")], [exercise("DSA5104/Homework Solutions/Ch06_Database_Design_Using_the_ER_Model/6.10.md", "foreign-key constraints")], [textbook(70, "Integrity constraints")]),
+    nodes: [{ id: "candidate", label: "Candidate key", detail: "A minimal unique identity." }, { id: "primary", label: "Primary key", detail: "The chosen identity constraint." }, { id: "foreign", label: "Foreign key", detail: "A reference to another relation's key." }, { id: "integrity", label: "Integrity", detail: "Reject impossible references." }],
+    edges: [["candidate", "primary"], ["primary", "foreign"], ["foreign", "integrity"]], requiredChoice: "foreign", initialState: { choice: null }, check: state => state.choice === "foreign", reducedMotion: true,
+    explanation: "Follow the identity boundary: the primary key identifies locally, and the foreign key carries that identity across a relationship."
+  };
+  window.NUS_VISUAL_LABS["dsa5104-database-design"] = {
+    courseCode: "DSA5104", lessonId: "dsa5104-database-design", type: "decision-tree", title: "ER-to-relational design studio",
+    learningGoal: "Choose the relation structure that preserves multiplicity and constraints.",
+    sourceRefs: [lecture(33, "database design"), exercise("DSA5104/Homework Solutions/Ch06_Database_Design_Using_the_ER_Model/6.23.md", "ER design exercise")],
+    sourceLens: lens("The lecture supplies the logical/physical distinction; ER homework checks whether the design preserves identity and relationship multiplicity.", [lecture(33, "database design")], [exercise("DSA5104/Homework Solutions/Ch06_Database_Design_Using_the_ER_Model/6.23.md", "ER design exercise")], [textbook(350, "Database design")]),
+    splits: [{ id: "one-many", label: "One-to-many", impurity: 15, detail: "Put the referenced key on the many-side relation." }, { id: "many-many", label: "Many-to-many", impurity: 22, detail: "Create a relationship relation with both keys." }, { id: "physical", label: "Storage choice", impurity: 70, detail: "Do not choose indexes before the logical meaning is clear." }],
+    requiredChoice: "many-many", initialState: { choice: null }, check: state => state.choice === "many-many", reducedMotion: true,
+    explanation: "The first design move is determined by cardinality and identity; storage optimization comes after the logical schema."
+  };
+  window.NUS_VISUAL_LABS["dsa5104-sql-foundations"] = {
+    courseCode: "DSA5104", lessonId: "dsa5104-sql-foundations", type: "derivation-trace", title: "SQL semantics trace",
+    learningGoal: "Follow rows from source tables through joins, grouping, and aggregate filtering.",
+    sourceRefs: [lecture(28, "DML"), lecture(30, "SQL query language"), exercise("DSA5104/Homework Solutions/Ch03_Introduction_to_SQL/3.2.md", "SQL query practice")],
+    sourceLens: lens("WHERE/HAVING and key-based joins are compact distinctions that transfer directly to SQL homework and closed-book exam answers.", [lecture(28, "DML"), lecture(30, "SQL query language")], [exercise("DSA5104/Homework Solutions/Ch03_Introduction_to_SQL/3.2.md", "SQL query practice")], [textbook(95, "SQL")]),
+    steps: [["Rows", "FROM and JOIN", "Build the input relation through key-based joins."], ["Filter", "WHERE", "Remove rows before grouping."], ["Groups", "GROUP BY", "Partition the remaining rows by the requested identity."], ["Aggregate filter", "HAVING", "Keep groups whose aggregate satisfies the condition."]],
+    initialState: { step: 0 }, check: state => state.step >= 3, reducedMotion: true,
+    explanation: "The trace makes the semantic boundary visible: WHERE sees rows, while HAVING sees completed groups."
+  };
+  window.NUS_VISUAL_LABS["dsa5104-query-processing"] = {
+    courseCode: "DSA5104", lessonId: "dsa5104-query-processing", type: "derivation-trace", title: "Query processor pipeline",
+    learningGoal: "Separate declarative semantics from physical execution strategy.",
+    sourceRefs: [lecture(39, "query processor"), lecture(40, "query processing"), lecture(38, "indexes")],
+    sourceLens: lens("The pipeline is the bridge from SQL syntax to cost reasoning: parse the request, choose the plan, then evaluate it.", [lecture(39, "query processor"), lecture(40, "query processing")], [], [textbook(220, "Query processing")]),
+    steps: [["Input", "SQL query", "The user declares the desired relation."], ["Translate", "Internal representation", "The processor parses and translates the statement."], ["Optimize", "Candidate plans", "Use statistics and access paths to choose a low-cost plan."], ["Evaluate", "Result relation", "Execute the chosen plan without changing logical semantics."]],
+    initialState: { step: 0 }, check: state => state.step >= 3, reducedMotion: true,
+    explanation: "A plan can change while the logical answer stays fixed; that is the key distinction between semantics and performance."
+  };
+  window.NUS_VISUAL_LABS["dsa5104-transactions-architecture"] = {
+    courseCode: "DSA5104", lessonId: "dsa5104-transactions-architecture", type: "concept-map", title: "Transaction safety map",
+    learningGoal: "Match a database failure mode to the manager or guarantee that addresses it.",
+    sourceRefs: [lecture(41, "transaction management"), lecture(42, "database architecture")],
+    sourceLens: lens("Transaction and architecture questions test which system boundary protects consistency, failure recovery, and scale.", [lecture(41, "transaction management"), lecture(42, "database architecture")], [], [textbook(370, "Transactions")]),
+    nodes: [{ id: "atomicity", label: "Atomicity", detail: "All-or-nothing logical function." }, { id: "concurrency", label: "Concurrency", detail: "Coordinate simultaneous transactions." }, { id: "placement", label: "Placement", detail: "Where data and computation live." }, { id: "network", label: "Network", detail: "Communication cost in distributed systems." }],
+    edges: [["atomicity", "concurrency"], ["placement", "network"]], requiredChoice: "atomicity", initialState: { choice: null }, check: state => state.choice === "atomicity", reducedMotion: true,
+    explanation: "The map keeps transaction semantics separate from deployment architecture while showing how both affect system behavior."
+  };
+  window.NUS_VISUAL_LABS["dsa5104-semi-structured"] = {
+    courseCode: "DSA5104", lessonId: "dsa5104-semi-structured", type: "compare", title: "Schema flexibility explorer",
+    learningGoal: "Choose a representation by weighing nesting, validation timing, and execution cost.",
+    sourceRefs: [lecture(13, "data-model categories"), lecture(16, "XML and JSON"), lecture(50, "big-data analysis beyond SQL")],
+    sourceLens: lens("The lecture introduces a representation trade-off; the lab makes the downstream validation and movement costs explicit.", [lecture(13, "data-model categories"), lecture(16, "XML and JSON")], [], [textbook(1020, "Semi-structured data")]),
+    initialState: { flexibility: 55 }, check: state => state.flexibility >= 35 && state.flexibility <= 80, reducedMotion: true,
+    explanation: "More ingestion flexibility can be useful for nested data, but it shifts agreement and validation work toward query time."
+  };
+})();

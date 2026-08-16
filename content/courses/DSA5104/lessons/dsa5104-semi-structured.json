@@ -1,0 +1,489 @@
+{
+  "id": "dsa5104-semi-structured",
+  "title": "Semi-structured data and distributed SQL",
+  "week": 8,
+  "minutes": 50,
+  "summary": "Compare relational, XML/JSON-like, and distributed SQL workflows by schema, nesting, validation, and movement costs.",
+  "objectives": [
+    "Recognize XML and JSON as semi-structured representations",
+    "Explain schema-on-read trade-offs",
+    "Relate a distributed SQL query to parsing, shuffle, and compute costs"
+  ],
+  "sourceRefs": [
+    {
+      "sourceId": "DSA5104/chapter1.pdf",
+      "page": 13,
+      "sourceType": "lecture",
+      "role": "semi-structured data model",
+      "status": "current"
+    },
+    {
+      "sourceId": "DSA5104/chapter1.pdf",
+      "page": 16,
+      "sourceType": "lecture",
+      "role": "XML and JSON examples",
+      "status": "current"
+    },
+    {
+      "sourceId": "DSA5104/chapter1.pdf",
+      "page": 17,
+      "sourceType": "lecture",
+      "role": "nested documents",
+      "status": "current"
+    },
+    {
+      "sourceId": "DSA5104/chapter1.pdf",
+      "page": 50,
+      "sourceType": "lecture",
+      "role": "big-data analysis beyond SQL",
+      "status": "current"
+    }
+  ],
+  "visualIds": [
+    "dsa5104-semi-structured"
+  ],
+  "sections": [
+    {
+      "title": "Nested structure, delayed agreement",
+      "sourceType": "lecture",
+      "body": "XML uses user-defined tags, while JSON represents nested objects and arrays through key–value pairs. Semi-structured formats preserve variation and nesting, but consumers must do more interpretation and validation later.",
+      "sourceRefs": [
+        {
+          "sourceId": "DSA5104/chapter1.pdf",
+          "page": 13,
+          "sourceType": "lecture",
+          "role": "semi-structured model",
+          "status": "current"
+        },
+        {
+          "sourceId": "DSA5104/chapter1.pdf",
+          "page": 16,
+          "sourceType": "lecture",
+          "role": "XML and JSON",
+          "status": "current"
+        },
+        {
+          "sourceId": "DSA5104/chapter1.pdf",
+          "page": 17,
+          "sourceType": "lecture",
+          "role": "nested documents",
+          "status": "current"
+        }
+      ],
+      "sourceLens": {
+        "status": "core DSA5104",
+        "whyExaminable": "The lecture introduces semi-structured data as a model choice, not as a replacement for relational integrity in every workload.",
+        "lecture": [
+          {
+            "sourceId": "DSA5104/chapter1.pdf",
+            "page": 13,
+            "sourceType": "lecture",
+            "role": "semi-structured model",
+            "status": "current"
+          },
+          {
+            "sourceId": "DSA5104/chapter1.pdf",
+            "page": 16,
+            "sourceType": "lecture",
+            "role": "XML and JSON",
+            "status": "current"
+          }
+        ],
+        "officialExercise": [],
+        "textbook": [
+          {
+            "sourceId": "DSA5104/Database System Concepts, 7th edition",
+            "page": 1020,
+            "sourceType": "textbook",
+            "role": "Semi-structured data",
+            "status": "course-depth"
+          }
+        ],
+        "reference": []
+      }
+    },
+    {
+      "title": "Distributed SQL is still semantic SQL",
+      "sourceType": "lecture",
+      "body": "A distributed query engine changes the physical cost model, not the need to define a clear result. Joins, grouping, and sorting can move data across partitions, so the plan should be inspected for shuffle, skew, and serialization.",
+      "sourceRefs": [
+        {
+          "sourceId": "DSA5104/chapter1.pdf",
+          "page": 50,
+          "sourceType": "lecture",
+          "role": "SQL and big-data systems",
+          "status": "current"
+        }
+      ],
+      "sourceLens": {
+        "status": "core DSA5104",
+        "whyExaminable": "This is the bridge from the introductory database engine to later distributed data systems: the same query semantics meet a different execution environment.",
+        "lecture": [
+          {
+            "sourceId": "DSA5104/chapter1.pdf",
+            "page": 50,
+            "sourceType": "lecture",
+            "role": "big-data analysis beyond SQL",
+            "status": "current"
+          }
+        ],
+        "officialExercise": [],
+        "textbook": [
+          {
+            "sourceId": "DSA5104/Database System Concepts, 7th edition",
+            "page": 1030,
+            "sourceType": "textbook",
+            "role": "Distributed query processing",
+            "status": "course-depth"
+          }
+        ],
+        "reference": []
+      }
+    }
+  ],
+  "examples": [
+    {
+      "title": "Choosing a representation",
+      "sourceType": "lecture",
+      "steps": [
+        "Use a relational schema when stable identity and constraints dominate.",
+        "Use nested XML or JSON when variation and hierarchy are first-class.",
+        "Define validation rules at the boundary where consumers need them.",
+        "Measure parse and shuffle costs when the query runs across partitions."
+      ],
+      "answer": "Flexibility is not free: deferred schema decisions move work into query and validation stages."
+    }
+  ],
+  "contrastDrills": [
+    {
+      "id": "dsa5104-contrast-relational-semi",
+      "type": "contrast",
+      "kind": "concept-contrast",
+      "pair": "Relational vs semi-structured",
+      "prompt": "Which representation naturally expresses nested variation with user-defined tags or key–value objects?",
+      "choices": [
+        "Relational table only",
+        "Semi-structured XML/JSON",
+        "B-tree index",
+        "Transaction log"
+      ],
+      "answer": 1,
+      "explanation": "XML and JSON represent nested or variable structure more directly; they do not remove the need for validation.",
+      "estimatedSeconds": 45,
+      "difficulty": "medium",
+      "skill": "concept-contrast",
+      "cognitiveLevel": "distinguish",
+      "misconception": "Name the boundary between the two concepts before choosing.",
+      "sourceRefs": [
+        {
+          "sourceId": "DSA5104/chapter1.pdf",
+          "page": 13,
+          "sourceType": "lecture",
+          "role": "data-model categories",
+          "status": "current"
+        },
+        {
+          "sourceId": "DSA5104/chapter1.pdf",
+          "page": 16,
+          "sourceType": "lecture",
+          "role": "XML and JSON",
+          "status": "current"
+        }
+      ]
+    },
+    {
+      "id": "dsa5104-contrast-read-write",
+      "type": "contrast",
+      "kind": "concept-contrast",
+      "pair": "Schema-on-write vs schema-on-read",
+      "prompt": "What is the main trade-off of schema-on-read?",
+      "choices": [
+        "It validates everything before ingestion",
+        "It delays some schema and validation work until query time",
+        "It guarantees fewer joins",
+        "It eliminates parsing"
+      ],
+      "answer": 1,
+      "explanation": "Schema-on-read is flexible at ingestion but shifts interpretation and validation to downstream consumers.",
+      "estimatedSeconds": 45,
+      "difficulty": "medium",
+      "skill": "concept-contrast",
+      "cognitiveLevel": "distinguish",
+      "misconception": "Name the boundary between the two concepts before choosing.",
+      "sourceRefs": [
+        {
+          "sourceId": "DSA5104/chapter1.pdf",
+          "page": 16,
+          "sourceType": "lecture",
+          "role": "semi-structured data",
+          "status": "current"
+        }
+      ]
+    }
+  ],
+  "math": [
+    {
+      "latex": "T_{\\mathrm{total}} \\approx T_{\\mathrm{parse}} + T_{\\mathrm{shuffle}} + T_{\\mathrm{compute}} + T_{\\mathrm{write}}",
+      "explanation": "Semi-structured and distributed workflows add costs beyond the logical query. Parsing nested records, moving rows across partitions, computing the transformation, and writing the result are separate places to measure.",
+      "symbols": [
+        {
+          "latex": "T_{\\mathrm{parse}}",
+          "meaning": "schema-on-read parsing cost"
+        },
+        {
+          "latex": "T_{\\mathrm{shuffle}}",
+          "meaning": "network data movement"
+        },
+        {
+          "latex": "T_{\\mathrm{write}}",
+          "meaning": "materialization cost"
+        }
+      ],
+      "sourceType": "lecture",
+      "caveat": "This is an engineering decomposition, not an exact runtime law."
+    }
+  ],
+  "criticalQuestions": [
+    {
+      "prompt": "When is schema-on-read the wrong choice even if ingestion flexibility is attractive?",
+      "angle": "Consider repeated consumers, strict governance, latency, and the cost of discovering errors late.",
+      "modelAnswer": "If many consumers need the same stable semantics or correctness must be enforced at ingestion, a validated schema-on-write boundary may reduce duplicated downstream work.",
+      "focus": "architecture"
+    },
+    {
+      "prompt": "Why can a short SQL query still trigger an expensive distributed job?",
+      "angle": "Trace partitioning, joins, shuffles, serialization, and synchronization rather than counting SQL tokens.",
+      "modelAnswer": "The logical query hides physical movement. A group-by or join can require a wide exchange even when the query text is only a few lines.",
+      "focus": "physical plan"
+    }
+  ],
+  "courseId": "DSA5104",
+  "moduleId": "dsa5104-modern",
+  "blocks": [
+    {
+      "id": "dsa5104-semi-structured-section-1",
+      "type": "teaching-note",
+      "title": "Nested structure, delayed agreement",
+      "body": "XML uses user-defined tags, while JSON represents nested objects and arrays through key–value pairs. Semi-structured formats preserve variation and nesting, but consumers must do more interpretation and validation later.",
+      "sourceType": "lecture",
+      "sourceRefs": [
+        {
+          "sourceId": "DSA5104/chapter1.pdf",
+          "page": 13,
+          "sourceType": "lecture",
+          "role": "semi-structured model",
+          "status": "current"
+        },
+        {
+          "sourceId": "DSA5104/chapter1.pdf",
+          "page": 16,
+          "sourceType": "lecture",
+          "role": "XML and JSON",
+          "status": "current"
+        },
+        {
+          "sourceId": "DSA5104/chapter1.pdf",
+          "page": 17,
+          "sourceType": "lecture",
+          "role": "nested documents",
+          "status": "current"
+        }
+      ]
+    },
+    {
+      "id": "dsa5104-semi-structured-section-2",
+      "type": "teaching-note",
+      "title": "Distributed SQL is still semantic SQL",
+      "body": "A distributed query engine changes the physical cost model, not the need to define a clear result. Joins, grouping, and sorting can move data across partitions, so the plan should be inspected for shuffle, skew, and serialization.",
+      "sourceType": "lecture",
+      "sourceRefs": [
+        {
+          "sourceId": "DSA5104/chapter1.pdf",
+          "page": 50,
+          "sourceType": "lecture",
+          "role": "SQL and big-data systems",
+          "status": "current"
+        }
+      ]
+    },
+    {
+      "id": "dsa5104-semi-structured-formula-1",
+      "type": "formula",
+      "latex": "T_{\\mathrm{total}} \\approx T_{\\mathrm{parse}} + T_{\\mathrm{shuffle}} + T_{\\mathrm{compute}} + T_{\\mathrm{write}}",
+      "explanation": "Semi-structured and distributed workflows add costs beyond the logical query. Parsing nested records, moving rows across partitions, computing the transformation, and writing the result are separate places to measure.",
+      "symbols": [
+        {
+          "latex": "T_{\\mathrm{parse}}",
+          "meaning": "schema-on-read parsing cost"
+        },
+        {
+          "latex": "T_{\\mathrm{shuffle}}",
+          "meaning": "network data movement"
+        },
+        {
+          "latex": "T_{\\mathrm{write}}",
+          "meaning": "materialization cost"
+        }
+      ],
+      "sourceType": "lecture",
+      "sourceRefs": [
+        {
+          "sourceId": "DSA5104/chapter1.pdf",
+          "page": 13,
+          "sourceType": "lecture",
+          "role": "semi-structured data model",
+          "status": "current"
+        },
+        {
+          "sourceId": "DSA5104/chapter1.pdf",
+          "page": 16,
+          "sourceType": "lecture",
+          "role": "XML and JSON examples",
+          "status": "current"
+        },
+        {
+          "sourceId": "DSA5104/chapter1.pdf",
+          "page": 17,
+          "sourceType": "lecture",
+          "role": "nested documents",
+          "status": "current"
+        },
+        {
+          "sourceId": "DSA5104/chapter1.pdf",
+          "page": 50,
+          "sourceType": "lecture",
+          "role": "big-data analysis beyond SQL",
+          "status": "current"
+        }
+      ]
+    },
+    {
+      "id": "dsa5104-semi-structured-example-1",
+      "type": "worked-example",
+      "title": "Choosing a representation",
+      "sourceType": "lecture",
+      "steps": [
+        "Use a relational schema when stable identity and constraints dominate.",
+        "Use nested XML or JSON when variation and hierarchy are first-class.",
+        "Define validation rules at the boundary where consumers need them.",
+        "Measure parse and shuffle costs when the query runs across partitions."
+      ],
+      "answer": "Flexibility is not free: deferred schema decisions move work into query and validation stages.",
+      "sourceRefs": [
+        {
+          "sourceId": "DSA5104/chapter1.pdf",
+          "page": 13,
+          "sourceType": "lecture",
+          "role": "semi-structured data model",
+          "status": "current"
+        },
+        {
+          "sourceId": "DSA5104/chapter1.pdf",
+          "page": 16,
+          "sourceType": "lecture",
+          "role": "XML and JSON examples",
+          "status": "current"
+        },
+        {
+          "sourceId": "DSA5104/chapter1.pdf",
+          "page": 17,
+          "sourceType": "lecture",
+          "role": "nested documents",
+          "status": "current"
+        },
+        {
+          "sourceId": "DSA5104/chapter1.pdf",
+          "page": 50,
+          "sourceType": "lecture",
+          "role": "big-data analysis beyond SQL",
+          "status": "current"
+        }
+      ]
+    },
+    {
+      "id": "dsa5104-semi-structured-critical-1",
+      "type": "critical-question",
+      "prompt": "When is schema-on-read the wrong choice even if ingestion flexibility is attractive?",
+      "angle": "Consider repeated consumers, strict governance, latency, and the cost of discovering errors late.",
+      "modelAnswer": "If many consumers need the same stable semantics or correctness must be enforced at ingestion, a validated schema-on-write boundary may reduce duplicated downstream work.",
+      "focus": "architecture",
+      "sourceRefs": [
+        {
+          "sourceId": "DSA5104/chapter1.pdf",
+          "page": 13,
+          "sourceType": "lecture",
+          "role": "semi-structured data model",
+          "status": "current"
+        },
+        {
+          "sourceId": "DSA5104/chapter1.pdf",
+          "page": 16,
+          "sourceType": "lecture",
+          "role": "XML and JSON examples",
+          "status": "current"
+        },
+        {
+          "sourceId": "DSA5104/chapter1.pdf",
+          "page": 17,
+          "sourceType": "lecture",
+          "role": "nested documents",
+          "status": "current"
+        },
+        {
+          "sourceId": "DSA5104/chapter1.pdf",
+          "page": 50,
+          "sourceType": "lecture",
+          "role": "big-data analysis beyond SQL",
+          "status": "current"
+        }
+      ]
+    },
+    {
+      "id": "dsa5104-semi-structured-critical-2",
+      "type": "critical-question",
+      "prompt": "Why can a short SQL query still trigger an expensive distributed job?",
+      "angle": "Trace partitioning, joins, shuffles, serialization, and synchronization rather than counting SQL tokens.",
+      "modelAnswer": "The logical query hides physical movement. A group-by or join can require a wide exchange even when the query text is only a few lines.",
+      "focus": "physical plan",
+      "sourceRefs": [
+        {
+          "sourceId": "DSA5104/chapter1.pdf",
+          "page": 13,
+          "sourceType": "lecture",
+          "role": "semi-structured data model",
+          "status": "current"
+        },
+        {
+          "sourceId": "DSA5104/chapter1.pdf",
+          "page": 16,
+          "sourceType": "lecture",
+          "role": "XML and JSON examples",
+          "status": "current"
+        },
+        {
+          "sourceId": "DSA5104/chapter1.pdf",
+          "page": 17,
+          "sourceType": "lecture",
+          "role": "nested documents",
+          "status": "current"
+        },
+        {
+          "sourceId": "DSA5104/chapter1.pdf",
+          "page": 50,
+          "sourceType": "lecture",
+          "role": "big-data analysis beyond SQL",
+          "status": "current"
+        }
+      ]
+    }
+  ],
+  "questionIds": [
+    "dsa5104-ms-q1",
+    "dsa5104-ms-q2",
+    "dsa5104-bank-012"
+  ],
+  "labIds": [
+    "dsa5104-semi-structured"
+  ],
+  "schemaVersion": "nus.lesson.v1"
+}

@@ -1,0 +1,131 @@
+[
+  {
+    "id": "dsa5104-qp-q1",
+    "type": "mcq",
+    "prompt": "Which sequence matches the lecture's query-processing pipeline?",
+    "choices": [
+      "Evaluation, parsing, optimization",
+      "Parsing/translation, optimization, evaluation",
+      "Optimization, DDL, backup",
+      "Join, group, projection only"
+    ],
+    "answer": 1,
+    "explanation": "The query is parsed and translated, an evaluation plan is selected, then the plan is executed.",
+    "sourceRefs": [
+      {
+        "sourceId": "DSA5104/chapter1.pdf",
+        "page": 40,
+        "sourceType": "lecture",
+        "role": "query processing",
+        "status": "current"
+      }
+    ],
+    "difficulty": "easy",
+    "skill": "recall",
+    "cognitiveLevel": "understand",
+    "estimatedSeconds": 60,
+    "misconception": "Check the assumption behind your answer.",
+    "visualHook": "Explain the idea with a small diagram or example.",
+    "courseId": "DSA5104",
+    "lessonId": "dsa5104-query-processing",
+    "schemaVersion": "nus.question.v1"
+  },
+  {
+    "id": "dsa5104-qp-q2",
+    "type": "short",
+    "prompt": "Why can an index improve retrieval without changing the logical query result?",
+    "accepted": [
+      "it changes access path not semantics",
+      "index is physical access method",
+      "same relation result different plan"
+    ],
+    "solution": "An index changes how the engine locates tuples, while the logical query still defines the same relation result.",
+    "explanation": "Physical optimization must preserve declarative semantics.",
+    "sourceRefs": [
+      {
+        "sourceId": "DSA5104/chapter1.pdf",
+        "page": 38,
+        "sourceType": "lecture",
+        "role": "indexes",
+        "status": "current"
+      },
+      {
+        "sourceId": "DSA5104/chapter1.pdf",
+        "page": 40,
+        "sourceType": "lecture",
+        "role": "query processing",
+        "status": "current"
+      }
+    ],
+    "difficulty": "medium",
+    "skill": "explain",
+    "cognitiveLevel": "understand",
+    "estimatedSeconds": 90,
+    "misconception": "Check the assumption behind your answer.",
+    "visualHook": "Explain the idea with a small diagram or example.",
+    "courseId": "DSA5104",
+    "lessonId": "dsa5104-query-processing",
+    "schemaVersion": "nus.question.v1"
+  },
+  {
+    "id": "dsa5104-bank-009",
+    "lessonId": "dsa5104-query-processing",
+    "type": "short",
+    "prompt": "What must stay unchanged when the optimizer replaces a full scan with an index lookup?",
+    "accepted": [
+      "logical result",
+      "relation result",
+      "query semantics"
+    ],
+    "solution": "The logical relation result must remain unchanged; only the physical access path changes.",
+    "explanation": "Optimization is allowed to change execution cost, not declarative meaning.",
+    "difficulty": "medium",
+    "skill": "explain",
+    "cognitiveLevel": "analyze",
+    "estimatedSeconds": 75,
+    "misconception": "A faster plan is not a different answer.",
+    "visualHook": "Follow the query processor pipeline from plan choice to result.",
+    "sourceRefs": [
+      {
+        "sourceId": "DSA5104/chapter1.pdf",
+        "page": 40,
+        "sourceType": "lecture",
+        "role": "query processing",
+        "status": "current"
+      }
+    ],
+    "courseId": "DSA5104",
+    "schemaVersion": "nus.question.v1"
+  },
+  {
+    "id": "dsa5104-bank-010",
+    "lessonId": "dsa5104-query-processing",
+    "type": "mcq",
+    "prompt": "Which component chooses a low-cost evaluation plan from alternatives?",
+    "choices": [
+      "DML compiler/query optimizer",
+      "Data dictionary only",
+      "View level",
+      "Foreign key"
+    ],
+    "answer": 0,
+    "explanation": "The DML compiler performs query optimization and the query evaluation engine executes the selected plan.",
+    "difficulty": "easy",
+    "skill": "recall",
+    "cognitiveLevel": "understand",
+    "estimatedSeconds": 45,
+    "misconception": "The parser and evaluator have different jobs from the optimizer.",
+    "visualHook": "Select the optimize stage in the pipeline lab.",
+    "sourceRefs": [
+      {
+        "sourceId": "DSA5104/chapter1.pdf",
+        "page": 39,
+        "sourceType": "lecture",
+        "role": "query processor",
+        "status": "current"
+      }
+    ],
+    "courseId": "DSA5104",
+    "schemaVersion": "nus.question.v1"
+  }
+]

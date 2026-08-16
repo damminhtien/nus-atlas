@@ -1,0 +1,93 @@
+[
+  {
+    "id": "dsa5104-ms-q1",
+    "type": "mcq",
+    "prompt": "What is a common schema-on-read trade-off?",
+    "choices": [
+      "No validation is ever needed",
+      "Flexibility at ingestion shifts more validation to query time",
+      "It always uses less storage",
+      "It removes all joins"
+    ],
+    "answer": 1,
+    "explanation": "Flexible ingestion can defer schema decisions, so consumers must validate and interpret data later.",
+    "sourceRefs": [
+      {
+        "sourceId": "DSA5104/chapter1.pdf",
+        "page": 16,
+        "sourceType": "lecture",
+        "role": "semi-structured data",
+        "status": "current"
+      }
+    ],
+    "difficulty": "easy",
+    "skill": "recall",
+    "cognitiveLevel": "understand",
+    "estimatedSeconds": 60,
+    "misconception": "Check the assumption behind your answer.",
+    "visualHook": "Explain the idea with a small diagram or example.",
+    "courseId": "DSA5104",
+    "lessonId": "dsa5104-semi-structured",
+    "schemaVersion": "nus.question.v1"
+  },
+  {
+    "id": "dsa5104-ms-q2",
+    "type": "short",
+    "prompt": "Why should a distributed SQL plan still be inspected for data movement?",
+    "accepted": [
+      "network shuffle is expensive",
+      "data movement and shuffle cost",
+      "because shuffle is expensive"
+    ],
+    "solution": "Network movement and shuffle can dominate a distributed query even when the SQL text looks simple.",
+    "explanation": "The distributed cost model adds partitioning, serialization, and network traffic.",
+    "sourceRefs": [
+      {
+        "sourceId": "DSA5104/chapter1.pdf",
+        "page": 50,
+        "sourceType": "lecture",
+        "role": "big-data analysis beyond SQL",
+        "status": "current"
+      }
+    ],
+    "difficulty": "medium",
+    "skill": "explain",
+    "cognitiveLevel": "understand",
+    "estimatedSeconds": 90,
+    "misconception": "Check the assumption behind your answer.",
+    "visualHook": "Explain the idea with a small diagram or example.",
+    "courseId": "DSA5104",
+    "lessonId": "dsa5104-semi-structured",
+    "schemaVersion": "nus.question.v1"
+  },
+  {
+    "id": "dsa5104-bank-012",
+    "lessonId": "dsa5104-semi-structured",
+    "type": "short",
+    "prompt": "What work is shifted when a team chooses schema-on-read?",
+    "accepted": [
+      "validation moves to query time",
+      "interpretation deferred",
+      "consumers validate later"
+    ],
+    "solution": "Schema-on-read makes ingestion flexible but moves interpretation, validation, and sometimes error discovery toward query and consumer time.",
+    "explanation": "The representation choice changes when agreement is enforced; it does not eliminate the need for agreement.",
+    "difficulty": "medium",
+    "skill": "explain",
+    "cognitiveLevel": "analyze",
+    "estimatedSeconds": 75,
+    "misconception": "Flexible ingestion is not the same as no schema.",
+    "visualHook": "Adjust the flexibility explorer and inspect the validation trade-off.",
+    "sourceRefs": [
+      {
+        "sourceId": "DSA5104/chapter1.pdf",
+        "page": 16,
+        "sourceType": "lecture",
+        "role": "XML and JSON",
+        "status": "current"
+      }
+    ],
+    "courseId": "DSA5104",
+    "schemaVersion": "nus.question.v1"
+  }
+]

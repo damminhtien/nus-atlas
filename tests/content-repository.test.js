@@ -21,6 +21,7 @@ function generatedPackage() {
   vm.runInNewContext(fs.readFileSync(path.join(__dirname, "../data/nus/generated/content-manifest.js"), "utf8"), context);
   vm.runInNewContext(fs.readFileSync(path.join(__dirname, "../data/nus/generated/dsa5101.js"), "utf8"), context);
   vm.runInNewContext(fs.readFileSync(path.join(__dirname, "../data/nus/generated/dsa5105.js"), "utf8"), context);
+  vm.runInNewContext(fs.readFileSync(path.join(__dirname, "../data/nus/generated/dsa5104.js"), "utf8"), context);
   return context.NUS_CONTENT_PACKAGES;
 }
 
@@ -82,6 +83,17 @@ test("DSA5101 package joins textbook, labs, and source-backed questions", () => 
   assert.ok(repo.getQuestionBank("DSA5101").extensionCount >= 12);
 });
 
+test("DSA5104 package joins textbook, slide reader, labs, and source-backed questions", () => {
+  const repo = createContentRepository({ ...loadLegacyState(), packages: generatedPackage() });
+  const lesson = repo.getLesson("DSA5104", "dsa5104-sql-foundations");
+  assert.equal(lesson.schemaVersion, "nus.lesson.v1");
+  assert.ok(lesson.sourceRefs.some(ref => ref.sourceId === "DSA5104/chapter1.pdf"));
+  assert.ok(repo.getLab("dsa5104-query-processing"));
+  assert.equal(repo.getSlideSets("DSA5104")[0].slides.length, 52);
+  assert.equal(repo.getTextbook("DSA5104").chapters.length, 5);
+  assert.equal(repo.getQuestionBank("DSA5104").extensionCount, 12);
+});
+
 test("browser script order installs the same repository boundary", () => {
   const files = [
     "data/nus/provenance.js", "data/nus/courses.js", "data/nus/schedule.js", "data/nus/assessments.js",
@@ -95,12 +107,12 @@ test("browser script order installs the same repository boundary", () => {
   files.forEach(file => vm.runInContext(fs.readFileSync(path.join(__dirname, "..", file), "utf8"), context, { filename: file }));
   const stats = context.NUS_REPOSITORY.stats();
   assert.equal(stats.courses, 4);
-  assert.equal(stats.lessons, 12, "migrated course payload is not loaded at startup");
+  assert.equal(stats.lessons, 15, "migrated course payload is not loaded at startup");
   assert.equal(stats.assessments, 12);
-  assert.equal(stats.labs, 27);
+  assert.equal(stats.labs, 34);
   vm.runInContext(fs.readFileSync(path.join(__dirname, "../data/nus/generated/dsa5105.js"), "utf8"), context, { filename: "data/nus/generated/dsa5105.js" });
   context.NUS_REPOSITORY.registerPackage("DSA5105", context.NUS_CONTENT_PACKAGES.DSA5105);
-  assert.equal(context.NUS_REPOSITORY.stats().lessons, 35);
+  assert.equal(context.NUS_REPOSITORY.stats().lessons, 38);
   assert.equal(context.NUS_REPOSITORY.getLesson("DSA5105", "dsa5105-erm").flashcards.length, 7);
 });
 

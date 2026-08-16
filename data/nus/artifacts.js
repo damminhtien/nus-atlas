@@ -42,3 +42,69 @@
   ], []);
   window.NUS_ARTIFACTS = artifacts;
 })();
+
+(function () {
+  "use strict";
+  const ref = (sourceId, page, sourceType, role, status) => ({ sourceId, page, sourceType, role, status });
+  const lecture = (page, role) => ref("DSA5104/chapter1.pdf", page, "lecture", role, "current");
+  const exercise = (sourceId, role) => ref(sourceId, 1, "exercise", role, "current-context");
+  const add = (id, flashcards, homework, codeExercises = []) => {
+    window.NUS_ARTIFACTS[id] = { lessonId: id, flashcards, homework, codeExercises, schemaVersion: "nus.study-kit.v1" };
+  };
+  add("dsa5104-orientation", [
+    { front: "Schema versus instance?", back: "The schema is the design and constraints; the instance is the current contents." },
+    { front: "Three abstraction levels?", back: "Physical storage, logical data and relationships, and application-specific views." },
+    { front: "What makes a database answer reproducible?", back: "State the model, constraints, query or transformation, expected shape, and validation evidence." }
+  ], [
+    { prompt: "Explain why a DBMS solves problems that a collection of files does not.", rubric: "Mention redundancy, integrity, concurrency, atomicity, security, and efficient access.", source: lecture(1, "DBMS purpose") },
+    { prompt: "Give one schema change and one instance change, then explain which abstraction level hides physical storage.", rubric: "Use a concrete table definition versus row update and identify the physical level.", source: lecture(18, "abstraction levels") }
+  ]);
+  add("dsa5104-relational-model", [
+    { front: "Primary key versus foreign key?", back: "A primary key identifies tuples locally; a foreign key references a key in another relation." },
+    { front: "Where does the foreign key go in one-to-many?", back: "On the many-side relation, pointing to the one-side key." },
+    { front: "Why is row position not identity?", back: "Rows can be reordered, filtered, partitioned, or stored differently; keys preserve meaning." }
+  ], [
+    { prompt: "Translate a one-to-many Department–Student ER relationship into relations and constraints.", rubric: "Give both primary keys, place department_id in Student, and state the foreign-key reference.", source: exercise("DSA5104/Homework Solutions/Ch06_Database_Design_Using_the_ER_Model/6.23.md", "ER translation") },
+    { prompt: "Construct a counterexample showing why an unkeyed table can contain ambiguous duplicate tuples.", rubric: "Show two rows that cannot be distinguished by the proposed identifier and name the missing constraint.", source: lecture(25, "integrity constraints") }
+  ]);
+  add("dsa5104-database-design", [
+    { front: "Logical versus physical design?", back: "Logical design chooses relation schemas and constraints; physical design chooses storage layout and access methods." },
+    { front: "Many-to-many mapping?", back: "Create a relationship relation with both entity keys, relationship attributes, and foreign-key constraints." },
+    { front: "Why use a composite key?", back: "It can enforce that one pair of participating entities appears at most once." }
+  ], [
+    { prompt: "Design a many-to-many schema for Student and Club with membership_since as a relationship attribute.", rubric: "Create Student, Club, and Membership relations; include both foreign keys and a composite identity.", source: exercise("DSA5104/Homework Solutions/Ch06_Database_Design_Using_the_ER_Model/6.23.md", "many-to-many design") },
+    { prompt: "Explain one benefit and one cost of three-tier architecture for a database application.", rubric: "Mention separation/security/scalability and the added application-server boundary.", source: lecture(44, "application architecture") }
+  ]);
+  add("dsa5104-sql-foundations", [
+    { front: "WHERE or HAVING?", back: "WHERE filters rows before grouping; HAVING filters groups after aggregation." },
+    { front: "Declarative SQL?", back: "The query states the desired relation result; the engine chooses how to evaluate it." },
+    { front: "What is the join invariant?", back: "The join predicate connects identities through keys, not through incidental row order." }
+  ], [
+    { prompt: "Write and explain a query that lists departments with at least two students.", rubric: "Use a key-based join, GROUP BY department identity, COUNT(*), and HAVING.", source: exercise("DSA5104/Homework Solutions/Ch03_Introduction_to_SQL/3.2.md", "aggregate query") },
+    { prompt: "Give a NULL edge case that changes the result of a comparison or aggregate.", rubric: "State that NULL is unknown, then explain the affected predicate or aggregate behavior.", source: lecture(30, "SQL query language") }
+  ], [{ id: "dsa5104-sql-code", language: "sql", prompt: "Return departments with at least two students.", starter: "SELECT d.name, COUNT(*) AS n\nFROM Department d JOIN Student s ON s.department_id = d.id\nGROUP BY d.id, d.name\nHAVING COUNT(*) >= 2;", expected: "Data Science|2", solution: "The aggregate filter belongs in HAVING, not WHERE." }]);
+  add("dsa5104-query-processing", [
+    { front: "Query-processing stages?", back: "Parsing and translation, optimization, then evaluation." },
+    { front: "What does an index change?", back: "The physical access path, not the logical relation result promised by the query." },
+    { front: "Why count block transfers?", back: "Disk and memory movement can dominate the time of a logically simple query." }
+  ], [
+    { prompt: "Trace one SQL query from text to result relation and identify what optimization is allowed to change.", rubric: "Name internal representation, candidate plans, chosen plan, and semantic preservation.", source: lecture(40, "query processing") },
+    { prompt: "Explain when an index can help and when it may not be selected.", rubric: "Mention selectivity, statistics, access cost, and that the optimizer chooses the plan.", source: lecture(38, "indexes") }
+  ], [{ id: "dsa5104-plan-code", language: "text", prompt: "Write a three-line query plan explanation for a selective key lookup.", starter: "1. Parse query\n2. Choose index lookup\n3. Evaluate and return tuples", expected: "parse|optimize|evaluate", solution: "Keep logical semantics separate from the physical access path." }]);
+  add("dsa5104-transactions-architecture", [
+    { front: "Atomicity?", back: "A transaction's logical function is all-or-nothing with respect to committed state." },
+    { front: "Transaction management versus concurrency control?", back: "Transaction management handles failure consistency; concurrency control coordinates simultaneous transactions." },
+    { front: "Shared-nothing trade-off?", back: "Independent nodes can scale, but partitioning, network movement, and coordination become explicit costs." }
+  ], [
+    { prompt: "Write the operation sequence for a bank transfer and mark its transaction boundary.", rubric: "Include both account updates and explain why a failure between them must not commit a partial result.", source: lecture(41, "transaction management") },
+    { prompt: "Compare centralized and distributed database architectures for a geographically distributed application.", rubric: "Discuss placement, communication, heterogeneity, failure, and coordination.", source: lecture(42, "database architecture") }
+  ]);
+  add("dsa5104-semi-structured", [
+    { front: "XML versus JSON?", back: "Both can represent nested semi-structured data; XML uses tags, while JSON uses objects, arrays, and key–value pairs." },
+    { front: "Schema-on-read trade-off?", back: "Flexible ingestion delays some schema and validation work until query time." },
+    { front: "Why inspect distributed SQL movement?", back: "Joins, grouping, and sorting may shuffle data across partitions even when the SQL is short." }
+  ], [
+    { prompt: "Choose relational, XML, or JSON for three workloads and justify each choice by structure and constraints.", rubric: "Name nesting/variation, stable identity, validation timing, and consumer needs.", source: lecture(16, "XML and JSON") },
+    { prompt: "Design a measurement plan for a distributed query whose average runtime is acceptable but one partition is slow.", rubric: "Measure partition sizes, skew, shuffle bytes, and stage/barrier time.", source: lecture(50, "big-data analysis beyond SQL") }
+  ]);
+})();
