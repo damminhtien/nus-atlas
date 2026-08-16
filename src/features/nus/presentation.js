@@ -52,7 +52,7 @@
     ].filter(group => group.refs.length);
   }
   function quickNav(kicker) {
-    const courseCode = String(kicker || "").match(/DSA\d{4}/)?.[0] || "DSA5104";
+    const courseCode = String(kicker || "").match(/DSA\d{4}/)?.[0] || "DSA5208";
     const links = [
       ["Study desk", "#/"],
       [courseCode, `#/nus/course/${courseCode}`],
@@ -61,7 +61,7 @@
       ["Mistakes", `#/nus/mistakes/${courseCode}`],
       ["Planner", "#/nus/planner"]
     ];
-    if (["DSA5101", "DSA5104", "DSA5105"].includes(courseCode)) {
+    if (["DSA5101", "DSA5104", "DSA5105", "DSA5208"].includes(courseCode)) {
       links.splice(3, 0, ["Contrast drills", `#/nus/contrast/${courseCode}`]);
     }
     if (courseCode === "DSA5105") {
@@ -70,6 +70,9 @@
       links.push(["Lecture 1 slides", "#/nus/slides/DSA5101/dsa5101-lecture1/1"]);
     } else if (courseCode === "DSA5104") {
       links.push(["Chapter 1 slides", "#/nus/slides/DSA5104/dsa5104-chapter1/1"]);
+    } else if (courseCode === "DSA5208") {
+      links.push(["Lecture 0 overview", "#/nus/slides/DSA5208/dsa5208-lec0/1"]);
+      links.push(["Lecture 1 times", "#/nus/slides/DSA5208/dsa5208-lec1/1"]);
     }
     return `<nav class="nus-quick-nav" aria-label="Quick navigation"><span>Quick nav</span>${links.map(([label, href]) => `<a href="${esc(href)}" data-route>${esc(label)}</a>`).join("")}</nav>`;
   }

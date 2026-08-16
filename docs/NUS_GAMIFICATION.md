@@ -41,7 +41,7 @@ These are feedback weights, not grades. They do not alter course marks or assess
 
 Question-level practice is deliberately separate from rewarded recall. Every submitted answer writes a zero-XP `question_attempt` event with its question ID, correctness, skill, misconception cue, and source refs. Correct answers can also create a small recall reward; a miss enters Mistake Clinic until the learner opens the worked repair and marks it redeemed. If the next attempt is correct, the unresolved queue clears automatically. This makes the loop observable without turning every click into a reward.
 
-The DSA5105 bank lives at `content/courses/DSA5105/questions/bank.json`. It is the editable source of truth for the 44-question extension; generated per-lesson JSON and the browser package are reader/build outputs. Each item carries `difficulty`, `skill`, `cognitiveLevel`, `estimatedSeconds`, `misconception`, `visualHook`, and typed `sourceRefs`. Lecture refs define the exam boundary; textbook and `ref` entries deepen or contextualize it.
+The DSA5105 bank lives at `content/courses/DSA5105/questions/bank.json`; DSA5208 has the same contract at `content/courses/DSA5208/questions/bank.json`. These are the editable source of truth for course-specific extension questions; generated per-lesson JSON and browser packages are reader/build outputs. Each item carries difficulty, skill, cognitive level, misconception, visual hook, and typed `sourceRefs`. Lecture refs define the exam boundary; textbook and `ref` entries deepen or contextualize it.
 
 ## Daily quests and recognition
 
@@ -68,7 +68,7 @@ Every visual lab in `data/nus/visual-labs.js` declares:
 
 `js/nus-components.js` renders the following templates:
 
-| Template | DSA5101 / DSA5104 / DSA5105 package | Reasoning move |
+| Template | Package examples | Reasoning move |
 | --- | --- | --- |
 | `compare` | ERM train–validation gap | Compare fit with held-out evidence |
 | `geometry` | SVM margin | Adjust a boundary and inspect robustness |
@@ -77,17 +77,17 @@ Every visual lab in `data/nus/visual-labs.js` declares:
 | `event-timeline` | Bellman backup | Separate reward from continuation value |
 | `pipeline-builder` | GNN message passing | Build message → aggregate → update |
 | `concept-map` | Kernel/PCA/cluster; RL/GNN | Select the concept that matches the output and information flow |
-| `decision-tree` | Generalization protocol | Choose validation evidence without test leakage |
+| `decision-tree` | Generalization protocol; happens-before checks | Choose validation evidence or prove a causal relation |
 
-All 4 DSA5101, 7 DSA5104, and 23 DSA5105 package lessons now resolve to source-backed visual labs. The contract is intentionally small so future templates such as `DistributionExplorer`, `MistakeClinic`, `ExamReadiness`, and `SourceLens` can share the same source and completion rules.
+All 4 DSA5101, 7 DSA5104, 23 DSA5105, and 9 DSA5208 package lessons now resolve to source-backed visual labs. DSA5208 reuses the same study-kit, source-lens, contrast-drill, Exam Mode, and spaced-retrieval contracts while adding clock/order-specific derivation traces and pipeline previews.
 
 ## Delivery roadmap
 
 ### Phase 1 — shipped package foundation
 
 - Add the event ledger and idempotent rewards.
-- Show daily quests, selectable DSA5101/DSA5104/DSA5105 mastery, and recognition on the dashboard.
-- Ship source-backed visual labs and source lenses for the normalized DSA5101, DSA5104, and DSA5105 packages.
+- Show daily quests, selectable DSA5101/DSA5104/DSA5105/DSA5208 mastery, and recognition on the dashboard.
+- Ship source-backed visual labs and source lenses for all four normalized course packages.
 - Log a visual lab only after the learner reaches the final reasoning step or explicitly commits a comparison.
 
 ### Phase 2 — deepen practice
@@ -99,7 +99,7 @@ All 4 DSA5101, 7 DSA5104, and 23 DSA5105 package lessons now resolve to source-b
 
 ### Phase 3 — expand across remaining courses
 
-- Reuse `PipelineBuilder` and `EventTimeline` for DSA5208.
+- Reuse `PipelineBuilder` and `EventTimeline` for future DSA5208 Spark/consistency lectures as they arrive.
 - Reuse `ConceptMap` and `DecisionTree` for DSA5101's new modules and future topics.
 - Reuse `CompareLab` and `SourceLens` for DSA5104 SQL and relational design.
 

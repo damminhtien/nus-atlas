@@ -11,7 +11,7 @@
   const presentation = window.NUS_PRESENTATION({ getSourceTypes: sourceTypes, getVisuals: visuals });
   const { esc, text, sourceLabel, sourceBadge, sourceItem, sourceGroups, pageHead, card, button, statusPill,
     visualCard, mathBlock, sourceDisclosure, lessonSection, workedExample, recallItem, criticalThinking, studyKit, studyCompass } = presentation;
-  const DEFAULT_FOCUS_COURSE = "DSA5104";
+  const DEFAULT_FOCUS_COURSE = "DSA5208";
   let focusTimer = null;
 
   function course(code) { return repository() ? repository().getCourse(code) : courses().find(c => c.code === code) || null; }

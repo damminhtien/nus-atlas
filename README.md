@@ -11,9 +11,9 @@ NUS Atlas is a focused study workspace for AY2026/27 Semester 1. It turns normal
 | DSA5101 | Big data foundations, frequent patterns, search, streams | 4 |
 | DSA5104 | Data management, relational design, SQL, retrieval | 7 |
 | DSA5105 | Machine learning foundations, OLS, SVM/KKT, trees, neural nets, PCA, clustering, RL, DP, graph methods | 23 |
-| DSA5208 | Distributed systems, ordering, consistency, Spark | 4 |
+| DSA5208 | Distributed systems, ordering, consistency, Spark | 9 |
 
-The normalized packages currently contain 34 lessons; the legacy curriculum adds four DSA5208 lessons. Assessment dates remain explicitly pending when they have not been confirmed.
+The normalized packages currently contain 43 lessons across four courses. DSA5208 is the current dashboard focus; assessment dates remain explicitly pending when they have not been confirmed.
 
 ## Study tools
 
@@ -27,7 +27,7 @@ The normalized packages currently contain 34 lessons; the legacy curriculum adds
 - Critical-thinking prompts that challenge assumptions and include strong-answer comparisons.
 - Reading-first lesson pages with editorial typography, a four-step Read/Work/Reason/Recall compass, and Focus Reading mode.
 - Derived visual study cues that explain what a referenced diagram, table, chart, or screenshot is meant to teach without publishing raw course slides.
-- Evidence-based daily quests, a selectable focus-course mastery map (DSA5104 by default), and recognition for retrieval and reasoning habits. Page views never award XP.
+- Evidence-based daily quests, a selectable focus-course mastery map (DSA5208 by default), and recognition for retrieval and reasoning habits. Page views never award XP.
 - Automatic spaced retrieval that schedules mastered concepts for `+1`, `+3`, `+7`, `+14`, and later intervals; each review asks only 1–2 questions and adapts to correctness and confidence.
 - Reusable visual-learning labs for ERM comparison, SVM geometry, derivation traces, PCA, GMM/EM, Bellman backups, DP tables, graph kernels, spectral clustering, and GNN message passing.
 - General Atlas remains available at `#/atlas`.
@@ -46,25 +46,29 @@ Useful routes:
 #/nus/slides/DSA5104/dsa5104-chapter1/1  DSA5104 Chapter 1 reader
 #/nus/course/DSA5105       DSA5105 course map
 #/nus/lesson/DSA5105/...   DSA5105 lesson study page
+#/nus/course/DSA5208       DSA5208 course map
+#/nus/lesson/DSA5208/...   DSA5208 lesson study page
+#/nus/slides/DSA5208/dsa5208-lec0/1  DSA5208 Lecture 0 reader
+#/nus/slides/DSA5208/dsa5208-lec1/1  DSA5208 Lecture 1 reader
 #/nus/sql                  DSA5104 SQL Studio
 #/nus/simulations          DSA5208 simulations
 ```
 
-See [the DSA5101 study guide](docs/DSA5101_STUDY_GUIDE.md) and [the DSA5104 study guide](docs/DSA5104_STUDY_GUIDE.md) for course-specific source boundaries and A+ study loops. See [the gamification and visual-learning plan](docs/NUS_GAMIFICATION.md) for the event ledger, reward safeguards, component contract, and reusable course templates.
+See [the DSA5101 study guide](docs/DSA5101_STUDY_GUIDE.md), [the DSA5104 study guide](docs/DSA5104_STUDY_GUIDE.md), and [the DSA5208 study guide](docs/DSA5208_STUDY_GUIDE.md) for course-specific source boundaries and A+ study loops. See [the gamification and visual-learning plan](docs/NUS_GAMIFICATION.md) for the event ledger, reward safeguards, component contract, and reusable course templates.
 See the [DSA5105 assessment map](docs/DSA5105_ASSESSMENT_MAP.md) for the exam/homework-to-lesson coverage index.
 
 On a lesson route, use **Focus reading** to remove the sidebar, top bar, and source rail temporarily. The study compass jumps to the lecture notes, worked examples, assumption checks, or recall prompts without losing your reading position.
 
 ## Source policy: lecture, exercise, textbook
 
-DSA5101, DSA5104, and DSA5105 deliberately separate four source classes:
+DSA5101, DSA5104, DSA5105, and DSA5208 deliberately separate four source classes:
 
 - `lecture`: current syllabus and local lecture material; this is the exam-priority scope.
 - `exercise`: official exercise sheets and worked solutions; this is derivation depth, not automatically lecture scope.
 - `textbook`: derivations and background from `Textbook.pdf`; useful for depth, but not automatically examinable.
 - `ref`: optional, historical, or assessment-derived support. Draft, old, and `assessment-derived` references are marked explicitly and must not redefine current lecture scope or dates.
 
-Every normalized lesson and question uses typed `sourceRefs` with `sourceId`, page, `sourceType`, role, and status. Concept cards and visual derivations can also expose an **A+ source lens** that explains why a topic is examinable and separates lecture scope from official exercise depth. See [the DSA5105 study guide](docs/NUS_STUDY_GUIDE.md), [the DSA5101 study guide](docs/DSA5101_STUDY_GUIDE.md), [the DSA5104 study guide](docs/DSA5104_STUDY_GUIDE.md), [the source metadata](data/nus/provenance.js), and [the normalized data policy](data/nus/README.md).
+Every normalized lesson and question uses typed `sourceRefs` with `sourceId`, page, `sourceType`, role, and status. Concept cards and visual derivations can also expose an **A+ source lens** that explains why a topic is examinable and separates lecture scope from official exercise depth. See [the DSA5105 study guide](docs/NUS_STUDY_GUIDE.md), [the DSA5101 study guide](docs/DSA5101_STUDY_GUIDE.md), [the DSA5104 study guide](docs/DSA5104_STUDY_GUIDE.md), [the DSA5208 study guide](docs/DSA5208_STUDY_GUIDE.md), [the source metadata](data/nus/provenance.js), and [the normalized data policy](data/nus/README.md).
 
 ## Data and privacy
 
@@ -116,7 +120,7 @@ node prerender.js
 git diff --check
 ```
 
-`nus-gate.js` verifies that all 35 NUS lessons have a LaTeX formula model, formula explanations, source labels, and at least two critical-thinking questions. `data/nus/formula-depth.js` contains the shared formula and critique layer; lecture, textbook, and reference content remains visibly separated.
+`nus-gate.js` verifies that all 43 NUS lessons have a LaTeX formula model, formula explanations, source labels, and at least two critical-thinking questions. `data/nus/formula-depth.js` contains the shared formula and critique layer; lecture, textbook, and reference content remains visibly separated.
 
 ### Strict authored-math rule
 
@@ -140,7 +144,7 @@ The Pages workflow runs `node prerender.js` in CI, creates the static `dist/` ar
 - `js/nus.js` — NUS views using the repository boundary.
 - `js/nus-store.js` — local study progress and attempts.
 - `js/nus-components.js` — reusable visual-learning lab templates.
-- `content/courses/` — normalized course packages; DSA5101, DSA5104, and DSA5105 are the current package-backed courses.
+- `content/courses/` — normalized course packages for DSA5101, DSA5104, DSA5105, and DSA5208.
 - `data/nus/` — legacy registries, provenance, and generated content manifest.
 - `scripts/content-build.js` — joins package IDs into the browser compatibility bundle.
 - `scripts/validate-latex.js` — blocks raw math fragments in authored study content.

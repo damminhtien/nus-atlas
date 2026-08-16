@@ -1,9 +1,10 @@
 # NUS study guide
 
-NUS Atlas is the study layer for AY2026/27 Semester 1. It currently covers DSA5101, DSA5104, DSA5105, and DSA5208. DSA5101, DSA5104, and DSA5105 are normalized package-backed courses; the dashboard defaults to DSA5104 as the focus course. The app is designed for short study loops: choose a lesson, recall the idea, attempt a prompt, then use the planner or review deck to schedule the next session.
+NUS Atlas is the study layer for AY2026/27 Semester 1. It currently covers DSA5101, DSA5104, DSA5105, and DSA5208. All four are normalized package-backed courses; the dashboard defaults to DSA5208 as the focus course. The app is designed for short study loops: choose a lesson, recall the idea, attempt a prompt, then use the planner or review deck to schedule the next session.
 
 For the DSA5101-specific source boundary and A+ study loop, see [the DSA5101 study guide](DSA5101_STUDY_GUIDE.md).
 For the DSA5104-specific source boundary and database-learning loop, see [the DSA5104 study guide](DSA5104_STUDY_GUIDE.md).
+For the DSA5208-specific source boundary and distributed-systems learning loop, see [the DSA5208 study guide](DSA5208_STUDY_GUIDE.md).
 
 ## Reader experience
 
@@ -106,4 +107,4 @@ git diff --check
 ```
 
 The NUS gate checks course allowlisting, lesson/question shape, typed package provenance, assessment invariants, visual references, and raw/private-source markers.
-It also checks LaTeX coverage, symbol explanations, source labels, the absence of Unicode formulas, and critical-thinking coverage across all 38 course lessons.
+It also checks LaTeX coverage, symbol explanations, source labels, the absence of Unicode formulas, and critical-thinking coverage across all 43 course lessons.

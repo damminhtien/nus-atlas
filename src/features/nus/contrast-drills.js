@@ -109,7 +109,7 @@
   }
 
   function render(code, scope) {
-    const selectedCode = code || "DSA5104";
+    const selectedCode = code || "DSA5208";
     const drills = drillsFor(selectedCode, scope);
     if (!drills.length) return renderEmpty(selectedCode, scope);
     state = { attemptId: `contrast-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`, code: selectedCode, scope: scope || "", drills, index: 0, answers: [] };
