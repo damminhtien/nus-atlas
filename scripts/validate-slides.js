@@ -4,6 +4,20 @@ const path = require("path");
 
 const ROOT = path.resolve(__dirname, "..");
 
+const GENERIC_SOCRATIC_PATTERNS = [
+  /rendered page belongs/i,
+  /Which invariant or guarantee is being tested/i,
+  /What would change if the system became larger or less reliable/i,
+  /What invariant or metric makes the idea on/i,
+  /How would the reasoning on .*change if the dataset no longer fit in memory/i,
+  /Which boundary or invariant is the key idea on/i,
+  /How would the reasoning on .*change when the database becomes larger or more concurrent/i
+];
+
+function isGenericSocraticPrompt(prompt) {
+  return GENERIC_SOCRATIC_PATTERNS.some(pattern => pattern.test(prompt || ""));
+}
+
 function jsonFiles(dir) {
   if (!fs.existsSync(dir)) return [];
   return fs.readdirSync(dir, { withFileTypes: true }).flatMap(entry => {
@@ -48,7 +62,7 @@ function validateSlideSet(set, file, root = ROOT) {
     if (!Array.isArray(slide && slide.socraticQuestions) || !slide.socraticQuestions.length) errors.push(`slide has no Socratic questions: ${label}`);
     for (const question of slide && slide.socraticQuestions || []) {
       if (!question.type || !question.prompt || !question.answer || !question.hint) errors.push(`incomplete Socratic question: ${label}`);
-      if (/Which invariant or guarantee is being tested|What would change if the system became larger or less reliable/.test(question.prompt || "")) errors.push(`generic Socratic prompt: ${label}`);
+      if (isGenericSocraticPrompt(question.prompt)) errors.push(`generic Socratic prompt: ${label}`);
     }
     if (!slide.assetPath || !fs.existsSync(path.join(root, slide.assetPath))) errors.push(`missing slide asset: ${label} -> ${slide.assetPath || "<none>"}`);
   }
@@ -82,4 +96,4 @@ if (require.main === module) {
   }
 }
 
-module.exports = { validateSlideSet, validateAll };
+module.exports = { validateSlideSet, validateAll, isGenericSocraticPrompt };
