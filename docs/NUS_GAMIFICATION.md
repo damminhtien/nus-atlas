@@ -68,7 +68,7 @@ Every visual lab in `data/nus/visual-labs.js` declares:
 
 `js/nus-components.js` renders the following templates:
 
-| Template | DSA5101 / DSA5105 package | Reasoning move |
+| Template | DSA5101 / DSA5104 / DSA5105 package | Reasoning move |
 | --- | --- | --- |
 | `compare` | ERM train–validation gap | Compare fit with held-out evidence |
 | `geometry` | SVM margin | Adjust a boundary and inspect robustness |
@@ -79,15 +79,15 @@ Every visual lab in `data/nus/visual-labs.js` declares:
 | `concept-map` | Kernel/PCA/cluster; RL/GNN | Select the concept that matches the output and information flow |
 | `decision-tree` | Generalization protocol | Choose validation evidence without test leakage |
 
-All 4 DSA5101 and 23 DSA5105 package lessons now resolve to source-backed visual labs. The contract is intentionally small so future templates such as `DistributionExplorer`, `MistakeClinic`, `ExamReadiness`, and `SourceLens` can share the same source and completion rules.
+All 4 DSA5101, 7 DSA5104, and 23 DSA5105 package lessons now resolve to source-backed visual labs. The contract is intentionally small so future templates such as `DistributionExplorer`, `MistakeClinic`, `ExamReadiness`, and `SourceLens` can share the same source and completion rules.
 
 ## Delivery roadmap
 
 ### Phase 1 — shipped package foundation
 
 - Add the event ledger and idempotent rewards.
-- Show daily quests, selectable DSA5101/DSA5105 mastery, and recognition on the dashboard.
-- Ship source-backed visual labs and source lenses for the normalized DSA5101 and DSA5105 packages.
+- Show daily quests, selectable DSA5101/DSA5104/DSA5105 mastery, and recognition on the dashboard.
+- Ship source-backed visual labs and source lenses for the normalized DSA5101, DSA5104, and DSA5105 packages.
 - Log a visual lab only after the learner reaches the final reasoning step or explicitly commits a comparison.
 
 ### Phase 2 — deepen practice
