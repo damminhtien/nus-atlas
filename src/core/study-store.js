@@ -13,7 +13,8 @@
   const atlasStore = config.atlasStore || null;
   const clock = typeof config.now === "function" ? config.now : () => new Date();
   const KEY = config.key || "nus.v1";
-  const SCHEMA_VERSION = "nus.study.v2";
+  const SCHEMA_VERSION = "nus.study.v3";
+  const RETRIEVAL_INTERVALS = [1, 3, 7, 14, 30, 60, 120];
 
   const QUESTS = [
     { id: "read", label: "Complete one lesson", hint: "Finish a source-backed lesson", target: 1, types: ["lesson_complete"] },
@@ -33,7 +34,7 @@
   ];
 
   function blank() {
-    return { schemaVersion: SCHEMA_VERSION, version: 2, tasks: {}, lessons: {}, attempts: [], lastStudy: null, events: {}, mastery: {}, questHistory: {} };
+    return { schemaVersion: SCHEMA_VERSION, version: 3, tasks: {}, lessons: {}, attempts: [], lastStudy: null, events: {}, mastery: {}, retrieval: {}, questHistory: {} };
   }
 
   function objectOrEmpty(value) { return value && typeof value === "object" && !Array.isArray(value) ? value : {}; }
@@ -44,12 +45,13 @@
       ...blank(),
       ...data,
       schemaVersion: SCHEMA_VERSION,
-      version: 2,
+      version: 3,
       tasks: objectOrEmpty(data.tasks),
       lessons: objectOrEmpty(data.lessons),
       attempts: Array.isArray(data.attempts) ? data.attempts : [],
       events: objectOrEmpty(data.events),
       mastery: objectOrEmpty(data.mastery),
+      retrieval: objectOrEmpty(data.retrieval),
       questHistory: objectOrEmpty(data.questHistory)
     };
   }
@@ -81,13 +83,14 @@
   function updateMastery(event) {
     if (!event.lessonId) return;
     const current = state.mastery[event.lessonId] || { score: 0, attempts: 0, correct: 0, lastAt: null };
-    const delta = { lesson_complete: 0.35, recall_correct: 0.12, exam_submitted: 0.15, simulation_completed: 0.18, worked_example: 0.12, mistake_redeemed: 0.18 }[event.type] || 0;
+    const delta = { lesson_complete: 0.35, recall_correct: 0.12, retrieval_failed: -0.08, exam_submitted: 0.15, simulation_completed: 0.18, worked_example: 0.12, mistake_redeemed: 0.18 }[event.type] || 0;
     if (!delta) return;
-    current.score = Math.min(1, Number((current.score + delta).toFixed(3)));
+    current.score = Math.max(0, Math.min(1, Number((current.score + delta).toFixed(3))));
     current.attempts += 1;
     if (["recall_correct", "exam_submitted", "simulation_completed", "worked_example", "mistake_redeemed"].includes(event.type)) current.correct += 1;
     current.lastAt = event.at;
     state.mastery[event.lessonId] = current;
+    if (current.score >= 0.8) ensureRetrievalSchedule(event.lessonId, event.courseCode);
   }
 
   function questState() {
@@ -192,6 +195,106 @@
     });
   }
 
+  function retrievalBase(lessonId, courseCode) {
+    return { lessonId, courseCode: courseCode || null, interval: RETRIEVAL_INTERVALS[0], dueAt: new Date(clock().getTime() + RETRIEVAL_INTERVALS[0] * 86400000).toISOString(), reps: 0, lastAt: null, lastResult: null, lastConfidence: null, lastQuestionId: null };
+  }
+
+  function ensureRetrievalSchedule(lessonId, courseCode) {
+    if (!lessonId) return null;
+    const current = state.retrieval[lessonId];
+    if (current) {
+      if (!current.courseCode && courseCode) current.courseCode = courseCode;
+      return current;
+    }
+    const schedule = retrievalBase(lessonId, courseCode);
+    state.retrieval[lessonId] = schedule;
+    return schedule;
+  }
+
+  function ensureRetrievalSchedules(lessonList) {
+    let changed = false;
+    (lessonList || []).forEach(lesson => {
+      if (!lesson || !lesson.id) return;
+      const mastery = state.mastery[lesson.id];
+      if (!mastery || Number(mastery.score) < 0.8 || state.retrieval[lesson.id]) return;
+      ensureRetrievalSchedule(lesson.id, lesson.courseId || lesson.courseCode);
+      changed = true;
+    });
+    if (changed) save();
+    return Object.values(state.retrieval).map(item => ({ ...item }));
+  }
+
+  function retrievalFor(lessonId) {
+    const item = state.retrieval[lessonId];
+    return item ? { ...item } : null;
+  }
+
+  function retrievalList(courseCode, predicate) {
+    return Object.values(state.retrieval)
+      .filter(item => !courseCode || item.courseCode === courseCode)
+      .filter(item => !predicate || predicate(item))
+      .sort((a, b) => new Date(a.dueAt) - new Date(b.dueAt))
+      .map(item => ({ ...item }));
+  }
+
+  function dueRetrievals(courseCode) {
+    const now = clock().getTime();
+    return retrievalList(courseCode, item => item.dueAt && new Date(item.dueAt).getTime() <= now);
+  }
+
+  function upcomingRetrievals(courseCode, days) {
+    const end = clock().getTime() + Math.max(1, Number(days) || 14) * 86400000;
+    return retrievalList(courseCode, item => item.dueAt && new Date(item.dueAt).getTime() > clock().getTime() && new Date(item.dueAt).getTime() <= end);
+  }
+
+  function normalizeConfidence(value) {
+    if (typeof value === "string") {
+      const key = value.toLowerCase();
+      if (key === "low") return 1;
+      if (key === "high" || key === "good") return 3;
+      return 2;
+    }
+    return Math.max(1, Math.min(3, Number(value) || 1));
+  }
+
+  function recordRetrieval(input) {
+    const item = input || {};
+    if (!item.lessonId || !item.questionId) throw new Error("Spaced retrieval requires lessonId and questionId");
+    const reviewId = String(item.reviewId || `${item.lessonId}:${item.questionId}:${clock().getTime()}`);
+    const eventId = `retrieval:${reviewId}`;
+    if (state.events[eventId]) return { ...retrievalFor(item.lessonId), duplicate: true };
+    const correct = !!item.correct;
+    const confidence = normalizeConfidence(item.confidence);
+    const previous = ensureRetrievalSchedule(item.lessonId, item.courseCode);
+    const before = Number(previous.interval) || RETRIEVAL_INTERVALS[0];
+    let nextInterval;
+    if (!correct) {
+      previous.reps = Math.max(0, Number(previous.reps) - 1);
+      nextInterval = Math.max(1, Math.floor(before / 2));
+    } else if (confidence >= 2) {
+      previous.reps = Number(previous.reps) + 1;
+      nextInterval = RETRIEVAL_INTERVALS[Math.min(previous.reps, RETRIEVAL_INTERVALS.length - 1)];
+    } else {
+      nextInterval = before;
+    }
+    previous.interval = nextInterval;
+    previous.dueAt = new Date(clock().getTime() + nextInterval * 86400000).toISOString();
+    previous.lastAt = timestamp();
+    previous.lastResult = correct ? "correct" : "failed";
+    previous.lastConfidence = confidence;
+    previous.lastQuestionId = item.questionId;
+    const event = recordEvidence({
+      eventId,
+      type: correct ? "recall_correct" : "retrieval_failed",
+      courseCode: item.courseCode || previous.courseCode,
+      lessonId: item.lessonId,
+      xp: correct ? 5 : 0,
+      meta: { questionId: item.questionId, correct, confidence, intervalBefore: before, intervalAfter: nextInterval, reps: previous.reps }
+    });
+    save();
+    return { ...previous, event, duplicate: false };
+  }
+
   function redeemMistake(questionId, attemptEventId) {
     const original = eventList().find(event => event.eventId === attemptEventId && event.type === "question_attempt");
     return recordEvidence({
@@ -227,6 +330,11 @@
     questState,
     recognition,
     courseProgress(code, lessonList) { const all = (lessonList || []).filter(Boolean), done = all.filter(lesson => this.lessonDone(lesson.id)).length; return { done, total: all.length, pct: all.length ? Math.round(done / all.length * 100) : 0 }; },
+    retrievalFor,
+    ensureRetrievalSchedules,
+    dueRetrievals,
+    upcomingRetrievals,
+    recordRetrieval,
     reset() { state = blank(); save(); }
   };
 

@@ -22,15 +22,15 @@ test("study store migrates legacy v1 state without losing progress", () => {
   });
   const store = createStudyStore({ storage, now: () => new Date("2026-08-15T10:00:00.000Z") });
 
-  assert.equal(store.schemaVersion, "nus.study.v2");
-  assert.equal(store.raw.schemaVersion, "nus.study.v2");
+  assert.equal(store.schemaVersion, "nus.study.v3");
+  assert.equal(store.raw.schemaVersion, "nus.study.v3");
   assert.equal(store.lessonDone("lesson1"), true);
   assert.equal(store.task("hw1").status, "done");
   assert.equal(store.attempts()[0].attemptId, "old-attempt");
   assert.equal(storage.read().schemaVersion, undefined, "migration persists at the next write");
 
   store.recordEvidence({ eventId: "recall:q1", type: "recall_correct", lessonId: "lesson1", xp: 5 });
-  assert.equal(storage.read().schemaVersion, "nus.study.v2");
+  assert.equal(storage.read().schemaVersion, "nus.study.v3");
 });
 
 test("study store keeps evidence idempotent and updates mastery", () => {
@@ -42,6 +42,34 @@ test("study store keeps evidence idempotent and updates mastery", () => {
   assert.equal(duplicate.duplicate, true);
   assert.equal(store.events().length, 1);
   assert.equal(store.masteryFor("lesson1").score, 0.12);
+});
+
+test("study store schedules mastered concepts and adapts retrieval intervals", () => {
+  let now = new Date("2026-08-15T10:00:00.000Z");
+  const store = createStudyStore({ storage: memoryStorage(), now: () => now });
+
+  store.recordEvidence({ eventId: "lesson:ridge", type: "lesson_complete", courseCode: "DSA5105", lessonId: "ridge", xp: 0 });
+  for (let index = 0; index < 4; index += 1) {
+    store.recordEvidence({ eventId: `recall:ridge:${index}`, type: "recall_correct", courseCode: "DSA5105", lessonId: "ridge", xp: 0 });
+  }
+
+  assert.deepEqual(store.retrievalFor("ridge"), {
+    lessonId: "ridge", courseCode: "DSA5105", interval: 1,
+    dueAt: "2026-08-16T10:00:00.000Z", reps: 0, lastAt: null,
+    lastResult: null, lastConfidence: null, lastQuestionId: null
+  });
+
+  now = new Date("2026-08-16T10:00:00.000Z");
+  assert.equal(store.dueRetrievals("DSA5105").length, 1);
+  const advanced = store.recordRetrieval({ reviewId: "r1", courseCode: "DSA5105", lessonId: "ridge", questionId: "q1", correct: true, confidence: "high" });
+  assert.equal(advanced.interval, 3);
+  assert.equal(advanced.dueAt, "2026-08-19T10:00:00.000Z");
+
+  now = new Date("2026-08-19T10:00:00.000Z");
+  const failed = store.recordRetrieval({ reviewId: "r2", courseCode: "DSA5105", lessonId: "ridge", questionId: "q1", correct: false, confidence: "low" });
+  assert.equal(failed.interval, 1);
+  assert.equal(failed.lastResult, "failed");
+  assert.equal(store.events().some(event => event.type === "retrieval_failed"), true);
 });
 
 test("question attempts build a repairable mistake signal without passive XP", () => {
