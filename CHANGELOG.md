@@ -6,6 +6,10 @@ and refresh first-party asset URLs so browsers and the service worker pick up th
 
 ## [Unreleased]
 
+## [0.2.18] - 2026-08-16
+
+- add automatic spaced retrieval
+
 ## [0.2.17] - 2026-08-16
 
 - add A+ source lens provenance
