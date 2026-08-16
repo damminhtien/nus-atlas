@@ -90,3 +90,62 @@ test("slide reader keeps source collapsed and resolves textbook annotations", ()
   assert.match(root.innerHTML, /Focus reading/);
   assert.match(root.innerHTML, /<kbd>F<\/kbd>/);
 });
+
+test("slide reader shows saved progress and a resume action", () => {
+  const root = makeRoot();
+  const saved = {
+    resourceId: "slide:DSA5105:week1",
+    kind: "slide",
+    courseCode: "DSA5105",
+    position: 2,
+    furthest: 2,
+    total: 4,
+    completed: false
+  };
+  const calls = [];
+  const feature = createSlideReaderFeature({
+    root,
+    getCourse: () => ({ code: "DSA5105" }),
+    getSlideSet: () => ({
+      courseId: "DSA5105",
+      id: "week1",
+      summary: "Week 1",
+      lessonIds: [],
+      source: { fileName: "Lecture.pdf", sourceId: "lecture.pdf", access: "local-only" },
+      slides: [1, 2, 3, 4].map(slideNumber => ({
+        slideNumber,
+        pdfPage: slideNumber,
+        title: `Slide ${slideNumber}`,
+        kind: "lecture",
+        status: "reviewed",
+        assetPath: `slide-${slideNumber}.jpg`,
+        sourceRef: { sourceId: "lecture.pdf", sourceType: "lecture", page: slideNumber },
+        extraction: { blocks: [] },
+        explanation: { whatYouSee: "A claim." },
+        textbookRefs: [],
+        referenceRefs: [],
+        socraticQuestions: []
+      }))
+    }),
+    getTextbook: () => null,
+    getStore: () => ({
+      readingFor: id => id === "slide:DSA5105:week1" ? saved : null,
+      recordReading: input => { calls.push(input); Object.assign(saved, input, { furthest: Math.max(saved.furthest, input.position) }); return saved; }
+    }),
+    pageHead: (_kicker, title) => `<h1>${title}</h1>`,
+    sourceBadge: ref => `<span>${ref.sourceType || "source"}</span>`,
+    sourceItem: ref => ref.sourceId,
+    button: (label, href) => `<a href="${href}">${label}</a>`,
+    text: value => String(value || ""),
+    esc: value => String(value || ""),
+    typeset() {},
+    notFound() {}
+  });
+
+  feature.render("DSA5105", "week1", 1);
+
+  assert.equal(calls[0].position, 1);
+  assert.match(root.innerHTML, /Lecture reading progress/);
+  assert.match(root.innerHTML, /Continue from slide 2/);
+  assert.match(root.innerHTML, /through slide 2 of 4/);
+});

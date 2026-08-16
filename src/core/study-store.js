@@ -13,7 +13,7 @@
   const atlasStore = config.atlasStore || null;
   const clock = typeof config.now === "function" ? config.now : () => new Date();
   const KEY = config.key || "nus.v1";
-  const SCHEMA_VERSION = "nus.study.v3";
+  const SCHEMA_VERSION = "nus.study.v4";
   const RETRIEVAL_INTERVALS = [1, 3, 7, 14, 30, 60, 120];
 
   const QUESTS = [
@@ -34,7 +34,7 @@
   ];
 
   function blank() {
-    return { schemaVersion: SCHEMA_VERSION, version: 3, tasks: {}, lessons: {}, attempts: [], lastStudy: null, events: {}, mastery: {}, retrieval: {}, questHistory: {} };
+    return { schemaVersion: SCHEMA_VERSION, version: 4, tasks: {}, lessons: {}, attempts: [], lastStudy: null, events: {}, mastery: {}, retrieval: {}, reading: {}, questHistory: {} };
   }
 
   function objectOrEmpty(value) { return value && typeof value === "object" && !Array.isArray(value) ? value : {}; }
@@ -45,13 +45,14 @@
       ...blank(),
       ...data,
       schemaVersion: SCHEMA_VERSION,
-      version: 3,
+      version: 4,
       tasks: objectOrEmpty(data.tasks),
       lessons: objectOrEmpty(data.lessons),
       attempts: Array.isArray(data.attempts) ? data.attempts : [],
       events: objectOrEmpty(data.events),
       mastery: objectOrEmpty(data.mastery),
       retrieval: objectOrEmpty(data.retrieval),
+      reading: objectOrEmpty(data.reading),
       questHistory: objectOrEmpty(data.questHistory)
     };
   }
@@ -307,6 +308,45 @@
     });
   }
 
+  function readingFor(resourceId) {
+    const item = state.reading[String(resourceId || "")];
+    return item ? { ...item } : null;
+  }
+
+  function recordReading(input) {
+    const item = input || {};
+    const resourceId = String(item.resourceId || "").trim();
+    if (!resourceId) throw new Error("Reading progress requires a stable resourceId");
+    const total = Math.max(1, Number(item.total) || 1);
+    const position = Math.max(1, Math.min(total, Number(item.position) || 1));
+    const previous = state.reading[resourceId] || {};
+    const progress = {
+      ...previous,
+      resourceId,
+      kind: String(item.kind || previous.kind || "reading"),
+      courseCode: item.courseCode || previous.courseCode || null,
+      sourceId: item.sourceId || previous.sourceId || null,
+      title: item.title || previous.title || null,
+      unit: item.unit || previous.unit || "page",
+      position,
+      furthest: Math.max(Number(previous.furthest) || 0, position),
+      total,
+      completed: !!previous.completed || position >= total || item.completed === true,
+      lastAt: timestamp()
+    };
+    state.reading[resourceId] = progress;
+    touch();
+    return { ...progress };
+  }
+
+  function readingList(courseCode, kind) {
+    return Object.values(state.reading)
+      .filter(item => !courseCode || item.courseCode === courseCode)
+      .filter(item => !kind || item.kind === kind)
+      .sort((a, b) => new Date(b.lastAt || 0) - new Date(a.lastAt || 0))
+      .map(item => ({ ...item }));
+  }
+
   const api = {
     get raw() { return state; },
     get schemaVersion() { return SCHEMA_VERSION; },
@@ -335,6 +375,9 @@
     dueRetrievals,
     upcomingRetrievals,
     recordRetrieval,
+    readingFor,
+    recordReading,
+    readingList,
     reset() { state = blank(); save(); }
   };
 

@@ -6,6 +6,10 @@ and refresh first-party asset URLs so browsers and the service worker pick up th
 
 ## [Unreleased]
 
+## [0.2.25] - 2026-08-16
+
+- persist slide and textbook reading progress
+
 ## [0.2.24] - 2026-08-16
 
 - deepen course slide teaching layers and formula contracts

@@ -22,15 +22,54 @@ test("study store migrates legacy v1 state without losing progress", () => {
   });
   const store = createStudyStore({ storage, now: () => new Date("2026-08-15T10:00:00.000Z") });
 
-  assert.equal(store.schemaVersion, "nus.study.v3");
-  assert.equal(store.raw.schemaVersion, "nus.study.v3");
+  assert.equal(store.schemaVersion, "nus.study.v4");
+  assert.equal(store.raw.schemaVersion, "nus.study.v4");
   assert.equal(store.lessonDone("lesson1"), true);
   assert.equal(store.task("hw1").status, "done");
   assert.equal(store.attempts()[0].attemptId, "old-attempt");
   assert.equal(storage.read().schemaVersion, undefined, "migration persists at the next write");
 
   store.recordEvidence({ eventId: "recall:q1", type: "recall_correct", lessonId: "lesson1", xp: 5 });
-  assert.equal(storage.read().schemaVersion, "nus.study.v3");
+  assert.equal(storage.read().schemaVersion, "nus.study.v4");
+});
+
+test("study store persists and resumes slide/textbook reading positions", () => {
+  let now = new Date("2026-08-15T10:00:00.000Z");
+  const storage = memoryStorage();
+  const store = createStudyStore({ storage, now: () => now });
+
+  const slide = store.recordReading({
+    resourceId: "slide:DSA5105:dsa5105-week1-annotated",
+    kind: "slide",
+    courseCode: "DSA5105",
+    sourceId: "DSA5105/Lec1_annotated.pdf",
+    title: "Week 1 · Annotated lecture slide reader",
+    unit: "slide",
+    position: 12,
+    total: 55
+  });
+  const textbook = store.recordReading({
+    resourceId: "textbook:DSA5105:DSA5105/Textbook.pdf",
+    kind: "textbook",
+    courseCode: "DSA5105",
+    sourceId: "DSA5105/Textbook.pdf",
+    title: "Principles of Machine Learning textbook",
+    unit: "page",
+    position: 29,
+    total: 129
+  });
+
+  assert.equal(slide.position, 12);
+  assert.equal(slide.furthest, 12);
+  assert.equal(textbook.position, 29);
+  assert.equal(store.readingFor(slide.resourceId).position, 12);
+  assert.equal(store.readingList("DSA5105", "textbook")[0].position, 29);
+  assert.equal(storage.read().reading[slide.resourceId].unit, "slide");
+
+  now = new Date("2026-08-15T11:00:00.000Z");
+  store.recordReading({ resourceId: slide.resourceId, position: 8, total: 55 });
+  assert.equal(store.readingFor(slide.resourceId).position, 8, "resume uses the latest position");
+  assert.equal(store.readingFor(slide.resourceId).furthest, 12, "furthest progress is never lost");
 });
 
 test("study store keeps evidence idempotent and updates mastery", () => {

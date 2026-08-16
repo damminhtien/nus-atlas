@@ -10,6 +10,7 @@
     getCourse,
     getSlideSet,
     getTextbook,
+    getStore,
     pageHead,
     sourceBadge,
     button,
@@ -64,6 +65,33 @@
     return `#/nus/slides/${encodeURIComponent(slideSet.courseId)}/${encodeURIComponent(slideSet.id)}/${slide.slideNumber}`;
   }
 
+  function slideResourceId(courseCode, slideSet) {
+    return `slide:${courseCode}:${slideSet.id}`;
+  }
+
+  function textbookResourceId(courseCode, sourceId) {
+    return `textbook:${courseCode}:${sourceId}`;
+  }
+
+  function studyStore() {
+    return typeof getStore === "function" ? getStore() : null;
+  }
+
+  function savedReading(resourceId) {
+    const store = studyStore();
+    return store && typeof store.readingFor === "function" ? store.readingFor(resourceId) : null;
+  }
+
+  function saveReading(progress) {
+    const store = studyStore();
+    return store && typeof store.recordReading === "function" ? store.recordReading(progress) : null;
+  }
+
+  function percent(progress) {
+    if (!progress || !progress.total) return 0;
+    return Math.round(Math.min(1, (Number(progress.furthest || progress.position) || 0) / progress.total) * 100);
+  }
+
   function sourceRefLabel(ref) {
     return `${ref.sourceId} · p.${ref.page}`;
   }
@@ -85,17 +113,35 @@
     return { chapter, section };
   }
 
-  function textbookMapping(slide, textbook) {
+  function textbookProgress(courseCode, textbook, sourceId) {
+    const progress = savedReading(textbookResourceId(courseCode, sourceId));
+    if (!progress) return `<div class="nus-reading-progress nus-reading-progress-empty"><span><b>Textbook progress</b><small>Nothing marked read yet</small></span><strong>0%</strong></div>`;
+    const current = Number(progress.position) || 0;
+    const furthest = Number(progress.furthest || current) || 0;
+    return `<div class="nus-reading-progress"><span><b>Textbook progress</b><small>${progress.completed ? "Complete · revisit any mapped page" : `Resume at p.${current}`}</small></span><strong>${percent(progress)}%</strong><div class="nus-progress"><span style="width:${percent(progress)}%"></span></div><small class="nus-reading-progress-meta">through p.${furthest} of ${progress.total}</small></div>`;
+  }
+
+  function textbookPageAction(courseCode, textbook, ref) {
+    const resourceId = textbookResourceId(courseCode, ref.sourceId);
+    const progress = savedReading(resourceId);
+    const read = progress && Number(progress.furthest || progress.position) >= Number(ref.page);
+    if (!studyStore()) return "";
+    return `<button class="btn ghost nus-textbook-read-button" type="button" data-nus-textbook-page="${esc(ref.page)}" data-nus-textbook-source="${esc(ref.sourceId)}">${read ? "✓ Read" : "Mark p." + esc(ref.page) + " read"}</button>`;
+  }
+
+  function textbookMapping(courseCode, slide, textbook) {
     const refs = Array.isArray(slide.textbookRefs) ? slide.textbookRefs : [];
     if (!refs.length) return `<div class="nus-slide-textbook-empty"><span class="pill">Not mapped</span><p class="nus-muted">No textbook page is linked to this slide yet. The lecture remains the primary study source.</p></div>`;
     const annotation = slide.explanation && (slide.explanation.whyItMatters || slide.explanation.connection || slide.explanation.whatYouSee);
+    const uniqueSourceIds = [...new Set(refs.map(ref => ref.sourceId))];
     const cards = refs.map(ref => {
       const location = findTextbookLocation(textbook, ref.page);
       const chapter = location && location.chapter;
       const section = location && location.section;
-      return `<article class="nus-slide-textbook-card"><div class="nus-slide-textbook-card-head"><span>${sourceBadge(ref)}</span><b>p.${esc(ref.page)}</b></div>${chapter ? `<p><span class="eyebrow">Chapter ${esc(chapter.number)}</span><strong>${esc(chapter.title)}</strong></p>` : `<p class="nus-muted">Chapter index not available for this page.</p>`}${section ? `<p class="nus-slide-textbook-section"><span>${esc(section.number)}</span>${esc(section.title)}</p>` : ""}${ref.role ? `<small>${esc(ref.role)}</small>` : ""}</article>`;
+      return `<article class="nus-slide-textbook-card"><div class="nus-slide-textbook-card-head"><span>${sourceBadge(ref)}</span><b>p.${esc(ref.page)}</b></div>${chapter ? `<p><span class="eyebrow">Chapter ${esc(chapter.number)}</span><strong>${esc(chapter.title)}</strong></p>` : `<p class="nus-muted">Chapter index not available for this page.</p>`}${section ? `<p class="nus-slide-textbook-section"><span>${esc(section.number)}</span>${esc(section.title)}</p>` : ""}${ref.role ? `<small>${esc(ref.role)}</small>` : ""}${textbookPageAction(courseCode, textbook, ref)}</article>`;
     }).join("");
-    return `<div class="nus-slide-textbook-cards">${cards}</div>${annotation ? `<div class="nus-slide-annotation"><span class="eyebrow">Dynamic Atlas annotation</span><p>${text(annotation)}</p></div>` : ""}`;
+    const progress = uniqueSourceIds.map(sourceId => textbookProgress(courseCode, textbook, sourceId)).join("");
+    return `${progress ? `<div class="nus-slide-textbook-progress">${progress}</div>` : ""}<div class="nus-slide-textbook-cards">${cards}</div>${annotation ? `<div class="nus-slide-annotation"><span class="eyebrow">Dynamic Atlas annotation</span><p>${text(annotation)}</p></div>` : ""}`;
   }
 
   function textbookReadingLens(slide, textbook) {
@@ -199,6 +245,16 @@
     return `<div class="nus-slide-nav"><div>${previous ? slideNavLink(slideSet, previous, "← Previous", "ghost", "previous") : `<span class="nus-muted">First slide</span>`}</div><label class="nus-slide-jump">Slide <select id="nus-slide-select" aria-label="Jump to slide">${slideSet.slides.map(item => `<option value="${item.slideNumber}" ${item.slideNumber === current.slideNumber ? "selected" : ""}>${item.slideNumber} · ${esc(item.title)}</option>`).join("")}</select></label><div>${next ? slideNavLink(slideSet, next, "Next →", "primary", "next") : `<span class="nus-muted">Last slide</span>`}</div></div>`;
   }
 
+  function slideProgress(courseCode, slideSet, source, slide, resumeSlide) {
+    const progress = savedReading(slideResourceId(courseCode, slideSet));
+    if (!progress) return "";
+    const through = Number(progress.furthest || progress.position) || slide.slideNumber;
+    const resume = resumeSlide && resumeSlide.slideNumber !== slide.slideNumber
+      ? button(`Continue from slide ${resumeSlide.slideNumber}`, slideLink(slideSet, resumeSlide), "primary")
+      : "";
+    return `<section class="nus-reading-progress nus-slide-reading-progress"><span><b>Lecture reading progress</b><small>${progress.completed ? "Complete · revisit any slide" : `Resume at slide ${Number(progress.position) || slide.slideNumber}`}</small></span><strong>${percent(progress)}%</strong><div class="nus-progress"><span style="width:${percent(progress)}%"></span></div><small class="nus-reading-progress-meta">through slide ${through} of ${progress.total} · ${esc(source.fileName || source.sourceId)}</small>${resume ? `<div class="nus-card-actions">${resume}</div>` : ""}</section>`;
+  }
+
   function sourcePanel(slide, source) {
     return `<details class="nus-slide-source-panel" id="nus-slide-source-panel"><summary class="nus-slide-source-summary"><span><span class="eyebrow">Source layer</span><b>${esc(source.fileName || source.sourceId)}</b></span><span class="nus-slide-source-meta">${sourceBadge({ sourceType: "lecture", status: "current" })} · PDF p.${slide.pdfPage} · slide ${slide.slideNumber}</span><span class="nus-slide-source-action">Open provenance · <kbd>I</kbd></span></summary><div class="nus-slide-source-panel-body"><section class="nus-slide-source-bar"><div><span class="eyebrow">Lecture core</span><b>${esc(source.fileName || source.sourceId)}</b><span>${sourceBadge({ sourceType: "lecture", status: "current" })} · PDF page ${slide.pdfPage} · rendered slide ${slide.slideNumber}</span></div><p>${esc(source.access === "local-only" ? "Original PDF stays local; this production-safe reader shows the exact page render and provenance." : "Original PDF is available under the configured access policy.")}</p></section><section class="nus-card nus-slide-extracted"><div class="nus-slide-section-head"><div><span class="eyebrow">Source layer</span><h3>Extracted text and blocks</h3></div><span class="pill">JSON provenance</span></div><p class="nus-muted">Every block retains sourceId, page, block type, bounding box, and image ID when present.</p>${extractedBlocks(slide)}</section></div></details>`;
   }
@@ -249,20 +305,29 @@
     const course = getCourse(courseCode);
     const slideSet = getSlideSet(courseCode, slideSetId);
     if (!course || !slideSet) return notFound();
-    const number = Math.min(Math.max(Number(rawSlideNumber) || 1, 1), slideSet.slides.length);
+    const resourceId = slideResourceId(courseCode, slideSet);
+    const previousReading = savedReading(resourceId);
+    const savedNumber = previousReading && !previousReading.completed ? Number(previousReading.position) : 0;
+    const requestedNumber = rawSlideNumber == null && savedNumber > 0 ? savedNumber : Number(rawSlideNumber) || 1;
+    const number = Math.min(Math.max(requestedNumber, 1), slideSet.slides.length);
     const index = number - 1;
     const slide = slideSet.slides[index];
     const source = slideSet.source || {};
+    const resumeSlide = rawSlideNumber != null && previousReading && !previousReading.completed && Number(previousReading.position) > number
+      ? slideSet.slides[Math.min(slideSet.slides.length, Number(previousReading.position)) - 1]
+      : null;
+    saveReading({ resourceId, kind: "slide", courseCode, sourceId: source.sourceId || slide.sourceRef.sourceId, title: slideSet.title || slideSet.summary, unit: "slide", position: slide.slideNumber, total: slideSet.slides.length });
     const textbook = typeof getTextbook === "function" ? getTextbook(courseCode) : null;
     const lessonIds = Array.isArray(slideSet.lessonIds) ? slideSet.lessonIds : [];
     let body = `<div class="nus-slide-reader-page">${pageHead(`${course.code} · Week 1 · slide ${slide.slideNumber}/${slideSet.slides.length}`, slide.title, slideSet.summary)}`;
     body += `<div class="nus-lesson-actions"><div class="nus-slide-study-actions">${button("← Lesson", `#/nus/lesson/${course.code}/${lessonIds[0] || "dsa5105-erm"}`, "ghost")}${button("Course map", `#/nus/course/${course.code}`, "ghost")}${button("Practice lesson", `#/nus/exam/${course.code}/${lessonIds[0] || "dsa5105-erm"}`, "primary")}<button class="btn ghost" id="nus-toggle-focus" type="button" aria-pressed="${focusModeOn()}" aria-label="${focusModeOn() ? "Exit focus reading" : "Enter focus reading"}">${focusModeOn() ? "Exit focus reading" : "Focus reading"} <kbd>F</kbd></button><button class="btn ghost" id="nus-toggle-source" type="button" aria-controls="nus-slide-source-panel">Source layer <kbd>I</kbd></button></div><span class="nus-slide-key-hint"><kbd>←</kbd><kbd>→</kbd> or <kbd>J</kbd><kbd>K</kbd> switch slides · <kbd>F</kbd> focus · <kbd>I</kbd> source</span>${slideNavigation(slideSet, index)}</div>`;
+    body += slideProgress(courseCode, slideSet, source, slide, resumeSlide);
     body += sourcePanel(slide, source);
     body += `<div class="nus-slide-focus-bar" aria-live="polite"><span class="eyebrow">Focus reading</span><strong>${esc(slide.title)}</strong><span>Slide ${slide.slideNumber}/${slideSet.slides.length}</span></div>`;
     body += `<div class="nus-slide-reader-grid">
       <aside class="nus-slide-strip" aria-label="Week 1 slides"><div class="nus-slide-strip-head"><b>All slides</b><span>${slideSet.slides.length} pages</span></div>${slideSet.slides.map(item => `<a class="nus-slide-thumb ${item.slideNumber === slide.slideNumber ? "active" : ""}" href="${slideLink(slideSet, item)}" data-route data-slide-number="${item.slideNumber}" aria-label="Slide ${item.slideNumber}: ${esc(item.title)}"><img loading="lazy" src="${esc(item.assetPath)}" alt=""><span><b>${String(item.slideNumber).padStart(2, "0")}</b><small>${esc(item.title)}</small></span></a>`).join("")}</aside>
       <main class="nus-slide-main"><section class="nus-slide-canvas nus-card"><div class="nus-slide-canvas-head"><span>${sourceBadge(slide.sourceRef)}</span><span class="nus-muted">${esc(slide.kind)} · ${esc(slide.status)} · ${slide.slideNumber}/${slideSet.slides.length}</span></div><img src="${esc(slide.assetPath)}" alt="${esc(slide.title)} — slide ${slide.slideNumber}" class="nus-slide-image"><p class="nus-slide-caption">Rendered from <code>${esc(source.sourceId || slide.sourceRef.sourceId)}</code>, page ${slide.pdfPage}. The image is the visual reference; the source layer above can be opened when you need to audit extraction.</p></section></main>
-      <aside class="nus-slide-context"><section class="nus-card nus-slide-explanation"><div class="nus-slide-section-head"><div><span class="eyebrow">Atlas layer</span><h3>Explanation</h3></div><span class="pill violet">Derived note</span></div>${explanation(slide)}</section><section class="nus-card nus-slide-depth" id="nus-slide-textbook-map"><div class="nus-slide-section-head"><div><span class="eyebrow">Parallel reading</span><h3>Textbook bridge</h3></div><span class="pill sage">${(slide.textbookRefs || []).length} mapped</span></div>${textbookMapping(slide, textbook)}${textbookReadingLens(slide, textbook)}<div class="nus-slide-reference-group"><h4>Reference layer</h4>${referenceList(slide.referenceRefs)}</div><p class="nus-muted">Lecture remains the exam-priority source. Textbook and reference material add depth; they do not rewrite the lecture.</p></section></aside>
+      <aside class="nus-slide-context"><section class="nus-card nus-slide-explanation"><div class="nus-slide-section-head"><div><span class="eyebrow">Atlas layer</span><h3>Explanation</h3></div><span class="pill violet">Derived note</span></div>${explanation(slide)}</section><section class="nus-card nus-slide-depth" id="nus-slide-textbook-map"><div class="nus-slide-section-head"><div><span class="eyebrow">Parallel reading</span><h3>Textbook bridge</h3></div><span class="pill sage">${(slide.textbookRefs || []).length} mapped</span></div>${textbookMapping(courseCode, slide, textbook)}${textbookReadingLens(slide, textbook)}<div class="nus-slide-reference-group"><h4>Reference layer</h4>${referenceList(slide.referenceRefs)}</div><p class="nus-muted">Lecture remains the exam-priority source. Textbook and reference material add depth; they do not rewrite the lecture.</p></section></aside>
     </div>`;
     body += `<div class="nus-slide-bottom">${slideNavigation(slideSet, index)}</div></div>`;
     root.innerHTML = body;
@@ -285,6 +350,13 @@
       const target = slideSet.slides.find(candidate => String(candidate.slideNumber) === item.dataset.slideNumber);
       navigateToSlide(slideSet, slide, target);
       window.scrollTo({ top: 0, behavior: "smooth" });
+    }));
+    root.querySelectorAll("[data-nus-textbook-page]").forEach(item => item.addEventListener("click", () => {
+      const sourceId = item.dataset.nusTextbookSource;
+      const page = Number(item.dataset.nusTextbookPage);
+      if (!sourceId || !Number.isFinite(page)) return;
+      saveReading({ resourceId: textbookResourceId(courseCode, sourceId), kind: "textbook", courseCode, sourceId, title: textbook && textbook.source ? textbook.source.role : sourceId, unit: "page", position: page, total: textbook && textbook.pageCount ? textbook.pageCount : page });
+      render(courseCode, slideSetId, slide.slideNumber);
     }));
     bindKeyboard(slideSet, index);
   }

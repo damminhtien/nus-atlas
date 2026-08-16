@@ -29,6 +29,12 @@
     return Math.ceil((new Date(value).getTime() - Date.now()) / 86400000);
   }
   function progress(code) { return window.NUS_STORE.courseProgress(code, lessons(code)); }
+  function slideResume(code, slideSet) {
+    if (!slideSet || !window.NUS_STORE || typeof window.NUS_STORE.readingFor !== "function") return { number: 1, label: "Open lecture slides" };
+    const saved = window.NUS_STORE.readingFor(`slide:${code}:${slideSet.id}`);
+    if (saved && !saved.completed && Number(saved.position) > 1) return { number: Number(saved.position), label: `Continue slides · ${saved.position}` };
+    return { number: 1, label: "Open lecture slides" };
+  }
   function focusCourseCode() {
     let saved = "";
     try { saved = localStorage.getItem("nus.focus-course") || ""; } catch (_) { saved = ""; }
@@ -181,7 +187,8 @@
     setReaderMode(readerModeOn());
     let body = pageHead(`${c.code} · Week ${l.week}`, l.title, l.summary);
     const slideSet = slideSets(code).find(item => (item.lessonIds || []).includes(l.id));
-    body += `<div class="nus-lesson-actions">${button("← Course", `#/nus/course/${c.code}`, "ghost")}<button class="btn ${done ? "ghost" : "primary"}" id="nus-mark-lesson">${done ? "✓ Completed" : "Mark complete"}</button>${slideSet ? button("Open lecture slides", `#/nus/slides/${c.code}/${slideSet.id}/1`, "primary") : ""}${l.contrastDrills && l.contrastDrills.length ? button("Concept contrasts", `#/nus/contrast/${c.code}/${l.id}`, "ghost") : ""}${button("Exam mode", `#/nus/exam/${c.code}/${l.id}`, "ghost")}${button("Mistake Clinic", `#/nus/mistakes/${c.code}`, "ghost")}${readerButton()}</div>`;
+    const slideResumeState = slideResume(code, slideSet);
+    body += `<div class="nus-lesson-actions">${button("← Course", `#/nus/course/${c.code}`, "ghost")}<button class="btn ${done ? "ghost" : "primary"}" id="nus-mark-lesson">${done ? "✓ Completed" : "Mark complete"}</button>${slideSet ? button(slideResumeState.label, `#/nus/slides/${c.code}/${slideSet.id}/${slideResumeState.number}`, "primary") : ""}${l.contrastDrills && l.contrastDrills.length ? button("Concept contrasts", `#/nus/contrast/${c.code}/${l.id}`, "ghost") : ""}${button("Exam mode", `#/nus/exam/${c.code}/${l.id}`, "ghost")}${button("Mistake Clinic", `#/nus/mistakes/${c.code}`, "ghost")}${readerButton()}</div>`;
     body += studyCompass(l);
     const lab = repository() ? repository().getLab(l.id) : window.NUS_VISUAL_LABS && window.NUS_VISUAL_LABS[l.id];
     body += `<div class="nus-lesson-grid"><main><section class="nus-card nus-objectives reveal"><div class="nus-teach-head"><h3>What you should be able to do</h3><span class="pill gold">${esc(l.minutes)} min</span></div><ul>${(l.objectives || []).map(objective => `<li>${esc(objective)}</li>`).join("")}</ul></section>${lab && window.NUS_COMPONENTS ? window.NUS_COMPONENTS.renderLab(l, lab) : ""}<div id="nus-lesson-read">${(l.sections || []).map(lessonSection).join("")}${(l.math || []).map(mathBlock).join("")}</div><div id="nus-lesson-work">${(l.examples || []).map(workedExample).join("")}</div>${criticalThinking(l)}<section class="nus-card nus-recall reveal" id="nus-lesson-recall"><div class="nus-teach-head"><h3>Recall before you test</h3><span class="pill">${l.questions.length} prompts</span></div><p class="nus-muted">Answer on paper first. Open each prompt only after you commit to an answer.</p><div class="nus-question-list">${l.questions.map(recallItem).join("")}</div>${button("Start this lesson in Exam Mode", `#/nus/exam/${c.code}/${l.id}`, "primary")}</section>${studyKit(l)}<div class="nus-lesson-nav">${previous ? button(`← ${previous.title}`, `#/nus/lesson/${c.code}/${previous.id}`, "ghost") : `<span></span>`}${next ? button(`Next: ${next.title} →`, `#/nus/lesson/${c.code}/${next.id}`, "primary") : button("Back to course", `#/nus/course/${c.code}`, "primary")}</div></main><aside>${l.visualIds && l.visualIds.length ? card("Visual study cues", l.visualIds.map(visualCard).join(""), "reveal") : ""}${card("Provenance", sourceDisclosure(l.sourceRefs, "Open source pages"), "reveal")}</aside></div>`;
@@ -258,6 +265,7 @@
     getCourse: course,
     getSlideSet: (code, setId) => repository() && repository().getSlideSet ? repository().getSlideSet(code, setId) : null,
     getTextbook: code => repository() && repository().getTextbook ? repository().getTextbook(code) : null,
+    getStore: () => window.NUS_STORE,
     pageHead,
     sourceBadge,
     sourceItem,
