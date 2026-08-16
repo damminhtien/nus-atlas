@@ -4,8 +4,46 @@
   const exercise = (page, role) => ({ sourceId: "DSA5105/Lec1_exercises-solutions.pdf", page, sourceType: "exercise", role, status: "current-context" });
   const textbook = (page, role) => ({ sourceId: "DSA5105/Textbook.pdf", page, sourceType: "textbook", role, status: "course-depth" });
   const reference = (sourceId, role) => ({ sourceId, page: 1, sourceType: "ref", role, status: "optional" });
+  const bigDataLecture = (sourceId, page, role) => ({ sourceId, page, sourceType: "lecture", role, status: "current" });
+  const bigDataExercise = (sourceId, page, role) => ({ sourceId, page, sourceType: "exercise", role, status: "current-context" });
+  const bigDataTextbook = (page, role) => ({ sourceId: "DSA5101/Reference textbook MMDS 3rd Edition.pdf", page, sourceType: "textbook", role, status: "course-depth" });
+  const bigDataLens = (why, lectureRefs, exerciseRefs, textbookRefs) => ({ status: "core DSA5101", whyExaminable: why, lecture: lectureRefs || [], officialExercise: exerciseRefs || [], textbook: textbookRefs || [], reference: [] });
   const lens = (status, whyExaminable, lectureRefs, exerciseRefs, textbookRefs, referenceRefs) => ({ status, whyExaminable, lecture: lectureRefs || [], officialExercise: exerciseRefs || [], textbook: textbookRefs || [], reference: referenceRefs || [] });
   window.NUS_VISUAL_LABS = {
+    "dsa5101-orientation": {
+      courseCode: "DSA5101", lessonId: "dsa5101-orientation", type: "concept-map", title: "Scalable-design decision map",
+      learningGoal: "Choose the first evidence to inspect when a data workflow must scale beyond one machine.",
+      sourceRefs: [bigDataLecture("DSA5101/DSA5101 Course Information.pdf", 1, "course framing"), bigDataTextbook(3, "scalable algorithm framing")],
+      sourceLens: bigDataLens("The course information establishes the scope; the textbook supplies a compact systems vocabulary for reasoning about scale.", [bigDataLecture("DSA5101/DSA5101 Course Information.pdf", 1, "course framing")], [], [bigDataTextbook(3, "scalable algorithm framing")]),
+      nodes: [{ id: "passes", label: "Data passes", detail: "How many full reads are required?" }, { id: "memory", label: "Working memory", detail: "Can the state fit on one worker?" }, { id: "shuffle", label: "Data movement", detail: "What must cross the network?" }, { id: "error", label: "Error contract", detail: "What approximation is acceptable?" }],
+      edges: [["passes", "memory"], ["memory", "shuffle"], ["shuffle", "error"]], requiredChoice: "memory", initialState: { choice: null }, check: state => state.choice === "memory", reducedMotion: true, explanation: "The map turns a vague scalability claim into four inspectable questions before implementation details distract you."
+    },
+    "dsa5101-frequent-itemsets": {
+      courseCode: "DSA5101", lessonId: "dsa5101-frequent-itemsets", type: "deep-dive", title: "Association-rule reasoning studio",
+      learningGoal: "Separate counting baskets, pruning candidates, and interpreting a rule's conditional strength.",
+      sourceRefs: [bigDataLecture("DSA5101/Lec1 - Assoc Rules, Frequent itemsets.pdf", 24, "support definition"), bigDataExercise("DSA5101/Assignments/DSA5101_Assignment_1.pdf", 1, "assignment practice"), bigDataTextbook(214, "frequent-itemset depth")],
+      sourceLens: bigDataLens("The lecture and assignment establish the calculation workflow; MMDS provides the full frequent-itemset chapter as labeled depth.", [bigDataLecture("DSA5101/Lec1 - Assoc Rules, Frequent itemsets.pdf", 24, "support definition")], [bigDataExercise("DSA5101/Assignments/DSA5101_Assignment_1.pdf", 1, "assignment practice")], [bigDataTextbook(214, "frequent-itemset depth")]),
+      exercises: [
+        { id: "support", label: "Support", prompt: "How does a basket table become a support value?", takeaway: "Count qualifying transactions first; normalize only after the numerator is explicit.", steps: [["Count", "support(I)=count(I in baskets)", "Identify the baskets containing every item in the candidate."], ["Normalize", "supp(I)=count(I)/|T|", "Divide by the total number of transactions."], ["Prune", "infrequent(I) => infrequent(J) for I subset J", "Use downward closure to remove every superset safely."], ["Check", "support -> candidate -> rule", "Only after frequent sets are known should rule confidence be interpreted."]] },
+        { id: "confidence", label: "Confidence", prompt: "Why is the antecedent the denominator?", takeaway: "Confidence is conditional: among baskets with A, how often does B also occur?", steps: [["Condition", "A -> B", "Start with the baskets that already contain the antecedent."], ["Overlap", "supp(A union B)", "Count baskets containing both sides."], ["Divide", "conf(A -> B)=supp(A union B)/supp(A)", "The denominator is the antecedent support, not all baskets."], ["Interpret", "conf != lift", "A high conditional rate can still add little information when B is common."]] },
+        { id: "interest", label: "Interest", prompt: "What does a base-rate comparison add?", takeaway: "Lift or interest asks whether the consequent is more likely than its background frequency.", steps: [["Baseline", "supp(B)", "Measure how common the consequent is without conditioning."], ["Conditional", "conf(A -> B)", "Measure how common B is among A baskets."], ["Compare", "lift=conf(A -> B)/supp(B)", "A value above one indicates positive association under this measure."], ["Boundary", "association != causation", "A rule can be predictive without proving that A causes B."]] }
+      ], initialState: { exercise: "support", step: 0 }, check: state => state.step >= 3, reducedMotion: true, explanation: "Each tab isolates a different denominator or interpretation so support, confidence, and lift do not blur together."
+    },
+    "dsa5101-minhash-lsh": {
+      courseCode: "DSA5101", lessonId: "dsa5101-minhash-lsh", type: "derivation-trace", title: "MinHash-to-LSH trace",
+      learningGoal: "Follow the chain from set similarity to compact signatures and then to candidate generation.",
+      sourceRefs: [bigDataExercise("DSA5101/Assignments/DSA5101_Assignment_1.pdf", 3, "MinHash"), bigDataExercise("DSA5101/Assignments/DSA5101_Assignment_1.pdf", 4, "LSH banding"), bigDataTextbook(95, "MinHash and LSH depth")],
+      sourceLens: bigDataLens("The assignment requires the probability calculation; MMDS supplies the derivation and parameter trade-off as textbook depth.", [], [bigDataExercise("DSA5101/Assignments/DSA5101_Assignment_1.pdf", 3, "MinHash"), bigDataExercise("DSA5101/Assignments/DSA5101_Assignment_1.pdf", 4, "LSH banding")], [bigDataTextbook(95, "MinHash and LSH depth")]),
+      steps: [["Set geometry", String.raw`J(A,B)=\frac{|A\cap B|}{|A\cup B|}`, "Define similarity before choosing a sketch."], ["One permutation", String.raw`\Pr[h(A)=h(B)]=J(A,B)`, "A collision is an unbiased similarity signal under a random permutation."], ["Banding", String.raw`P_{\mathrm{candidate}}=1-(1-s^r)^b`, "At least one matching band is enough to pass the candidate filter."], ["Verify", String.raw`\text{candidate}\to\text{exact similarity}`, "LSH generates candidates; it does not certify every candidate as a true neighbor."]],
+      initialState: { step: 0 }, check: state => state.step >= 3, reducedMotion: true, explanation: "The trace keeps exact similarity, compact estimation, and approximate candidate retrieval as three different operations."
+    },
+    "dsa5101-ranking-streams": {
+      courseCode: "DSA5101", lessonId: "dsa5101-ranking-streams", type: "decision-tree", title: "Ranking and sketch selection lab",
+      learningGoal: "Match a data question to PageRank, DGIM, or Flajolet–Martin without treating every stream method as interchangeable.",
+      sourceRefs: [bigDataExercise("DSA5101/Assignments/DSA5101_Assignment_2.pdf", 2, "PageRank"), bigDataExercise("DSA5101/Assignments/DSA5101_Assignment_2.pdf", 4, "streaming sketches"), bigDataTextbook(155, "streaming depth")],
+      sourceLens: bigDataLens("Assignment prompts define the current practice boundary; MMDS links the algorithms to their distinct outputs and error models.", [], [bigDataExercise("DSA5101/Assignments/DSA5101_Assignment_2.pdf", 2, "PageRank"), bigDataExercise("DSA5101/Assignments/DSA5101_Assignment_2.pdf", 4, "streaming sketches")], [bigDataTextbook(155, "streaming depth")]),
+      splits: [{ id: "pagerank", label: "Rank nodes by link structure", impurity: 18, detail: "Use stationary probability mass and damping." }, { id: "window", label: "Count recent 1s in a window", impurity: 26, detail: "Use timestamped buckets and bounded memory." }, { id: "distinct", label: "Estimate distinct stream items", impurity: 22, detail: "Use hash zero-prefix evidence and accept approximation." }], requiredChoice: "window", initialState: { choice: null }, check: state => state.choice === "window", reducedMotion: true, explanation: "The right method follows the target quantity: node importance, a recent-window count, or distinct-cardinality estimation."
+    },
     "dsa5105-erm": {
       courseCode: "DSA5105", lessonId: "dsa5105-erm", type: "compare", title: "Train–validation gap lab",
       learningGoal: "Use a held-out validation signal to choose a model complexity instead of celebrating training fit alone.",

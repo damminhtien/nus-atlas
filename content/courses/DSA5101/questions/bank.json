@@ -1,0 +1,200 @@
+{
+  "schemaVersion": "nus.question-bank.v1",
+  "courseId": "DSA5101",
+  "purpose": "Additional source-backed retrieval and exam prompts for DSA5101.",
+  "blueprint": {
+    "orientation": ["scale diagnosis", "passes", "memory", "approximation"],
+    "patterns": ["support", "confidence", "lift", "downward closure"],
+    "similarity": ["Jaccard", "MinHash", "LSH", "candidate verification"],
+    "streams": ["PageRank", "DGIM", "Flajolet-Martin", "error contracts"]
+  },
+  "questions": [
+    {
+      "id": "dsa5101-bank-001",
+      "lessonId": "dsa5101-orientation",
+      "type": "short",
+      "difficulty": "medium",
+      "skill": "diagnose",
+      "cognitiveLevel": "analyze",
+      "estimatedSeconds": 90,
+      "prompt": "Two algorithms have the same asymptotic time. Name two measurements that can still decide which one scales better beyond main memory.",
+      "accepted": ["passes and memory", "data passes and memory", "passes memory and shuffle"],
+      "explanation": "Count full data passes and peak working memory first; network movement, skew, and synchronization are additional measurements when the workflow is distributed.",
+      "sourceRefs": [
+        { "sourceId": "DSA5101/DSA5101 Course Information.pdf", "sourceType": "lecture", "page": 1, "role": "scale framing", "status": "current" },
+        { "sourceId": "DSA5101/Reference textbook MMDS 3rd Edition.pdf", "sourceType": "textbook", "page": 3, "role": "scalable algorithm framing", "status": "course-depth" }
+      ]
+    },
+    {
+      "id": "dsa5101-bank-002",
+      "lessonId": "dsa5101-orientation",
+      "type": "mcq",
+      "difficulty": "easy",
+      "skill": "distinguish",
+      "cognitiveLevel": "understand",
+      "estimatedSeconds": 45,
+      "prompt": "A streaming sketch uses less memory than storing every event. What must be stated alongside the memory claim?",
+      "choices": ["The error or approximation guarantee", "That the result is always exact", "That the stream has no duplicates", "That the input fits in cache"],
+      "answer": 0,
+      "explanation": "A sketch trades exact storage for a controlled approximation, so its error model is part of the algorithm contract.",
+      "sourceRefs": [{ "sourceId": "DSA5101/DSA5101 Course Information.pdf", "sourceType": "lecture", "page": 1, "role": "scale framing", "status": "current" }]
+    },
+    {
+      "id": "dsa5101-bank-003",
+      "lessonId": "dsa5101-orientation",
+      "type": "derivation",
+      "difficulty": "hard",
+      "skill": "explain",
+      "cognitiveLevel": "analyze",
+      "estimatedSeconds": 120,
+      "prompt": "Explain why a one-pass algorithm can be preferable to a multi-pass algorithm even when both have the same asymptotic time.",
+      "accepted": ["one pass reduces repeated reads and memory pressure", "fewer passes and bounded memory", "avoids repeated scans"],
+      "explanation": "When data is larger than memory, repeated scans can dominate I/O and coordination. A one-pass design can keep a bounded summary, subject to its error contract.",
+      "sourceRefs": [
+        { "sourceId": "DSA5101/DSA5101 Course Information.pdf", "sourceType": "lecture", "page": 1, "role": "scale framing", "status": "current" },
+        { "sourceId": "DSA5101/Reference textbook MMDS 3rd Edition.pdf", "sourceType": "textbook", "page": 3, "role": "scalable algorithm framing", "status": "course-depth" }
+      ]
+    },
+    {
+      "id": "dsa5101-bank-004",
+      "lessonId": "dsa5101-frequent-itemsets",
+      "type": "calculation",
+      "difficulty": "medium",
+      "skill": "calculate",
+      "cognitiveLevel": "apply",
+      "estimatedSeconds": 90,
+      "prompt": "In $20$ baskets, itemset $I$ occurs in $6$. Compute $\\operatorname{supp}(I)$ as a fraction and decimal.",
+      "accepted": ["6/20 and 0.3", "0.3", "3/10"],
+      "solution": "$\\operatorname{supp}(I)=6/20=3/10=0.3$.",
+      "explanation": "Support uses the number of qualifying baskets divided by the total number of baskets.",
+      "sourceRefs": [{ "sourceId": "DSA5101/Lec1 - Assoc Rules, Frequent itemsets.pdf", "sourceType": "lecture", "page": 24, "role": "support definition", "status": "current" }]
+    },
+    {
+      "id": "dsa5101-bank-005",
+      "lessonId": "dsa5101-frequent-itemsets",
+      "type": "derivation",
+      "difficulty": "hard",
+      "skill": "derive",
+      "cognitiveLevel": "analyze",
+      "estimatedSeconds": 120,
+      "prompt": "Derive confidence for the rule $A\\to B$ and explain why its denominator is not the total number of baskets.",
+      "accepted": ["supp(A union B) / supp(A)", "conditional on A", "among baskets containing A"],
+      "solution": "$\\operatorname{conf}(A\\to B)=\\operatorname{supp}(A\\cup B)/\\operatorname{supp}(A)$ because the question conditions on baskets that already contain $A$.",
+      "explanation": "Confidence is conditional strength. The total-basket denominator belongs to support, not to the conditional rule probability.",
+      "sourceRefs": [
+        { "sourceId": "DSA5101/Lec1 - Assoc Rules, Frequent itemsets.pdf", "sourceType": "lecture", "page": 28, "role": "association rules", "status": "current" },
+        { "sourceId": "DSA5101/Assignments/DSA5101_Assignment_1.pdf", "sourceType": "exercise", "page": 1, "role": "assignment calculation", "status": "current-context" }
+      ]
+    },
+    {
+      "id": "dsa5101-bank-006",
+      "lessonId": "dsa5101-frequent-itemsets",
+      "type": "mcq",
+      "difficulty": "medium",
+      "skill": "prune",
+      "cognitiveLevel": "apply",
+      "estimatedSeconds": 60,
+      "prompt": "If $I$ is infrequent under a support threshold, which statement is guaranteed?",
+      "choices": ["Every subset of $I$ is infrequent", "Every superset of $I$ is infrequent", "Every rule from $I$ has low confidence", "The consequent is independent"],
+      "answer": 1,
+      "explanation": "Downward closure says support cannot increase when more items are added, so all supersets can be pruned. It does not determine confidence or causality.",
+      "sourceRefs": [{ "sourceId": "DSA5101/Lec1 - Assoc Rules, Frequent itemsets.pdf", "sourceType": "lecture", "page": 36, "role": "downward closure", "status": "current" }]
+    },
+    {
+      "id": "dsa5101-bank-007",
+      "lessonId": "dsa5101-minhash-lsh",
+      "type": "calculation",
+      "difficulty": "medium",
+      "skill": "calculate",
+      "cognitiveLevel": "apply",
+      "estimatedSeconds": 90,
+      "prompt": "For similarity $s=0.8$, $b=2$ bands, and $r=2$ rows, compute the LSH candidate probability $1-(1-s^r)^b$.",
+      "accepted": ["0.8704", "87.04%", "0.8704 or 87.04%"],
+      "solution": "$1-(1-0.8^2)^2=1-0.36^2=0.8704$.",
+      "explanation": "Compute the probability that a band matches, then take one minus the probability that all bands fail.",
+      "sourceRefs": [{ "sourceId": "DSA5101/Assignments/DSA5101_Assignment_1.pdf", "sourceType": "exercise", "page": 4, "role": "LSH banding", "status": "current-context" }]
+    },
+    {
+      "id": "dsa5101-bank-008",
+      "lessonId": "dsa5101-minhash-lsh",
+      "type": "short",
+      "difficulty": "medium",
+      "skill": "explain",
+      "cognitiveLevel": "understand",
+      "estimatedSeconds": 75,
+      "prompt": "Why must an LSH candidate usually be verified with an exact similarity computation?",
+      "accepted": ["LSH produces candidates and false positives", "a band collision is not proof of similarity", "candidate generation is approximate"],
+      "explanation": "A pair can collide in one band by chance. LSH is a filter for speed; exact similarity or a downstream score decides whether the candidate is truly useful.",
+      "sourceRefs": [
+        { "sourceId": "DSA5101/Assignments/DSA5101_Assignment_1.pdf", "sourceType": "exercise", "page": 4, "role": "LSH banding", "status": "current-context" },
+        { "sourceId": "DSA5101/Reference textbook MMDS 3rd Edition.pdf", "sourceType": "textbook", "page": 100, "role": "LSH candidate filtering", "status": "course-depth" }
+      ]
+    },
+    {
+      "id": "dsa5101-bank-009",
+      "lessonId": "dsa5101-minhash-lsh",
+      "type": "derivation",
+      "difficulty": "hard",
+      "skill": "derive",
+      "cognitiveLevel": "analyze",
+      "estimatedSeconds": 120,
+      "prompt": "Connect one MinHash collision to Jaccard similarity and state the assumption that makes the equality valid.",
+      "accepted": ["Pr[h(A)=h(B)] = J(A,B)", "random permutation", "collision probability equals Jaccard"],
+      "solution": "Under a random permutation, $\\Pr[h_{\\pi}(A)=h_{\\pi}(B)]=J(A,B)=|A\\cap B|/|A\\cup B|$.",
+      "explanation": "The equality is a property of the random-permutation MinHash construction, not a generic fact about every hash function.",
+      "sourceRefs": [
+        { "sourceId": "DSA5101/Assignments/DSA5101_Assignment_1.pdf", "sourceType": "exercise", "page": 3, "role": "MinHash signature", "status": "current-context" },
+        { "sourceId": "DSA5101/Reference textbook MMDS 3rd Edition.pdf", "sourceType": "textbook", "page": 95, "role": "MinHash depth", "status": "course-depth" }
+      ]
+    },
+    {
+      "id": "dsa5101-bank-010",
+      "lessonId": "dsa5101-ranking-streams",
+      "type": "mcq",
+      "difficulty": "medium",
+      "skill": "distinguish",
+      "cognitiveLevel": "understand",
+      "estimatedSeconds": 60,
+      "prompt": "Why can PageRank differ from raw indegree?",
+      "choices": ["PageRank weights incoming mass by source rank and out-degree", "PageRank ignores the graph", "Indegree already includes teleportation", "PageRank only counts self-links"],
+      "answer": 0,
+      "explanation": "PageRank is a stationary random-walk quantity. A link from an important page can transfer more rank than a link from a low-ranked page, and damping adds teleportation.",
+      "sourceRefs": [
+        { "sourceId": "DSA5101/Assignments/DSA5101_Assignment_2.pdf", "sourceType": "exercise", "page": 2, "role": "PageRank iteration", "status": "current-context" },
+        { "sourceId": "DSA5101/Reference textbook MMDS 3rd Edition.pdf", "sourceType": "textbook", "page": 175, "role": "PageRank depth", "status": "course-depth" }
+      ]
+    },
+    {
+      "id": "dsa5101-bank-011",
+      "lessonId": "dsa5101-ranking-streams",
+      "type": "short",
+      "difficulty": "medium",
+      "skill": "compare",
+      "cognitiveLevel": "analyze",
+      "estimatedSeconds": 90,
+      "prompt": "Contrast DGIM with Flajolet–Martin by naming the quantity each estimates.",
+      "accepted": ["DGIM recent-window count and Flajolet Martin distinct count", "DGIM counts recent 1s; Flajolet Martin estimates distinct items", "window count versus cardinality"],
+      "explanation": "DGIM estimates the number of recent 1s in a sliding window, while Flajolet–Martin estimates the number of distinct stream elements from hash-prefix evidence.",
+      "sourceRefs": [
+        { "sourceId": "DSA5101/Assignments/DSA5101_Assignment_2.pdf", "sourceType": "exercise", "page": 4, "role": "streaming sketches", "status": "current-context" },
+        { "sourceId": "DSA5101/Reference textbook MMDS 3rd Edition.pdf", "sourceType": "textbook", "page": 155, "role": "streaming depth", "status": "course-depth" }
+      ]
+    },
+    {
+      "id": "dsa5101-bank-012",
+      "lessonId": "dsa5101-ranking-streams",
+      "type": "derivation",
+      "difficulty": "hard",
+      "skill": "interpret",
+      "cognitiveLevel": "analyze",
+      "estimatedSeconds": 120,
+      "prompt": "Explain why the one-register estimate $\\widehat{n}\\approx2^R$ has high variance and how a practical sketch reduces that risk.",
+      "accepted": ["one register is noisy; use multiple registers and bias correction", "multiple registers reduce variance", "zero prefix is probabilistic"],
+      "explanation": "The longest zero-prefix is a noisy statistic. Multiple independent registers and bias correction stabilize the estimate while preserving bounded memory.",
+      "sourceRefs": [
+        { "sourceId": "DSA5101/Assignments/DSA5101_Assignment_2.pdf", "sourceType": "exercise", "page": 4, "role": "Flajolet-Martin", "status": "current-context" },
+        { "sourceId": "DSA5101/Reference textbook MMDS 3rd Edition.pdf", "sourceType": "textbook", "page": 155, "role": "cardinality estimation depth", "status": "course-depth" }
+      ]
+    }
+  ]
+}

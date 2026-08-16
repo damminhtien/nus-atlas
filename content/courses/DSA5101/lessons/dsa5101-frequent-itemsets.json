@@ -1,0 +1,514 @@
+{
+  "id": "dsa5101-frequent-itemsets",
+  "title": "Support, confidence, and interest",
+  "week": 2,
+  "minutes": 45,
+  "summary": "Count baskets first, then generate rules from frequent itemsets without confusing support and confidence.",
+  "objectives": [
+    "Compute support from a basket table",
+    "Use downward closure to prune candidates",
+    "Distinguish confidence from interest"
+  ],
+  "sourceRefs": [
+    {
+      "sourceId": "DSA5101/Lec1 - Assoc Rules, Frequent itemsets.pdf",
+      "page": 24,
+      "sourceType": "lecture",
+      "role": "frequent-itemset definition",
+      "status": "current"
+    },
+    {
+      "sourceId": "DSA5101/Lec1 - Assoc Rules, Frequent itemsets.pdf",
+      "page": 28,
+      "sourceType": "lecture",
+      "role": "association rules",
+      "status": "current"
+    },
+    {
+      "sourceId": "DSA5101/Assignments/DSA5101_Assignment_1.pdf",
+      "page": 1,
+      "sourceType": "exercise",
+      "role": "assignment calculation",
+      "status": "current-context"
+    }
+  ],
+  "visualIds": [
+    "dsa5101-support-baskets",
+    "dsa5101-association-network"
+  ],
+  "sections": [
+    {
+      "title": "Core equations",
+      "body": "For an itemset $I$, support is the fraction of baskets containing $I$. For a rule $A\\to B$, confidence is $\\operatorname{supp}(A\\cup B)/\\operatorname{supp}(A)$. Interest compares confidence with the base rate $\\operatorname{supp}(B)$.",
+      "sourceType": "lecture",
+      "sourceLens": {
+        "status": "core DSA5101 concept",
+        "whyExaminable": "Lecture and assignment material define the current study target; the MMDS index is attached as labeled depth, not merged into lecture scope.",
+        "lecture": [
+          {
+            "sourceId": "DSA5101/Lec1 - Assoc Rules, Frequent itemsets.pdf",
+            "page": 24,
+            "sourceType": "lecture",
+            "role": "frequent-itemset definition",
+            "status": "current"
+          },
+          {
+            "sourceId": "DSA5101/Lec1 - Assoc Rules, Frequent itemsets.pdf",
+            "page": 28,
+            "sourceType": "lecture",
+            "role": "association rules",
+            "status": "current"
+          }
+        ],
+        "officialExercise": [
+          {
+            "sourceId": "DSA5101/Assignments/DSA5101_Assignment_1.pdf",
+            "page": 1,
+            "sourceType": "exercise",
+            "role": "assignment calculation",
+            "status": "current-context"
+          }
+        ],
+        "textbook": [
+          {
+            "sourceId": "DSA5101/Reference textbook MMDS 3rd Edition.pdf",
+            "page": 214,
+            "sourceType": "textbook",
+            "role": "frequent-itemset depth",
+            "status": "course-depth"
+          }
+        ],
+        "reference": []
+      }
+    },
+    {
+      "title": "Visual reading",
+      "body": "Read the basket table as a set of transactions, not as a graph. The network-like slide decoration is only a visual cue; the formal object is still a basket incidence relation.",
+      "sourceType": "lecture"
+    }
+  ],
+  "contrastDrills": [
+    {
+      "id": "dsa5101-c3",
+      "type": "contrast",
+      "kind": "concept-contrast",
+      "pair": "Support vs confidence",
+      "prompt": "Which quantity asks how often the entire itemset appears in all baskets?",
+      "choices": [
+        "Support",
+        "Confidence",
+        "Lift"
+      ],
+      "answer": 0,
+      "explanation": "Support uses the full transaction population; confidence conditions on the antecedent.",
+      "estimatedSeconds": 45,
+      "sourceRefs": [
+        {
+          "sourceId": "DSA5101/Lec1 - Assoc Rules, Frequent itemsets.pdf",
+          "page": 24,
+          "sourceType": "lecture",
+          "role": "frequent-itemset definition",
+          "status": "current"
+        },
+        {
+          "sourceId": "DSA5101/Lec1 - Assoc Rules, Frequent itemsets.pdf",
+          "page": 28,
+          "sourceType": "lecture",
+          "role": "association rules",
+          "status": "current"
+        }
+      ]
+    },
+    {
+      "id": "dsa5101-c4",
+      "type": "contrast",
+      "kind": "concept-contrast",
+      "pair": "Confidence vs lift",
+      "prompt": "A rule has high confidence because its consequent is common everywhere. Which measure exposes that baseline?",
+      "choices": [
+        "Support",
+        "Lift",
+        "Candidate count"
+      ],
+      "answer": 1,
+      "explanation": "Lift compares confidence with the consequent base rate.",
+      "estimatedSeconds": 45,
+      "sourceRefs": [
+        {
+          "sourceId": "DSA5101/Lec1 - Assoc Rules, Frequent itemsets.pdf",
+          "page": 24,
+          "sourceType": "lecture",
+          "role": "frequent-itemset definition",
+          "status": "current"
+        },
+        {
+          "sourceId": "DSA5101/Lec1 - Assoc Rules, Frequent itemsets.pdf",
+          "page": 28,
+          "sourceType": "lecture",
+          "role": "association rules",
+          "status": "current"
+        }
+      ]
+    },
+    {
+      "id": "dsa5101-c5",
+      "type": "contrast",
+      "kind": "concept-contrast",
+      "pair": "Subset vs superset pruning",
+      "prompt": "An itemset is infrequent. What can be pruned safely?",
+      "choices": [
+        "Every subset",
+        "Every superset",
+        "Only rules with one consequent"
+      ],
+      "answer": 1,
+      "explanation": "Downward closure says every superset has support no larger than the infrequent subset.",
+      "estimatedSeconds": 45,
+      "sourceRefs": [
+        {
+          "sourceId": "DSA5101/Lec1 - Assoc Rules, Frequent itemsets.pdf",
+          "page": 24,
+          "sourceType": "lecture",
+          "role": "frequent-itemset definition",
+          "status": "current"
+        },
+        {
+          "sourceId": "DSA5101/Lec1 - Assoc Rules, Frequent itemsets.pdf",
+          "page": 28,
+          "sourceType": "lecture",
+          "role": "association rules",
+          "status": "current"
+        }
+      ]
+    }
+  ],
+  "math": [
+    {
+      "latex": "\\operatorname{supp}(I) = \\frac{|\\{t \\in \\mathcal{T}: I \\subseteq t\\}|}{|\\mathcal{T}|}",
+      "explanation": "Support asks how often every item in $I$ appears together. The numerator counts qualifying baskets; the denominator is the full transaction count. Keep the count and normalized fraction distinct when reporting an answer.",
+      "symbols": [
+        {
+          "latex": "I",
+          "meaning": "candidate itemset"
+        },
+        {
+          "latex": "\\mathcal{T}",
+          "meaning": "set of baskets"
+        },
+        {
+          "latex": "I \\subseteq t",
+          "meaning": "basket $t$ contains every item in $I$"
+        }
+      ],
+      "sourceType": "lecture"
+    },
+    {
+      "latex": "\\operatorname{conf}(A \\to B) = \\frac{\\operatorname{supp}(A \\cup B)}{\\operatorname{supp}(A)}",
+      "explanation": "Confidence conditions on baskets that already contain $A$. That is why the denominator is $\\operatorname{supp}(A)$ rather than the total number of baskets. A high confidence can still be uninteresting when $B$ is common everywhere.",
+      "symbols": [
+        {
+          "latex": "A \\to B",
+          "meaning": "association rule"
+        },
+        {
+          "latex": "A \\cup B",
+          "meaning": "baskets containing both sides"
+        }
+      ],
+      "sourceType": "lecture"
+    },
+    {
+      "latex": "\\operatorname{lift}(A \\to B) = \\frac{\\operatorname{conf}(A \\to B)}{\\operatorname{supp}(B)}",
+      "explanation": "Lift compares the rule's conditional rate with the base rate of $B$. A value above $1$ means $B$ is more common when $A$ is present than it is overall; it does not prove causation.",
+      "symbols": [
+        {
+          "latex": "\\operatorname{supp}(B)",
+          "meaning": "base rate of the consequent"
+        },
+        {
+          "latex": "\\operatorname{lift}>1",
+          "meaning": "positive association under this measure"
+        }
+      ],
+      "sourceType": "lecture",
+      "caveat": "Lift is sensitive to rare consequents and should be read with support counts."
+    }
+  ],
+  "criticalQuestions": [
+    {
+      "prompt": "Can a rule have high confidence and still be useless? Construct a counterexample.",
+      "angle": "Make $B$ very common and compare the confidence with the base rate of $B$.",
+      "modelAnswer": "Yes. If $B$ appears in almost every basket, then $A\to B$ can have high confidence without $A$ adding much information; lift exposes that issue.",
+      "focus": "counterexample"
+    },
+    {
+      "prompt": "Why does downward closure justify pruning, and what does it not justify?",
+      "angle": "Separate a guaranteed support property from a heuristic about predictive usefulness.",
+      "modelAnswer": "If a set is infrequent, every superset is also infrequent, so pruning is safe for frequent-itemset discovery. It says nothing about confidence, lift, or causal value.",
+      "focus": "scope"
+    }
+  ],
+  "courseId": "DSA5101",
+  "moduleId": "dsa5101-patterns",
+  "blocks": [
+    {
+      "id": "dsa5101-frequent-itemsets-section-1",
+      "type": "teaching-note",
+      "title": "Core equations",
+      "body": "For an itemset $I$, support is the fraction of baskets containing $I$. For a rule $A\\to B$, confidence is $\\operatorname{supp}(A\\cup B)/\\operatorname{supp}(A)$. Interest compares confidence with the base rate $\\operatorname{supp}(B)$.",
+      "sourceType": "lecture",
+      "sourceRefs": [
+        {
+          "sourceId": "DSA5101/Lec1 - Assoc Rules, Frequent itemsets.pdf",
+          "page": 24,
+          "sourceType": "lecture",
+          "role": "frequent-itemset definition",
+          "status": "current"
+        },
+        {
+          "sourceId": "DSA5101/Lec1 - Assoc Rules, Frequent itemsets.pdf",
+          "page": 28,
+          "sourceType": "lecture",
+          "role": "association rules",
+          "status": "current"
+        },
+        {
+          "sourceId": "DSA5101/Assignments/DSA5101_Assignment_1.pdf",
+          "page": 1,
+          "sourceType": "exercise",
+          "role": "assignment calculation",
+          "status": "current-context"
+        }
+      ]
+    },
+    {
+      "id": "dsa5101-frequent-itemsets-section-2",
+      "type": "teaching-note",
+      "title": "Visual reading",
+      "body": "Read the basket table as a set of transactions, not as a graph. The network-like slide decoration is only a visual cue; the formal object is still a basket incidence relation.",
+      "sourceType": "lecture",
+      "sourceRefs": [
+        {
+          "sourceId": "DSA5101/Lec1 - Assoc Rules, Frequent itemsets.pdf",
+          "page": 24,
+          "sourceType": "lecture",
+          "role": "frequent-itemset definition",
+          "status": "current"
+        },
+        {
+          "sourceId": "DSA5101/Lec1 - Assoc Rules, Frequent itemsets.pdf",
+          "page": 28,
+          "sourceType": "lecture",
+          "role": "association rules",
+          "status": "current"
+        },
+        {
+          "sourceId": "DSA5101/Assignments/DSA5101_Assignment_1.pdf",
+          "page": 1,
+          "sourceType": "exercise",
+          "role": "assignment calculation",
+          "status": "current-context"
+        }
+      ]
+    },
+    {
+      "id": "dsa5101-frequent-itemsets-formula-1",
+      "type": "formula",
+      "latex": "\\operatorname{supp}(I) = \\frac{|\\{t \\in \\mathcal{T}: I \\subseteq t\\}|}{|\\mathcal{T}|}",
+      "explanation": "Support asks how often every item in $I$ appears together. The numerator counts qualifying baskets; the denominator is the full transaction count. Keep the count and normalized fraction distinct when reporting an answer.",
+      "symbols": [
+        {
+          "latex": "I",
+          "meaning": "candidate itemset"
+        },
+        {
+          "latex": "\\mathcal{T}",
+          "meaning": "set of baskets"
+        },
+        {
+          "latex": "I \\subseteq t",
+          "meaning": "basket $t$ contains every item in $I$"
+        }
+      ],
+      "sourceType": "lecture",
+      "sourceRefs": [
+        {
+          "sourceId": "DSA5101/Lec1 - Assoc Rules, Frequent itemsets.pdf",
+          "page": 24,
+          "sourceType": "lecture",
+          "role": "frequent-itemset definition",
+          "status": "current"
+        },
+        {
+          "sourceId": "DSA5101/Lec1 - Assoc Rules, Frequent itemsets.pdf",
+          "page": 28,
+          "sourceType": "lecture",
+          "role": "association rules",
+          "status": "current"
+        },
+        {
+          "sourceId": "DSA5101/Assignments/DSA5101_Assignment_1.pdf",
+          "page": 1,
+          "sourceType": "exercise",
+          "role": "assignment calculation",
+          "status": "current-context"
+        }
+      ]
+    },
+    {
+      "id": "dsa5101-frequent-itemsets-formula-2",
+      "type": "formula",
+      "latex": "\\operatorname{conf}(A \\to B) = \\frac{\\operatorname{supp}(A \\cup B)}{\\operatorname{supp}(A)}",
+      "explanation": "Confidence conditions on baskets that already contain $A$. That is why the denominator is $\\operatorname{supp}(A)$ rather than the total number of baskets. A high confidence can still be uninteresting when $B$ is common everywhere.",
+      "symbols": [
+        {
+          "latex": "A \\to B",
+          "meaning": "association rule"
+        },
+        {
+          "latex": "A \\cup B",
+          "meaning": "baskets containing both sides"
+        }
+      ],
+      "sourceType": "lecture",
+      "sourceRefs": [
+        {
+          "sourceId": "DSA5101/Lec1 - Assoc Rules, Frequent itemsets.pdf",
+          "page": 24,
+          "sourceType": "lecture",
+          "role": "frequent-itemset definition",
+          "status": "current"
+        },
+        {
+          "sourceId": "DSA5101/Lec1 - Assoc Rules, Frequent itemsets.pdf",
+          "page": 28,
+          "sourceType": "lecture",
+          "role": "association rules",
+          "status": "current"
+        },
+        {
+          "sourceId": "DSA5101/Assignments/DSA5101_Assignment_1.pdf",
+          "page": 1,
+          "sourceType": "exercise",
+          "role": "assignment calculation",
+          "status": "current-context"
+        }
+      ]
+    },
+    {
+      "id": "dsa5101-frequent-itemsets-formula-3",
+      "type": "formula",
+      "latex": "\\operatorname{lift}(A \\to B) = \\frac{\\operatorname{conf}(A \\to B)}{\\operatorname{supp}(B)}",
+      "explanation": "Lift compares the rule's conditional rate with the base rate of $B$. A value above $1$ means $B$ is more common when $A$ is present than it is overall; it does not prove causation.",
+      "symbols": [
+        {
+          "latex": "\\operatorname{supp}(B)",
+          "meaning": "base rate of the consequent"
+        },
+        {
+          "latex": "\\operatorname{lift}>1",
+          "meaning": "positive association under this measure"
+        }
+      ],
+      "sourceType": "lecture",
+      "sourceRefs": [
+        {
+          "sourceId": "DSA5101/Lec1 - Assoc Rules, Frequent itemsets.pdf",
+          "page": 24,
+          "sourceType": "lecture",
+          "role": "frequent-itemset definition",
+          "status": "current"
+        },
+        {
+          "sourceId": "DSA5101/Lec1 - Assoc Rules, Frequent itemsets.pdf",
+          "page": 28,
+          "sourceType": "lecture",
+          "role": "association rules",
+          "status": "current"
+        },
+        {
+          "sourceId": "DSA5101/Assignments/DSA5101_Assignment_1.pdf",
+          "page": 1,
+          "sourceType": "exercise",
+          "role": "assignment calculation",
+          "status": "current-context"
+        }
+      ]
+    },
+    {
+      "id": "dsa5101-frequent-itemsets-critical-1",
+      "type": "critical-question",
+      "prompt": "Can a rule have high confidence and still be useless? Construct a counterexample.",
+      "angle": "Make $B$ very common and compare the confidence with the base rate of $B$.",
+      "modelAnswer": "Yes. If $B$ appears in almost every basket, then $A\to B$ can have high confidence without $A$ adding much information; lift exposes that issue.",
+      "focus": "counterexample",
+      "sourceRefs": [
+        {
+          "sourceId": "DSA5101/Lec1 - Assoc Rules, Frequent itemsets.pdf",
+          "page": 24,
+          "sourceType": "lecture",
+          "role": "frequent-itemset definition",
+          "status": "current"
+        },
+        {
+          "sourceId": "DSA5101/Lec1 - Assoc Rules, Frequent itemsets.pdf",
+          "page": 28,
+          "sourceType": "lecture",
+          "role": "association rules",
+          "status": "current"
+        },
+        {
+          "sourceId": "DSA5101/Assignments/DSA5101_Assignment_1.pdf",
+          "page": 1,
+          "sourceType": "exercise",
+          "role": "assignment calculation",
+          "status": "current-context"
+        }
+      ]
+    },
+    {
+      "id": "dsa5101-frequent-itemsets-critical-2",
+      "type": "critical-question",
+      "prompt": "Why does downward closure justify pruning, and what does it not justify?",
+      "angle": "Separate a guaranteed support property from a heuristic about predictive usefulness.",
+      "modelAnswer": "If a set is infrequent, every superset is also infrequent, so pruning is safe for frequent-itemset discovery. It says nothing about confidence, lift, or causal value.",
+      "focus": "scope",
+      "sourceRefs": [
+        {
+          "sourceId": "DSA5101/Lec1 - Assoc Rules, Frequent itemsets.pdf",
+          "page": 24,
+          "sourceType": "lecture",
+          "role": "frequent-itemset definition",
+          "status": "current"
+        },
+        {
+          "sourceId": "DSA5101/Lec1 - Assoc Rules, Frequent itemsets.pdf",
+          "page": 28,
+          "sourceType": "lecture",
+          "role": "association rules",
+          "status": "current"
+        },
+        {
+          "sourceId": "DSA5101/Assignments/DSA5101_Assignment_1.pdf",
+          "page": 1,
+          "sourceType": "exercise",
+          "role": "assignment calculation",
+          "status": "current-context"
+        }
+      ]
+    }
+  ],
+  "questionIds": [
+    "dsa5101-fi-q1",
+    "dsa5101-fi-q2",
+    "dsa5101-fi-q3",
+    "dsa5101-bank-004",
+    "dsa5101-bank-005",
+    "dsa5101-bank-006"
+  ],
+  "labIds": [
+    "dsa5101-support-baskets",
+    "dsa5101-association-network"
+  ],
+  "schemaVersion": "nus.lesson.v1"
+}

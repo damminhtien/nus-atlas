@@ -1,0 +1,292 @@
+{
+  "id": "dsa5101-orientation",
+  "title": "Course map and assessment",
+  "week": 1,
+  "minutes": 25,
+  "summary": "Turn the course outline into a study loop: data representation, scalable computation, and evaluation.",
+  "objectives": [
+    "Locate the four assessment milestones",
+    "Separate lecture concepts from assignment deliverables",
+    "Create a source-backed revision checklist"
+  ],
+  "sourceRefs": [
+    {
+      "sourceId": "DSA5101/DSA5101 Course Information.pdf",
+      "page": 1,
+      "sourceType": "lecture",
+      "role": "course scope",
+      "status": "current"
+    },
+    {
+      "sourceId": "DSA5101/DSA5101 Course Information.pdf",
+      "page": 2,
+      "sourceType": "lecture",
+      "role": "assessment weights",
+      "status": "current"
+    }
+  ],
+  "visualIds": [
+    "dsa5101-big-data-cost"
+  ],
+  "sections": [
+    {
+      "title": "Study lens",
+      "body": "For every algorithm, record the input model, the expensive pass over data, the memory bottleneck, and the failure mode.",
+      "sourceType": "lecture",
+      "sourceLens": {
+        "status": "core DSA5101 concept",
+        "whyExaminable": "Lecture and assignment material define the current study target; the MMDS index is attached as labeled depth, not merged into lecture scope.",
+        "lecture": [
+          {
+            "sourceId": "DSA5101/DSA5101 Course Information.pdf",
+            "page": 1,
+            "sourceType": "lecture",
+            "role": "course scope",
+            "status": "current"
+          },
+          {
+            "sourceId": "DSA5101/DSA5101 Course Information.pdf",
+            "page": 2,
+            "sourceType": "lecture",
+            "role": "assessment weights",
+            "status": "current"
+          }
+        ],
+        "officialExercise": [],
+        "textbook": [
+          {
+            "sourceId": "DSA5101/Reference textbook MMDS 3rd Edition.pdf",
+            "page": 3,
+            "sourceType": "textbook",
+            "role": "scalable-algorithm framing",
+            "status": "course-depth"
+          }
+        ],
+        "reference": []
+      }
+    }
+  ],
+  "contrastDrills": [
+    {
+      "id": "dsa5101-c1",
+      "type": "contrast",
+      "kind": "concept-contrast",
+      "pair": "Batch vs streaming",
+      "prompt": "A dataset does not fit in memory. Which design assumption should you test first?",
+      "choices": [
+        "Read all data repeatedly",
+        "Bound the working state and process incrementally",
+        "Ignore memory because Big-O is unchanged"
+      ],
+      "answer": 1,
+      "explanation": "Streaming keeps a bounded summary and makes the number of passes explicit.",
+      "estimatedSeconds": 45,
+      "sourceRefs": [
+        {
+          "sourceId": "DSA5101/DSA5101 Course Information.pdf",
+          "page": 1,
+          "sourceType": "lecture",
+          "role": "course scope",
+          "status": "current"
+        },
+        {
+          "sourceId": "DSA5101/DSA5101 Course Information.pdf",
+          "page": 2,
+          "sourceType": "lecture",
+          "role": "assessment weights",
+          "status": "current"
+        }
+      ]
+    },
+    {
+      "id": "dsa5101-c2",
+      "type": "contrast",
+      "kind": "concept-contrast",
+      "pair": "Exact vs approximate computation",
+      "prompt": "When is an approximate count acceptable?",
+      "choices": [
+        "Always",
+        "When error is bounded and acceptable for the decision",
+        "Only when the dataset is tiny"
+      ],
+      "answer": 1,
+      "explanation": "Approximation is a contract about error and decision risk, not a synonym for correctness.",
+      "estimatedSeconds": 45,
+      "sourceRefs": [
+        {
+          "sourceId": "DSA5101/DSA5101 Course Information.pdf",
+          "page": 1,
+          "sourceType": "lecture",
+          "role": "course scope",
+          "status": "current"
+        },
+        {
+          "sourceId": "DSA5101/DSA5101 Course Information.pdf",
+          "page": 2,
+          "sourceType": "lecture",
+          "role": "assessment weights",
+          "status": "current"
+        }
+      ]
+    }
+  ],
+  "math": [
+    {
+      "latex": "T_{\\mathrm{total}} \\approx p\\,T_{\\mathrm{scan}} + T_{\\mathrm{shuffle}} + T_{\\mathrm{sync}}",
+      "explanation": "Use this as a study model, not a universal theorem. A scalable algorithm tries to keep the number of full scans $p$ small and makes network movement and synchronization visible instead of hiding them inside a single runtime number.",
+      "symbols": [
+        {
+          "latex": "p",
+          "meaning": "number of passes over the data"
+        },
+        {
+          "latex": "T_{\\mathrm{shuffle}}",
+          "meaning": "time spent moving data between workers"
+        },
+        {
+          "latex": "T_{\\mathrm{sync}}",
+          "meaning": "time spent waiting for coordination"
+        }
+      ],
+      "sourceType": "lecture",
+      "caveat": "The decomposition is a diagnostic lens; real runtimes also depend on skew, caching, serialization, and hardware."
+    }
+  ],
+  "criticalQuestions": [
+    {
+      "prompt": "If two implementations have the same Big-O time, which one would you choose for a dataset larger than main memory?",
+      "angle": "Compare passes, peak memory, network movement, skew, and recovery behavior rather than stopping at asymptotic notation.",
+      "modelAnswer": "A one-pass or streaming design may win because it avoids repeated reads and keeps the working set bounded, even when both methods have the same formal order.",
+      "focus": "systems trade-off"
+    },
+    {
+      "prompt": "What evidence would falsify the claim that an algorithm is scalable?",
+      "angle": "Design a measurement that changes the input size, worker count, and partition distribution separately.",
+      "modelAnswer": "A flattening throughput curve, rapidly increasing shuffle time, or a single hot partition would contradict a simple scale-out claim.",
+      "focus": "evidence"
+    }
+  ],
+  "courseId": "DSA5101",
+  "moduleId": "dsa5101-foundations",
+  "blocks": [
+    {
+      "id": "dsa5101-orientation-section-1",
+      "type": "teaching-note",
+      "title": "Study lens",
+      "body": "For every algorithm, record the input model, the expensive pass over data, the memory bottleneck, and the failure mode.",
+      "sourceType": "lecture",
+      "sourceRefs": [
+        {
+          "sourceId": "DSA5101/DSA5101 Course Information.pdf",
+          "page": 1,
+          "sourceType": "lecture",
+          "role": "course scope",
+          "status": "current"
+        },
+        {
+          "sourceId": "DSA5101/DSA5101 Course Information.pdf",
+          "page": 2,
+          "sourceType": "lecture",
+          "role": "assessment weights",
+          "status": "current"
+        }
+      ]
+    },
+    {
+      "id": "dsa5101-orientation-formula-1",
+      "type": "formula",
+      "latex": "T_{\\mathrm{total}} \\approx p\\,T_{\\mathrm{scan}} + T_{\\mathrm{shuffle}} + T_{\\mathrm{sync}}",
+      "explanation": "Use this as a study model, not a universal theorem. A scalable algorithm tries to keep the number of full scans $p$ small and makes network movement and synchronization visible instead of hiding them inside a single runtime number.",
+      "symbols": [
+        {
+          "latex": "p",
+          "meaning": "number of passes over the data"
+        },
+        {
+          "latex": "T_{\\mathrm{shuffle}}",
+          "meaning": "time spent moving data between workers"
+        },
+        {
+          "latex": "T_{\\mathrm{sync}}",
+          "meaning": "time spent waiting for coordination"
+        }
+      ],
+      "sourceType": "lecture",
+      "sourceRefs": [
+        {
+          "sourceId": "DSA5101/DSA5101 Course Information.pdf",
+          "page": 1,
+          "sourceType": "lecture",
+          "role": "course scope",
+          "status": "current"
+        },
+        {
+          "sourceId": "DSA5101/DSA5101 Course Information.pdf",
+          "page": 2,
+          "sourceType": "lecture",
+          "role": "assessment weights",
+          "status": "current"
+        }
+      ]
+    },
+    {
+      "id": "dsa5101-orientation-critical-1",
+      "type": "critical-question",
+      "prompt": "If two implementations have the same Big-O time, which one would you choose for a dataset larger than main memory?",
+      "angle": "Compare passes, peak memory, network movement, skew, and recovery behavior rather than stopping at asymptotic notation.",
+      "modelAnswer": "A one-pass or streaming design may win because it avoids repeated reads and keeps the working set bounded, even when both methods have the same formal order.",
+      "focus": "systems trade-off",
+      "sourceRefs": [
+        {
+          "sourceId": "DSA5101/DSA5101 Course Information.pdf",
+          "page": 1,
+          "sourceType": "lecture",
+          "role": "course scope",
+          "status": "current"
+        },
+        {
+          "sourceId": "DSA5101/DSA5101 Course Information.pdf",
+          "page": 2,
+          "sourceType": "lecture",
+          "role": "assessment weights",
+          "status": "current"
+        }
+      ]
+    },
+    {
+      "id": "dsa5101-orientation-critical-2",
+      "type": "critical-question",
+      "prompt": "What evidence would falsify the claim that an algorithm is scalable?",
+      "angle": "Design a measurement that changes the input size, worker count, and partition distribution separately.",
+      "modelAnswer": "A flattening throughput curve, rapidly increasing shuffle time, or a single hot partition would contradict a simple scale-out claim.",
+      "focus": "evidence",
+      "sourceRefs": [
+        {
+          "sourceId": "DSA5101/DSA5101 Course Information.pdf",
+          "page": 1,
+          "sourceType": "lecture",
+          "role": "course scope",
+          "status": "current"
+        },
+        {
+          "sourceId": "DSA5101/DSA5101 Course Information.pdf",
+          "page": 2,
+          "sourceType": "lecture",
+          "role": "assessment weights",
+          "status": "current"
+        }
+      ]
+    }
+  ],
+  "questionIds": [
+    "dsa5101-o-q1",
+    "dsa5101-o-q2",
+    "dsa5101-bank-001",
+    "dsa5101-bank-002",
+    "dsa5101-bank-003"
+  ],
+  "labIds": [
+    "dsa5101-big-data-cost"
+  ],
+  "schemaVersion": "nus.lesson.v1"
+}

@@ -1,0 +1,187 @@
+[
+  {
+    "id": "dsa5101-rs-q1",
+    "type": "mcq",
+    "prompt": "What is the role of the damping factor in PageRank?",
+    "choices": [
+      "It removes all links",
+      "It models random teleportation and prevents rank traps",
+      "It counts distinct stream items",
+      "It chooses the LSH band size"
+    ],
+    "answer": 1,
+    "explanation": "Teleportation makes the transition process ergodic and reduces sink/trap problems.",
+    "sourceRefs": [
+      {
+        "sourceId": "DSA5101/Assignments/DSA5101_Assignment_2.pdf",
+        "page": 2,
+        "sourceType": "exercise",
+        "role": "PageRank iteration",
+        "status": "current-context"
+      },
+      {
+        "sourceId": "DSA5101/Assignments/DSA5101_Assignment_2.pdf",
+        "page": 4,
+        "sourceType": "exercise",
+        "role": "streaming sketches",
+        "status": "current-context"
+      }
+    ],
+    "difficulty": "easy",
+    "skill": "recall",
+    "cognitiveLevel": "understand",
+    "estimatedSeconds": 60,
+    "misconception": "Check the assumption behind your answer.",
+    "visualHook": "Explain the idea with a small diagram or example.",
+    "courseId": "DSA5101",
+    "lessonId": "dsa5101-ranking-streams",
+    "schemaVersion": "nus.question.v1"
+  },
+  {
+    "id": "dsa5101-rs-q2",
+    "type": "short",
+    "prompt": "Why can a streaming sketch use less memory than storing every event?",
+    "accepted": [
+      "it summarizes the stream",
+      "compact approximate summary",
+      "it stores a compact approximate summary"
+    ],
+    "solution": "It keeps a compact approximate summary with controlled error instead of every raw event.",
+    "explanation": "Mention approximation/error; the memory saving is not free.",
+    "sourceRefs": [
+      {
+        "sourceId": "DSA5101/Assignments/DSA5101_Assignment_2.pdf",
+        "page": 2,
+        "sourceType": "exercise",
+        "role": "PageRank iteration",
+        "status": "current-context"
+      },
+      {
+        "sourceId": "DSA5101/Assignments/DSA5101_Assignment_2.pdf",
+        "page": 4,
+        "sourceType": "exercise",
+        "role": "streaming sketches",
+        "status": "current-context"
+      }
+    ],
+    "difficulty": "medium",
+    "skill": "explain",
+    "cognitiveLevel": "understand",
+    "estimatedSeconds": 90,
+    "misconception": "Check the assumption behind your answer.",
+    "visualHook": "Explain the idea with a small diagram or example.",
+    "courseId": "DSA5101",
+    "lessonId": "dsa5101-ranking-streams",
+    "schemaVersion": "nus.question.v1"
+  },
+  {
+    "id": "dsa5101-bank-010",
+    "lessonId": "dsa5101-ranking-streams",
+    "type": "mcq",
+    "difficulty": "medium",
+    "skill": "distinguish",
+    "cognitiveLevel": "understand",
+    "estimatedSeconds": 60,
+    "prompt": "Why can PageRank differ from raw indegree?",
+    "choices": [
+      "PageRank weights incoming mass by source rank and out-degree",
+      "PageRank ignores the graph",
+      "Indegree already includes teleportation",
+      "PageRank only counts self-links"
+    ],
+    "answer": 0,
+    "explanation": "PageRank is a stationary random-walk quantity. A link from an important page can transfer more rank than a link from a low-ranked page, and damping adds teleportation.",
+    "sourceRefs": [
+      {
+        "sourceId": "DSA5101/Assignments/DSA5101_Assignment_2.pdf",
+        "sourceType": "exercise",
+        "page": 2,
+        "role": "PageRank iteration",
+        "status": "current-context"
+      },
+      {
+        "sourceId": "DSA5101/Reference textbook MMDS 3rd Edition.pdf",
+        "sourceType": "textbook",
+        "page": 175,
+        "role": "PageRank depth",
+        "status": "course-depth"
+      }
+    ],
+    "misconception": "Check the assumption behind your answer.",
+    "visualHook": "Explain the idea with a small diagram or example.",
+    "courseId": "DSA5101",
+    "schemaVersion": "nus.question.v1"
+  },
+  {
+    "id": "dsa5101-bank-011",
+    "lessonId": "dsa5101-ranking-streams",
+    "type": "short",
+    "difficulty": "medium",
+    "skill": "compare",
+    "cognitiveLevel": "analyze",
+    "estimatedSeconds": 90,
+    "prompt": "Contrast DGIM with Flajolet–Martin by naming the quantity each estimates.",
+    "accepted": [
+      "DGIM recent-window count and Flajolet Martin distinct count",
+      "DGIM counts recent 1s; Flajolet Martin estimates distinct items",
+      "window count versus cardinality"
+    ],
+    "explanation": "DGIM estimates the number of recent 1s in a sliding window, while Flajolet–Martin estimates the number of distinct stream elements from hash-prefix evidence.",
+    "sourceRefs": [
+      {
+        "sourceId": "DSA5101/Assignments/DSA5101_Assignment_2.pdf",
+        "sourceType": "exercise",
+        "page": 4,
+        "role": "streaming sketches",
+        "status": "current-context"
+      },
+      {
+        "sourceId": "DSA5101/Reference textbook MMDS 3rd Edition.pdf",
+        "sourceType": "textbook",
+        "page": 155,
+        "role": "streaming depth",
+        "status": "course-depth"
+      }
+    ],
+    "misconception": "Check the assumption behind your answer.",
+    "visualHook": "Explain the idea with a small diagram or example.",
+    "courseId": "DSA5101",
+    "schemaVersion": "nus.question.v1"
+  },
+  {
+    "id": "dsa5101-bank-012",
+    "lessonId": "dsa5101-ranking-streams",
+    "type": "derivation",
+    "difficulty": "hard",
+    "skill": "interpret",
+    "cognitiveLevel": "analyze",
+    "estimatedSeconds": 120,
+    "prompt": "Explain why the one-register estimate $\\widehat{n}\\approx2^R$ has high variance and how a practical sketch reduces that risk.",
+    "accepted": [
+      "one register is noisy; use multiple registers and bias correction",
+      "multiple registers reduce variance",
+      "zero prefix is probabilistic"
+    ],
+    "explanation": "The longest zero-prefix is a noisy statistic. Multiple independent registers and bias correction stabilize the estimate while preserving bounded memory.",
+    "sourceRefs": [
+      {
+        "sourceId": "DSA5101/Assignments/DSA5101_Assignment_2.pdf",
+        "sourceType": "exercise",
+        "page": 4,
+        "role": "Flajolet-Martin",
+        "status": "current-context"
+      },
+      {
+        "sourceId": "DSA5101/Reference textbook MMDS 3rd Edition.pdf",
+        "sourceType": "textbook",
+        "page": 155,
+        "role": "cardinality estimation depth",
+        "status": "course-depth"
+      }
+    ],
+    "misconception": "Check the assumption behind your answer.",
+    "visualHook": "Explain the idea with a small diagram or example.",
+    "courseId": "DSA5101",
+    "schemaVersion": "nus.question.v1"
+  }
+]

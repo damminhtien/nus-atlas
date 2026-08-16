@@ -1,0 +1,180 @@
+[
+  {
+    "id": "dsa5101-mh-q1",
+    "type": "mcq",
+    "prompt": "What does a single MinHash collision estimate?",
+    "choices": [
+      "Cosine similarity",
+      "Jaccard similarity",
+      "Euclidean distance",
+      "Support count"
+    ],
+    "answer": 1,
+    "explanation": "For a random permutation, the collision probability equals Jaccard similarity.",
+    "sourceRefs": [
+      {
+        "sourceId": "DSA5101/Assignments/DSA5101_Assignment_1.pdf",
+        "page": 3,
+        "sourceType": "exercise",
+        "role": "MinHash signature",
+        "status": "current-context"
+      },
+      {
+        "sourceId": "DSA5101/Assignments/DSA5101_Assignment_1.pdf",
+        "page": 4,
+        "sourceType": "exercise",
+        "role": "LSH banding",
+        "status": "current-context"
+      }
+    ],
+    "difficulty": "easy",
+    "skill": "recall",
+    "cognitiveLevel": "understand",
+    "estimatedSeconds": 60,
+    "misconception": "Check the assumption behind your answer.",
+    "visualHook": "Explain the idea with a small diagram or example.",
+    "courseId": "DSA5101",
+    "lessonId": "dsa5101-minhash-lsh",
+    "schemaVersion": "nus.question.v1"
+  },
+  {
+    "id": "dsa5101-mh-q2",
+    "type": "calculation",
+    "prompt": "$With similarity s=0.8, b=2 bands and r=2 rows, what is the LSH candidate probability?$",
+    "accepted": [
+      "0.8704",
+      "87.04%",
+      "0.8704 or 87.04%"
+    ],
+    "solution": "1 − (1 − 0.8²)² = 1 − 0.36² = 0.8704.",
+    "explanation": "First compute the probability of avoiding a match in one band, then across all bands.",
+    "sourceRefs": [
+      {
+        "sourceId": "DSA5101/Assignments/DSA5101_Assignment_1.pdf",
+        "page": 3,
+        "sourceType": "exercise",
+        "role": "MinHash signature",
+        "status": "current-context"
+      },
+      {
+        "sourceId": "DSA5101/Assignments/DSA5101_Assignment_1.pdf",
+        "page": 4,
+        "sourceType": "exercise",
+        "role": "LSH banding",
+        "status": "current-context"
+      }
+    ],
+    "difficulty": "medium",
+    "skill": "calculate",
+    "cognitiveLevel": "apply",
+    "estimatedSeconds": 120,
+    "misconception": "Check the assumption behind your answer.",
+    "visualHook": "Explain the idea with a small diagram or example.",
+    "courseId": "DSA5101",
+    "lessonId": "dsa5101-minhash-lsh",
+    "schemaVersion": "nus.question.v1"
+  },
+  {
+    "id": "dsa5101-bank-007",
+    "lessonId": "dsa5101-minhash-lsh",
+    "type": "calculation",
+    "difficulty": "medium",
+    "skill": "calculate",
+    "cognitiveLevel": "apply",
+    "estimatedSeconds": 90,
+    "prompt": "For similarity $s=0.8$, $b=2$ bands, and $r=2$ rows, compute the LSH candidate probability $1-(1-s^r)^b$.",
+    "accepted": [
+      "0.8704",
+      "87.04%",
+      "0.8704 or 87.04%"
+    ],
+    "solution": "$1-(1-0.8^2)^2=1-0.36^2=0.8704$.",
+    "explanation": "Compute the probability that a band matches, then take one minus the probability that all bands fail.",
+    "sourceRefs": [
+      {
+        "sourceId": "DSA5101/Assignments/DSA5101_Assignment_1.pdf",
+        "sourceType": "exercise",
+        "page": 4,
+        "role": "LSH banding",
+        "status": "current-context"
+      }
+    ],
+    "misconception": "Check the assumption behind your answer.",
+    "visualHook": "Explain the idea with a small diagram or example.",
+    "courseId": "DSA5101",
+    "schemaVersion": "nus.question.v1"
+  },
+  {
+    "id": "dsa5101-bank-008",
+    "lessonId": "dsa5101-minhash-lsh",
+    "type": "short",
+    "difficulty": "medium",
+    "skill": "explain",
+    "cognitiveLevel": "understand",
+    "estimatedSeconds": 75,
+    "prompt": "Why must an LSH candidate usually be verified with an exact similarity computation?",
+    "accepted": [
+      "LSH produces candidates and false positives",
+      "a band collision is not proof of similarity",
+      "candidate generation is approximate"
+    ],
+    "explanation": "A pair can collide in one band by chance. LSH is a filter for speed; exact similarity or a downstream score decides whether the candidate is truly useful.",
+    "sourceRefs": [
+      {
+        "sourceId": "DSA5101/Assignments/DSA5101_Assignment_1.pdf",
+        "sourceType": "exercise",
+        "page": 4,
+        "role": "LSH banding",
+        "status": "current-context"
+      },
+      {
+        "sourceId": "DSA5101/Reference textbook MMDS 3rd Edition.pdf",
+        "sourceType": "textbook",
+        "page": 100,
+        "role": "LSH candidate filtering",
+        "status": "course-depth"
+      }
+    ],
+    "misconception": "Check the assumption behind your answer.",
+    "visualHook": "Explain the idea with a small diagram or example.",
+    "courseId": "DSA5101",
+    "schemaVersion": "nus.question.v1"
+  },
+  {
+    "id": "dsa5101-bank-009",
+    "lessonId": "dsa5101-minhash-lsh",
+    "type": "derivation",
+    "difficulty": "hard",
+    "skill": "derive",
+    "cognitiveLevel": "analyze",
+    "estimatedSeconds": 120,
+    "prompt": "Connect one MinHash collision to Jaccard similarity and state the assumption that makes the equality valid.",
+    "accepted": [
+      "Pr[h(A)=h(B)] = J(A,B)",
+      "random permutation",
+      "collision probability equals Jaccard"
+    ],
+    "solution": "Under a random permutation, $\\Pr[h_{\\pi}(A)=h_{\\pi}(B)]=J(A,B)=|A\\cap B|/|A\\cup B|$.",
+    "explanation": "The equality is a property of the random-permutation MinHash construction, not a generic fact about every hash function.",
+    "sourceRefs": [
+      {
+        "sourceId": "DSA5101/Assignments/DSA5101_Assignment_1.pdf",
+        "sourceType": "exercise",
+        "page": 3,
+        "role": "MinHash signature",
+        "status": "current-context"
+      },
+      {
+        "sourceId": "DSA5101/Reference textbook MMDS 3rd Edition.pdf",
+        "sourceType": "textbook",
+        "page": 95,
+        "role": "MinHash depth",
+        "status": "course-depth"
+      }
+    ],
+    "misconception": "Check the assumption behind your answer.",
+    "visualHook": "Explain the idea with a small diagram or example.",
+    "courseId": "DSA5101",
+    "schemaVersion": "nus.question.v1"
+  }
+]

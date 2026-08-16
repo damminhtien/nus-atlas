@@ -1,0 +1,180 @@
+[
+  {
+    "id": "dsa5101-o-q1",
+    "type": "mcq",
+    "prompt": "Which assessment has the largest weight in the course information sheet?",
+    "choices": [
+      "Assignment 1",
+      "Assignment 2",
+      "Project",
+      "Final open-book exam"
+    ],
+    "answer": 3,
+    "explanation": "The final exam is listed as 50%; the project is 20% and each assignment is 15%.",
+    "sourceRefs": [
+      {
+        "sourceId": "DSA5101/DSA5101 Course Information.pdf",
+        "page": 1,
+        "sourceType": "lecture",
+        "role": "course scope",
+        "status": "current"
+      },
+      {
+        "sourceId": "DSA5101/DSA5101 Course Information.pdf",
+        "page": 2,
+        "sourceType": "lecture",
+        "role": "assessment weights",
+        "status": "current"
+      }
+    ],
+    "difficulty": "easy",
+    "skill": "recall",
+    "cognitiveLevel": "understand",
+    "estimatedSeconds": 60,
+    "misconception": "Check the assumption behind your answer.",
+    "visualHook": "Explain the idea with a small diagram or example.",
+    "courseId": "DSA5101",
+    "lessonId": "dsa5101-orientation",
+    "schemaVersion": "nus.question.v1"
+  },
+  {
+    "id": "dsa5101-o-q2",
+    "type": "short",
+    "prompt": "Name the two properties you should record when comparing a big-data algorithm's scalability.",
+    "accepted": [
+      "passes and memory",
+      "number of passes and memory",
+      "passes through data and main memory"
+    ],
+    "solution": "Track passes through the data and the main-memory bottleneck; both are central to the lecture framing.",
+    "explanation": "A good answer mentions data passes and memory pressure.",
+    "sourceRefs": [
+      {
+        "sourceId": "DSA5101/DSA5101 Course Information.pdf",
+        "page": 1,
+        "sourceType": "lecture",
+        "role": "course scope",
+        "status": "current"
+      },
+      {
+        "sourceId": "DSA5101/DSA5101 Course Information.pdf",
+        "page": 2,
+        "sourceType": "lecture",
+        "role": "assessment weights",
+        "status": "current"
+      }
+    ],
+    "difficulty": "medium",
+    "skill": "explain",
+    "cognitiveLevel": "understand",
+    "estimatedSeconds": 90,
+    "misconception": "Check the assumption behind your answer.",
+    "visualHook": "Explain the idea with a small diagram or example.",
+    "courseId": "DSA5101",
+    "lessonId": "dsa5101-orientation",
+    "schemaVersion": "nus.question.v1"
+  },
+  {
+    "id": "dsa5101-bank-001",
+    "lessonId": "dsa5101-orientation",
+    "type": "short",
+    "difficulty": "medium",
+    "skill": "diagnose",
+    "cognitiveLevel": "analyze",
+    "estimatedSeconds": 90,
+    "prompt": "Two algorithms have the same asymptotic time. Name two measurements that can still decide which one scales better beyond main memory.",
+    "accepted": [
+      "passes and memory",
+      "data passes and memory",
+      "passes memory and shuffle"
+    ],
+    "explanation": "Count full data passes and peak working memory first; network movement, skew, and synchronization are additional measurements when the workflow is distributed.",
+    "sourceRefs": [
+      {
+        "sourceId": "DSA5101/DSA5101 Course Information.pdf",
+        "sourceType": "lecture",
+        "page": 1,
+        "role": "scale framing",
+        "status": "current"
+      },
+      {
+        "sourceId": "DSA5101/Reference textbook MMDS 3rd Edition.pdf",
+        "sourceType": "textbook",
+        "page": 3,
+        "role": "scalable algorithm framing",
+        "status": "course-depth"
+      }
+    ],
+    "misconception": "Check the assumption behind your answer.",
+    "visualHook": "Explain the idea with a small diagram or example.",
+    "courseId": "DSA5101",
+    "schemaVersion": "nus.question.v1"
+  },
+  {
+    "id": "dsa5101-bank-002",
+    "lessonId": "dsa5101-orientation",
+    "type": "mcq",
+    "difficulty": "easy",
+    "skill": "distinguish",
+    "cognitiveLevel": "understand",
+    "estimatedSeconds": 45,
+    "prompt": "A streaming sketch uses less memory than storing every event. What must be stated alongside the memory claim?",
+    "choices": [
+      "The error or approximation guarantee",
+      "That the result is always exact",
+      "That the stream has no duplicates",
+      "That the input fits in cache"
+    ],
+    "answer": 0,
+    "explanation": "A sketch trades exact storage for a controlled approximation, so its error model is part of the algorithm contract.",
+    "sourceRefs": [
+      {
+        "sourceId": "DSA5101/DSA5101 Course Information.pdf",
+        "sourceType": "lecture",
+        "page": 1,
+        "role": "scale framing",
+        "status": "current"
+      }
+    ],
+    "misconception": "Check the assumption behind your answer.",
+    "visualHook": "Explain the idea with a small diagram or example.",
+    "courseId": "DSA5101",
+    "schemaVersion": "nus.question.v1"
+  },
+  {
+    "id": "dsa5101-bank-003",
+    "lessonId": "dsa5101-orientation",
+    "type": "derivation",
+    "difficulty": "hard",
+    "skill": "explain",
+    "cognitiveLevel": "analyze",
+    "estimatedSeconds": 120,
+    "prompt": "Explain why a one-pass algorithm can be preferable to a multi-pass algorithm even when both have the same asymptotic time.",
+    "accepted": [
+      "one pass reduces repeated reads and memory pressure",
+      "fewer passes and bounded memory",
+      "avoids repeated scans"
+    ],
+    "explanation": "When data is larger than memory, repeated scans can dominate I/O and coordination. A one-pass design can keep a bounded summary, subject to its error contract.",
+    "sourceRefs": [
+      {
+        "sourceId": "DSA5101/DSA5101 Course Information.pdf",
+        "sourceType": "lecture",
+        "page": 1,
+        "role": "scale framing",
+        "status": "current"
+      },
+      {
+        "sourceId": "DSA5101/Reference textbook MMDS 3rd Edition.pdf",
+        "sourceType": "textbook",
+        "page": 3,
+        "role": "scalable algorithm framing",
+        "status": "course-depth"
+      }
+    ],
+    "misconception": "Check the assumption behind your answer.",
+    "visualHook": "Explain the idea with a small diagram or example.",
+    "courseId": "DSA5101",
+    "schemaVersion": "nus.question.v1"
+  }
+]

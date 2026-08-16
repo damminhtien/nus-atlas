@@ -16,7 +16,17 @@
       description: "Big-data foundations: collection, cleaning, frequent patterns, search, recommendation, streams, and scalable ML practice.", prerequisites: [],
       workload: [3, 0, 1, 3, 3], department: "Mathematics", faculty: "Science",
       nusmods: { url: "https://nusmods.com/courses/DSA5101/introduction-to-big-data-for-industry", apiModule: "https://api.nusmods.com/v2/2026-2027/modules/DSA5101.json", apiSemester: "https://api.nusmods.com/v2/2026-2027/semesters/1/DSA5101/semesterData.json" },
-      localSources: ["DSA5101/DSA5101 Course Information.pdf", "DSA5101/Lec1 - Assoc Rules, Frequent itemsets.pdf", "DSA5101/Assignments/DSA5101_Assignment_1.pdf", "DSA5101/Assignments/DSA5101_Assignment_2.pdf"]
+      localSources: ["DSA5101/DSA5101 Course Information.pdf", "DSA5101/Lec1 - Assoc Rules, Frequent itemsets.pdf", "DSA5101/Assignments/DSA5101_Assignment_1.pdf", "DSA5101/Assignments/DSA5101_Assignment_2.pdf", "DSA5101/Reference textbook MMDS 3rd Edition.pdf"],
+      lectureSources: [
+        { sourceId: "DSA5101/DSA5101 Course Information.pdf", sourceType: "lecture", role: "course scope and assessment weights", status: "current" },
+        { sourceId: "DSA5101/Lec1 - Assoc Rules, Frequent itemsets.pdf", sourceType: "lecture", role: "frequent-itemset lecture", status: "current" }
+      ],
+      exerciseSources: [
+        { sourceId: "DSA5101/Assignments/DSA5101_Assignment_1.pdf", sourceType: "exercise", role: "Assignment 1 practice", status: "current-context" },
+        { sourceId: "DSA5101/Assignments/DSA5101_Assignment_2.pdf", sourceType: "exercise", role: "Assignment 2 practice", status: "current-context" }
+      ],
+      textbookSources: [{ sourceId: "DSA5101/Reference textbook MMDS 3rd Edition.pdf", sourceType: "textbook", role: "course textbook", status: "course-depth" }],
+      sourceNote: "Lecture and assignment PDFs define the current DSA5101 study scope; the MMDS index is labeled textbook depth and is never presented as lecture authority."
     },
     {
       code: "DSA5104", title: "Principles of Data Management and Retrieval", semester: "AY2026/27 · Semester 1", color: "#4f9b84",

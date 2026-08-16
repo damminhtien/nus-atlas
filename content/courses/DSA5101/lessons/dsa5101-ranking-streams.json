@@ -1,0 +1,341 @@
+{
+  "id": "dsa5101-ranking-streams",
+  "title": "PageRank, DGIM, and Flajolet–Martin",
+  "week": 5,
+  "minutes": 55,
+  "summary": "Connect graph ranking and streaming sketches to the same design question: what can be remembered in one pass?",
+  "objectives": [
+    "Explain PageRank as a stationary random walk",
+    "Estimate a window count with DGIM",
+    "Explain probabilistic cardinality estimation"
+  ],
+  "sourceRefs": [
+    {
+      "sourceId": "DSA5101/Assignments/DSA5101_Assignment_2.pdf",
+      "page": 2,
+      "sourceType": "exercise",
+      "role": "PageRank iteration",
+      "status": "current-context"
+    },
+    {
+      "sourceId": "DSA5101/Assignments/DSA5101_Assignment_2.pdf",
+      "page": 4,
+      "sourceType": "exercise",
+      "role": "streaming sketches",
+      "status": "current-context"
+    }
+  ],
+  "visualIds": [
+    "dsa5101-pagerank-stream"
+  ],
+  "sections": [
+    {
+      "title": "Compare the sketches",
+      "body": "DGIM estimates counts in a recent window with timestamped buckets. Flajolet–Martin estimates distinct elements using the longest observed zero-prefix in a hashed stream; its estimate is probabilistic rather than exact.",
+      "sourceType": "lecture",
+      "sourceLens": {
+        "status": "core DSA5101 concept",
+        "whyExaminable": "Lecture and assignment material define the current study target; the MMDS index is attached as labeled depth, not merged into lecture scope.",
+        "lecture": [],
+        "officialExercise": [
+          {
+            "sourceId": "DSA5101/Assignments/DSA5101_Assignment_2.pdf",
+            "page": 2,
+            "sourceType": "exercise",
+            "role": "PageRank iteration",
+            "status": "current-context"
+          },
+          {
+            "sourceId": "DSA5101/Assignments/DSA5101_Assignment_2.pdf",
+            "page": 4,
+            "sourceType": "exercise",
+            "role": "streaming sketches",
+            "status": "current-context"
+          }
+        ],
+        "textbook": [
+          {
+            "sourceId": "DSA5101/Reference textbook MMDS 3rd Edition.pdf",
+            "page": 155,
+            "sourceType": "textbook",
+            "role": "streaming and PageRank depth",
+            "status": "course-depth"
+          }
+        ],
+        "reference": []
+      }
+    }
+  ],
+  "contrastDrills": [
+    {
+      "id": "dsa5101-c9",
+      "type": "contrast",
+      "kind": "concept-contrast",
+      "pair": "PageRank vs indegree",
+      "prompt": "Why can two pages with the same indegree receive different PageRank?",
+      "choices": [
+        "PageRank weights the source rank and out-degree",
+        "PageRank ignores links",
+        "Indegree is probabilistic"
+      ],
+      "answer": 0,
+      "explanation": "PageRank transfers weighted rank mass rather than counting every incoming edge equally.",
+      "estimatedSeconds": 45,
+      "sourceRefs": [
+        {
+          "sourceId": "DSA5101/Assignments/DSA5101_Assignment_2.pdf",
+          "page": 2,
+          "sourceType": "exercise",
+          "role": "PageRank iteration",
+          "status": "current-context"
+        },
+        {
+          "sourceId": "DSA5101/Assignments/DSA5101_Assignment_2.pdf",
+          "page": 4,
+          "sourceType": "exercise",
+          "role": "streaming sketches",
+          "status": "current-context"
+        }
+      ]
+    },
+    {
+      "id": "dsa5101-c10",
+      "type": "contrast",
+      "kind": "concept-contrast",
+      "pair": "Exact storage vs sketch summary",
+      "prompt": "What does a streaming sketch trade for lower memory?",
+      "choices": [
+        "All error",
+        "Controlled approximation error",
+        "The ability to process a stream"
+      ],
+      "answer": 1,
+      "explanation": "A sketch saves memory by summarizing the stream, so its error model must be stated.",
+      "estimatedSeconds": 45,
+      "sourceRefs": [
+        {
+          "sourceId": "DSA5101/Assignments/DSA5101_Assignment_2.pdf",
+          "page": 2,
+          "sourceType": "exercise",
+          "role": "PageRank iteration",
+          "status": "current-context"
+        },
+        {
+          "sourceId": "DSA5101/Assignments/DSA5101_Assignment_2.pdf",
+          "page": 4,
+          "sourceType": "exercise",
+          "role": "streaming sketches",
+          "status": "current-context"
+        }
+      ]
+    }
+  ],
+  "math": [
+    {
+      "latex": "\\operatorname{PR}(i) = \\frac{1-d}{N} + d\\sum_{j\\to i}\\frac{\\operatorname{PR}(j)}{\\operatorname{outdeg}(j)}",
+      "explanation": "PageRank combines a uniform teleportation term with rank flowing through incoming links. The damping factor $d$ prevents the walk from getting trapped forever in a sink or closed component.",
+      "symbols": [
+        {
+          "latex": "d",
+          "meaning": "damping probability"
+        },
+        {
+          "latex": "N",
+          "meaning": "number of pages or nodes"
+        },
+        {
+          "latex": "\\operatorname{outdeg}(j)",
+          "meaning": "number of outgoing links from $j$"
+        }
+      ],
+      "sourceType": "lecture",
+      "caveat": "Dangling nodes need an explicit convention, such as redistributing their mass uniformly."
+    },
+    {
+      "latex": "\\widehat{n}_{\\mathrm{distinct}} \\approx 2^R",
+      "explanation": "Flajolet–Martin-style reasoning uses the longest observed zero-prefix $R$ in hashed stream values. A long zero-prefix is rare for one item, so it suggests that many distinct items were sampled; practical estimators use bias correction and multiple registers.",
+      "symbols": [
+        {
+          "latex": "R",
+          "meaning": "maximum zero-prefix length"
+        },
+        {
+          "latex": "\\widehat{n}_{\\mathrm{distinct}}",
+          "meaning": "approximate number of distinct items"
+        }
+      ],
+      "sourceType": "lecture",
+      "caveat": "The one-register expression is a teaching approximation and has high variance."
+    }
+  ],
+  "criticalQuestions": [
+    {
+      "prompt": "Why is PageRank not the same as counting incoming links?",
+      "angle": "Compare a link from an important page with many links to a link from a low-ranked page.",
+      "modelAnswer": "PageRank weights incoming mass by the source's rank and out-degree, then adds teleportation; raw indegree treats every link equally.",
+      "focus": "model comparison"
+    },
+    {
+      "prompt": "What kind of error is acceptable for a stream sketch, and who decides?",
+      "angle": "Tie the error tolerance to the downstream decision rather than treating approximation as automatically good.",
+      "modelAnswer": "A dashboard may accept a bounded approximate count, while billing or compliance may require an exact count. Memory savings are useful only relative to that decision risk.",
+      "focus": "requirements"
+    }
+  ],
+  "courseId": "DSA5101",
+  "moduleId": "dsa5101-scale",
+  "blocks": [
+    {
+      "id": "dsa5101-ranking-streams-section-1",
+      "type": "teaching-note",
+      "title": "Compare the sketches",
+      "body": "DGIM estimates counts in a recent window with timestamped buckets. Flajolet–Martin estimates distinct elements using the longest observed zero-prefix in a hashed stream; its estimate is probabilistic rather than exact.",
+      "sourceType": "lecture",
+      "sourceRefs": [
+        {
+          "sourceId": "DSA5101/Assignments/DSA5101_Assignment_2.pdf",
+          "page": 2,
+          "sourceType": "exercise",
+          "role": "PageRank iteration",
+          "status": "current-context"
+        },
+        {
+          "sourceId": "DSA5101/Assignments/DSA5101_Assignment_2.pdf",
+          "page": 4,
+          "sourceType": "exercise",
+          "role": "streaming sketches",
+          "status": "current-context"
+        }
+      ]
+    },
+    {
+      "id": "dsa5101-ranking-streams-formula-1",
+      "type": "formula",
+      "latex": "\\operatorname{PR}(i) = \\frac{1-d}{N} + d\\sum_{j\\to i}\\frac{\\operatorname{PR}(j)}{\\operatorname{outdeg}(j)}",
+      "explanation": "PageRank combines a uniform teleportation term with rank flowing through incoming links. The damping factor $d$ prevents the walk from getting trapped forever in a sink or closed component.",
+      "symbols": [
+        {
+          "latex": "d",
+          "meaning": "damping probability"
+        },
+        {
+          "latex": "N",
+          "meaning": "number of pages or nodes"
+        },
+        {
+          "latex": "\\operatorname{outdeg}(j)",
+          "meaning": "number of outgoing links from $j$"
+        }
+      ],
+      "sourceType": "lecture",
+      "sourceRefs": [
+        {
+          "sourceId": "DSA5101/Assignments/DSA5101_Assignment_2.pdf",
+          "page": 2,
+          "sourceType": "exercise",
+          "role": "PageRank iteration",
+          "status": "current-context"
+        },
+        {
+          "sourceId": "DSA5101/Assignments/DSA5101_Assignment_2.pdf",
+          "page": 4,
+          "sourceType": "exercise",
+          "role": "streaming sketches",
+          "status": "current-context"
+        }
+      ]
+    },
+    {
+      "id": "dsa5101-ranking-streams-formula-2",
+      "type": "formula",
+      "latex": "\\widehat{n}_{\\mathrm{distinct}} \\approx 2^R",
+      "explanation": "Flajolet–Martin-style reasoning uses the longest observed zero-prefix $R$ in hashed stream values. A long zero-prefix is rare for one item, so it suggests that many distinct items were sampled; practical estimators use bias correction and multiple registers.",
+      "symbols": [
+        {
+          "latex": "R",
+          "meaning": "maximum zero-prefix length"
+        },
+        {
+          "latex": "\\widehat{n}_{\\mathrm{distinct}}",
+          "meaning": "approximate number of distinct items"
+        }
+      ],
+      "sourceType": "lecture",
+      "sourceRefs": [
+        {
+          "sourceId": "DSA5101/Assignments/DSA5101_Assignment_2.pdf",
+          "page": 2,
+          "sourceType": "exercise",
+          "role": "PageRank iteration",
+          "status": "current-context"
+        },
+        {
+          "sourceId": "DSA5101/Assignments/DSA5101_Assignment_2.pdf",
+          "page": 4,
+          "sourceType": "exercise",
+          "role": "streaming sketches",
+          "status": "current-context"
+        }
+      ]
+    },
+    {
+      "id": "dsa5101-ranking-streams-critical-1",
+      "type": "critical-question",
+      "prompt": "Why is PageRank not the same as counting incoming links?",
+      "angle": "Compare a link from an important page with many links to a link from a low-ranked page.",
+      "modelAnswer": "PageRank weights incoming mass by the source's rank and out-degree, then adds teleportation; raw indegree treats every link equally.",
+      "focus": "model comparison",
+      "sourceRefs": [
+        {
+          "sourceId": "DSA5101/Assignments/DSA5101_Assignment_2.pdf",
+          "page": 2,
+          "sourceType": "exercise",
+          "role": "PageRank iteration",
+          "status": "current-context"
+        },
+        {
+          "sourceId": "DSA5101/Assignments/DSA5101_Assignment_2.pdf",
+          "page": 4,
+          "sourceType": "exercise",
+          "role": "streaming sketches",
+          "status": "current-context"
+        }
+      ]
+    },
+    {
+      "id": "dsa5101-ranking-streams-critical-2",
+      "type": "critical-question",
+      "prompt": "What kind of error is acceptable for a stream sketch, and who decides?",
+      "angle": "Tie the error tolerance to the downstream decision rather than treating approximation as automatically good.",
+      "modelAnswer": "A dashboard may accept a bounded approximate count, while billing or compliance may require an exact count. Memory savings are useful only relative to that decision risk.",
+      "focus": "requirements",
+      "sourceRefs": [
+        {
+          "sourceId": "DSA5101/Assignments/DSA5101_Assignment_2.pdf",
+          "page": 2,
+          "sourceType": "exercise",
+          "role": "PageRank iteration",
+          "status": "current-context"
+        },
+        {
+          "sourceId": "DSA5101/Assignments/DSA5101_Assignment_2.pdf",
+          "page": 4,
+          "sourceType": "exercise",
+          "role": "streaming sketches",
+          "status": "current-context"
+        }
+      ]
+    }
+  ],
+  "questionIds": [
+    "dsa5101-rs-q1",
+    "dsa5101-rs-q2",
+    "dsa5101-bank-010",
+    "dsa5101-bank-011",
+    "dsa5101-bank-012"
+  ],
+  "labIds": [
+    "dsa5101-pagerank-stream"
+  ],
+  "schemaVersion": "nus.lesson.v1"
+}

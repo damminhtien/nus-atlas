@@ -1,0 +1,379 @@
+{
+  "id": "dsa5101-minhash-lsh",
+  "title": "MinHash signatures and LSH probability",
+  "week": 3,
+  "minutes": 50,
+  "summary": "Estimate Jaccard similarity compactly, then use banding to make near-neighbor search practical.",
+  "objectives": [
+    "Relate MinHash collision probability to Jaccard similarity",
+    "Compute an LSH candidate probability",
+    "Explain false positives and false negatives"
+  ],
+  "sourceRefs": [
+    {
+      "sourceId": "DSA5101/Assignments/DSA5101_Assignment_1.pdf",
+      "page": 3,
+      "sourceType": "exercise",
+      "role": "MinHash signature",
+      "status": "current-context"
+    },
+    {
+      "sourceId": "DSA5101/Assignments/DSA5101_Assignment_1.pdf",
+      "page": 4,
+      "sourceType": "exercise",
+      "role": "LSH banding",
+      "status": "current-context"
+    }
+  ],
+  "visualIds": [
+    "dsa5101-minhash-bands"
+  ],
+  "sections": [
+    {
+      "title": "Probability checkpoint",
+      "body": "For one MinHash permutation, $\\Pr[h(A)=h(B)]=J(A,B)$. With $b$ bands of $r$ rows and similarity $s$, the LSH candidate probability is $1-(1-s^r)^b$.",
+      "sourceType": "lecture",
+      "sourceLens": {
+        "status": "core DSA5101 concept",
+        "whyExaminable": "Lecture and assignment material define the current study target; the MMDS index is attached as labeled depth, not merged into lecture scope.",
+        "lecture": [],
+        "officialExercise": [
+          {
+            "sourceId": "DSA5101/Assignments/DSA5101_Assignment_1.pdf",
+            "page": 3,
+            "sourceType": "exercise",
+            "role": "MinHash signature",
+            "status": "current-context"
+          },
+          {
+            "sourceId": "DSA5101/Assignments/DSA5101_Assignment_1.pdf",
+            "page": 4,
+            "sourceType": "exercise",
+            "role": "LSH banding",
+            "status": "current-context"
+          }
+        ],
+        "textbook": [
+          {
+            "sourceId": "DSA5101/Reference textbook MMDS 3rd Edition.pdf",
+            "page": 95,
+            "sourceType": "textbook",
+            "role": "MinHash and LSH depth",
+            "status": "course-depth"
+          }
+        ],
+        "reference": []
+      }
+    }
+  ],
+  "contrastDrills": [
+    {
+      "id": "dsa5101-c6",
+      "type": "contrast",
+      "kind": "concept-contrast",
+      "pair": "Jaccard vs cosine similarity",
+      "prompt": "Which similarity is estimated by MinHash collision probability?",
+      "choices": [
+        "Jaccard",
+        "Cosine",
+        "Euclidean"
+      ],
+      "answer": 0,
+      "explanation": "A random-permutation MinHash collision estimates Jaccard similarity for sets.",
+      "estimatedSeconds": 45,
+      "sourceRefs": [
+        {
+          "sourceId": "DSA5101/Assignments/DSA5101_Assignment_1.pdf",
+          "page": 3,
+          "sourceType": "exercise",
+          "role": "MinHash signature",
+          "status": "current-context"
+        },
+        {
+          "sourceId": "DSA5101/Assignments/DSA5101_Assignment_1.pdf",
+          "page": 4,
+          "sourceType": "exercise",
+          "role": "LSH banding",
+          "status": "current-context"
+        }
+      ]
+    },
+    {
+      "id": "dsa5101-c7",
+      "type": "contrast",
+      "kind": "concept-contrast",
+      "pair": "MinHash vs LSH",
+      "prompt": "What is LSH banding primarily used for?",
+      "choices": [
+        "Exact similarity scoring",
+        "Candidate generation",
+        "Replacing all hashing"
+      ],
+      "answer": 1,
+      "explanation": "LSH makes near-neighbor search cheaper by generating candidates; exact similarity can follow.",
+      "estimatedSeconds": 45,
+      "sourceRefs": [
+        {
+          "sourceId": "DSA5101/Assignments/DSA5101_Assignment_1.pdf",
+          "page": 3,
+          "sourceType": "exercise",
+          "role": "MinHash signature",
+          "status": "current-context"
+        },
+        {
+          "sourceId": "DSA5101/Assignments/DSA5101_Assignment_1.pdf",
+          "page": 4,
+          "sourceType": "exercise",
+          "role": "LSH banding",
+          "status": "current-context"
+        }
+      ]
+    },
+    {
+      "id": "dsa5101-c8",
+      "type": "contrast",
+      "kind": "concept-contrast",
+      "pair": "False positive vs false negative",
+      "prompt": "A dissimilar pair passes the LSH candidate filter. What is this?",
+      "choices": [
+        "False positive",
+        "False negative",
+        "True negative"
+      ],
+      "answer": 0,
+      "explanation": "The filter admitted a pair that is not truly similar; verification controls the cost of this error.",
+      "estimatedSeconds": 45,
+      "sourceRefs": [
+        {
+          "sourceId": "DSA5101/Assignments/DSA5101_Assignment_1.pdf",
+          "page": 3,
+          "sourceType": "exercise",
+          "role": "MinHash signature",
+          "status": "current-context"
+        },
+        {
+          "sourceId": "DSA5101/Assignments/DSA5101_Assignment_1.pdf",
+          "page": 4,
+          "sourceType": "exercise",
+          "role": "LSH banding",
+          "status": "current-context"
+        }
+      ]
+    }
+  ],
+  "math": [
+    {
+      "latex": "\\Pr\\bigl[h_{\\pi}(A)=h_{\\pi}(B)\\bigr] = J(A,B) = \\frac{|A\\cap B|}{|A\\cup B|}",
+      "explanation": "Under a random permutation, the probability that the minimum hashed element agrees is exactly the Jaccard similarity. Repeating permutations gives an estimator whose collision frequency approaches $J(A,B)$.",
+      "symbols": [
+        {
+          "latex": "h_{\\pi}",
+          "meaning": "minimum-hash value under permutation $\\pi$"
+        },
+        {
+          "latex": "J(A,B)",
+          "meaning": "Jaccard similarity"
+        },
+        {
+          "latex": "A\\cap B",
+          "meaning": "shared elements"
+        }
+      ],
+      "sourceType": "lecture"
+    },
+    {
+      "latex": "P_{\\mathrm{candidate}} = 1 - \\bigl(1-s^r\\bigr)^b",
+      "explanation": "A band matches when all $r$ rows in that band match. The pair becomes a candidate if at least one of the $b$ bands matches, so compute one-minus-the-probability that every band fails.",
+      "symbols": [
+        {
+          "latex": "s",
+          "meaning": "similarity estimate"
+        },
+        {
+          "latex": "r",
+          "meaning": "rows per band"
+        },
+        {
+          "latex": "b",
+          "meaning": "number of bands"
+        }
+      ],
+      "sourceType": "lecture",
+      "caveat": "LSH trades false positives and false negatives by changing $b$ and $r$; it is not an exact similarity test."
+    }
+  ],
+  "criticalQuestions": [
+    {
+      "prompt": "Why can LSH return a false positive even when the exact Jaccard similarity is low?",
+      "angle": "Inspect the event 'at least one band matches' rather than treating a candidate as a confirmed neighbor.",
+      "modelAnswer": "A random collision in one band is enough to pass the candidate filter. Exact similarity must be computed afterward if the application needs precision.",
+      "focus": "false positive"
+    },
+    {
+      "prompt": "What happens when you increase the number of rows per band while keeping the number of bands fixed?",
+      "angle": "Examine the exponent $s^r$ and discuss the competing effect on similar and dissimilar pairs.",
+      "modelAnswer": "The threshold becomes sharper: high-similarity pairs are more likely to match a full band, while moderate-similarity pairs are less likely to pass.",
+      "focus": "parameter sensitivity"
+    }
+  ],
+  "courseId": "DSA5101",
+  "moduleId": "dsa5101-minhash",
+  "blocks": [
+    {
+      "id": "dsa5101-minhash-lsh-section-1",
+      "type": "teaching-note",
+      "title": "Probability checkpoint",
+      "body": "For one MinHash permutation, $\\Pr[h(A)=h(B)]=J(A,B)$. With $b$ bands of $r$ rows and similarity $s$, the LSH candidate probability is $1-(1-s^r)^b$.",
+      "sourceType": "lecture",
+      "sourceRefs": [
+        {
+          "sourceId": "DSA5101/Assignments/DSA5101_Assignment_1.pdf",
+          "page": 3,
+          "sourceType": "exercise",
+          "role": "MinHash signature",
+          "status": "current-context"
+        },
+        {
+          "sourceId": "DSA5101/Assignments/DSA5101_Assignment_1.pdf",
+          "page": 4,
+          "sourceType": "exercise",
+          "role": "LSH banding",
+          "status": "current-context"
+        }
+      ]
+    },
+    {
+      "id": "dsa5101-minhash-lsh-formula-1",
+      "type": "formula",
+      "latex": "\\Pr\\bigl[h_{\\pi}(A)=h_{\\pi}(B)\\bigr] = J(A,B) = \\frac{|A\\cap B|}{|A\\cup B|}",
+      "explanation": "Under a random permutation, the probability that the minimum hashed element agrees is exactly the Jaccard similarity. Repeating permutations gives an estimator whose collision frequency approaches $J(A,B)$.",
+      "symbols": [
+        {
+          "latex": "h_{\\pi}",
+          "meaning": "minimum-hash value under permutation $\\pi$"
+        },
+        {
+          "latex": "J(A,B)",
+          "meaning": "Jaccard similarity"
+        },
+        {
+          "latex": "A\\cap B",
+          "meaning": "shared elements"
+        }
+      ],
+      "sourceType": "lecture",
+      "sourceRefs": [
+        {
+          "sourceId": "DSA5101/Assignments/DSA5101_Assignment_1.pdf",
+          "page": 3,
+          "sourceType": "exercise",
+          "role": "MinHash signature",
+          "status": "current-context"
+        },
+        {
+          "sourceId": "DSA5101/Assignments/DSA5101_Assignment_1.pdf",
+          "page": 4,
+          "sourceType": "exercise",
+          "role": "LSH banding",
+          "status": "current-context"
+        }
+      ]
+    },
+    {
+      "id": "dsa5101-minhash-lsh-formula-2",
+      "type": "formula",
+      "latex": "P_{\\mathrm{candidate}} = 1 - \\bigl(1-s^r\\bigr)^b",
+      "explanation": "A band matches when all $r$ rows in that band match. The pair becomes a candidate if at least one of the $b$ bands matches, so compute one-minus-the-probability that every band fails.",
+      "symbols": [
+        {
+          "latex": "s",
+          "meaning": "similarity estimate"
+        },
+        {
+          "latex": "r",
+          "meaning": "rows per band"
+        },
+        {
+          "latex": "b",
+          "meaning": "number of bands"
+        }
+      ],
+      "sourceType": "lecture",
+      "sourceRefs": [
+        {
+          "sourceId": "DSA5101/Assignments/DSA5101_Assignment_1.pdf",
+          "page": 3,
+          "sourceType": "exercise",
+          "role": "MinHash signature",
+          "status": "current-context"
+        },
+        {
+          "sourceId": "DSA5101/Assignments/DSA5101_Assignment_1.pdf",
+          "page": 4,
+          "sourceType": "exercise",
+          "role": "LSH banding",
+          "status": "current-context"
+        }
+      ]
+    },
+    {
+      "id": "dsa5101-minhash-lsh-critical-1",
+      "type": "critical-question",
+      "prompt": "Why can LSH return a false positive even when the exact Jaccard similarity is low?",
+      "angle": "Inspect the event 'at least one band matches' rather than treating a candidate as a confirmed neighbor.",
+      "modelAnswer": "A random collision in one band is enough to pass the candidate filter. Exact similarity must be computed afterward if the application needs precision.",
+      "focus": "false positive",
+      "sourceRefs": [
+        {
+          "sourceId": "DSA5101/Assignments/DSA5101_Assignment_1.pdf",
+          "page": 3,
+          "sourceType": "exercise",
+          "role": "MinHash signature",
+          "status": "current-context"
+        },
+        {
+          "sourceId": "DSA5101/Assignments/DSA5101_Assignment_1.pdf",
+          "page": 4,
+          "sourceType": "exercise",
+          "role": "LSH banding",
+          "status": "current-context"
+        }
+      ]
+    },
+    {
+      "id": "dsa5101-minhash-lsh-critical-2",
+      "type": "critical-question",
+      "prompt": "What happens when you increase the number of rows per band while keeping the number of bands fixed?",
+      "angle": "Examine the exponent $s^r$ and discuss the competing effect on similar and dissimilar pairs.",
+      "modelAnswer": "The threshold becomes sharper: high-similarity pairs are more likely to match a full band, while moderate-similarity pairs are less likely to pass.",
+      "focus": "parameter sensitivity",
+      "sourceRefs": [
+        {
+          "sourceId": "DSA5101/Assignments/DSA5101_Assignment_1.pdf",
+          "page": 3,
+          "sourceType": "exercise",
+          "role": "MinHash signature",
+          "status": "current-context"
+        },
+        {
+          "sourceId": "DSA5101/Assignments/DSA5101_Assignment_1.pdf",
+          "page": 4,
+          "sourceType": "exercise",
+          "role": "LSH banding",
+          "status": "current-context"
+        }
+      ]
+    }
+  ],
+  "questionIds": [
+    "dsa5101-mh-q1",
+    "dsa5101-mh-q2",
+    "dsa5101-bank-007",
+    "dsa5101-bank-008",
+    "dsa5101-bank-009"
+  ],
+  "labIds": [
+    "dsa5101-minhash-bands"
+  ],
+  "schemaVersion": "nus.lesson.v1"
+}

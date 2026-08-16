@@ -1,0 +1,46 @@
+{
+  "lessonId": "dsa5101-frequent-itemsets",
+  "schemaVersion": "nus.study-kit.v1",
+  "flashcards": [
+    {
+      "front": "What does downward closure prune?",
+      "back": "If an itemset is infrequent, every superset is infrequent at the same threshold."
+    },
+    {
+      "front": "Confidence versus interest?",
+      "back": "Confidence is $P(B|A)$; interest compares that confidence with the base rate $P(B)$."
+    },
+    {
+      "front": "What is one pass through the data?",
+      "back": "A sequential read of the baskets/records used to update the current summary."
+    }
+  ],
+  "homework": [
+    {
+      "prompt": "Compute support, confidence, and interest for one rule from the lecture baskets.",
+      "rubric": "Show numerator/denominator and label count versus fraction.",
+      "source": {
+        "sourceId": "DSA5101/Lec1 - Assoc Rules, Frequent itemsets.pdf",
+        "page": 28
+      }
+    },
+    {
+      "prompt": "Give one candidate-pruning example using an infrequent pair.",
+      "rubric": "State the threshold, the failed subset, and the supersets removed.",
+      "source": {
+        "sourceId": "DSA5101/Lec1 - Assoc Rules, Frequent itemsets.pdf",
+        "page": 36
+      }
+    }
+  ],
+  "codeExercises": [
+    {
+      "id": "dsa5101-support-code",
+      "language": "python",
+      "prompt": "Count baskets containing every item in a candidate set.",
+      "starter": "baskets = [{\"m\", \"b\"}, {\"m\", \"c\"}, {\"b\", \"c\"}]\ncandidate = {\"m\", \"b\"}\nprint(sum(candidate <= basket for basket in baskets))",
+      "expected": "1",
+      "solution": "Use set containment; do not count a basket that misses any candidate item."
+    }
+  ]
+}
