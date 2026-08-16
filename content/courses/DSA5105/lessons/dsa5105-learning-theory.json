@@ -37,6 +37,12 @@
       "title": "Lecture core · Generalization gap",
       "body": "The lecture distinction is simple but essential: empirical risk measures observed examples, while population risk measures the distribution of future examples. A low training error is evidence about the sample; it becomes evidence about the population only under assumptions about sampling, model capacity, and stability.",
       "sourceType": "lecture",
+      "teaching": {
+        "concept": "The generalization gap is the difference between expected population loss and observed empirical loss for the fitted hypothesis.",
+        "useWhen": "Use its direction and size to distinguish fitting the sample from transferring to new data.",
+        "examMove": "Compare training and held-out behavior while naming the source of information used to select the model.",
+        "trap": "A gap is not automatically caused by optimization failure; capacity, finite data, leakage, and shift must be separated."
+      },
       "math": {
         "latex": "\\operatorname{gap}(h)=R(h)-\\widehat{R}(h)",
         "explanation": "Subtract the observed-sample risk from the population risk for the same hypothesis. The gap is not a constant property of an algorithm: it depends on the data distribution, sample size, hypothesis class, and evaluation protocol.",
@@ -88,7 +94,13 @@
     {
       "title": "Lecture core · What breaks the estimate?",
       "body": "The basic train–test story assumes the examples are independent and identically distributed. Duplicates, leakage, time drift, and distribution shift can make a validation score look precise while answering the wrong question. Always state the evaluation population before trusting a number.",
-      "sourceType": "lecture"
+      "sourceType": "lecture",
+      "teaching": {
+        "concept": "A sample average can mislead when examples are dependent, leaked, time-shifted, duplicated, or drawn from a different population.",
+        "useWhen": "Use this diagnostic before trusting a validation or test number in a real data pipeline.",
+        "examMove": "Name the violated sampling condition and explain which future-data claim the score can no longer support.",
+        "trap": "More data do not repair a systematically wrong evaluation population."
+      }
     },
     {
       "title": "Reference boundary · Optional theory",
@@ -131,6 +143,12 @@
       "type": "teaching-note",
       "title": "Lecture core · Generalization gap",
       "body": "The lecture distinction is simple but essential: empirical risk measures observed examples, while population risk measures the distribution of future examples. A low training error is evidence about the sample; it becomes evidence about the population only under assumptions about sampling, model capacity, and stability.",
+      "teaching": {
+        "concept": "The generalization gap is the difference between expected population loss and observed empirical loss for the fitted hypothesis.",
+        "useWhen": "Use its direction and size to distinguish fitting the sample from transferring to new data.",
+        "examMove": "Compare training and held-out behavior while naming the source of information used to select the model.",
+        "trap": "A gap is not automatically caused by optimization failure; capacity, finite data, leakage, and shift must be separated."
+      },
       "sourceType": "lecture",
       "sourceRefs": [
         {
@@ -283,6 +301,12 @@
       "type": "teaching-note",
       "title": "Lecture core · What breaks the estimate?",
       "body": "The basic train–test story assumes the examples are independent and identically distributed. Duplicates, leakage, time drift, and distribution shift can make a validation score look precise while answering the wrong question. Always state the evaluation population before trusting a number.",
+      "teaching": {
+        "concept": "A sample average can mislead when examples are dependent, leaked, time-shifted, duplicated, or drawn from a different population.",
+        "useWhen": "Use this diagnostic before trusting a validation or test number in a real data pipeline.",
+        "examMove": "Name the violated sampling condition and explain which future-data claim the score can no longer support.",
+        "trap": "More data do not repair a systematically wrong evaluation population."
+      },
       "sourceType": "lecture",
       "sourceRefs": [
         {

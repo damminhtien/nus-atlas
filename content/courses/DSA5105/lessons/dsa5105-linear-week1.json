@@ -143,6 +143,12 @@
       "title": "Lecture core · Simple linear regression",
       "body": "For scalar input and target, start with affine functions. The model is linear in its parameters even though later basis functions can be nonlinear in the input. The loss determines what counts as a bad fit.",
       "sourceType": "lecture",
+      "teaching": {
+        "concept": "An affine predictor is the smallest useful laboratory for separating model choice, loss choice, and parameter fitting.",
+        "useWhen": "Use it when the input and target are scalar and a line is a defensible first hypothesis class.",
+        "examMove": "Write the hypothesis and loss first, then derive the stationarity equations instead of jumping to the slope formula.",
+        "trap": "Linear in the parameters does not mean the target relationship is truly linear or that the line is adequate."
+      },
       "math": {
         "latex": "\\mathcal{H} = \\{f: f(x)=w_0+w_1x,\\;w_0,w_1\\in\\mathbb{R}\\},\\qquad \\mathcal{L}(y',y)=\\frac{1}{2}(y'-y)^2",
         "explanation": "The hypothesis space contains every line with intercept w0 and slope w1. Squared loss penalizes a residual quadratically, so a residual twice as large contributes four times as much.",
@@ -173,6 +179,12 @@
       "title": "Lecture core · Ordinary least squares",
       "body": "Setting the derivatives of the empirical squared-loss objective to zero gives the centered closed form. The slope is covariance-like: it compares how x and y move together, normalized by the spread of x. The intercept then makes the fitted line pass through the sample means.",
       "sourceType": "lecture",
+      "teaching": {
+        "concept": "OLS chooses the line that minimizes squared residuals; centering separates co-movement from the mean level.",
+        "useWhen": "Use the centered estimator to calculate a slope, check identifiability, and interpret the intercept through the sample means.",
+        "examMove": "Check that the centered input spread is nonzero, compute the centered numerator and denominator, then recover the intercept.",
+        "trap": "A zero denominator means the slope is not identified; it is not a numerical inconvenience to ignore."
+      },
       "math": {
         "latex": "\\hat w_1 = \\frac{\\sum_{i=1}^{N}(x_i-\\bar{x})(y_i-\\bar{y})}{\\sum_{i=1}^{N}(x_i-\\bar{x})^2},\\qquad \\hat w_0=\\bar{y}-\\hat w_1\\bar{x}",
         "explanation": "Compute the sample means first, then the centered numerator and denominator. If all x values are identical, the denominator is zero and the slope is not identified by this formula.",
@@ -199,6 +211,12 @@
       "title": "Lecture core · Capacity and loss",
       "body": "A line can underfit when the hypothesis space is too small. A high-degree polynomial can overfit even without observation noise by following sample-specific wiggles. Mean-square loss is sensitive to outliers; Huber loss is quadratic near zero and linear for large residuals.",
       "sourceType": "lecture",
+      "teaching": {
+        "concept": "Capacity controls which shapes can be represented, while the loss controls which residual patterns are expensive; both affect the fitted model.",
+        "useWhen": "Use this pair to diagnose underfitting, overfitting, and sensitivity to outliers before changing the optimizer.",
+        "examMove": "Separate a representation problem from a loss problem: structured residuals suggest capacity, extreme residual leverage suggests robustness.",
+        "trap": "Increasing capacity can lower training error while worsening generalization; a smoother plot is not evidence by itself."
+      },
       "math": {
         "latex": "\\rho_\\delta(r)=\\begin{cases}\\frac{1}{2}r^2,&|r|\\le\\delta,\\\\\\delta|r|-\\frac{1}{2}\\delta^2,&|r|>\\delta,\\end{cases}",
         "explanation": "The threshold $\\delta$ decides where the loss changes from quadratic to linear. Huber keeps smooth behavior around a good fit while reducing the leverage of extreme residuals compared with squared loss.",
@@ -300,6 +318,12 @@
       "title": "Lecture core · Basis functions and matrix form",
       "body": "General linear basis models use an indexed feature map with $\\phi_0(x)=1$ for an intercept. The model can be nonlinear in x while remaining linear in weights. In matrix form, $\\Phi\\in\\mathbb{R}^{N\\times M}$ stores the basis values; the inverse formula requires the feature matrix to have suitable rank.",
       "sourceType": "lecture",
+      "teaching": {
+        "concept": "A basis map can make predictions nonlinear in the input while keeping the unknown coefficients linear, preserving least-squares algebra.",
+        "useWhen": "Use it to express polynomial, localized, or other feature geometries with one consistent matrix objective.",
+        "examMove": "Write the feature vector, state its shape, and check whether the design columns are independent before using an inverse.",
+        "trap": "Nonlinear features do not make the objective non-convex in the weights when the weights still enter linearly."
+      },
       "math": {
         "latex": "f(x)=\\sum_{j=0}^{M-1}w_j\\phi_j(x),\\qquad \\phi(x)=(\\phi_0(x),\\ldots,\\phi_{M-1}(x))^\\top\\in\\mathbb R^M,\\qquad \\Phi\\in\\mathbb R^{N\\times M}",
         "explanation": "The lecture indexes basis functions from 0, so $\\phi_0(x)=1$ and $\\phi_1(x)=x$ recover simple linear regression. The closed form is valid when the normal matrix is invertible; otherwise use a pseudoinverse or regularization and state the rank issue.",
@@ -381,6 +405,12 @@
       "title": "Lecture core · Regularization",
       "body": "When the matrix is singular, underdetermined, or too flexible, regularization changes the objective rather than pretending the data identify one unique unregularized answer. L2 regularization prefers small weights; L1 regularization can produce exact zeros. Choose the strength with validation data.",
       "sourceType": "lecture",
+      "teaching": {
+        "concept": "Regularization changes the objective to prefer stable parameter values when the sample alone permits unstable or overly flexible fits.",
+        "useWhen": "Use ridge for continuous shrinkage and improved conditioning; use an L1 penalty when sparse coefficients are part of the goal.",
+        "examMove": "State the fit term, penalty, and validation rule, then explain the bias–variance or identifiability trade-off.",
+        "trap": "Regularization does not erase the need for a validation set and does not prove that a smoother curve is better."
+      },
       "math": {
         "latex": "\\hat w_\\lambda=\\arg\\min_w\\left[\\frac{1}{2N}\\lVert\\Phi w-y\\rVert_2^2+\\frac{\\lambda}{2}\\lVert w\\rVert_2^2\\right]",
         "explanation": "The first term measures fit and the second charges for coefficient magnitude. Increasing $\\lambda$ suppresses unstable directions; it also adds bias, so its value is a model-selection decision.",
@@ -476,6 +506,12 @@
       "title": "Lecture core · Multiclass linear classification",
       "body": "For K classes, one-hot targets are vectors rather than ordered numbers. A linear score for each class is passed through softmax to obtain probabilities, and cross-entropy rewards probability mass assigned to the observed class. For two classes, the two logits reduce to one score difference and the loss becomes logistic loss.",
       "sourceType": "lecture",
+      "teaching": {
+        "concept": "The regression template extends to K class scores, but the target representation and loss must respect nominal class identity.",
+        "useWhen": "Use one-hot targets, a score vector, and a declared classification loss when moving from scalar regression to multiclass prediction.",
+        "examMove": "Check the matrix dimensions before choosing between least squares, 0–1 loss, or cross-entropy.",
+        "trap": "Do not regress scalar class IDs and call the numeric spacing a meaningful class distance."
+      },
       "math": {
         "latex": "g(z)_k=\\frac{\\exp(z_k)}{\\sum_{j=1}^{K}\\exp(z_j)},\\qquad \\mathcal{L}(y',y)=-\\sum_{k=1}^{K}y_k\\log y'_k",
         "explanation": "Softmax normalizes class scores into a probability vector. With one-hot y, only the log probability of the true class contributes to cross-entropy; do not treat class IDs as ordinal measurements.",
@@ -569,6 +605,12 @@
       "type": "teaching-note",
       "title": "Lecture core · Simple linear regression",
       "body": "For scalar input and target, start with affine functions. The model is linear in its parameters even though later basis functions can be nonlinear in the input. The loss determines what counts as a bad fit.",
+      "teaching": {
+        "concept": "An affine predictor is the smallest useful laboratory for separating model choice, loss choice, and parameter fitting.",
+        "useWhen": "Use it when the input and target are scalar and a line is a defensible first hypothesis class.",
+        "examMove": "Write the hypothesis and loss first, then derive the stationarity equations instead of jumping to the slope formula.",
+        "trap": "Linear in the parameters does not mean the target relationship is truly linear or that the line is adequate."
+      },
       "sourceType": "lecture",
       "sourceRefs": [
         {
@@ -859,6 +901,12 @@
       "type": "teaching-note",
       "title": "Lecture core · Ordinary least squares",
       "body": "Setting the derivatives of the empirical squared-loss objective to zero gives the centered closed form. The slope is covariance-like: it compares how x and y move together, normalized by the spread of x. The intercept then makes the fitted line pass through the sample means.",
+      "teaching": {
+        "concept": "OLS chooses the line that minimizes squared residuals; centering separates co-movement from the mean level.",
+        "useWhen": "Use the centered estimator to calculate a slope, check identifiability, and interpret the intercept through the sample means.",
+        "examMove": "Check that the centered input spread is nonzero, compute the centered numerator and denominator, then recover the intercept.",
+        "trap": "A zero denominator means the slope is not identified; it is not a numerical inconvenience to ignore."
+      },
       "sourceType": "lecture",
       "sourceRefs": [
         {
@@ -1145,6 +1193,12 @@
       "type": "teaching-note",
       "title": "Lecture core · Capacity and loss",
       "body": "A line can underfit when the hypothesis space is too small. A high-degree polynomial can overfit even without observation noise by following sample-specific wiggles. Mean-square loss is sensitive to outliers; Huber loss is quadratic near zero and linear for large residuals.",
+      "teaching": {
+        "concept": "Capacity controls which shapes can be represented, while the loss controls which residual patterns are expensive; both affect the fitted model.",
+        "useWhen": "Use this pair to diagnose underfitting, overfitting, and sensitivity to outliers before changing the optimizer.",
+        "examMove": "Separate a representation problem from a loss problem: structured residuals suggest capacity, extreme residual leverage suggests robustness.",
+        "trap": "Increasing capacity can lower training error while worsening generalization; a smoother plot is not evidence by itself."
+      },
       "sourceType": "lecture",
       "sourceRefs": [
         {
@@ -1239,6 +1293,12 @@
       "type": "teaching-note",
       "title": "Lecture core · Basis functions and matrix form",
       "body": "General linear basis models use an indexed feature map with $\\phi_0(x)=1$ for an intercept. The model can be nonlinear in x while remaining linear in weights. In matrix form, $\\Phi\\in\\mathbb{R}^{N\\times M}$ stores the basis values; the inverse formula requires the feature matrix to have suitable rank.",
+      "teaching": {
+        "concept": "A basis map can make predictions nonlinear in the input while keeping the unknown coefficients linear, preserving least-squares algebra.",
+        "useWhen": "Use it to express polynomial, localized, or other feature geometries with one consistent matrix objective.",
+        "examMove": "Write the feature vector, state its shape, and check whether the design columns are independent before using an inverse.",
+        "trap": "Nonlinear features do not make the objective non-convex in the weights when the weights still enter linearly."
+      },
       "sourceType": "lecture",
       "sourceRefs": [
         {
@@ -1353,6 +1413,12 @@
       "type": "teaching-note",
       "title": "Lecture core · Regularization",
       "body": "When the matrix is singular, underdetermined, or too flexible, regularization changes the objective rather than pretending the data identify one unique unregularized answer. L2 regularization prefers small weights; L1 regularization can produce exact zeros. Choose the strength with validation data.",
+      "teaching": {
+        "concept": "Regularization changes the objective to prefer stable parameter values when the sample alone permits unstable or overly flexible fits.",
+        "useWhen": "Use ridge for continuous shrinkage and improved conditioning; use an L1 penalty when sparse coefficients are part of the goal.",
+        "examMove": "State the fit term, penalty, and validation rule, then explain the bias–variance or identifiability trade-off.",
+        "trap": "Regularization does not erase the need for a validation set and does not prove that a smoother curve is better."
+      },
       "sourceType": "lecture",
       "sourceRefs": [
         {
@@ -1443,6 +1509,12 @@
       "type": "teaching-note",
       "title": "Lecture core · Multiclass linear classification",
       "body": "For K classes, one-hot targets are vectors rather than ordered numbers. A linear score for each class is passed through softmax to obtain probabilities, and cross-entropy rewards probability mass assigned to the observed class. For two classes, the two logits reduce to one score difference and the loss becomes logistic loss.",
+      "teaching": {
+        "concept": "The regression template extends to K class scores, but the target representation and loss must respect nominal class identity.",
+        "useWhen": "Use one-hot targets, a score vector, and a declared classification loss when moving from scalar regression to multiclass prediction.",
+        "examMove": "Check the matrix dimensions before choosing between least squares, 0–1 loss, or cross-entropy.",
+        "trap": "Do not regress scalar class IDs and call the numeric spacing a meaningful class distance."
+      },
       "sourceType": "lecture",
       "sourceRefs": [
         {

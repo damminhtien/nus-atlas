@@ -30,12 +30,24 @@
     {
       "title": "Lecture core · Three different questions",
       "body": "PCA asks for a low-dimensional linear view that preserves variance. K-means asks which centroid is closest under squared Euclidean distance. GMM asks which latent component plausibly generated the point and returns a probability, not just a label.",
-      "sourceType": "lecture"
+      "sourceType": "lecture",
+      "teaching": {
+        "concept": "A fitted model can be judged by representation, estimation, or optimization questions; these are different failure diagnoses.",
+        "useWhen": "Use the distinction when two models have similar training loss but differ in stability, capacity, or convergence.",
+        "examMove": "Ask first whether the function is representable, then whether finite data identify it, then whether the algorithm found the intended solution.",
+        "trap": "Improving the optimizer cannot repair a hypothesis class that excludes the target."
+      }
     },
     {
       "title": "Lecture core · Kernel idea",
       "body": "A kernel lets us compute inner products after an implicit feature map without explicitly constructing every transformed coordinate. The useful mental model is geometry in a richer space; the kernel choice controls which notion of similarity is available.",
       "sourceType": "lecture",
+      "teaching": {
+        "concept": "A kernel supplies feature-space inner products without explicitly constructing every feature coordinate.",
+        "useWhen": "Use it when a nonlinear geometry is useful but pairwise similarity is cheaper or clearer than explicit feature construction.",
+        "examMove": "Check that the Gram matrix is positive semidefinite before treating a similarity function as a valid kernel.",
+        "trap": "A visually plausible similarity is not automatically a valid kernel or a useful predictor."
+      },
       "math": {
         "latex": "k(x,z)=\\langle\\phi(x),\\phi(z)\\rangle",
         "explanation": "The kernel value is the inner product of the inputs after the implicit feature map. A method can therefore use richer geometry without storing every transformed coordinate explicitly.",
@@ -143,6 +155,12 @@
       "type": "teaching-note",
       "title": "Lecture core · Three different questions",
       "body": "PCA asks for a low-dimensional linear view that preserves variance. K-means asks which centroid is closest under squared Euclidean distance. GMM asks which latent component plausibly generated the point and returns a probability, not just a label.",
+      "teaching": {
+        "concept": "A fitted model can be judged by representation, estimation, or optimization questions; these are different failure diagnoses.",
+        "useWhen": "Use the distinction when two models have similar training loss but differ in stability, capacity, or convergence.",
+        "examMove": "Ask first whether the function is representable, then whether finite data identify it, then whether the algorithm found the intended solution.",
+        "trap": "Improving the optimizer cannot repair a hypothesis class that excludes the target."
+      },
       "sourceType": "lecture",
       "sourceRefs": [
         {
@@ -166,6 +184,12 @@
       "type": "teaching-note",
       "title": "Lecture core · Kernel idea",
       "body": "A kernel lets us compute inner products after an implicit feature map without explicitly constructing every transformed coordinate. The useful mental model is geometry in a richer space; the kernel choice controls which notion of similarity is available.",
+      "teaching": {
+        "concept": "A kernel supplies feature-space inner products without explicitly constructing every feature coordinate.",
+        "useWhen": "Use it when a nonlinear geometry is useful but pairwise similarity is cheaper or clearer than explicit feature construction.",
+        "examMove": "Check that the Gram matrix is positive semidefinite before treating a similarity function as a valid kernel.",
+        "trap": "A visually plausible similarity is not automatically a valid kernel or a useful predictor."
+      },
       "sourceType": "lecture",
       "sourceRefs": [
         {

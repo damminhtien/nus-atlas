@@ -99,7 +99,17 @@
   }
   function lessonSection(section) {
     const badge = section.sourceType ? sourceBadge({ sourceType: section.sourceType, status: section.status }) : "";
-    return `<section class="nus-teach-card reveal"><div class="nus-teach-head"><h3>${esc(section.title)}</h3>${badge}</div>${paragraphs(section.body)}${section.math ? mathBlock(section.math) : ""}${sourceLens(section.sourceLens)}</section>`;
+    const teaching = section.teaching || {};
+    const teachingFields = [
+      ["Core idea", teaching.concept],
+      ["Use it when", teaching.useWhen],
+      ["Exam move", teaching.examMove],
+      ["Common trap", teaching.trap]
+    ].filter(([, value]) => value);
+    const teachingHtml = teachingFields.length
+      ? `<div class="nus-teaching-guide">${teachingFields.map(([label, value]) => `<div class="nus-teaching-guide-item"><b>${esc(label)}</b><p>${text(value)}</p></div>`).join("")}</div>`
+      : "";
+    return `<section class="nus-teach-card reveal"><div class="nus-teach-head"><h3>${esc(section.title)}</h3>${badge}</div>${paragraphs(section.body)}${teachingHtml}${section.math ? mathBlock(section.math) : ""}${sourceLens(section.sourceLens)}</section>`;
   }
   function workedExample(example) {
     const steps = (example.steps || []).map((step, index) => `<li><b>${index + 1}.</b><span>${text(step)}</span></li>`).join("");

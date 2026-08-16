@@ -62,6 +62,12 @@
       "title": "Lecture core · Margin and scale",
       "body": "For labels $y_i\\in\\{-1,+1\\}$, a separating hyperplane can be rescaled without changing the boundary. SVM fixes the scale by requiring $y_i(w^\\top x_i+b)\\ge1$. The closest points then have geometric margin $1/\\lVert w\\rVert$, so minimizing $\\frac12\\lVert w\\rVert^2$ maximizes the margin.",
       "sourceType": "lecture",
+      "teaching": {
+        "concept": "SVM fixes the arbitrary scale of a separating hyperplane, then maximizes geometric margin by minimizing the norm of its normal vector.",
+        "useWhen": "Use the normalized signed margin to compare separators and derive the hard-margin primal objective.",
+        "examMove": "Write the label-scaled constraint first, then translate norm minimization into widest-margin geometry.",
+        "trap": "The raw score is scale-dependent; only the normalized geometric margin has the intended interpretation."
+      },
       "math": {
         "latex": "\\min_{w,b}\\frac12\\lVert w\\rVert_2^2\\quad\\text{s.t.}\\quad y_i(w^\\top x_i+b)\\ge1",
         "explanation": "The constraints place positive examples on or beyond one side of the normalized boundary and negative examples on the other. The objective prefers the widest feasible separator.",
@@ -200,6 +206,12 @@
       "type": "teaching-note",
       "title": "Lecture core · Margin and scale",
       "body": "For labels $y_i\\in\\{-1,+1\\}$, a separating hyperplane can be rescaled without changing the boundary. SVM fixes the scale by requiring $y_i(w^\\top x_i+b)\\ge1$. The closest points then have geometric margin $1/\\lVert w\\rVert$, so minimizing $\\frac12\\lVert w\\rVert^2$ maximizes the margin.",
+      "teaching": {
+        "concept": "SVM fixes the arbitrary scale of a separating hyperplane, then maximizes geometric margin by minimizing the norm of its normal vector.",
+        "useWhen": "Use the normalized signed margin to compare separators and derive the hard-margin primal objective.",
+        "examMove": "Write the label-scaled constraint first, then translate norm minimization into widest-margin geometry.",
+        "trap": "The raw score is scale-dependent; only the normalized geometric margin has the intended interpretation."
+      },
       "sourceType": "lecture",
       "sourceRefs": [
         {

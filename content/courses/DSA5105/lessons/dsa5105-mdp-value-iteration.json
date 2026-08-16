@@ -62,6 +62,12 @@
       "title": "Lecture core · Finite MDP backup",
       "body": "For a finite MDP, value iteration applies the optimality operator repeatedly: $V_{t+1}(s)=\\max_a\\sum_{s',r}p(s',r\\mid s,a)[r+\\gamma V_t(s')]$. Start from a stated initialization such as $V_0=0$ and show each requested sweep; do not jump directly to an unverified fixed point.",
       "sourceType": "lecture",
+      "teaching": {
+        "concept": "Value iteration replaces a long-horizon decision with immediate reward plus discounted continuation value, then chooses the best action.",
+        "useWhen": "Use the Bellman backup to compute each requested sweep from a stated initialization.",
+        "examMove": "List every action candidate, include transition probabilities, apply the discount, and take the maximum only at the end.",
+        "trap": "Jumping straight to a fixed point hides indexing and terminal-state errors."
+      },
       "math": {
         "latex": "V_{t+1}=T^*V_t",
         "explanation": "The Bellman optimality operator maps one value estimate to a one-step lookahead estimate. The max is over the current action choice; the transition model still averages over possible outcomes.",
@@ -179,6 +185,12 @@
       "type": "teaching-note",
       "title": "Lecture core · Finite MDP backup",
       "body": "For a finite MDP, value iteration applies the optimality operator repeatedly: $V_{t+1}(s)=\\max_a\\sum_{s',r}p(s',r\\mid s,a)[r+\\gamma V_t(s')]$. Start from a stated initialization such as $V_0=0$ and show each requested sweep; do not jump directly to an unverified fixed point.",
+      "teaching": {
+        "concept": "Value iteration replaces a long-horizon decision with immediate reward plus discounted continuation value, then chooses the best action.",
+        "useWhen": "Use the Bellman backup to compute each requested sweep from a stated initialization.",
+        "examMove": "List every action candidate, include transition probabilities, apply the discount, and take the maximum only at the end.",
+        "trap": "Jumping straight to a fixed point hides indexing and terminal-state errors."
+      },
       "sourceType": "lecture",
       "sourceRefs": [
         {

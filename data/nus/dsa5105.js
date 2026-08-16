@@ -91,13 +91,255 @@
     const clean = title.replace(/^(?:Lecture core|Lecture bridge|Official exercise|Textbook depth|Reference depth|Core derivation)\s*·\s*/, "");
     throw new Error(`Missing formula metadata for DSA5105 formula note: ${title}`);
   };
+  const TEACHING_GUIDES = {
+    "What is being learned?": {
+      concept: "A learning problem is a relationship between inputs, targets, a hypothesis class, and a loss—not a vague claim that a model is intelligent.",
+      useWhen: "Use this checklist before choosing an algorithm: name what is observed, what must be predicted, which functions are allowed, and how an error is measured.",
+      examMove: "Translate a word problem into x, y, H, and loss before writing an objective.",
+      trap: "Do not confuse the observed sample with the unknown target relationship or treat the loss as the task itself."
+    },
+    "Mitchell's E–T–P definition": {
+      concept: "Learning means measured performance on a task improves with experience; experience, task, and performance are all required to make the claim testable.",
+      useWhen: "Use E–T–P to audit whether a system description says what data changed, what task improved, and which metric proves improvement.",
+      examMove: "Give one concrete example for E, T, and P rather than repeating the three letters.",
+      trap: "A model producing plausible outputs is not evidence of learning until improvement is measured against a declared task."
+    },
+    "Training set and oracle": {
+      concept: "The training set is finite evidence; the oracle is the unknown process that generates targets, deterministically or stochastically.",
+      useWhen: "Use the distinction whenever a question asks why fitting observed labels does not guarantee correct predictions on new inputs.",
+      examMove: "State whether the target is a function or a conditional distribution, then identify what the sample actually reveals.",
+      trap: "Do not write the observed label as if it were the full oracle or assume every real target is deterministic."
+    },
+    "Data representation": {
+      concept: "Encoding determines which order, distance, and geometry the model can see; it is part of the hypothesis design.",
+      useWhen: "Use ordinal codes only when order is meaningful; use one-hot or another categorical representation for nominal identity.",
+      examMove: "Name the relationship the encoding preserves and the false relationship it would introduce.",
+      trap: "Integer labels do not become quantitative merely because they are written as numbers."
+    },
+    "Empirical risk": {
+      concept: "Empirical risk is the average observed loss used as a finite-sample proxy for expected future loss.",
+      useWhen: "Use it to write the training objective, compare fitted models on the same sample, and explain why a regularizer may be added separately.",
+      examMove: "Identify the sample average, the loss, and the hypothesis being optimized; then state what the expression cannot guarantee.",
+      trap: "Low empirical risk is not low population risk without assumptions about sampling, capacity, and stability."
+    },
+    "Train, validation, test": {
+      concept: "The three splits have different information flows: parameters are fit on training data, choices are made on validation data, and the test set is reserved for the final estimate.",
+      useWhen: "Use this rule whenever a hyperparameter, architecture, feature set, or stopping point must be selected.",
+      examMove: "Draw the decision timeline and mark which split is allowed to influence each decision.",
+      trap: "Repeatedly checking test performance turns the test set into validation data and invalidates the final claim."
+    },
+    "Three sources of error": {
+      concept: "The lecture separates approximation, estimation, and optimization: class limitation, finite-sample movement, and imperfect search.",
+      useWhen: "Use the object transitions to diagnose a failure: oracle to best class member, best class member to sample fit, or initialization to the empirical minimizer.",
+      examMove: "Name the source and the two objects it connects; do not replace estimation with the textbook's broader generalization label.",
+      trap: "This is a diagnostic decomposition, not an invitation to merge the lecture map with the textbook's three paradigms."
+    },
+    "Simple linear regression": {
+      concept: "An affine predictor is the smallest useful laboratory for separating model choice, loss choice, and parameter fitting.",
+      useWhen: "Use it when the input and target are scalar and a line is a defensible first hypothesis class.",
+      examMove: "Write the hypothesis and loss first, then derive the stationarity equations instead of jumping to the slope formula.",
+      trap: "Linear in the parameters does not mean the target relationship is truly linear or that the line is adequate."
+    },
+    "Ordinary least squares": {
+      concept: "OLS chooses the line that minimizes squared residuals; centering separates co-movement from the mean level.",
+      useWhen: "Use the centered estimator to calculate a slope, check identifiability, and interpret the intercept through the sample means.",
+      examMove: "Check that the centered input spread is nonzero, compute the centered numerator and denominator, then recover the intercept.",
+      trap: "A zero denominator means the slope is not identified; it is not a numerical inconvenience to ignore."
+    },
+    "Capacity and loss": {
+      concept: "Capacity controls which shapes can be represented, while the loss controls which residual patterns are expensive; both affect the fitted model.",
+      useWhen: "Use this pair to diagnose underfitting, overfitting, and sensitivity to outliers before changing the optimizer.",
+      examMove: "Separate a representation problem from a loss problem: structured residuals suggest capacity, extreme residual leverage suggests robustness.",
+      trap: "Increasing capacity can lower training error while worsening generalization; a smoother plot is not evidence by itself."
+    },
+    "Basis functions and matrix form": {
+      concept: "A basis map can make predictions nonlinear in the input while keeping the unknown coefficients linear, preserving least-squares algebra.",
+      useWhen: "Use it to express polynomial, localized, or other feature geometries with one consistent matrix objective.",
+      examMove: "Write the feature vector, state its shape, and check whether the design columns are independent before using an inverse.",
+      trap: "Nonlinear features do not make the objective non-convex in the weights when the weights still enter linearly."
+    },
+    "Regularization": {
+      concept: "Regularization changes the objective to prefer stable parameter values when the sample alone permits unstable or overly flexible fits.",
+      useWhen: "Use ridge for continuous shrinkage and improved conditioning; use an L1 penalty when sparse coefficients are part of the goal.",
+      examMove: "State the fit term, penalty, and validation rule, then explain the bias–variance or identifiability trade-off.",
+      trap: "Regularization does not erase the need for a validation set and does not prove that a smoother curve is better."
+    },
+    "Multiclass linear classification": {
+      concept: "The regression template extends to K class scores, but the target representation and loss must respect nominal class identity.",
+      useWhen: "Use one-hot targets, a score vector, and a declared classification loss when moving from scalar regression to multiclass prediction.",
+      examMove: "Check the matrix dimensions before choosing between least squares, 0–1 loss, or cross-entropy.",
+      trap: "Do not regress scalar class IDs and call the numeric spacing a meaningful class distance."
+    },
+    "ERM versus population risk": {
+      concept: "ERM is computable from the finite sample; population risk is the expected loss on future draws and is the quantity we ultimately care about.",
+      useWhen: "Use the pair to explain generalization, why validation is needed, and why a training curve alone cannot certify deployment performance.",
+      examMove: "Write both expectations explicitly and state the sampling assumption that makes their comparison meaningful.",
+      trap: "A sample average is not automatically an unbiased or relevant estimate under leakage, dependence, or distribution shift."
+    },
+    "Why iid matters": {
+      concept: "IID sampling is the bridge that lets a finite sample stand in for the same population on which risk is discussed.",
+      useWhen: "Use it to diagnose leakage, duplicate evidence, time drift, or a validation set drawn from a different population.",
+      examMove: "State what is independent, what has the same distribution, and which claim fails when either condition is broken.",
+      trap: "A large split can still answer the wrong question if future data or related groups are not represented correctly."
+    },
+    "Generalization gap": {
+      concept: "The generalization gap is the difference between expected population loss and observed empirical loss for the fitted hypothesis.",
+      useWhen: "Use its direction and size to distinguish fitting the sample from transferring to new data.",
+      examMove: "Compare training and held-out behavior while naming the source of information used to select the model.",
+      trap: "A gap is not automatically caused by optimization failure; capacity, finite data, leakage, and shift must be separated."
+    },
+    "What breaks the estimate?": {
+      concept: "A sample average can mislead when examples are dependent, leaked, time-shifted, duplicated, or drawn from a different population.",
+      useWhen: "Use this diagnostic before trusting a validation or test number in a real data pipeline.",
+      examMove: "Name the violated sampling condition and explain which future-data claim the score can no longer support.",
+      trap: "More data do not repair a systematically wrong evaluation population."
+    },
+    "OLS baseline": {
+      concept: "OLS is the unregularized reference objective against which rank, conditioning, shrinkage, and sparsity are compared.",
+      useWhen: "Use it as the baseline before claiming that ridge or lasso improved the model.",
+      examMove: "State the objective and compare its solution properties, not just its training error, with the regularized alternative.",
+      trap: "A closed form does not imply a unique or stable coefficient vector when the design is rank deficient."
+    },
+    "Ridge and lasso": {
+      concept: "Ridge shrinks all coefficients smoothly; lasso's absolute-value geometry can set some coefficients exactly to zero.",
+      useWhen: "Use the penalty geometry to predict coefficient behavior and choose which model-selection question to ask on validation data.",
+      examMove: "Contrast the norm, geometry, coefficient effect, and bias–variance consequence in four short steps.",
+      trap: "Sparsity is not the same as truth, and shrinkage strength must not be selected from the final test score."
+    },
+    "Three different questions": {
+      concept: "A fitted model can be judged by representation, estimation, or optimization questions; these are different failure diagnoses.",
+      useWhen: "Use the distinction when two models have similar training loss but differ in stability, capacity, or convergence.",
+      examMove: "Ask first whether the function is representable, then whether finite data identify it, then whether the algorithm found the intended solution.",
+      trap: "Improving the optimizer cannot repair a hypothesis class that excludes the target."
+    },
+    "Kernel idea": {
+      concept: "A kernel supplies feature-space inner products without explicitly constructing every feature coordinate.",
+      useWhen: "Use it when a nonlinear geometry is useful but pairwise similarity is cheaper or clearer than explicit feature construction.",
+      examMove: "Check that the Gram matrix is positive semidefinite before treating a similarity function as a valid kernel.",
+      trap: "A visually plausible similarity is not automatically a valid kernel or a useful predictor."
+    },
+    "Center before projecting": {
+      concept: "PCA finds variation around the sample mean, so centering is what makes the covariance directions about spread rather than offset.",
+      useWhen: "Use centering before covariance, eigenvector, projection, or reconstruction calculations.",
+      examMove: "Subtract the feature-wise mean, build covariance, then interpret the largest-eigenvalue direction.",
+      trap: "Skipping centering can make the first component describe the origin offset instead of the data variation."
+    },
+    "K-means loop": {
+      concept: "K-means alternates hard assignments and centroid means, decreasing the within-cluster squared-distance objective at each conditional step.",
+      useWhen: "Use it to perform one iteration and to explain why scale, outliers, and initialization affect the result.",
+      examMove: "Write the assignment and update separately, name the objective each improves, and state the local-optimum limitation.",
+      trap: "A cluster index is not a probability and a converged run is not evidence of a globally optimal partition."
+    },
+    "Linear in parameters, not necessarily in x": {
+      concept: "The algebra is linear in the trainable weights even when the fixed feature map is nonlinear in the input.",
+      useWhen: "Use this distinction to decide whether least-squares convexity and normal-equation reasoning still apply.",
+      examMove: "Identify the variable being optimized; nonlinearity in a fixed feature is different from nonlinearity in the parameters.",
+      trap: "Calling a basis model nonlinear without specifying the variable hides the property that makes the optimization easy."
+    },
+    "Margin and scale": {
+      concept: "SVM fixes the arbitrary scale of a separating hyperplane, then maximizes geometric margin by minimizing the norm of its normal vector.",
+      useWhen: "Use the normalized signed margin to compare separators and derive the hard-margin primal objective.",
+      examMove: "Write the label-scaled constraint first, then translate norm minimization into widest-margin geometry.",
+      trap: "The raw score is scale-dependent; only the normalized geometric margin has the intended interpretation."
+    },
+    "A tree is a piecewise-constant model": {
+      concept: "A decision tree partitions input space into regions and assigns one local prediction to each region.",
+      useWhen: "Use the region view to evaluate a split, discuss impurity, and explain why depth changes bias and variance.",
+      examMove: "State the region, its prediction, and the impurity reduction for the candidate split.",
+      trap: "A deeper tree can fit more structure but can also memorize sample noise; depth is a capacity choice."
+    },
+    "A shallow network needs a nonlinearity": {
+      concept: "Without an activation, composing affine layers collapses to one affine map; the activation is what expands the representable function class.",
+      useWhen: "Use it to explain why architecture alone does not create nonlinear modeling power.",
+      examMove: "Multiply two affine maps symbolically, then point to the activation as the step that prevents collapse.",
+      trap: "More linear layers do not replace a nonlinear activation."
+    },
+    "Center, then form covariance": {
+      concept: "PCA turns centered data variation into a covariance eigensystem whose leading directions retain the most variance.",
+      useWhen: "Use it to derive the first component, compare eigenvalues, and compute a low-dimensional projection.",
+      examMove: "Show the centering, covariance convention, unit-norm constraint, and eigenvector selection.",
+      trap: "Eigenvector sign is arbitrary, but the centering and covariance convention are not optional."
+    },
+    "K-means assignment and update": {
+      concept: "One K-means iteration is a concrete alternating-minimization calculation: nearest-centroid assignment followed by a mean update.",
+      useWhen: "Use it for numerical questions and to verify that an update decreases or preserves the within-cluster objective.",
+      examMove: "Keep old centroids for assignment, then recompute each non-empty centroid from the newly assigned points.",
+      trap: "Mixing assignments from different iterations or dividing by an empty cluster silently changes the algorithm."
+    },
+    "Finite MDP backup": {
+      concept: "Value iteration replaces a long-horizon decision with immediate reward plus discounted continuation value, then chooses the best action.",
+      useWhen: "Use the Bellman backup to compute each requested sweep from a stated initialization.",
+      examMove: "List every action candidate, include transition probabilities, apply the discount, and take the maximum only at the end.",
+      trap: "Jumping straight to a fixed point hides indexing and terminal-state errors."
+    },
+    "Optimal substructure": {
+      concept: "Dynamic programming works when the best solution can be decomposed into a local final decision plus an optimal smaller subproblem.",
+      useWhen: "Use it to define a state, recurrence, base cases, and complexity for a shortest-path or sequence problem.",
+      examMove: "Derive the recurrence from the final move, not from a memorized pattern, and state what cost is charged.",
+      trap: "A recurrence without boundary conditions or a precise state is not a complete algorithm."
+    },
+    "Bellman backup": {
+      concept: "A Bellman backup propagates reward information through a transition graph; optimality takes a maximum while a fixed policy averages over actions.",
+      useWhen: "Use it to distinguish policy evaluation, value iteration, and action-value updates.",
+      examMove: "Identify whether the question supplies a policy or asks for an optimum before choosing sum versus max.",
+      trap: "A graph-neighbor aggregation rule and an RL transition backup share local flow, not the same objective."
+    },
+    "MDP vocabulary": {
+      concept: "An MDP makes state, action, transition, reward, policy, and return explicit; the Markov property is the information-sufficiency assumption.",
+      useWhen: "Use the vocabulary before writing a value or policy equation so each conditional quantity has a clear meaning.",
+      examMove: "State what is conditioned on, what is random, and whether the policy is fixed or being optimized.",
+      trap: "A delayed reward problem is not fully specified by states and actions alone; transition and reward dynamics matter."
+    },
+    "Huber ψ-function": {
+      concept: "The derivative of Huber loss is linear near zero and capped in magnitude for extreme residuals, so one outlier cannot dominate the first-order condition indefinitely.",
+      useWhen: "Use it to derive the location-estimate stationarity equation and explain bounded per-observation contribution.",
+      examMove: "Differentiate both branches, check continuity at the threshold, then sum the score contributions.",
+      trap: "Call the derivative a score or psi-function; do not claim the whole estimator is automatically robust under every design."
+    },
+    "Singular OLS and the null space": {
+      concept: "Rank deficiency creates a family of equally good least-squares parameters because null-space directions are invisible in the fitted training vector.",
+      useWhen: "Use the pseudoinverse plus null-space term to describe non-uniqueness and to explain why off-sample behavior can differ.",
+      examMove: "Verify the null-space projection and distinguish identical fitted values from identical parameter vectors.",
+      trap: "The pseudoinverse chooses a minimum-norm representative; it does not make the original parameterization identifiable."
+    },
+    "Ridge as a spectral filter": {
+      concept: "Ridge shifts every eigenvalue of the normal matrix by a positive amount, shrinking weakly identified directions more strongly and restoring uniqueness.",
+      useWhen: "Use the eigenbasis to derive the shrinkage factor and explain why ridge is stable when OLS is singular or ill-conditioned.",
+      examMove: "State positive definiteness, project the normal equations onto an eigenvector, and compare with the unique OLS solution.",
+      trap: "The OLS ratio requires positive eigenvalues; ridge can be unique even when that comparison is undefined."
+    },
+    "One-hot least squares": {
+      concept: "Least-squares classification fits vector-valued one-hot indicators; it is convex and convenient, but Euclidean target distance is only a surrogate for classification correctness.",
+      useWhen: "Use it to connect one-hot encoding to the linear score model before contrasting 0–1 loss and cross-entropy.",
+      examMove: "State that the targets are vectors, write the score shape, and separate the training surrogate from the final classification metric.",
+      trap: "The weakness is not scalar regression of class IDs, and least squares can still produce a classifier."
+    },
+    "From 0–1 loss to a surrogate": {
+      concept: "0–1 loss is task-aligned but flat and discontinuous; a smooth surrogate supplies optimization signal while the final decision rule remains separate.",
+      useWhen: "Use the chain to explain why cross-entropy is trained even when accuracy is reported.",
+      examMove: "Name the evaluation metric, identify its optimization obstacle, then state what property the surrogate contributes.",
+      trap: "A surrogate is not the same metric as accuracy; improvement is useful only when its relationship to classification behavior is understood."
+    },
+    "Logistic loss and convexity": {
+      concept: "Binary logistic loss penalizes the signed score through softplus and is convex in that score; the sign decision still needs an explicit tie rule.",
+      useWhen: "Use the second derivative to prove convexity and the signed score to derive the binary prediction rule.",
+      examMove: "Substitute the label-scaled score, differentiate twice, and handle the zero-score tie separately.",
+      trap: "Convexity in the score does not by itself prove every parameterized model is globally convex."
+    }
+  };
+  const teachingGuide = title => {
+    const key = title.replace(/^(?:Lecture core|Lecture bridge|Official exercise|Textbook depth|Reference depth|Core derivation)\s*·\s*/, "");
+    return TEACHING_GUIDES[key] || null;
+  };
   const equation = (latex, explanation, symbols) => ({ latex, explanation, symbols: symbols || [] });
   const symbol = (latex, meaning) => ({ latex, meaning });
   const sourceLens = (status, whyExaminable, lectureRefs, officialExercise, textbookRefs, referenceRefs) => ({ status, whyExaminable, lecture: lectureRefs || [], officialExercise: officialExercise || [], textbook: textbookRefs || [], reference: referenceRefs || [] });
   const note = (title, body, sourceType, math, sourceRefs, lens) => {
     const resolvedSourceType = title.startsWith("Official exercise") ? "exercise" : sourceType;
     const metadata = math ? formulaMetadata(title) : null;
-    return { title, body, sourceType: resolvedSourceType, ...(math ? { math: { ...math, ...metadata, sourceType: math.sourceType || resolvedSourceType } } : {}), ...(sourceRefs ? { sourceRefs } : {}), ...(lens ? { sourceLens: lens } : {}) };
+    const teaching = teachingGuide(title);
+    if (/^(?:Lecture core|Core derivation)/.test(title) && !teaching) throw new Error(`Missing teaching guide for DSA5105 core note: ${title}`);
+    return { title, body, sourceType: resolvedSourceType, ...(teaching ? { teaching } : {}), ...(math ? { math: { ...math, ...metadata, sourceType: math.sourceType || resolvedSourceType } } : {}), ...(sourceRefs ? { sourceRefs } : {}), ...(lens ? { sourceLens: lens } : {}) };
   };
   const worked = (title, steps, answer, sourceType) => ({ title, steps, answer, sourceType });
   const contrastDrill = (id, pair, prompt, choices, answer, explanation, sourceRefs) => ({

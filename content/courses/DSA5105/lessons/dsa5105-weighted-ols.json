@@ -48,6 +48,12 @@
       "title": "Lecture core · Linear in parameters, not necessarily in x",
       "body": "A basis model has $f_w(x)=w^\\top\\phi(x)$. The input transformation $\\phi(x)$ can contain $x^2$, Gaussian bumps, or other nonlinear features; the model is still linear in the unknown weights $w$. This is why a linear model can represent nonlinear functions when the basis is rich enough.",
       "sourceType": "lecture",
+      "teaching": {
+        "concept": "The algebra is linear in the trainable weights even when the fixed feature map is nonlinear in the input.",
+        "useWhen": "Use this distinction to decide whether least-squares convexity and normal-equation reasoning still apply.",
+        "examMove": "Identify the variable being optimized; nonlinearity in a fixed feature is different from nonlinearity in the parameters.",
+        "trap": "Calling a basis model nonlinear without specifying the variable hides the property that makes the optimization easy."
+      },
       "math": {
         "latex": "f_w(x)=\\sum_{j=1}^{M}w_j\\phi_j(x)=w^\\top\\phi(x)",
         "explanation": "The weights appear only as a linear combination. Nonlinearity in the features changes the hypothesis class without changing the least-squares algebra in the weights.",
@@ -177,6 +183,12 @@
       "type": "teaching-note",
       "title": "Lecture core · Linear in parameters, not necessarily in x",
       "body": "A basis model has $f_w(x)=w^\\top\\phi(x)$. The input transformation $\\phi(x)$ can contain $x^2$, Gaussian bumps, or other nonlinear features; the model is still linear in the unknown weights $w$. This is why a linear model can represent nonlinear functions when the basis is rich enough.",
+      "teaching": {
+        "concept": "The algebra is linear in the trainable weights even when the fixed feature map is nonlinear in the input.",
+        "useWhen": "Use this distinction to decide whether least-squares convexity and normal-equation reasoning still apply.",
+        "examMove": "Identify the variable being optimized; nonlinearity in a fixed feature is different from nonlinearity in the parameters.",
+        "trap": "Calling a basis model nonlinear without specifying the variable hides the property that makes the optimization easy."
+      },
       "sourceType": "lecture",
       "sourceRefs": [
         {

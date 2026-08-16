@@ -31,6 +31,12 @@
       "title": "Lecture core · Bellman backup",
       "body": "A one-step backup combines the reward received now with a discounted estimate of what can be achieved from the next state. The optimality version chooses the best next action; the policy version averages according to the current policy.",
       "sourceType": "lecture",
+      "teaching": {
+        "concept": "A Bellman backup propagates reward information through a transition graph; optimality takes a maximum while a fixed policy averages over actions.",
+        "useWhen": "Use it to distinguish policy evaluation, value iteration, and action-value updates.",
+        "examMove": "Identify whether the question supplies a policy or asks for an optimum before choosing sum versus max.",
+        "trap": "A graph-neighbor aggregation rule and an RL transition backup share local flow, not the same objective."
+      },
       "math": {
         "latex": "Q^*(s,a)=r+\\gamma\\max_{a'}Q^*(s',a')",
         "explanation": "Start with the immediate reward $r$. Then look at the next state and take the largest available action value. The discount $\\gamma$ controls how much that future estimate contributes to the target.",
@@ -120,6 +126,12 @@
       "type": "teaching-note",
       "title": "Lecture core · Bellman backup",
       "body": "A one-step backup combines the reward received now with a discounted estimate of what can be achieved from the next state. The optimality version chooses the best next action; the policy version averages according to the current policy.",
+      "teaching": {
+        "concept": "A Bellman backup propagates reward information through a transition graph; optimality takes a maximum while a fixed policy averages over actions.",
+        "useWhen": "Use it to distinguish policy evaluation, value iteration, and action-value updates.",
+        "examMove": "Identify whether the question supplies a policy or asks for an optimum before choosing sum versus max.",
+        "trap": "A graph-neighbor aggregation rule and an RL transition backup share local flow, not the same objective."
+      },
       "sourceType": "lecture",
       "sourceRefs": [
         {

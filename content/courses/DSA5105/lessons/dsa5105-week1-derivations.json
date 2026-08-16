@@ -129,6 +129,12 @@
       "title": "Core derivation · ERM versus population risk",
       "body": "ERM is the quantity we can compute from the finite sample. Population risk is the quantity we actually care about for future draws. A small training objective is not yet a claim about deployment performance.",
       "sourceType": "lecture",
+      "teaching": {
+        "concept": "ERM is computable from the finite sample; population risk is the expected loss on future draws and is the quantity we ultimately care about.",
+        "useWhen": "Use the pair to explain generalization, why validation is needed, and why a training curve alone cannot certify deployment performance.",
+        "examMove": "Write both expectations explicitly and state the sampling assumption that makes their comparison meaningful.",
+        "trap": "A sample average is not automatically an unbiased or relevant estimate under leakage, dependence, or distribution shift."
+      },
       "math": {
         "latex": "\\widehat{R}(h)=\\frac{1}{N}\\sum_{i=1}^{N}\\ell(h(x_i),y_i),\\qquad R_{\\mathrm{pop}}(h)=\\mathbb{E}_{x\\sim\\mu}\\left[\\ell(h(x),f^*(x))\\right]",
         "explanation": "The lecture now specializes to a deterministic oracle. For a random oracle, the clarification/extension is $R_{\\mathrm{pop}}(h)=\\mathbb E_{x\\sim\\mu}\\mathbb E_{y\\sim p^*(\\cdot\\mid x)}[\\ell(h(x),y)]$.",
@@ -175,6 +181,12 @@
       "title": "Lecture bridge · Why iid matters",
       "body": "The usual generalization story treats inputs as independent draws from the same distribution. Independence limits duplicated evidence; identical distribution makes the validation sample relevant to the population we claim to measure. Time drift, leakage, and distribution shift break this interpretation even when the split is large.",
       "sourceType": "lecture",
+      "teaching": {
+        "concept": "IID sampling is the bridge that lets a finite sample stand in for the same population on which risk is discussed.",
+        "useWhen": "Use it to diagnose leakage, duplicate evidence, time drift, or a validation set drawn from a different population.",
+        "examMove": "State what is independent, what has the same distribution, and which claim fails when either condition is broken.",
+        "trap": "A large split can still answer the wrong question if future data or related groups are not represented correctly."
+      },
       "math": {
         "latex": "x_1,\\ldots,x_N\\overset{\\mathrm{iid}}{\\sim}\\mu",
         "explanation": "The iid assumption is not a decorative symbol: it is the bridge that lets sample averages approximate an expectation under the same population.",
@@ -206,6 +218,12 @@
       "title": "Lecture core · Three sources of error",
       "body": "The slide-25 decomposition is lecture-aligned: approximation, estimation, and optimization. It is not a strict equality of scalar distances; it is a diagnostic map with distinct objects and failure modes.",
       "sourceType": "lecture",
+      "teaching": {
+        "concept": "The lecture separates approximation, estimation, and optimization: class limitation, finite-sample movement, and imperfect search.",
+        "useWhen": "Use the object transitions to diagnose a failure: oracle to best class member, best class member to sample fit, or initialization to the empirical minimizer.",
+        "examMove": "Name the source and the two objects it connects; do not replace estimation with the textbook's broader generalization label.",
+        "trap": "This is a diagnostic decomposition, not an invitation to merge the lecture map with the textbook's three paradigms."
+      },
       "math": {
         "latex": "\\tilde f\\in\\arg\\min_{f\\in\\mathcal H}R_{\\mathrm{pop}}(f),\\qquad \\hat f\\in\\arg\\min_{f\\in\\mathcal H}\\widehat R(f),\\qquad f^*\\to\\tilde f\\;(\\text{approximation}),\\quad \\tilde f\\to\\hat f\\;(\\text{estimation}),\\quad f_0\\to\\hat f\\;(\\text{optimization})",
         "explanation": "Approximation compares the oracle $f^*$ with the best population-risk member $\\tilde f$. Estimation is the finite-sample move from $\\tilde f$ to $\\hat f$. Optimization is the algorithmic move from initialization $f_0$ toward the empirical minimizer $\\hat f$. The lecture diagram has no $f_{\\\\mathrm{opt}}$.",
@@ -245,6 +263,12 @@
       "title": "Official exercise · Huber ψ-function",
       "body": "Differentiate the Huber loss instead of stopping at the phrase linear tails. Call $\\psi_\\delta=\\rho_\\delta'$ the Huber $\\psi$-function or score contribution. Its per-observation contribution to the stationarity equation is bounded by $\\delta$ outside the quadratic region.",
       "sourceType": "exercise",
+      "teaching": {
+        "concept": "The derivative of Huber loss is linear near zero and capped in magnitude for extreme residuals, so one outlier cannot dominate the first-order condition indefinitely.",
+        "useWhen": "Use it to derive the location-estimate stationarity equation and explain bounded per-observation contribution.",
+        "examMove": "Differentiate both branches, check continuity at the threshold, then sum the score contributions.",
+        "trap": "Call the derivative a score or $\\psi$-function; do not claim the whole estimator is automatically robust under every design."
+      },
       "math": {
         "latex": "\\psi_\\delta(r)=\\rho_\\delta'(r)=\\begin{cases}r,&|r|\\le\\delta\\\\\\delta\\operatorname{sign}(r),&|r|>\\delta\\end{cases},\\qquad\\sum_{i=1}^{N}\\psi_\\delta(\\hat m-y_i)=0",
         "explanation": "For squared loss, $\\psi(r)=r$. Huber caps the first-order contribution at plus or minus $\\delta$; this is a bounded score contribution, not a claim about the full statistical influence function.",
@@ -315,6 +339,12 @@
       "title": "Official exercise · Singular OLS and the null space",
       "body": "When the design matrix is rank deficient, the normal equation can have infinitely many parameter solutions. The pseudoinverse gives one particular solution; the null-space term changes parameters without changing the fitted training vector. This is why identical training predictions do not imply identical parameter behavior off-sample.",
       "sourceType": "exercise",
+      "teaching": {
+        "concept": "Rank deficiency creates a family of equally good least-squares parameters because null-space directions are invisible in the fitted training vector.",
+        "useWhen": "Use the pseudoinverse plus null-space term to describe non-uniqueness and to explain why off-sample behavior can differ.",
+        "examMove": "Verify the null-space projection and distinguish identical fitted values from identical parameter vectors.",
+        "trap": "The pseudoinverse chooses a minimum-norm representative; it does not make the original parameterization identifiable."
+      },
       "math": {
         "latex": "\\hat w(u)=\\Phi^\\dagger y+\\left(I-\\Phi^\\dagger\\Phi\\right)u,\\qquad u\\in\\mathbb{R}^{M}",
         "explanation": "The matrix $I-\\Phi^\\dagger\\Phi$ Phi projects onto the null space of Phi. The exact family is on lecture page 47; page 46 supplies the full-rank OLS context.",
@@ -361,6 +391,12 @@
       "title": "Official exercise · Ridge as a spectral filter",
       "body": "Use the exercise-sheet convention $\\frac{\\lambda}{2}\\lVert w\\rVert^2$. The lecture writes the more general $\\lambda C(w)$ with $C(w)=\\lVert w\\rVert^2$, so the numerical definition of $\\lambda$ can differ by a constant factor between the two conventions.",
       "sourceType": "exercise",
+      "teaching": {
+        "concept": "Ridge shifts every eigenvalue of the normal matrix by a positive amount, shrinking weakly identified directions more strongly and restoring uniqueness.",
+        "useWhen": "Use the eigenbasis to derive the shrinkage factor and explain why ridge is stable when OLS is singular or ill-conditioned.",
+        "examMove": "State positive definiteness, project the normal equations onto an eigenvector, and compare with the unique OLS solution.",
+        "trap": "The OLS ratio requires positive eigenvalues; ridge can be unique even when that comparison is undefined."
+      },
       "math": {
         "latex": "A=\\frac{1}{N}\\Phi^\\top\\Phi,\\quad b=\\frac{1}{N}\\Phi^\\top y,\\quad (A+\\lambda I)\\hat w_\\lambda=b,\\quad A v_j=\\mu_jv_j",
         "explanation": "For comparison with the unique OLS solution, assume $A\\succ0$, equivalently $\\mu_j>0$ for every $j$. Then $\\langle\\hat w_\\lambda,v_j\\rangle/\\langle\\hat w_0,v_j\\rangle=\\mu_j/(\\mu_j+\\lambda)$. If $A$ is singular, OLS can be non-unique, but $A+\\lambda I\\succ0$ for $\\lambda>0$, so ridge remains unique. The bridge is rank deficiency $\\to$ non-identifiability $\\to$ ridge $\\to$ positive definiteness.",
@@ -516,6 +552,12 @@
       "title": "Lecture bridge · From 0–1 loss to a surrogate",
       "body": "Classification error is the metric we ultimately care about, but 0–1 loss is flat almost everywhere and discontinuous at the decision boundary. A smooth surrogate such as cross-entropy makes score-based optimization possible while keeping the decision rule explicit.",
       "sourceType": "lecture",
+      "teaching": {
+        "concept": "0–1 loss is task-aligned but flat and discontinuous; a smooth surrogate supplies optimization signal while the final decision rule remains separate.",
+        "useWhen": "Use the chain to explain why cross-entropy is trained even when accuracy is reported.",
+        "examMove": "Name the evaluation metric, identify its optimization obstacle, then state what property the surrogate contributes.",
+        "trap": "A surrogate is not the same metric as accuracy; improvement is useful only when its relationship to classification behavior is understood."
+      },
       "math": {
         "latex": "\\mathbf{1}\\{\\hat y\\ne y\\}\\;\\longrightarrow\\;\\text{smooth surrogate}\\;\\longrightarrow\\;\\text{cross-entropy}",
         "explanation": "The arrows are a reasoning chain, not an equivalence claim. The surrogate is chosen for optimization geometry; the final classification metric remains a separate evaluation question.",
@@ -558,6 +600,12 @@
       "title": "Official exercise · Logistic loss and convexity",
       "body": "For a binary score s and label y in {-1,+1}, the logistic loss is softplus(-ys). Its second derivative is non-negative, which gives a convex one-dimensional loss in the score. The decision rule is piecewise for $s>0$ and $s<0$; the tie case $s=0$ must be resolved separately.",
       "sourceType": "exercise",
+      "teaching": {
+        "concept": "Binary logistic loss penalizes the signed score through softplus and is convex in that score; the sign decision still needs an explicit tie rule.",
+        "useWhen": "Use the second derivative to prove convexity and the signed score to derive the binary prediction rule.",
+        "examMove": "Substitute the label-scaled score, differentiate twice, and handle the zero-score tie separately.",
+        "trap": "Convexity in the score does not by itself prove every parameterized model is globally convex."
+      },
       "math": {
         "latex": "\\ell(s,y)=\\log(1+e^{-ys}),\\qquad\\hat y=\\begin{cases}+1,&s>0\\\\-1,&s<0\\end{cases},\\qquad\\frac{\\partial^2\\ell}{\\partial s^2}=\\frac{e^{ys}}{(1+e^{ys})^2}\\ge0",
         "explanation": "The tie at $s=0$ is a convention, not a hidden third class. The second derivative is non-negative for either label, so the score-level logistic loss is convex.",
@@ -714,6 +762,12 @@
       "type": "teaching-note",
       "title": "Core derivation · ERM versus population risk",
       "body": "ERM is the quantity we can compute from the finite sample. Population risk is the quantity we actually care about for future draws. A small training objective is not yet a claim about deployment performance.",
+      "teaching": {
+        "concept": "ERM is computable from the finite sample; population risk is the expected loss on future draws and is the quantity we ultimately care about.",
+        "useWhen": "Use the pair to explain generalization, why validation is needed, and why a training curve alone cannot certify deployment performance.",
+        "examMove": "Write both expectations explicitly and state the sampling assumption that makes their comparison meaningful.",
+        "trap": "A sample average is not automatically an unbiased or relevant estimate under leakage, dependence, or distribution shift."
+      },
       "sourceType": "lecture",
       "sourceRefs": [
         {
@@ -780,6 +834,12 @@
       "type": "teaching-note",
       "title": "Lecture bridge · Why iid matters",
       "body": "The usual generalization story treats inputs as independent draws from the same distribution. Independence limits duplicated evidence; identical distribution makes the validation sample relevant to the population we claim to measure. Time drift, leakage, and distribution shift break this interpretation even when the split is large.",
+      "teaching": {
+        "concept": "IID sampling is the bridge that lets a finite sample stand in for the same population on which risk is discussed.",
+        "useWhen": "Use it to diagnose leakage, duplicate evidence, time drift, or a validation set drawn from a different population.",
+        "examMove": "State what is independent, what has the same distribution, and which claim fails when either condition is broken.",
+        "trap": "A large split can still answer the wrong question if future data or related groups are not represented correctly."
+      },
       "sourceType": "lecture",
       "sourceRefs": [
         {
@@ -824,6 +884,12 @@
       "type": "teaching-note",
       "title": "Lecture core · Three sources of error",
       "body": "The slide-25 decomposition is lecture-aligned: approximation, estimation, and optimization. It is not a strict equality of scalar distances; it is a diagnostic map with distinct objects and failure modes.",
+      "teaching": {
+        "concept": "The lecture separates approximation, estimation, and optimization: class limitation, finite-sample movement, and imperfect search.",
+        "useWhen": "Use the object transitions to diagnose a failure: oracle to best class member, best class member to sample fit, or initialization to the empirical minimizer.",
+        "examMove": "Name the source and the two objects it connects; do not replace estimation with the textbook's broader generalization label.",
+        "trap": "This is a diagnostic decomposition, not an invitation to merge the lecture map with the textbook's three paradigms."
+      },
       "sourceType": "lecture",
       "sourceRefs": [
         {
@@ -876,6 +942,12 @@
       "type": "teaching-note",
       "title": "Official exercise · Huber ψ-function",
       "body": "Differentiate the Huber loss instead of stopping at the phrase linear tails. Call $\\psi_\\delta=\\rho_\\delta'$ the Huber $\\psi$-function or score contribution. Its per-observation contribution to the stationarity equation is bounded by $\\delta$ outside the quadratic region.",
+      "teaching": {
+        "concept": "The derivative of Huber loss is linear near zero and capped in magnitude for extreme residuals, so one outlier cannot dominate the first-order condition indefinitely.",
+        "useWhen": "Use it to derive the location-estimate stationarity equation and explain bounded per-observation contribution.",
+        "examMove": "Differentiate both branches, check continuity at the threshold, then sum the score contributions.",
+        "trap": "Call the derivative a score or $\\psi$-function; do not claim the whole estimator is automatically robust under every design."
+      },
       "sourceType": "exercise",
       "sourceRefs": [
         {
@@ -942,6 +1014,12 @@
       "type": "teaching-note",
       "title": "Official exercise · Singular OLS and the null space",
       "body": "When the design matrix is rank deficient, the normal equation can have infinitely many parameter solutions. The pseudoinverse gives one particular solution; the null-space term changes parameters without changing the fitted training vector. This is why identical training predictions do not imply identical parameter behavior off-sample.",
+      "teaching": {
+        "concept": "Rank deficiency creates a family of equally good least-squares parameters because null-space directions are invisible in the fitted training vector.",
+        "useWhen": "Use the pseudoinverse plus null-space term to describe non-uniqueness and to explain why off-sample behavior can differ.",
+        "examMove": "Verify the null-space projection and distinguish identical fitted values from identical parameter vectors.",
+        "trap": "The pseudoinverse chooses a minimum-norm representative; it does not make the original parameterization identifiable."
+      },
       "sourceType": "exercise",
       "sourceRefs": [
         {
@@ -1008,6 +1086,12 @@
       "type": "teaching-note",
       "title": "Official exercise · Ridge as a spectral filter",
       "body": "Use the exercise-sheet convention $\\frac{\\lambda}{2}\\lVert w\\rVert^2$. The lecture writes the more general $\\lambda C(w)$ with $C(w)=\\lVert w\\rVert^2$, so the numerical definition of $\\lambda$ can differ by a constant factor between the two conventions.",
+      "teaching": {
+        "concept": "Ridge shifts every eigenvalue of the normal matrix by a positive amount, shrinking weakly identified directions more strongly and restoring uniqueness.",
+        "useWhen": "Use the eigenbasis to derive the shrinkage factor and explain why ridge is stable when OLS is singular or ill-conditioned.",
+        "examMove": "State positive definiteness, project the normal equations onto an eigenvector, and compare with the unique OLS solution.",
+        "trap": "The OLS ratio requires positive eigenvalues; ridge can be unique even when that comparison is undefined."
+      },
       "sourceType": "exercise",
       "sourceRefs": [
         {
@@ -1192,6 +1276,12 @@
       "type": "teaching-note",
       "title": "Lecture bridge · From 0–1 loss to a surrogate",
       "body": "Classification error is the metric we ultimately care about, but 0–1 loss is flat almost everywhere and discontinuous at the decision boundary. A smooth surrogate such as cross-entropy makes score-based optimization possible while keeping the decision rule explicit.",
+      "teaching": {
+        "concept": "0–1 loss is task-aligned but flat and discontinuous; a smooth surrogate supplies optimization signal while the final decision rule remains separate.",
+        "useWhen": "Use the chain to explain why cross-entropy is trained even when accuracy is reported.",
+        "examMove": "Name the evaluation metric, identify its optimization obstacle, then state what property the surrogate contributes.",
+        "trap": "A surrogate is not the same metric as accuracy; improvement is useful only when its relationship to classification behavior is understood."
+      },
       "sourceType": "lecture",
       "sourceRefs": [
         {
@@ -1254,6 +1344,12 @@
       "type": "teaching-note",
       "title": "Official exercise · Logistic loss and convexity",
       "body": "For a binary score s and label y in {-1,+1}, the logistic loss is softplus(-ys). Its second derivative is non-negative, which gives a convex one-dimensional loss in the score. The decision rule is piecewise for $s>0$ and $s<0$; the tie case $s=0$ must be resolved separately.",
+      "teaching": {
+        "concept": "Binary logistic loss penalizes the signed score through softplus and is convex in that score; the sign decision still needs an explicit tie rule.",
+        "useWhen": "Use the second derivative to prove convexity and the signed score to derive the binary prediction rule.",
+        "examMove": "Substitute the label-scaled score, differentiate twice, and handle the zero-score tie separately.",
+        "trap": "Convexity in the score does not by itself prove every parameterized model is globally convex."
+      },
       "sourceType": "exercise",
       "sourceRefs": [
         {

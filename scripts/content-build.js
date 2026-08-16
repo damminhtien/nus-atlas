@@ -99,6 +99,7 @@ function lessonBlocks(lesson) {
       type: "teaching-note",
       title: section.title,
       body: section.body,
+      teaching: section.teaching,
       sourceType: section.sourceType,
       sourceRefs: refsFor(section)
     });

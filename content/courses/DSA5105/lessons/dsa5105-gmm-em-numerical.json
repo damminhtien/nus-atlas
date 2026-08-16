@@ -55,6 +55,12 @@
       "title": "Lecture core · K-means assignment and update",
       "body": "K-means alternates $z_i\\leftarrow\\arg\\min_k\\lVert x_i-c_k\\rVert^2$ and $c_k\\leftarrow\\frac{1}{|C_k|}\\sum_{i:z_i=k}x_i$. Each step does not increase the within-cluster squared-distance objective, but the result depends on initialization and is generally only a local optimum.",
       "sourceType": "lecture",
+      "teaching": {
+        "concept": "One K-means iteration is a concrete alternating-minimization calculation: nearest-centroid assignment followed by a mean update.",
+        "useWhen": "Use it for numerical questions and to verify that an update decreases or preserves the within-cluster objective.",
+        "examMove": "Keep old centroids for assignment, then recompute each non-empty centroid from the newly assigned points.",
+        "trap": "Mixing assignments from different iterations or dividing by an empty cluster silently changes the algorithm."
+      },
       "math": {
         "latex": "J=\\sum_i\\lVert x_i-c_{z_i}\\rVert_2^2",
         "explanation": "The assignment chooses the closest current centroid; the centroid update is the minimizer of the squared distances for a fixed assignment.",
@@ -175,6 +181,12 @@
       "type": "teaching-note",
       "title": "Lecture core · K-means assignment and update",
       "body": "K-means alternates $z_i\\leftarrow\\arg\\min_k\\lVert x_i-c_k\\rVert^2$ and $c_k\\leftarrow\\frac{1}{|C_k|}\\sum_{i:z_i=k}x_i$. Each step does not increase the within-cluster squared-distance objective, but the result depends on initialization and is generally only a local optimum.",
+      "teaching": {
+        "concept": "One K-means iteration is a concrete alternating-minimization calculation: nearest-centroid assignment followed by a mean update.",
+        "useWhen": "Use it for numerical questions and to verify that an update decreases or preserves the within-cluster objective.",
+        "examMove": "Keep old centroids for assignment, then recompute each non-empty centroid from the newly assigned points.",
+        "trap": "Mixing assignments from different iterations or dividing by an empty cluster silently changes the algorithm."
+      },
       "sourceType": "lecture",
       "sourceRefs": [
         {

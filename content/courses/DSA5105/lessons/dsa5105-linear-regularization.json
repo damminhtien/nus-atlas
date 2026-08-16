@@ -31,6 +31,12 @@
       "title": "Lecture core · OLS baseline",
       "body": "Ordinary least squares chooses weights that minimize squared residuals. It is a useful baseline because the objective is explicit, but correlated features can make the fitted weights unstable and high-dimensional models can fit noise.",
       "sourceType": "lecture",
+      "teaching": {
+        "concept": "OLS is the unregularized reference objective against which rank, conditioning, shrinkage, and sparsity are compared.",
+        "useWhen": "Use it as the baseline before claiming that ridge or lasso improved the model.",
+        "examMove": "State the objective and compare its solution properties, not just its training error, with the regularized alternative.",
+        "trap": "A closed form does not imply a unique or stable coefficient vector when the design is rank deficient."
+      },
       "math": {
         "latex": "\\hat w = \\arg\\min_w \\lVert Xw-y\\rVert_2^2",
         "explanation": "The model predicts $Xw$ and compares it with the target vector $y$. Squaring and summing the residuals penalizes large mistakes and gives a smooth objective.",
@@ -57,6 +63,12 @@
       "title": "Lecture core · Ridge and lasso",
       "body": "Ridge adds an L2 penalty, shrinking weights toward zero while usually keeping correlated predictors together. Lasso adds an L1 penalty, whose corners make exact zeros possible. Both trade a little bias for lower variance when the unregularized fit is too sensitive.",
       "sourceType": "lecture",
+      "teaching": {
+        "concept": "Ridge shrinks all coefficients smoothly; lasso's absolute-value geometry can set some coefficients exactly to zero.",
+        "useWhen": "Use the penalty geometry to predict coefficient behavior and choose which model-selection question to ask on validation data.",
+        "examMove": "Contrast the norm, geometry, coefficient effect, and bias–variance consequence in four short steps.",
+        "trap": "Sparsity is not the same as truth, and shrinkage strength must not be selected from the final test score."
+      },
       "math": {
         "latex": "\\min_w\\;\\lVert Xw-y\\rVert_2^2+\\lambda\\lVert w\\rVert_2^2\\;\\text{(ridge)},\\qquad \\min_w\\;\\lVert Xw-y\\rVert_2^2+\\lambda\\lVert w\\rVert_1\\;\\text{(lasso)}",
         "explanation": "The first term rewards fit to the data; the penalty charges for coefficient size. Increasing $\\lambda$ makes complexity more expensive. The L2 norm is smooth, while the L1 norm has corners that allow exact zeros.",
@@ -120,6 +132,12 @@
       "type": "teaching-note",
       "title": "Lecture core · OLS baseline",
       "body": "Ordinary least squares chooses weights that minimize squared residuals. It is a useful baseline because the objective is explicit, but correlated features can make the fitted weights unstable and high-dimensional models can fit noise.",
+      "teaching": {
+        "concept": "OLS is the unregularized reference objective against which rank, conditioning, shrinkage, and sparsity are compared.",
+        "useWhen": "Use it as the baseline before claiming that ridge or lasso improved the model.",
+        "examMove": "State the objective and compare its solution properties, not just its training error, with the regularized alternative.",
+        "trap": "A closed form does not imply a unique or stable coefficient vector when the design is rank deficient."
+      },
       "sourceType": "lecture",
       "sourceRefs": [
         {
@@ -182,6 +200,12 @@
       "type": "teaching-note",
       "title": "Lecture core · Ridge and lasso",
       "body": "Ridge adds an L2 penalty, shrinking weights toward zero while usually keeping correlated predictors together. Lasso adds an L1 penalty, whose corners make exact zeros possible. Both trade a little bias for lower variance when the unregularized fit is too sensitive.",
+      "teaching": {
+        "concept": "Ridge shrinks all coefficients smoothly; lasso's absolute-value geometry can set some coefficients exactly to zero.",
+        "useWhen": "Use the penalty geometry to predict coefficient behavior and choose which model-selection question to ask on validation data.",
+        "examMove": "Contrast the norm, geometry, coefficient effect, and bias–variance consequence in four short steps.",
+        "trap": "Sparsity is not the same as truth, and shrinkage strength must not be selected from the final test score."
+      },
       "sourceType": "lecture",
       "sourceRefs": [
         {

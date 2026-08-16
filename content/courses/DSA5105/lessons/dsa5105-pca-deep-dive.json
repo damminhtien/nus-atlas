@@ -45,6 +45,12 @@
       "title": "Lecture core · Center before projecting",
       "body": "Compute the feature-wise mean $\\mu$ and subtract it from every row. Without centering, the first direction can mostly describe the offset of the cloud from the origin instead of the variation around its mean.",
       "sourceType": "lecture",
+      "teaching": {
+        "concept": "PCA finds variation around the sample mean, so centering is what makes the covariance directions about spread rather than offset.",
+        "useWhen": "Use centering before covariance, eigenvector, projection, or reconstruction calculations.",
+        "examMove": "Subtract the feature-wise mean, build covariance, then interpret the largest-eigenvalue direction.",
+        "trap": "Skipping centering can make the first component describe the origin offset instead of the data variation."
+      },
       "math": {
         "latex": "Z=X-\\mathbf{1}\\mu^\\top",
         "explanation": "Centering subtracts the same feature-mean row $\\mu^\top$ from every observation. The resulting matrix $Z$ describes deviations around the sample mean, which is the object PCA is intended to analyze.",
@@ -139,6 +145,12 @@
       "type": "teaching-note",
       "title": "Lecture core · Center before projecting",
       "body": "Compute the feature-wise mean $\\mu$ and subtract it from every row. Without centering, the first direction can mostly describe the offset of the cloud from the origin instead of the variation around its mean.",
+      "teaching": {
+        "concept": "PCA finds variation around the sample mean, so centering is what makes the covariance directions about spread rather than offset.",
+        "useWhen": "Use centering before covariance, eigenvector, projection, or reconstruction calculations.",
+        "examMove": "Subtract the feature-wise mean, build covariance, then interpret the largest-eigenvalue direction.",
+        "trap": "Skipping centering can make the first component describe the origin offset instead of the data variation."
+      },
       "sourceType": "lecture",
       "sourceRefs": [
         {

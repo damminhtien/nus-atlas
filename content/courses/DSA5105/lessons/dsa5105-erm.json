@@ -416,6 +416,12 @@
       "title": "Lecture core · What is being learned?",
       "body": "A supervised-learning problem gives examples of inputs and targets, a hypothesis class, and a loss. Before fitting, name the input, target, task, and evaluation measure. Week 1 also surveys unsupervised and reinforcement learning, but this first deep-dive follows the supervised linear-model path.",
       "sourceType": "lecture",
+      "teaching": {
+        "concept": "A learning problem is a relationship between inputs, targets, a hypothesis class, and a loss—not a vague claim that a model is intelligent.",
+        "useWhen": "Use this checklist before choosing an algorithm: name what is observed, what must be predicted, which functions are allowed, and how an error is measured.",
+        "examMove": "Translate a word problem into x, y, H, and loss before writing an objective.",
+        "trap": "Do not confuse the observed sample with the unknown target relationship or treat the loss as the task itself."
+      },
       "math": {
         "latex": "\\hat h = \\arg\\min_{h \\in \\mathcal{H}} \\widehat{R}(h)",
         "explanation": "The learner searches the allowed hypothesis class and selects the function with the smallest observed average loss.",
@@ -451,6 +457,12 @@
       "title": "Lecture core · Mitchell's E–T–P definition",
       "body": "A program learns from experience $E$ with respect to a task $T$ and a performance measure $P$ if its performance on $T$, as measured by $P$, improves with $E$. The tuple is a contract: without $T$ there is no behavior to improve, without $P$ there is no meaning of better, and without $E$ there is no source of learning.",
       "sourceType": "lecture",
+      "teaching": {
+        "concept": "Learning means measured performance on a task improves with experience; experience, task, and performance are all required to make the claim testable.",
+        "useWhen": "Use E–T–P to audit whether a system description says what data changed, what task improved, and which metric proves improvement.",
+        "examMove": "Give one concrete example for E, T, and P rather than repeating the three letters.",
+        "trap": "A model producing plausible outputs is not evidence of learning until improvement is measured against a declared task."
+      },
       "math": {
         "latex": "(E,T,P)=\\text{experience, task, performance measure}",
         "explanation": "This is the lecture's operational definition of learning, not a claim that every model is supervised.",
@@ -486,6 +498,12 @@
       "title": "Lecture core · Training set and oracle",
       "body": "The training set contains N observed input-target pairs. The input $x_{i}$ is what the model receives; $y_{i}$ is the output or label it should predict. Learning means using the sample to approximate the relationship from x to y. The oracle $f^*$ names the unknown target relationship: it can be deterministic, or the target can be sampled from a conditional distribution when the same input may have multiple plausible outputs.",
       "sourceType": "lecture",
+      "teaching": {
+        "concept": "The training set is finite evidence; the oracle is the unknown process that generates targets, deterministically or stochastically.",
+        "useWhen": "Use the distinction whenever a question asks why fitting observed labels does not guarantee correct predictions on new inputs.",
+        "examMove": "State whether the target is a function or a conditional distribution, then identify what the sample actually reveals.",
+        "trap": "Do not write the observed label as if it were the full oracle or assume every real target is deterministic."
+      },
       "math": {
         "latex": "\\mathcal{D}=\\{(x_i,y_i)\\}_{i=1}^{N},\\qquad y_i=f^*(x_i)\\quad\\text{or}\\quad y_i\\sim p^*(\\cdot\\mid x_i)",
         "explanation": "The first case is a deterministic oracle. A noisy regression view writes $y_i=f^*(x_i)+\\epsilon_i$; the second case makes randomness explicit through a conditional target distribution. Do not confuse an observed label with the unknown oracle itself.",
@@ -533,6 +551,12 @@
       "title": "Lecture core · Data representation",
       "body": "Ordinal values have meaningful order, such as a level or rating. Nominal labels are categories without a meaningful distance, so one-hot or another categorical representation is safer than treating the label names as numbers.",
       "sourceType": "lecture",
+      "teaching": {
+        "concept": "Encoding determines which order, distance, and geometry the model can see; it is part of the hypothesis design.",
+        "useWhen": "Use ordinal codes only when order is meaningful; use one-hot or another categorical representation for nominal identity.",
+        "examMove": "Name the relationship the encoding preserves and the false relationship it would introduce.",
+        "trap": "Integer labels do not become quantitative merely because they are written as numbers."
+      },
       "sourceRefs": [
         {
           "sourceId": "DSA5105/Lec1_annotated.pdf",
@@ -554,6 +578,12 @@
       "title": "Lecture core · Empirical risk",
       "body": "Empirical risk is the average loss on the examples we observed. It is a training measurement, not a guarantee about future data. A regularizer can be added when we want to prefer simpler or smoother hypotheses.",
       "sourceType": "lecture",
+      "teaching": {
+        "concept": "Empirical risk is the average observed loss used as a finite-sample proxy for expected future loss.",
+        "useWhen": "Use it to write the training objective, compare fitted models on the same sample, and explain why a regularizer may be added separately.",
+        "examMove": "Identify the sample average, the loss, and the hypothesis being optimized; then state what the expression cannot guarantee.",
+        "trap": "Low empirical risk is not low population risk without assumptions about sampling, capacity, and stability."
+      },
       "math": {
         "latex": "\\widehat{R}(h) = \\frac{1}{N}\\sum_{i=1}^{N}\\ell\\bigl(h(x_i), y_i\\bigr)",
         "explanation": "Add the loss made on each observed example, then divide by the number of examples. This still says nothing by itself about unseen data.",
@@ -589,6 +619,12 @@
       "title": "Lecture core · Train, validation, test",
       "body": "Use training data to fit parameters, validation data to choose settings such as $\\lambda$ or model size, and test data once for the final estimate. Reusing the test set for decisions quietly turns it into another validation set.",
       "sourceType": "lecture",
+      "teaching": {
+        "concept": "The three splits have different information flows: parameters are fit on training data, choices are made on validation data, and the test set is reserved for the final estimate.",
+        "useWhen": "Use this rule whenever a hyperparameter, architecture, feature set, or stopping point must be selected.",
+        "examMove": "Draw the decision timeline and mark which split is allowed to influence each decision.",
+        "trap": "Repeatedly checking test performance turns the test set into validation data and invalidates the final claim."
+      },
       "sourceRefs": [
         {
           "sourceId": "DSA5105/Lec1_annotated.pdf",
@@ -603,6 +639,12 @@
       "title": "Lecture core · Three sources of error",
       "body": "The current lecture names three sources of error: approximation, estimation, and optimization. Keep this lecture decomposition separate from the textbook's broader three paradigms.",
       "sourceType": "lecture",
+      "teaching": {
+        "concept": "The lecture separates approximation, estimation, and optimization: class limitation, finite-sample movement, and imperfect search.",
+        "useWhen": "Use the object transitions to diagnose a failure: oracle to best class member, best class member to sample fit, or initialization to the empirical minimizer.",
+        "examMove": "Name the source and the two objects it connects; do not replace estimation with the textbook's broader generalization label.",
+        "trap": "This is a diagnostic decomposition, not an invitation to merge the lecture map with the textbook's three paradigms."
+      },
       "math": {
         "latex": "\\text{Approximation}+\\text{Estimation}+\\text{Optimization}",
         "explanation": "Approximation compares the oracle $f^*$ with the best population-risk member $\\tilde f$ in $\\mathcal H$. Estimation is the finite-sample move from $\\tilde f$ to $\\hat f$, where $\\hat f\\in\\arg\\min_{f\\in\\mathcal H}\\widehat R(f)$. Optimization is the algorithmic move from initialization $f_0$ toward $\\hat f$.",
@@ -711,6 +753,12 @@
       "type": "teaching-note",
       "title": "Lecture core · What is being learned?",
       "body": "A supervised-learning problem gives examples of inputs and targets, a hypothesis class, and a loss. Before fitting, name the input, target, task, and evaluation measure. Week 1 also surveys unsupervised and reinforcement learning, but this first deep-dive follows the supervised linear-model path.",
+      "teaching": {
+        "concept": "A learning problem is a relationship between inputs, targets, a hypothesis class, and a loss—not a vague claim that a model is intelligent.",
+        "useWhen": "Use this checklist before choosing an algorithm: name what is observed, what must be predicted, which functions are allowed, and how an error is measured.",
+        "examMove": "Translate a word problem into x, y, H, and loss before writing an objective.",
+        "trap": "Do not confuse the observed sample with the unknown target relationship or treat the loss as the task itself."
+      },
       "sourceType": "lecture",
       "sourceRefs": [
         {
@@ -759,6 +807,12 @@
       "type": "teaching-note",
       "title": "Lecture core · Mitchell's E–T–P definition",
       "body": "A program learns from experience $E$ with respect to a task $T$ and a performance measure $P$ if its performance on $T$, as measured by $P$, improves with $E$. The tuple is a contract: without $T$ there is no behavior to improve, without $P$ there is no meaning of better, and without $E$ there is no source of learning.",
+      "teaching": {
+        "concept": "Learning means measured performance on a task improves with experience; experience, task, and performance are all required to make the claim testable.",
+        "useWhen": "Use E–T–P to audit whether a system description says what data changed, what task improved, and which metric proves improvement.",
+        "examMove": "Give one concrete example for E, T, and P rather than repeating the three letters.",
+        "trap": "A model producing plausible outputs is not evidence of learning until improvement is measured against a declared task."
+      },
       "sourceType": "lecture",
       "sourceRefs": [
         {
@@ -807,6 +861,12 @@
       "type": "teaching-note",
       "title": "Lecture core · Training set and oracle",
       "body": "The training set contains N observed input-target pairs. The input $x_{i}$ is what the model receives; $y_{i}$ is the output or label it should predict. Learning means using the sample to approximate the relationship from x to y. The oracle $f^*$ names the unknown target relationship: it can be deterministic, or the target can be sampled from a conditional distribution when the same input may have multiple plausible outputs.",
+      "teaching": {
+        "concept": "The training set is finite evidence; the oracle is the unknown process that generates targets, deterministically or stochastically.",
+        "useWhen": "Use the distinction whenever a question asks why fitting observed labels does not guarantee correct predictions on new inputs.",
+        "examMove": "State whether the target is a function or a conditional distribution, then identify what the sample actually reveals.",
+        "trap": "Do not write the observed label as if it were the full oracle or assume every real target is deterministic."
+      },
       "sourceType": "lecture",
       "sourceRefs": [
         {
@@ -867,6 +927,12 @@
       "type": "teaching-note",
       "title": "Lecture core · Data representation",
       "body": "Ordinal values have meaningful order, such as a level or rating. Nominal labels are categories without a meaningful distance, so one-hot or another categorical representation is safer than treating the label names as numbers.",
+      "teaching": {
+        "concept": "Encoding determines which order, distance, and geometry the model can see; it is part of the hypothesis design.",
+        "useWhen": "Use ordinal codes only when order is meaningful; use one-hot or another categorical representation for nominal identity.",
+        "examMove": "Name the relationship the encoding preserves and the false relationship it would introduce.",
+        "trap": "Integer labels do not become quantitative merely because they are written as numbers."
+      },
       "sourceType": "lecture",
       "sourceRefs": [
         {
@@ -890,6 +956,12 @@
       "type": "teaching-note",
       "title": "Lecture core · Empirical risk",
       "body": "Empirical risk is the average loss on the examples we observed. It is a training measurement, not a guarantee about future data. A regularizer can be added when we want to prefer simpler or smoother hypotheses.",
+      "teaching": {
+        "concept": "Empirical risk is the average observed loss used as a finite-sample proxy for expected future loss.",
+        "useWhen": "Use it to write the training objective, compare fitted models on the same sample, and explain why a regularizer may be added separately.",
+        "examMove": "Identify the sample average, the loss, and the hypothesis being optimized; then state what the expression cannot guarantee.",
+        "trap": "Low empirical risk is not low population risk without assumptions about sampling, capacity, and stability."
+      },
       "sourceType": "lecture",
       "sourceRefs": [
         {
@@ -938,6 +1010,12 @@
       "type": "teaching-note",
       "title": "Lecture core · Train, validation, test",
       "body": "Use training data to fit parameters, validation data to choose settings such as $\\lambda$ or model size, and test data once for the final estimate. Reusing the test set for decisions quietly turns it into another validation set.",
+      "teaching": {
+        "concept": "The three splits have different information flows: parameters are fit on training data, choices are made on validation data, and the test set is reserved for the final estimate.",
+        "useWhen": "Use this rule whenever a hyperparameter, architecture, feature set, or stopping point must be selected.",
+        "examMove": "Draw the decision timeline and mark which split is allowed to influence each decision.",
+        "trap": "Repeatedly checking test performance turns the test set into validation data and invalidates the final claim."
+      },
       "sourceType": "lecture",
       "sourceRefs": [
         {
@@ -954,6 +1032,12 @@
       "type": "teaching-note",
       "title": "Lecture core · Three sources of error",
       "body": "The current lecture names three sources of error: approximation, estimation, and optimization. Keep this lecture decomposition separate from the textbook's broader three paradigms.",
+      "teaching": {
+        "concept": "The lecture separates approximation, estimation, and optimization: class limitation, finite-sample movement, and imperfect search.",
+        "useWhen": "Use the object transitions to diagnose a failure: oracle to best class member, best class member to sample fit, or initialization to the empirical minimizer.",
+        "examMove": "Name the source and the two objects it connects; do not replace estimation with the textbook's broader generalization label.",
+        "trap": "This is a diagnostic decomposition, not an invitation to merge the lecture map with the textbook's three paradigms."
+      },
       "sourceType": "lecture",
       "sourceRefs": [
         {

@@ -52,6 +52,12 @@
       "title": "Lecture core · K-means loop",
       "body": "K-means alternates between assigning each point to its nearest centroid and recomputing each centroid from its assigned points. Its objective is a sum of within-cluster squared distances, so scale and outliers matter.",
       "sourceType": "lecture",
+      "teaching": {
+        "concept": "K-means alternates hard assignments and centroid means, decreasing the within-cluster squared-distance objective at each conditional step.",
+        "useWhen": "Use it to perform one iteration and to explain why scale, outliers, and initialization affect the result.",
+        "examMove": "Write the assignment and update separately, name the objective each improves, and state the local-optimum limitation.",
+        "trap": "A cluster index is not a probability and a converged run is not evidence of a globally optimal partition."
+      },
       "math": {
         "latex": "\\min_{\\{c_k\\},\\{z_i\\}}\\sum_{i=1}^{n}\\lVert x_i-c_{z_i}\\rVert_2^2",
         "explanation": "For each data point, choose a cluster index $z_i$ and pay the squared distance to that cluster's centroid. The assignment step lowers the objective by choosing the nearest centroid; the update step lowers it by replacing each centroid with the mean of its assigned points.",
@@ -150,6 +156,12 @@
       "type": "teaching-note",
       "title": "Lecture core · K-means loop",
       "body": "K-means alternates between assigning each point to its nearest centroid and recomputing each centroid from its assigned points. Its objective is a sum of within-cluster squared distances, so scale and outliers matter.",
+      "teaching": {
+        "concept": "K-means alternates hard assignments and centroid means, decreasing the within-cluster squared-distance objective at each conditional step.",
+        "useWhen": "Use it to perform one iteration and to explain why scale, outliers, and initialization affect the result.",
+        "examMove": "Write the assignment and update separately, name the objective each improves, and state the local-optimum limitation.",
+        "trap": "A cluster index is not a probability and a converged run is not evidence of a globally optimal partition."
+      },
       "sourceType": "lecture",
       "sourceRefs": [
         {

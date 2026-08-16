@@ -55,6 +55,12 @@
       "title": "Lecture core · A tree is a piecewise-constant model",
       "body": "A decision tree partitions the input space by asking a sequence of feature-threshold questions. A regression leaf predicts a constant such as the mean target; a classification leaf predicts a class distribution or majority class. Training is greedy: choose the split with the best local impurity reduction, then recurse.",
       "sourceType": "lecture",
+      "teaching": {
+        "concept": "A decision tree partitions input space into regions and assigns one local prediction to each region.",
+        "useWhen": "Use the region view to evaluate a split, discuss impurity, and explain why depth changes bias and variance.",
+        "examMove": "State the region, its prediction, and the impurity reduction for the candidate split.",
+        "trap": "A deeper tree can fit more structure but can also memorize sample noise; depth is a capacity choice."
+      },
       "math": {
         "latex": "\\Delta I=I(\\text{parent})-\\sum_{c\\in\\text{children}}\\frac{n_c}{n}I(c)",
         "explanation": "The child impurities are weighted by their sample counts. A split is useful when it reduces impurity, but the best local split is not a proof of globally optimal future depth.",
@@ -197,6 +203,12 @@
       "type": "teaching-note",
       "title": "Lecture core · A tree is a piecewise-constant model",
       "body": "A decision tree partitions the input space by asking a sequence of feature-threshold questions. A regression leaf predicts a constant such as the mean target; a classification leaf predicts a class distribution or majority class. Training is greedy: choose the split with the best local impurity reduction, then recurse.",
+      "teaching": {
+        "concept": "A decision tree partitions input space into regions and assigns one local prediction to each region.",
+        "useWhen": "Use the region view to evaluate a split, discuss impurity, and explain why depth changes bias and variance.",
+        "examMove": "State the region, its prediction, and the impurity reduction for the candidate split.",
+        "trap": "A deeper tree can fit more structure but can also memorize sample noise; depth is a capacity choice."
+      },
       "sourceType": "lecture",
       "sourceRefs": [
         {
