@@ -1,7 +1,11 @@
 const test = require("node:test");
 const assert = require("node:assert/strict");
 const fs = require("node:fs");
+const path = require("node:path");
 const createLabRegistry = require("../src/ui/labs/registry.js");
+const { compileCourse } = require("../tools/content-compiler");
+
+function coursePackage(courseId) { return compileCourse(path.join(__dirname, ".."), courseId).package; }
 
 test("lab registry registers, resolves, and lists renderer plugins", () => {
   const registry = createLabRegistry();
@@ -19,44 +23,36 @@ test("lab registry rejects accidental duplicate renderer registration", () => {
 });
 
 test("every DSA5105 lesson has a source-backed visual lab", () => {
-  const window = { NUS_CONTENT: {} };
-  new Function("window", fs.readFileSync("data/nus/dsa5105.js", "utf8"))(window);
-  new Function("window", fs.readFileSync("data/nus/visual-labs.js", "utf8"))(window);
-  const lessons = window.NUS_CONTENT.DSA5105.modules.flatMap(module => module.lessons);
-  const labs = new Map(Object.values(window.NUS_VISUAL_LABS).map(lab => [lab.lessonId, lab]));
+  const packageData = coursePackage("DSA5105");
+  const lessons = packageData.content.modules.flatMap(module => module.lessons);
+  const labs = new Map(Object.values(packageData.labs).map(lab => [lab.lessonId, lab]));
   assert.equal(lessons.length, 23);
   assert.equal(lessons.filter(lesson => labs.has(lesson.id)).length, 23);
-  assert.ok(["concept-map", "decision-tree", "deep-dive"].every(type => Object.values(window.NUS_VISUAL_LABS).some(lab => lab.type === type)));
+  assert.ok(["concept-map", "decision-tree", "deep-dive"].every(type => Object.values(packageData.labs).some(lab => lab.type === type)));
 });
 
 test("every DSA5101 lesson has a source-backed visual lab", () => {
-  const window = { NUS_CONTENT: {} };
-  new Function("window", fs.readFileSync("data/nus/dsa5101.js", "utf8"))(window);
-  new Function("window", fs.readFileSync("data/nus/visual-labs.js", "utf8"))(window);
-  const lessons = window.NUS_CONTENT.DSA5101.modules.flatMap(module => module.lessons);
-  const labs = new Map(Object.values(window.NUS_VISUAL_LABS).map(lab => [lab.lessonId, lab]));
+  const packageData = coursePackage("DSA5101");
+  const lessons = packageData.content.modules.flatMap(module => module.lessons);
+  const labs = new Map(Object.values(packageData.labs).map(lab => [lab.lessonId, lab]));
   assert.equal(lessons.length, 4);
   assert.equal(lessons.filter(lesson => labs.has(lesson.id)).length, lessons.length);
   assert.ok(lessons.every(lesson => labs.get(lesson.id).sourceRefs.every(ref => ref.sourceType)));
 });
 
 test("every DSA5104 lesson has a source-backed visual lab", () => {
-  const window = { NUS_CONTENT: {} };
-  new Function("window", fs.readFileSync("data/nus/dsa5104.js", "utf8"))(window);
-  new Function("window", fs.readFileSync("data/nus/visual-labs.js", "utf8"))(window);
-  const lessons = window.NUS_CONTENT.DSA5104.modules.flatMap(module => module.lessons);
-  const labs = new Map(Object.values(window.NUS_VISUAL_LABS).map(lab => [lab.lessonId, lab]));
+  const packageData = coursePackage("DSA5104");
+  const lessons = packageData.content.modules.flatMap(module => module.lessons);
+  const labs = new Map(Object.values(packageData.labs).map(lab => [lab.lessonId, lab]));
   assert.equal(lessons.length, 7);
   assert.equal(lessons.filter(lesson => labs.has(lesson.id)).length, lessons.length);
   assert.ok(lessons.every(lesson => labs.get(lesson.id).sourceRefs.every(ref => ref.sourceType)));
 });
 
 test("every DSA5208 lesson has a source-backed visual lab", () => {
-  const window = { NUS_CONTENT: {} };
-  new Function("window", fs.readFileSync("data/nus/dsa5208.js", "utf8"))(window);
-  new Function("window", fs.readFileSync("data/nus/visual-labs.js", "utf8"))(window);
-  const lessons = window.NUS_CONTENT.DSA5208.modules.flatMap(module => module.lessons);
-  const labs = new Map(Object.values(window.NUS_VISUAL_LABS).map(lab => [lab.lessonId, lab]));
+  const packageData = coursePackage("DSA5208");
+  const lessons = packageData.content.modules.flatMap(module => module.lessons);
+  const labs = new Map(Object.values(packageData.labs).map(lab => [lab.lessonId, lab]));
   assert.equal(lessons.length, 9);
   assert.equal(lessons.filter(lesson => labs.has(lesson.id)).length, lessons.length);
   assert.ok(lessons.every(lesson => labs.get(lesson.id).sourceRefs.every(ref => ref.sourceType)));

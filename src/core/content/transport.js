@@ -4,7 +4,15 @@
   else root.ATLAS_CONTENT_TRANSPORT = factory;
 })(typeof globalThis === "object" ? globalThis : this, function createContentTransport(options) {
   const config = options || {};
-  const fetcher = config.fetcher || (typeof fetch === "function" ? fetch.bind(globalThis) : null);
+  const xhrFetcher = typeof XMLHttpRequest === "function" ? (url => new Promise((resolve, reject) => {
+    const request = new XMLHttpRequest();
+    request.open("GET", url, true);
+    request.setRequestHeader("accept", "application/json");
+    request.onload = () => resolve({ ok: request.status >= 200 && request.status < 300, status: request.status, json: async () => JSON.parse(request.responseText) });
+    request.onerror = () => reject(new Error(`Content request failed: ${url}`));
+    request.send();
+  })) : null;
+  const fetcher = config.fetcher || (typeof fetch === "function" ? fetch.bind(globalThis) : xhrFetcher);
   const roots = config.roots || ["content/", "dist/content/"];
   let manifestPromise = null;
   let activeRoot = roots[0];

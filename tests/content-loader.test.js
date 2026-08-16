@@ -1,32 +1,23 @@
 const test = require("node:test");
 const assert = require("node:assert/strict");
-const fs = require("node:fs");
-const path = require("node:path");
-const vm = require("node:vm");
+const createTransport = require("../src/core/content/transport.js");
 
-test("content loader fetches a course bundle once and resolves its package", async () => {
-  let appended = 0;
-  const context = {
-    console,
-    NUS_CONTENT_PACKAGES: { NEW5100: { code: "NEW5100", asset: "data/nus/generated/new5100.js", version: "abc" } },
-    document: {
-      createElement() { return {}; },
-      head: {
-        appendChild(script) {
-          appended += 1;
-          assert.equal(script.src, "data/nus/generated/new5100.js?v=abc");
-          context.NUS_CONTENT_PACKAGES.NEW5100 = { course: { code: "NEW5100" }, content: { modules: [] } };
-          script.onload();
-        }
-      }
+test("content transport deduplicates manifest requests and resolves a course asset", async () => {
+  let calls = 0;
+  const manifest = { schemaVersion: "nus.content-manifest.v3", courses: [{ code: "NEW5100", course: { code: "NEW5100", title: "New package" }, outline: "NEW5100/outline.json", courseAsset: "NEW5100/course.json" }] };
+  const transport = createTransport({
+    roots: ["content/"],
+    fetcher: async url => {
+      calls += 1;
+      if (url.endsWith("manifest.json")) return { ok: true, status: 200, json: async () => manifest };
+      if (url.endsWith("outline.json")) return { ok: true, status: 200, json: async () => ({ modules: [] }) };
+      return { ok: true, status: 200, json: async () => ({ course: { code: "NEW5100" }, assessments: [] }) };
     }
-  };
-  context.window = context;
-  vm.runInNewContext(fs.readFileSync(path.join(__dirname, "../src/core/content-loader.js"), "utf8"), context);
-
-  const first = context.NUS_CONTENT_PACKAGE_LOADER.load("NEW5100");
-  const second = context.NUS_CONTENT_PACKAGE_LOADER.load("NEW5100");
-  assert.equal((await first).course.code, "NEW5100");
-  assert.equal((await second).course.code, "NEW5100");
-  assert.equal(appended, 1);
+  });
+  const first = transport.loadManifest();
+  const second = transport.loadManifest();
+  assert.strictEqual(await first, await second);
+  const course = await transport.loadCourse("NEW5100");
+  assert.equal(course.course.code, "NEW5100");
+  assert.equal(calls, 3);
 });

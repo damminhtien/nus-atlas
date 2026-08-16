@@ -2,7 +2,7 @@
  * on the current reader surface and deliberately stays out of study mastery. */
 (function (root, factory) {
   if (typeof module === "object" && module.exports) module.exports = factory;
-  else root.NUS_READING_TIMER = factory;
+  else root.ATLAS_READING_TIMER = factory;
 })(typeof globalThis === "object" ? globalThis : this, function createReadingTimer(options) {
   const config = options || {};
   const storage = config.storage || (typeof localStorage !== "undefined" ? localStorage : null);

@@ -243,7 +243,7 @@ function writeCourseArtifacts(outputRoot, compiled) {
   writeJson(path.join(courseRoot, courseAsset), courseAssetValue);
   const outline = { ...compiled.outline, courseAsset, lessonAssets, questionAssets, studyKitAssets };
   writeJson(path.join(courseRoot, "outline.json"), outline);
-  return { code: courseId, courseId, course: compiled.outline.course, modules: compiled.outline.modules, labs: compiled.outline.labs, outline: `${courseId}/outline.json`, courseAsset: `${courseId}/${courseAsset}`, lessonAssets: Object.fromEntries(Object.entries(lessonAssets).map(([id, asset]) => [id, `${courseId}/${asset}`])), questionAssets: Object.fromEntries(Object.entries(questionAssets).map(([id, asset]) => [id, `${courseId}/${asset}`])), studyKitAssets: Object.fromEntries(Object.entries(studyKitAssets).map(([id, asset]) => [id, `${courseId}/${asset}`])), counts: compiled.package.counts, version: hash({ outline, courseAssetValue }), schemaVersion: "nus.content-course-manifest.v1" };
+  return { code: courseId, courseId, course: compiled.outline.course, modules: compiled.outline.modules, labs: compiled.outline.labs, assessments: compiled.package.assessments, schedule: compiled.package.schedule, outline: `${courseId}/outline.json`, courseAsset: `${courseId}/${courseAsset}`, lessonAssets: Object.fromEntries(Object.entries(lessonAssets).map(([id, asset]) => [id, `${courseId}/${asset}`])), questionAssets: Object.fromEntries(Object.entries(questionAssets).map(([id, asset]) => [id, `${courseId}/${asset}`])), studyKitAssets: Object.fromEntries(Object.entries(studyKitAssets).map(([id, asset]) => [id, `${courseId}/${asset}`])), counts: compiled.package.counts, version: hash({ outline, courseAssetValue }), schemaVersion: "nus.content-course-manifest.v1" };
 }
 
 function compileAll(root, outputRoot) {
@@ -251,7 +251,10 @@ function compileAll(root, outputRoot) {
   const ids = fs.readdirSync(coursesRoot, { withFileTypes: true }).filter(entry => entry.isDirectory()).map(entry => entry.name).sort();
   fs.rmSync(outputRoot, { recursive: true, force: true });
   fs.mkdirSync(outputRoot, { recursive: true });
-  const courses = ids.map(courseId => writeCourseArtifacts(outputRoot, compileCourse(root, courseId)));
+  const courses = ids.map(courseId => {
+    validateCanonical(root, courseId);
+    return writeCourseArtifacts(outputRoot, compileCourse(root, courseId));
+  });
   const sourceTypes = readJsonIfExists(path.join(root, "content", "source-types.json"));
   const manifest = { schemaVersion: "nus.content-manifest.v3", version: hash({ courses, sourceTypes }), sourceTypes, courses };
   writeJson(path.join(outputRoot, "manifest.json"), manifest);

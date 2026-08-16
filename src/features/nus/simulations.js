@@ -2,7 +2,7 @@
  * evidence writes are injected, keeping the renderer independent of storage. */
 (function (root, factory) {
   if (typeof module === "object" && module.exports) module.exports = factory;
-  else root.NUS_SIMULATIONS_FEATURE = factory;
+  else root.ATLAS_SIMULATIONS_FEATURE = factory;
 })(typeof globalThis === "object" ? globalThis : this, function createNusSimulationsFeature(config) {
   const options = config || {};
   const host = options.root;

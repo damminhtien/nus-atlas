@@ -3,7 +3,7 @@
  * from the app shell and makes route coverage testable without a DOM. */
 (function (root, factory) {
   if (typeof module === "object" && module.exports) module.exports = factory;
-  else root.NUS_ROUTE_TABLE = factory;
+  else root.ATLAS_ROUTE_TABLE = factory;
 })(typeof globalThis === "object" ? globalThis : this, function createNusRouteTable(handlers) {
   const routes = { ...handlers };
   return Object.freeze({

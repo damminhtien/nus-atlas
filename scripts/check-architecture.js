@@ -5,10 +5,7 @@ const { execFileSync } = require("child_process");
 
 const ROOT = path.resolve(__dirname, "..");
 const OWNERSHIP_FILE = path.join(ROOT, "architecture", "ownership.json");
-const GLOBAL_BRIDGE_ALLOWLIST = new Set([
-  "src/core/content-loader.js",
-  "src/core/content-repository.js"
-]);
+const GLOBAL_BRIDGE_ALLOWLIST = new Set();
 
 function readOwnership() {
   return JSON.parse(fs.readFileSync(OWNERSHIP_FILE, "utf8"));
@@ -41,9 +38,9 @@ function changedFiles() {
 
 function assertSourceBoundaries(files) {
   const errors = [];
-  const globalPattern = /window\.NUS_[A-Z0-9_]+/;
+  const globalPattern = /(?:window|root)\.NUS_[A-Z0-9_]+/;
   for (const file of files) {
-    if (!/^src\/(core|features|ui)\//.test(file)) continue;
+    if (!(/^(?:src\/(core|features|ui)|js)\//.test(file))) continue;
     if (GLOBAL_BRIDGE_ALLOWLIST.has(file)) continue;
     const absolute = path.join(ROOT, file);
     if (fs.existsSync(absolute) && globalPattern.test(fs.readFileSync(absolute, "utf8"))) {

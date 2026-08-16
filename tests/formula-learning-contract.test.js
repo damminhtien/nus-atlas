@@ -1,7 +1,7 @@
 const test = require("node:test");
 const assert = require("node:assert/strict");
 const fs = require("node:fs");
-const { loadLegacyState } = require("../scripts/validate-content");
+const { loadCanonicalState } = require("../scripts/validate-content");
 const { isGenericSocraticPrompt } = require("../scripts/validate-slides");
 
 function formulas(lesson) {
@@ -9,7 +9,7 @@ function formulas(lesson) {
 }
 
 test("every authored formula has a name and a use case", () => {
-  const state = loadLegacyState();
+  const state = loadCanonicalState();
   const missing = [];
   for (const [courseCode, catalog] of Object.entries(state.content)) {
     for (const module of catalog.modules || []) {
@@ -26,7 +26,7 @@ test("every authored formula has a name and a use case", () => {
 });
 
 test("DSA5105 lecture cores expose a teachable reasoning contract", () => {
-  const lessonCore = loadLegacyState().content.DSA5105;
+  const lessonCore = loadCanonicalState().content.DSA5105;
   const missing = [];
   for (const module of lessonCore.modules || []) {
     for (const lesson of module.lessons || []) {

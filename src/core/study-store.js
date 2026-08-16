@@ -6,7 +6,7 @@
  */
 (function (root, factory) {
   if (typeof module === "object" && module.exports) module.exports = factory;
-  else root.NUS_STUDY_STORE = factory;
+  else root.ATLAS_STUDY_STORE_FACTORY = factory;
 })(typeof globalThis === "object" ? globalThis : this, function createStudyStore(options) {
   const config = options || {};
   const storage = config.storage || null;

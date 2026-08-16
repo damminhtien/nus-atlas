@@ -4,9 +4,9 @@
 (function () {
   "use strict";
   const C = () => window.COURSES;
-  const nusRepository = () => window.NUS_REPOSITORY || null;
-  const nusCourses = () => nusRepository() ? nusRepository().listCourses() : (window.NUS_COURSES || []);
-  const nusContent = code => nusRepository() ? nusRepository().getCatalog(code) : (window.NUS_CONTENT || {})[code] || { modules: [] };
+  const nusRepository = () => window.ATLAS_REPOSITORY || null;
+  const nusCourses = () => nusRepository() ? nusRepository().listCourses() : [];
+  const nusContent = code => nusRepository() ? nusRepository().getCatalog(code) : { modules: [] };
   const app = document.getElementById("app");
   const esc = s => String(s == null ? "" : s);
 
@@ -2909,8 +2909,8 @@
     return BASE + " · Study Studio";
   }
   function renderRoute(parts) {
-    if (parts.length === 0) window.NUS_UI ? window.NUS_UI.renderRoute([]) : viewDashboard();
-    else if (parts[0] === "nus") window.NUS_UI ? window.NUS_UI.renderRoute(parts.slice(1)) : viewDashboard();
+    if (parts.length === 0) window.ATLAS_NUS_UI ? window.ATLAS_NUS_UI.renderRoute([]) : viewDashboard();
+    else if (parts[0] === "nus") window.ATLAS_NUS_UI ? window.ATLAS_NUS_UI.renderRoute(parts.slice(1)) : viewDashboard();
     else if (parts[0] === "atlas") viewDashboard();
     else if (parts[0] === "course") viewCourse(parts[1]);
     else if (parts[0] === "lesson") viewLesson(parts[1], parts[2], parts[3]);
@@ -3227,6 +3227,10 @@
     if (Store.freezeEarned()) toast("❄️", "Streak freeze earned!", "Hit a 7-day milestone — this freeze will cover one missed day (you have " + Store.raw.freezes + ").");
     showIntro(false);
   }
-  if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", boot);
-  else boot();
+  function startBoot() {
+    const ready = window.ATLAS_CONTENT_READY && typeof window.ATLAS_CONTENT_READY.then === "function" ? window.ATLAS_CONTENT_READY : Promise.resolve();
+    ready.catch(() => null).then(() => boot());
+  }
+  if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", startBoot);
+  else startBoot();
 })();

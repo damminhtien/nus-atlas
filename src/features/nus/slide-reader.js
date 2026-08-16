@@ -3,7 +3,7 @@
  * separate so learners can compare rather than conflate them. */
 (function (root, factory) {
   if (typeof module === "object" && module.exports) module.exports = factory;
-  else root.NUS_SLIDE_READER_FEATURE = factory;
+  else root.ATLAS_SLIDE_READER_FEATURE = factory;
 })(typeof globalThis === "object" ? globalThis : this, function createNusSlideReaderFeature(options) {
   const {
     root,

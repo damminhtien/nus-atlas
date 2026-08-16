@@ -1,9 +1,9 @@
 const test = require("node:test");
 const assert = require("node:assert/strict");
-const { loadLegacyState, validateContentState, validatePackageDirectory } = require("../scripts/validate-content");
+const { loadLegacyState, loadCanonicalState, validateContentState, validatePackageDirectory } = require("../scripts/validate-content");
 
-test("legacy NUS data satisfies the content contract", () => {
-  const result = validateContentState(loadLegacyState());
+test("canonical course packages satisfy the content contract", () => {
+  const result = validateContentState(loadCanonicalState());
   assert.equal(result.ok, true, result.errors.join("\n"));
   assert.ok(result.counts.lessons > 0);
   assert.ok(result.counts.questions > 0);

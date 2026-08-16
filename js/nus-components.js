@@ -1,5 +1,8 @@
 (function () {
   "use strict";
+  const repository = () => window.ATLAS_REPOSITORY || null;
+  const sourceTypes = () => repository() && repository().getSourceTypes ? repository().getSourceTypes() : {};
+  const studyStore = () => window.ATLAS_STUDY_STORE || null;
   const esc = value => String(value == null ? "" : value).replace(/[&<>"']/g, ch => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", "\"": "&quot;", "'": "&#39;" }[ch]));
   function mathSource(value) {
     const source = String(value == null ? "" : value).trim();
@@ -12,11 +15,11 @@
   const mathMarkup = value => `$${esc(mathSource(value))}$`;
   const sourceLabel = ref => `${ref.sourceId}${ref.page ? ` · p.${ref.page}` : ""}`;
   const routeLink = (label, href, cls = "ghost") => `<a class="btn ${cls}" href="${esc(href)}" data-route>${esc(label)}</a>`;
-  const sourceRefs = lab => (lab.sourceRefs || []).map(ref => `<span class="nus-lab-source-ref"><b>${esc((window.NUS_SOURCE_TYPES && window.NUS_SOURCE_TYPES[ref.sourceType] || {}).shortLabel || ref.sourceType)}</b> ${esc(sourceLabel(ref))}</span>`).join("");
+  const sourceRefs = lab => (lab.sourceRefs || []).map(ref => `<span class="nus-lab-source-ref"><b>${esc((sourceTypes()[ref.sourceType] || {}).shortLabel || ref.sourceType)}</b> ${esc(sourceLabel(ref))}</span>`).join("");
   const sourceSummary = lab => {
     const refs = lab.sourceRefs || [];
     const counts = refs.reduce((out, ref) => {
-      const label = (window.NUS_SOURCE_TYPES && window.NUS_SOURCE_TYPES[ref.sourceType] || {}).shortLabel || ref.sourceType || "Source";
+      const label = (sourceTypes()[ref.sourceType] || {}).shortLabel || ref.sourceType || "Source";
       out[label] = (out[label] || 0) + 1;
       return out;
     }, {});
@@ -26,7 +29,7 @@
     if (!lens) return "";
     const groups = [["Lecture scope", lens.lecture], ["Official exercise depth", lens.officialExercise], ["Textbook depth", lens.textbook], ["Reference / assessment", lens.reference]]
       .filter(([, refs]) => Array.isArray(refs) && refs.length)
-      .map(([label, refs]) => `<div class="nus-source-lens-group"><b>${esc(label)}</b><ul class="nus-source-list">${refs.map(ref => `<li><span class="pill">${esc((window.NUS_SOURCE_TYPES && window.NUS_SOURCE_TYPES[ref.sourceType] || {}).shortLabel || ref.sourceType)}</span> <span>${esc(sourceLabel(ref))}</span><small>${esc(ref.role || "")}</small></li>`).join("")}</ul></div>`).join("");
+      .map(([label, refs]) => `<div class="nus-source-lens-group"><b>${esc(label)}</b><ul class="nus-source-list">${refs.map(ref => `<li><span class="pill">${esc((sourceTypes()[ref.sourceType] || {}).shortLabel || ref.sourceType)}</span> <span>${esc(sourceLabel(ref))}</span><small>${esc(ref.role || "")}</small></li>`).join("")}</ul></div>`).join("");
     return `<details class="nus-source-lens"><summary><span>Why is this examinable?</span><span class="pill gold">A+ · ${esc(lens.status || "scope mapped")}</span></summary>${lens.whyExaminable ? `<p class="nus-source-lens-why">${esc(lens.whyExaminable)}</p>` : ""}<div class="nus-source-lens-grid">${groups}</div></details>`;
   }
   const shell = (lab, body) => `<section id="nus-lab-${esc(lab.lessonId)}" class="nus-lab nus-lab-${esc(lab.type)} reveal" data-nus-lab="${esc(lab.lessonId)}" data-reduced-motion="${lab.reducedMotion ? "true" : "false"}" aria-labelledby="nus-lab-title-${esc(lab.lessonId)}"><header class="nus-lab-head"><div><span class="pill violet">Visual learning lab</span><h3 id="nus-lab-title-${esc(lab.lessonId)}">${esc(lab.title)}</h3></div><span class="nus-lab-status" data-lab-status aria-live="polite">Not attempted</span></header><p class="nus-lab-goal"><b>Learning goal</b> ${esc(lab.learningGoal)}</p><div class="nus-lab-links">${routeLink("Course map", `#/nus/course/${lab.courseCode}`)}${routeLink("Practice this lesson", `#/nus/exam/${lab.courseCode}/${lab.lessonId}`, "primary")}</div>${body}${sourceLensMarkup(lab.sourceLens)}<footer class="nus-lab-foot"><details class="nus-lab-source-details"><summary><span>Sources</span><small>${esc(sourceSummary(lab))}</small></summary><p class="nus-lab-source-note">Lecture is the core; textbook and reference material are optional depth.</p><div class="nus-lab-sources">${sourceRefs(lab)}</div></details><details class="nus-lab-why"><summary>Why this interaction?</summary><p>${esc(lab.explanation || "Use the controls to make one explicit reasoning move, then explain the evidence.")}</p></details></footer></section>`;
@@ -39,7 +42,7 @@
       if (status) status.textContent = "Complete the reasoning step first";
       return;
     }
-    const result = window.NUS_STORE && window.NUS_STORE.recordSimulation(`${lab.courseCode || "nus"}:${lab.lessonId}`, lab.courseCode, lab.lessonId);
+    const result = studyStore() && studyStore().recordSimulation(`${lab.courseCode || "nus"}:${lab.lessonId}`, lab.courseCode, lab.lessonId);
     const status = root.querySelector("[data-lab-status]");
     if (status) status.textContent = result && result.duplicate ? "Already logged · repeat to reason" : "Evidence logged · +10 XP";
     root.classList.add("is-complete");
@@ -134,7 +137,7 @@
       if (status) status.textContent = "Reveal the final step before committing the proof";
       return;
     }
-    const result = window.NUS_STORE && window.NUS_STORE.recordSimulation((lab.courseCode || "nus") + ":" + lab.lessonId + ":" + panel.dataset.deepPanel, lab.courseCode, lab.lessonId);
+    const result = studyStore() && studyStore().recordSimulation((lab.courseCode || "nus") + ":" + lab.lessonId + ":" + panel.dataset.deepPanel, lab.courseCode, lab.lessonId);
     if (status) status.textContent = result && result.duplicate ? "Already logged · repeat to reason" : "Proof logged · +10 XP";
     root.classList.add("is-complete");
   }
@@ -163,7 +166,7 @@
     const nextButton = root.querySelector("[data-lab-next]"); if (nextButton) nextButton.textContent = next === steps.length - 1 ? "Complete reasoning move" : nextButton.textContent;
     if (next === steps.length - 1) complete(lab, root);
   }
-  const registry = window.NUS_LAB_REGISTRY ? window.NUS_LAB_REGISTRY() : { register() { return this; }, get() { return null; }, types() { return []; } };
+  const registry = window.ATLAS_LAB_REGISTRY ? window.ATLAS_LAB_REGISTRY() : { register() { return this; }, get() { return null; }, types() { return []; } };
   registry.register("compare", compare)
     .register("geometry", geometry)
     .register("math-stepper", mathStepper)
@@ -181,7 +184,7 @@
   }
   function bind(root) {
     root.querySelectorAll("[data-nus-lab]").forEach(labRoot => {
-      const lab = window.NUS_VISUAL_LABS && window.NUS_VISUAL_LABS[labRoot.dataset.nusLab];
+      const lab = repository() && repository().getLab(labRoot.dataset.nusLab);
       if (!lab) return;
       if (lab.type === "deep-dive") {
         labRoot.querySelectorAll("[data-deep-tab]").forEach(tab => tab.addEventListener("click", () => selectDeepDive(labRoot, tab.dataset.deepTab)));
@@ -203,5 +206,5 @@
       }));
     });
   }
-  window.NUS_COMPONENTS = { renderLab, bind, labRegistry: registry };
+  window.ATLAS_COMPONENTS = { renderLab, bind, labRegistry: registry };
 })();

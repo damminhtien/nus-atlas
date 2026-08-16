@@ -1,7 +1,7 @@
 /* Fast, distinction-first retrieval for paired concepts. */
 (function (root, factory) {
   if (typeof module === "object" && module.exports) module.exports = factory;
-  else root.NUS_CONTRAST_DRILLS_FEATURE = factory;
+  else root.ATLAS_CONTRAST_DRILLS_FEATURE = factory;
 })(typeof globalThis === "object" ? globalThis : this, function createContrastDrills(config) {
   const options = config || {};
   const root = options.root;

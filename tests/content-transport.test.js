@@ -2,11 +2,15 @@ const test = require("node:test");
 const assert = require("node:assert/strict");
 const fs = require("node:fs");
 const path = require("node:path");
+const os = require("node:os");
 const createTransport = require("../src/core/content/transport.js");
 const createRepository = require("../src/core/content/repository.js");
+const { compileAll } = require("../tools/content-compiler");
 
-const contentRoot = path.join(__dirname, "..", "dist", "content");
+const contentRoot = fs.mkdtempSync(path.join(os.tmpdir(), "nus-atlas-transport-"));
+compileAll(path.join(__dirname, ".."), contentRoot);
 const manifest = JSON.parse(fs.readFileSync(path.join(contentRoot, "manifest.json"), "utf8"));
+test.after(() => fs.rmSync(contentRoot, { recursive: true, force: true }));
 
 function fakeFetch(url) {
   const relative = url.replace(/^test-content\//, "");

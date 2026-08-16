@@ -1,11 +1,11 @@
 /* Content contract and referential-integrity checks.
  *
- * The validator accepts the current legacy globals as input so migration can be
- * incremental. New JSON packages can call validateContentState directly with the
- * same normalized shape and receive the same checks.
+ * The production validator reads canonical JSON packages. Legacy globals remain
+ * available only for the one-way migration tool and compatibility tests.
  */
 const fs = require("fs");
 const path = require("path");
+const { loadCourseSource } = require("../tools/content-compiler");
 
 const ROOT = path.resolve(__dirname, "..");
 const NUS_FILES = [
@@ -38,6 +38,37 @@ function loadLegacyState(root = ROOT) {
     visuals: window.NUS_VISUALS || {},
     sourceTypes: window.NUS_SOURCE_TYPES || {}
   };
+}
+
+function loadCanonicalState(root = ROOT) {
+  const coursesRoot = path.join(root, "content", "courses");
+  const sourceTypes = JSON.parse(fs.readFileSync(path.join(root, "content", "source-types.json"), "utf8"));
+  const state = { courses: [], content: {}, assessments: [], artifacts: {}, labs: {}, visuals: {}, sourceTypes };
+  const courseIds = fs.readdirSync(coursesRoot, { withFileTypes: true })
+    .filter(entry => entry.isDirectory())
+    .map(entry => entry.name)
+    .sort();
+  for (const courseId of courseIds) {
+    const source = loadCourseSource(root, courseId);
+    const bankIds = new Set((source.questionBank && source.questionBank.questions || []).map(question => question.id));
+    state.courses.push(source.course);
+    // The question-bank validator owns extension questions. Keep the base
+    // content contract focused on authored lesson questions so a bank item is
+    // not reported as a false duplicate after compilation merges both layers.
+    state.content[courseId] = {
+      modules: source.modules.map(module => ({
+        ...module,
+        lessons: (module.lessons || []).map(lesson => ({
+          ...lesson,
+          questions: (lesson.questions || []).filter(question => !bankIds.has(question.id))
+        }))
+      }))
+    };
+    state.assessments.push(...source.assessments);
+    Object.assign(state.labs, source.labs);
+    Object.assign(state.visuals, source.visuals);
+  }
+  return state;
 }
 
 function validateContentState(state) {
@@ -170,7 +201,7 @@ function checkSourceLens(lens, sourceTypes, errors, owner) {
 }
 
 if (require.main === module) {
-  const result = validateContentState(loadLegacyState());
+  const result = validateContentState(loadCanonicalState());
   const packages = validatePackageDirectory();
   if (!result.ok || !packages.ok) {
     console.error("CONTENT CONTRACT FAILED");
@@ -181,4 +212,4 @@ if (require.main === module) {
   }
 }
 
-module.exports = { NUS_FILES, loadLegacyState, validateContentState, validatePackageDirectory };
+module.exports = { NUS_FILES, loadLegacyState, loadCanonicalState, validateContentState, validatePackageDirectory };

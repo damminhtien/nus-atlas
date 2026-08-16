@@ -2,7 +2,7 @@
  * a compact revision index without presenting third-party previews as lecture truth. */
 (function (root, factory) {
   if (typeof module === "object" && module.exports) module.exports = factory;
-  else root.NUS_ASSESSMENT_MAP_FEATURE = factory;
+  else root.ATLAS_ASSESSMENT_MAP_FEATURE = factory;
 })(typeof globalThis === "object" ? globalThis : this, function createNusAssessmentMapFeature(options) {
   const { root, getAssessmentMap, getLessons, pageHead, sourceItem, text, esc, button, notFound } = options;
 

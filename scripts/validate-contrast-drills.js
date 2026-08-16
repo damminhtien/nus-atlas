@@ -1,5 +1,5 @@
 /* Contract for fast, distinction-first question cards. */
-const { loadLegacyState } = require("./validate-content.js");
+const { loadCanonicalState } = require("./validate-content.js");
 
 const REQUIRED_PAIRS = [
   "Train vs validation vs test",
@@ -107,7 +107,7 @@ function validateContrastDrills(state) {
 }
 
 if (require.main === module) {
-  const result = validateContrastDrills(loadLegacyState());
+  const result = validateContrastDrills(loadCanonicalState());
   if (!result.ok) {
     console.error("CONTRAST DRILLS CONTRACT FAILED");
     result.errors.forEach(error => console.error(`- ${error}`));

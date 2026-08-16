@@ -2,7 +2,7 @@
  * stay together so new assessment formats do not expand the NUS shell. */
 (function (root, factory) {
   if (typeof module === "object" && module.exports) module.exports = factory;
-  else root.NUS_EXAM_FEATURE = factory;
+  else root.ATLAS_EXAM_FEATURE = factory;
 })(typeof globalThis === "object" ? globalThis : this, function createNusExamFeature(options) {
   const {
     root,

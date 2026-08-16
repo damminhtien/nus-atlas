@@ -2,7 +2,7 @@
  * can render without reaching into global course registries directly. */
 (function (root, factory) {
   if (typeof module === "object" && module.exports) module.exports = factory;
-  else root.NUS_PRESENTATION = factory;
+  else root.ATLAS_PRESENTATION = factory;
 })(typeof globalThis === "object" ? globalThis : this, function createNusPresentation(config) {
   const options = config || {};
   const getSourceTypes = typeof options.getSourceTypes === "function" ? options.getSourceTypes : () => ({});
@@ -42,6 +42,16 @@
     return `<details class="nus-source-lens"><summary><span>Why is this examinable?</span><span class="pill gold">A+ · ${esc(lens.status || "scope mapped")}</span></summary>${lens.whyExaminable ? `<p class="nus-source-lens-why">${text(lens.whyExaminable)}</p>` : ""}<div class="nus-source-lens-grid">${groups}</div></details>`;
   }
   function sourceGroups(course) {
+    if (Array.isArray(course.sourceCatalog) && course.sourceCatalog.length) {
+      const groups = [
+        ["Lecture core", "lecture"],
+        ["Official exercise depth", "exercise"],
+        ["Textbook depth", "textbook"],
+        ["Reference / optional", "ref"]
+      ].map(([label, sourceType]) => ({ label, refs: course.sourceCatalog.filter(ref => ref.sourceType === sourceType) }))
+        .filter(group => group.refs.length);
+      if (groups.length) return groups;
+    }
     if (!course.lectureSources) return [{ label: "Course sources", refs: (course.localSources || []).map(sourceId => ({ sourceId })) }];
     const allLectureSources = course.lectureSources || [];
     return [

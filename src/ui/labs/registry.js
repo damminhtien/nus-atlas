@@ -4,7 +4,7 @@
  */
 (function (root, factory) {
   if (typeof module === "object" && module.exports) module.exports = factory;
-  else root.NUS_LAB_REGISTRY = factory;
+  else root.ATLAS_LAB_REGISTRY = factory;
 })(typeof globalThis === "object" ? globalThis : this, function createLabRegistry() {
   const renderers = Object.create(null);
   return Object.freeze({

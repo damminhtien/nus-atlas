@@ -2,7 +2,7 @@
  * and navigation context; lecture Atlas annotations belong to the slide view. */
 (function (root, factory) {
   if (typeof module === "object" && module.exports) module.exports = factory;
-  else root.NUS_TEXTBOOK_READER_FEATURE = factory;
+  else root.ATLAS_TEXTBOOK_READER_FEATURE = factory;
 })(typeof globalThis === "object" ? globalThis : this, function createNusTextbookReaderFeature(options) {
   const {
     root,

@@ -1,6 +1,6 @@
 const fs = require("fs");
 const path = require("path");
-const { loadLegacyState } = require("./validate-content");
+const { loadCanonicalState } = require("./validate-content");
 
 const ROOT = path.resolve(__dirname, "..");
 const TYPES = new Set(["mcq", "short", "derivation", "calculation"]);
@@ -12,7 +12,7 @@ function readQuestionBank(courseId = "DSA5105", root = ROOT) {
   return JSON.parse(fs.readFileSync(file, "utf8"));
 }
 
-function validateQuestionBank(bank, state = loadLegacyState(ROOT)) {
+function validateQuestionBank(bank, state = loadCanonicalState(ROOT)) {
   const errors = [];
   if (!bank || bank.schemaVersion !== "nus.question-bank.v1") errors.push("invalid question bank schemaVersion");
   const courseId = bank && bank.courseId;

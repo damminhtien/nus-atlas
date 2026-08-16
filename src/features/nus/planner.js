@@ -2,7 +2,7 @@
  * while the NUS entrypoint supplies data and shared presentation helpers. */
 (function (root, factory) {
   if (typeof module === "object" && module.exports) module.exports = factory;
-  else root.NUS_PLANNER_FEATURE = factory;
+  else root.ATLAS_PLANNER_FEATURE = factory;
 })(typeof globalThis === "object" ? globalThis : this, function createNusPlannerFeature(options) {
   const {
     root,

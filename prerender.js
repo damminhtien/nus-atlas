@@ -14,7 +14,7 @@
 const fs = require("fs");
 const path = require("path");
 const crypto = require("crypto");
-const createContentRepository = require("./src/core/content-repository.js");
+const { compileCourse } = require("./tools/content-compiler");
 
 // Where the site will live. Canonical/OG/sitemap urls point here; override in CI if needed.
 const BASE = (process.env.SITE_URL || "https://atlascodex.io").replace(/\/+$/, "");
@@ -30,25 +30,8 @@ function load(f) { new Function("window", "document", "getComputedStyle", fs.rea
 ["linear-algebra", "calculus", "algorithms", "deep-learning", "reinforcement-learning", "llm", "probability-statistics"]
   .forEach(t => load("data/" + t + ".js"));
 const COURSES = global.window.COURSES || [];
-[
-  "data/nus/provenance.js", "data/nus/courses.js", "data/nus/schedule.js", "data/nus/assessments.js", "data/nus/visuals.js",
-  "data/nus/dsa5101.js", "data/nus/dsa5104.js", "data/nus/dsa5105.js", "data/nus/generated/content-manifest.js", "data/nus/dsa5208.js",
-  "data/nus/artifacts.js", "data/nus/formula-depth.js", "data/nus/visual-labs.js"
-].forEach(load);
-const generatedRoot = path.join(__dirname, "data", "nus", "generated");
-if (fs.existsSync(generatedRoot)) fs.readdirSync(generatedRoot).filter(file => file.endsWith(".js") && file !== "content-manifest.js").sort().forEach(file => load(path.join("data/nus/generated", file)));
-const NUS_REPOSITORY = createContentRepository({
-  courses: global.window.NUS_COURSES,
-  content: global.window.NUS_CONTENT,
-  packages: global.window.NUS_CONTENT_PACKAGES,
-  assessments: global.window.NUS_ASSESSMENTS,
-  artifacts: global.window.NUS_ARTIFACTS,
-  labs: global.window.NUS_VISUAL_LABS,
-  visuals: global.window.NUS_VISUALS,
-  schedule: global.window.NUS_SCHEDULE,
-  sourceTypes: global.window.NUS_SOURCE_TYPES,
-  provenance: global.window.NUS_SOURCE_POLICY
-});
+const courseIds = fs.readdirSync(path.join(__dirname, "content", "courses"), { withFileTypes: true }).filter(entry => entry.isDirectory()).map(entry => entry.name).sort();
+const NUS_PACKAGES = courseIds.map(courseId => compileCourse(__dirname, courseId).package);
 
 // ---- helpers ----
 function esc(s) { return String(s).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;"); }
@@ -188,7 +171,11 @@ function copyInto(src, dst) {
   const st = fs.statSync(src);
   if (st.isDirectory()) {
     fs.mkdirSync(dst, { recursive: true });
-    for (const name of fs.readdirSync(src)) copyInto(path.join(src, name), path.join(dst, name));
+    for (const name of fs.readdirSync(src)) {
+      // Historical NUS IIFE registries are migration input, not public runtime assets.
+      if (src === path.join(__dirname, "data") && name === "nus") continue;
+      copyInto(path.join(src, name), path.join(dst, name));
+    }
   } else {
     fs.copyFileSync(src, dst);
   }
@@ -197,6 +184,7 @@ function copyInto(src, dst) {
 // ---- build ----
 fs.rmSync(OUT, { recursive: true, force: true });
 fs.mkdirSync(OUT, { recursive: true });
+require("./scripts/content-build").buildAll();
 for (const item of ["index.html", "sw.js", "manifest.webmanifest", "icon.svg", "css", "js", "src", "data", "assets"]) {
   const p = path.join(__dirname, item);
   if (fs.existsSync(p)) copyInto(p, path.join(OUT, item));
@@ -215,8 +203,9 @@ for (const course of COURSES) {
     }
   }
 }
-for (const course of NUS_REPOSITORY.listCourses()) {
-  const modules = (course.modules || []).map(module => ({ ...module, lessons: module.lessons || [] }));
+for (const packageData of NUS_PACKAGES) {
+  const course = packageData.course;
+  const modules = (packageData.content.modules || []).map(module => ({ ...module, lessons: module.lessons || [] }));
   for (const module of modules) {
     for (const lesson of module.lessons) {
       const dir = path.join(OUT, "nus", course.code, lesson.id);
@@ -244,7 +233,7 @@ function walkFiles(dir, prefix = "") {
     return [relative.split(path.sep).join("/")];
   });
 }
-const assets = walkFiles(OUT).filter(file => !file.startsWith("l/") && !file.startsWith("nus/") && !["sw.js", "asset-manifest.json", "sitemap.xml", "robots.txt"].includes(file) && !(file.startsWith("data/nus/generated/") && file !== "data/nus/generated/content-manifest.js"));
+const assets = walkFiles(OUT).filter(file => !file.startsWith("l/") && !file.startsWith("nus/") && !["sw.js", "asset-manifest.json", "sitemap.xml", "robots.txt"].includes(file));
 const manifest = { schemaVersion: "atlas.asset-manifest.v1", version: VERSION, assets: assets.map(file => `./${file}`) };
 fs.writeFileSync(path.join(OUT, "asset-manifest.json"), `${JSON.stringify(manifest, null, 2)}\n`);
 const cache = `atlas-${VERSION}-${crypto.createHash("sha1").update(JSON.stringify(manifest)).digest("hex").slice(0, 12)}`;

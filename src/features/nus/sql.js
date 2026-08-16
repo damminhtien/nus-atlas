@@ -2,7 +2,7 @@
  * runtime; the NUS entrypoint only injects data and presentation helpers. */
 (function (root, factory) {
   if (typeof module === "object" && module.exports) module.exports = factory;
-  else root.NUS_SQL_FEATURE = factory;
+  else root.ATLAS_SQL_FEATURE = factory;
 })(typeof globalThis === "object" ? globalThis : this, function createNusSqlFeature(config) {
   const options = config || {};
   const host = options.root;

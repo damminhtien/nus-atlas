@@ -2,7 +2,7 @@
  * It presents only one or two prompts due now; lesson reading stays optional. */
 (function (root, factory) {
   if (typeof module === "object" && module.exports) module.exports = factory;
-  else root.NUS_RETRIEVAL_FEATURE = factory;
+  else root.ATLAS_RETRIEVAL_FEATURE = factory;
 })(typeof globalThis === "object" ? globalThis : this, function createNusRetrievalFeature(options) {
   const { root, getCourses, getLessons, getStore, pageHead, sourceItem, text, esc, button, typeset, answerKey } = options;
   const DAY = 86400000;
