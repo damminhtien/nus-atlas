@@ -16,7 +16,8 @@ The source label is part of the data model, not just a UI decoration. A source r
 
 | Type | Meaning | Study priority |
 | --- | --- | --- |
-| `lecture` | Current syllabus, lecture slides, or lecture exercises | Primary scope and exam priority |
+| `lecture` | Current syllabus and lecture slides | Primary scope and exam priority |
+| `exercise` | Official exercise sheets and worked solutions | Derivation depth; use the A+ source lens to distinguish it from lecture scope |
 | `textbook` | Course-textbook derivations and background | Depth; confirm examinability against lecture |
 | `ref` | Optional, advanced, draft, or historical support | Useful context, not current lecture authority |
 
@@ -25,6 +26,7 @@ Assessment-derived material remains `ref` with `status: "assessment-derived"`. I
 For DSA5105, the local IDs are intentionally kept as references only:
 
 - `DSA5105/Ref/week1_DSA5105_lecture1_with_note.pdf` is the annotated Week 1 lecture copy used for the current deep-dive lessons. `DSA5105/Lec1.pdf` remains a local lecture source, but its cover has a DSA5102 label; the data records that anomaly instead of silently presenting it as an official title.
+- `DSA5105/Lec1_exercises.pdf` and `DSA5105/Lec1_exercises-solutions.pdf` are `exercise` sources, not lecture sources. The official exercise layer records what must be derived for A+ preparation without expanding the lecture boundary.
 - `DSA5105/Textbook.pdf` supplies textbook depth: PAC/risk definitions, SVM margins, PCA, mixture models, and Bellman/RL derivations.
 - `DSA5105/Ref/...` supplies optional learning theory, high-dimensional PCA, RL, and GNN reading. The Mathematics of Data Science source is marked `draft`; old or optional material must not define current assessments.
 
@@ -40,6 +42,12 @@ The DSA5105 course page separates the following tracks:
 - **RL and graphs:** Bellman reasoning, MDP value functions, value iteration, graph kernels, PageRank, spectral clustering, GNN message passing, permutation invariance, and oversmoothing.
 
 Textbook-backed prompts are marked in the lesson source trail and in Exam Mode review. Reference-backed prompts remain visibly optional, so a difficult reference question does not masquerade as a lecture requirement.
+
+### A+ source lens
+
+When a concept has both lecture and exercise evidence, open **Why is this examinable?**. The lens shows four separate groups: lecture scope, official exercise depth, textbook depth, and reference/assessment context. A concept can be lecture-core while its closed-form derivation or eigen analysis is exercise depth; the UI must never collapse those into one citation list.
+
+The data contract is `sourceLens: { status, whyExaminable, lecture, officialExercise, textbook, reference }`. `sourceRefs` answers “where is this stated?”; `sourceLens` answers “what level should I prepare, and why?”.
 
 ## DSA5105 assessment alignment
 

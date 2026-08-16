@@ -16,7 +16,7 @@
   function sourceBadge(ref) {
     const meta = getSourceTypes()[ref && ref.sourceType];
     if (!meta) return `<span class="pill">Source</span>`;
-    const status = ref.status && !["current", "course-depth"].includes(ref.status) ? ` · ${ref.status}` : "";
+    const status = ref.status && !["current", "course-depth", "current-context"].includes(ref.status) ? ` · ${ref.status}` : "";
     return `<span class="pill ${esc(meta.tone)}">${esc(meta.shortLabel)}${esc(status)}</span>`;
   }
   function sourceItem(ref) { return `${sourceBadge(ref)} <span>${esc(sourceLabel(ref))}</span>${ref && ref.role ? `<small>${esc(ref.role)}</small>` : ""}`; }
@@ -34,10 +34,19 @@
     if (!(refs || []).length) return "";
     return `<details class="nus-source-disclosure"><summary><span>${esc(title)}</span><small>${esc(sourceSummary(refs))}</small></summary><ul class="nus-source-list">${refs.map(ref => `<li>${sourceItem(ref)}</li>`).join("")}</ul><p class="nus-muted">Open to inspect exact page-level provenance.</p></details>`;
   }
+  function sourceLens(lens) {
+    if (!lens) return "";
+    const groups = [["Lecture scope", lens.lecture], ["Official exercise depth", lens.officialExercise], ["Textbook depth", lens.textbook], ["Reference / assessment", lens.reference]]
+      .filter(([, refs]) => Array.isArray(refs) && refs.length)
+      .map(([label, refs]) => `<div class="nus-source-lens-group"><b>${esc(label)}</b><ul class="nus-source-list">${refs.map(ref => `<li>${sourceItem(ref)}</li>`).join("")}</ul></div>`).join("");
+    return `<details class="nus-source-lens"><summary><span>Why is this examinable?</span><span class="pill gold">A+ · ${esc(lens.status || "scope mapped")}</span></summary>${lens.whyExaminable ? `<p class="nus-source-lens-why">${text(lens.whyExaminable)}</p>` : ""}<div class="nus-source-lens-grid">${groups}</div></details>`;
+  }
   function sourceGroups(course) {
     if (!course.lectureSources) return [{ label: "Course sources", refs: (course.localSources || []).map(sourceId => ({ sourceId })) }];
+    const allLectureSources = course.lectureSources || [];
     return [
-      { label: "Lecture core", refs: course.lectureSources },
+      { label: "Lecture core", refs: allLectureSources.filter(ref => !ref.sourceType || ref.sourceType === "lecture") },
+      { label: "Official exercise depth", refs: course.exerciseSources || allLectureSources.filter(ref => ref.sourceType === "exercise") },
       { label: "Textbook depth", refs: course.textbookSources || [] },
       { label: "Reference / optional", refs: course.referenceSources || [] }
     ].filter(group => group.refs.length);
@@ -80,7 +89,7 @@
   }
   function lessonSection(section) {
     const badge = section.sourceType ? sourceBadge({ sourceType: section.sourceType, status: section.status }) : "";
-    return `<section class="nus-teach-card reveal"><div class="nus-teach-head"><h3>${esc(section.title)}</h3>${badge}</div>${paragraphs(section.body)}${section.math ? mathBlock(section.math) : ""}</section>`;
+    return `<section class="nus-teach-card reveal"><div class="nus-teach-head"><h3>${esc(section.title)}</h3>${badge}</div>${paragraphs(section.body)}${section.math ? mathBlock(section.math) : ""}${sourceLens(section.sourceLens)}</section>`;
   }
   function workedExample(example) {
     const steps = (example.steps || []).map((step, index) => `<li><b>${index + 1}.</b><span>${text(step)}</span></li>`).join("");
@@ -113,7 +122,7 @@
   }
 
   return Object.freeze({
-    esc, text, sourceLabel, sourceBadge, sourceItem, sourceSummary, sourceDisclosure, sourceGroups, quickNav, pageHead, card,
+    esc, text, sourceLabel, sourceBadge, sourceItem, sourceSummary, sourceDisclosure, sourceLens, sourceGroups, quickNav, pageHead, card,
     button, statusPill, visualCard, mathBlock, lessonSection, workedExample,
     recallItem, criticalThinking, studyKit, studyCompass
   });

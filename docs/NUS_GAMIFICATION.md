@@ -8,7 +8,7 @@ Gamification in NUS Atlas is a private feedback loop for studying, not a public 
 - Keep the signal personal. There is no leaderboard, public rank, streak shaming, or score penalty.
 - Make rewards idempotent. Every award has a stable `eventId`, so refreshes and repeated clicks cannot duplicate XP.
 - Prefer recovery over punishment. A missed question becomes a prompt for another attempt, not a permanent deduction.
-- Keep lecture, textbook, and reference content visibly separate in every lab source lens.
+- Keep lecture, official exercise, textbook, and reference content visibly separate in every lab source lens.
 - Make interactions keyboard reachable and useful with reduced motion enabled.
 
 ## Evidence ledger
@@ -58,7 +58,8 @@ Recognition cards show progress toward durable study behaviors such as Retrieval
 Every visual lab in `data/nus/visual-labs.js` declares:
 
 - `learningGoal`: one observable reasoning outcome.
-- `sourceRefs`: typed lecture, textbook, or reference pointers.
+- `sourceRefs`: typed lecture, exercise, textbook, or reference pointers.
+- `sourceLens`: the A+ explanation of why a concept is examinable, with separate lecture scope and official exercise depth groups.
 - `initialState`: the safe default interaction state.
 - `check`: a small completion predicate that verifies the reasoning move before reward.
 - `type`: a reusable interaction template.

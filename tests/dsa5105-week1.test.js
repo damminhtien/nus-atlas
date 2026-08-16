@@ -39,6 +39,33 @@ test("Week 1 labs and artifacts use canonical lecture provenance", () => {
   const artifacts = read("content/courses/DSA5105/artifacts/dsa5105-week1-derivations.json");
   assert.match(artifacts.flashcards[1].front, /score equation/);
   assert.match(artifacts.homework[0].rubric, /score contribution/);
+  assert.equal(artifacts.flashcards[2].source.sourceType, "exercise");
+  assert.equal(artifacts.flashcards[3].source.sourceType, "exercise");
+  assert.equal(artifacts.homework[0].source.sourceType, "exercise");
+  assert.equal(artifacts.homework[1].sourceRefs[1].sourceType, "exercise");
+});
+
+test("A+ source lenses separate lecture scope from official exercise depth", () => {
+  const lesson = read("content/courses/DSA5105/lessons/dsa5105-linear-week1.json");
+  const regularization = lesson.sections.find(section => section.title === "Lecture core · Regularization");
+  assert.equal(regularization.sourceLens.status, "core Week-1 derivation");
+  assert.deepEqual(regularization.sourceLens.lecture.map(ref => ref.page), [47, 48]);
+  assert.deepEqual(regularization.sourceLens.officialExercise.map(ref => [ref.sourceType, ref.page]), [["exercise", 2]]);
+
+  const labs = read("content/courses/DSA5105/labs/index.json");
+  const derivations = labs["dsa5105-week1-derivations"];
+  const ridge = derivations.exercises.find(exercise => exercise.id === "ridge");
+  const huber = derivations.exercises.find(exercise => exercise.id === "huber");
+  assert.match(ridge.sourceLens.whyExaminable, /Exercise 2 requires the closed form and eigen analysis/);
+  assert.equal(ridge.sourceLens.officialExercise[0].sourceType, "exercise");
+  assert.equal(ridge.sourceLens.officialExercise[0].page, 2);
+  assert.match(huber.sourceLens.whyExaminable, /derivative, stationarity, and bounded score contribution/);
+  assert.equal(huber.sourceLens.officialExercise[0].page, 1);
+
+  const manifest = read("content/courses/DSA5105/sources/manifest.json");
+  const exerciseSources = manifest.sources.filter(source => source.sourceId.includes("Lec1_exercises"));
+  assert.equal(exerciseSources.length, 2);
+  assert.ok(exerciseSources.every(source => source.sourceType === "exercise"));
 });
 
 test("textbook paradigm question labels the vocabulary boundary", () => {

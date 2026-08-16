@@ -93,7 +93,7 @@
     if (!course) return [];
     const packageData = coursePackage(courseId);
     if (packageData && packageData.sources) return packageData.sources.slice();
-    return [course.lectureSources || [], course.textbookSources || [], course.referenceSources || []].flat();
+    return [course.lectureSources || [], course.exerciseSources || [], course.textbookSources || [], course.referenceSources || []].flat();
   }
   function getTextbook(courseId) {
     const packageData = courseId && coursePackage(courseId);

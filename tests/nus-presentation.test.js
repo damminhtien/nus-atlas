@@ -4,7 +4,7 @@ const createPresentation = require("../src/features/nus/presentation.js");
 
 function presentation() {
   return createPresentation({
-    getSourceTypes: () => ({ lecture: { tone: "sage", shortLabel: "Lecture" }, textbook: { tone: "gold", shortLabel: "Textbook" } }),
+    getSourceTypes: () => ({ lecture: { tone: "sage", shortLabel: "Lecture" }, exercise: { tone: "gold", shortLabel: "Exercise" }, textbook: { tone: "gold", shortLabel: "Textbook" } }),
     getVisuals: () => ({ visual: { kind: "table", title: "A visual", observation: "Compare < and >", source: { sourceId: "lecture.pdf", page: 2 } } })
   });
 }
@@ -28,6 +28,32 @@ test("source provenance is compact until explicitly opened", () => {
   assert.match(html, /<details class="nus-source-disclosure">/);
   assert.match(html, /2 refs · 1 Lecture · 1 Textbook/);
   assert.match(html, /lecture\.pdf · p\.39/);
+});
+
+test("source lens explains examinability and keeps exercise depth distinct", () => {
+  const view = presentation();
+  const html = view.sourceLens({
+    status: "core Week-1 derivation",
+    whyExaminable: "Lecture defines the objective; Exercise 2 requires the closed form and eigen analysis.",
+    lecture: [{ sourceId: "Lec1_annotated.pdf", sourceType: "lecture", page: 48 }],
+    officialExercise: [{ sourceId: "Lec1_exercises-solutions.pdf", sourceType: "exercise", page: 2, role: "closed form + eigen analysis" }]
+  });
+  assert.match(html, /Why is this examinable\?/);
+  assert.match(html, /Lecture scope/);
+  assert.match(html, /Official exercise depth/);
+  assert.match(html, /Lec1_exercises-solutions\.pdf · p\.2/);
+});
+
+test("course source groups keep official exercises out of lecture core", () => {
+  const groups = presentation().sourceGroups({
+    lectureSources: [{ sourceId: "lecture.pdf", sourceType: "lecture", page: 48 }],
+    exerciseSources: [{ sourceId: "exercise-solutions.pdf", sourceType: "exercise", page: 2 }],
+    textbookSources: [],
+    referenceSources: []
+  });
+  assert.deepEqual(groups.map(group => group.label), ["Lecture core", "Official exercise depth"]);
+  assert.equal(groups[0].refs[0].sourceType, "lecture");
+  assert.equal(groups[1].refs[0].sourceType, "exercise");
 });
 
 test("presentation helpers render visual cues without owning data", () => {

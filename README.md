@@ -50,13 +50,14 @@ On a lesson route, use **Focus reading** to remove the sidebar, top bar, and sou
 
 ## DSA5105 source policy
 
-DSA5105 deliberately separates three source classes:
+DSA5105 deliberately separates four source classes:
 
 - `lecture`: current syllabus and local lecture material; this is the exam-priority scope.
+- `exercise`: official exercise sheets and worked solutions; this is derivation depth, not automatically lecture scope.
 - `textbook`: derivations and background from `Textbook.pdf`; useful for depth, but not automatically examinable.
 - `ref`: optional, historical, or assessment-derived support. Draft, old, and `assessment-derived` references are marked explicitly and must not redefine current lecture scope or dates.
 
-Every DSA5105 lesson and question uses typed `sourceRefs` with `sourceId`, page, `sourceType`, role, and status. See [the DSA5105 study guide](docs/NUS_STUDY_GUIDE.md), [the source metadata](data/nus/provenance.js), and [the normalized data policy](data/nus/README.md).
+Every DSA5105 lesson and question uses typed `sourceRefs` with `sourceId`, page, `sourceType`, role, and status. Concept cards and visual derivations can also expose an **A+ source lens** that explains why a topic is examinable and separates lecture scope from official exercise depth. See [the DSA5105 study guide](docs/NUS_STUDY_GUIDE.md), [the source metadata](data/nus/provenance.js), and [the normalized data policy](data/nus/README.md).
 
 ## Data and privacy
 

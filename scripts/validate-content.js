@@ -69,6 +69,11 @@ function validateContentState(state) {
         const refs = Array.isArray(lesson.sourceRefs) ? lesson.sourceRefs : [];
         if (!refs.length) errors.push(`lesson has no source refs: ${lesson.id}`);
         for (const ref of refs) checkSourceRef(ref, sourceTypes, errors, `lesson ${lesson.id}`);
+        checkSourceLens(lesson.sourceLens, sourceTypes, errors, `lesson ${lesson.id}`);
+        for (const block of [...(lesson.sections || []), ...(lesson.math || []), ...(lesson.examples || [])]) {
+          for (const ref of block.sourceRefs || []) checkSourceRef(ref, sourceTypes, errors, `lesson block ${lesson.id}`);
+          checkSourceLens(block.sourceLens, sourceTypes, errors, `lesson block ${lesson.id}`);
+        }
         for (const question of Array.isArray(lesson.questions) ? lesson.questions : []) {
           if (!question || !question.id) { errors.push(`question missing id: ${lesson.id}`); continue; }
           if (questionIds.has(question.id)) errors.push(`duplicate question id: ${question.id}`);
@@ -98,6 +103,8 @@ function validateContentState(state) {
     if (!lab || !lab.lessonId) errors.push(`lab missing lessonId: ${labId}`);
     if (lab && lab.lessonId && !lessonIds.has(lab.lessonId)) errors.push(`lab references unknown lesson: ${labId}`);
     for (const ref of (lab && lab.sourceRefs) || []) checkSourceRef(ref, sourceTypes, errors, `lab ${labId}`);
+    checkSourceLens(lab && lab.sourceLens, sourceTypes, errors, `lab ${labId}`);
+    for (const exercise of (lab && lab.exercises) || []) checkSourceLens(exercise.sourceLens, sourceTypes, errors, `lab ${labId}/${exercise.id || "exercise"}`);
   }
   return { ok: errors.length === 0, errors, counts: { courses: courseIds.size, lessons: lessonIds.size, questions: questionIds.size, assessments: assessmentIds.size, labs: Object.keys(labs).length } };
 }
@@ -132,7 +139,7 @@ function validatePackageDirectory(root = ROOT) {
       lessonIds.add(lesson.id);
       if (!Array.isArray(lesson.blocks) || !lesson.blocks.length) errors.push(`package lesson has no blocks: ${lesson.id}`);
       if (!Array.isArray(lesson.sourceRefs) || !lesson.sourceRefs.length) errors.push(`package lesson has no source refs: ${lesson.id}`);
-      (lesson.sourceRefs || []).forEach(ref => checkSourceRef(ref, { lecture: {}, textbook: {}, ref: {}, "assessment-derived": {} }, errors, `package lesson ${lesson.id}`));
+      (lesson.sourceRefs || []).forEach(ref => checkSourceRef(ref, { lecture: {}, exercise: {}, textbook: {}, ref: {}, "assessment-derived": {} }, errors, `package lesson ${lesson.id}`));
       const questionFile = path.join(dir, "questions", file);
       const questions = fs.existsSync(questionFile) ? readJson(questionFile) : [];
       if (!Array.isArray(questions)) errors.push(`question package must be an array: ${lesson.id}`);
@@ -151,6 +158,15 @@ function validatePackageDirectory(root = ROOT) {
 function checkSourceRef(ref, sourceTypes, errors, owner) {
   if (!ref || !ref.sourceId || !Number.isInteger(ref.page) || ref.page < 1) errors.push(`${owner} has invalid source ref`);
   if (ref && ref.sourceType && !sourceTypes[ref.sourceType]) errors.push(`${owner} has unknown source type: ${ref.sourceType}`);
+}
+
+function checkSourceLens(lens, sourceTypes, errors, owner) {
+  if (!lens) return;
+  if (!lens.status || !lens.whyExaminable) errors.push(`${owner} source lens needs status and whyExaminable`);
+  ["lecture", "officialExercise", "textbook", "reference"].forEach(group => {
+    if (!Array.isArray(lens[group])) errors.push(`${owner} source lens group is not an array: ${group}`);
+    (lens[group] || []).forEach(ref => checkSourceRef(ref, sourceTypes, errors, `${owner} source lens ${group}`));
+  });
 }
 
 if (require.main === module) {

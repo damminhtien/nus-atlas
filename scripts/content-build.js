@@ -168,7 +168,7 @@ function collectSources(course, catalog) {
     const key = `${ref.sourceId}#${ref.page || 0}#${ref.sourceType || ""}`;
     if (!byKey.has(key)) byKey.set(key, cleanObject(ref));
   };
-  [course.lectureSources, course.textbookSources, course.referenceSources].flat().forEach(add);
+  [course.lectureSources, course.exerciseSources, course.textbookSources, course.referenceSources].flat().forEach(add);
   (catalog.modules || []).forEach(module => (module.lessons || []).forEach(lesson => {
     (lesson.sourceRefs || []).forEach(add);
     (lesson.questions || []).forEach(question => (question.sourceRefs || []).forEach(add));
