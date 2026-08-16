@@ -51,7 +51,10 @@
       ["Mistakes", `#/nus/mistakes/${courseCode}`],
       ["Planner", "#/nus/planner"]
     ];
-    if (courseCode === "DSA5105") links.push(["Week 1 slides", "#/nus/slides/DSA5105/dsa5105-week1-annotated/1"]);
+    if (courseCode === "DSA5105") {
+      links.splice(3, 0, ["Contrast drills", "#/nus/contrast/DSA5105"]);
+      links.push(["Week 1 slides", "#/nus/slides/DSA5105/dsa5105-week1-annotated/1"]);
+    }
     return `<nav class="nus-quick-nav" aria-label="Quick navigation"><span>Quick nav</span>${links.map(([label, href]) => `<a href="${esc(href)}" data-route>${esc(label)}</a>`).join("")}</nav>`;
   }
   function pageHead(kicker, title, desc) { return `<div class="page-head reveal"><div class="eyebrow">${esc(kicker)}</div><h2>${esc(title)}</h2>${desc ? `<p>${text(desc)}</p>` : ""}${quickNav(kicker)}</div>`; }

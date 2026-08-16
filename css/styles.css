@@ -1443,6 +1443,33 @@ a.gloss-item:hover .gloss-go, a.gloss-item:focus-visible .gloss-go { opacity: 1;
 .nus-review-item p { margin:10px 0 0; font-size:13px; }
 .nus-review-item strong { color:var(--ink); }
 .nus-review-item pre, .nus-output pre { white-space:pre-wrap; overflow:auto; padding:12px; border-radius:8px; background:var(--bg); color:var(--ink-soft); font:12px/1.55 var(--font-mono); }
+.nus-contrast-intro { display:grid; gap:14px; margin-bottom:16px; }
+.nus-contrast-intro-copy { display:flex; align-items:baseline; gap:12px; flex-wrap:wrap; }
+.nus-contrast-intro-copy h3 { margin:0; font-size:22px; }
+.nus-contrast-intro-copy p { flex-basis:100%; margin:0; color:var(--ink-mute); }
+.nus-contrast-pairs { display:flex; flex-wrap:wrap; gap:7px; }
+.nus-contrast-pairs span { padding:6px 9px; border:1px solid var(--line); border-radius:999px; color:var(--ink-soft); font:11px var(--font-mono); }
+.nus-contrast-progress { display:flex; justify-content:space-between; gap:12px; margin:16px 0 10px; color:var(--ink-mute); font:12px var(--font-mono); }
+.nus-contrast-question { max-width:900px; }
+.nus-contrast-question-head { display:flex; align-items:center; justify-content:space-between; gap:12px; flex-wrap:wrap; }
+.nus-contrast-question h3 { margin:18px 0 22px; font-size:clamp(22px, 3vw, 32px); line-height:1.35; }
+.nus-contrast-choices { display:grid; gap:10px; margin-bottom:20px; }
+.nus-contrast-choice { display:flex; align-items:flex-start; gap:12px; width:100%; padding:14px 16px; border:1px solid var(--line); border-radius:12px; background:transparent; color:var(--ink-soft); text-align:left; font:16px/1.45 var(--font-body); cursor:pointer; transition:border-color .2s ease, background .2s ease, transform .2s ease; }
+.nus-contrast-choice:hover:not(:disabled), .nus-contrast-choice:focus-visible { border-color:var(--gold); background:color-mix(in srgb, var(--gold) 9%, transparent); transform:translateX(2px); }
+.nus-contrast-choice:disabled { cursor:default; opacity:1; }
+.nus-contrast-choice.is-correct { border-color:var(--sage); background:color-mix(in srgb, var(--sage) 13%, transparent); color:var(--ink); }
+.nus-contrast-choice.is-wrong { border-color:var(--rust); background:color-mix(in srgb, var(--rust) 12%, transparent); }
+.nus-contrast-choice-key { display:grid; place-items:center; width:24px; height:24px; flex:none; border:1px solid currentColor; border-radius:50%; font:12px var(--font-mono); }
+.nus-contrast-feedback { display:grid; gap:5px; margin:16px 0; padding:14px 16px; border-left:3px solid var(--line); background:color-mix(in srgb, var(--bg) 65%, transparent); }
+.nus-contrast-feedback.is-correct { border-color:var(--sage); }
+.nus-contrast-feedback.is-wrong { border-color:var(--rust); }
+.nus-contrast-feedback p { margin:0; color:var(--ink-soft); line-height:1.6; }
+.nus-contrast-footer { display:flex; justify-content:flex-end; align-items:center; gap:12px; padding-top:14px; border-top:1px solid var(--line); }
+.nus-contrast-review-list { display:grid; gap:12px; max-width:900px; margin-bottom:22px; }
+.nus-contrast-review { padding:15px 17px; border:1px solid var(--line); border-left:3px solid var(--rust); border-radius:12px; background:var(--bg-2); }
+.nus-contrast-review.is-correct { border-left-color:var(--sage); }
+.nus-contrast-review > div { display:flex; align-items:center; gap:10px; }
+.nus-contrast-review p { margin:10px 0 0; color:var(--ink-soft); line-height:1.55; }
 .nus-mistake-callout { display:grid; gap:8px; margin:4px 0 20px; }
 .nus-mistake-clinic { display:grid; gap:14px; margin-bottom:20px; }
 .nus-mistake-item { border-left:3px solid var(--rust); }

@@ -39,8 +39,8 @@ jobs:
         run: npm run version:check
       - name: Build normalized course packages
         run: node scripts/content-build.js --all
-      - name: Validate content contracts, extraction provenance, LaTeX, and gates
-        run: node scripts/validate-content.js && node scripts/validate-extracted.js && node scripts/validate-textbook.js && node scripts/validate-latex.js && node scripts/validate-latex-render.js && node --test tests/*.test.js && node nus-gate.js && node gate.js
+      - name: Validate content contracts, extraction provenance, LaTeX, contrast drills, and gates
+        run: node scripts/validate-content.js && node scripts/validate-extracted.js && node scripts/validate-textbook.js && node scripts/validate-latex.js && node scripts/validate-latex-render.js && node scripts/validate-contrast-drills.js && node --test tests/*.test.js && node nus-gate.js && node gate.js
       - name: Prerender lesson pages + sitemap + robots
         run: node prerender.js
       - name: Configure GitHub Pages

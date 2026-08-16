@@ -128,7 +128,7 @@
     const c = course(code);
     if (!c) return renderNotFound();
     let body = pageHead(c.code, c.title, c.description);
-    body += `<div class="nus-course-meta"><span>${esc(c.department)} · ${esc(c.faculty)}</span><span>Workload ${esc(c.workload.join(" / "))}</span>${button("Exam mode", `#/nus/exam/${c.code}`, "primary")}</div>`;
+    body += `<div class="nus-course-meta"><span>${esc(c.department)} · ${esc(c.faculty)}</span><span>Workload ${esc(c.workload.join(" / "))}</span>${c.code === "DSA5105" ? button("Concept contrasts", `#/nus/contrast/${c.code}`, "ghost") : ""}${button("Exam mode", `#/nus/exam/${c.code}`, "primary")}</div>`;
     body += `<div class="nus-course-layout"><div><div class="nus-course-progress"><b>Course progress</b>${courseProgressBar(c.code)}</div>${content(c.code).modules.map(m => `<section class="nus-module reveal"><div class="eyebrow">${esc(m.title)}</div>${(m.lessons || []).map(l => `<a class="nus-lesson-row" href="#/nus/lesson/${esc(c.code)}/${esc(l.id)}" data-route><span class="nus-lesson-dot ${window.NUS_STORE.lessonDone(l.id) ? "done" : ""}">${window.NUS_STORE.lessonDone(l.id) ? "✓" : ""}</span><div><b>${esc(l.title)}</b><span>Week ${esc(l.week)} · ${esc(l.minutes)} min · ${(l.questions || []).length} practice prompts${(repository() ? repository().getLab(l.id) : window.NUS_VISUAL_LABS && window.NUS_VISUAL_LABS[l.id]) ? " · visual lab" : ""}</span></div><span>→</span></a>`).join("")}</section>`).join("")}</div><aside>${card("Assessment weight", assessments().filter(a => a.courseCode === c.code).map(a => `<div class="nus-weight"><span>${esc(a.title)}</span><b>${a.weight}%</b></div>`).join(""), "reveal")}${card("Sources", sourceGroups(c).map(g => `<div class="nus-source-group"><b>${esc(g.label)}</b><ul class="nus-source-list">${g.refs.map(r => `<li>${sourceItem(r)}</li>`).join("")}</ul></div>`).join("")+`<a class="nus-external" href="${esc(c.nusmods.url)}" target="_blank" rel="noreferrer">NUSMods course page ↗</a>`, "reveal")}</aside></div>`;
     root.innerHTML = body;
   }
@@ -153,7 +153,7 @@
     setReaderMode(readerModeOn());
     let body = pageHead(`${c.code} · Week ${l.week}`, l.title, l.summary);
     const slideSet = slideSets(code).find(item => (item.lessonIds || []).includes(l.id));
-    body += `<div class="nus-lesson-actions">${button("← Course", `#/nus/course/${c.code}`, "ghost")}<button class="btn ${done ? "ghost" : "primary"}" id="nus-mark-lesson">${done ? "✓ Completed" : "Mark complete"}</button>${slideSet ? button("Open annotated slides", `#/nus/slides/${c.code}/${slideSet.id}/1`, "primary") : ""}${button("Exam mode", `#/nus/exam/${c.code}/${l.id}`, "ghost")}${button("Mistake Clinic", `#/nus/mistakes/${c.code}`, "ghost")}${readerButton()}</div>`;
+    body += `<div class="nus-lesson-actions">${button("← Course", `#/nus/course/${c.code}`, "ghost")}<button class="btn ${done ? "ghost" : "primary"}" id="nus-mark-lesson">${done ? "✓ Completed" : "Mark complete"}</button>${slideSet ? button("Open annotated slides", `#/nus/slides/${c.code}/${slideSet.id}/1`, "primary") : ""}${l.contrastDrills && l.contrastDrills.length ? button("Concept contrasts", `#/nus/contrast/${c.code}/${l.id}`, "ghost") : ""}${button("Exam mode", `#/nus/exam/${c.code}/${l.id}`, "ghost")}${button("Mistake Clinic", `#/nus/mistakes/${c.code}`, "ghost")}${readerButton()}</div>`;
     body += studyCompass(l);
     const lab = repository() ? repository().getLab(l.id) : window.NUS_VISUAL_LABS && window.NUS_VISUAL_LABS[l.id];
     body += `<div class="nus-lesson-grid"><main><section class="nus-card nus-objectives reveal"><div class="nus-teach-head"><h3>What you should be able to do</h3><span class="pill gold">${esc(l.minutes)} min</span></div><ul>${(l.objectives || []).map(objective => `<li>${esc(objective)}</li>`).join("")}</ul></section>${lab && window.NUS_COMPONENTS ? window.NUS_COMPONENTS.renderLab(l, lab) : ""}<div id="nus-lesson-read">${(l.sections || []).map(lessonSection).join("")}${(l.math || []).map(mathBlock).join("")}</div><div id="nus-lesson-work">${(l.examples || []).map(workedExample).join("")}</div>${criticalThinking(l)}<section class="nus-card nus-recall reveal" id="nus-lesson-recall"><div class="nus-teach-head"><h3>Recall before you test</h3><span class="pill">${l.questions.length} prompts</span></div><p class="nus-muted">Answer on paper first. Open each prompt only after you commit to an answer.</p><div class="nus-question-list">${l.questions.map(recallItem).join("")}</div>${button("Start this lesson in Exam Mode", `#/nus/exam/${c.code}/${l.id}`, "primary")}</section>${studyKit(l)}<div class="nus-lesson-nav">${previous ? button(`← ${previous.title}`, `#/nus/lesson/${c.code}/${previous.id}`, "ghost") : `<span></span>`}${next ? button(`Next: ${next.title} →`, `#/nus/lesson/${c.code}/${next.id}`, "primary") : button("Back to course", `#/nus/course/${c.code}`, "primary")}</div></main><aside>${l.visualIds && l.visualIds.length ? card("Visual study cues", l.visualIds.map(visualCard).join(""), "reveal") : ""}${card("Provenance", sourceDisclosure(l.sourceRefs, "Open source pages"), "reveal")}</aside></div>`;
@@ -186,6 +186,23 @@
     return examFeature ? examFeature.renderMistakes(code) : renderNotFound();
   }
 
+  const contrastFeature = window.NUS_CONTRAST_DRILLS_FEATURE ? window.NUS_CONTRAST_DRILLS_FEATURE({
+    root,
+    getCourses: courses,
+    getLessons: lessons,
+    getStore: () => window.NUS_STORE,
+    pageHead,
+    sourceItem,
+    text,
+    esc,
+    button,
+    typeset: typesetNus
+  }) : null;
+  function renderContrast(code, scope) {
+    if (ensureCourseLoaded(code, () => renderContrast(code, scope))) return;
+    return contrastFeature ? contrastFeature.render(code || "DSA5105", scope) : renderNotFound();
+  }
+
   const sqlFeature = window.NUS_SQL_FEATURE ? window.NUS_SQL_FEATURE({ root, getContent: content, pageHead, card, esc, text, notFound: renderNotFound }) : null;
   const simulationsFeature = window.NUS_SIMULATIONS_FEATURE ? window.NUS_SIMULATIONS_FEATURE({ root, pageHead, esc, getStore: () => window.NUS_STORE }) : null;
   function renderSql() { return sqlFeature ? sqlFeature.render() : renderNotFound(); }
@@ -216,6 +233,7 @@
     lesson: parts => renderLesson(parts[1], parts[2]),
     exam: parts => renderExam(parts[1], parts[2]),
     mistakes: parts => renderMistakes(parts[1] || "DSA5105"),
+    contrast: parts => renderContrast(parts[1] || "DSA5105", parts[2]),
     slides: parts => renderSlides(parts[1], parts[2], parts[3]),
     sql: () => renderSql(),
     simulations: () => renderSimulations()
