@@ -255,14 +255,29 @@
     return `<div class="nus-slide-nav"><div>${previous ? slideNavLink(slideSet, previous, "← Previous", "ghost", "previous") : `<span class="nus-muted">First slide</span>`}</div><label class="nus-slide-jump">Slide <select id="nus-slide-select" aria-label="Jump to slide">${slideSet.slides.map(item => `<option value="${item.slideNumber}" ${item.slideNumber === current.slideNumber ? "selected" : ""}>${item.slideNumber} · ${esc(item.title)}</option>`).join("")}</select></label><div>${next ? slideNavLink(slideSet, next, "Next →", "primary", "next") : `<span class="nus-muted">Last slide</span>`}</div></div>`;
   }
 
+  function progressBand(value) {
+    const percentage = Number(value) || 0;
+    if (percentage >= 100) return { key: "complete", label: "100% · Complete" };
+    if (percentage >= 75) return { key: "nearly", label: "75–99% · Nearly complete" };
+    if (percentage >= 50) return { key: "halfway", label: "50–74% · Halfway" };
+    if (percentage >= 25) return { key: "building", label: "25–49% · Building" };
+    return { key: "starting", label: "0–24% · Starting" };
+  }
+
+  function progressLegend() {
+    return `<div class="nus-reading-progress-legend" aria-label="Lecture reading progress colour key"><span class="nus-progress-key-starting"><i aria-hidden="true"></i>0–24% · Starting</span><span class="nus-progress-key-building"><i aria-hidden="true"></i>25–49% · Building</span><span class="nus-progress-key-halfway"><i aria-hidden="true"></i>50–74% · Halfway</span><span class="nus-progress-key-nearly"><i aria-hidden="true"></i>75–99% · Nearly complete</span><span class="nus-progress-key-complete"><i aria-hidden="true"></i>100% · Complete</span></div>`;
+  }
+
   function slideProgress(courseCode, slideSet, source, slide, resumeSlide) {
     const progress = savedReading(slideResourceId(courseCode, slideSet));
     if (!progress) return "";
+    const percentage = percent(progress);
+    const band = progressBand(percentage);
     const through = Number(progress.furthest || progress.position) || slide.slideNumber;
     const resume = resumeSlide && resumeSlide.slideNumber !== slide.slideNumber
       ? button(`Continue from slide ${resumeSlide.slideNumber}`, slideLink(slideSet, resumeSlide), "primary")
       : "";
-    return `<section class="nus-reading-progress nus-slide-reading-progress"><span><b>Lecture reading progress</b><small>${progress.completed ? "Complete · revisit any slide" : `Resume at slide ${Number(progress.position) || slide.slideNumber}`}</small></span><strong>${percent(progress)}%</strong><div class="nus-progress"><span style="width:${percent(progress)}%"></span></div><small class="nus-reading-progress-meta">through slide ${through} of ${progress.total} · ${esc(source.fileName || source.sourceId)}</small>${resume ? `<div class="nus-card-actions">${resume}</div>` : ""}</section>`;
+    return `<section class="nus-reading-progress nus-slide-reading-progress"><span><b>Lecture reading progress</b><small>${progress.completed ? "Complete · revisit any slide" : `Resume at slide ${Number(progress.position) || slide.slideNumber}`}</small></span><strong>${percentage}%</strong><div class="nus-progress nus-progress-${band.key}" role="progressbar" aria-label="Lecture reading progress" aria-valuemin="0" aria-valuemax="100" aria-valuenow="${percentage}"><span style="width:${percentage}%"></span></div><div class="nus-reading-progress-status"><b class="nus-progress-status-${band.key}">${band.label}</b><small>Based on slides read so far</small></div>${progressLegend()}<small class="nus-reading-progress-meta">through slide ${through} of ${progress.total} · ${esc(source.fileName || source.sourceId)}</small>${resume ? `<div class="nus-card-actions">${resume}</div>` : ""}</section>`;
   }
 
   function sourcePanel(slide, source) {

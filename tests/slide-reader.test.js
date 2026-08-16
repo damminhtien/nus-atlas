@@ -155,4 +155,6 @@ test("slide reader shows saved progress and a resume action", () => {
   assert.match(root.innerHTML, /Lecture reading progress/);
   assert.match(root.innerHTML, /Continue from slide 2/);
   assert.match(root.innerHTML, /through slide 2 of 4/);
+  assert.match(root.innerHTML, /Lecture reading progress colour key/);
+  assert.match(root.innerHTML, /50–74% · Halfway/);
 });

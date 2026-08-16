@@ -6,6 +6,10 @@ and refresh first-party asset URLs so browsers and the service worker pick up th
 
 ## [Unreleased]
 
+## [0.2.29] - 2026-08-16
+
+- Add lecture progress colour legend
+
 ## [0.2.28] - 2026-08-16
 
 - Add slide highlights and textbook PDF reader
