@@ -75,8 +75,8 @@
             "meaning": "value estimate at sweep t"
           }
         ],
-        "name": "Finite MDP backup formula",
-        "purpose": "Use it to make the finite mdp backup claim operational; state its assumptions before applying it.",
+        "name": "Finite-MDP value backup",
+        "purpose": "Use it to compute one Bellman optimality update from immediate rewards and successor values.",
         "sourceType": "lecture"
       }
     },
@@ -97,8 +97,8 @@
             "meaning": "optimal fixed-point value"
           }
         ],
-        "name": "Contraction and policy extraction formula",
-        "purpose": "Use it to make the contraction and policy extraction claim operational; state its assumptions before applying it.",
+        "name": "Bellman contraction and policy extraction",
+        "purpose": "Use it to justify convergence intuition and extract a greedy policy after value iteration.",
         "sourceType": "textbook"
       }
     },
@@ -119,8 +119,8 @@
             "meaning": "TD learning rate"
           }
         ],
-        "name": "TD(0) formula",
-        "purpose": "Use it to make the td(0) claim operational; state its assumptions before applying it.",
+        "name": "TD(0) prediction error",
+        "purpose": "Use it to update a value estimate from a one-step bootstrapped target rather than a complete return.",
         "sourceType": "textbook"
       }
     },
@@ -228,8 +228,8 @@
     {
       "id": "dsa5105-mdp-value-iteration-section-1-formula",
       "type": "formula",
-      "name": "Finite MDP backup formula",
-      "purpose": "Use it to make the finite mdp backup claim operational; state its assumptions before applying it.",
+      "name": "Finite-MDP value backup",
+      "purpose": "Use it to compute one Bellman optimality update from immediate rewards and successor values.",
       "latex": "V_{t+1}=T^*V_t",
       "explanation": "The Bellman optimality operator maps one value estimate to a one-step lookahead estimate. The max is over the current action choice; the transition model still averages over possible outcomes.",
       "symbols": [
@@ -342,8 +342,8 @@
     {
       "id": "dsa5105-mdp-value-iteration-section-2-formula",
       "type": "formula",
-      "name": "Contraction and policy extraction formula",
-      "purpose": "Use it to make the contraction and policy extraction claim operational; state its assumptions before applying it.",
+      "name": "Bellman contraction and policy extraction",
+      "purpose": "Use it to justify convergence intuition and extract a greedy policy after value iteration.",
       "latex": "\\lVert T^*V-T^*U\\rVert_\\infty\\le\\gamma\\lVert V-U\\rVert_\\infty",
       "explanation": "The contraction explains why errors shrink geometrically under exact value iteration. It is a convergence statement for the value update, not a statement that every approximate neural optimizer is globally optimal.",
       "symbols": [
@@ -456,8 +456,8 @@
     {
       "id": "dsa5105-mdp-value-iteration-section-3-formula",
       "type": "formula",
-      "name": "TD(0) formula",
-      "purpose": "Use it to make the td(0) claim operational; state its assumptions before applying it.",
+      "name": "TD(0) prediction error",
+      "purpose": "Use it to update a value estimate from a one-step bootstrapped target rather than a complete return.",
       "latex": "\\delta_t=r_{t+1}+\\gamma V(s_{t+1})-V(s_t)",
       "explanation": "The temporal-difference error is the gap between the one-step bootstrap target and the current estimate. The learning rate $\\alpha$ controls how much of this error is applied.",
       "symbols": [

@@ -62,8 +62,8 @@
             "meaning": "column vector of ones"
           }
         ],
-        "name": "Center before projecting formula",
-        "purpose": "Use it to make the center before projecting claim operational; state its assumptions before applying it.",
+        "name": "Centered-data construction",
+        "purpose": "Use it to remove the sample mean before interpreting covariance directions as variation.",
         "sourceType": "lecture"
       }
     },
@@ -88,8 +88,8 @@
             "meaning": "variance after projection"
           }
         ],
-        "name": "Variance and eigenvectors formula",
-        "purpose": "Use it to make the variance and eigenvectors claim operational; state its assumptions before applying it.",
+        "name": "PCA variance maximization",
+        "purpose": "Use it to select the unit direction with maximum projected variance.",
         "sourceType": "textbook"
       }
     },
@@ -174,8 +174,8 @@
     {
       "id": "dsa5105-pca-deep-dive-section-1-formula",
       "type": "formula",
-      "name": "Center before projecting formula",
-      "purpose": "Use it to make the center before projecting claim operational; state its assumptions before applying it.",
+      "name": "Centered-data construction",
+      "purpose": "Use it to remove the sample mean before interpreting covariance directions as variation.",
       "latex": "Z=X-\\mathbf{1}\\mu^\\top",
       "explanation": "Centering subtracts the same feature-mean row $\\mu^\top$ from every observation. The resulting matrix $Z$ describes deviations around the sample mean, which is the object PCA is intended to analyze.",
       "symbols": [
@@ -264,8 +264,8 @@
     {
       "id": "dsa5105-pca-deep-dive-section-2-formula",
       "type": "formula",
-      "name": "Variance and eigenvectors formula",
-      "purpose": "Use it to make the variance and eigenvectors claim operational; state its assumptions before applying it.",
+      "name": "PCA variance maximization",
+      "purpose": "Use it to select the unit direction with maximum projected variance.",
       "latex": "v_1=\\arg\\max_{\\lVert v\\rVert_2=1}v^\\top\\Sigma v",
       "explanation": "The constraint keeps the direction from becoming arbitrarily large. Among all unit vectors, the quadratic form chooses the direction whose projection has the greatest variance; the maximizing direction is the leading covariance eigenvector.",
       "symbols": [

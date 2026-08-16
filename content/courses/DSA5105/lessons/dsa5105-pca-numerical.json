@@ -72,8 +72,8 @@
             "meaning": "sample covariance"
           }
         ],
-        "name": "Center, then form covariance formula",
-        "purpose": "Use it to make the center, then form covariance claim operational; state its assumptions before applying it.",
+        "name": "PCA centering and covariance",
+        "purpose": "Use it to construct the covariance matrix whose eigenvectors define the principal directions.",
         "sourceType": "lecture"
       }
     },
@@ -94,8 +94,8 @@
             "meaning": "largest covariance eigenvalue"
           }
         ],
-        "name": "Variance and Rayleigh quotient formula",
-        "purpose": "Use it to make the variance and rayleigh quotient claim operational; state its assumptions before applying it.",
+        "name": "PCA Rayleigh quotient",
+        "purpose": "Use it to turn maximum projected variance into a constrained eigenvalue problem.",
         "sourceType": "textbook"
       }
     },
@@ -116,8 +116,8 @@
             "meaning": "ordered covariance eigenvalues"
           }
         ],
-        "name": "Reconstruction error formula",
-        "purpose": "Use it to make the reconstruction error claim operational; state its assumptions before applying it.",
+        "name": "PCA reconstruction-error spectrum",
+        "purpose": "Use it to connect discarded eigenvalues with the error introduced by retaining only a chosen number of components.",
         "sourceType": "textbook"
       }
     },
@@ -138,8 +138,8 @@
             "meaning": "diagonal eigenvalue matrix"
           }
         ],
-        "name": "Reference boundary · Whitening and exam bridge formula",
-        "purpose": "Use it to make the reference boundary · whitening and exam bridge claim operational; state its assumptions before applying it.",
+        "name": "PCA whitening transform",
+        "purpose": "Use it to rescale retained principal coordinates to unit variance, checking small-eigenvalue stability.",
         "sourceType": "ref"
       }
     },
@@ -225,8 +225,8 @@
     {
       "id": "dsa5105-pca-numerical-section-1-formula",
       "type": "formula",
-      "name": "Center, then form covariance formula",
-      "purpose": "Use it to make the center, then form covariance claim operational; state its assumptions before applying it.",
+      "name": "PCA centering and covariance",
+      "purpose": "Use it to construct the covariance matrix whose eigenvectors define the principal directions.",
       "latex": "Z=X-\\mathbf{1}\\mu^\\top,\\qquad C=\\frac1N Z^\\top Z",
       "explanation": "The centering step removes the mean offset. The covariance is symmetric positive semidefinite, so its eigenvalues are non-negative and its eigenvectors can be chosen orthonormal.",
       "symbols": [
@@ -329,8 +329,8 @@
     {
       "id": "dsa5105-pca-numerical-section-2-formula",
       "type": "formula",
-      "name": "Variance and Rayleigh quotient formula",
-      "purpose": "Use it to make the variance and rayleigh quotient claim operational; state its assumptions before applying it.",
+      "name": "PCA Rayleigh quotient",
+      "purpose": "Use it to turn maximum projected variance into a constrained eigenvalue problem.",
       "latex": "v_1=\\arg\\max_{\\lVert v\\rVert_2=1}v^\\top Cv",
       "explanation": "The unit-norm constraint removes the trivial scaling solution. The maximum equals the largest eigenvalue of C.",
       "symbols": [
@@ -429,8 +429,8 @@
     {
       "id": "dsa5105-pca-numerical-section-3-formula",
       "type": "formula",
-      "name": "Reconstruction error formula",
-      "purpose": "Use it to make the reconstruction error claim operational; state its assumptions before applying it.",
+      "name": "PCA reconstruction-error spectrum",
+      "purpose": "Use it to connect discarded eigenvalues with the error introduced by retaining only a chosen number of components.",
       "latex": "\\operatorname{MSE}_{recon}(k)\\propto\\sum_{j>k}\\lambda_j",
       "explanation": "Keeping more principal directions removes more reconstruction error. The exact normalization depends on whether the loss is summed or averaged.",
       "symbols": [
@@ -529,8 +529,8 @@
     {
       "id": "dsa5105-pca-numerical-section-4-formula",
       "type": "formula",
-      "name": "Reference boundary · Whitening and exam bridge formula",
-      "purpose": "Use it to make the reference boundary · whitening and exam bridge claim operational; state its assumptions before applying it.",
+      "name": "PCA whitening transform",
+      "purpose": "Use it to rescale retained principal coordinates to unit variance, checking small-eigenvalue stability.",
       "latex": "X_{white}=ZV\\Lambda^{-1/2}",
       "explanation": "V contains the orthonormal eigenvectors and Lambda the diagonal eigenvalue matrix. Small eigenvalues may amplify noise, so practical whitening often clips or regularizes them.",
       "symbols": [

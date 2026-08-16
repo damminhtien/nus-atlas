@@ -72,8 +72,8 @@
             "meaning": "impurity decrease"
           }
         ],
-        "name": "A tree is a piecewise-constant model formula",
-        "purpose": "Use it to make the a tree is a piecewise-constant model claim operational; state its assumptions before applying it.",
+        "name": "Decision-tree split model",
+        "purpose": "Use it to represent a tree prediction as a region-wise constant function and evaluate a candidate split.",
         "sourceType": "lecture"
       }
     },
@@ -94,8 +94,8 @@
             "meaning": "number of classes"
           }
         ],
-        "name": "Entropy, Gini, depth, pruning formula",
-        "purpose": "Use it to make the entropy, gini, depth, pruning claim operational; state its assumptions before applying it.",
+        "name": "Tree impurity and complexity controls",
+        "purpose": "Use it to choose a purity criterion and explain how depth or pruning changes variance and bias.",
         "sourceType": "textbook"
       }
     },
@@ -116,8 +116,8 @@
             "meaning": "prediction of learner $b$"
           }
         ],
-        "name": "Bagging reduces variance formula",
-        "purpose": "Use it to make the bagging reduces variance claim operational; state its assumptions before applying it.",
+        "name": "Bagging ensemble average",
+        "purpose": "Use it to explain why averaging decorrelated bootstrap predictors can reduce variance.",
         "sourceType": "textbook"
       }
     },
@@ -142,8 +142,8 @@
             "meaning": "example-weight distribution"
           }
         ],
-        "name": "AdaBoost focuses on mistakes formula",
-        "purpose": "Use it to make the adaboost focuses on mistakes claim operational; state its assumptions before applying it.",
+        "name": "AdaBoost example reweighting",
+        "purpose": "Use it to update observation emphasis toward mistakes and reason about the next weak learner.",
         "sourceType": "textbook"
       }
     },
@@ -239,8 +239,8 @@
     {
       "id": "dsa5105-trees-ensembles-section-1-formula",
       "type": "formula",
-      "name": "A tree is a piecewise-constant model formula",
-      "purpose": "Use it to make the a tree is a piecewise-constant model claim operational; state its assumptions before applying it.",
+      "name": "Decision-tree split model",
+      "purpose": "Use it to represent a tree prediction as a region-wise constant function and evaluate a candidate split.",
       "latex": "\\Delta I=I(\\text{parent})-\\sum_{c\\in\\text{children}}\\frac{n_c}{n}I(c)",
       "explanation": "The child impurities are weighted by their sample counts. A split is useful when it reduces impurity, but the best local split is not a proof of globally optimal future depth.",
       "symbols": [
@@ -343,8 +343,8 @@
     {
       "id": "dsa5105-trees-ensembles-section-2-formula",
       "type": "formula",
-      "name": "Entropy, Gini, depth, pruning formula",
-      "purpose": "Use it to make the entropy, gini, depth, pruning claim operational; state its assumptions before applying it.",
+      "name": "Tree impurity and complexity controls",
+      "purpose": "Use it to choose a purity criterion and explain how depth or pruning changes variance and bias.",
       "latex": "Gini(S)=1-\\sum_{k=1}^{K}p_k^2",
       "explanation": "A pure node has Gini zero. The impurity is largest when classes are balanced, so a split that creates purer children lowers the weighted impurity.",
       "symbols": [
@@ -443,8 +443,8 @@
     {
       "id": "dsa5105-trees-ensembles-section-3-formula",
       "type": "formula",
-      "name": "Bagging reduces variance formula",
-      "purpose": "Use it to make the bagging reduces variance claim operational; state its assumptions before applying it.",
+      "name": "Bagging ensemble average",
+      "purpose": "Use it to explain why averaging decorrelated bootstrap predictors can reduce variance.",
       "latex": "\\hat f_{bag}(x)=\\frac{1}{B}\\sum_{b=1}^{B}\\hat f_b(x)",
       "explanation": "The ensemble average cancels some independent fluctuations across bootstrap-fitted models. The benefit is strongest when the base learners are reasonably accurate but diverse.",
       "symbols": [
@@ -543,8 +543,8 @@
     {
       "id": "dsa5105-trees-ensembles-section-4-formula",
       "type": "formula",
-      "name": "AdaBoost focuses on mistakes formula",
-      "purpose": "Use it to make the adaboost focuses on mistakes claim operational; state its assumptions before applying it.",
+      "name": "AdaBoost example reweighting",
+      "purpose": "Use it to update observation emphasis toward mistakes and reason about the next weak learner.",
       "latex": "D_{t+1}(i)\\propto D_t(i)\\exp\\{-\\alpha_t y_i h_t(x_i)\\}",
       "explanation": "When the weak learner is correct, $y_i h_t(x_i)=1$ and the weight is multiplied by $e^{-\\alpha_t}$. When it is wrong, the sign flips and the weight is multiplied by $e^{\\alpha_t}$. A learner better than random has $\\epsilon_t<0.5$ and non-negative $\\alpha$.",
       "symbols": [

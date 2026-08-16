@@ -69,8 +69,8 @@
             "meaning": "number of data points"
           }
         ],
-        "name": "K-means loop formula",
-        "purpose": "Use it to make the k-means loop claim operational; state its assumptions before applying it.",
+        "name": "K-means alternating update",
+        "purpose": "Use it to alternate hard assignments and centroid updates while reducing the within-cluster objective.",
         "sourceType": "lecture"
       }
     },
@@ -99,8 +99,8 @@
             "meaning": "current mixture parameters"
           }
         ],
-        "name": "GMM responsibilities formula",
-        "purpose": "Use it to make the gmm responsibilities claim operational; state its assumptions before applying it.",
+        "name": "GMM responsibility",
+        "purpose": "Use it to compute the posterior membership weight of a point under each mixture component.",
         "sourceType": "textbook"
       }
     },
@@ -192,8 +192,8 @@
     {
       "id": "dsa5105-cluster-gmm-section-1-formula",
       "type": "formula",
-      "name": "K-means loop formula",
-      "purpose": "Use it to make the k-means loop claim operational; state its assumptions before applying it.",
+      "name": "K-means alternating update",
+      "purpose": "Use it to alternate hard assignments and centroid updates while reducing the within-cluster objective.",
       "latex": "\\min_{\\{c_k\\},\\{z_i\\}}\\sum_{i=1}^{n}\\lVert x_i-c_{z_i}\\rVert_2^2",
       "explanation": "For each data point, choose a cluster index $z_i$ and pay the squared distance to that cluster's centroid. The assignment step lowers the objective by choosing the nearest centroid; the update step lowers it by replacing each centroid with the mean of its assigned points.",
       "symbols": [
@@ -296,8 +296,8 @@
     {
       "id": "dsa5105-cluster-gmm-section-2-formula",
       "type": "formula",
-      "name": "GMM responsibilities formula",
-      "purpose": "Use it to make the gmm responsibilities claim operational; state its assumptions before applying it.",
+      "name": "GMM responsibility",
+      "purpose": "Use it to compute the posterior membership weight of a point under each mixture component.",
       "latex": "\\gamma_{ik}=P(z_i=k\\mid x_i,\\theta)=\\frac{\\pi_k\\,p(x_i\\mid\\theta_k)}{\\sum_j\\pi_j\\,p(x_i\\mid\\theta_j)}",
       "explanation": "The responsibility is a posterior probability, so the responsibilities for one point sum to one across components. The numerator combines the component prior with the point's likelihood under that component; the denominator normalizes across all components.",
       "symbols": [

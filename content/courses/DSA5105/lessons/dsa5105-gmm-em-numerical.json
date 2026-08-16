@@ -72,8 +72,8 @@
             "meaning": "K-means objective"
           }
         ],
-        "name": "K-means assignment and update formula",
-        "purpose": "Use it to make the k-means assignment and update claim operational; state its assumptions before applying it.",
+        "name": "K-means assignment and centroid update",
+        "purpose": "Use it to carry out one concrete iteration and verify which objective each step improves.",
         "sourceType": "lecture"
       }
     },
@@ -98,8 +98,8 @@
             "meaning": "component covariance"
           }
         ],
-        "name": "GMM responsibilities formula",
-        "purpose": "Use it to make the gmm responsibilities claim operational; state its assumptions before applying it.",
+        "name": "GMM responsibility",
+        "purpose": "Use it to compute the posterior membership weight of a point under each mixture component.",
         "sourceType": "textbook"
       }
     },
@@ -120,8 +120,8 @@
             "meaning": "soft membership weight"
           }
         ],
-        "name": "M-step formula",
-        "purpose": "Use it to make the m-step claim operational; state its assumptions before applying it.",
+        "name": "GMM M-step parameter update",
+        "purpose": "Use it to refit mixture weights, means, or covariances using the responsibilities from the E-step.",
         "sourceType": "textbook"
       }
     },
@@ -217,8 +217,8 @@
     {
       "id": "dsa5105-gmm-em-numerical-section-1-formula",
       "type": "formula",
-      "name": "K-means assignment and update formula",
-      "purpose": "Use it to make the k-means assignment and update claim operational; state its assumptions before applying it.",
+      "name": "K-means assignment and centroid update",
+      "purpose": "Use it to carry out one concrete iteration and verify which objective each step improves.",
       "latex": "J=\\sum_i\\lVert x_i-c_{z_i}\\rVert_2^2",
       "explanation": "The assignment chooses the closest current centroid; the centroid update is the minimizer of the squared distances for a fixed assignment.",
       "symbols": [
@@ -321,8 +321,8 @@
     {
       "id": "dsa5105-gmm-em-numerical-section-2-formula",
       "type": "formula",
-      "name": "GMM responsibilities formula",
-      "purpose": "Use it to make the gmm responsibilities claim operational; state its assumptions before applying it.",
+      "name": "GMM responsibility",
+      "purpose": "Use it to compute the posterior membership weight of a point under each mixture component.",
       "latex": "\\gamma_{ik}=\\frac{\\pi_k\\mathcal{N}(x_i\\mid\\mu_k,\\Sigma_k)}{\\sum_j\\pi_j\\mathcal{N}(x_i\\mid\\mu_j,\\Sigma_j)}",
       "explanation": "Responsibilities are soft labels and sum to one across components for each point. A component with a smaller prior can still receive high responsibility if its likelihood is much larger.",
       "symbols": [
@@ -425,8 +425,8 @@
     {
       "id": "dsa5105-gmm-em-numerical-section-3-formula",
       "type": "formula",
-      "name": "M-step formula",
-      "purpose": "Use it to make the m-step claim operational; state its assumptions before applying it.",
+      "name": "GMM M-step parameter update",
+      "purpose": "Use it to refit mixture weights, means, or covariances using the responsibilities from the E-step.",
       "latex": "\\mu_k^{new}=\\frac{\\sum_i\\gamma_{ik}x_i}{\\sum_i\\gamma_{ik}}",
       "explanation": "The mean is a weighted average, so high-responsibility points pull the component more strongly.",
       "symbols": [

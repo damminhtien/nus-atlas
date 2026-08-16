@@ -65,8 +65,8 @@
             "meaning": "number of basis functions"
           }
         ],
-        "name": "Linear in parameters, not necessarily in x formula",
-        "purpose": "Use it to make the linear in parameters, not necessarily in x claim operational; state its assumptions before applying it.",
+        "name": "Linear-in-parameters basis model",
+        "purpose": "Use it to separate nonlinear feature construction from the linear parameter optimization problem.",
         "sourceType": "lecture"
       }
     },
@@ -91,8 +91,8 @@
             "meaning": "full-column-rank condition"
           }
         ],
-        "name": "OLS normal equations and uniqueness formula",
-        "purpose": "Use it to make the ols normal equations and uniqueness claim operational; state its assumptions before applying it.",
+        "name": "OLS normal equations and uniqueness",
+        "purpose": "Use it to state the full-column-rank condition before applying the inverse closed form.",
         "sourceType": "textbook"
       }
     },
@@ -117,8 +117,8 @@
             "meaning": "row-scaled design matrix"
           }
         ],
-        "name": "Weighted empirical risk formula",
-        "purpose": "Use it to make the weighted empirical risk claim operational; state its assumptions before applying it.",
+        "name": "Weighted empirical-risk estimator",
+        "purpose": "Use it when observations have unequal importance and verify that the weighted normal matrix is invertible.",
         "sourceType": "textbook"
       }
     },
@@ -212,8 +212,8 @@
     {
       "id": "dsa5105-weighted-ols-section-1-formula",
       "type": "formula",
-      "name": "Linear in parameters, not necessarily in x formula",
-      "purpose": "Use it to make the linear in parameters, not necessarily in x claim operational; state its assumptions before applying it.",
+      "name": "Linear-in-parameters basis model",
+      "purpose": "Use it to separate nonlinear feature construction from the linear parameter optimization problem.",
       "latex": "f_w(x)=\\sum_{j=1}^{M}w_j\\phi_j(x)=w^\\top\\phi(x)",
       "explanation": "The weights appear only as a linear combination. Nonlinearity in the features changes the hypothesis class without changing the least-squares algebra in the weights.",
       "symbols": [
@@ -302,8 +302,8 @@
     {
       "id": "dsa5105-weighted-ols-section-2-formula",
       "type": "formula",
-      "name": "OLS normal equations and uniqueness formula",
-      "purpose": "Use it to make the ols normal equations and uniqueness claim operational; state its assumptions before applying it.",
+      "name": "OLS normal equations and uniqueness",
+      "purpose": "Use it to state the full-column-rank condition before applying the inverse closed form.",
       "latex": "\\hat w=(\\Phi^\\top\\Phi)^{-1}\\Phi^\\top y",
       "explanation": "The inverse is not a decorative step: it encodes the full-column-rank assumption. If two basis columns are duplicates, multiple coefficient vectors can produce the same predictions.",
       "symbols": [
@@ -392,8 +392,8 @@
     {
       "id": "dsa5105-weighted-ols-section-3-formula",
       "type": "formula",
-      "name": "Weighted empirical risk formula",
-      "purpose": "Use it to make the weighted empirical risk claim operational; state its assumptions before applying it.",
+      "name": "Weighted empirical-risk estimator",
+      "purpose": "Use it when observations have unequal importance and verify that the weighted normal matrix is invertible.",
       "latex": "\\hat w_A=(\\Phi^\\top A\\Phi)^{-1}\\Phi^\\top Ay",
       "explanation": "Weighted least squares is ordinary least squares after scaling row $i$ by $sqrt{a_i}$. This interpretation is the cleanest way to reason about existence and uniqueness.",
       "symbols": [

@@ -55,8 +55,8 @@
             "meaning": "signed geometric margin"
           }
         ],
-        "name": "Geometry first formula",
-        "purpose": "Use it to make the geometry first claim operational; state its assumptions before applying it.",
+        "name": "Signed geometric margin",
+        "purpose": "Use it to convert a label-scaled classifier score into distance from the separating hyperplane.",
         "sourceType": "textbook"
       }
     },
@@ -77,8 +77,8 @@
             "meaning": "correct classification with fixed scale"
           }
         ],
-        "name": "Hard margin formula",
-        "purpose": "Use it to make the hard margin claim operational; state its assumptions before applying it.",
+        "name": "Hard-margin SVM objective",
+        "purpose": "Use it when every training point is assumed separable and the goal is the widest feasible margin.",
         "sourceType": "textbook"
       }
     },
@@ -156,8 +156,8 @@
     {
       "id": "dsa5105-svm-margin-section-1-formula",
       "type": "formula",
-      "name": "Geometry first formula",
-      "purpose": "Use it to make the geometry first claim operational; state its assumptions before applying it.",
+      "name": "Signed geometric margin",
+      "purpose": "Use it to convert a label-scaled classifier score into distance from the separating hyperplane.",
       "latex": "\\gamma_i=\\frac{y_i(w^\\top x_i+b)}{\\lVert w\\rVert_2}",
       "explanation": "The numerator is the signed classifier score after multiplying by the label, so a correctly classified point has a positive value. Dividing by the normal-vector length converts that score into a geometric distance.",
       "symbols": [
@@ -232,8 +232,8 @@
     {
       "id": "dsa5105-svm-margin-section-2-formula",
       "type": "formula",
-      "name": "Hard margin formula",
-      "purpose": "Use it to make the hard margin claim operational; state its assumptions before applying it.",
+      "name": "Hard-margin SVM objective",
+      "purpose": "Use it when every training point is assumed separable and the goal is the widest feasible margin.",
       "latex": "\\min_{w,b}\\;\\frac{1}{2}\\lVert w\\rVert_2^2\\quad\\text{subject to}\\quad y_i(w^\\top x_i+b)\\ge 1\\ \\forall i",
       "explanation": "The constraint fixes the arbitrary scale by placing the closest correct points at score one. Once scale is fixed, a smaller norm means a wider geometric margin.",
       "symbols": [

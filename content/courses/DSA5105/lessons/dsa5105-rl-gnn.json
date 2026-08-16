@@ -48,8 +48,8 @@
             "meaning": "discount factor"
           }
         ],
-        "name": "Bellman backup formula",
-        "purpose": "Use it to make the bellman backup claim operational; state its assumptions before applying it.",
+        "name": "Q-function Bellman backup",
+        "purpose": "Use it to evaluate one-step action choices using immediate reward and discounted continuation value.",
         "sourceType": "lecture"
       }
     },
@@ -74,8 +74,8 @@
             "meaning": "permutation-invariant aggregation"
           }
         ],
-        "name": "Message passing formula",
-        "purpose": "Use it to make the message passing claim operational; state its assumptions before applying it.",
+        "name": "Permutation-invariant message-passing layer",
+        "purpose": "Use it to aggregate unordered neighbor information while preserving the node's own state.",
         "sourceType": "ref"
       }
     },
@@ -141,8 +141,8 @@
     {
       "id": "dsa5105-rl-gnn-section-1-formula",
       "type": "formula",
-      "name": "Bellman backup formula",
-      "purpose": "Use it to make the bellman backup claim operational; state its assumptions before applying it.",
+      "name": "Q-function Bellman backup",
+      "purpose": "Use it to evaluate one-step action choices using immediate reward and discounted continuation value.",
       "latex": "Q^*(s,a)=r+\\gamma\\max_{a'}Q^*(s',a')",
       "explanation": "Start with the immediate reward $r$. Then look at the next state and take the largest available action value. The discount $\\gamma$ controls how much that future estimate contributes to the target.",
       "symbols": [
@@ -203,8 +203,8 @@
     {
       "id": "dsa5105-rl-gnn-section-2-formula",
       "type": "formula",
-      "name": "Message passing formula",
-      "purpose": "Use it to make the message passing claim operational; state its assumptions before applying it.",
+      "name": "Permutation-invariant message-passing layer",
+      "purpose": "Use it to aggregate unordered neighbor information while preserving the node's own state.",
       "latex": "h_v'=\\sigma\\!\\left(W_0h_v+\\operatorname{AGG}_{u\\in N(v)}W_1h_u\\right)",
       "explanation": "The self-state contribution and the aggregated neighbor message are combined, then passed through a learnable nonlinearity. The aggregator must not depend on the arbitrary order in which neighbors are listed.",
       "symbols": [

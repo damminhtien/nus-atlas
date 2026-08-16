@@ -68,8 +68,8 @@
             "meaning": "arbitrary real Gram coefficients"
           }
         ],
-        "name": "Kernel PSD by feature map formula",
-        "purpose": "Use it to make the kernel psd by feature map claim operational; state its assumptions before applying it.",
+        "name": "Graph-kernel positive-semidefinite proof",
+        "purpose": "Use it to certify a kernel by rewriting its quadratic form as a squared feature-map norm.",
         "sourceType": "textbook"
       }
     },
@@ -86,8 +86,8 @@
             "meaning": "opposite-orientation similarity parameter"
           }
         ],
-        "name": "Assessment bridge · Opposite-edge parameter formula",
-        "purpose": "Use it to make the assessment bridge · opposite-edge parameter claim operational; state its assumptions before applying it.",
+        "name": "Graph-kernel eigenvalue condition",
+        "purpose": "Use it to determine the parameter range for which the graph-kernel Gram matrix remains positive semidefinite.",
         "sourceType": "ref"
       }
     },
@@ -112,8 +112,8 @@
             "meaning": "damping or continuation probability"
           }
         ],
-        "name": "PageRank as a fixed point formula",
-        "purpose": "Use it to make the pagerank as a fixed point claim operational; state its assumptions before applying it.",
+        "name": "PageRank fixed-point equation",
+        "purpose": "Use it to compute or iterate the stationary importance vector while accounting for teleportation.",
         "sourceType": "ref"
       }
     },
@@ -209,8 +209,8 @@
     {
       "id": "dsa5105-graph-kernel-pagerank-section-1-formula",
       "type": "formula",
-      "name": "Kernel PSD by feature map formula",
-      "purpose": "Use it to make the kernel psd by feature map claim operational; state its assumptions before applying it.",
+      "name": "Graph-kernel positive-semidefinite proof",
+      "purpose": "Use it to certify a kernel by rewriting its quadratic form as a squared feature-map norm.",
       "latex": "\\sum_{i,j}c_ic_jK(G_i,G_j)=\\left\\lVert\\sum_i c_i\\Psi(G_i)\\right\\rVert_2^2\\ge0",
       "explanation": "The quadratic-form test proves PSD directly once the feature map is identified. For graph kernels, coordinates can count node labels, edge patterns, walks, or other substructures.",
       "symbols": [
@@ -309,8 +309,8 @@
     {
       "id": "dsa5105-graph-kernel-pagerank-section-2-formula",
       "type": "formula",
-      "name": "Assessment bridge · Opposite-edge parameter formula",
-      "purpose": "Use it to make the assessment bridge · opposite-edge parameter claim operational; state its assumptions before applying it.",
+      "name": "Graph-kernel eigenvalue condition",
+      "purpose": "Use it to determine the parameter range for which the graph-kernel Gram matrix remains positive semidefinite.",
       "latex": "\\lambda_\\pm=1\\pm q\\quad\\Longrightarrow\\quad -1\\le q\\le1",
       "explanation": "Both eigenvalues must be non-negative. The boundary values are PSD but can make the feature representation linearly dependent.",
       "symbols": [
@@ -405,8 +405,8 @@
     {
       "id": "dsa5105-graph-kernel-pagerank-section-3-formula",
       "type": "formula",
-      "name": "PageRank as a fixed point formula",
-      "purpose": "Use it to make the pagerank as a fixed point claim operational; state its assumptions before applying it.",
+      "name": "PageRank fixed-point equation",
+      "purpose": "Use it to compute or iterate the stationary importance vector while accounting for teleportation.",
       "latex": "r=\\alpha P^\\top r+(1-\\alpha)\\frac1n\\mathbf1",
       "explanation": "Damping makes the random-surfer chain well behaved even when the raw graph has sinks or disconnected structure. Check the orientation convention: whether vectors are columns or rows changes where the transpose appears.",
       "symbols": [

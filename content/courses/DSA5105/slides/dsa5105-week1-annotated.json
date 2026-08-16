@@ -4367,13 +4367,13 @@
         {
           "type": "diagnose",
           "prompt": "A linear model cannot represent a curved target even with an exact optimizer. Which error dominates?",
-          "answer": "Approximation error.",
-          "hint": "The optimizer can only search inside H."
+          "answer": "Approximation dominates because the best population-risk member $\\tilde f\\in\\mathcal H$ is still separated from the oracle $f^*$.",
+          "hint": "The optimizer can only search inside $\\mathcal H$."
         },
         {
           "type": "diagnose",
           "prompt": "A high-degree polynomial fits training points but changes wildly between them. Which error is the warning sign?",
-          "answer": "Estimation/generalization error caused by excessive flexibility relative to the data.",
+          "answer": "Estimation/generalization is the warning sign: finite-sample fitting has moved the model toward sample-specific detail, so $\\hat f$ does not track the population-risk solution reliably.",
           "hint": "The fitted function is too sample-sensitive."
         }
       ],
@@ -7110,14 +7110,14 @@
         {
           "type": "derive",
           "prompt": "What basis functions reproduce $f(x)=w_0+w_1x$?",
-          "answer": "$\\phi_0(x)=1$ and $\\phi_1(x)=x$ with $M=2$.",
+          "answer": "Choose $\\phi_0(x)=1$ and $\\phi_1(x)=x$. Then $\\sum_{j=0}^{1}w_j\\phi_j(x)=w_0+w_1x$, so the intercept is represented by an explicit constant feature.",
           "hint": "Match each term in the sum."
         },
         {
           "type": "predict",
-          "prompt": "If $M$ grows while $N$ stays fixed, what risk appears?",
-          "answer": "The design matrix may become rank-deficient or the model may overfit, so solution uniqueness and generalization become concerns.",
-          "hint": "Compare number of parameters with examples."
+          "prompt": "If $M$ grows while $N$ stays fixed, what two risks should you check before fitting?",
+          "answer": "Check rank/identifiability because $\\Phi^\\top\\Phi$ may become singular, and check estimation/generalization because a larger hypothesis class can fit sample-specific noise.",
+          "hint": "Compare number of parameters with independent examples."
         }
       ],
       "lecturePriority": "core",
@@ -7170,13 +7170,13 @@
         {
           "type": "derive",
           "prompt": "Write the prediction for $\\phi(x)=(1,x,x^2)$ and weights $(w_0,w_1,w_2)$.",
-          "answer": "$f(x)=w_0+w_1x+w_2x^2$.",
-          "hint": "Expand the dot product."
+          "answer": "The dot product is $f(x)=w_0\\cdot1+w_1\\cdot x+w_2\\cdot x^2=w_0+w_1x+w_2x^2$.",
+          "hint": "Expand each feature-weight product."
         },
         {
           "type": "critique",
           "prompt": "What new failure mode can a quadratic basis introduce compared with a line?",
-          "answer": "It can fit curvature that is not supported by data and may extrapolate poorly outside the observed range.",
+          "answer": "It can fit curvature that is not supported by the sample and extrapolate poorly; extra capacity can lower training error while increasing estimation error outside the observed range.",
           "hint": "More expressiveness is not free."
         }
       ],
@@ -7955,13 +7955,13 @@
         {
           "type": "derive",
           "prompt": "What is the optimization variable after the basis functions are fixed?",
-          "answer": "The weight vector w in $R^M$.",
+          "answer": "The parameter vector $w\\in\\mathbb R^M$. The basis values $\\phi_j(x_i)$ are fixed numbers; only their coefficients move during optimization.",
           "hint": "The features are now fixed columns."
         },
         {
           "type": "compare",
           "prompt": "What remains convex when the basis functions are nonlinear in x?",
-          "answer": "The squared-loss objective remains convex in the weights because the prediction is linear in w.",
+          "answer": "The squared-loss objective remains convex in $w$ because the prediction is linear in the trainable weights, even when each fixed feature $\\phi_j(x)$ is nonlinear in $x$.",
           "hint": "Convexity is with respect to parameters."
         }
       ],
@@ -8473,9 +8473,9 @@
         },
         {
           "type": "derive",
-          "prompt": "What does the i-th row of Phi represent?",
-          "answer": "The values of all M basis functions evaluated at $x_i$.",
-          "hint": "Read across one example."
+          "prompt": "What does the i-th row of $\\Phi$ represent, and why does that orientation matter?",
+          "answer": "It is $(\\phi_0(x_i),\\ldots,\\phi_{M-1}(x_i))$. With examples as rows, $\\Phi w$ produces all predictions and $\\Phi^\\top(\\Phi w-y)$ collects feature-direction derivatives.",
+          "hint": "Read across one example and then check the multiplication."
         }
       ],
       "lecturePriority": "core",
@@ -8528,7 +8528,7 @@
         "whatYouSee": "The annotated page contains handwritten expansion of $R(w)$, its gradient, the normal equation $\\Phi^\\top\\Phi w=\\Phi^\\top y$, and a split between full-rank and singular cases.",
         "whyItMatters": "It is the bridge between the geometric least-squares problem and the algebraic solution, including the uniqueness condition emphasized by the lecturer.",
         "intuition": "At the optimum, the residual is orthogonal to every feature direction. The normal equations express that residual orthogonality in matrix form.",
-        "technicalDetail": "Expanding $R(w)=\\frac{1}{2N}\\lVert\\Phi w-y\\rVert^2$ gives gradient $\\frac{1}{N}\\Phi^\\top(\\Phi w-y)$. Setting it to zero yields $\\Phi^\\top\\Phi w=\\Phi^\\top y$. If Phi has full column rank, $\\Phi^\\top$ Phi is invertible and the solution is unique.",
+        "technicalDetail": "Expanding $R(w)=\\frac{1}{2N}\\lVert\\Phi w-y\\rVert^2$ gives gradient $\\frac{1}{N}\\Phi^\\top(\\Phi w-y)$. Setting it to zero yields $\\Phi^\\top\\Phi w=\\Phi^\\top y$. If $\\Phi$ has full column rank, $\\Phi^\\top\\Phi$ is invertible and the solution is unique.",
         "pitfall": "Do not claim $\\Phi^\\top$ Phi is invertible merely because Phi has entries. Check rank; duplicated or redundant basis columns can make it singular.",
         "connection": "Page 44 is a handwritten companion to slides 46–47 and directly supports OLS uniqueness questions."
       },
@@ -8551,13 +8551,13 @@
         {
           "type": "derive",
           "prompt": "What geometric statement is encoded by $\\Phi^\\top(\\Phi\\hat w-y)=0$?",
-          "answer": "The residual vector y-Phi $\\hat w$ is orthogonal to the column space of Phi.",
+          "answer": "The residual $y-\\Phi\\hat w$ is orthogonal to every column of $\\Phi$, hence to the whole column space used for prediction.",
           "hint": "Multiply out the inner products with every feature column."
         },
         {
           "type": "diagnose",
-          "prompt": "What can make $\\Phi^\\top$ Phi singular?",
-          "answer": "Linearly dependent feature columns, too many features relative to independent observations, or redundant basis functions.",
+          "prompt": "What can make $\\Phi^\\top\\Phi$ singular, and what does that mean for OLS?",
+          "answer": "Redundant or linearly dependent feature columns, or too many effective parameters, can make $\\Phi^\\top\\Phi$ singular. Then the fitted values may be identifiable while the coefficient vector is not unique.",
           "hint": "Rank, not just matrix size, determines invertibility."
         }
       ],
@@ -9359,9 +9359,9 @@
         },
         {
           "type": "predict",
-          "prompt": "What happens as lambda becomes very large?",
-          "answer": "The optimizer prioritizes a small penalty over close fit, increasing bias and shrinking coefficients strongly.",
-          "hint": "Consider the two terms in the objective."
+          "prompt": "What happens as $\\lambda$ becomes very large, and why is that not automatically desirable?",
+          "answer": "The penalty dominates the fit term, shrinking coefficients toward zero and increasing bias. It can reduce variance but eventually underfit, so $\\lambda$ must be selected with validation evidence.",
+          "hint": "Compare the two objective terms."
         }
       ],
       "lecturePriority": "core",
@@ -9851,14 +9851,14 @@
       "socraticQuestions": [
         {
           "type": "derive",
-          "prompt": "For $K=3$ and class 2, what is $y_i$?",
-          "answer": "$e_2=(0,1,0)^\\top$.",
+          "prompt": "For $K=3$ and class 2, what is $y_i$, and what does each coordinate mean?",
+          "answer": "$y_i=e_2=(0,1,0)^\\top$. The second coordinate marks the observed class; the zeros do not assert an ordinal distance from the other class names.",
           "hint": "The class index selects the coordinate."
         },
         {
           "type": "critique",
           "prompt": "Why is a one-hot vector more natural than the scalar label 2 for a nominal class?",
-          "answer": "It avoids implying that class 2 is numerically between or closer to other class IDs.",
+          "answer": "It avoids implying that class 2 is numerically between or closer to other class IDs; the target encodes identity, not magnitude.",
           "hint": "Nominal labels have no order."
         }
       ],
@@ -10204,8 +10204,8 @@
       "socraticQuestions": [
         {
           "type": "check",
-          "prompt": "If $W$ is $M\\times K$ and $\\Phi(x)$ is $M\\times1$, what is the dimension of $W^\\top\\Phi(x)$?",
-          "answer": "Kx1, one score per class.",
+          "prompt": "If $W$ is $M\\times K$ and $\\Phi(x)$ is $M\\times1$, what is the dimension of $W^\\top\\Phi(x)$, and what does that vector represent?",
+          "answer": "$W^\\top\\Phi(x)\\in\\mathbb R^K$: it contains one raw score/logit for each class, before a loss such as softmax cross-entropy is applied.",
           "hint": "Transpose W before multiplying."
         },
         {

@@ -79,8 +79,8 @@
             "meaning": "layer weights and bias"
           }
         ],
-        "name": "A shallow network needs a nonlinearity formula",
-        "purpose": "Use it to make the a shallow network needs a nonlinearity claim operational; state its assumptions before applying it.",
+        "name": "Shallow neural-network forward map",
+        "purpose": "Use it to show where the nonlinearity enters and why stacked linear maps alone collapse to one linear map.",
         "sourceType": "lecture"
       }
     },
@@ -105,8 +105,8 @@
             "meaning": "training loss"
           }
         ],
-        "name": "Gradient descent and non-convexity formula",
-        "purpose": "Use it to make the gradient descent and non-convexity claim operational; state its assumptions before applying it.",
+        "name": "Gradient-descent parameter update",
+        "purpose": "Use it to describe one optimization step and distinguish local update mechanics from global optimality.",
         "sourceType": "textbook"
       }
     },
@@ -131,8 +131,8 @@
             "meaning": "input to layer $l$"
           }
         ],
-        "name": "Backpropagation recurrence formula",
-        "purpose": "Use it to make the backpropagation recurrence claim operational; state its assumptions before applying it.",
+        "name": "Backpropagation error recurrence",
+        "purpose": "Use it to propagate local derivatives backward through a computation graph without recomputing every path.",
         "sourceType": "textbook"
       }
     },
@@ -158,8 +158,8 @@
             "meaning": "Frobenius norm of layer weights"
           }
         ],
-        "name": "L2-regularized neural objective formula",
-        "purpose": "Use it to make the l2-regularized neural objective claim operational; state its assumptions before applying it.",
+        "name": "Regularized neural objective",
+        "purpose": "Use it to balance data fit against parameter magnitude when training a flexible network.",
         "sourceType": "textbook"
       }
     }
@@ -257,8 +257,8 @@
     {
       "id": "dsa5105-neural-backprop-section-1-formula",
       "type": "formula",
-      "name": "A shallow network needs a nonlinearity formula",
-      "purpose": "Use it to make the a shallow network needs a nonlinearity claim operational; state its assumptions before applying it.",
+      "name": "Shallow neural-network forward map",
+      "purpose": "Use it to show where the nonlinearity enters and why stacked linear maps alone collapse to one linear map.",
       "latex": "h=\\sigma(W_1x+b_1),\\qquad f(x)=W_2h+b_2",
       "explanation": "The activation is the source of extra expressive shape. If $\\sigma$ is the identity everywhere, stacking layers does not create a richer linear decision family.",
       "symbols": [
@@ -375,8 +375,8 @@
     {
       "id": "dsa5105-neural-backprop-section-2-formula",
       "type": "formula",
-      "name": "Gradient descent and non-convexity formula",
-      "purpose": "Use it to make the gradient descent and non-convexity claim operational; state its assumptions before applying it.",
+      "name": "Gradient-descent parameter update",
+      "purpose": "Use it to describe one optimization step and distinguish local update mechanics from global optimality.",
       "latex": "\\theta_{t+1}=\\theta_t-\\eta\\nabla_\\theta L(\\theta_t)",
       "explanation": "The learning rate controls the step size. A small gradient can mean a stationary point, saturation, or a poorly scaled parameterization; it is not proof that the global best loss has been found.",
       "symbols": [
@@ -493,8 +493,8 @@
     {
       "id": "dsa5105-neural-backprop-section-3-formula",
       "type": "formula",
-      "name": "Backpropagation recurrence formula",
-      "purpose": "Use it to make the backpropagation recurrence claim operational; state its assumptions before applying it.",
+      "name": "Backpropagation error recurrence",
+      "purpose": "Use it to propagate local derivatives backward through a computation graph without recomputing every path.",
       "latex": "\\delta^l=(W^{l+1\\top}\\delta^{l+1})\\odot\\sigma_l'(z^l),\\qquad \\frac{\\partial L}{\\partial W^l}=\\delta^l h^{l-1\\top}",
       "explanation": "The transpose transports sensitivity from the next layer; the elementwise derivative gates it at the current pre-activation. The outer product gives the parameter gradient for an affine layer.",
       "symbols": [
@@ -662,8 +662,8 @@
     {
       "id": "dsa5105-neural-backprop-section-5-formula",
       "type": "formula",
-      "name": "L2-regularized neural objective formula",
-      "purpose": "Use it to make the l2-regularized neural objective claim operational; state its assumptions before applying it.",
+      "name": "Regularized neural objective",
+      "purpose": "Use it to balance data fit against parameter magnitude when training a flexible network.",
       "latex": "\\frac{\\partial L_{total}}{\\partial W^l}=\\frac{\\partial L_{data}}{\\partial W^l}+\\lambda W^l",
       "explanation": "Keep the computational graph for the data term separate from the explicit derivative of the penalty. This is a common place to lose the $\\lambda$ term in an exam derivation.",
       "symbols": [

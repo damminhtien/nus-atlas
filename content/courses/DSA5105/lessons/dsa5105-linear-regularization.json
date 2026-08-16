@@ -48,8 +48,8 @@
             "meaning": "target vector"
           }
         ],
-        "name": "OLS baseline formula",
-        "purpose": "Use it to make the ols baseline claim operational; state its assumptions before applying it.",
+        "name": "Ordinary least-squares objective",
+        "purpose": "Use it to define the unregularized fit before comparing rank, uniqueness, or regularization.",
         "sourceType": "lecture"
       }
     },
@@ -74,8 +74,8 @@
             "meaning": "sum of absolute coefficient values"
           }
         ],
-        "name": "Ridge and lasso formula",
-        "purpose": "Use it to make the ridge and lasso claim operational; state its assumptions before applying it.",
+        "name": "L2 and L1 regularized objectives",
+        "purpose": "Use it to compare continuous shrinkage with sparsity-inducing penalization and choose a validation strategy.",
         "sourceType": "lecture"
       }
     },
@@ -141,8 +141,8 @@
     {
       "id": "dsa5105-linear-regularization-section-1-formula",
       "type": "formula",
-      "name": "OLS baseline formula",
-      "purpose": "Use it to make the ols baseline claim operational; state its assumptions before applying it.",
+      "name": "Ordinary least-squares objective",
+      "purpose": "Use it to define the unregularized fit before comparing rank, uniqueness, or regularization.",
       "latex": "\\hat w = \\arg\\min_w \\lVert Xw-y\\rVert_2^2",
       "explanation": "The model predicts $Xw$ and compares it with the target vector $y$. Squaring and summing the residuals penalizes large mistakes and gives a smooth objective.",
       "symbols": [
@@ -203,8 +203,8 @@
     {
       "id": "dsa5105-linear-regularization-section-2-formula",
       "type": "formula",
-      "name": "Ridge and lasso formula",
-      "purpose": "Use it to make the ridge and lasso claim operational; state its assumptions before applying it.",
+      "name": "L2 and L1 regularized objectives",
+      "purpose": "Use it to compare continuous shrinkage with sparsity-inducing penalization and choose a validation strategy.",
       "latex": "\\min_w\\;\\lVert Xw-y\\rVert_2^2+\\lambda\\lVert w\\rVert_2^2\\;\\text{(ridge)},\\qquad \\min_w\\;\\lVert Xw-y\\rVert_2^2+\\lambda\\lVert w\\rVert_1\\;\\text{(lasso)}",
       "explanation": "The first term rewards fit to the data; the penalty charges for coefficient size. Increasing $\\lambda$ makes complexity more expensive. The L2 norm is smooth, while the L1 norm has corners that allow exact zeros.",
       "symbols": [

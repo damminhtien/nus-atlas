@@ -79,8 +79,8 @@
             "meaning": "signed class label"
           }
         ],
-        "name": "Margin and scale formula",
-        "purpose": "Use it to make the margin and scale claim operational; state its assumptions before applying it.",
+        "name": "SVM margin normalization",
+        "purpose": "Use it to remove the arbitrary scale of a separating hyperplane before measuring its geometric margin.",
         "sourceType": "lecture"
       }
     },
@@ -101,8 +101,8 @@
             "meaning": "pairwise input inner product"
           }
         ],
-        "name": "Lagrangian and stationarity formula",
-        "purpose": "Use it to make the lagrangian and stationarity claim operational; state its assumptions before applying it.",
+        "name": "Hard-margin SVM dual objective",
+        "purpose": "Use it to eliminate the primal parameters and expose the dual coefficients that define the separator.",
         "sourceType": "textbook"
       }
     },
@@ -123,8 +123,8 @@
             "meaning": "margin equality"
           }
         ],
-        "name": "KKT and support vectors formula",
-        "purpose": "Use it to make the kkt and support vectors claim operational; state its assumptions before applying it.",
+        "name": "SVM KKT complementarity",
+        "purpose": "Use it to identify which training points lie on the margin and therefore can carry nonzero dual weight.",
         "sourceType": "textbook"
       }
     },
@@ -145,8 +145,8 @@
             "meaning": "soft-margin penalty"
           }
         ],
-        "name": "Kernel and soft-margin extension formula",
-        "purpose": "Use it to make the kernel and soft-margin extension claim operational; state its assumptions before applying it.",
+        "name": "Kernelized and soft-margin SVM",
+        "purpose": "Use it to extend the margin model to nonlinear geometry or nonseparable data while tracking the new trade-off.",
         "sourceType": "textbook"
       }
     },
@@ -249,8 +249,8 @@
     {
       "id": "dsa5105-svm-dual-kkt-section-1-formula",
       "type": "formula",
-      "name": "Margin and scale formula",
-      "purpose": "Use it to make the margin and scale claim operational; state its assumptions before applying it.",
+      "name": "SVM margin normalization",
+      "purpose": "Use it to remove the arbitrary scale of a separating hyperplane before measuring its geometric margin.",
       "latex": "\\min_{w,b}\\frac12\\lVert w\\rVert_2^2\\quad\\text{s.t.}\\quad y_i(w^\\top x_i+b)\\ge1",
       "explanation": "The constraints place positive examples on or beyond one side of the normalized boundary and negative examples on the other. The objective prefers the widest feasible separator.",
       "symbols": [
@@ -367,8 +367,8 @@
     {
       "id": "dsa5105-svm-dual-kkt-section-2-formula",
       "type": "formula",
-      "name": "Lagrangian and stationarity formula",
-      "purpose": "Use it to make the lagrangian and stationarity claim operational; state its assumptions before applying it.",
+      "name": "Hard-margin SVM dual objective",
+      "purpose": "Use it to eliminate the primal parameters and expose the dual coefficients that define the separator.",
       "latex": "\\max_{\\alpha\\ge0}\\;\\sum_i\\alpha_i-\\frac12\\sum_{i,j}\\alpha_i\\alpha_jy_iy_jx_i^\\top x_j\\quad\\text{s.t.}\\quad\\sum_i\\alpha_iy_i=0",
       "explanation": "The equality constraint is the bias-stationarity condition. It says the total multiplier mass on positive and negative labels must balance.",
       "symbols": [
@@ -481,8 +481,8 @@
     {
       "id": "dsa5105-svm-dual-kkt-section-3-formula",
       "type": "formula",
-      "name": "KKT and support vectors formula",
-      "purpose": "Use it to make the kkt and support vectors claim operational; state its assumptions before applying it.",
+      "name": "SVM KKT complementarity",
+      "purpose": "Use it to identify which training points lie on the margin and therefore can carry nonzero dual weight.",
       "latex": "\\alpha_i\\left[y_i(w^\\top x_i+b)-1\\right]=0",
       "explanation": "A non-zero multiplier can only occur when its inequality is tight. The support vectors determine the solution through the weighted expansion of $w$.",
       "symbols": [
@@ -595,8 +595,8 @@
     {
       "id": "dsa5105-svm-dual-kkt-section-4-formula",
       "type": "formula",
-      "name": "Kernel and soft-margin extension formula",
-      "purpose": "Use it to make the kernel and soft-margin extension claim operational; state its assumptions before applying it.",
+      "name": "Kernelized and soft-margin SVM",
+      "purpose": "Use it to extend the margin model to nonlinear geometry or nonseparable data while tracking the new trade-off.",
       "latex": "f(x)=\\sum_i\\alpha_i y_i k(x_i,x)+b",
       "explanation": "The prediction depends on kernel similarities to support vectors. Kernel validity matters because the dual quadratic form should preserve the intended convex geometry.",
       "symbols": [

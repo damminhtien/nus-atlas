@@ -61,8 +61,8 @@
             "meaning": "identity matrix"
           }
         ],
-        "name": "Ridge normal equations formula",
-        "purpose": "Use it to make the ridge normal equations claim operational; state its assumptions before applying it.",
+        "name": "Ridge normal equations",
+        "purpose": "Use it to solve the unique regularized least-squares system and compare it with unregularized OLS.",
         "sourceType": "textbook"
       }
     },
@@ -87,8 +87,8 @@
             "meaning": "LS-SVM multipliers"
           }
         ],
-        "name": "Assessment bridge · LS-SVM KKT system formula",
-        "purpose": "Use it to make the assessment bridge · ls-svm kkt system claim operational; state its assumptions before applying it.",
+        "name": "LS-SVM KKT linear system",
+        "purpose": "Use it to solve the equality-constrained least-squares SVM formulation as one block linear system.",
         "sourceType": "ref"
       }
     },
@@ -109,8 +109,8 @@
             "meaning": "leverage of observation i"
           }
         ],
-        "name": "Hat matrix and LOO formula",
-        "purpose": "Use it to make the hat matrix and loo claim operational; state its assumptions before applying it.",
+        "name": "Ridge leave-one-out residual",
+        "purpose": "Use it to estimate held-out residuals from one fitted model without refitting once per observation.",
         "sourceType": "textbook"
       }
     },
@@ -199,8 +199,8 @@
     {
       "id": "dsa5105-ls-svm-loo-section-1-formula",
       "type": "formula",
-      "name": "Ridge normal equations formula",
-      "purpose": "Use it to make the ridge normal equations claim operational; state its assumptions before applying it.",
+      "name": "Ridge normal equations",
+      "purpose": "Use it to solve the unique regularized least-squares system and compare it with unregularized OLS.",
       "latex": "\\hat w=(\\Phi^\\top\\Phi+\\lambda I)^{-1}\\Phi^\\top y",
       "explanation": "Ridge trades fit for a stable, small-norm solution. In a kernel representation the same idea acts through the Gram matrix.",
       "symbols": [
@@ -285,8 +285,8 @@
     {
       "id": "dsa5105-ls-svm-loo-section-2-formula",
       "type": "formula",
-      "name": "Assessment bridge · LS-SVM KKT system formula",
-      "purpose": "Use it to make the assessment bridge · ls-svm kkt system claim operational; state its assumptions before applying it.",
+      "name": "LS-SVM KKT linear system",
+      "purpose": "Use it to solve the equality-constrained least-squares SVM formulation as one block linear system.",
       "latex": "\\begin{bmatrix}0&y^\\top\\\\y&K+\\gamma^{-1}I\\end{bmatrix}\\begin{bmatrix}b\\\\\\alpha\\end{bmatrix}=\\begin{bmatrix}0\\\\\\mathbf1\\end{bmatrix}",
       "explanation": "The block system couples the bias equality with the kernel Gram matrix. It is a linear system rather than the inequality-constrained hard-margin SVM QP.",
       "symbols": [
@@ -375,8 +375,8 @@
     {
       "id": "dsa5105-ls-svm-loo-section-3-formula",
       "type": "formula",
-      "name": "Hat matrix and LOO formula",
-      "purpose": "Use it to make the hat matrix and loo claim operational; state its assumptions before applying it.",
+      "name": "Ridge leave-one-out residual",
+      "purpose": "Use it to estimate held-out residuals from one fitted model without refitting once per observation.",
       "latex": "e_i^{LOO}=\\frac{y_i-\\hat y_i}{1-H_{ii}}",
       "explanation": "High-leverage points have Hii near one and can make the LOO residual large. The formula is a computational shortcut, not permission to use the test set for tuning.",
       "symbols": [

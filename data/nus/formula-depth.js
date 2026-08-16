@@ -28,6 +28,8 @@
       [/m_1\\to m_2/, "Causal-delivery guarantee", "Use it to test whether a receiver may deliver messages without violating a known causal dependency."],
       [/delta = \(T_4/, "NTP round-trip delay estimate", "Use it to estimate message delay from the four timestamps in a clock-synchronization exchange."],
       [/widehat\{T\}_\{\\mathrm\{server\}\}/, "NTP server-time estimate", "Use it under the symmetric-delay assumption to estimate the remote wall-clock time."],
+      [/L_\{\\mathrm\{recv\}\}/, "Lamport receive-clock update", "Use it on receipt to move the logical clock beyond both local history and the message timestamp."],
+      [/x \\prec y/, "Vector-clock comparison", "Use it to test componentwise causal precedence and identify concurrency when neither vector dominates."],
       [/C_i :=/, "Lamport receive-clock update", "Use it on message receipt to place the receive event after both local and received logical time."],
       [/C\(e_i\)/, "Lamport causality guarantee", "Use it in the forward direction only: causal precedence implies increasing scalar timestamps."],
       [/vt_i\[i\]/, "Vector-clock local update", "Use it to record one process's causal progress before a local or send event."],
@@ -39,7 +41,8 @@
       [/operatorname\{Var\}/, "Projected variance quadratic form", "Use it to compute the variance visible along a unit PCA direction."],
     ];
     const match = rules.find(([pattern]) => pattern.test(latex));
-    return match ? { name: match[1], purpose: match[2] } : { name: "Named formula", purpose: "Use it only after identifying the quantity it computes and the assumptions that make it valid." };
+    if (!match) throw new Error(`Missing formula metadata for formula: ${latex}`);
+    return { name: match[1], purpose: match[2] };
   };
   const eq = (latex, explanation, symbols, sourceType, caveat) => ({ latex, explanation, symbols: symbols || [], ...formulaMetadata(latex), sourceType: sourceType || "lecture", ...(caveat ? { caveat } : {}) });
   const crit = (prompt, angle, modelAnswer, focus) => ({ prompt, angle, modelAnswer, focus: focus || "assumption" });
@@ -244,7 +247,8 @@
       [/T_\{\\mathrm\{job\}\}/, "Distributed-job cost decomposition", "Use it to measure compute, shuffle, and coordination as separate contributors to job time."],
     ];
     const match = rules.find(([pattern]) => pattern.test(latex));
-    return match ? { name: match[1], purpose: match[2] } : { name: "Named formula", purpose: "Use it only after identifying the quantity it computes and the assumptions that make it valid." };
+    if (!match) throw new Error(`Missing formula metadata for formula: ${latex}`);
+    return { name: match[1], purpose: match[2] };
   };
   const eq = (latex, explanation, symbols, sourceType = "lecture", caveat) => ({ latex, explanation, symbols: symbols || [], ...formulaMetadata(latex), sourceType, ...(caveat ? { caveat } : {}) });
   const crit = (prompt, angle, modelAnswer, focus) => ({ prompt, angle, modelAnswer, focus: focus || "assumption" });
