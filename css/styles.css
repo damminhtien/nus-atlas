@@ -103,7 +103,7 @@ body {
   background: var(--bg);
   color: var(--ink);
   line-height: 1.72;
-  font-size: 18px;
+  font-size: 19px;
   -webkit-font-smoothing: antialiased;
   min-height: 100vh;
   position: relative;
@@ -1980,4 +1980,34 @@ body.nus-slide-focus-mode .nus-slide-note p { font-size:clamp(14px, 1.05vw, 18px
   body.nus-slide-focus-mode .nus-slide-context { display:none; }
   body.nus-slide-focus-mode .nus-slide-focus-bar { gap:7px; }
   body.nus-slide-focus-mode .nus-slide-focus-bar strong { font-size:13px; }
+}
+
+/* Readability baseline: the NUS study surface is meant for sustained reading.
+ * Keep the focus-mode geometry unchanged; only enlarge the text inside it. */
+#app.nus-root { font-size:1.06rem; }
+#app.nus-root .page-head p { font-size:1.12rem; }
+#app.nus-root .nus-muted { font-size:14px; }
+#app.nus-root .nus-teach-card p,
+#app.nus-root .nus-example p,
+#app.nus-root .nus-math-block > p { font-size:1.12rem; line-height:1.8; }
+#app.nus-root .nus-teach-head h3 { font-size:24px; }
+#app.nus-root .nus-slide-reader-page { font-size:20px; }
+#app.nus-root .nus-slide-note p { font-size:16px; line-height:1.62; }
+#app.nus-root .nus-slide-question summary { font-size:15px; }
+#app.nus-root .nus-slide-question p { font-size:15px; line-height:1.62; }
+#app.nus-root .nus-slide-textbook-card p,
+#app.nus-root .nus-slide-annotation p { font-size:15px; }
+#app.nus-root .nus-slide-extraction-block p { font-size:14px; line-height:1.65; }
+body.nus-slide-focus-mode #app.nus-root .nus-slide-focus-bar { font-size:12px; }
+body.nus-slide-focus-mode #app.nus-root .nus-slide-focus-bar strong { font-size:16px; }
+body.nus-slide-focus-mode #app.nus-root .nus-slide-note p { font-size:clamp(16px, 1.15vw, 20px); line-height:1.55; }
+
+@media (max-width:760px) {
+  #app.nus-root { font-size:1rem; }
+  #app.nus-root .page-head p { font-size:1.05rem; }
+  #app.nus-root .nus-teach-card p,
+  #app.nus-root .nus-example p,
+  #app.nus-root .nus-math-block > p { font-size:1.05rem; }
+  #app.nus-root .nus-slide-note p { font-size:16px; }
+  body.nus-slide-focus-mode #app.nus-root .nus-slide-focus-bar strong { font-size:14px; }
 }
