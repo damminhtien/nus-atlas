@@ -20,6 +20,7 @@ test("slide reader keeps source collapsed and resolves textbook annotations", ()
       id: "week1",
       summary: "Week 1",
       lessonIds: ["dsa5105-erm"],
+      coreSlideNumbers: [1],
       source: { fileName: "Lecture.pdf", sourceId: "lecture.pdf", access: "local-only" },
       slides: [{
         slideNumber: 1,
@@ -69,7 +70,8 @@ test("slide reader keeps source collapsed and resolves textbook annotations", ()
     text: value => String(value || ""),
     esc: value => String(value || ""),
     typeset() {},
-    notFound() {}
+    notFound() {},
+    readingTimer: { render: () => '<aside class="nus-reading-timer">timer</aside>', bind() {} }
   });
 
   feature.render("DSA5105", "week1", 1);
@@ -92,6 +94,8 @@ test("slide reader keeps source collapsed and resolves textbook annotations", ()
   assert.match(root.innerHTML, /Practice lesson/);
   assert.match(root.innerHTML, /Focus reading/);
   assert.match(root.innerHTML, /<kbd>F<\/kbd>/);
+  assert.match(root.innerHTML, /nus-reading-timer/);
+  assert.match(root.innerHTML, /Core slide/);
 });
 
 test("slide reader shows saved progress and a resume action", () => {

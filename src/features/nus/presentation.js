@@ -65,6 +65,7 @@
       links.splice(3, 0, ["Contrast drills", `#/nus/contrast/${courseCode}`]);
     }
     if (courseCode === "DSA5105") {
+      links.push(["Textbook PDF", "#/nus/textbook/DSA5105/1"]);
       links.push(["Week 1 slides", "#/nus/slides/DSA5105/dsa5105-week1-annotated/1"]);
     } else if (courseCode === "DSA5101") {
       links.push(["Lecture 1 slides", "#/nus/slides/DSA5101/dsa5101-lecture1/1"]);

@@ -196,7 +196,8 @@
     if (!c) return renderNotFound();
     let body = pageHead(c.code, c.title, c.description);
     const hasContrasts = lessons(c.code).some(item => Array.isArray(item.contrastDrills) && item.contrastDrills.length);
-    body += `<div class="nus-course-meta"><span>${esc(c.department)} · ${esc(c.faculty)}</span><span>Workload ${esc(c.workload.join(" / "))}</span>${hasContrasts ? button("Concept contrasts", `#/nus/contrast/${c.code}`, "ghost") : ""}${button("Exam mode", `#/nus/exam/${c.code}`, "primary")}</div>`;
+    const courseTextbook = repository() && repository().getTextbook ? repository().getTextbook(c.code) : null;
+    body += `<div class="nus-course-meta"><span>${esc(c.department)} · ${esc(c.faculty)}</span><span>Workload ${esc(c.workload.join(" / "))}</span>${hasContrasts ? button("Concept contrasts", `#/nus/contrast/${c.code}`, "ghost") : ""}${courseTextbook && courseTextbook.reader ? button("Textbook PDF", `#/nus/textbook/${c.code}/1`, "ghost") : ""}${button("Exam mode", `#/nus/exam/${c.code}`, "primary")}</div>`;
     body += `<div class="nus-course-layout"><div><div class="nus-course-progress"><b>Course progress</b>${courseProgressBar(c.code)}</div>${content(c.code).modules.map(m => `<section class="nus-module reveal"><div class="eyebrow">${esc(m.title)}</div>${(m.lessons || []).map(l => `<a class="nus-lesson-row" href="#/nus/lesson/${esc(c.code)}/${esc(l.id)}" data-route><span class="nus-lesson-dot ${window.NUS_STORE.lessonDone(l.id) ? "done" : ""}">${window.NUS_STORE.lessonDone(l.id) ? "✓" : ""}</span><div><b>${esc(l.title)}</b><span>Week ${esc(l.week)} · ${esc(l.minutes)} min · ${(l.questions || []).length} practice prompts${(repository() ? repository().getLab(l.id) : window.NUS_VISUAL_LABS && window.NUS_VISUAL_LABS[l.id]) ? " · visual lab" : ""}</span></div><span>→</span></a>`).join("")}</section>`).join("")}</div><aside>${card("Assessment weight", assessments().filter(a => a.courseCode === c.code).map(a => `<div class="nus-weight"><span>${esc(a.title)}</span><b>${a.weight}%</b></div>`).join(""), "reveal")}${card("Sources", sourceGroups(c).map(g => `<div class="nus-source-group"><b>${esc(g.label)}</b><ul class="nus-source-list">${g.refs.map(r => `<li>${sourceItem(r)}</li>`).join("")}</ul></div>`).join("")+`<a class="nus-external" href="${esc(c.nusmods.url)}" target="_blank" rel="noreferrer">NUSMods course page ↗</a>`, "reveal")}</aside></div>`;
     root.innerHTML = body;
   }
@@ -219,11 +220,12 @@
     const done = window.NUS_STORE.lessonDone(l.id);
     const courseLessons = lessons(code), index = courseLessons.findIndex(x => x.id === l.id);
     const previous = courseLessons[index - 1], next = courseLessons[index + 1];
+    const courseTextbook = repository() && repository().getTextbook ? repository().getTextbook(c.code) : null;
     setReaderMode(readerModeOn());
     let body = pageHead(`${c.code} · Week ${l.week}`, l.title, l.summary);
     const slideSet = slideSets(code).find(item => (item.lessonIds || []).includes(l.id));
     const slideResumeState = slideResume(code, slideSet);
-    body += `<div class="nus-lesson-actions">${button("← Course", `#/nus/course/${c.code}`, "ghost")}<button class="btn ${done ? "ghost" : "primary"}" id="nus-mark-lesson">${done ? "✓ Completed" : "Mark complete"}</button>${slideSet ? button(slideResumeState.label, `#/nus/slides/${c.code}/${slideSet.id}/${slideResumeState.number}`, "primary") : ""}${l.contrastDrills && l.contrastDrills.length ? button("Concept contrasts", `#/nus/contrast/${c.code}/${l.id}`, "ghost") : ""}${button("Exam mode", `#/nus/exam/${c.code}/${l.id}`, "ghost")}${button("Mistake Clinic", `#/nus/mistakes/${c.code}`, "ghost")}${readerButton()}</div>`;
+    body += `<div class="nus-lesson-actions">${button("← Course", `#/nus/course/${c.code}`, "ghost")}<button class="btn ${done ? "ghost" : "primary"}" id="nus-mark-lesson">${done ? "✓ Completed" : "Mark complete"}</button>${slideSet ? button(slideResumeState.label, `#/nus/slides/${c.code}/${slideSet.id}/${slideResumeState.number}`, "primary") : ""}${courseTextbook && courseTextbook.reader ? button("Textbook PDF", `#/nus/textbook/${c.code}/1`, "ghost") : ""}${l.contrastDrills && l.contrastDrills.length ? button("Concept contrasts", `#/nus/contrast/${c.code}/${l.id}`, "ghost") : ""}${button("Exam mode", `#/nus/exam/${c.code}/${l.id}`, "ghost")}${button("Mistake Clinic", `#/nus/mistakes/${c.code}`, "ghost")}${readerButton()}</div>`;
     body += studyCompass(l);
     const lab = repository() ? repository().getLab(l.id) : window.NUS_VISUAL_LABS && window.NUS_VISUAL_LABS[l.id];
     const visualCueIds = Array.isArray(l.visualIds) ? l.visualIds : [];
@@ -297,6 +299,7 @@
   const simulationsFeature = window.NUS_SIMULATIONS_FEATURE ? window.NUS_SIMULATIONS_FEATURE({ root, pageHead, esc, getStore: () => window.NUS_STORE }) : null;
   function renderSql() { return sqlFeature ? sqlFeature.render() : renderNotFound(); }
   function renderSimulations() { return simulationsFeature ? simulationsFeature.render() : renderNotFound(); }
+  const readingTimerFeature = window.NUS_READING_TIMER ? window.NUS_READING_TIMER() : null;
   const slideReaderFeature = window.NUS_SLIDE_READER_FEATURE ? window.NUS_SLIDE_READER_FEATURE({
     root,
     getCourse: course,
@@ -310,11 +313,29 @@
     text,
     esc,
     typeset: typesetNus,
-    notFound: renderNotFound
+    notFound: renderNotFound,
+    readingTimer: readingTimerFeature
   }) : null;
   function renderSlides(code, setId, slideNumber) {
     if (ensureCourseLoaded(code, () => renderSlides(code, setId, slideNumber))) return;
     return slideReaderFeature ? slideReaderFeature.render(code, setId, slideNumber) : renderNotFound();
+  }
+  const textbookReaderFeature = window.NUS_TEXTBOOK_READER_FEATURE ? window.NUS_TEXTBOOK_READER_FEATURE({
+    root,
+    getCourse: course,
+    getTextbook: code => repository() && repository().getTextbook ? repository().getTextbook(code) : null,
+    getStore: () => window.NUS_STORE,
+    pageHead,
+    sourceBadge,
+    button,
+    text,
+    esc,
+    notFound: renderNotFound,
+    readingTimer: readingTimerFeature
+  }) : null;
+  function renderTextbook(code, page) {
+    if (ensureCourseLoaded(code, () => renderTextbook(code, page))) return;
+    return textbookReaderFeature ? textbookReaderFeature.render(code, page) : renderNotFound();
   }
 
   const routeTable = window.NUS_ROUTE_TABLE ? window.NUS_ROUTE_TABLE({
@@ -327,12 +348,14 @@
     mistakes: parts => renderMistakes(parts[1] || focusCourseCode()),
     contrast: parts => renderContrast(parts[1] || focusCourseCode(), parts[2]),
     slides: parts => renderSlides(parts[1], parts[2], parts[3]),
+    textbook: parts => renderTextbook(parts[1], parts[2]),
     sql: () => renderSql(),
     simulations: () => renderSimulations()
   }) : null;
   function renderNotFound() { root.innerHTML = pageHead("NUS", "Not found", "That study page does not exist.") + button("Back to NUS dashboard", "#/", "primary"); }
   function renderRoute(parts) {
     stopExamTimer();
+    if (readingTimerFeature && typeof readingTimerFeature.stop === "function") readingTimerFeature.stop();
     const p = parts || [];
     if (p[0] !== "lesson") setReaderMode(false);
     if (p[0] !== "slides") document.body.classList.remove("nus-slide-focus-mode");
