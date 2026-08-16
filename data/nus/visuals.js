@@ -32,6 +32,19 @@
   "use strict";
   const local = (sourceId, page) => ({ sourceId, page, access: "local source; not copied to public bundle" });
   window.NUS_VISUALS = window.NUS_VISUALS || {};
+  window.NUS_VISUALS["dsa5208-event-history"] = { courseCode: "DSA5208", title: "Process event histories", kind: "diagram+graph", source: local("DSA5208/Lec1.pdf", 4), observation: "Use the process diagram to separate local order, message edges, and the global event set before proving causality." };
+  window.NUS_VISUALS["dsa5208-causal-graph"] = { courseCode: "DSA5208", title: "Happens-before graph", kind: "graph+relation", source: local("DSA5208/Lec1.pdf", 5), observation: "Treat each arrow as a justified local, message, or transitive edge; incomparability is a conclusion that needs both directions checked." };
+  window.NUS_VISUALS["dsa5208-ordering-ladder"] = { courseCode: "DSA5208", title: "Delivery guarantees", kind: "comparison+flow", source: local("DSA5208/Lec1.pdf", 9), observation: "Compare arbitrary delivery, FIFO channel order, and causal delivery by the invariant each guarantee preserves." };
+  window.NUS_VISUALS["dsa5208-physical-time"] = { courseCode: "DSA5208", title: "Physical time and NTP", kind: "timeline+equation", source: local("DSA5208/Lec1.pdf", 14), observation: "Keep delay estimation and clock synchronization separate from logical causality." };
+  window.NUS_VISUALS["dsa5208-lamport-trace"] = { courseCode: "DSA5208", title: "Lamport scalar update trace", kind: "event-timeline", source: local("DSA5208/Lec1.pdf", 17), observation: "Trace increment, piggyback, max, increment, and deliver in order; the receive update is the common failure point." };
+  window.NUS_VISUALS["dsa5208-vector-trace"] = { courseCode: "DSA5208", title: "Vector-clock comparison", kind: "matrix+comparison", source: local("DSA5208/Lec1.pdf", 22), observation: "Compare every component and identify incomparability rather than sorting vectors lexicographically." };
+  window.NUS_VISUALS["dsa5208-compression-trace"] = { courseCode: "DSA5208", title: "Compressed timestamp metadata", kind: "state+comparison", source: local("DSA5208/Lec1.pdf", 29), observation: "Compare repeated full vectors with receiver-specific deltas and the Last Sent/Last Update differential state." };
+})();
+
+(function () {
+  "use strict";
+  const local = (sourceId, page) => ({ sourceId, page, access: "local source; not copied to public bundle" });
+  window.NUS_VISUALS = window.NUS_VISUALS || {};
   window.NUS_VISUALS["dsa5104-sql-flow"] = { courseCode: "DSA5104", title: "SQL row-to-group flow", kind: "flow+table", source: local("DSA5104/chapter1.pdf", 30), observation: "Trace rows through a key-based join, WHERE filtering, GROUP BY, and HAVING. Use the flow to explain why aggregate predicates cannot move into WHERE." };
   window.NUS_VISUALS["dsa5104-query-pipeline"] = { courseCode: "DSA5104", title: "Query processor pipeline", kind: "flow+diagram", source: local("DSA5104/chapter1.pdf", 40), observation: "Keep parsing, optimization, and evaluation distinct. A physical plan can change while the logical relation result stays fixed." };
   window.NUS_VISUALS["dsa5104-semi-structured"] = { courseCode: "DSA5104", title: "Relational versus nested data", kind: "diagram+comparison", source: local("DSA5104/chapter1.pdf", 16), observation: "Compare tabular identity and constraints with XML/JSON nesting and deferred validation before choosing a representation." };

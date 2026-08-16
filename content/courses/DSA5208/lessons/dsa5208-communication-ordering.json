@@ -1,0 +1,453 @@
+{
+  "id": "dsa5208-communication-ordering",
+  "title": "Non-FIFO, FIFO, and causal ordering",
+  "week": 2,
+  "minutes": 55,
+  "summary": "Compare channel guarantees and see why causal ordering requires buffering and message timestamps.",
+  "objectives": [
+    "Distinguish random delivery from FIFO delivery",
+    "State the causal-ordering guarantee",
+    "Explain buffering and timestamp overhead"
+  ],
+  "sourceRefs": [
+    {
+      "sourceId": "DSA5208/Lec1.pdf",
+      "page": 7,
+      "sourceType": "lecture",
+      "role": "non-FIFO model",
+      "status": "current"
+    },
+    {
+      "sourceId": "DSA5208/Lec1.pdf",
+      "page": 8,
+      "sourceType": "lecture",
+      "role": "FIFO model",
+      "status": "current"
+    },
+    {
+      "sourceId": "DSA5208/Lec1.pdf",
+      "page": 9,
+      "sourceType": "lecture",
+      "role": "causal ordering",
+      "status": "current"
+    }
+  ],
+  "visualIds": [
+    "dsa5208-ordering-ladder"
+  ],
+  "sections": [
+    {
+      "title": "Channel guarantees",
+      "sourceType": "lecture",
+      "body": "A non-FIFO channel can deliver messages in random order. FIFO preserves the send order for messages on the same channel. Causal ordering preserves the order of causally related sends when the messages are delivered to the same process.",
+      "sourceRefs": [
+        {
+          "sourceId": "DSA5208/Lec1.pdf",
+          "page": 7,
+          "sourceType": "lecture",
+          "role": "non-FIFO model",
+          "status": "current"
+        },
+        {
+          "sourceId": "DSA5208/Lec1.pdf",
+          "page": 8,
+          "sourceType": "lecture",
+          "role": "FIFO model",
+          "status": "current"
+        },
+        {
+          "sourceId": "DSA5208/Lec1.pdf",
+          "page": 9,
+          "sourceType": "lecture",
+          "role": "causal ordering",
+          "status": "current"
+        }
+      ],
+      "sourceLens": {
+        "status": "core DSA5208",
+        "whyExaminable": "Ordering questions test a guarantee boundary: FIFO is channel-local, while causal ordering follows the global happens-before relation between sends.",
+        "lecture": [
+          {
+            "sourceId": "DSA5208/Lec1.pdf",
+            "page": 7,
+            "sourceType": "lecture",
+            "role": "non-FIFO model",
+            "status": "current"
+          },
+          {
+            "sourceId": "DSA5208/Lec1.pdf",
+            "page": 8,
+            "sourceType": "lecture",
+            "role": "FIFO model",
+            "status": "current"
+          },
+          {
+            "sourceId": "DSA5208/Lec1.pdf",
+            "page": 9,
+            "sourceType": "lecture",
+            "role": "causal ordering",
+            "status": "current"
+          }
+        ],
+        "officialExercise": [],
+        "textbook": [
+          {
+            "sourceId": "DSA5208/Distributed Systems textbook pointer",
+            "page": 32,
+            "sourceType": "textbook",
+            "role": "message delivery guarantees",
+            "status": "course-depth"
+          }
+        ],
+        "reference": []
+      }
+    },
+    {
+      "title": "Synchronization by delivery discipline",
+      "sourceType": "lecture",
+      "body": "Causal ordering provides built-in synchronization, but the receiver may need to buffer messages until earlier causal dependencies arrive. Timestamps make those dependencies observable.",
+      "sourceRefs": [
+        {
+          "sourceId": "DSA5208/Lec1.pdf",
+          "page": 10,
+          "sourceType": "lecture",
+          "role": "causal-ordering implementation",
+          "status": "current"
+        }
+      ],
+      "sourceLens": {
+        "status": "core DSA5208",
+        "whyExaminable": "The implementation cost explains why stronger delivery guarantees are not free: metadata, buffering, and release rules move into the system.",
+        "lecture": [
+          {
+            "sourceId": "DSA5208/Lec1.pdf",
+            "page": 10,
+            "sourceType": "lecture",
+            "role": "causal-ordering implementation",
+            "status": "current"
+          }
+        ],
+        "officialExercise": [],
+        "textbook": [
+          {
+            "sourceId": "DSA5208/Distributed Systems textbook pointer",
+            "page": 36,
+            "sourceType": "textbook",
+            "role": "causal broadcast",
+            "status": "course-depth"
+          }
+        ],
+        "reference": []
+      }
+    }
+  ],
+  "examples": [
+    {
+      "title": "Choose the weakest sufficient channel",
+      "sourceType": "lecture",
+      "steps": [
+        "Ask whether order matters only per sender-channel.",
+        "If yes, FIFO may be sufficient.",
+        "If cross-process causal dependencies matter, require causal ordering.",
+        "If neither matters, do not pay for unnecessary metadata and buffering."
+      ],
+      "answer": "The guarantee should match the application invariant, not the strongest label available."
+    }
+  ],
+  "contrastDrills": [
+    {
+      "id": "dsa5208-contrast-nonfifo-fifo",
+      "type": "contrast",
+      "kind": "concept-contrast",
+      "pair": "Non-FIFO vs FIFO",
+      "prompt": "Two messages sent on one channel must be delivered in send order. Which guarantee is needed?",
+      "choices": [
+        "Non-FIFO",
+        "FIFO",
+        "Eventual consistency",
+        "Vector dominance"
+      ],
+      "answer": 1,
+      "explanation": "FIFO preserves the order of messages on the same channel; non-FIFO explicitly allows arbitrary delivery order.",
+      "estimatedSeconds": 45,
+      "difficulty": "medium",
+      "skill": "concept-contrast",
+      "cognitiveLevel": "distinguish",
+      "misconception": "Name the ordering, time, or communication boundary before choosing.",
+      "sourceRefs": [
+        {
+          "sourceId": "DSA5208/Lec1.pdf",
+          "page": 7,
+          "sourceType": "lecture",
+          "role": "non-FIFO model",
+          "status": "current"
+        },
+        {
+          "sourceId": "DSA5208/Lec1.pdf",
+          "page": 8,
+          "sourceType": "lecture",
+          "role": "FIFO model",
+          "status": "current"
+        }
+      ]
+    },
+    {
+      "id": "dsa5208-contrast-fifo-causal",
+      "type": "contrast",
+      "kind": "concept-contrast",
+      "pair": "FIFO vs causal ordering",
+      "prompt": "Which guarantee tracks causal order between sends that may originate on different processes?",
+      "choices": [
+        "FIFO",
+        "Causal ordering",
+        "Random delivery",
+        "Physical synchronization"
+      ],
+      "answer": 1,
+      "explanation": "Causal ordering follows happens-before dependencies between sends, not merely one channel's queue order.",
+      "estimatedSeconds": 45,
+      "difficulty": "medium",
+      "skill": "concept-contrast",
+      "cognitiveLevel": "distinguish",
+      "misconception": "Name the ordering, time, or communication boundary before choosing.",
+      "sourceRefs": [
+        {
+          "sourceId": "DSA5208/Lec1.pdf",
+          "page": 9,
+          "sourceType": "lecture",
+          "role": "causal ordering",
+          "status": "current"
+        }
+      ]
+    }
+  ],
+  "math": [
+    {
+      "latex": "m_1\\to m_2\\ \\Longrightarrow\\ \\mathrm{deliver}(m_1)\\to\\mathrm{deliver}(m_2)",
+      "explanation": "Causal ordering requires a receiver to deliver messages in an order consistent with causal precedence between their send events. FIFO is weaker because it only constrains one channel.",
+      "symbols": [
+        {
+          "latex": "m_1,m_2",
+          "meaning": "messages"
+        },
+        {
+          "latex": "\\mathrm{deliver}",
+          "meaning": "delivery event"
+        }
+      ],
+      "sourceType": "lecture"
+    }
+  ],
+  "criticalQuestions": [
+    {
+      "prompt": "Why is FIFO not enough to preserve every causal dependency?",
+      "angle": "Compare messages sent by different processes with messages on one channel.",
+      "modelAnswer": "FIFO preserves one sender-channel order. A causal dependency can cross channels and processes, so a stronger causal-ordering rule is needed.",
+      "focus": "guarantee scope"
+    },
+    {
+      "prompt": "What is the cost of stronger delivery ordering?",
+      "angle": "Name the state needed to know whether a message is safe to deliver.",
+      "modelAnswer": "The system may need timestamps, receiver buffers, and release conditions; stronger consistency moves metadata and waiting into the implementation.",
+      "focus": "implementation cost"
+    }
+  ],
+  "courseId": "DSA5208",
+  "moduleId": "dsa5208-ordering",
+  "blocks": [
+    {
+      "id": "dsa5208-communication-ordering-section-1",
+      "type": "teaching-note",
+      "title": "Channel guarantees",
+      "body": "A non-FIFO channel can deliver messages in random order. FIFO preserves the send order for messages on the same channel. Causal ordering preserves the order of causally related sends when the messages are delivered to the same process.",
+      "sourceType": "lecture",
+      "sourceRefs": [
+        {
+          "sourceId": "DSA5208/Lec1.pdf",
+          "page": 7,
+          "sourceType": "lecture",
+          "role": "non-FIFO model",
+          "status": "current"
+        },
+        {
+          "sourceId": "DSA5208/Lec1.pdf",
+          "page": 8,
+          "sourceType": "lecture",
+          "role": "FIFO model",
+          "status": "current"
+        },
+        {
+          "sourceId": "DSA5208/Lec1.pdf",
+          "page": 9,
+          "sourceType": "lecture",
+          "role": "causal ordering",
+          "status": "current"
+        }
+      ]
+    },
+    {
+      "id": "dsa5208-communication-ordering-section-2",
+      "type": "teaching-note",
+      "title": "Synchronization by delivery discipline",
+      "body": "Causal ordering provides built-in synchronization, but the receiver may need to buffer messages until earlier causal dependencies arrive. Timestamps make those dependencies observable.",
+      "sourceType": "lecture",
+      "sourceRefs": [
+        {
+          "sourceId": "DSA5208/Lec1.pdf",
+          "page": 10,
+          "sourceType": "lecture",
+          "role": "causal-ordering implementation",
+          "status": "current"
+        }
+      ]
+    },
+    {
+      "id": "dsa5208-communication-ordering-formula-1",
+      "type": "formula",
+      "latex": "m_1\\to m_2\\ \\Longrightarrow\\ \\mathrm{deliver}(m_1)\\to\\mathrm{deliver}(m_2)",
+      "explanation": "Causal ordering requires a receiver to deliver messages in an order consistent with causal precedence between their send events. FIFO is weaker because it only constrains one channel.",
+      "symbols": [
+        {
+          "latex": "m_1,m_2",
+          "meaning": "messages"
+        },
+        {
+          "latex": "\\mathrm{deliver}",
+          "meaning": "delivery event"
+        }
+      ],
+      "sourceType": "lecture",
+      "sourceRefs": [
+        {
+          "sourceId": "DSA5208/Lec1.pdf",
+          "page": 7,
+          "sourceType": "lecture",
+          "role": "non-FIFO model",
+          "status": "current"
+        },
+        {
+          "sourceId": "DSA5208/Lec1.pdf",
+          "page": 8,
+          "sourceType": "lecture",
+          "role": "FIFO model",
+          "status": "current"
+        },
+        {
+          "sourceId": "DSA5208/Lec1.pdf",
+          "page": 9,
+          "sourceType": "lecture",
+          "role": "causal ordering",
+          "status": "current"
+        }
+      ]
+    },
+    {
+      "id": "dsa5208-communication-ordering-example-1",
+      "type": "worked-example",
+      "title": "Choose the weakest sufficient channel",
+      "sourceType": "lecture",
+      "steps": [
+        "Ask whether order matters only per sender-channel.",
+        "If yes, FIFO may be sufficient.",
+        "If cross-process causal dependencies matter, require causal ordering.",
+        "If neither matters, do not pay for unnecessary metadata and buffering."
+      ],
+      "answer": "The guarantee should match the application invariant, not the strongest label available.",
+      "sourceRefs": [
+        {
+          "sourceId": "DSA5208/Lec1.pdf",
+          "page": 7,
+          "sourceType": "lecture",
+          "role": "non-FIFO model",
+          "status": "current"
+        },
+        {
+          "sourceId": "DSA5208/Lec1.pdf",
+          "page": 8,
+          "sourceType": "lecture",
+          "role": "FIFO model",
+          "status": "current"
+        },
+        {
+          "sourceId": "DSA5208/Lec1.pdf",
+          "page": 9,
+          "sourceType": "lecture",
+          "role": "causal ordering",
+          "status": "current"
+        }
+      ]
+    },
+    {
+      "id": "dsa5208-communication-ordering-critical-1",
+      "type": "critical-question",
+      "prompt": "Why is FIFO not enough to preserve every causal dependency?",
+      "angle": "Compare messages sent by different processes with messages on one channel.",
+      "modelAnswer": "FIFO preserves one sender-channel order. A causal dependency can cross channels and processes, so a stronger causal-ordering rule is needed.",
+      "focus": "guarantee scope",
+      "sourceRefs": [
+        {
+          "sourceId": "DSA5208/Lec1.pdf",
+          "page": 7,
+          "sourceType": "lecture",
+          "role": "non-FIFO model",
+          "status": "current"
+        },
+        {
+          "sourceId": "DSA5208/Lec1.pdf",
+          "page": 8,
+          "sourceType": "lecture",
+          "role": "FIFO model",
+          "status": "current"
+        },
+        {
+          "sourceId": "DSA5208/Lec1.pdf",
+          "page": 9,
+          "sourceType": "lecture",
+          "role": "causal ordering",
+          "status": "current"
+        }
+      ]
+    },
+    {
+      "id": "dsa5208-communication-ordering-critical-2",
+      "type": "critical-question",
+      "prompt": "What is the cost of stronger delivery ordering?",
+      "angle": "Name the state needed to know whether a message is safe to deliver.",
+      "modelAnswer": "The system may need timestamps, receiver buffers, and release conditions; stronger consistency moves metadata and waiting into the implementation.",
+      "focus": "implementation cost",
+      "sourceRefs": [
+        {
+          "sourceId": "DSA5208/Lec1.pdf",
+          "page": 7,
+          "sourceType": "lecture",
+          "role": "non-FIFO model",
+          "status": "current"
+        },
+        {
+          "sourceId": "DSA5208/Lec1.pdf",
+          "page": 8,
+          "sourceType": "lecture",
+          "role": "FIFO model",
+          "status": "current"
+        },
+        {
+          "sourceId": "DSA5208/Lec1.pdf",
+          "page": 9,
+          "sourceType": "lecture",
+          "role": "causal ordering",
+          "status": "current"
+        }
+      ]
+    }
+  ],
+  "questionIds": [
+    "dsa5208-co-q1",
+    "dsa5208-co-q2",
+    "dsa5208-bank-007",
+    "dsa5208-bank-008"
+  ],
+  "labIds": [
+    "dsa5208-ordering-ladder"
+  ],
+  "schemaVersion": "nus.lesson.v1"
+}

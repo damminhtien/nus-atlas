@@ -1,0 +1,52 @@
+{
+  "lessonId": "dsa5208-lamport-scalar",
+  "schemaVersion": "nus.study-kit.v1",
+  "flashcards": [
+    {
+      "front": "Lamport receive rule?",
+      "back": "Set $C_i:=\\max(C_i,C_{\\mathrm{msg}})+d$ before delivering the message."
+    },
+    {
+      "front": "What does scalar consistency guarantee?",
+      "back": "$e_i\\to e_j$ implies $C(e_i)<C(e_j)$."
+    },
+    {
+      "front": "What can scalar time not detect?",
+      "back": "It cannot reliably distinguish every pair of concurrent events because it may assign them ordered scalar values."
+    }
+  ],
+  "homework": [
+    {
+      "prompt": "Trace three Lamport events including a send and a receive.",
+      "rubric": "Increment at the correct points, apply max on receive, and state the resulting timestamps.",
+      "source": {
+        "sourceId": "DSA5208/Lec1.pdf",
+        "page": 17,
+        "sourceType": "lecture",
+        "role": "Lamport scalar rules",
+        "status": "current"
+      }
+    },
+    {
+      "prompt": "Explain why a total order built from scalar timestamps can be useful even when it is not causal truth.",
+      "rubric": "Distinguish deterministic tie-breaking from strong consistency.",
+      "source": {
+        "sourceId": "DSA5208/Lec1.pdf",
+        "page": 19,
+        "sourceType": "lecture",
+        "role": "scalar properties",
+        "status": "current"
+      }
+    }
+  ],
+  "codeExercises": [
+    {
+      "id": "dsa5208-lamport-code",
+      "language": "python",
+      "prompt": "Implement the scalar receive update.",
+      "starter": "def receive(local, received, d=1):\n    return max(local, received) + d",
+      "expected": "8",
+      "solution": "For local $4$ and received $7$ with $d=1$, return $8$."
+    }
+  ]
+}

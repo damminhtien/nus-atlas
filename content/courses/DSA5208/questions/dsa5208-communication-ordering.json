@@ -1,0 +1,124 @@
+[
+  {
+    "id": "dsa5208-co-q1",
+    "type": "mcq",
+    "prompt": "What extra mechanism is highlighted for implementing causal ordering?",
+    "choices": [
+      "Receiver buffering and timestamps",
+      "Removing all messages",
+      "A single shared memory",
+      "Sorting by process name only"
+    ],
+    "answer": 0,
+    "explanation": "The receiver buffers messages and uses timestamps to deliver them in causal order.",
+    "sourceRefs": [
+      {
+        "sourceId": "DSA5208/Lec1.pdf",
+        "page": 10,
+        "sourceType": "lecture",
+        "role": "causal-ordering implementation",
+        "status": "current"
+      }
+    ],
+    "difficulty": "easy",
+    "skill": "recall",
+    "cognitiveLevel": "understand",
+    "estimatedSeconds": 60,
+    "misconception": "Check the assumption behind your answer.",
+    "visualHook": "Explain the idea with a small diagram or example.",
+    "courseId": "DSA5208",
+    "lessonId": "dsa5208-communication-ordering",
+    "schemaVersion": "nus.question.v1"
+  },
+  {
+    "id": "dsa5208-co-q2",
+    "type": "short",
+    "prompt": "Give one case where FIFO is not enough.",
+    "accepted": [
+      "causal dependencies across processes",
+      "messages from different senders",
+      "cross process causal order"
+    ],
+    "solution": "FIFO alone does not capture causal dependencies between messages sent from different processes; causal ordering is needed when those dependencies matter.",
+    "explanation": "Channel-local order and system-wide causal order are different guarantees.",
+    "sourceRefs": [
+      {
+        "sourceId": "DSA5208/Lec1.pdf",
+        "page": 9,
+        "sourceType": "lecture",
+        "role": "causal ordering",
+        "status": "current"
+      }
+    ],
+    "difficulty": "medium",
+    "skill": "explain",
+    "cognitiveLevel": "understand",
+    "estimatedSeconds": 90,
+    "misconception": "Check the assumption behind your answer.",
+    "visualHook": "Explain the idea with a small diagram or example.",
+    "courseId": "DSA5208",
+    "lessonId": "dsa5208-communication-ordering",
+    "schemaVersion": "nus.question.v1"
+  },
+  {
+    "id": "dsa5208-bank-007",
+    "lessonId": "dsa5208-communication-ordering",
+    "type": "mcq",
+    "prompt": "Which guarantee preserves message order on one channel?",
+    "choices": [
+      "Non-FIFO",
+      "FIFO",
+      "NTP",
+      "Vector dominance"
+    ],
+    "answer": 1,
+    "explanation": "FIFO preserves send order for messages on the same channel.",
+    "difficulty": "easy",
+    "skill": "classify",
+    "cognitiveLevel": "understand",
+    "estimatedSeconds": 45,
+    "misconception": "FIFO is weaker than system-wide causal ordering.",
+    "visualHook": "Use the ordering ladder.",
+    "sourceRefs": [
+      {
+        "sourceId": "DSA5208/Lec1.pdf",
+        "page": 8,
+        "sourceType": "lecture",
+        "role": "FIFO model",
+        "status": "current"
+      }
+    ],
+    "courseId": "DSA5208",
+    "schemaVersion": "nus.question.v1"
+  },
+  {
+    "id": "dsa5208-bank-008",
+    "lessonId": "dsa5208-communication-ordering",
+    "type": "short",
+    "prompt": "Why can causal ordering require a receiver buffer?",
+    "accepted": [
+      "wait for causal dependencies",
+      "deliver messages in causal order",
+      "earlier message may not arrive yet"
+    ],
+    "solution": "The receiver may receive a later message before a causally earlier one, so it buffers the later message until the dependency arrives.",
+    "explanation": "Stronger delivery guarantees require state and waiting.",
+    "difficulty": "medium",
+    "skill": "explain",
+    "cognitiveLevel": "analyze",
+    "estimatedSeconds": 90,
+    "misconception": "The receiver cannot deliver every arrival immediately under causal ordering.",
+    "visualHook": "Advance the causal-ordering buffer simulation.",
+    "sourceRefs": [
+      {
+        "sourceId": "DSA5208/Lec1.pdf",
+        "page": 10,
+        "sourceType": "lecture",
+        "role": "causal-ordering implementation",
+        "status": "current"
+      }
+    ],
+    "courseId": "DSA5208",
+    "schemaVersion": "nus.question.v1"
+  }
+]

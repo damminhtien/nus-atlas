@@ -1,0 +1,396 @@
+{
+  "id": "dsa5208-physical-clocks",
+  "title": "Physical clocks and NTP",
+  "week": 3,
+  "minutes": 45,
+  "summary": "Understand local clock drift, the absence of a global clock, and round-trip delay estimation in NTP.",
+  "objectives": [
+    "Explain why physical clocks drift",
+    "Interpret NTP timestamps",
+    "Separate physical synchronization from causal ordering"
+  ],
+  "sourceRefs": [
+    {
+      "sourceId": "DSA5208/Lec1.pdf",
+      "page": 13,
+      "sourceType": "lecture",
+      "role": "physical clocks",
+      "status": "current"
+    },
+    {
+      "sourceId": "DSA5208/Lec1.pdf",
+      "page": 14,
+      "sourceType": "lecture",
+      "role": "NTP",
+      "status": "current"
+    }
+  ],
+  "visualIds": [
+    "dsa5208-physical-time"
+  ],
+  "sections": [
+    {
+      "title": "Physical time is local and imperfect",
+      "sourceType": "lecture",
+      "body": "Each process has its own internal physical clock. Clock drift accumulates error, and a distributed system has no automatically available global clock. Synchronization protocols can estimate offset, but they do not turn physical time into causal truth.",
+      "sourceRefs": [
+        {
+          "sourceId": "DSA5208/Lec1.pdf",
+          "page": 13,
+          "sourceType": "lecture",
+          "role": "physical clocks",
+          "status": "current"
+        }
+      ],
+      "sourceLens": {
+        "status": "core DSA5208",
+        "whyExaminable": "The physical/logical distinction is examinable because distributed algorithms need ordering even when synchronized wall-clock time is noisy.",
+        "lecture": [
+          {
+            "sourceId": "DSA5208/Lec1.pdf",
+            "page": 13,
+            "sourceType": "lecture",
+            "role": "physical clocks",
+            "status": "current"
+          }
+        ],
+        "officialExercise": [],
+        "textbook": [
+          {
+            "sourceId": "DSA5208/Distributed Systems textbook pointer",
+            "page": 45,
+            "sourceType": "textbook",
+            "role": "physical time",
+            "status": "course-depth"
+          }
+        ],
+        "reference": []
+      }
+    },
+    {
+      "title": "NTP as a delay estimate",
+      "sourceType": "lecture",
+      "body": "NTP uses four timestamps to estimate round-trip delay and the server time observed by a client. Treat the estimate as a synchronization aid with network-delay assumptions, not as a proof that one distributed event caused another.",
+      "sourceRefs": [
+        {
+          "sourceId": "DSA5208/Lec1.pdf",
+          "page": 14,
+          "sourceType": "lecture",
+          "role": "NTP",
+          "status": "current"
+        }
+      ],
+      "sourceLens": {
+        "status": "core DSA5208",
+        "whyExaminable": "The formula is a compact calculation checkpoint and a direct contrast with logical clocks: synchronization estimates time; logical clocks encode causal order.",
+        "lecture": [
+          {
+            "sourceId": "DSA5208/Lec1.pdf",
+            "page": 14,
+            "sourceType": "lecture",
+            "role": "NTP",
+            "status": "current"
+          }
+        ],
+        "officialExercise": [],
+        "textbook": [
+          {
+            "sourceId": "DSA5208/Distributed Systems textbook pointer",
+            "page": 48,
+            "sourceType": "textbook",
+            "role": "clock synchronization",
+            "status": "course-depth"
+          }
+        ],
+        "reference": []
+      }
+    }
+  ],
+  "examples": [
+    {
+      "title": "NTP reasoning checklist",
+      "sourceType": "lecture",
+      "steps": [
+        "Identify the four send/receive timestamps.",
+        "Compute the round-trip delay estimate.",
+        "Use half the estimated delay for the server-time estimate.",
+        "State the network symmetry assumption before interpreting the result."
+      ],
+      "answer": "A numeric timestamp estimate is meaningful only with its delay and synchronization assumptions."
+    }
+  ],
+  "contrastDrills": [
+    {
+      "id": "dsa5208-contrast-physical-logical",
+      "type": "contrast",
+      "kind": "concept-contrast",
+      "pair": "Physical vs logical clocks",
+      "prompt": "Which clock abstraction is designed to preserve causal precedence rather than estimate UTC?",
+      "choices": [
+        "Physical clock",
+        "Logical clock",
+        "NTP server clock",
+        "CPU frequency"
+      ],
+      "answer": 1,
+      "explanation": "Logical clocks are defined by event-order consistency; physical clocks approximate wall-clock time.",
+      "estimatedSeconds": 45,
+      "difficulty": "medium",
+      "skill": "concept-contrast",
+      "cognitiveLevel": "distinguish",
+      "misconception": "Name the ordering, time, or communication boundary before choosing.",
+      "sourceRefs": [
+        {
+          "sourceId": "DSA5208/Lec1.pdf",
+          "page": 13,
+          "sourceType": "lecture",
+          "role": "physical clocks",
+          "status": "current"
+        },
+        {
+          "sourceId": "DSA5208/Lec1.pdf",
+          "page": 16,
+          "sourceType": "lecture",
+          "role": "logical clocks",
+          "status": "current"
+        }
+      ]
+    }
+  ],
+  "math": [
+    {
+      "latex": "\\delta = (T_4-T_3)-(T_2-T_1)",
+      "explanation": "NTP estimates round-trip delay by subtracting the server-side elapsed interval from the client-side elapsed interval.",
+      "symbols": [
+        {
+          "latex": "T_1,T_4",
+          "meaning": "client send and receive times"
+        },
+        {
+          "latex": "T_2,T_3",
+          "meaning": "server receive and send times"
+        },
+        {
+          "latex": "\\delta",
+          "meaning": "round-trip delay estimate"
+        }
+      ],
+      "sourceType": "lecture"
+    },
+    {
+      "latex": "\\widehat{T}_{\\mathrm{server}} = T_2 + \\frac{\\delta}{2}",
+      "explanation": "Under the lecture's delay-symmetry approximation, the client estimates the server time at receipt by adding half the round-trip delay to the server receive timestamp.",
+      "symbols": [
+        {
+          "latex": "\\widehat{T}_{\\mathrm{server}}",
+          "meaning": "estimated server time"
+        }
+      ],
+      "sourceType": "lecture",
+      "caveat": "The estimate depends on network-delay assumptions and does not establish causal precedence."
+    }
+  ],
+  "criticalQuestions": [
+    {
+      "prompt": "If $\\delta$ is large, what should you question before trusting the synchronized time?",
+      "angle": "Inspect network asymmetry, queueing, and clock drift.",
+      "modelAnswer": "A large delay widens uncertainty; the estimate may be poor even if the arithmetic is correct.",
+      "focus": "uncertainty"
+    },
+    {
+      "prompt": "Why does NTP synchronization not replace logical time?",
+      "angle": "Compare a wall-clock estimate with an event-order guarantee.",
+      "modelAnswer": "NTP estimates physical time. Logical clocks are designed to preserve causal precedence even when physical clocks drift or messages are delayed.",
+      "focus": "abstraction"
+    }
+  ],
+  "courseId": "DSA5208",
+  "moduleId": "dsa5208-clocks",
+  "blocks": [
+    {
+      "id": "dsa5208-physical-clocks-section-1",
+      "type": "teaching-note",
+      "title": "Physical time is local and imperfect",
+      "body": "Each process has its own internal physical clock. Clock drift accumulates error, and a distributed system has no automatically available global clock. Synchronization protocols can estimate offset, but they do not turn physical time into causal truth.",
+      "sourceType": "lecture",
+      "sourceRefs": [
+        {
+          "sourceId": "DSA5208/Lec1.pdf",
+          "page": 13,
+          "sourceType": "lecture",
+          "role": "physical clocks",
+          "status": "current"
+        }
+      ]
+    },
+    {
+      "id": "dsa5208-physical-clocks-section-2",
+      "type": "teaching-note",
+      "title": "NTP as a delay estimate",
+      "body": "NTP uses four timestamps to estimate round-trip delay and the server time observed by a client. Treat the estimate as a synchronization aid with network-delay assumptions, not as a proof that one distributed event caused another.",
+      "sourceType": "lecture",
+      "sourceRefs": [
+        {
+          "sourceId": "DSA5208/Lec1.pdf",
+          "page": 14,
+          "sourceType": "lecture",
+          "role": "NTP",
+          "status": "current"
+        }
+      ]
+    },
+    {
+      "id": "dsa5208-physical-clocks-formula-1",
+      "type": "formula",
+      "latex": "\\delta = (T_4-T_3)-(T_2-T_1)",
+      "explanation": "NTP estimates round-trip delay by subtracting the server-side elapsed interval from the client-side elapsed interval.",
+      "symbols": [
+        {
+          "latex": "T_1,T_4",
+          "meaning": "client send and receive times"
+        },
+        {
+          "latex": "T_2,T_3",
+          "meaning": "server receive and send times"
+        },
+        {
+          "latex": "\\delta",
+          "meaning": "round-trip delay estimate"
+        }
+      ],
+      "sourceType": "lecture",
+      "sourceRefs": [
+        {
+          "sourceId": "DSA5208/Lec1.pdf",
+          "page": 13,
+          "sourceType": "lecture",
+          "role": "physical clocks",
+          "status": "current"
+        },
+        {
+          "sourceId": "DSA5208/Lec1.pdf",
+          "page": 14,
+          "sourceType": "lecture",
+          "role": "NTP",
+          "status": "current"
+        }
+      ]
+    },
+    {
+      "id": "dsa5208-physical-clocks-formula-2",
+      "type": "formula",
+      "latex": "\\widehat{T}_{\\mathrm{server}} = T_2 + \\frac{\\delta}{2}",
+      "explanation": "Under the lecture's delay-symmetry approximation, the client estimates the server time at receipt by adding half the round-trip delay to the server receive timestamp.",
+      "symbols": [
+        {
+          "latex": "\\widehat{T}_{\\mathrm{server}}",
+          "meaning": "estimated server time"
+        }
+      ],
+      "sourceType": "lecture",
+      "sourceRefs": [
+        {
+          "sourceId": "DSA5208/Lec1.pdf",
+          "page": 13,
+          "sourceType": "lecture",
+          "role": "physical clocks",
+          "status": "current"
+        },
+        {
+          "sourceId": "DSA5208/Lec1.pdf",
+          "page": 14,
+          "sourceType": "lecture",
+          "role": "NTP",
+          "status": "current"
+        }
+      ]
+    },
+    {
+      "id": "dsa5208-physical-clocks-example-1",
+      "type": "worked-example",
+      "title": "NTP reasoning checklist",
+      "sourceType": "lecture",
+      "steps": [
+        "Identify the four send/receive timestamps.",
+        "Compute the round-trip delay estimate.",
+        "Use half the estimated delay for the server-time estimate.",
+        "State the network symmetry assumption before interpreting the result."
+      ],
+      "answer": "A numeric timestamp estimate is meaningful only with its delay and synchronization assumptions.",
+      "sourceRefs": [
+        {
+          "sourceId": "DSA5208/Lec1.pdf",
+          "page": 13,
+          "sourceType": "lecture",
+          "role": "physical clocks",
+          "status": "current"
+        },
+        {
+          "sourceId": "DSA5208/Lec1.pdf",
+          "page": 14,
+          "sourceType": "lecture",
+          "role": "NTP",
+          "status": "current"
+        }
+      ]
+    },
+    {
+      "id": "dsa5208-physical-clocks-critical-1",
+      "type": "critical-question",
+      "prompt": "If $\\delta$ is large, what should you question before trusting the synchronized time?",
+      "angle": "Inspect network asymmetry, queueing, and clock drift.",
+      "modelAnswer": "A large delay widens uncertainty; the estimate may be poor even if the arithmetic is correct.",
+      "focus": "uncertainty",
+      "sourceRefs": [
+        {
+          "sourceId": "DSA5208/Lec1.pdf",
+          "page": 13,
+          "sourceType": "lecture",
+          "role": "physical clocks",
+          "status": "current"
+        },
+        {
+          "sourceId": "DSA5208/Lec1.pdf",
+          "page": 14,
+          "sourceType": "lecture",
+          "role": "NTP",
+          "status": "current"
+        }
+      ]
+    },
+    {
+      "id": "dsa5208-physical-clocks-critical-2",
+      "type": "critical-question",
+      "prompt": "Why does NTP synchronization not replace logical time?",
+      "angle": "Compare a wall-clock estimate with an event-order guarantee.",
+      "modelAnswer": "NTP estimates physical time. Logical clocks are designed to preserve causal precedence even when physical clocks drift or messages are delayed.",
+      "focus": "abstraction",
+      "sourceRefs": [
+        {
+          "sourceId": "DSA5208/Lec1.pdf",
+          "page": 13,
+          "sourceType": "lecture",
+          "role": "physical clocks",
+          "status": "current"
+        },
+        {
+          "sourceId": "DSA5208/Lec1.pdf",
+          "page": 14,
+          "sourceType": "lecture",
+          "role": "NTP",
+          "status": "current"
+        }
+      ]
+    }
+  ],
+  "questionIds": [
+    "dsa5208-pc-q1",
+    "dsa5208-pc-q2",
+    "dsa5208-bank-009",
+    "dsa5208-bank-010"
+  ],
+  "labIds": [
+    "dsa5208-physical-time"
+  ],
+  "schemaVersion": "nus.lesson.v1"
+}

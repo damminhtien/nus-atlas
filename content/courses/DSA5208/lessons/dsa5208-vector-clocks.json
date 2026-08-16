@@ -1,0 +1,459 @@
+{
+  "id": "dsa5208-vector-clocks",
+  "title": "Vector time and causal isomorphism",
+  "week": 4,
+  "minutes": 70,
+  "summary": "Update vector clocks, compare timestamps componentwise, and use incomparability to detect concurrency.",
+  "objectives": [
+    "Apply vector send and receive rules",
+    "Compare vectors using all components",
+    "Explain the $O(n)$ message overhead"
+  ],
+  "sourceRefs": [
+    {
+      "sourceId": "DSA5208/Lec1.pdf",
+      "page": 20,
+      "sourceType": "lecture",
+      "role": "vector-clock rules",
+      "status": "current"
+    },
+    {
+      "sourceId": "DSA5208/Lec1.pdf",
+      "page": 22,
+      "sourceType": "lecture",
+      "role": "vector comparison",
+      "status": "current"
+    },
+    {
+      "sourceId": "DSA5208/Lec1.pdf",
+      "page": 23,
+      "sourceType": "lecture",
+      "role": "vector properties",
+      "status": "current"
+    }
+  ],
+  "visualIds": [
+    "dsa5208-vector-trace"
+  ],
+  "sections": [
+    {
+      "title": "Per-process causal memory",
+      "sourceType": "lecture",
+      "body": "A vector clock stores one logical component per process. A process increments its own component before a local or send event and takes componentwise maxima before delivering a message.",
+      "sourceRefs": [
+        {
+          "sourceId": "DSA5208/Lec1.pdf",
+          "page": 20,
+          "sourceType": "lecture",
+          "role": "vector-clock rules",
+          "status": "current"
+        }
+      ],
+      "sourceLens": {
+        "status": "core DSA5208",
+        "whyExaminable": "Vector updates are the main calculation depth of the supplied lecture: every component has a role, and receive order matters.",
+        "lecture": [
+          {
+            "sourceId": "DSA5208/Lec1.pdf",
+            "page": 20,
+            "sourceType": "lecture",
+            "role": "vector-clock rules",
+            "status": "current"
+          }
+        ],
+        "officialExercise": [],
+        "textbook": [
+          {
+            "sourceId": "DSA5208/Distributed Systems textbook pointer",
+            "page": 62,
+            "sourceType": "textbook",
+            "role": "vector clocks",
+            "status": "course-depth"
+          }
+        ],
+        "reference": [
+          {
+            "sourceId": "L. Lamport, Time, Clocks, and the Ordering of Events in a Distributed System",
+            "page": 1,
+            "sourceType": "ref",
+            "role": "vector-clock causality",
+            "status": "optional"
+          }
+        ]
+      }
+    },
+    {
+      "title": "Compare, do not sort",
+      "sourceType": "lecture",
+      "body": "One vector is less than another only when every component is no larger and at least one is smaller. If each vector is larger in a different component, the timestamps are incomparable and the events are concurrent.",
+      "sourceRefs": [
+        {
+          "sourceId": "DSA5208/Lec1.pdf",
+          "page": 22,
+          "sourceType": "lecture",
+          "role": "vector comparison",
+          "status": "current"
+        },
+        {
+          "sourceId": "DSA5208/Lec1.pdf",
+          "page": 23,
+          "sourceType": "lecture",
+          "role": "vector properties",
+          "status": "current"
+        }
+      ],
+      "sourceLens": {
+        "status": "core DSA5208",
+        "whyExaminable": "The vector comparison is a high-value distinction from scalar clocks: it can recover the causal partial order rather than inventing a total order.",
+        "lecture": [
+          {
+            "sourceId": "DSA5208/Lec1.pdf",
+            "page": 22,
+            "sourceType": "lecture",
+            "role": "vector comparison",
+            "status": "current"
+          },
+          {
+            "sourceId": "DSA5208/Lec1.pdf",
+            "page": 23,
+            "sourceType": "lecture",
+            "role": "vector properties",
+            "status": "current"
+          }
+        ],
+        "officialExercise": [],
+        "textbook": [
+          {
+            "sourceId": "DSA5208/Distributed Systems textbook pointer",
+            "page": 66,
+            "sourceType": "textbook",
+            "role": "causal comparison",
+            "status": "course-depth"
+          }
+        ],
+        "reference": [
+          {
+            "sourceId": "L. Lamport, Time, Clocks, and the Ordering of Events in a Distributed System",
+            "page": 1,
+            "sourceType": "ref",
+            "role": "causal isomorphism",
+            "status": "optional"
+          }
+        ]
+      }
+    }
+  ],
+  "examples": [
+    {
+      "title": "Componentwise comparison",
+      "sourceType": "lecture",
+      "steps": [
+        "Compare the first component.",
+        "Compare every remaining component.",
+        "Check that at least one component is strictly smaller for a strict relation.",
+        "If each vector wins somewhere, report concurrency."
+      ],
+      "answer": "Do not compare vectors lexicographically; the relation is componentwise."
+    }
+  ],
+  "contrastDrills": [
+    {
+      "id": "dsa5208-contrast-vector-incomparable",
+      "type": "contrast",
+      "kind": "concept-contrast",
+      "pair": "Comparable vs incomparable vectors",
+      "prompt": "$X=(2,1)$ and $Y=(1,2)$. What is the relation?",
+      "choices": [
+        "$X < Y$",
+        "$Y < X$",
+        "X and Y are concurrent",
+        "$X = Y$"
+      ],
+      "answer": 2,
+      "explanation": "Each vector is larger in one component, so neither dominates the other.",
+      "estimatedSeconds": 45,
+      "difficulty": "medium",
+      "skill": "concept-contrast",
+      "cognitiveLevel": "distinguish",
+      "misconception": "Name the ordering, time, or communication boundary before choosing.",
+      "sourceRefs": [
+        {
+          "sourceId": "DSA5208/Lec1.pdf",
+          "page": 22,
+          "sourceType": "lecture",
+          "role": "vector comparison",
+          "status": "current"
+        }
+      ]
+    }
+  ],
+  "math": [
+    {
+      "latex": "vt_i[i] := vt_i[i]+d",
+      "explanation": "Before a local or send event, process i increments its own vector component. On receive, it first takes componentwise maxima and then performs the same local update.",
+      "symbols": [
+        {
+          "latex": "vt_i",
+          "meaning": "vector timestamp held by process i"
+        },
+        {
+          "latex": "vt_i[i]",
+          "meaning": "own component"
+        }
+      ],
+      "sourceType": "lecture"
+    },
+    {
+      "latex": "vt_1<vt_2\\ \\Longleftrightarrow\\ (\\forall k,\\ vt_1[k]\\le vt_2[k])\\land(\\exists k,\\ vt_1[k]<vt_2[k])",
+      "explanation": "Strict vector order requires every component to be no larger and at least one component to be strictly smaller. If each vector exceeds the other somewhere, they are incomparable.",
+      "symbols": [
+        {
+          "latex": "k",
+          "meaning": "process-component index"
+        }
+      ],
+      "sourceType": "lecture"
+    }
+  ],
+  "criticalQuestions": [
+    {
+      "prompt": "Why is lexicographic sorting invalid for vector timestamps?",
+      "angle": "A lexicographic rule can invent order when different processes have advanced independently.",
+      "modelAnswer": "Causal comparison is componentwise. A vector can be larger in one component and smaller in another, which means concurrency rather than a total order.",
+      "focus": "comparison"
+    },
+    {
+      "prompt": "What does the vector dimension represent?",
+      "angle": "Connect one component to one process's causal progress.",
+      "modelAnswer": "The vector has one component per process, so its size and message overhead grow with the number of processes.",
+      "focus": "representation"
+    }
+  ],
+  "courseId": "DSA5208",
+  "moduleId": "dsa5208-clocks",
+  "blocks": [
+    {
+      "id": "dsa5208-vector-clocks-section-1",
+      "type": "teaching-note",
+      "title": "Per-process causal memory",
+      "body": "A vector clock stores one logical component per process. A process increments its own component before a local or send event and takes componentwise maxima before delivering a message.",
+      "sourceType": "lecture",
+      "sourceRefs": [
+        {
+          "sourceId": "DSA5208/Lec1.pdf",
+          "page": 20,
+          "sourceType": "lecture",
+          "role": "vector-clock rules",
+          "status": "current"
+        }
+      ]
+    },
+    {
+      "id": "dsa5208-vector-clocks-section-2",
+      "type": "teaching-note",
+      "title": "Compare, do not sort",
+      "body": "One vector is less than another only when every component is no larger and at least one is smaller. If each vector is larger in a different component, the timestamps are incomparable and the events are concurrent.",
+      "sourceType": "lecture",
+      "sourceRefs": [
+        {
+          "sourceId": "DSA5208/Lec1.pdf",
+          "page": 22,
+          "sourceType": "lecture",
+          "role": "vector comparison",
+          "status": "current"
+        },
+        {
+          "sourceId": "DSA5208/Lec1.pdf",
+          "page": 23,
+          "sourceType": "lecture",
+          "role": "vector properties",
+          "status": "current"
+        }
+      ]
+    },
+    {
+      "id": "dsa5208-vector-clocks-formula-1",
+      "type": "formula",
+      "latex": "vt_i[i] := vt_i[i]+d",
+      "explanation": "Before a local or send event, process i increments its own vector component. On receive, it first takes componentwise maxima and then performs the same local update.",
+      "symbols": [
+        {
+          "latex": "vt_i",
+          "meaning": "vector timestamp held by process i"
+        },
+        {
+          "latex": "vt_i[i]",
+          "meaning": "own component"
+        }
+      ],
+      "sourceType": "lecture",
+      "sourceRefs": [
+        {
+          "sourceId": "DSA5208/Lec1.pdf",
+          "page": 20,
+          "sourceType": "lecture",
+          "role": "vector-clock rules",
+          "status": "current"
+        },
+        {
+          "sourceId": "DSA5208/Lec1.pdf",
+          "page": 22,
+          "sourceType": "lecture",
+          "role": "vector comparison",
+          "status": "current"
+        },
+        {
+          "sourceId": "DSA5208/Lec1.pdf",
+          "page": 23,
+          "sourceType": "lecture",
+          "role": "vector properties",
+          "status": "current"
+        }
+      ]
+    },
+    {
+      "id": "dsa5208-vector-clocks-formula-2",
+      "type": "formula",
+      "latex": "vt_1<vt_2\\ \\Longleftrightarrow\\ (\\forall k,\\ vt_1[k]\\le vt_2[k])\\land(\\exists k,\\ vt_1[k]<vt_2[k])",
+      "explanation": "Strict vector order requires every component to be no larger and at least one component to be strictly smaller. If each vector exceeds the other somewhere, they are incomparable.",
+      "symbols": [
+        {
+          "latex": "k",
+          "meaning": "process-component index"
+        }
+      ],
+      "sourceType": "lecture",
+      "sourceRefs": [
+        {
+          "sourceId": "DSA5208/Lec1.pdf",
+          "page": 20,
+          "sourceType": "lecture",
+          "role": "vector-clock rules",
+          "status": "current"
+        },
+        {
+          "sourceId": "DSA5208/Lec1.pdf",
+          "page": 22,
+          "sourceType": "lecture",
+          "role": "vector comparison",
+          "status": "current"
+        },
+        {
+          "sourceId": "DSA5208/Lec1.pdf",
+          "page": 23,
+          "sourceType": "lecture",
+          "role": "vector properties",
+          "status": "current"
+        }
+      ]
+    },
+    {
+      "id": "dsa5208-vector-clocks-example-1",
+      "type": "worked-example",
+      "title": "Componentwise comparison",
+      "sourceType": "lecture",
+      "steps": [
+        "Compare the first component.",
+        "Compare every remaining component.",
+        "Check that at least one component is strictly smaller for a strict relation.",
+        "If each vector wins somewhere, report concurrency."
+      ],
+      "answer": "Do not compare vectors lexicographically; the relation is componentwise.",
+      "sourceRefs": [
+        {
+          "sourceId": "DSA5208/Lec1.pdf",
+          "page": 20,
+          "sourceType": "lecture",
+          "role": "vector-clock rules",
+          "status": "current"
+        },
+        {
+          "sourceId": "DSA5208/Lec1.pdf",
+          "page": 22,
+          "sourceType": "lecture",
+          "role": "vector comparison",
+          "status": "current"
+        },
+        {
+          "sourceId": "DSA5208/Lec1.pdf",
+          "page": 23,
+          "sourceType": "lecture",
+          "role": "vector properties",
+          "status": "current"
+        }
+      ]
+    },
+    {
+      "id": "dsa5208-vector-clocks-critical-1",
+      "type": "critical-question",
+      "prompt": "Why is lexicographic sorting invalid for vector timestamps?",
+      "angle": "A lexicographic rule can invent order when different processes have advanced independently.",
+      "modelAnswer": "Causal comparison is componentwise. A vector can be larger in one component and smaller in another, which means concurrency rather than a total order.",
+      "focus": "comparison",
+      "sourceRefs": [
+        {
+          "sourceId": "DSA5208/Lec1.pdf",
+          "page": 20,
+          "sourceType": "lecture",
+          "role": "vector-clock rules",
+          "status": "current"
+        },
+        {
+          "sourceId": "DSA5208/Lec1.pdf",
+          "page": 22,
+          "sourceType": "lecture",
+          "role": "vector comparison",
+          "status": "current"
+        },
+        {
+          "sourceId": "DSA5208/Lec1.pdf",
+          "page": 23,
+          "sourceType": "lecture",
+          "role": "vector properties",
+          "status": "current"
+        }
+      ]
+    },
+    {
+      "id": "dsa5208-vector-clocks-critical-2",
+      "type": "critical-question",
+      "prompt": "What does the vector dimension represent?",
+      "angle": "Connect one component to one process's causal progress.",
+      "modelAnswer": "The vector has one component per process, so its size and message overhead grow with the number of processes.",
+      "focus": "representation",
+      "sourceRefs": [
+        {
+          "sourceId": "DSA5208/Lec1.pdf",
+          "page": 20,
+          "sourceType": "lecture",
+          "role": "vector-clock rules",
+          "status": "current"
+        },
+        {
+          "sourceId": "DSA5208/Lec1.pdf",
+          "page": 22,
+          "sourceType": "lecture",
+          "role": "vector comparison",
+          "status": "current"
+        },
+        {
+          "sourceId": "DSA5208/Lec1.pdf",
+          "page": 23,
+          "sourceType": "lecture",
+          "role": "vector properties",
+          "status": "current"
+        }
+      ]
+    }
+  ],
+  "questionIds": [
+    "dsa5208-vt-q1",
+    "dsa5208-vt-q2",
+    "dsa5208-bank-013",
+    "dsa5208-bank-014"
+  ],
+  "labIds": [
+    "dsa5208-vector-trace"
+  ],
+  "schemaVersion": "nus.lesson.v1"
+}

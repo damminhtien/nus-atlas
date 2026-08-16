@@ -1,0 +1,500 @@
+{
+  "id": "dsa5208-compressed-timestamps",
+  "title": "Compressed and differential timestamps",
+  "week": 4,
+  "minutes": 65,
+  "summary": "Understand why vector metadata can be compressed and compare naive quadratic storage with a differential linear-order technique.",
+  "objectives": [
+    "Trace receiver-specific timestamp deltas",
+    "Explain the storage overhead of recent timestamp tables",
+    "Describe the Singhal-Kshemkalyani differential idea"
+  ],
+  "sourceRefs": [
+    {
+      "sourceId": "DSA5208/Lec1.pdf",
+      "page": 24,
+      "sourceType": "lecture",
+      "role": "compressed timestamp idea",
+      "status": "current"
+    },
+    {
+      "sourceId": "DSA5208/Lec1.pdf",
+      "page": 25,
+      "sourceType": "lecture",
+      "role": "compressed timestamp implementation",
+      "status": "current"
+    },
+    {
+      "sourceId": "DSA5208/Lec1.pdf",
+      "page": 29,
+      "sourceType": "lecture",
+      "role": "differential technique",
+      "status": "current"
+    }
+  ],
+  "visualIds": [
+    "dsa5208-compression-trace"
+  ],
+  "sections": [
+    {
+      "title": "Send only what changed",
+      "sourceType": "lecture",
+      "body": "A sender can piggyback only vector entries that differ from the last timestamp sent to that receiver. The receiver applies maxima to the transmitted components before updating and delivering the message.",
+      "sourceRefs": [
+        {
+          "sourceId": "DSA5208/Lec1.pdf",
+          "page": 24,
+          "sourceType": "lecture",
+          "role": "compression idea",
+          "status": "current"
+        },
+        {
+          "sourceId": "DSA5208/Lec1.pdf",
+          "page": 26,
+          "sourceType": "lecture",
+          "role": "receiver update",
+          "status": "current"
+        }
+      ],
+      "sourceLens": {
+        "status": "core DSA5208",
+        "whyExaminable": "Compression is examinable as an implementation bridge: preserve causal information while reducing repeated metadata.",
+        "lecture": [
+          {
+            "sourceId": "DSA5208/Lec1.pdf",
+            "page": 24,
+            "sourceType": "lecture",
+            "role": "compression idea",
+            "status": "current"
+          },
+          {
+            "sourceId": "DSA5208/Lec1.pdf",
+            "page": 26,
+            "sourceType": "lecture",
+            "role": "receiver update",
+            "status": "current"
+          }
+        ],
+        "officialExercise": [],
+        "textbook": [
+          {
+            "sourceId": "DSA5208/Distributed Systems textbook pointer",
+            "page": 70,
+            "sourceType": "textbook",
+            "role": "compressed vector timestamps",
+            "status": "course-depth"
+          }
+        ],
+        "reference": []
+      }
+    },
+    {
+      "title": "Differential storage trade-off",
+      "sourceType": "lecture",
+      "body": "The receiver-specific recent-timestamp table can require quadratic storage. The Singhal-Kshemkalyani technique keeps last-sent and last-updated vectors to reduce storage to linear order while still identifying changed entries.",
+      "sourceRefs": [
+        {
+          "sourceId": "DSA5208/Lec1.pdf",
+          "page": 27,
+          "sourceType": "lecture",
+          "role": "storage overhead",
+          "status": "current"
+        },
+        {
+          "sourceId": "DSA5208/Lec1.pdf",
+          "page": 30,
+          "sourceType": "lecture",
+          "role": "last-sent and last-updated vectors",
+          "status": "current"
+        }
+      ],
+      "sourceLens": {
+        "status": "core DSA5208",
+        "whyExaminable": "This topic tests systems reasoning: a correctness-preserving optimization changes metadata state and storage complexity.",
+        "lecture": [
+          {
+            "sourceId": "DSA5208/Lec1.pdf",
+            "page": 27,
+            "sourceType": "lecture",
+            "role": "storage overhead",
+            "status": "current"
+          },
+          {
+            "sourceId": "DSA5208/Lec1.pdf",
+            "page": 30,
+            "sourceType": "lecture",
+            "role": "differential technique",
+            "status": "current"
+          }
+        ],
+        "officialExercise": [],
+        "textbook": [
+          {
+            "sourceId": "DSA5208/Distributed Systems textbook pointer",
+            "page": 74,
+            "sourceType": "textbook",
+            "role": "metadata compression",
+            "status": "course-depth"
+          }
+        ],
+        "reference": []
+      }
+    }
+  ],
+  "examples": [
+    {
+      "title": "Metadata delta trace",
+      "sourceType": "lecture",
+      "steps": [
+        "Store the last vector sent to the target process.",
+        "Update the current vector before sending.",
+        "Transmit only changed entries.",
+        "Update the receiver with componentwise maxima and then deliver."
+      ],
+      "answer": "Compression changes representation and storage, not the causal meaning of the delivered message."
+    }
+  ],
+  "contrastDrills": [
+    {
+      "id": "dsa5208-contrast-full-compressed",
+      "type": "contrast",
+      "kind": "concept-contrast",
+      "pair": "Full vector vs compressed timestamp",
+      "prompt": "What does a compressed timestamp omit?",
+      "choices": [
+        "All causal information",
+        "Entries unchanged since the last message to that receiver",
+        "The sender identity",
+        "The receive event"
+      ],
+      "answer": 1,
+      "explanation": "The compressed representation omits repeated entries that the receiver already knows from a prior message.",
+      "estimatedSeconds": 45,
+      "difficulty": "medium",
+      "skill": "concept-contrast",
+      "cognitiveLevel": "distinguish",
+      "misconception": "Name the ordering, time, or communication boundary before choosing.",
+      "sourceRefs": [
+        {
+          "sourceId": "DSA5208/Lec1.pdf",
+          "page": 24,
+          "sourceType": "lecture",
+          "role": "compressed timestamp idea",
+          "status": "current"
+        }
+      ]
+    },
+    {
+      "id": "dsa5208-contrast-quadratic-linear",
+      "type": "contrast",
+      "kind": "concept-contrast",
+      "pair": "O(n²) vs O(n) timestamp storage",
+      "prompt": "Which technique is introduced as reducing timestamp storage from quadratic order to linear order?",
+      "choices": [
+        "NTP",
+        "Singhal-Kshemkalyani differential technique",
+        "FIFO delivery",
+        "Scalar Lamport time"
+      ],
+      "answer": 1,
+      "explanation": "The differential technique maintains last-sent and last-updated vectors instead of a receiver-specific table of recent vectors.",
+      "estimatedSeconds": 45,
+      "difficulty": "medium",
+      "skill": "concept-contrast",
+      "cognitiveLevel": "distinguish",
+      "misconception": "Name the ordering, time, or communication boundary before choosing.",
+      "sourceRefs": [
+        {
+          "sourceId": "DSA5208/Lec1.pdf",
+          "page": 27,
+          "sourceType": "lecture",
+          "role": "storage overhead",
+          "status": "current"
+        },
+        {
+          "sourceId": "DSA5208/Lec1.pdf",
+          "page": 29,
+          "sourceType": "lecture",
+          "role": "differential technique",
+          "status": "current"
+        }
+      ]
+    }
+  ],
+  "math": [
+    {
+      "latex": "\\mathrm{storage}_{\\mathrm{recent}}=O(n^2)",
+      "explanation": "Keeping a recent vector timestamp for every sender-receiver pair creates quadratic storage in the number of processes.",
+      "symbols": [
+        {
+          "latex": "n",
+          "meaning": "number of processes"
+        }
+      ],
+      "sourceType": "lecture"
+    },
+    {
+      "latex": "\\mathrm{storage}_{\\mathrm{differential}}=O(n)",
+      "explanation": "The Singhal-Kshemkalyani differential technique reduces storage by maintaining only Last Sent and Last Update vectors at each process.",
+      "symbols": [
+        {
+          "latex": "LS",
+          "meaning": "Last Sent vector"
+        },
+        {
+          "latex": "LU",
+          "meaning": "Last Update vector"
+        }
+      ],
+      "sourceType": "lecture"
+    }
+  ],
+  "criticalQuestions": [
+    {
+      "prompt": "What must remain invariant when timestamp metadata is compressed?",
+      "angle": "Separate representation size from the causal information needed by the receiver.",
+      "modelAnswer": "The receiver must still be able to reconstruct the relevant componentwise causal knowledge; compression may omit repetition but not required dependencies.",
+      "focus": "correctness"
+    },
+    {
+      "prompt": "Why is receiver-specific state needed in the basic compressed scheme?",
+      "angle": "The sender must know what this particular receiver has already observed.",
+      "modelAnswer": "Different receivers may have received different prior vectors, so the set of changed entries depends on the destination.",
+      "focus": "state scope"
+    }
+  ],
+  "courseId": "DSA5208",
+  "moduleId": "dsa5208-advanced",
+  "blocks": [
+    {
+      "id": "dsa5208-compressed-timestamps-section-1",
+      "type": "teaching-note",
+      "title": "Send only what changed",
+      "body": "A sender can piggyback only vector entries that differ from the last timestamp sent to that receiver. The receiver applies maxima to the transmitted components before updating and delivering the message.",
+      "sourceType": "lecture",
+      "sourceRefs": [
+        {
+          "sourceId": "DSA5208/Lec1.pdf",
+          "page": 24,
+          "sourceType": "lecture",
+          "role": "compression idea",
+          "status": "current"
+        },
+        {
+          "sourceId": "DSA5208/Lec1.pdf",
+          "page": 26,
+          "sourceType": "lecture",
+          "role": "receiver update",
+          "status": "current"
+        }
+      ]
+    },
+    {
+      "id": "dsa5208-compressed-timestamps-section-2",
+      "type": "teaching-note",
+      "title": "Differential storage trade-off",
+      "body": "The receiver-specific recent-timestamp table can require quadratic storage. The Singhal-Kshemkalyani technique keeps last-sent and last-updated vectors to reduce storage to linear order while still identifying changed entries.",
+      "sourceType": "lecture",
+      "sourceRefs": [
+        {
+          "sourceId": "DSA5208/Lec1.pdf",
+          "page": 27,
+          "sourceType": "lecture",
+          "role": "storage overhead",
+          "status": "current"
+        },
+        {
+          "sourceId": "DSA5208/Lec1.pdf",
+          "page": 30,
+          "sourceType": "lecture",
+          "role": "last-sent and last-updated vectors",
+          "status": "current"
+        }
+      ]
+    },
+    {
+      "id": "dsa5208-compressed-timestamps-formula-1",
+      "type": "formula",
+      "latex": "\\mathrm{storage}_{\\mathrm{recent}}=O(n^2)",
+      "explanation": "Keeping a recent vector timestamp for every sender-receiver pair creates quadratic storage in the number of processes.",
+      "symbols": [
+        {
+          "latex": "n",
+          "meaning": "number of processes"
+        }
+      ],
+      "sourceType": "lecture",
+      "sourceRefs": [
+        {
+          "sourceId": "DSA5208/Lec1.pdf",
+          "page": 24,
+          "sourceType": "lecture",
+          "role": "compressed timestamp idea",
+          "status": "current"
+        },
+        {
+          "sourceId": "DSA5208/Lec1.pdf",
+          "page": 25,
+          "sourceType": "lecture",
+          "role": "compressed timestamp implementation",
+          "status": "current"
+        },
+        {
+          "sourceId": "DSA5208/Lec1.pdf",
+          "page": 29,
+          "sourceType": "lecture",
+          "role": "differential technique",
+          "status": "current"
+        }
+      ]
+    },
+    {
+      "id": "dsa5208-compressed-timestamps-formula-2",
+      "type": "formula",
+      "latex": "\\mathrm{storage}_{\\mathrm{differential}}=O(n)",
+      "explanation": "The Singhal-Kshemkalyani differential technique reduces storage by maintaining only Last Sent and Last Update vectors at each process.",
+      "symbols": [
+        {
+          "latex": "LS",
+          "meaning": "Last Sent vector"
+        },
+        {
+          "latex": "LU",
+          "meaning": "Last Update vector"
+        }
+      ],
+      "sourceType": "lecture",
+      "sourceRefs": [
+        {
+          "sourceId": "DSA5208/Lec1.pdf",
+          "page": 24,
+          "sourceType": "lecture",
+          "role": "compressed timestamp idea",
+          "status": "current"
+        },
+        {
+          "sourceId": "DSA5208/Lec1.pdf",
+          "page": 25,
+          "sourceType": "lecture",
+          "role": "compressed timestamp implementation",
+          "status": "current"
+        },
+        {
+          "sourceId": "DSA5208/Lec1.pdf",
+          "page": 29,
+          "sourceType": "lecture",
+          "role": "differential technique",
+          "status": "current"
+        }
+      ]
+    },
+    {
+      "id": "dsa5208-compressed-timestamps-example-1",
+      "type": "worked-example",
+      "title": "Metadata delta trace",
+      "sourceType": "lecture",
+      "steps": [
+        "Store the last vector sent to the target process.",
+        "Update the current vector before sending.",
+        "Transmit only changed entries.",
+        "Update the receiver with componentwise maxima and then deliver."
+      ],
+      "answer": "Compression changes representation and storage, not the causal meaning of the delivered message.",
+      "sourceRefs": [
+        {
+          "sourceId": "DSA5208/Lec1.pdf",
+          "page": 24,
+          "sourceType": "lecture",
+          "role": "compressed timestamp idea",
+          "status": "current"
+        },
+        {
+          "sourceId": "DSA5208/Lec1.pdf",
+          "page": 25,
+          "sourceType": "lecture",
+          "role": "compressed timestamp implementation",
+          "status": "current"
+        },
+        {
+          "sourceId": "DSA5208/Lec1.pdf",
+          "page": 29,
+          "sourceType": "lecture",
+          "role": "differential technique",
+          "status": "current"
+        }
+      ]
+    },
+    {
+      "id": "dsa5208-compressed-timestamps-critical-1",
+      "type": "critical-question",
+      "prompt": "What must remain invariant when timestamp metadata is compressed?",
+      "angle": "Separate representation size from the causal information needed by the receiver.",
+      "modelAnswer": "The receiver must still be able to reconstruct the relevant componentwise causal knowledge; compression may omit repetition but not required dependencies.",
+      "focus": "correctness",
+      "sourceRefs": [
+        {
+          "sourceId": "DSA5208/Lec1.pdf",
+          "page": 24,
+          "sourceType": "lecture",
+          "role": "compressed timestamp idea",
+          "status": "current"
+        },
+        {
+          "sourceId": "DSA5208/Lec1.pdf",
+          "page": 25,
+          "sourceType": "lecture",
+          "role": "compressed timestamp implementation",
+          "status": "current"
+        },
+        {
+          "sourceId": "DSA5208/Lec1.pdf",
+          "page": 29,
+          "sourceType": "lecture",
+          "role": "differential technique",
+          "status": "current"
+        }
+      ]
+    },
+    {
+      "id": "dsa5208-compressed-timestamps-critical-2",
+      "type": "critical-question",
+      "prompt": "Why is receiver-specific state needed in the basic compressed scheme?",
+      "angle": "The sender must know what this particular receiver has already observed.",
+      "modelAnswer": "Different receivers may have received different prior vectors, so the set of changed entries depends on the destination.",
+      "focus": "state scope",
+      "sourceRefs": [
+        {
+          "sourceId": "DSA5208/Lec1.pdf",
+          "page": 24,
+          "sourceType": "lecture",
+          "role": "compressed timestamp idea",
+          "status": "current"
+        },
+        {
+          "sourceId": "DSA5208/Lec1.pdf",
+          "page": 25,
+          "sourceType": "lecture",
+          "role": "compressed timestamp implementation",
+          "status": "current"
+        },
+        {
+          "sourceId": "DSA5208/Lec1.pdf",
+          "page": 29,
+          "sourceType": "lecture",
+          "role": "differential technique",
+          "status": "current"
+        }
+      ]
+    }
+  ],
+  "questionIds": [
+    "dsa5208-ct-q1",
+    "dsa5208-ct-q2",
+    "dsa5208-bank-015",
+    "dsa5208-bank-016"
+  ],
+  "labIds": [
+    "dsa5208-compression-trace"
+  ],
+  "schemaVersion": "nus.lesson.v1"
+}

@@ -1,0 +1,43 @@
+{
+  "lessonId": "dsa5208-communication-ordering",
+  "schemaVersion": "nus.study-kit.v1",
+  "flashcards": [
+    {
+      "front": "Non-FIFO?",
+      "back": "Messages may be received in random order."
+    },
+    {
+      "front": "FIFO?",
+      "back": "Messages sent on one channel are received in send order."
+    },
+    {
+      "front": "Causal ordering?",
+      "back": "Causally related sends are delivered in an order consistent with their happens-before relation; buffering and timestamps may be needed."
+    }
+  ],
+  "homework": [
+    {
+      "prompt": "Build a table comparing non-FIFO, FIFO, and causal ordering.",
+      "rubric": "State the guarantee scope, one application need, and one implementation cost for each.",
+      "source": {
+        "sourceId": "DSA5208/Lec1.pdf",
+        "page": 9,
+        "sourceType": "lecture",
+        "role": "causal ordering",
+        "status": "current"
+      }
+    },
+    {
+      "prompt": "Trace a receiver that gets a causally later message first.",
+      "rubric": "Show why it buffers the message and what evidence allows delivery later.",
+      "source": {
+        "sourceId": "DSA5208/Lec1.pdf",
+        "page": 10,
+        "sourceType": "lecture",
+        "role": "causal-ordering implementation",
+        "status": "current"
+      }
+    }
+  ],
+  "codeExercises": []
+}

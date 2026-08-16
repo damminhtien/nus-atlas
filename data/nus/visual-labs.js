@@ -218,6 +218,95 @@
 
 (function () {
   "use strict";
+  const lecture = (sourceId, page, role) => ({ sourceId, page, sourceType: "lecture", role, status: "current" });
+  const textbook = (page, role) => ({ sourceId: "DSA5208/Distributed Systems textbook pointer", page, sourceType: "textbook", role, status: "course-depth" });
+  const reference = role => ({ sourceId: "L. Lamport, Time, Clocks, and the Ordering of Events in a Distributed System", page: 1, sourceType: "ref", role, status: "optional" });
+  const lens = (why, lectureRefs, textbookRefs = [], referenceRefs = []) => ({ status: "core DSA5208", whyExaminable: why, lecture: lectureRefs, officialExercise: [], textbook: textbookRefs, reference: referenceRefs });
+  const add = (id, lab) => { window.NUS_VISUAL_LABS[id] = lab; };
+
+  add("dsa5208-orientation", {
+    courseCode: "DSA5208", lessonId: "dsa5208-orientation", type: "concept-map", title: "Distributed experiment evidence map",
+    learningGoal: "Connect a distributed claim to its system conditions and measurements.",
+    sourceRefs: [lecture("DSA5208/Lec0.pdf", 9, "distributed-system challenges"), lecture("DSA5208/Lec0.pdf", 16, "project themes")],
+    sourceLens: lens("The overview turns scale, failure, communication, and coordination into the evidence vocabulary for later project work.", [lecture("DSA5208/Lec0.pdf", 9, "distributed-system challenges"), lecture("DSA5208/Lec0.pdf", 16, "project themes")], [textbook(1, "distributed-system overview")]),
+    nodes: [{ id: "claim", label: "Claim", detail: "What the system is supposed to achieve." }, { id: "setting", label: "System setting", detail: "Workers, partitions, network, and failures." }, { id: "metric", label: "Metric", detail: "Latency, throughput, shuffle, or recovery." }, { id: "evidence", label: "Evidence", detail: "Observed result and reproducible conditions." }],
+    edges: [["claim", "setting"], ["setting", "metric"], ["metric", "evidence"]], requiredChoice: "evidence", initialState: { choice: null }, check: state => state.choice === "evidence", reducedMotion: true,
+    explanation: "A distributed experiment is a chain from claim to setting to metric to evidence; the final result is not meaningful without the earlier context."
+  });
+  add("dsa5208-distributed-models", {
+    courseCode: "DSA5208", lessonId: "dsa5208-distributed-models", type: "concept-map", title: "Process and event-history map",
+    learningGoal: "Separate processes, local histories, messages, and the global event set.",
+    sourceRefs: [lecture("DSA5208/Lec1.pdf", 3, "distributed-system definition"), lecture("DSA5208/Lec1.pdf", 4, "event notation")],
+    sourceLens: lens("The process/event model is the assumption boundary for every causal-ordering derivation.", [lecture("DSA5208/Lec1.pdf", 3, "distributed-system definition"), lecture("DSA5208/Lec1.pdf", 4, "event notation")], [textbook(8, "system models")]),
+    nodes: [{ id: "process", label: "Process", detail: "An independent entity with local state." }, { id: "history", label: "Local history", detail: "Events produced by one process." }, { id: "message", label: "Message edge", detail: "Information crossing process boundaries." }, { id: "events", label: "Global event set", detail: "The union of all local histories." }],
+    edges: [["process", "history"], ["history", "events"], ["message", "events"]], requiredChoice: "events", initialState: { choice: null }, check: state => state.choice === "events", reducedMotion: true,
+    explanation: "The map keeps local state and cross-process communication distinct before causal edges are derived."
+  });
+  add("dsa5208-happens-before", {
+    courseCode: "DSA5208", lessonId: "dsa5208-happens-before", type: "decision-tree", title: "Causal-edge checker",
+    learningGoal: "Choose the rule that justifies a proposed happens-before edge.",
+    sourceRefs: [lecture("DSA5208/Lec1.pdf", 5, "causal precedence"), lecture("DSA5208/Lec1.pdf", 6, "concurrency")],
+    sourceLens: lens("Happens-before is the formal bridge from a message-passing diagram to clocks and delivery guarantees.", [lecture("DSA5208/Lec1.pdf", 5, "causal precedence"), lecture("DSA5208/Lec1.pdf", 6, "concurrency")], [textbook(18, "causal order")], [reference("happens-before relation")]),
+    splits: [{ id: "local", label: "Same process", impurity: 12, detail: "Use local event order." }, { id: "message", label: "Send to receive", impurity: 18, detail: "Use message send-before-receive." }, { id: "chain", label: "Causal chain", impurity: 22, detail: "Use transitive closure." }, { id: "none", label: "No edge", impurity: 70, detail: "Check the reverse direction before calling events concurrent." }],
+    requiredChoice: "chain", initialState: { choice: null }, check: state => state.choice === "chain", reducedMotion: true,
+    explanation: "The checker forces the learner to justify an edge with a model rule rather than visual intuition."
+  });
+  add("dsa5208-communication-ordering", {
+    courseCode: "DSA5208", lessonId: "dsa5208-communication-ordering", type: "compare", title: "Delivery-guarantee explorer",
+    learningGoal: "Choose the weakest delivery guarantee that preserves an application invariant.",
+    sourceRefs: [lecture("DSA5208/Lec1.pdf", 7, "non-FIFO model"), lecture("DSA5208/Lec1.pdf", 8, "FIFO model"), lecture("DSA5208/Lec1.pdf", 9, "causal ordering")],
+    sourceLens: lens("Delivery guarantees are a compact distinction between channel-local order and system-wide causal order.", [lecture("DSA5208/Lec1.pdf", 7, "non-FIFO model"), lecture("DSA5208/Lec1.pdf", 8, "FIFO model"), lecture("DSA5208/Lec1.pdf", 9, "causal ordering")], [textbook(32, "message delivery guarantees")]),
+    initialState: { value: 55 }, check: state => state.value >= 35 && state.value <= 80, reducedMotion: true,
+    explanation: "Move toward stronger guarantees only when the application invariant needs more than arbitrary or per-channel delivery order."
+  });
+  add("dsa5208-physical-clocks", {
+    courseCode: "DSA5208", lessonId: "dsa5208-physical-clocks", type: "derivation-trace", title: "NTP delay trace",
+    learningGoal: "Trace the four timestamps into a delay estimate and state its assumptions.",
+    sourceRefs: [lecture("DSA5208/Lec1.pdf", 13, "physical clocks"), lecture("DSA5208/Lec1.pdf", 14, "NTP")],
+    sourceLens: lens("NTP is a concrete calculation checkpoint and a clean contrast with causal logical time.", [lecture("DSA5208/Lec1.pdf", 13, "physical clocks"), lecture("DSA5208/Lec1.pdf", 14, "NTP")], [textbook(48, "clock synchronization")]),
+    steps: [["Inputs", "T1, T2, T3, T4", "Identify client and server send/receive timestamps."], ["Elapsed intervals", "Client minus server", "Compare the two observed durations."], ["Delay", "Round-trip estimate", "Compute the network-delay estimate."], ["Interpret", "Uncertainty", "State drift and delay-symmetry assumptions."]],
+    initialState: { step: 0 }, check: state => state.step >= 3, reducedMotion: true,
+    explanation: "The trace separates arithmetic from the assumptions needed to interpret an NTP estimate."
+  });
+  add("dsa5208-lamport-scalar", {
+    courseCode: "DSA5208", lessonId: "dsa5208-lamport-scalar", type: "derivation-trace", title: "Lamport scalar trace",
+    learningGoal: "Apply local, send, and receive updates in the correct order.",
+    sourceRefs: [lecture("DSA5208/Lec1.pdf", 17, "Lamport scalar rules"), lecture("DSA5208/Lec1.pdf", 19, "scalar properties")],
+    sourceLens: lens("Scalar clocks are a core derivation because every later ordering claim depends on the receive max-and-increment rule.", [lecture("DSA5208/Lec1.pdf", 17, "Lamport scalar rules"), lecture("DSA5208/Lec1.pdf", 19, "scalar properties")], [textbook(55, "Lamport clocks")], [reference("scalar logical clocks")]),
+    steps: [["Local event", "Increment", "Advance before a send or internal event."], ["Message", "Piggyback", "Attach the updated scalar value."], ["Receive", "Take maximum", "Merge local and message history."], ["Deliver", "Increment then deliver", "Place the receive event strictly after both histories."]],
+    initialState: { step: 0 }, check: state => state.step >= 3, reducedMotion: true,
+    explanation: "The trace makes the one-way causal guarantee and the receive-event ordering visible."
+  });
+  add("dsa5208-vector-clocks", {
+    courseCode: "DSA5208", lessonId: "dsa5208-vector-clocks", type: "derivation-trace", title: "Vector comparison trace",
+    learningGoal: "Compare every component and identify causal order versus concurrency.",
+    sourceRefs: [lecture("DSA5208/Lec1.pdf", 20, "vector-clock rules"), lecture("DSA5208/Lec1.pdf", 22, "vector comparison"), lecture("DSA5208/Lec1.pdf", 23, "vector properties")],
+    sourceLens: lens("Vector clocks extend scalar time with enough process-specific state to recover concurrency.", [lecture("DSA5208/Lec1.pdf", 20, "vector-clock rules"), lecture("DSA5208/Lec1.pdf", 22, "vector comparison"), lecture("DSA5208/Lec1.pdf", 23, "vector properties")], [textbook(62, "vector clocks")], [reference("vector-clock causality")]),
+    steps: [["Own event", "Increment one component", "Advance the local process component."], ["Receive", "Componentwise maximum", "Merge every known process history."], ["Compare", "All components", "Check no component is larger and one is strictly smaller."], ["Classify", "Ordered or concurrent", "Incomparability means concurrency."]],
+    initialState: { step: 0 }, check: state => state.step >= 3, reducedMotion: true,
+    explanation: "The learner must use componentwise comparison rather than a scalar or lexicographic shortcut."
+  });
+  add("dsa5208-compressed-timestamps", {
+    courseCode: "DSA5208", lessonId: "dsa5208-compressed-timestamps", type: "compare", title: "Timestamp-storage explorer",
+    learningGoal: "Compare full vectors, receiver-specific deltas, and differential metadata state.",
+    sourceRefs: [lecture("DSA5208/Lec1.pdf", 24, "compressed timestamp idea"), lecture("DSA5208/Lec1.pdf", 27, "storage overhead"), lecture("DSA5208/Lec1.pdf", 29, "differential technique")],
+    sourceLens: lens("This lab turns a complexity statement into a design trade-off: preserve causal knowledge while reducing repeated metadata.", [lecture("DSA5208/Lec1.pdf", 24, "compressed timestamp idea"), lecture("DSA5208/Lec1.pdf", 27, "storage overhead"), lecture("DSA5208/Lec1.pdf", 29, "differential technique")], [textbook(70, "metadata compression")]),
+    initialState: { value: 55 }, check: state => state.value >= 35 && state.value <= 80, reducedMotion: true,
+    explanation: "More compression can reduce communication and storage, but it requires carefully maintained receiver-specific state."
+  });
+  add("dsa5208-consistency-spark", {
+    courseCode: "DSA5208", lessonId: "dsa5208-consistency-spark", type: "pipeline-builder", title: "Roadmap-to-measurement builder",
+    learningGoal: "Connect a later-course topic to a concrete distributed measurement without overstating source coverage.",
+    sourceRefs: [lecture("DSA5208/Lec0.pdf", 12, "course topic map"), lecture("DSA5208/Lec0.pdf", 14, "Spark and distributed algorithms")],
+    sourceLens: lens("The supplied overview gives a roadmap; the lab turns that roadmap into a request for evidence while keeping later lecture depth marked pending.", [lecture("DSA5208/Lec0.pdf", 12, "course topic map"), lecture("DSA5208/Lec0.pdf", 14, "Spark and distributed algorithms")], [textbook(90, "distributed data processing")]),
+    steps: [["Topic", "Consistency or Spark", "Choose the later-course question."], ["Operation", "Join or group", "Name the logical operation that may move data."], ["Metric", "Shuffle or stale-read evidence", "Choose a measurable signal."], ["Boundary", "Pending source", "Keep the claim provisional until the detailed lecture is supplied."]],
+    initialState: { step: 0 }, check: state => state.step >= 3, reducedMotion: true,
+    explanation: "The builder makes source fidelity part of the learning experience: a roadmap is useful, but it is not a fabricated derivation."
+  });
+})();
+
+(function () {
+  "use strict";
   const lecture = (page, role) => ({ sourceId: "DSA5104/chapter1.pdf", page, sourceType: "lecture", role, status: "current" });
   const exercise = (sourceId, role) => ({ sourceId, page: 1, sourceType: "exercise", role, status: "current-context" });
   const textbook = (page, role) => ({ sourceId: "DSA5104/Database System Concepts, 7th edition", page, sourceType: "textbook", role, status: "course-depth" });

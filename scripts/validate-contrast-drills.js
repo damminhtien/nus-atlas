@@ -41,6 +41,22 @@ const DSA5104_REQUIRED_PAIRS = [
   "Relational vs semi-structured",
   "Schema-on-write vs schema-on-read"
 ];
+const DSA5208_REQUIRED_PAIRS = [
+  "Computation vs communication",
+  "Multiprocessor vs multicomputer",
+  "Event order vs wall-clock order",
+  "Causal precedence vs concurrency",
+  "Non-FIFO vs FIFO",
+  "FIFO vs causal ordering",
+  "Physical vs logical clocks",
+  "Lamport scalar vs vector time",
+  "Weak ordering vs strong consistency",
+  "Comparable vs incomparable vectors",
+  "Full vector vs compressed timestamp",
+  "O(n²) vs O(n) timestamp storage",
+  "Partition-local vs shuffle",
+  "Lecture roadmap vs lecture derivation"
+];
 
 function validateContrastDrills(state) {
   const errors = [];
@@ -48,7 +64,7 @@ function validateContrastDrills(state) {
   const ids = new Set();
   const pairs = new Set();
   const byCourse = {};
-  const requiredPairsByCourse = { DSA5101: DSA5101_REQUIRED_PAIRS, DSA5104: DSA5104_REQUIRED_PAIRS, DSA5105: REQUIRED_PAIRS };
+  const requiredPairsByCourse = { DSA5101: DSA5101_REQUIRED_PAIRS, DSA5104: DSA5104_REQUIRED_PAIRS, DSA5105: REQUIRED_PAIRS, DSA5208: DSA5208_REQUIRED_PAIRS };
   for (const [courseId, requiredPairs] of Object.entries(requiredPairsByCourse)) {
     const course = state && state.content && state.content[courseId];
     const lessons = course ? course.modules.flatMap(module => module.lessons || []) : [];
@@ -101,4 +117,4 @@ if (require.main === module) {
   }
 }
 
-module.exports = { REQUIRED_PAIRS, DSA5101_REQUIRED_PAIRS, DSA5104_REQUIRED_PAIRS, validateContrastDrills };
+module.exports = { REQUIRED_PAIRS, DSA5101_REQUIRED_PAIRS, DSA5104_REQUIRED_PAIRS, DSA5208_REQUIRED_PAIRS, validateContrastDrills };

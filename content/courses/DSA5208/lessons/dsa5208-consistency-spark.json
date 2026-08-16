@@ -1,0 +1,494 @@
+{
+  "id": "dsa5208-consistency-spark",
+  "title": "Course frontier: consistency and Spark preview",
+  "week": 5,
+  "minutes": 45,
+  "summary": "Use the overview's later-course map to connect consistency testing, Spark data movement, MLlib, and cloud workflows without pretending missing lectures were supplied.",
+  "objectives": [
+    "Separate the supplied overview from later lecture detail",
+    "Map a project question to consistency or shuffle evidence",
+    "Identify what source must be added before claiming full lecture coverage"
+  ],
+  "sourceRefs": [
+    {
+      "sourceId": "DSA5208/Lec0.pdf",
+      "page": 12,
+      "sourceType": "lecture",
+      "role": "course topic map",
+      "status": "current"
+    },
+    {
+      "sourceId": "DSA5208/Lec0.pdf",
+      "page": 14,
+      "sourceType": "lecture",
+      "role": "Spark and distributed algorithms",
+      "status": "current"
+    },
+    {
+      "sourceId": "DSA5208/Lec0.pdf",
+      "page": 15,
+      "sourceType": "lecture",
+      "role": "MLlib and cloud",
+      "status": "current"
+    }
+  ],
+  "visualIds": [
+    "dsa5208-spark-pipeline"
+  ],
+  "sections": [
+    {
+      "title": "Scope boundary",
+      "sourceType": "lecture",
+      "body": "The supplied Lec0 overview names consistency models, Apache Spark, distributed algorithms, MLlib, and cloud computing as later topics. It is safe to use this page as a course map; detailed derivations require the corresponding lecture sources when they are available.",
+      "sourceRefs": [
+        {
+          "sourceId": "DSA5208/Lec0.pdf",
+          "page": 12,
+          "sourceType": "lecture",
+          "role": "course topic map",
+          "status": "current"
+        },
+        {
+          "sourceId": "DSA5208/Lec0.pdf",
+          "page": 14,
+          "sourceType": "lecture",
+          "role": "Spark topic",
+          "status": "current"
+        }
+      ],
+      "sourceLens": {
+        "status": "core DSA5208",
+        "whyExaminable": "The examinability signal here is the official course roadmap, not an invented replacement for missing later slides.",
+        "lecture": [
+          {
+            "sourceId": "DSA5208/Lec0.pdf",
+            "page": 12,
+            "sourceType": "lecture",
+            "role": "course topic map",
+            "status": "current"
+          },
+          {
+            "sourceId": "DSA5208/Lec0.pdf",
+            "page": 14,
+            "sourceType": "lecture",
+            "role": "Spark topic",
+            "status": "current"
+          }
+        ],
+        "officialExercise": [],
+        "textbook": [
+          {
+            "sourceId": "DSA5208/Distributed Systems textbook pointer",
+            "page": 90,
+            "sourceType": "textbook",
+            "role": "distributed data processing",
+            "status": "course-depth"
+          }
+        ],
+        "reference": []
+      }
+    },
+    {
+      "title": "Preview a shuffle boundary",
+      "sourceType": "lecture",
+      "body": "A map or filter can often remain partition-local, while grouping, joins, and global sorts usually require data movement. Treat this as a study hypothesis to test against the Spark lecture and project implementation, not as a complete Spark derivation.",
+      "sourceRefs": [
+        {
+          "sourceId": "DSA5208/Lec0.pdf",
+          "page": 14,
+          "sourceType": "lecture",
+          "role": "Spark and distributed algorithms",
+          "status": "current"
+        },
+        {
+          "sourceId": "DSA5208/Lec0.pdf",
+          "page": 15,
+          "sourceType": "lecture",
+          "role": "MLlib and cloud",
+          "status": "current"
+        }
+      ],
+      "sourceLens": {
+        "status": "core DSA5208",
+        "whyExaminable": "The preview bridges the clock-and-ordering foundations to future Spark work while preserving the source boundary.",
+        "lecture": [
+          {
+            "sourceId": "DSA5208/Lec0.pdf",
+            "page": 14,
+            "sourceType": "lecture",
+            "role": "Spark and distributed algorithms",
+            "status": "current"
+          },
+          {
+            "sourceId": "DSA5208/Lec0.pdf",
+            "page": 15,
+            "sourceType": "lecture",
+            "role": "MLlib and cloud",
+            "status": "current"
+          }
+        ],
+        "officialExercise": [],
+        "textbook": [
+          {
+            "sourceId": "DSA5208/Distributed Systems textbook pointer",
+            "page": 98,
+            "sourceType": "textbook",
+            "role": "shuffle and data movement",
+            "status": "course-depth"
+          }
+        ],
+        "reference": []
+      }
+    }
+  ],
+  "examples": [
+    {
+      "title": "Evidence request for the next module",
+      "sourceType": "lecture",
+      "steps": [
+        "State the claimed consistency or performance property.",
+        "Identify the missing lecture or implementation source.",
+        "Choose a metric such as stale-read rate, shuffle bytes, or stage time.",
+        "Do not mark the claim lecture-complete until the source is supplied."
+      ],
+      "answer": "The Atlas should distinguish a roadmap pointer from a fully taught derivation."
+    }
+  ],
+  "contrastDrills": [
+    {
+      "id": "dsa5208-contrast-local-shuffle",
+      "type": "contrast",
+      "kind": "concept-contrast",
+      "pair": "Partition-local vs shuffle",
+      "prompt": "Which operation usually requires records to move between partitions?",
+      "choices": [
+        "Map",
+        "Filter",
+        "Group by key",
+        "Local projection"
+      ],
+      "answer": 2,
+      "explanation": "Grouping by key brings records with the same key together and typically requires a shuffle.",
+      "estimatedSeconds": 45,
+      "difficulty": "medium",
+      "skill": "concept-contrast",
+      "cognitiveLevel": "distinguish",
+      "misconception": "Name the ordering, time, or communication boundary before choosing.",
+      "sourceRefs": [
+        {
+          "sourceId": "DSA5208/Lec0.pdf",
+          "page": 14,
+          "sourceType": "lecture",
+          "role": "Spark topic map",
+          "status": "current"
+        }
+      ]
+    },
+    {
+      "id": "dsa5208-contrast-roadmap-detail",
+      "type": "contrast",
+      "kind": "concept-contrast",
+      "pair": "Lecture roadmap vs lecture derivation",
+      "prompt": "What should Atlas show when the overview names a later topic but its detailed lecture is not supplied?",
+      "choices": [
+        "Invent the missing equations",
+        "Label it as a roadmap/context pointer",
+        "Mark it as fully mastered",
+        "Copy a generic answer without a source"
+      ],
+      "answer": 1,
+      "explanation": "Keep the roadmap pointer visible and mark detailed coverage pending until the appropriate lecture or official source is available.",
+      "estimatedSeconds": 45,
+      "difficulty": "medium",
+      "skill": "concept-contrast",
+      "cognitiveLevel": "distinguish",
+      "misconception": "Name the ordering, time, or communication boundary before choosing.",
+      "sourceRefs": [
+        {
+          "sourceId": "DSA5208/Lec0.pdf",
+          "page": 12,
+          "sourceType": "lecture",
+          "role": "course topic map",
+          "status": "current"
+        }
+      ]
+    }
+  ],
+  "math": [
+    {
+      "latex": "T_{\\mathrm{pipeline}} \\approx T_{\\mathrm{local}} + T_{\\mathrm{shuffle}} + T_{\\mathrm{barrier}}",
+      "explanation": "Map-like operations can often stay partition-local, while joins, group-bys, and global sorts may require a shuffle. The equation forces the experiment to name the data movement and synchronization costs instead of treating the pipeline as one opaque step.",
+      "symbols": [
+        {
+          "latex": "T_{\\mathrm{local}}",
+          "meaning": "work within existing partitions"
+        },
+        {
+          "latex": "T_{\\mathrm{barrier}}",
+          "meaning": "waiting for stage coordination"
+        }
+      ],
+      "sourceType": "lecture"
+    },
+    {
+      "latex": "T_{\\mathrm{job}}\\approx T_{\\mathrm{compute}}+T_{\\mathrm{shuffle}}+T_{\\mathrm{coordination}}",
+      "explanation": "Use this as a bridge from the course overview to Spark experiments: local computation, data movement, and coordination should be measured separately.",
+      "symbols": [
+        {
+          "latex": "T_{\\mathrm{shuffle}}",
+          "meaning": "time moving records between partitions"
+        }
+      ],
+      "sourceType": "lecture",
+      "caveat": "This is a derived study model; the supplied overview names Spark but does not provide the later lecture derivation."
+    }
+  ],
+  "criticalQuestions": [
+    {
+      "prompt": "Why should this lesson be labeled a course frontier rather than full Spark coverage?",
+      "angle": "Check which source pages are actually supplied.",
+      "modelAnswer": "Lec0 gives the roadmap and project direction, but the detailed Spark, consistency, and MLlib lectures are not in the current local source set.",
+      "focus": "provenance"
+    },
+    {
+      "prompt": "What evidence would turn a shuffle hypothesis into a measured claim?",
+      "angle": "Move from a conceptual operation to an instrumented stage-level observation.",
+      "modelAnswer": "Record partition sizes, shuffle bytes, task skew, stage time, and the logical operation that caused the exchange.",
+      "focus": "experimental design"
+    }
+  ],
+  "courseId": "DSA5208",
+  "moduleId": "dsa5208-advanced",
+  "blocks": [
+    {
+      "id": "dsa5208-consistency-spark-section-1",
+      "type": "teaching-note",
+      "title": "Scope boundary",
+      "body": "The supplied Lec0 overview names consistency models, Apache Spark, distributed algorithms, MLlib, and cloud computing as later topics. It is safe to use this page as a course map; detailed derivations require the corresponding lecture sources when they are available.",
+      "sourceType": "lecture",
+      "sourceRefs": [
+        {
+          "sourceId": "DSA5208/Lec0.pdf",
+          "page": 12,
+          "sourceType": "lecture",
+          "role": "course topic map",
+          "status": "current"
+        },
+        {
+          "sourceId": "DSA5208/Lec0.pdf",
+          "page": 14,
+          "sourceType": "lecture",
+          "role": "Spark topic",
+          "status": "current"
+        }
+      ]
+    },
+    {
+      "id": "dsa5208-consistency-spark-section-2",
+      "type": "teaching-note",
+      "title": "Preview a shuffle boundary",
+      "body": "A map or filter can often remain partition-local, while grouping, joins, and global sorts usually require data movement. Treat this as a study hypothesis to test against the Spark lecture and project implementation, not as a complete Spark derivation.",
+      "sourceType": "lecture",
+      "sourceRefs": [
+        {
+          "sourceId": "DSA5208/Lec0.pdf",
+          "page": 14,
+          "sourceType": "lecture",
+          "role": "Spark and distributed algorithms",
+          "status": "current"
+        },
+        {
+          "sourceId": "DSA5208/Lec0.pdf",
+          "page": 15,
+          "sourceType": "lecture",
+          "role": "MLlib and cloud",
+          "status": "current"
+        }
+      ]
+    },
+    {
+      "id": "dsa5208-consistency-spark-formula-1",
+      "type": "formula",
+      "latex": "T_{\\mathrm{pipeline}} \\approx T_{\\mathrm{local}} + T_{\\mathrm{shuffle}} + T_{\\mathrm{barrier}}",
+      "explanation": "Map-like operations can often stay partition-local, while joins, group-bys, and global sorts may require a shuffle. The equation forces the experiment to name the data movement and synchronization costs instead of treating the pipeline as one opaque step.",
+      "symbols": [
+        {
+          "latex": "T_{\\mathrm{local}}",
+          "meaning": "work within existing partitions"
+        },
+        {
+          "latex": "T_{\\mathrm{barrier}}",
+          "meaning": "waiting for stage coordination"
+        }
+      ],
+      "sourceType": "lecture",
+      "sourceRefs": [
+        {
+          "sourceId": "DSA5208/Lec0.pdf",
+          "page": 12,
+          "sourceType": "lecture",
+          "role": "course topic map",
+          "status": "current"
+        },
+        {
+          "sourceId": "DSA5208/Lec0.pdf",
+          "page": 14,
+          "sourceType": "lecture",
+          "role": "Spark and distributed algorithms",
+          "status": "current"
+        },
+        {
+          "sourceId": "DSA5208/Lec0.pdf",
+          "page": 15,
+          "sourceType": "lecture",
+          "role": "MLlib and cloud",
+          "status": "current"
+        }
+      ]
+    },
+    {
+      "id": "dsa5208-consistency-spark-formula-2",
+      "type": "formula",
+      "latex": "T_{\\mathrm{job}}\\approx T_{\\mathrm{compute}}+T_{\\mathrm{shuffle}}+T_{\\mathrm{coordination}}",
+      "explanation": "Use this as a bridge from the course overview to Spark experiments: local computation, data movement, and coordination should be measured separately.",
+      "symbols": [
+        {
+          "latex": "T_{\\mathrm{shuffle}}",
+          "meaning": "time moving records between partitions"
+        }
+      ],
+      "sourceType": "lecture",
+      "sourceRefs": [
+        {
+          "sourceId": "DSA5208/Lec0.pdf",
+          "page": 12,
+          "sourceType": "lecture",
+          "role": "course topic map",
+          "status": "current"
+        },
+        {
+          "sourceId": "DSA5208/Lec0.pdf",
+          "page": 14,
+          "sourceType": "lecture",
+          "role": "Spark and distributed algorithms",
+          "status": "current"
+        },
+        {
+          "sourceId": "DSA5208/Lec0.pdf",
+          "page": 15,
+          "sourceType": "lecture",
+          "role": "MLlib and cloud",
+          "status": "current"
+        }
+      ]
+    },
+    {
+      "id": "dsa5208-consistency-spark-example-1",
+      "type": "worked-example",
+      "title": "Evidence request for the next module",
+      "sourceType": "lecture",
+      "steps": [
+        "State the claimed consistency or performance property.",
+        "Identify the missing lecture or implementation source.",
+        "Choose a metric such as stale-read rate, shuffle bytes, or stage time.",
+        "Do not mark the claim lecture-complete until the source is supplied."
+      ],
+      "answer": "The Atlas should distinguish a roadmap pointer from a fully taught derivation.",
+      "sourceRefs": [
+        {
+          "sourceId": "DSA5208/Lec0.pdf",
+          "page": 12,
+          "sourceType": "lecture",
+          "role": "course topic map",
+          "status": "current"
+        },
+        {
+          "sourceId": "DSA5208/Lec0.pdf",
+          "page": 14,
+          "sourceType": "lecture",
+          "role": "Spark and distributed algorithms",
+          "status": "current"
+        },
+        {
+          "sourceId": "DSA5208/Lec0.pdf",
+          "page": 15,
+          "sourceType": "lecture",
+          "role": "MLlib and cloud",
+          "status": "current"
+        }
+      ]
+    },
+    {
+      "id": "dsa5208-consistency-spark-critical-1",
+      "type": "critical-question",
+      "prompt": "Why should this lesson be labeled a course frontier rather than full Spark coverage?",
+      "angle": "Check which source pages are actually supplied.",
+      "modelAnswer": "Lec0 gives the roadmap and project direction, but the detailed Spark, consistency, and MLlib lectures are not in the current local source set.",
+      "focus": "provenance",
+      "sourceRefs": [
+        {
+          "sourceId": "DSA5208/Lec0.pdf",
+          "page": 12,
+          "sourceType": "lecture",
+          "role": "course topic map",
+          "status": "current"
+        },
+        {
+          "sourceId": "DSA5208/Lec0.pdf",
+          "page": 14,
+          "sourceType": "lecture",
+          "role": "Spark and distributed algorithms",
+          "status": "current"
+        },
+        {
+          "sourceId": "DSA5208/Lec0.pdf",
+          "page": 15,
+          "sourceType": "lecture",
+          "role": "MLlib and cloud",
+          "status": "current"
+        }
+      ]
+    },
+    {
+      "id": "dsa5208-consistency-spark-critical-2",
+      "type": "critical-question",
+      "prompt": "What evidence would turn a shuffle hypothesis into a measured claim?",
+      "angle": "Move from a conceptual operation to an instrumented stage-level observation.",
+      "modelAnswer": "Record partition sizes, shuffle bytes, task skew, stage time, and the logical operation that caused the exchange.",
+      "focus": "experimental design",
+      "sourceRefs": [
+        {
+          "sourceId": "DSA5208/Lec0.pdf",
+          "page": 12,
+          "sourceType": "lecture",
+          "role": "course topic map",
+          "status": "current"
+        },
+        {
+          "sourceId": "DSA5208/Lec0.pdf",
+          "page": 14,
+          "sourceType": "lecture",
+          "role": "Spark and distributed algorithms",
+          "status": "current"
+        },
+        {
+          "sourceId": "DSA5208/Lec0.pdf",
+          "page": 15,
+          "sourceType": "lecture",
+          "role": "MLlib and cloud",
+          "status": "current"
+        }
+      ]
+    }
+  ],
+  "questionIds": [
+    "dsa5208-sp-q1",
+    "dsa5208-sp-q2",
+    "dsa5208-bank-017",
+    "dsa5208-bank-018"
+  ],
+  "labIds": [
+    "dsa5208-spark-pipeline"
+  ],
+  "schemaVersion": "nus.lesson.v1"
+}

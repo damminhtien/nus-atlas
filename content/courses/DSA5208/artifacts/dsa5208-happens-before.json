@@ -1,0 +1,43 @@
+{
+  "lessonId": "dsa5208-happens-before",
+  "schemaVersion": "nus.study-kit.v1",
+  "flashcards": [
+    {
+      "front": "Three happens-before rules?",
+      "back": "Local process order, send-before-receive, and transitive closure."
+    },
+    {
+      "front": "Concurrency?",
+      "back": "Two events are concurrent when neither happens-before the other."
+    },
+    {
+      "front": "Is concurrency transitive?",
+      "back": "No. Check both directions for each pair; adjacent incomparable pairs do not force the endpoints to be incomparable."
+    }
+  ],
+  "homework": [
+    {
+      "prompt": "Given a message-passing diagram, prove two requested arrows and classify one pair as ordered or concurrent.",
+      "rubric": "Cite the exact local, message, or transitive rule for every arrow and check both directions for concurrency.",
+      "source": {
+        "sourceId": "DSA5208/Lec1.pdf",
+        "page": 5,
+        "sourceType": "lecture",
+        "role": "causal precedence",
+        "status": "current"
+      }
+    },
+    {
+      "prompt": "Construct a counterexample showing why wall-clock order is not enough to prove causality.",
+      "rubric": "Use independent process events and explain the missing happens-before edge.",
+      "source": {
+        "sourceId": "DSA5208/Lec1.pdf",
+        "page": 6,
+        "sourceType": "lecture",
+        "role": "concurrency",
+        "status": "current"
+      }
+    }
+  ],
+  "codeExercises": []
+}

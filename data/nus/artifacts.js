@@ -45,6 +45,88 @@
 
 (function () {
   "use strict";
+  const lecture = (sourceId, page, role) => ({ sourceId, page, sourceType: "lecture", role, status: "current" });
+  const textbook = (page, role) => ({ sourceId: "DSA5208/Distributed Systems textbook pointer", page, sourceType: "textbook", role, status: "course-depth" });
+  const add = (id, flashcards, homework, codeExercises = []) => { window.NUS_ARTIFACTS[id] = { lessonId: id, flashcards, homework, codeExercises, schemaVersion: "nus.study-kit.v1" }; };
+  const card = (front, back) => ({ front, back });
+  const work = (prompt, rubric, source) => ({ prompt, rubric, source });
+
+  add("dsa5208-orientation", [
+    card("What makes a distributed experiment reproducible?", "State workers, partitioning, communication, failure assumptions, metrics, and observed results."),
+    card("Why can more workers hurt?", "Network movement, synchronization, serialization, or skew can grow faster than useful computation falls."),
+    card("What is the source boundary for later topics?", "Lec0 supplies the roadmap; detailed consistency, Spark, MLlib, GPU, and cloud derivations remain pending until their sources are supplied.")
+  ], [
+    work("Design a one-page experiment log for a distributed data task.", "Include claim, system setting, partitioning, failure assumption, metrics, and a reproducible result.", lecture("DSA5208/Lec0.pdf", 9, "distributed-system challenges")),
+    work("Explain why the project structure is evidence about course priorities but not a substitute for lecture derivations.", "Separate assessment signal, lecture scope, and missing source material.", lecture("DSA5208/Lec0.pdf", 16, "project themes"))
+  ], []);
+  add("dsa5208-distributed-models", [
+    card("Multiprocessor versus multicomputer?", "Multiprocessors share memory in the lecture comparison; multicomputers give processors private memory connected by an interconnection network."),
+    card("What is H?", String.raw`$H=\bigcup_i h_i$ is the set of all events across local process histories.`),
+    card("Why is message passing an assumption?", "A process cannot read another process's state directly; information must cross an explicit message edge.")
+  ], [
+    work("Draw a three-process event history and label local events, sends, receives, and H.", "Show local order and message edges without using vertical alignment as a causal rule.", lecture("DSA5208/Lec1.pdf", 4, "event notation")),
+    work("Compare one multiprocessor and one multicomputer design for a shared data task.", "Name memory placement, communication mechanism, and one resulting coordination cost.", lecture("DSA5208/Lec1.pdf", 3, "system models"))
+  ]);
+  add("dsa5208-happens-before", [
+    card("Three happens-before rules?", "Local process order, send-before-receive, and transitive closure."),
+    card("Concurrency?", "Two events are concurrent when neither happens-before the other."),
+    card("Is concurrency transitive?", "No. Check both directions for each pair; adjacent incomparable pairs do not force the endpoints to be incomparable.")
+  ], [
+    work("Given a message-passing diagram, prove two requested arrows and classify one pair as ordered or concurrent.", "Cite the exact local, message, or transitive rule for every arrow and check both directions for concurrency.", lecture("DSA5208/Lec1.pdf", 5, "causal precedence")),
+    work("Construct a counterexample showing why wall-clock order is not enough to prove causality.", "Use independent process events and explain the missing happens-before edge.", lecture("DSA5208/Lec1.pdf", 6, "concurrency"))
+  ]);
+  add("dsa5208-communication-ordering", [
+    card("Non-FIFO?", "Messages may be received in random order."),
+    card("FIFO?", "Messages sent on one channel are received in send order."),
+    card("Causal ordering?", "Causally related sends are delivered in an order consistent with their happens-before relation; buffering and timestamps may be needed.")
+  ], [
+    work("Build a table comparing non-FIFO, FIFO, and causal ordering.", "State the guarantee scope, one application need, and one implementation cost for each.", lecture("DSA5208/Lec1.pdf", 9, "causal ordering")),
+    work("Trace a receiver that gets a causally later message first.", "Show why it buffers the message and what evidence allows delivery later.", lecture("DSA5208/Lec1.pdf", 10, "causal-ordering implementation"))
+  ]);
+  add("dsa5208-physical-clocks", [
+    card("NTP delay formula?", String.raw`$\delta=(T_4-T_3)-(T_2-T_1)$.`),
+    card("What does clock drift do?", "It causes each local physical clock's error to grow over time."),
+    card("Physical versus logical time?", "Physical time estimates wall-clock time; logical time encodes causal ordering under a model.")
+  ], [
+    work("Calculate the NTP delay and estimated server time for one four-timestamp example.", "Show the two elapsed intervals, the delay estimate, and the delay-symmetry assumption.", lecture("DSA5208/Lec1.pdf", 14, "NTP")),
+    work("Explain why a small NTP delay does not prove an event caused another event.", "Separate timestamp estimation from local/message/transitive causal rules.", lecture("DSA5208/Lec1.pdf", 13, "physical clocks"))
+  ]);
+  add("dsa5208-lamport-scalar", [
+    card("Lamport receive rule?", String.raw`Set $C_i:=\max(C_i,C_{\mathrm{msg}})+d$ before delivering the message.`),
+    card("What does scalar consistency guarantee?", String.raw`$e_i\to e_j$ implies $C(e_i)<C(e_j)$.`),
+    card("What can scalar time not detect?", "It cannot reliably distinguish every pair of concurrent events because it may assign them ordered scalar values.")
+  ], [
+    work("Trace three Lamport events including a send and a receive.", "Increment at the correct points, apply max on receive, and state the resulting timestamps.", lecture("DSA5208/Lec1.pdf", 17, "Lamport scalar rules")),
+    work("Explain why a total order built from scalar timestamps can be useful even when it is not causal truth.", "Distinguish deterministic tie-breaking from strong consistency.", lecture("DSA5208/Lec1.pdf", 19, "scalar properties"))
+  ], [{ id: "dsa5208-lamport-code", language: "python", prompt: "Implement the scalar receive update.", starter: "def receive(local, received, d=1):\n    return max(local, received) + d", expected: "8", solution: String.raw`For local $4$ and received $7$ with $d=1$, return $8$.` }]);
+  add("dsa5208-vector-clocks", [
+    card("Vector receive rule?", "Take componentwise maxima with the received vector, then increment the local process component before delivery."),
+    card("Vector order?", String.raw`$X<Y$ requires every component of $X$ to be no larger and at least one to be strictly smaller.`),
+    card("Vector concurrency?", "If each vector is larger in a different component, neither dominates and the events are concurrent.")
+  ], [
+    work("Work a two-process vector-clock trace with one send and one receive.", "Show the vector before send, the piggybacked vector, componentwise max, and post-receive increment.", lecture("DSA5208/Lec1.pdf", 20, "vector-clock rules")),
+    work("Compare X=(2,1) and Y=(1,2), then explain the result without using lexicographic order.", "Check every component and name incomparability as concurrency.", lecture("DSA5208/Lec1.pdf", 22, "vector comparison"))
+  ], [{ id: "dsa5208-vector-code", language: "python", prompt: "Implement vector dominance.", starter: "def happens_before(x, y):\n    return all(a <= b for a, b in zip(x, y)) and any(a < b for a, b in zip(x, y))", expected: "True", solution: "The relation requires all components to be no larger and at least one to be strictly smaller." }]);
+  add("dsa5208-compressed-timestamps", [
+    card("Why send only changed vector entries?", "The receiver already knows unchanged entries from the last message sent to that receiver."),
+    card("Naive recent-vector storage?", String.raw`Keeping a recent vector for every sender-receiver pair costs $O(n^2)$ storage.`),
+    card("Differential technique?", "Maintain Last Sent and Last Update vectors to reduce storage to linear order while identifying changes.")
+  ], [
+    work("Trace a compressed timestamp from sender to receiver.", "Identify the receiver's prior vector, list changed entries, apply maxima, and update before delivery.", lecture("DSA5208/Lec1.pdf", 24, "compressed timestamp idea")),
+    work("Compare the basic recent-vector table with the Singhal-Kshemkalyani technique.", "State the storage order, maintained state, and correctness invariant.", lecture("DSA5208/Lec1.pdf", 29, "differential technique"))
+  ]);
+  add("dsa5208-consistency-spark", [
+    card("What does the Lec0 roadmap establish?", "It establishes later themes and project direction, not the full detailed derivation of those lectures."),
+    card("Likely shuffle operations?", "Grouping, joins, and global sorts often move records across partitions; map and filter can often remain local."),
+    card("What should be measured?", "Partition sizes, shuffle bytes, task skew, stage time, stale reads, or recovery behavior depending on the claim.")
+  ], [
+    work("Turn a Spark shuffle hypothesis into an experiment plan.", "Name the logical operation, partitioning, metric, expected movement, and source still needed for detailed coverage.", lecture("DSA5208/Lec0.pdf", 14, "Spark and distributed algorithms")),
+    work("Explain why Atlas marks this lesson as a course frontier.", "Separate roadmap evidence from supplied derivation evidence and identify the missing lecture source.", lecture("DSA5208/Lec0.pdf", 12, "course topic map"))
+  ], [{ id: "dsa5208-evidence-code", language: "text", prompt: "Write a four-line distributed experiment plan.", starter: "claim:\noperation:\nmetric:\nsource-needed:", expected: "claim|operation|metric|source-needed", solution: "A good plan states the system claim, logical operation, measurable signal, and the source or instrumentation needed to validate it." }]);
+})();
+
+(function () {
+  "use strict";
   const ref = (sourceId, page, sourceType, role, status) => ({ sourceId, page, sourceType, role, status });
   const lecture = (page, role) => ref("DSA5104/chapter1.pdf", page, "lecture", role, "current");
   const exercise = (sourceId, role) => ref(sourceId, 1, "exercise", role, "current-context");

@@ -1,0 +1,52 @@
+{
+  "lessonId": "dsa5208-consistency-spark",
+  "schemaVersion": "nus.study-kit.v1",
+  "flashcards": [
+    {
+      "front": "What does the Lec0 roadmap establish?",
+      "back": "It establishes later themes and project direction, not the full detailed derivation of those lectures."
+    },
+    {
+      "front": "Likely shuffle operations?",
+      "back": "Grouping, joins, and global sorts often move records across partitions; map and filter can often remain local."
+    },
+    {
+      "front": "What should be measured?",
+      "back": "Partition sizes, shuffle bytes, task skew, stage time, stale reads, or recovery behavior depending on the claim."
+    }
+  ],
+  "homework": [
+    {
+      "prompt": "Turn a Spark shuffle hypothesis into an experiment plan.",
+      "rubric": "Name the logical operation, partitioning, metric, expected movement, and source still needed for detailed coverage.",
+      "source": {
+        "sourceId": "DSA5208/Lec0.pdf",
+        "page": 14,
+        "sourceType": "lecture",
+        "role": "Spark and distributed algorithms",
+        "status": "current"
+      }
+    },
+    {
+      "prompt": "Explain why Atlas marks this lesson as a course frontier.",
+      "rubric": "Separate roadmap evidence from supplied derivation evidence and identify the missing lecture source.",
+      "source": {
+        "sourceId": "DSA5208/Lec0.pdf",
+        "page": 12,
+        "sourceType": "lecture",
+        "role": "course topic map",
+        "status": "current"
+      }
+    }
+  ],
+  "codeExercises": [
+    {
+      "id": "dsa5208-evidence-code",
+      "language": "text",
+      "prompt": "Write a four-line distributed experiment plan.",
+      "starter": "claim:\noperation:\nmetric:\nsource-needed:",
+      "expected": "claim|operation|metric|source-needed",
+      "solution": "A good plan states the system claim, logical operation, measurable signal, and the source or instrumentation needed to validate it."
+    }
+  ]
+}

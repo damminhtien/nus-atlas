@@ -51,6 +51,17 @@ test("every DSA5104 lesson has a source-backed visual lab", () => {
   assert.ok(lessons.every(lesson => labs.get(lesson.id).sourceRefs.every(ref => ref.sourceType)));
 });
 
+test("every DSA5208 lesson has a source-backed visual lab", () => {
+  const window = { NUS_CONTENT: {} };
+  new Function("window", fs.readFileSync("data/nus/dsa5208.js", "utf8"))(window);
+  new Function("window", fs.readFileSync("data/nus/visual-labs.js", "utf8"))(window);
+  const lessons = window.NUS_CONTENT.DSA5208.modules.flatMap(module => module.lessons);
+  const labs = new Map(Object.values(window.NUS_VISUAL_LABS).map(lab => [lab.lessonId, lab]));
+  assert.equal(lessons.length, 9);
+  assert.equal(lessons.filter(lesson => labs.has(lesson.id)).length, lessons.length);
+  assert.ok(lessons.every(lesson => labs.get(lesson.id).sourceRefs.every(ref => ref.sourceType)));
+});
+
 test("formula-bearing labs use exactly-once math wrapping", () => {
   const source = fs.readFileSync("js/nus-components.js", "utf8");
   assert.match(source, /function mathSource\(value\)/);

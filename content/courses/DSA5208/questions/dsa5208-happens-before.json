@@ -1,0 +1,122 @@
+[
+  {
+    "id": "dsa5208-ho-q1",
+    "type": "derivation",
+    "prompt": "State the three rules that generate the happens-before relation.",
+    "accepted": [
+      "local order send before receive transitivity",
+      "same process send receive transitive closure",
+      "program order message order transitivity"
+    ],
+    "solution": "Use local event order, send-before-receive, and transitivity.",
+    "explanation": "These rules define the causal relation without requiring a global clock.",
+    "sourceRefs": [
+      {
+        "sourceId": "DSA5208/Lec1.pdf",
+        "page": 5,
+        "sourceType": "lecture",
+        "role": "causal precedence",
+        "status": "current"
+      }
+    ],
+    "difficulty": "hard",
+    "skill": "derive",
+    "cognitiveLevel": "analyze",
+    "estimatedSeconds": 150,
+    "misconception": "Check the assumption behind your answer.",
+    "visualHook": "Explain the idea with a small diagram or example.",
+    "courseId": "DSA5208",
+    "lessonId": "dsa5208-happens-before",
+    "schemaVersion": "nus.question.v1"
+  },
+  {
+    "id": "dsa5208-ho-q2",
+    "type": "short",
+    "prompt": "Why is concurrency not the same as simultaneous wall-clock time?",
+    "accepted": [
+      "concurrency means neither happens before the other",
+      "wall clock is not causal order",
+      "partial order incomparability"
+    ],
+    "solution": "Concurrency is defined by incomparability under happens-before; two events can be concurrent even if their physical timestamps differ.",
+    "explanation": "A timestamp ordering is not automatically a causal proof.",
+    "sourceRefs": [
+      {
+        "sourceId": "DSA5208/Lec1.pdf",
+        "page": 6,
+        "sourceType": "lecture",
+        "role": "concurrency",
+        "status": "current"
+      }
+    ],
+    "difficulty": "medium",
+    "skill": "explain",
+    "cognitiveLevel": "understand",
+    "estimatedSeconds": 90,
+    "misconception": "Check the assumption behind your answer.",
+    "visualHook": "Explain the idea with a small diagram or example.",
+    "courseId": "DSA5208",
+    "lessonId": "dsa5208-happens-before",
+    "schemaVersion": "nus.question.v1"
+  },
+  {
+    "id": "dsa5208-bank-005",
+    "lessonId": "dsa5208-happens-before",
+    "type": "derivation",
+    "prompt": "State the three rules that generate happens-before.",
+    "accepted": [
+      "local order send before receive transitivity",
+      "same process order message order transitive closure",
+      "program order and transitivity"
+    ],
+    "solution": "Use local process order, send-before-receive, and transitivity.",
+    "explanation": "These rules define causal precedence without a global clock.",
+    "difficulty": "medium",
+    "skill": "derive",
+    "cognitiveLevel": "apply",
+    "estimatedSeconds": 90,
+    "misconception": "Wall-clock order is not one of the generating rules.",
+    "visualHook": "Use the causal graph lab.",
+    "sourceRefs": [
+      {
+        "sourceId": "DSA5208/Lec1.pdf",
+        "page": 5,
+        "sourceType": "lecture",
+        "role": "causal precedence",
+        "status": "current"
+      }
+    ],
+    "courseId": "DSA5208",
+    "schemaVersion": "nus.question.v1"
+  },
+  {
+    "id": "dsa5208-bank-006",
+    "lessonId": "dsa5208-happens-before",
+    "type": "short",
+    "prompt": "What must be true before two events can be called concurrent?",
+    "accepted": [
+      "neither happens before the other",
+      "both directions fail",
+      "incomparable under happens-before"
+    ],
+    "solution": "Neither event happens-before the other; both directions fail under the causal relation.",
+    "explanation": "Concurrency is a positive incomparability condition.",
+    "difficulty": "medium",
+    "skill": "distinguish",
+    "cognitiveLevel": "analyze",
+    "estimatedSeconds": 75,
+    "misconception": "Failure to prove one direction is not enough.",
+    "visualHook": "Compare both directions in the causal graph.",
+    "sourceRefs": [
+      {
+        "sourceId": "DSA5208/Lec1.pdf",
+        "page": 6,
+        "sourceType": "lecture",
+        "role": "concurrency",
+        "status": "current"
+      }
+    ],
+    "courseId": "DSA5208",
+    "schemaVersion": "nus.question.v1"
+  }
+]

@@ -56,7 +56,15 @@
       description: "Distributed systems, time and ordering, consistency, Apache Spark, scalable algorithms, MLlib, GPU, and cloud workflows.", prerequisites: ["DSA5101"],
       workload: [3, 0, 0, 3, 4], department: "Mathematics", faculty: "Science",
       nusmods: { url: "https://nusmods.com/courses/DSA5208/scalable-distributed-computing-for-data-science", apiModule: "https://api.nusmods.com/v2/2026-2027/modules/DSA5208.json", apiSemester: "https://api.nusmods.com/v2/2026-2027/semesters/1/DSA5208/semesterData.json" },
-      localSources: ["DSA5208/Lec0.pdf", "DSA5208/Lec1.pdf"]
+      localSources: ["DSA5208/Lec0.pdf", "DSA5208/Lec1.pdf"],
+      lectureSources: [
+        { sourceId: "DSA5208/Lec0.pdf", sourceType: "lecture", role: "course overview and project scope", status: "current" },
+        { sourceId: "DSA5208/Lec1.pdf", sourceType: "lecture", role: "physical and logical times", status: "current" }
+      ],
+      exerciseSources: [],
+      textbookSources: [{ sourceId: "DSA5208/Distributed Systems textbook pointer", sourceType: "textbook", role: "distributed-systems depth pointer", status: "course-depth" }],
+      referenceSources: [{ sourceId: "L. Lamport, Time, Clocks, and the Ordering of Events in a Distributed System", sourceType: "ref", role: "optional seminal logical-time paper", status: "optional" }],
+      sourceNote: "Lec0 and Lec1 define the currently supplied lecture scope. The textbook and Lamport paper are depth pointers only; later consistency, Spark, MLlib, GPU, and cloud derivations remain pending until their official sources are supplied."
     }
   ];
   window.NUS_CATALOG_META = {

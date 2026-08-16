@@ -24,3 +24,9 @@ test("all DSA5104 authored formulas render with KaTeX", () => {
   assert.ok(result.formulas.length > 0);
   assert.deepEqual(result.errors, []);
 });
+
+test("all DSA5208 authored formulas render with KaTeX", () => {
+  const result = validateCourse("DSA5208");
+  assert.ok(result.formulas.length > 0);
+  assert.deepEqual(result.errors, []);
+});

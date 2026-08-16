@@ -22,6 +22,7 @@ function generatedPackage() {
   vm.runInNewContext(fs.readFileSync(path.join(__dirname, "../data/nus/generated/dsa5101.js"), "utf8"), context);
   vm.runInNewContext(fs.readFileSync(path.join(__dirname, "../data/nus/generated/dsa5105.js"), "utf8"), context);
   vm.runInNewContext(fs.readFileSync(path.join(__dirname, "../data/nus/generated/dsa5104.js"), "utf8"), context);
+  vm.runInNewContext(fs.readFileSync(path.join(__dirname, "../data/nus/generated/dsa5208.js"), "utf8"), context);
   return context.NUS_CONTENT_PACKAGES;
 }
 
@@ -94,6 +95,19 @@ test("DSA5104 package joins textbook, slide reader, labs, and source-backed ques
   assert.equal(repo.getQuestionBank("DSA5104").extensionCount, 12);
 });
 
+test("DSA5208 package joins two slide readers, labs, source lens, and retrieval questions", () => {
+  const repo = createContentRepository({ ...loadLegacyState(), packages: generatedPackage() });
+  const lesson = repo.getLesson("DSA5208", "dsa5208-vector-clocks");
+  assert.equal(lesson.schemaVersion, "nus.lesson.v1");
+  assert.ok(lesson.sourceRefs.some(ref => ref.sourceId === "DSA5208/Lec1.pdf"));
+  assert.ok(repo.getLab("dsa5208-vector-clocks"));
+  assert.equal(repo.getSlideSets("DSA5208").length, 2);
+  assert.deepEqual(Array.from(repo.getSlideSets("DSA5208").map(set => set.slides.length)), [16, 36]);
+  assert.equal(repo.getTextbook("DSA5208").chapters.length, 4);
+  assert.equal(repo.getQuestionBank("DSA5208").extensionCount, 18);
+  assert.ok(lesson.flashcards.length > 0);
+});
+
 test("browser script order installs the same repository boundary", () => {
   const files = [
     "data/nus/provenance.js", "data/nus/courses.js", "data/nus/schedule.js", "data/nus/assessments.js",
@@ -107,12 +121,12 @@ test("browser script order installs the same repository boundary", () => {
   files.forEach(file => vm.runInContext(fs.readFileSync(path.join(__dirname, "..", file), "utf8"), context, { filename: file }));
   const stats = context.NUS_REPOSITORY.stats();
   assert.equal(stats.courses, 4);
-  assert.equal(stats.lessons, 15, "migrated course payload is not loaded at startup");
+  assert.equal(stats.lessons, 20, "migrated course payload is not loaded at startup");
   assert.equal(stats.assessments, 12);
-  assert.equal(stats.labs, 34);
+  assert.equal(stats.labs, 43);
   vm.runInContext(fs.readFileSync(path.join(__dirname, "../data/nus/generated/dsa5105.js"), "utf8"), context, { filename: "data/nus/generated/dsa5105.js" });
   context.NUS_REPOSITORY.registerPackage("DSA5105", context.NUS_CONTENT_PACKAGES.DSA5105);
-  assert.equal(context.NUS_REPOSITORY.stats().lessons, 38);
+  assert.equal(context.NUS_REPOSITORY.stats().lessons, 43);
   assert.equal(context.NUS_REPOSITORY.getLesson("DSA5105", "dsa5105-erm").flashcards.length, 7);
 });
 

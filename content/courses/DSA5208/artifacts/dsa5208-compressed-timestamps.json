@@ -1,0 +1,43 @@
+{
+  "lessonId": "dsa5208-compressed-timestamps",
+  "schemaVersion": "nus.study-kit.v1",
+  "flashcards": [
+    {
+      "front": "Why send only changed vector entries?",
+      "back": "The receiver already knows unchanged entries from the last message sent to that receiver."
+    },
+    {
+      "front": "Naive recent-vector storage?",
+      "back": "Keeping a recent vector for every sender-receiver pair costs $O(n^2)$ storage."
+    },
+    {
+      "front": "Differential technique?",
+      "back": "Maintain Last Sent and Last Update vectors to reduce storage to linear order while identifying changes."
+    }
+  ],
+  "homework": [
+    {
+      "prompt": "Trace a compressed timestamp from sender to receiver.",
+      "rubric": "Identify the receiver's prior vector, list changed entries, apply maxima, and update before delivery.",
+      "source": {
+        "sourceId": "DSA5208/Lec1.pdf",
+        "page": 24,
+        "sourceType": "lecture",
+        "role": "compressed timestamp idea",
+        "status": "current"
+      }
+    },
+    {
+      "prompt": "Compare the basic recent-vector table with the Singhal-Kshemkalyani technique.",
+      "rubric": "State the storage order, maintained state, and correctness invariant.",
+      "source": {
+        "sourceId": "DSA5208/Lec1.pdf",
+        "page": 29,
+        "sourceType": "lecture",
+        "role": "differential technique",
+        "status": "current"
+      }
+    }
+  ],
+  "codeExercises": []
+}

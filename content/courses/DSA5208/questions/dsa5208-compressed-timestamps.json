@@ -1,0 +1,123 @@
+[
+  {
+    "id": "dsa5208-ct-q1",
+    "type": "short",
+    "prompt": "Why can a sender omit unchanged vector entries for one receiver?",
+    "accepted": [
+      "receiver already knows them",
+      "only changed entries need sending",
+      "last sent timestamp stores prior values"
+    ],
+    "solution": "The receiver has already observed the prior values from the last message on that sender-receiver pair, so only changed entries need to be piggybacked.",
+    "explanation": "Compression relies on receiver-specific history, not on dropping causal information arbitrarily.",
+    "sourceRefs": [
+      {
+        "sourceId": "DSA5208/Lec1.pdf",
+        "page": 24,
+        "sourceType": "lecture",
+        "role": "compressed timestamp idea",
+        "status": "current"
+      }
+    ],
+    "difficulty": "medium",
+    "skill": "explain",
+    "cognitiveLevel": "understand",
+    "estimatedSeconds": 90,
+    "misconception": "Check the assumption behind your answer.",
+    "visualHook": "Explain the idea with a small diagram or example.",
+    "courseId": "DSA5208",
+    "lessonId": "dsa5208-compressed-timestamps",
+    "schemaVersion": "nus.question.v1"
+  },
+  {
+    "id": "dsa5208-ct-q2",
+    "type": "short",
+    "prompt": "What state does the differential technique maintain at each process?",
+    "accepted": [
+      "last sent and last update vectors",
+      "LS and LU",
+      "two vectors"
+    ],
+    "solution": "It maintains a Last Sent vector and a Last Update vector.",
+    "explanation": "The pair identifies which local changes have not yet been sent to a target.",
+    "sourceRefs": [
+      {
+        "sourceId": "DSA5208/Lec1.pdf",
+        "page": 30,
+        "sourceType": "lecture",
+        "role": "differential technique",
+        "status": "current"
+      }
+    ],
+    "difficulty": "medium",
+    "skill": "explain",
+    "cognitiveLevel": "understand",
+    "estimatedSeconds": 90,
+    "misconception": "Check the assumption behind your answer.",
+    "visualHook": "Explain the idea with a small diagram or example.",
+    "courseId": "DSA5208",
+    "lessonId": "dsa5208-compressed-timestamps",
+    "schemaVersion": "nus.question.v1"
+  },
+  {
+    "id": "dsa5208-bank-015",
+    "lessonId": "dsa5208-compressed-timestamps",
+    "type": "short",
+    "prompt": "Why can a sender omit unchanged vector entries for one receiver?",
+    "accepted": [
+      "the receiver already knows them",
+      "only changed entries need sending",
+      "prior message stores those values"
+    ],
+    "solution": "The receiver has already observed the prior values from the last message on that sender-receiver pair, so only changed entries need to be sent.",
+    "explanation": "Compression relies on receiver-specific history.",
+    "difficulty": "medium",
+    "skill": "explain",
+    "cognitiveLevel": "analyze",
+    "estimatedSeconds": 90,
+    "misconception": "Compression may omit repetition, not required causal knowledge.",
+    "visualHook": "Trace the metadata $\\delta$.",
+    "sourceRefs": [
+      {
+        "sourceId": "DSA5208/Lec1.pdf",
+        "page": 24,
+        "sourceType": "lecture",
+        "role": "compressed timestamp idea",
+        "status": "current"
+      }
+    ],
+    "courseId": "DSA5208",
+    "schemaVersion": "nus.question.v1"
+  },
+  {
+    "id": "dsa5208-bank-016",
+    "lessonId": "dsa5208-compressed-timestamps",
+    "type": "mcq",
+    "prompt": "Which technique reduces the timestamp storage order from quadratic to linear in the lecture?",
+    "choices": [
+      "NTP",
+      "Singhal-Kshemkalyani differential technique",
+      "FIFO delivery",
+      "Scalar Lamport time"
+    ],
+    "answer": 1,
+    "explanation": "The differential technique maintains Last Sent and Last Update vectors.",
+    "difficulty": "medium",
+    "skill": "recall",
+    "cognitiveLevel": "understand",
+    "estimatedSeconds": 60,
+    "misconception": "Vector compression and scalar clocks solve different problems.",
+    "visualHook": "Compare recent-vector storage with LS/LU state.",
+    "sourceRefs": [
+      {
+        "sourceId": "DSA5208/Lec1.pdf",
+        "page": 29,
+        "sourceType": "lecture",
+        "role": "differential technique",
+        "status": "current"
+      }
+    ],
+    "courseId": "DSA5208",
+    "schemaVersion": "nus.question.v1"
+  }
+]

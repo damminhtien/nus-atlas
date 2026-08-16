@@ -1,0 +1,482 @@
+{
+  "id": "dsa5208-lamport-scalar",
+  "title": "Lamport scalar time",
+  "week": 3,
+  "minutes": 60,
+  "summary": "Apply scalar-clock update rules, prove consistency, and understand total ordering versus strong consistency.",
+  "objectives": [
+    "Update clocks before sends and internal events",
+    "Apply the receive max rule",
+    "Explain why scalar time cannot detect all concurrency"
+  ],
+  "sourceRefs": [
+    {
+      "sourceId": "DSA5208/Lec1.pdf",
+      "page": 16,
+      "sourceType": "lecture",
+      "role": "logical-clock definition",
+      "status": "current"
+    },
+    {
+      "sourceId": "DSA5208/Lec1.pdf",
+      "page": 17,
+      "sourceType": "lecture",
+      "role": "Lamport scalar time",
+      "status": "current"
+    },
+    {
+      "sourceId": "DSA5208/Lec1.pdf",
+      "page": 19,
+      "sourceType": "lecture",
+      "role": "scalar properties",
+      "status": "current"
+    }
+  ],
+  "visualIds": [
+    "dsa5208-lamport-trace"
+  ],
+  "sections": [
+    {
+      "title": "The scalar update rule",
+      "sourceType": "lecture",
+      "body": "A process increments its scalar clock before a send or internal event. On receive, it takes the maximum of the local and message timestamp, increments, and then delivers the message.",
+      "sourceRefs": [
+        {
+          "sourceId": "DSA5208/Lec1.pdf",
+          "page": 17,
+          "sourceType": "lecture",
+          "role": "Lamport scalar rules",
+          "status": "current"
+        }
+      ],
+      "sourceLens": {
+        "status": "core DSA5208",
+        "whyExaminable": "The rule is a core derivation and trace skill: students must update local state in the correct order and preserve the send-before-receive implication.",
+        "lecture": [
+          {
+            "sourceId": "DSA5208/Lec1.pdf",
+            "page": 17,
+            "sourceType": "lecture",
+            "role": "Lamport scalar rules",
+            "status": "current"
+          }
+        ],
+        "officialExercise": [],
+        "textbook": [
+          {
+            "sourceId": "DSA5208/Distributed Systems textbook pointer",
+            "page": 55,
+            "sourceType": "textbook",
+            "role": "Lamport clocks",
+            "status": "course-depth"
+          }
+        ],
+        "reference": [
+          {
+            "sourceId": "L. Lamport, Time, Clocks, and the Ordering of Events in a Distributed System",
+            "page": 1,
+            "sourceType": "ref",
+            "role": "scalar logical clocks",
+            "status": "optional"
+          }
+        ]
+      }
+    },
+    {
+      "title": "Consistency is one-way",
+      "sourceType": "lecture",
+      "body": "Lamport scalar timestamps guarantee that a happens-before relation produces an increasing timestamp. The converse fails: two concurrent events can still receive ordered scalar values, which is useful for deterministic total ordering but not a complete causality test.",
+      "sourceRefs": [
+        {
+          "sourceId": "DSA5208/Lec1.pdf",
+          "page": 19,
+          "sourceType": "lecture",
+          "role": "scalar properties",
+          "status": "current"
+        }
+      ],
+      "sourceLens": {
+        "status": "core DSA5208",
+        "whyExaminable": "The one-way implication is a classic distinction: scalar clocks preserve causality but may invent order between concurrent events.",
+        "lecture": [
+          {
+            "sourceId": "DSA5208/Lec1.pdf",
+            "page": 19,
+            "sourceType": "lecture",
+            "role": "scalar properties",
+            "status": "current"
+          }
+        ],
+        "officialExercise": [],
+        "textbook": [
+          {
+            "sourceId": "DSA5208/Distributed Systems textbook pointer",
+            "page": 58,
+            "sourceType": "textbook",
+            "role": "logical-clock limitations",
+            "status": "course-depth"
+          }
+        ],
+        "reference": [
+          {
+            "sourceId": "L. Lamport, Time, Clocks, and the Ordering of Events in a Distributed System",
+            "page": 1,
+            "sourceType": "ref",
+            "role": "Lamport total ordering",
+            "status": "optional"
+          }
+        ]
+      }
+    }
+  ],
+  "examples": [
+    {
+      "title": "Receive-event trace",
+      "sourceType": "lecture",
+      "steps": [
+        "Read the local clock before receiving.",
+        "Read the piggybacked message timestamp.",
+        "Take the maximum.",
+        "Increment and only then deliver the message."
+      ],
+      "answer": "The receive event must be later than both the local history and the sender's timestamp."
+    }
+  ],
+  "contrastDrills": [
+    {
+      "id": "dsa5208-contrast-lamport-vector",
+      "type": "contrast",
+      "kind": "concept-contrast",
+      "pair": "Lamport scalar vs vector time",
+      "prompt": "Which representation can distinguish two concurrent events by componentwise incomparability?",
+      "choices": [
+        "Lamport scalar",
+        "Vector time",
+        "NTP delay",
+        "FIFO queue"
+      ],
+      "answer": 1,
+      "explanation": "Vector timestamps preserve enough per-process information to identify incomparable concurrent events; scalar timestamps can impose an arbitrary order.",
+      "estimatedSeconds": 45,
+      "difficulty": "medium",
+      "skill": "concept-contrast",
+      "cognitiveLevel": "distinguish",
+      "misconception": "Name the ordering, time, or communication boundary before choosing.",
+      "sourceRefs": [
+        {
+          "sourceId": "DSA5208/Lec1.pdf",
+          "page": 19,
+          "sourceType": "lecture",
+          "role": "scalar limitations",
+          "status": "current"
+        },
+        {
+          "sourceId": "DSA5208/Lec1.pdf",
+          "page": 23,
+          "sourceType": "lecture",
+          "role": "vector properties",
+          "status": "current"
+        }
+      ]
+    },
+    {
+      "id": "dsa5208-contrast-strong-lamport",
+      "type": "contrast",
+      "kind": "concept-contrast",
+      "pair": "Weak ordering vs strong consistency",
+      "prompt": "What does a Lamport scalar clock guarantee for a happens-before pair?",
+      "choices": [
+        "Equal timestamps",
+        "Increasing timestamps",
+        "The events are concurrent",
+        "A shared physical clock"
+      ],
+      "answer": 1,
+      "explanation": "Scalar-clock consistency is the forward implication from happens-before to increasing timestamp.",
+      "estimatedSeconds": 45,
+      "difficulty": "medium",
+      "skill": "concept-contrast",
+      "cognitiveLevel": "distinguish",
+      "misconception": "Name the ordering, time, or communication boundary before choosing.",
+      "sourceRefs": [
+        {
+          "sourceId": "DSA5208/Lec1.pdf",
+          "page": 16,
+          "sourceType": "lecture",
+          "role": "clock consistency",
+          "status": "current"
+        }
+      ]
+    }
+  ],
+  "math": [
+    {
+      "latex": "C_i := \\max(C_i,C_{\\mathrm{msg}})+d",
+      "explanation": "On receipt, a process moves its scalar clock beyond both its local history and the received timestamp. The usual teaching choice is $d=1$.",
+      "symbols": [
+        {
+          "latex": "C_i",
+          "meaning": "local scalar clock"
+        },
+        {
+          "latex": "C_{\\mathrm{msg}}",
+          "meaning": "message timestamp"
+        },
+        {
+          "latex": "d",
+          "meaning": "positive increment"
+        }
+      ],
+      "sourceType": "lecture"
+    },
+    {
+      "latex": "e_i\\to e_j\\ \\Longrightarrow\\ C(e_i)<C(e_j)",
+      "explanation": "Lamport scalar clocks are consistent with causality in the forward direction. The converse is not guaranteed: an ordered scalar pair can still be concurrent.",
+      "symbols": [
+        {
+          "latex": "C(e)",
+          "meaning": "scalar timestamp of event e"
+        }
+      ],
+      "sourceType": "lecture"
+    }
+  ],
+  "criticalQuestions": [
+    {
+      "prompt": "Why must the receive event increment after taking the maximum?",
+      "angle": "The receive must be later than both the local event history and the sender's timestamp.",
+      "modelAnswer": "Taking the maximum alone could tie with known history. Incrementing places the receive event strictly after both sources of information.",
+      "focus": "update order"
+    },
+    {
+      "prompt": "Does $C(e_i)<C(e_j)$ prove $e_i\\to e_j$?",
+      "angle": "Distinguish a causal-preserving implication from a causal-complete representation.",
+      "modelAnswer": "No. Scalar clocks guarantee $e_i\\to e_j\\Rightarrow C(e_i)<C(e_j)$, but the reverse implication can fail for concurrent events.",
+      "focus": "one-way guarantee"
+    }
+  ],
+  "courseId": "DSA5208",
+  "moduleId": "dsa5208-clocks",
+  "blocks": [
+    {
+      "id": "dsa5208-lamport-scalar-section-1",
+      "type": "teaching-note",
+      "title": "The scalar update rule",
+      "body": "A process increments its scalar clock before a send or internal event. On receive, it takes the maximum of the local and message timestamp, increments, and then delivers the message.",
+      "sourceType": "lecture",
+      "sourceRefs": [
+        {
+          "sourceId": "DSA5208/Lec1.pdf",
+          "page": 17,
+          "sourceType": "lecture",
+          "role": "Lamport scalar rules",
+          "status": "current"
+        }
+      ]
+    },
+    {
+      "id": "dsa5208-lamport-scalar-section-2",
+      "type": "teaching-note",
+      "title": "Consistency is one-way",
+      "body": "Lamport scalar timestamps guarantee that a happens-before relation produces an increasing timestamp. The converse fails: two concurrent events can still receive ordered scalar values, which is useful for deterministic total ordering but not a complete causality test.",
+      "sourceType": "lecture",
+      "sourceRefs": [
+        {
+          "sourceId": "DSA5208/Lec1.pdf",
+          "page": 19,
+          "sourceType": "lecture",
+          "role": "scalar properties",
+          "status": "current"
+        }
+      ]
+    },
+    {
+      "id": "dsa5208-lamport-scalar-formula-1",
+      "type": "formula",
+      "latex": "C_i := \\max(C_i,C_{\\mathrm{msg}})+d",
+      "explanation": "On receipt, a process moves its scalar clock beyond both its local history and the received timestamp. The usual teaching choice is $d=1$.",
+      "symbols": [
+        {
+          "latex": "C_i",
+          "meaning": "local scalar clock"
+        },
+        {
+          "latex": "C_{\\mathrm{msg}}",
+          "meaning": "message timestamp"
+        },
+        {
+          "latex": "d",
+          "meaning": "positive increment"
+        }
+      ],
+      "sourceType": "lecture",
+      "sourceRefs": [
+        {
+          "sourceId": "DSA5208/Lec1.pdf",
+          "page": 16,
+          "sourceType": "lecture",
+          "role": "logical-clock definition",
+          "status": "current"
+        },
+        {
+          "sourceId": "DSA5208/Lec1.pdf",
+          "page": 17,
+          "sourceType": "lecture",
+          "role": "Lamport scalar time",
+          "status": "current"
+        },
+        {
+          "sourceId": "DSA5208/Lec1.pdf",
+          "page": 19,
+          "sourceType": "lecture",
+          "role": "scalar properties",
+          "status": "current"
+        }
+      ]
+    },
+    {
+      "id": "dsa5208-lamport-scalar-formula-2",
+      "type": "formula",
+      "latex": "e_i\\to e_j\\ \\Longrightarrow\\ C(e_i)<C(e_j)",
+      "explanation": "Lamport scalar clocks are consistent with causality in the forward direction. The converse is not guaranteed: an ordered scalar pair can still be concurrent.",
+      "symbols": [
+        {
+          "latex": "C(e)",
+          "meaning": "scalar timestamp of event e"
+        }
+      ],
+      "sourceType": "lecture",
+      "sourceRefs": [
+        {
+          "sourceId": "DSA5208/Lec1.pdf",
+          "page": 16,
+          "sourceType": "lecture",
+          "role": "logical-clock definition",
+          "status": "current"
+        },
+        {
+          "sourceId": "DSA5208/Lec1.pdf",
+          "page": 17,
+          "sourceType": "lecture",
+          "role": "Lamport scalar time",
+          "status": "current"
+        },
+        {
+          "sourceId": "DSA5208/Lec1.pdf",
+          "page": 19,
+          "sourceType": "lecture",
+          "role": "scalar properties",
+          "status": "current"
+        }
+      ]
+    },
+    {
+      "id": "dsa5208-lamport-scalar-example-1",
+      "type": "worked-example",
+      "title": "Receive-event trace",
+      "sourceType": "lecture",
+      "steps": [
+        "Read the local clock before receiving.",
+        "Read the piggybacked message timestamp.",
+        "Take the maximum.",
+        "Increment and only then deliver the message."
+      ],
+      "answer": "The receive event must be later than both the local history and the sender's timestamp.",
+      "sourceRefs": [
+        {
+          "sourceId": "DSA5208/Lec1.pdf",
+          "page": 16,
+          "sourceType": "lecture",
+          "role": "logical-clock definition",
+          "status": "current"
+        },
+        {
+          "sourceId": "DSA5208/Lec1.pdf",
+          "page": 17,
+          "sourceType": "lecture",
+          "role": "Lamport scalar time",
+          "status": "current"
+        },
+        {
+          "sourceId": "DSA5208/Lec1.pdf",
+          "page": 19,
+          "sourceType": "lecture",
+          "role": "scalar properties",
+          "status": "current"
+        }
+      ]
+    },
+    {
+      "id": "dsa5208-lamport-scalar-critical-1",
+      "type": "critical-question",
+      "prompt": "Why must the receive event increment after taking the maximum?",
+      "angle": "The receive must be later than both the local event history and the sender's timestamp.",
+      "modelAnswer": "Taking the maximum alone could tie with known history. Incrementing places the receive event strictly after both sources of information.",
+      "focus": "update order",
+      "sourceRefs": [
+        {
+          "sourceId": "DSA5208/Lec1.pdf",
+          "page": 16,
+          "sourceType": "lecture",
+          "role": "logical-clock definition",
+          "status": "current"
+        },
+        {
+          "sourceId": "DSA5208/Lec1.pdf",
+          "page": 17,
+          "sourceType": "lecture",
+          "role": "Lamport scalar time",
+          "status": "current"
+        },
+        {
+          "sourceId": "DSA5208/Lec1.pdf",
+          "page": 19,
+          "sourceType": "lecture",
+          "role": "scalar properties",
+          "status": "current"
+        }
+      ]
+    },
+    {
+      "id": "dsa5208-lamport-scalar-critical-2",
+      "type": "critical-question",
+      "prompt": "Does $C(e_i)<C(e_j)$ prove $e_i\\to e_j$?",
+      "angle": "Distinguish a causal-preserving implication from a causal-complete representation.",
+      "modelAnswer": "No. Scalar clocks guarantee $e_i\\to e_j\\Rightarrow C(e_i)<C(e_j)$, but the reverse implication can fail for concurrent events.",
+      "focus": "one-way guarantee",
+      "sourceRefs": [
+        {
+          "sourceId": "DSA5208/Lec1.pdf",
+          "page": 16,
+          "sourceType": "lecture",
+          "role": "logical-clock definition",
+          "status": "current"
+        },
+        {
+          "sourceId": "DSA5208/Lec1.pdf",
+          "page": 17,
+          "sourceType": "lecture",
+          "role": "Lamport scalar time",
+          "status": "current"
+        },
+        {
+          "sourceId": "DSA5208/Lec1.pdf",
+          "page": 19,
+          "sourceType": "lecture",
+          "role": "scalar properties",
+          "status": "current"
+        }
+      ]
+    }
+  ],
+  "questionIds": [
+    "dsa5208-ls-q1",
+    "dsa5208-ls-q2",
+    "dsa5208-bank-011",
+    "dsa5208-bank-012"
+  ],
+  "labIds": [
+    "dsa5208-lamport-trace"
+  ],
+  "schemaVersion": "nus.lesson.v1"
+}

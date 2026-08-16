@@ -1,0 +1,52 @@
+{
+  "lessonId": "dsa5208-vector-clocks",
+  "schemaVersion": "nus.study-kit.v1",
+  "flashcards": [
+    {
+      "front": "Vector receive rule?",
+      "back": "Take componentwise maxima with the received vector, then increment the local process component before delivery."
+    },
+    {
+      "front": "Vector order?",
+      "back": "$X<Y$ requires every component of $X$ to be no larger and at least one to be strictly smaller."
+    },
+    {
+      "front": "Vector concurrency?",
+      "back": "If each vector is larger in a different component, neither dominates and the events are concurrent."
+    }
+  ],
+  "homework": [
+    {
+      "prompt": "Work a two-process vector-clock trace with one send and one receive.",
+      "rubric": "Show the vector before send, the piggybacked vector, componentwise max, and post-receive increment.",
+      "source": {
+        "sourceId": "DSA5208/Lec1.pdf",
+        "page": 20,
+        "sourceType": "lecture",
+        "role": "vector-clock rules",
+        "status": "current"
+      }
+    },
+    {
+      "prompt": "$Compare X=(2,1) and Y=(1,2), then explain the result without using lexicographic order.$",
+      "rubric": "Check every component and name incomparability as concurrency.",
+      "source": {
+        "sourceId": "DSA5208/Lec1.pdf",
+        "page": 22,
+        "sourceType": "lecture",
+        "role": "vector comparison",
+        "status": "current"
+      }
+    }
+  ],
+  "codeExercises": [
+    {
+      "id": "dsa5208-vector-code",
+      "language": "python",
+      "prompt": "Implement vector dominance.",
+      "starter": "def happens_before(x, y):\n    return all(a <= b for a, b in zip(x, y)) and any(a < b for a, b in zip(x, y))",
+      "expected": "True",
+      "solution": "The relation requires all components to be no larger and at least one to be strictly smaller."
+    }
+  ]
+}
