@@ -87,6 +87,16 @@
     return value.length > 0 && rubric.every(item => (item.required || []).every(term => termMatches(value, term)));
   }
 
+  function gradingMode(question) {
+    if (question && question.type === "mcq") return "exact";
+    if (question && question.type === "derivation" && Array.isArray(question.rubric) && question.rubric.length) return "rubric";
+    return "heuristic";
+  }
+
+  function masteryEligible(question) {
+    return gradingMode(question) === "exact";
+  }
+
   function answerKey(question, raw) {
     if (question.type === "mcq") return Number(raw) === question.answer;
     const rubricResult = rubricPasses(question, raw);
@@ -111,13 +121,13 @@
     stopTimer();
     const score = state.answers.filter(answer => answer.correct).length;
     const store = getStore();
-    state.answers.filter(answer => answer.correct).forEach(answer => store.recordEvidence({
+    state.answers.filter(answer => answer.correct && masteryEligible(answer.q)).forEach(answer => store.recordEvidence({
       eventId: `recall:${state.attemptId}:${answer.q.id}`,
       type: "recall_correct",
       courseCode: state.code,
       lessonId: answer.q.lessonId,
       xp: 5,
-      meta: { questionId: answer.q.id }
+      meta: { questionId: answer.q.id, gradingMode: "exact" }
     }));
     store.recordAttempt({
       attemptId: state.attemptId,
@@ -125,7 +135,11 @@
       courseCode: state.code,
       lessonId: state.scope || null,
       score,
-      total: state.questions.length
+      total: state.questions.length,
+      meta: {
+        exactAutoGraded: state.answers.filter(answer => masteryEligible(answer.q)).length,
+        openResponse: state.answers.filter(answer => !masteryEligible(answer.q)).length
+      }
     });
     render(null, null, true);
   }
@@ -161,8 +175,14 @@
   function renderResult() {
     const correct = state.answers.filter(answer => answer.correct).length;
     const total = state.questions.length;
-    let body = pageHead(`${esc(state.code)} · review`, "Attempt complete", `${correct}/${total} correct. Use the deck below to turn misses into the next study session.`);
-    body += `<div class="nus-result-score"><b>${Math.round(correct / Math.max(1, total) * 100)}%</b><span>${correct} correct · ${total - correct} to review</span></div>${total - correct ? `<div class="nus-callout nus-mistake-callout"><b>${total - correct} repair${total - correct === 1 ? "" : "s"} queued</b><span>Open Mistake Clinic to turn each miss into a corrected idea.</span>${button("Open Mistake Clinic", `#/nus/mistakes/${state.code}`, "primary")}</div>` : ""}<div class="nus-review-deck">${state.answers.map((answer, index) => `<article class="nus-review-item ${answer.correct ? "correct" : "missed"}"><div><span class="pill ${answer.correct ? "sage" : ""}">${answer.correct ? "Correct" : "Review"}</span><b>${index + 1}. ${esc(answer.q.prompt)}</b></div><p><strong>Source:</strong> ${(answer.q.sourceRefs || answer.q.lessonSourceRefs || []).slice(0, 2).map(sourceItem).join(" ")}</p><p><strong>Your answer:</strong> ${esc(answer.q.type === "mcq" ? (answer.q.choices[Number(answer.raw)] || "No choice") : answer.raw)}</p><p><strong>Worked answer:</strong> ${text(answer.q.solution || answer.q.explanation || "Review the source lesson.")}</p></article>`).join("")}</div><div class="nus-card"><h3>Cheat sheet</h3>${getLessons(state.code).map(lesson => `<details><summary>${esc(lesson.title)}</summary>${lesson.sections.map(section => `<p>${text(section.body)}</p>`).join("")}</details>`).join("")}</div><div class="nus-lesson-actions">${button("Try again", `#/nus/exam/${state.code}${state.scope ? `/${state.scope}` : ""}`, "primary")}${button("Back to course", `#/nus/course/${state.code}`, "ghost")}${button("Study desk", "#/", "ghost")}</div>`;
+    const exactAnswers = state.answers.filter(answer => masteryEligible(answer.q));
+    const exactCorrect = exactAnswers.filter(answer => answer.correct).length;
+    const openResponses = total - exactAnswers.length;
+    const gradingSummary = exactAnswers.length
+      ? `${exactCorrect}/${exactAnswers.length} exact auto-graded${openResponses ? ` · ${openResponses} open-response self-check${openResponses === 1 ? "" : "s"}` : ""}`
+      : `${openResponses} open-response self-check${openResponses === 1 ? "" : "s"}`;
+    let body = pageHead(`${esc(state.code)} · review`, "Attempt complete", `${gradingSummary}. Open-response rubric/phrase matches are feedback signals, not mastery evidence.`);
+    body += `<div class="nus-result-score"><b>${Math.round(correct / Math.max(1, total) * 100)}%</b><span>${correct} matched · ${total - correct} to review</span></div>${total - correct ? `<div class="nus-callout nus-mistake-callout"><b>${total - correct} repair${total - correct === 1 ? "" : "s"} queued</b><span>Open Mistake Clinic to turn each miss into a corrected idea.</span>${button("Open Mistake Clinic", `#/nus/mistakes/${state.code}`, "primary")}</div>` : ""}<div class="nus-review-deck">${state.answers.map((answer, index) => { const mode = gradingMode(answer.q); const label = mode === "exact" ? (answer.correct ? "Correct" : "Review") : (answer.correct ? "Rubric match" : "Self-review"); return `<article class="nus-review-item ${answer.correct ? "correct" : "missed"}"><div><span class="pill ${answer.correct ? "sage" : ""}">${label}</span><b>${index + 1}. ${esc(answer.q.prompt)}</b></div><p><strong>Grading:</strong> ${mode === "exact" ? "deterministic" : "heuristic feedback; does not award mastery evidence"}</p><p><strong>Source:</strong> ${(answer.q.sourceRefs || answer.q.lessonSourceRefs || []).slice(0, 2).map(sourceItem).join(" ")}</p><p><strong>Your answer:</strong> ${esc(answer.q.type === "mcq" ? (answer.q.choices[Number(answer.raw)] || "No choice") : answer.raw)}</p><p><strong>Worked answer:</strong> ${text(answer.q.solution || answer.q.explanation || "Review the source lesson.")}</p></article>`; }).join("")}</div><div class="nus-card"><h3>Cheat sheet</h3>${getLessons(state.code).map(lesson => `<details><summary>${esc(lesson.title)}</summary>${lesson.sections.map(section => `<p>${text(section.body)}</p>`).join("")}</details>`).join("")}</div><div class="nus-lesson-actions">${button("Try again", `#/nus/exam/${state.code}${state.scope ? `/${state.scope}` : ""}`, "primary")}${button("Back to course", `#/nus/course/${state.code}`, "ghost")}${button("Study desk", "#/", "ghost")}</div>`;
     root.innerHTML = body;
     typeset();
   }
@@ -173,7 +193,7 @@
     if (!state) {
       const optionsHtml = getCourses().map(course => `<option value="${esc(course.code)}" ${code === course.code ? "selected" : ""}>${esc(course.code)} · ${esc(course.title)}</option>`).join("");
       const selected = code || "DSA5208";
-      root.innerHTML = pageHead("NUS practice", "Exam mode", "Choose a course, a focus, and a short attempt. Every answer is logged as a question-level learning signal; solutions remain locked until submission.") + `<section class="nus-card nus-exam-setup reveal"><div class="nus-exam-setup-grid"><label>Course<select id="nus-exam-course">${optionsHtml}</select></label><label>Scope<select id="nus-exam-scope"><option value="">All seeded lessons</option>${getLessons(selected).map(lesson => `<option value="${esc(lesson.id)}" ${scope === lesson.id ? "selected" : ""}>${esc(lesson.title)}</option>`).join("")}</select></label><label>Focus<select id="nus-exam-focus"><option value="smart">Smart mix</option><option value="weakness">Weak topics</option><option value="new">New concepts</option><option value="mixed">Mixed retrieval</option></select></label><label>Questions<select id="nus-exam-count"><option value="5">5 questions</option><option value="10" selected>10 questions</option><option value="15">15 questions</option></select></label><label>Time<select id="nus-exam-minutes"><option value="15">15 minutes</option><option value="30" selected>30 minutes</option><option value="45">45 minutes</option></select></label></div><div class="nus-callout"><b>Practice loop</b><span>Answer first, review the explanation, then repair misses in Mistake Clinic. Lecture refs are primary; textbook/ref refs are labeled as support.</span></div><div class="nus-card-actions"><button class="btn primary" id="nus-start-exam">Start attempt</button>${button("Course map", `#/nus/course/${esc(selected)}`, "ghost")}${button("Mistake Clinic", `#/nus/mistakes/${esc(selected)}`, "ghost")}</div></section>`;
+      root.innerHTML = pageHead("NUS practice", "Exam mode", "Choose a course, a focus, and a short attempt. MCQ answers are exact auto-grades; open responses use heuristic rubric/phrase checks for feedback and do not automatically become mastery evidence.") + `<section class="nus-card nus-exam-setup reveal"><div class="nus-exam-setup-grid"><label>Course<select id="nus-exam-course">${optionsHtml}</select></label><label>Scope<select id="nus-exam-scope"><option value="">All seeded lessons</option>${getLessons(selected).map(lesson => `<option value="${esc(lesson.id)}" ${scope === lesson.id ? "selected" : ""}>${esc(lesson.title)}</option>`).join("")}</select></label><label>Focus<select id="nus-exam-focus"><option value="smart">Smart mix</option><option value="weakness">Weak topics</option><option value="new">New concepts</option><option value="mixed">Mixed retrieval</option></select></label><label>Questions<select id="nus-exam-count"><option value="5">5 questions</option><option value="10" selected>10 questions</option><option value="15">15 questions</option></select></label><label>Time<select id="nus-exam-minutes"><option value="15">15 minutes</option><option value="30" selected>30 minutes</option><option value="45">45 minutes</option></select></label></div><div class="nus-callout"><b>Practice loop</b><span>Answer first, review the explanation, then repair misses in Mistake Clinic. Lecture refs are primary; textbook/ref refs are labeled as support.</span></div><div class="nus-card-actions"><button class="btn primary" id="nus-start-exam">Start attempt</button>${button("Course map", `#/nus/course/${esc(selected)}`, "ghost")}${button("Mistake Clinic", `#/nus/mistakes/${esc(selected)}`, "ghost")}</div></section>`;
       typeset();
       const courseSelect = root.querySelector("#nus-exam-course");
       const scopeSelect = root.querySelector("#nus-exam-scope");
@@ -205,7 +225,7 @@
       ? `<div class="nus-choices">${question.choices.map((choice, index) => `<label><input type="radio" name="nus-answer" value="${index}"><span>${esc(choice)}</span></label>`).join("")}</div>`
       : `<textarea id="nus-answer" rows="5" placeholder="Write your answer here…"></textarea>`;
     const rubricHint = question.type === "derivation" && Array.isArray(question.rubric) && question.rubric.length
-      ? `<p class="nus-muted nus-rubric-hint"><b>Required derivation components:</b> ${question.rubric.map(item => esc(item.label)).join(" · ")}</p>`
+      ? `<p class="nus-muted nus-rubric-hint"><b>Self-review rubric:</b> ${question.rubric.map(item => esc(item.label)).join(" · ")}. Matching all components is heuristic feedback, not a deterministic proof of correctness.</p>`
       : "";
     root.innerHTML = pageHead(`${esc(state.code)} · Question ${state.index + 1}/${state.questions.length}`, question.type.toUpperCase(), question.lessonTitle) + `<div class="nus-exam-bar"><span>Time left <b id="nus-exam-timer">--:--</b></span><span>${answersSoFar} submitted</span><span>${esc(state.focus || "smart")} · ${state.questions.length} questions</span></div><section class="nus-card nus-exam-question reveal"><div class="nus-question-source">${(question.sourceRefs || question.lessonSourceRefs || []).slice(0, 2).map(sourceItem).join(" ")}</div><div class="nus-question-meta"><span>${esc(questionLabel(question))}</span><span>${esc(question.cognitiveLevel || "understand")}</span></div><h3>${esc(question.prompt)}</h3>${rubricHint}${input}<div class="nus-exam-footer"><span class="nus-muted">Answer reveal is locked until the attempt ends.</span><div class="nus-exam-footer-actions">${question.lessonId ? button("Review lesson", `#/nus/lesson/${esc(state.code)}/${esc(question.lessonId)}`, "ghost") : ""}${button("Mistakes", `#/nus/mistakes/${esc(state.code)}`, "ghost")}<button class="btn primary" id="nus-next-answer">${state.index + 1 === state.questions.length ? "Submit attempt" : "Next question"}</button></div></div></section>`;
     typeset();
@@ -215,7 +235,7 @@
       const correct = answerKey(question, raw);
       state.answers.push({ q: question, raw, correct });
       const store = getStore();
-      if (store && typeof store.recordQuestionAttempt === "function") store.recordQuestionAttempt({ attemptId: state.attemptId, courseCode: state.code, correct, raw, question });
+      if (store && typeof store.recordQuestionAttempt === "function") store.recordQuestionAttempt({ attemptId: state.attemptId, courseCode: state.code, correct, raw, question, gradingMode: gradingMode(question) });
       state.index++;
       if (state.index >= state.questions.length) finish();
       else render(null, null, true);
@@ -223,5 +243,5 @@
     startTimer();
   }
 
-  return Object.freeze({ render, renderMistakes, stopTimer, questionsFor, answerKey });
+  return Object.freeze({ render, renderMistakes, stopTimer, questionsFor, answerKey, gradingMode, masteryEligible });
 });
