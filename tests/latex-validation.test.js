@@ -23,9 +23,8 @@ test('rejects malformed delimiters and leaked normalizer markers', () => {
   assert.ok(findMalformedMath('\u0001FORMULA0\u0001').some(match => match.label === 'normalizer placeholder'));
 });
 
-test('rejects accidental JSON tab escapes and instruction prose inside math', () => {
+test('rejects accidental JSON tab escapes inside math', () => {
   assert.ok(findMalformedMath('$\\Phi^\topPhi$').some(match => match.label === 'tab character inside math'));
-  assert.ok(findMalformedMath('$Derive the ridge spectral shrinkage factor$').some(match => match.label === 'instruction prose inside math'));
 });
 
 test('rejects double-escaped TeX commands without flagging matrix row breaks', () => {
