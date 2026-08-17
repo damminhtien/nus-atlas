@@ -51,8 +51,8 @@
     "skill": "derive",
     "cognitiveLevel": "analyze",
     "estimatedSeconds": 150,
-    "misconception": "Check the assumption behind your answer.",
-    "visualHook": "Explain the idea with a small diagram or example.",
+    "misconception": "Do not confuse the empirical average with the population expectation; iid sampling is the bridge, not an identity between the two risks.",
+    "visualHook": "Sketch a finite training sample feeding an empirical average beside a population distribution feeding an expectation.",
     "courseId": "DSA5105",
     "lessonId": "dsa5105-week1-derivations",
     "schemaVersion": "nus.question.v1"
@@ -111,8 +111,8 @@
     "skill": "derive",
     "cognitiveLevel": "analyze",
     "estimatedSeconds": 150,
-    "misconception": "Check the assumption behind your answer.",
-    "visualHook": "Explain the idea with a small diagram or example.",
+    "misconception": "Huber bounds each residual's derivative contribution outside the quadratic region; the loss itself is not bounded.",
+    "visualHook": "Sketch the Huber score $\\psi_\\delta(r)$ as linear near zero and capped at magnitude $\\delta$ outside the transition region.",
     "courseId": "DSA5105",
     "lessonId": "dsa5105-week1-derivations",
     "schemaVersion": "nus.question.v1"
@@ -163,8 +163,8 @@
     "skill": "derive",
     "cognitiveLevel": "analyze",
     "estimatedSeconds": 150,
-    "misconception": "Check the assumption behind your answer.",
-    "visualHook": "Explain the idea with a small diagram or example.",
+    "misconception": "The pseudoinverse gives one distinguished solution; singular OLS has an affine family obtained by adding null-space components that preserve the training fit.",
+    "visualHook": "Draw a parameter-space null direction along which the weights move while the training predictions stay unchanged.",
     "courseId": "DSA5105",
     "lessonId": "dsa5105-week1-derivations",
     "schemaVersion": "nus.question.v1"
@@ -172,7 +172,7 @@
   {
     "id": "dsa5105-w1d-q4",
     "type": "derivation",
-    "prompt": "$Derive the ridge spectral shrinkage factor along an eigenvector v_j.$",
+    "prompt": "Derive the ridge spectral shrinkage factor along an eigenvector $v_j$.",
     "accepted": [
       "mu j divided by mu j plus lambda",
       "mu over mu plus lambda"
@@ -230,8 +230,8 @@
     "skill": "derive",
     "cognitiveLevel": "analyze",
     "estimatedSeconds": 150,
-    "misconception": "Check the assumption behind your answer.",
-    "visualHook": "Explain the idea with a small diagram or example.",
+    "misconception": "Ridge does not shrink every direction equally; directions with small eigenvalues $\\mu_j$ are damped most strongly.",
+    "visualHook": "Plot $g_\\lambda(\\mu)=\\mu/(\\mu+\\lambda)$ against $\\mu$ and compare weak with strongly identified directions.",
     "courseId": "DSA5105",
     "lessonId": "dsa5105-week1-derivations",
     "schemaVersion": "nus.question.v1"
@@ -239,13 +239,13 @@
   {
     "id": "dsa5105-w1d-q5",
     "type": "short",
-    "prompt": "Explain the reasoning chain from $0-1 $loss to cross-entropy.",
+    "prompt": "Explain why zero-one classification error motivates a smooth cross-entropy surrogate.",
     "accepted": [
       "0-1 loss is hard to optimize so use a smooth surrogate",
       "classification error to surrogate loss",
       "cross entropy is a smooth optimization surrogate"
     ],
-    "solution": "$0-1 $loss matches the final classification metric but is discontinuous and difficult to optimize. Smooth surrogates such as cross-entropy provide useful gradients while the decision rule remains a separate sign or argmax operation.",
+    "solution": "Zero-one loss matches the final classification metric but is discontinuous and difficult to optimize. Smooth surrogates such as cross-entropy provide useful gradients while the decision rule remains a separate sign or argmax operation.",
     "explanation": "Do not claim that surrogate loss and classification error are the same quantity.",
     "sourceRefs": [
       {
@@ -267,8 +267,8 @@
     "skill": "explain",
     "cognitiveLevel": "understand",
     "estimatedSeconds": 90,
-    "misconception": "Check the assumption behind your answer.",
-    "visualHook": "Explain the idea with a small diagram or example.",
+    "misconception": "Cross-entropy is a smooth optimization surrogate; it is not numerically identical to zero-one classification error.",
+    "visualHook": "Draw a discontinuous zero-one error beside a smooth surrogate curve and compare their optimization signals.",
     "courseId": "DSA5105",
     "lessonId": "dsa5105-week1-derivations",
     "schemaVersion": "nus.question.v1"
@@ -326,8 +326,8 @@
     "skill": "derive",
     "cognitiveLevel": "analyze",
     "estimatedSeconds": 150,
-    "misconception": "Check the assumption behind your answer.",
-    "visualHook": "Explain the idea with a small diagram or example.",
+    "misconception": "Convexity here is with respect to the scalar score $s$; it does not imply that a neural-network training objective is globally convex in its parameters.",
+    "visualHook": "Plot logistic loss against the score $s$ for a positive label and point to its non-negative curvature.",
     "courseId": "DSA5105",
     "lessonId": "dsa5105-week1-derivations",
     "schemaVersion": "nus.question.v1"
