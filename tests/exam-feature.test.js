@@ -15,7 +15,7 @@ test("exam feature keeps question selection scoped to a lesson", () => {
       sections: [{ body: "A short review." }]
     }] : [],
     getStore: () => ({ recordEvidence() {}, recordAttempt() {} }),
-    pageHead: (_kicker, title) => `<h1>${title}</h1>`,
+    pageHead: (_kicker, title, description) => `<h1>${title}</h1><p>${description || ""}</p>`,
     sourceItem: ref => ref.sourceId,
     text: value => value,
     esc: value => String(value),
