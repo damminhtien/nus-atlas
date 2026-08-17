@@ -31,6 +31,7 @@ const MALFORMED_MATH_PATTERNS = [
   { pattern: /(?<!\\)\b(?:mathcal|mathbb|mathrm|mathbf|operatorname|langle|rangle)\b/g, label: 'missing TeX command' },
   { pattern: /(?<!\\)\b(?:hat|tilde|widehat|bar)\s+[A-Za-z]\b/g, label: 'missing accent command' },
   { pattern: /\b(?:remains|giving|classify)\b/g, label: 'prose inside math' },
+  { pattern: /\b(?:Derive|Explain|Show|Write|State|Compute|Describe)\b(?:\s+[A-Za-z][A-Za-z-]*){2,}/g, label: 'instruction prose inside math' },
 ];
 const DOUBLE_ESCAPED_TEX_COMMAND = /(?<!\\)\\{2}(?=(?:alpha|beta|begin|mathbf|dagger|delta|ell|end|frac|ge|hat|in|infty|lambda|le|langle|mathbb|mathrm|mu|operatorname|partial|Phi|psi|rho|sim|sqrt|sum|text|theta|tilde|top|widehat)\b)/g;
 
@@ -131,6 +132,9 @@ function findMalformedMath(value) {
   }
   const spans = MATH_DELIMITERS.flatMap(delimiter => [...value.matchAll(delimiter)]);
   for (const span of spans) {
+    if (span[0].includes('\t')) {
+      issues.push({ label: 'tab character inside math', token: 'U+0009', index: span.index + span[0].indexOf('\t') });
+    }
     const body = span[0]
       .replace(/^\$\$?|\$\$?$|^\\\[|\\\]$|^\\\(|\\\)$/g, '')
       .replace(/\\(?:text|mathrm|operatorname)\{[^{}]*\}/g, ' ');
