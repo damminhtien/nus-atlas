@@ -131,9 +131,6 @@ function findMalformedMath(value) {
   }
   const spans = MATH_DELIMITERS.flatMap(delimiter => [...value.matchAll(delimiter)]);
   for (const span of spans) {
-    if (span[0].includes('\t')) {
-      issues.push({ label: 'tab character inside math', token: 'U+0009', index: span.index + span[0].indexOf('\t') });
-    }
     const body = span[0]
       .replace(/^\$\$?|\$\$?$|^\\\[|\\\]$|^\\\(|\\\)$/g, '')
       .replace(/\\(?:text|mathrm|operatorname)\{[^{}]*\}/g, ' ');
