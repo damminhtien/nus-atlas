@@ -15,6 +15,19 @@ test("Week 1 keeps lecture and textbook error frameworks separate", () => {
   assert.doesNotMatch(text, /P0 ·|P1 ·/);
 });
 
+test("Week 1 authored formulas keep complete TeX commands and prose outside math mode", () => {
+  const lesson = read("content/courses/DSA5105/lessons/dsa5105-erm.json");
+  const rankDrill = lesson.contrastDrills.find(drill => drill.id === "dsa5105-contrast-rank");
+  assert.equal(rankDrill.choices[0], "When $\\Phi^\\top\\Phi$ is invertible");
+  assert.equal(rankDrill.choices[1], "When $\\Phi^\\top\\Phi$ is singular");
+
+  const questions = read("content/courses/DSA5105/questions/dsa5105-week1-derivations.json");
+  const ridge = questions.find(question => question.id === "dsa5105-w1d-q4");
+  const surrogate = questions.find(question => question.id === "dsa5105-w1d-q5");
+  assert.equal(ridge.prompt, "Derive the ridge spectral shrinkage factor along an eigenvector $v_j$.");
+  assert.doesNotMatch(surrogate.prompt, /^\$/);
+});
+
 test("Week 1 derivations retain exact source pages and strict rubrics", () => {
   const questions = read("content/courses/DSA5105/questions/dsa5105-week1-derivations.json");
   const byId = new Map(questions.map(question => [question.id, question]));
