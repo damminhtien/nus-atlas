@@ -8,6 +8,7 @@ Each migrated package keeps the content graph explicit:
 
 - `course.json`, `modules/*.json`, and `lessons/*.json` define curriculum structure.
 - `questions/*.json` and `artifacts/*.json` are joined by lesson/question IDs during the build.
+- `questions/bank.json` is an extension bank, not a second copy of per-lesson questions. Bank IDs must be globally distinct from question IDs already attached to lessons; `scripts/validate-question-bank.js` rejects duplicate ownership before build/deploy.
 - `sources.json` preserves source type, page, role, and status.
 - `textbook.json` stores a copyright-safe chapter/section index with textbook page refs;
   it is kept separate from lecture lessons and never includes raw textbook prose.
