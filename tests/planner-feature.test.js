@@ -35,3 +35,35 @@ test("planner renders assessment state without owning the data source", () => {
   assert.match(root.innerHTML, /href="#\/nus\/course\/DSA5105"/);
   assert.match(root.innerHTML, /href="#\/nus\/exam\/DSA5105"/);
 });
+
+test("planner renders confirmed week timing without inventing an exact date", () => {
+  const root = { innerHTML: "", querySelectorAll: () => [] };
+  const feature = createPlannerFeature({
+    root,
+    getAssessments: () => [{
+      id: "midterm",
+      courseCode: "DSA5105",
+      title: "Midterm",
+      kind: "exam",
+      weight: 20,
+      date: null,
+      dateStatus: "week-confirmed",
+      timing: { granularity: "week", week: 7, status: "confirmed" },
+      checklist: ["Confirm exact session"],
+      source: { sourceId: "DSA5105/syllabus.pdf", page: 1 }
+    }],
+    getStore: () => ({ task: () => ({ status: "todo", checks: [] }) }),
+    pageHead: (_kicker, title) => `<h1>${title}</h1>`,
+    dayCount: () => null,
+    fmtDate: value => value,
+    statusPill: status => `<b>${status}</b>`,
+    sourceLabel: ref => `${ref.sourceId} · p.${ref.page}`,
+    esc: value => String(value)
+  });
+
+  feature.render();
+
+  assert.match(root.innerHTML, /Week 7 confirmed/);
+  assert.match(root.innerHTML, /Exact session\/time pending/);
+  assert.doesNotMatch(root.innerHTML, /2026-/);
+});
