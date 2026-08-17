@@ -11,6 +11,18 @@
     "kind": { "type": "string", "minLength": 1 },
     "weight": { "type": "number", "minimum": 0, "maximum": 100 },
     "date": { "type": ["string", "null"] },
+    "dateStatus": { "enum": ["confirmed", "week-confirmed", "pending"] },
+    "timing": {
+      "type": "object",
+      "required": ["granularity", "status"],
+      "properties": {
+        "granularity": { "enum": ["exact", "day", "week", "course-half", "unknown"] },
+        "week": { "type": "integer", "minimum": 1, "maximum": 20 },
+        "status": { "enum": ["confirmed", "pending"] },
+        "description": { "type": "string" }
+      },
+      "additionalProperties": false
+    },
     "checklist": { "type": "array", "items": { "type": "string" } },
     "source": { "$ref": "source.schema.json" }
   },
