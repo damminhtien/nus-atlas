@@ -44,7 +44,10 @@ function extractSlides({ input, courseId, sourceId, slideSetId, imageRoot }) {
       sourceRef: { sourceId, sourceType: "lecture", page: number },
       ...(imageRoot ? { assetPath: `${imageRoot}/page-${String(number).padStart(3, "0")}.png` } : {}),
       extraction: { sourceId, page: number, blocks },
-      text: pageText(page),
+      // Keep parser text explicitly in the source layer. It may contain faithful
+      // PDF glyph extraction rather than renderable LaTeX and must not be
+      // treated as authored study prose by the math validator.
+      sourceText: pageText(page),
       explanation: { whatYouSee: pageText(page), whyItMatters: "Read the authored lecture note in the canonical lesson package.", intuition: "", technicalDetail: "", pitfall: "", connection: "" },
       textbookRefs: [],
       referenceRefs: [],

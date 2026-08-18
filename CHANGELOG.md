@@ -6,6 +6,10 @@ and refresh first-party asset URLs so browsers and the service worker pick up th
 
 ## [Unreleased]
 
+## [0.2.35] - 2026-08-18
+
+- Add DSA5105 Lecture 2 kernel and SVM study package
+
 ## [0.2.34] - 2026-08-16
 
 - split lazy content shards and enforce scoped release checks

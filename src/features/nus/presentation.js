@@ -78,6 +78,7 @@
       links.push(["Exam & homework map", "#/nus/assessment-map/DSA5105"]);
       links.push(["Textbook PDF", "#/nus/textbook/DSA5105/1"]);
       links.push(["Week 1 slides", "#/nus/slides/DSA5105/dsa5105-week1-annotated/1"]);
+      links.push(["Week 2 slides", "#/nus/slides/DSA5105/dsa5105-week2-annotated/1"]);
     } else if (courseCode === "DSA5101") {
       links.push(["Lecture 1 slides", "#/nus/slides/DSA5101/dsa5101-lecture1/1"]);
     } else if (courseCode === "DSA5104") {

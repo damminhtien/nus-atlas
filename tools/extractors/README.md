@@ -6,6 +6,11 @@ slide-set JSON file. Course-specific study notes, textbook links, and Socratic
 prompts are authored in `content/courses/<COURSE>/slides/*.json` after the
 mechanical extraction step.
 
+The extracted page text is stored as `sourceText` and remains a faithful PDF
+source layer. It is deliberately not treated as authored prose: PDF glyph
+extraction can contain broken mathematical notation, while authored Atlas
+notes must use the strict LaTeX contract.
+
 Example:
 
 ```bash
