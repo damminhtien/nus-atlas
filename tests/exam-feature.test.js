@@ -15,7 +15,7 @@ test("exam feature keeps question selection scoped to a lesson", () => {
       sections: [{ body: "A short review." }]
     }] : [],
     getStore: () => ({ recordEvidence() {}, recordAttempt() {} }),
-    pageHead: (_kicker, title) => `<h1>${title}</h1>`,
+    pageHead: (_kicker, title, description) => `<h1>${title}</h1><p>${description || ""}</p>`,
     sourceItem: ref => ref.sourceId,
     text: value => value,
     esc: value => String(value),
@@ -29,6 +29,7 @@ test("exam feature keeps question selection scoped to a lesson", () => {
   assert.match(root.innerHTML, /Linear models/);
   assert.match(root.innerHTML, /Start attempt/);
   assert.match(root.innerHTML, /Mistake Clinic/);
+  assert.match(root.innerHTML, /open responses use heuristic rubric\/phrase checks/);
 });
 
 test("derivation rubric requires every declared concept", () => {
@@ -46,4 +47,21 @@ test("derivation rubric requires every declared concept", () => {
   };
   assert.equal(feature.answerKey(question, "(A + lambda I) w = b"), false);
   assert.equal(feature.answerKey(question, "(A + lambda I) w = b; weak directions shrink"), true);
+});
+
+test("only deterministic grades are eligible for mastery evidence", () => {
+  const feature = createExamFeature({
+    root: { innerHTML: "" }, getCourses: () => [], getLessons: () => [], getStore: () => ({}),
+    pageHead: () => "", sourceItem: () => "", text: value => value, esc: value => String(value), button: () => "", typeset() {}
+  });
+  const mcq = { type: "mcq", answer: 0, choices: ["A"] };
+  const derivation = { type: "derivation", rubric: [{ label: "step", required: ["step"] }] };
+  const short = { type: "short", accepted: ["answer"] };
+
+  assert.equal(feature.gradingMode(mcq), "exact");
+  assert.equal(feature.gradingMode(derivation), "rubric");
+  assert.equal(feature.gradingMode(short), "heuristic");
+  assert.equal(feature.masteryEligible(mcq), true);
+  assert.equal(feature.masteryEligible(derivation), false);
+  assert.equal(feature.masteryEligible(short), false);
 });
