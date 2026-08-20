@@ -26,6 +26,13 @@ test("service worker update files bypass runtime cache", () => {
   assert.match(serviceWorker, /if \(isControlFile\) return/);
 });
 
+test("content manifest is fetched network-first so new content is not hidden", () => {
+  // The content manifest is not content-hashed; a stale cached copy would keep
+  // serving old slide/lesson asset references and surface as a "not found" page.
+  assert.match(serviceWorker, /content\\\/manifest\\\.json/);
+  assert.match(serviceWorker, /isNavigation \|\| isContentManifest/);
+});
+
 test("service worker installs only eager shell assets", () => {
   assert.match(serviceWorker, /manifest\.eager \|\| manifest\.assets/);
   assert.match(fs.readFileSync(path.join(root, "prerender.js"), "utf8"), /const lazy = assets\.filter\(file => file\.startsWith\("content\//);

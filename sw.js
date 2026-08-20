@@ -31,21 +31,27 @@ self.addEventListener("fetch", e => {
   const url = new URL(req.url);
   const isNavigation = req.mode === "navigate";
   const isControlFile = url.origin === self.location.origin && /\/(?:sw\.js|asset-manifest\.json)$/.test(url.pathname);
+  // The content manifest is the version boundary for every lazy content shard
+  // (slide sets, lessons, question banks). It is not content-hashed, so a stale
+  // cached copy would keep serving old asset references and hide newly added
+  // content (for example a new lecture slide set) behind a "not found" page.
+  const isContentManifest = url.origin === self.location.origin && /\/content\/manifest\.json$/.test(url.pathname);
 
   // Never let the worker hide its own update script or the generated manifest.
   // The browser's service-worker update check also bypasses the HTTP cache.
   if (isControlFile) return;
 
-  // HTML is the version boundary: always check the network first on reload,
-  // while retaining the cached shell as an offline fallback.
-  if (isNavigation) {
+  // HTML and the content manifest are version boundaries: always check the
+  // network first on reload, while retaining the cached copy as an offline
+  // fallback.
+  if (isNavigation || isContentManifest) {
     e.respondWith(
       fetch(req, { cache: "no-store" })
         .then(res => {
           if (res && res.ok) caches.open(CACHE).then(cache => cache.put(req, res.clone())).catch(() => {});
           return res;
         })
-        .catch(() => caches.match(req).then(hit => hit || caches.match("./index.html")))
+        .catch(() => caches.match(req).then(hit => hit || (isNavigation ? caches.match("./index.html") : undefined)))
     );
     return;
   }
