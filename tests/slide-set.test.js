@@ -6,8 +6,8 @@ const { validateAll } = require("../scripts/validate-slides");
 test("DSA5105 slide packages preserve page, block, explanation, question, and asset provenance", () => {
   const result = validateAll();
   assert.equal(result.ok, true, result.errors.join("\n"));
-  assert.equal(result.counts.slideSets, 6);
-  assert.equal(result.counts.slides, 297);
+  assert.equal(result.counts.slideSets, 8);
+  assert.equal(result.counts.slides, 442);
 });
 
 test("DSA5104 Chapter 1 reader keeps 52 pages and source-layer assets", () => {

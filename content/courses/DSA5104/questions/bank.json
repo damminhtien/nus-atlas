@@ -200,6 +200,215 @@
       "misconception": "Flexible ingestion is not the same as no schema.",
       "visualHook": "Adjust the flexibility explorer and inspect the validation trade-off.",
       "sourceRefs": [{ "sourceId": "DSA5104/chapter1.pdf", "page": 16, "sourceType": "lecture", "role": "XML and JSON", "status": "current" }]
+    },
+    {
+      "id": "dsa5104-bank-013",
+      "lessonId": "dsa5104-relational-model",
+      "type": "derivation",
+      "prompt": "Given the foreign-key constraint from instructor.dept_name to the department relation, give an example insert that would violate the constraint.",
+      "accepted": ["insert a tuple whose dept_name is absent from department", "insert (10111, Ostrom, Economics, 110000) when Economics is missing"],
+      "solution": "Inserting (10111, Ostrom, Economics, 110000) into instructor when the department relation has no Economics tuple violates the foreign-key constraint, because dept_name must refer to an existing department.",
+      "explanation": "A foreign key is enforced: SQL rejects any insert whose referenced value does not exist in the referenced relation.",
+      "difficulty": "medium",
+      "skill": "derive",
+      "cognitiveLevel": "apply",
+      "estimatedSeconds": 90,
+      "misconception": "A foreign key is not optional metadata; insertions are checked.",
+      "visualHook": "Trace the dept_name foreign-key edge in the keys lab.",
+      "sourceRefs": [
+        { "sourceId": "DSA5104/chapter2.pdf", "page": 46, "sourceType": "lecture", "role": "homework assignment slide", "status": "current" },
+        { "sourceId": "DSA5104/Homework Solutions/Ch02_Introduction_to_the_Relational_Model/2.2.md", "page": 1, "sourceType": "exercise", "role": "teacher-designated homework solution", "status": "current-context" }
+      ]
+    },
+    {
+      "id": "dsa5104-bank-014",
+      "lessonId": "dsa5104-relational-model",
+      "type": "derivation",
+      "prompt": "Using the employee database, write a relational-algebra expression (select, project, join) for the names of every employee who lives in city \"Miami\" and whose salary is greater than USD 100,000.",
+      "accepted": ["project person_name from select on city and salary over employee join works", "expression with sigma, pi, and bowtie"],
+      "solution": "Join employee with works, select rows whose city is Miami and whose salary exceeds USD 100,000, then project person_name. The join brings the salary attribute from works into employee so one selection can combine both predicates.",
+      "explanation": "The join combines employee and works so one selection can reference both city and salary before projection keeps only the name.",
+      "difficulty": "medium",
+      "skill": "derive",
+      "cognitiveLevel": "apply",
+      "estimatedSeconds": 120,
+      "misconception": "Do not select on salary directly over employee before joining works, because salary does not live in employee.",
+      "visualHook": "Follow the join-before-select ordering in the algebra lab.",
+      "sourceRefs": [
+        { "sourceId": "DSA5104/chapter2.pdf", "page": 46, "sourceType": "lecture", "role": "homework assignment slide", "status": "current" },
+        { "sourceId": "DSA5104/Homework Solutions/Ch02_Introduction_to_the_Relational_Model/2.6.md", "page": 1, "sourceType": "exercise", "role": "teacher-designated homework solution", "status": "current-context" }
+      ]
+    },
+    {
+      "id": "dsa5104-bank-015",
+      "lessonId": "dsa5104-relational-model",
+      "type": "short",
+      "prompt": "In the bank database, assume branch names and customer names uniquely identify branches and customers. What primary keys do you choose, and which foreign keys follow?",
+      "accepted": ["branch_name primary key for branch; customer_name primary key for customer", "foreign keys on account, loan, depositor, borrower referencing branch and customer"],
+      "solution": "branch_name is the primary key of branch and customer_name the primary key of customer. The relationship relations (account, loan, depositor, and borrower) carry foreign keys referencing branch and/or customer as their connections require.",
+      "explanation": "Primary keys carry identity; foreign keys encode the references between relations and enforce referential integrity.",
+      "difficulty": "medium",
+      "skill": "derive",
+      "cognitiveLevel": "apply",
+      "estimatedSeconds": 150,
+      "misconception": "A relationship table may be associated with more than one customer, so the composite relationship key must be chosen with care.",
+      "visualHook": "Use the schema-diagram key chooser for the bank example.",
+      "sourceRefs": [
+        { "sourceId": "DSA5104/chapter2.pdf", "page": 46, "sourceType": "lecture", "role": "homework assignment slide", "status": "current" },
+        { "sourceId": "DSA5104/Homework Solutions/Ch02_Introduction_to_the_Relational_Model/2.12.md", "page": 1, "sourceType": "exercise", "role": "teacher-designated homework solution", "status": "current-context" }
+      ]
+    },
+    {
+      "id": "dsa5104-bank-016",
+      "lessonId": "dsa5104-relational-model",
+      "type": "short",
+      "prompt": "Sketch the schema diagram for the bank database: which relations appear and which foreign-key edges are drawn between them?",
+      "accepted": ["branch, customer, account, loan, depositor, borrower with FK edges", "keys underlined and relationships by foreign keys"],
+      "solution": "The diagram shows branch, customer, account, loan, depositor, and borrower with primary keys connected: account references branch, depositor references customer and account, borrower references customer and loan, and loan references branch. Foreign-key edges map the referential relationships.",
+      "explanation": "A schema diagram is a visual map of relation attributes plus the referential-integrity edges that connect them.",
+      "difficulty": "medium",
+      "skill": "explain",
+      "cognitiveLevel": "understand",
+      "estimatedSeconds": 90,
+      "misconception": "Do not read the diagram as data; it encodes structure and key relationships.",
+      "visualHook": "Inspect the figure schema_diagram_2_13.png for the actual bank diagram.",
+      "sourceRefs": [
+        { "sourceId": "DSA5104/chapter2.pdf", "page": 46, "sourceType": "lecture", "role": "homework assignment slide", "status": "current" },
+        { "sourceId": "DSA5104/Homework Solutions/Ch02_Introduction_to_the_Relational_Model/2.13.md", "page": 1, "sourceType": "exercise", "role": "teacher-designated homework solution", "status": "current-context" }
+      ]
+    },
+    {
+      "id": "dsa5104-bank-017",
+      "lessonId": "dsa5104-relational-model",
+      "type": "derivation",
+      "prompt": "Write a relational-algebra expression that returns each loan number with a loan amount greater than USD 10,000 in the bank database.",
+      "accepted": ["Pi_loan_number (sigma_amount > 10000 (loan))", "project loan_number from loan filtered by amount"],
+      "solution": "Select loan rows whose amount exceeds USD 10,000, then project loan_number. The selection filters the loan relation; the projection keeps only the attribute needed in the answer.",
+      "explanation": "Select filters rows by predicate; project drops the attributes not needed in the answer.",
+      "difficulty": "easy",
+      "skill": "derive",
+      "cognitiveLevel": "apply",
+      "estimatedSeconds": 90,
+      "misconception": "Select and project act on different parts of the expression: filter rows then choose columns.",
+      "visualHook": "Run this expression through the algebra pipeline in the lab.",
+      "sourceRefs": [
+        { "sourceId": "DSA5104/chapter2.pdf", "page": 46, "sourceType": "lecture", "role": "homework assignment slide", "status": "current" },
+        { "sourceId": "DSA5104/Homework Solutions/Ch02_Introduction_to_the_Relational_Model/2.15.md", "page": 1, "sourceType": "exercise", "role": "teacher-designated homework solution", "status": "current-context" }
+      ]
+    },
+    {
+      "id": "dsa5104-bank-018",
+      "lessonId": "dsa5104-sql-foundations",
+      "type": "derivation",
+      "prompt": "Write an SQL query to find the titles of all courses in the Comp. Sci. department that have 3 credits.",
+      "accepted": ["SELECT title FROM course WHERE dept_name = 'Comp. Sci.' AND credits = 3"],
+      "solution": "Project the title column from course, restricting rows to the Comp. Sci. department and to courses carrying three credits.",
+      "explanation": "The where clause filters the course rows by department and credits before projection returns only the title column.",
+      "difficulty": "easy",
+      "skill": "apply",
+      "cognitiveLevel": "apply",
+      "estimatedSeconds": 60,
+      "misconception": "Composite predicates combine naturally with AND after select-from-where.",
+      "visualHook": "Trace the select-from-where order in the SQL flow visual.",
+      "sourceRefs": [
+        { "sourceId": "DSA5104/chapter3.pdf", "page": 99, "sourceType": "lecture", "role": "homework assignment slide", "status": "current" },
+        { "sourceId": "DSA5104/Homework Solutions/Ch03_Introduction_to_SQL/3.1.md", "page": 1, "sourceType": "exercise", "role": "teacher-designated homework solution", "status": "current-context" }
+      ]
+    },
+    {
+      "id": "dsa5104-bank-019",
+      "lessonId": "dsa5104-sql-foundations",
+      "type": "short",
+      "prompt": "Write the SQL statement that increases the salary of each instructor in the Comp. Sci. department by 10%.",
+      "accepted": ["UPDATE instructor SET salary = salary * 1.10 WHERE dept_name = 'Comp. Sci.'"],
+      "solution": "Update instructor rows in the Comp. Sci. department by multiplying each selected salary by 1.10.",
+      "explanation": "UPDATE modifies existing tuples; the WHERE restricts which instructor rows are changed.",
+      "difficulty": "easy",
+      "skill": "apply",
+      "cognitiveLevel": "apply",
+      "estimatedSeconds": 75,
+      "misconception": "Without a WHERE clause the update would apply to every instructor row.",
+      "visualHook": "Watch the UPDATE pipeline only touch Comp. Sci. rows.",
+      "sourceRefs": [
+        { "sourceId": "DSA5104/chapter3.pdf", "page": 99, "sourceType": "lecture", "role": "homework assignment slide", "status": "current" },
+        { "sourceId": "DSA5104/Homework Solutions/Ch03_Introduction_to_SQL/3.3.md", "page": 1, "sourceType": "exercise", "role": "teacher-designated homework solution", "status": "current-context" }
+      ]
+    },
+    {
+      "id": "dsa5104-bank-020",
+      "lessonId": "dsa5104-sql-foundations",
+      "type": "short",
+      "prompt": "Write an SQL query that finds departments whose names contain the substring \"sci\", regardless of case.",
+      "accepted": ["SELECT dept_name FROM department WHERE LOWER(dept_name) LIKE '%sci%'"],
+      "solution": "Normalize dept_name with LOWER and apply a pattern that contains the substring sci.",
+      "explanation": "LIKE performs pattern matching; LOWER normalizes the column value so the match is case-insensitive.",
+      "difficulty": "easy",
+      "skill": "apply",
+      "cognitiveLevel": "apply",
+      "estimatedSeconds": 60,
+      "misconception": "LIKE alone is case sensitive in most systems; LOWER is what makes the match case-insensitive.",
+      "visualHook": "Compare LIKE versus LOWER(LIKE) in the string-operations lab.",
+      "sourceRefs": [
+        { "sourceId": "DSA5104/chapter3.pdf", "page": 99, "sourceType": "lecture", "role": "homework assignment slide", "status": "current" },
+        { "sourceId": "DSA5104/Homework Solutions/Ch03_Introduction_to_SQL/3.6.md", "page": 1, "sourceType": "exercise", "role": "teacher-designated homework solution", "status": "current-context" }
+      ]
+    },
+    {
+      "id": "dsa5104-bank-021",
+      "lessonId": "dsa5104-sql-foundations",
+      "type": "derivation",
+      "prompt": "Using the university schema, write an SQL query that finds the lowest, across all departments, of the per-department maximum instructor salary.",
+      "accepted": ["SELECT MIN(max_salary) FROM (SELECT MAX(salary) AS max_salary FROM instructor GROUP BY dept_name)", "single-query aggregation of per-department maximum"],
+      "solution": "Compute each department's maximum instructor salary in an inner grouped query, then take the minimum of those maxima in an outer query.",
+      "explanation": "The inner query computes each department's maximum; the outer MIN aggregates those maxima to find the lowest one.",
+      "difficulty": "medium",
+      "skill": "derive",
+      "cognitiveLevel": "analyze",
+      "estimatedSeconds": 150,
+      "misconception": "You cannot take MIN of MAX in one flat group-by; a nesting is required.",
+      "visualHook": "Follow the nested aggregation in the group-by lab.",
+      "sourceRefs": [
+        { "sourceId": "DSA5104/chapter3.pdf", "page": 99, "sourceType": "lecture", "role": "homework assignment slide", "status": "current" },
+        { "sourceId": "DSA5104/Homework Solutions/Ch03_Introduction_to_SQL/3.11.md", "page": 1, "sourceType": "exercise", "role": "teacher-designated homework solution", "status": "current-context" }
+      ]
+    },
+    {
+      "id": "dsa5104-bank-022",
+      "lessonId": "dsa5104-sql-foundations",
+      "type": "derivation",
+      "prompt": "Using a WITH clause, write an SQL query to find the IDs of students who have retaken at least three distinct courses at least once (course taken at least two times).",
+      "accepted": ["WITH retakers ... HAVING COUNT(*)>=3", "GROUP BY id having count of repeated course_ids at least 3"],
+      "solution": "Use a common table expression to keep student-course pairs that occur more than once, then group by student and retain students with at least three repeated courses.",
+      "explanation": "The CTE keeps only course-student pairs taken more than once; the outer group counts how many repeated courses each student has, keeping those with at least three.",
+      "difficulty": "hard",
+      "skill": "derive",
+      "cognitiveLevel": "apply",
+      "estimatedSeconds": 180,
+      "misconception": "The inner HAVING keeps repeated courses, while the outer HAVING keeps students with enough repeated courses.",
+      "visualHook": "Inspect the two-level HAVING in the CTE lab.",
+      "sourceRefs": [
+        { "sourceId": "DSA5104/chapter3.pdf", "page": 99, "sourceType": "lecture", "role": "homework assignment slide", "status": "current" },
+        { "sourceId": "DSA5104/Homework Solutions/Ch03_Introduction_to_SQL/3.27.md", "page": 1, "sourceType": "exercise", "role": "teacher-designated homework solution", "status": "current-context" }
+      ]
+    },
+    {
+      "id": "dsa5104-bank-023",
+      "lessonId": "dsa5104-sql-foundations",
+      "type": "derivation",
+      "prompt": "Write an SQL query using NOT EXISTS to find the names and IDs of instructors who teach every course taught in their own department, ordered by name.",
+      "accepted": ["NOT EXISTS with course EXCEPT teaches", "division query against department's course set"],
+      "solution": "For each instructor, take the set difference between the department's course set and the instructor's taught-course set; keep instructors for whom that difference is empty, and order by name.",
+      "explanation": "For each instructor, the EXCEPT removes the courses they actually teach from the set of their department's courses; NOT EXISTS keeps instructors for whom no leftover course is not taught.",
+      "difficulty": "hard",
+      "skill": "derive",
+      "cognitiveLevel": "analyze",
+      "estimatedSeconds": 180,
+      "misconception": "Division by all-courses requires set difference with NOT EXISTS, not a simple equal-all comparison.",
+      "visualHook": "Use the categorical division visual for this pattern.",
+      "sourceRefs": [
+        { "sourceId": "DSA5104/chapter3.pdf", "page": 99, "sourceType": "lecture", "role": "homework assignment slide", "status": "current" },
+        { "sourceId": "DSA5104/Homework Solutions/Ch03_Introduction_to_SQL/3.28.md", "page": 1, "sourceType": "exercise", "role": "teacher-designated homework solution", "status": "current-context" }
+      ]
     }
   ]
 }

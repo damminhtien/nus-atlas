@@ -26,7 +26,7 @@ test("DSA5104 question bank covers every lesson with metadata", () => {
   const bank = readQuestionBank("DSA5104");
   const result = validateQuestionBank(bank, loadCanonicalState());
   assert.equal(result.ok, true, result.errors.join("\n"));
-  assert.equal(result.counts.questions, 12);
+  assert.equal(result.counts.questions, 23);
   assert.equal(result.counts.lessons, 7);
 });
 
