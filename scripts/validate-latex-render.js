@@ -8,7 +8,7 @@
 const fs = require("node:fs");
 const path = require("node:path");
 const katex = require("katex");
-const { AUTHORED_TEXT_KEYS } = require("./latex-utils");
+const { AUTHORED_TEXT_KEYS, SKIP_KEYS } = require("./latex-utils");
 
 const ROOT = path.resolve(__dirname, "..", "content", "courses");
 const DELIMITED_MATH = /(\$\$[\s\S]*?\$\$|\$(?:\\.|[^$])*?\$|\\\([\s\S]*?\\\)|\\\[[\s\S]*?\\\])/g;
@@ -28,10 +28,10 @@ function formulaBody(raw) {
   return { body: raw.slice(2, -2), display: true };
 }
 
-function collectFormulas(value, filePath, propertyPath = [], key = "", formulas = []) {
+function collectFormulas(value, filePath, propertyPath = [], key = "", formulas = [], skipped = false) {
   if (typeof value === "string") {
-    if (key === "latex") formulas.push({ filePath, propertyPath, body: value, display: true });
-    if (AUTHORED_TEXT_KEYS.has(key)) {
+    if (key === "latex" && !skipped) formulas.push({ filePath, propertyPath, body: value, display: true });
+    if (!skipped && AUTHORED_TEXT_KEYS.has(key)) {
       for (const match of value.matchAll(DELIMITED_MATH)) {
         const parsed = formulaBody(match[1]);
         formulas.push({ filePath, propertyPath, ...parsed });
@@ -40,12 +40,13 @@ function collectFormulas(value, filePath, propertyPath = [], key = "", formulas 
     return formulas;
   }
   if (Array.isArray(value)) {
-    value.forEach((item, index) => collectFormulas(item, filePath, propertyPath.concat(index), key, formulas));
+    value.forEach((item, index) => collectFormulas(item, filePath, propertyPath.concat(index), key, formulas, skipped));
     return formulas;
   }
   if (!value || typeof value !== "object") return formulas;
   Object.entries(value).forEach(([childKey, childValue]) => {
-    collectFormulas(childValue, filePath, propertyPath.concat(childKey), childKey, formulas);
+    const childSkipped = skipped || (SKIP_KEYS.has(childKey) && childKey !== "latex");
+    collectFormulas(childValue, filePath, propertyPath.concat(childKey), childKey, formulas, childSkipped);
   });
   return formulas;
 }

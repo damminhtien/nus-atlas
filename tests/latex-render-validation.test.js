@@ -1,10 +1,19 @@
 const test = require("node:test");
 const assert = require("node:assert/strict");
-const { renderFormula, validateCourse } = require("../scripts/validate-latex-render");
+const { collectFormulas, renderFormula, validateCourse } = require("../scripts/validate-latex-render");
 
 test("KaTeX accepts supported activation notation and rejects invented commands", () => {
   assert.doesNotThrow(() => renderFormula(String.raw`\operatorname{ReLU}(u)`));
   assert.throws(() => renderFormula(String.raw`\sigmoid(u)`), /Undefined control sequence/);
+});
+
+test("source extraction text is not treated as authored math", () => {
+  const formulas = collectFormulas({
+    extraction: { blocks: [{ text: "PDF text with $x$ and a corrupted symbol Î" }] },
+    explanation: { whyItMatters: "Authored formula $x^2$ remains renderable." }
+  }, "fixture.json");
+  assert.equal(formulas.length, 1);
+  assert.deepEqual(formulas[0].propertyPath, ["explanation", "whyItMatters"]);
 });
 
 test("all DSA5105 authored formulas render with KaTeX", () => {
