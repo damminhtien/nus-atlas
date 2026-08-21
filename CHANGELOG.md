@@ -6,6 +6,10 @@ and refresh first-party asset URLs so browsers and the service worker pick up th
 
 ## [Unreleased]
 
+## [0.2.39] - 2026-08-21
+
+- Fix interactive lab navigation
+
 ## [0.2.35] - 2026-08-18
 
 - Add DSA5105 Lecture 2 kernel and SVM study package
