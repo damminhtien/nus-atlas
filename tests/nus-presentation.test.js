@@ -66,3 +66,24 @@ test("presentation helpers render visual cues without owning data", () => {
   assert.match(view.visualCard("missing"), /^$/);
   assert.match(view.studyCompass({ sections: [], examples: [], criticalQuestions: [], questions: [] }), /Read/);
 });
+
+test("same-lesson visual labs use an in-page anchor instead of an SPA route", () => {
+  const view = createPresentation({
+    getSourceTypes: () => ({}),
+    getVisuals: () => ({ visual: { kind: "diagram", title: "A visual", labId: "lesson-1" } })
+  });
+  const html = view.visualCard("visual", { courseCode: "DSA5101", lessonId: "lesson-1", labId: "lesson-1", hasLab: true });
+  assert.match(html, /href="#nus-lab-lesson-1"/);
+  assert.match(html, /data-nus-lab-anchor="nus-lab-lesson-1"/);
+  assert.doesNotMatch(html, /data-route/);
+});
+
+test("linked visual labs retain a routable lesson destination", () => {
+  const view = createPresentation({
+    getSourceTypes: () => ({}),
+    getVisuals: () => ({ visual: { kind: "diagram", title: "A visual", labId: "target-lesson" } })
+  });
+  const html = view.visualCard("visual", { courseCode: "DSA5101", lessonId: "source-lesson", hasLab: false });
+  assert.match(html, /href="#\/nus\/lesson\/DSA5101\/target-lesson"/);
+  assert.match(html, /data-route/);
+});
