@@ -4,6 +4,54 @@
   "semester": "AY2026/27 · Semester 1",
   "color": "#4f9b84",
   "description": "Database models, relational design, SQL, semi-structured data, data integration, Spark SQL, and retrieval-oriented data systems.",
+  "sqlPractice": {
+    "schemaVersion": "nus.sql-practice.v1",
+    "engine": "SQLite/WASM",
+    "schema": [
+      { "name": "Department", "columns": ["id INTEGER PRIMARY KEY", "name TEXT NOT NULL"] },
+      { "name": "Student", "columns": ["id INTEGER PRIMARY KEY", "name TEXT NOT NULL", "department_id INTEGER", "FOREIGN KEY (department_id) REFERENCES Department(id)"] },
+      { "name": "Enrollment", "columns": ["student_id INTEGER", "course_code TEXT", "grade REAL", "PRIMARY KEY (student_id, course_code)"] }
+    ],
+    "seed": {
+      "Department": [[1, "Data Science"], [2, "Computer Science"], [3, "Statistics"]],
+      "Student": [[101, "An", 1], [102, "Binh", 1], [103, "Chi", 2], [104, "Duc", 3]],
+      "Enrollment": [[101, "DSA5104", 85], [102, "DSA5104", 78], [103, "DSA5104", 91], [101, "DSA5105", 88], [104, "DSA5105", 73]]
+    },
+    "exercises": [
+      {
+        "id": "sql-1",
+        "level": "Warm-up",
+        "prompt": "List every student name in alphabetical order.",
+        "starter": "SELECT name FROM Student ORDER BY name;",
+        "expected": ["An", "Binh", "Chi", "Duc"],
+        "explanation": "Select one column and make ordering explicit."
+      },
+      {
+        "id": "sql-2",
+        "level": "Join",
+        "prompt": "Return each student with the department name.",
+        "starter": "SELECT s.name, d.name AS department\nFROM Student s\nJOIN Department d ON d.id = s.department_id\nORDER BY s.id;",
+        "expected": ["An|Data Science", "Binh|Data Science", "Chi|Computer Science", "Duc|Statistics"],
+        "explanation": "The join uses Student.department_id to Department.id."
+      },
+      {
+        "id": "sql-3",
+        "level": "Aggregation",
+        "prompt": "Find departments with at least two students.",
+        "starter": "SELECT d.name, COUNT(*) AS n\nFROM Department d\nJOIN Student s ON s.department_id = d.id\nGROUP BY d.id, d.name\nHAVING COUNT(*) >= 2;",
+        "expected": ["Data Science|2"],
+        "explanation": "HAVING filters the aggregate result after GROUP BY."
+      },
+      {
+        "id": "sql-4",
+        "level": "ER practice",
+        "prompt": "Which key pair prevents duplicate enrollments for one student and course?",
+        "starter": "-- Write the constraint in words or SQL",
+        "expected": ["primary key (student_id, course_code)", "composite primary key", "student_id, course_code"],
+        "explanation": "The composite key identifies one enrollment per student-course pair."
+      }
+    ]
+  },
   "prerequisites": [
     "DSA5101"
   ],

@@ -7,6 +7,10 @@
   const options = config || {};
   const host = options.root;
   const getContent = options.getContent || (() => ({}));
+  const getPractice = options.getPractice || (() => {
+    const course = getContent("DSA5104");
+    return course && course.sqlPractice;
+  });
   const pageHead = options.pageHead || (() => "");
   const card = options.card || (() => "");
   const esc = options.esc || (value => String(value == null ? "" : value));
@@ -15,8 +19,12 @@
   let state = { index: 0, result: null, error: null, ran: false, reveal: false };
   let sqlPromise = null;
 
+  function practiceSpec() {
+    return getPractice() || {};
+  }
+
   function render() {
-    const spec = getContent("DSA5104").sqlPractice;
+    const spec = practiceSpec();
     if (!spec || !Array.isArray(spec.exercises) || !spec.exercises.length) return notFound();
     const exercise = spec.exercises[state.index] || spec.exercises[0];
     let body = pageHead("DSA5104 · practice", "SQL studio", "A small SQLite database runs in your browser. Use it to practice schema reading, joins, grouping, aggregation, and ER constraints without sending queries to a server. Compatibility note: this is SQLite/WASM for the MVP; MySQL-specific functions and DDL may differ.");
@@ -31,21 +39,55 @@
   }
 
   function loadSqlJs() {
-    if (root.ownerDocument && root.ownerDocument.defaultView && root.ownerDocument.defaultView.initSqlJs) return Promise.resolve(root.ownerDocument.defaultView.initSqlJs);
-    if (typeof window === "object" && window.initSqlJs) return Promise.resolve(window.initSqlJs);
+    const documentRef = host && host.ownerDocument ? host.ownerDocument : (typeof document === "object" ? document : null);
+    const view = documentRef && documentRef.defaultView ? documentRef.defaultView : (typeof window === "object" ? window : null);
+    if (view && view.initSqlJs) return Promise.resolve(view.initSqlJs);
     if (sqlPromise) return sqlPromise;
+    if (!documentRef) return Promise.reject(new Error("SQL Studio needs a browser document."));
     sqlPromise = new Promise((resolve, reject) => {
-      const script = document.createElement("script");
+      const script = documentRef.createElement("script");
       script.src = "https://cdn.jsdelivr.net/npm/sql.js@1.10.3/dist/sql-wasm.js";
-      script.onload = () => resolve(window.initSqlJs);
-      script.onerror = () => reject(new Error("Could not load the browser SQL engine. Check your connection and try again."));
-      document.head.appendChild(script);
+      script.onload = () => {
+        const init = (view && view.initSqlJs) || (typeof window === "object" && window.initSqlJs);
+        if (init) resolve(init);
+        else {
+          sqlPromise = null;
+          reject(new Error("The browser SQL engine loaded without its initializer."));
+        }
+      };
+      script.onerror = () => {
+        sqlPromise = null;
+        reject(new Error("Could not load the browser SQL engine. Check your connection and try again."));
+      };
+      documentRef.head.appendChild(script);
     });
     return sqlPromise;
   }
 
+  function resultLines(rows) {
+    return rows ? rows.values.map(row => row.map(value => value == null ? "" : String(value)).join("|")) : [];
+  }
+
+  function createDatabase(SQL, spec) {
+    const db = new SQL.Database();
+    (spec.schema || []).forEach(table => {
+      const columns = (table.columns || []).join(", ");
+      db.run(`CREATE TABLE ${table.name} (${columns});`);
+    });
+    Object.entries(spec.seed || {}).forEach(([table, rows]) => rows.forEach(row => {
+      const marks = row.map(() => "?").join(",");
+      db.run(`INSERT INTO ${table} VALUES (${marks})`, row);
+    }));
+    return db;
+  }
+
   async function execute(exercise) {
     const input = host.querySelector("#nus-sql-input").value.trim();
+    if (!input) {
+      state = { ...state, error: "Enter a SQL query or answer before running.", result: null, ran: true };
+      render();
+      return;
+    }
     state = { ...state, error: null, result: null, ran: true };
     if (exercise.id === "sql-4") {
       const normalized = input.toLowerCase().replace(/\s+/g, " ");
@@ -53,22 +95,18 @@
       render();
       return;
     }
+    let db = null;
     try {
       const init = await loadSqlJs();
       const SQL = await init({ locateFile: file => `https://cdn.jsdelivr.net/npm/sql.js@1.10.3/dist/${file}` });
-      const db = new SQL.Database();
-      db.run("CREATE TABLE Department (id INTEGER PRIMARY KEY, name TEXT NOT NULL); CREATE TABLE Student (id INTEGER PRIMARY KEY, name TEXT NOT NULL, department_id INTEGER); CREATE TABLE Enrollment (student_id INTEGER, course_code TEXT, grade REAL, PRIMARY KEY (student_id, course_code));");
-      const seed = getContent("DSA5104").sqlPractice.seed;
-      Object.entries(seed).forEach(([table, rows]) => rows.forEach(row => {
-        const marks = row.map(() => "?").join(",");
-        db.run(`INSERT INTO ${table} VALUES (${marks})`, row);
-      }));
+      db = createDatabase(SQL, practiceSpec());
       const rows = db.exec(input)[0];
-      const values = rows ? rows.values.map(row => row.join("|")) : [];
-      state.result = { pass: values.join("\n") === exercise.expected.join("\n"), text: rows ? [rows.columns.join(" | "), ...values].join("\n") : "Query returned no rows" };
-      db.close();
+      const values = resultLines(rows);
+      state.result = { pass: values.join("\n") === (exercise.expected || []).join("\n"), text: rows ? [rows.columns.join(" | "), ...values].join("\n") : "Query returned no rows" };
     } catch (error) {
       state.error = error.message || "SQL error";
+    } finally {
+      if (db) db.close();
     }
     render();
   }

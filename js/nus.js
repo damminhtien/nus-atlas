@@ -383,9 +383,12 @@
     return contrastFeature ? contrastFeature.render(code || focusCourseCode(), scope) : renderNotFound();
   }
 
-  const sqlFeature = window.ATLAS_SQL_FEATURE ? window.ATLAS_SQL_FEATURE({ root, getContent: content, pageHead, card, esc, text, notFound: renderNotFound }) : null;
+  const sqlFeature = window.ATLAS_SQL_FEATURE ? window.ATLAS_SQL_FEATURE({ root, getContent: content, getPractice: () => { const item = course("DSA5104"); return item && item.sqlPractice; }, pageHead, card, esc, text, notFound: renderNotFound }) : null;
   const simulationsFeature = window.ATLAS_SIMULATIONS_FEATURE ? window.ATLAS_SIMULATIONS_FEATURE({ root, pageHead, esc, getStore: () => window.ATLAS_STUDY_STORE }) : null;
-  function renderSql() { return sqlFeature ? sqlFeature.render() : renderNotFound(); }
+  function renderSql() {
+    if (ensureCourseLoaded("DSA5104", () => renderSql())) return;
+    return sqlFeature ? sqlFeature.render() : renderNotFound();
+  }
   function renderSimulations() { return simulationsFeature ? simulationsFeature.render() : renderNotFound(); }
   const readingTimerFeature = window.ATLAS_READING_TIMER ? window.ATLAS_READING_TIMER() : null;
   const slideReaderFeature = window.ATLAS_SLIDE_READER_FEATURE ? window.ATLAS_SLIDE_READER_FEATURE({
