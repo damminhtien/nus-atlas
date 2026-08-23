@@ -2,13 +2,13 @@
   {
     "id": "dsa5105-lw1-q1",
     "type": "calculation",
-    "prompt": "For $x = {0, 1, 2}$ and $y = {1, 2, 2}$, what is the OLS slope?",
+    "prompt": "For $x=\\{0,1,2\\}$ and $y=\\{1,2,2\\}$, what is the OLS slope?",
     "accepted": [
       "0.5",
       "1/2",
       "0.50"
     ],
-    "solution": "With x-$bar = 1$ and y-$bar = \\frac{5}{3}$, the centered numerator is 1 and denominator is 2, so w1-$hat = \\frac{1}{2}$.",
+    "solution": "With $\\bar{x}=1$ and $\\bar{y}=\\frac{5}{3}$, the centered numerator is $1$ and denominator is $2$, so $\\widehat{w}_1=\\frac{1}{2}$.",
     "explanation": "Center both variables before forming the covariance-like numerator.",
     "sourceRefs": [
       {
@@ -99,7 +99,7 @@
       "use the logit difference",
       "binary softmax depends on z1 minus z2"
     ],
-    "solution": "Let $s = z1 - z2$. Dividing numerator and denominator by $\\exp(z2)$ gives $p1 = 1/(1 + \\exp(-s))$ and $p2 = 1 - p1$.",
+    "solution": "Let $s=z_1-z_2$. Dividing numerator and denominator by $\\exp(z_2)$ gives $p_1=\\frac{1}{1+\\exp(-s)}$ and $p_2=1-p_1$.",
     "explanation": "The invariant is the difference between the two logits, not their absolute offset.",
     "sourceRefs": [
       {
@@ -224,6 +224,375 @@
       }
     ],
     "courseId": "DSA5105",
+    "schemaVersion": "nus.question.v1"
+  },
+  {
+    "id": "dsa5105-lw1-q6",
+    "type": "mcq",
+    "prompt": "For $K=4$ and observed class $k=3$, which one-hot target is correct?",
+    "choices": [
+      "$e_3=(0,0,1,0)^\\top$",
+      "$e_3=(0,1,0,0)^\\top$",
+      "$e_3=(3,0,0,0)^\\top$",
+      "$e_3=(1,1,1,1)^\\top$"
+    ],
+    "answer": 0,
+    "explanation": "The class index selects one coordinate; the vector is not a scalar class ID and has exactly one entry equal to one.",
+    "sourceRefs": [
+      {
+        "sourceId": "DSA5105/Lec1_annotated.pdf",
+        "page": 15,
+        "sourceType": "lecture",
+        "role": "one-hot encoding",
+        "status": "current"
+      },
+      {
+        "sourceId": "DSA5105/Lec1_annotated.pdf",
+        "page": 50,
+        "sourceType": "lecture",
+        "role": "multiclass targets",
+        "status": "current"
+      }
+    ],
+    "difficulty": "easy",
+    "skill": "representation",
+    "cognitiveLevel": "understand",
+    "estimatedSeconds": 60,
+    "misconception": "Confusing the nominal class index with a regression target.",
+    "visualHook": "Highlight the active coordinate in a one-hot vector.",
+    "courseId": "DSA5105",
+    "lessonId": "dsa5105-linear-week1",
+    "schemaVersion": "nus.question.v1"
+  },
+  {
+    "id": "dsa5105-lw1-q7",
+    "type": "mcq",
+    "prompt": "If the same constant $c$ is added to every logit, what happens to softmax probabilities?",
+    "choices": [
+      "They remain unchanged because the common factor cancels",
+      "Every probability increases by $c$",
+      "The largest-logit class changes automatically",
+      "All probabilities become zero"
+    ],
+    "answer": 0,
+    "explanation": "For $p_k=\\exp(z_k)/\\sum_j\\exp(z_j)$, adding $c$ multiplies numerator and denominator by $\\exp(c)$. The probabilities and their argmax are unchanged.",
+    "sourceRefs": [
+      {
+        "sourceId": "DSA5105/Lec1_annotated.pdf",
+        "page": 54,
+        "sourceType": "lecture",
+        "role": "softmax properties",
+        "status": "current"
+      }
+    ],
+    "difficulty": "medium",
+    "skill": "logit-invariance",
+    "cognitiveLevel": "analyze",
+    "estimatedSeconds": 75,
+    "misconception": "Treating logits as probabilities with an absolute zero point.",
+    "visualHook": "Shift every logit with a slider and watch the probability bars stay fixed.",
+    "courseId": "DSA5105",
+    "lessonId": "dsa5105-linear-week1",
+    "schemaVersion": "nus.question.v1"
+  },
+  {
+    "id": "dsa5105-lw1-q8",
+    "type": "calculation",
+    "prompt": "A ridge eigen-direction has $\\mu=0.1$ and $\\lambda=0.9$. What is its spectral shrinkage factor $\\mu/(\\mu+\\lambda)$?",
+    "accepted": [
+      "0.1",
+      "1/10",
+      "0.10"
+    ],
+    "solution": "$\\frac{\\mu}{\\mu+\\lambda}=\\frac{0.1}{0.1+0.9}=0.1$.",
+    "explanation": "A small eigenvalue relative to $\\lambda$ is strongly suppressed by ridge.",
+    "sourceRefs": [
+      {
+        "sourceId": "DSA5105/Lec1_exercises-solutions.pdf",
+        "page": 2,
+        "sourceType": "exercise",
+        "role": "ridge spectral filter",
+        "status": "current-context"
+      }
+    ],
+    "difficulty": "medium",
+    "skill": "ridge-spectrum",
+    "cognitiveLevel": "apply",
+    "estimatedSeconds": 90,
+    "misconception": "Assuming ridge shrinks every eigen-direction by the same additive amount.",
+    "visualHook": "Move $\\lambda$ and compare weak and strong eigen-directions.",
+    "courseId": "DSA5105",
+    "lessonId": "dsa5105-linear-week1",
+    "schemaVersion": "nus.question.v1"
+  },
+  {
+    "id": "dsa5105-lw1-q9",
+    "type": "derivation",
+    "prompt": "Why does ridge have a unique minimizer even when $A=\\Phi^\\top\\Phi/N$ is singular?",
+    "accepted": [
+      "A is positive semidefinite and lambda I makes A plus lambda I positive definite",
+      "lambda greater than zero lifts every eigenvalue",
+      "the Hessian becomes invertible"
+    ],
+    "rubric": [
+      {
+        "label": "base spectrum",
+        "required": [
+          "positive semidefinite",
+          "A",
+          "eigenvalue"
+        ]
+      },
+      {
+        "label": "ridge shift",
+        "required": [
+          "lambda",
+          "positive",
+          "lift|shift|add"
+        ]
+      },
+      {
+        "label": "uniqueness conclusion",
+        "required": [
+          "positive definite",
+          "unique",
+          "minimizer|solution"
+        ]
+      }
+    ],
+    "solution": "The Gram matrix $A=\\Phi^\\top\\Phi/N$ is positive semidefinite, so its eigenvalues satisfy $\\mu_j\\ge0$. For $\\lambda>0$, $A+\\lambda I$ has eigenvalues $\\mu_j+\\lambda>0$, hence is positive definite and the ridge minimizer is unique.",
+    "hint": "Inspect what happens to a zero eigenvalue after adding $\\lambda I$.",
+    "explanation": "Ridge repairs non-identifiability in the objective; it does not claim that the original OLS coefficient vector was unique.",
+    "misconception": "Saying that the pseudoinverse itself makes the OLS normal matrix positive definite.",
+    "visualHook": "Lift the zero end of an eigenvalue spectrum above the horizontal axis.",
+    "sourceRefs": [
+      {
+        "sourceId": "DSA5105/Lec1_annotated.pdf",
+        "page": 48,
+        "sourceType": "lecture",
+        "role": "regularization",
+        "status": "current"
+      },
+      {
+        "sourceId": "DSA5105/Lec1_exercises-solutions.pdf",
+        "page": 2,
+        "sourceType": "exercise",
+        "role": "ridge uniqueness and spectrum",
+        "status": "current-context"
+      }
+    ],
+    "difficulty": "hard",
+    "skill": "ridge-derivation",
+    "cognitiveLevel": "analyze",
+    "estimatedSeconds": 150,
+    "courseId": "DSA5105",
+    "lessonId": "dsa5105-linear-week1",
+    "schemaVersion": "nus.question.v1"
+  },
+  {
+    "id": "dsa5105-lw1-q10",
+    "type": "short",
+    "prompt": "What is the key difference between the pseudoinverse solution and ridge when OLS is singular?",
+    "accepted": [
+      "pseudoinverse selects a minimum norm OLS solution while ridge changes the objective and shrinks coefficients",
+      "pseudoinverse preserves the OLS objective; ridge adds an L2 penalty",
+      "ridge gives a unique penalized solution for positive lambda"
+    ],
+    "solution": "The pseudoinverse selects one minimum-norm member of the singular OLS solution family. Ridge instead minimizes a modified objective with an L2 penalty and is unique for $\\lambda>0$.",
+    "hint": "Ask whether the objective itself changed.",
+    "explanation": "Both can stabilize computation, but they encode different modeling choices and need not produce the same predictor.",
+    "sourceRefs": [
+      {
+        "sourceId": "DSA5105/Lec1_annotated.pdf",
+        "page": 47,
+        "sourceType": "lecture",
+        "role": "singular OLS",
+        "status": "current"
+      },
+      {
+        "sourceId": "DSA5105/Lec1_annotated.pdf",
+        "page": 48,
+        "sourceType": "lecture",
+        "role": "regularization",
+        "status": "current"
+      }
+    ],
+    "difficulty": "hard",
+    "skill": "estimator-comparison",
+    "cognitiveLevel": "analyze",
+    "estimatedSeconds": 120,
+    "misconception": "Treating all ways of resolving rank deficiency as the same estimator.",
+    "visualHook": "Show a flat OLS valley and a ridge bowl selecting different points.",
+    "courseId": "DSA5105",
+    "lessonId": "dsa5105-linear-week1",
+    "schemaVersion": "nus.question.v1"
+  },
+  {
+    "id": "dsa5105-lw1-q11",
+    "type": "mcq",
+    "prompt": "What is bounded in the large-residual region of Huber loss?",
+    "choices": [
+      "The derivative contribution $\\psi_\\delta(r)$",
+      "The loss value $\\rho_\\delta(r)$ itself",
+      "The residual $r$ in the data",
+      "The population risk for every model"
+    ],
+    "answer": 0,
+    "explanation": "Huber loss grows linearly for large residuals, so its derivative is capped at $\\pm\\delta$. The loss itself is not bounded.",
+    "sourceRefs": [
+      {
+        "sourceId": "DSA5105/Lec1_exercises-solutions.pdf",
+        "page": 1,
+        "sourceType": "exercise",
+        "role": "Huber derivative and bounded contribution",
+        "status": "current-context"
+      },
+      {
+        "sourceId": "DSA5105/Lec1_annotated.pdf",
+        "page": 35,
+        "sourceType": "lecture",
+        "role": "Huber definition",
+        "status": "current"
+      }
+    ],
+    "difficulty": "medium",
+    "skill": "robust-loss",
+    "cognitiveLevel": "distinguish",
+    "estimatedSeconds": 60,
+    "misconception": "Calling Huber a bounded loss instead of a loss with bounded score contribution.",
+    "visualHook": "Plot the loss and its derivative side by side.",
+    "courseId": "DSA5105",
+    "lessonId": "dsa5105-linear-week1",
+    "schemaVersion": "nus.question.v1"
+  },
+  {
+    "id": "dsa5105-lw1-q12",
+    "type": "calculation",
+    "prompt": "Three observed examples have losses $2$, $0$, and $4$. What is the empirical risk $\\widehat{R}$?",
+    "accepted": [
+      "2",
+      "2.0",
+      "6/3"
+    ],
+    "solution": "$\\widehat{R}=\\frac{1}{3}(2+0+4)=2$.",
+    "explanation": "Empirical risk is the sample average of observed losses; it is not the population expectation.",
+    "sourceRefs": [
+      {
+        "sourceId": "DSA5105/Lec1_annotated.pdf",
+        "page": 23,
+        "sourceType": "lecture",
+        "role": "empirical risk",
+        "status": "current"
+      }
+    ],
+    "difficulty": "easy",
+    "skill": "empirical-risk",
+    "cognitiveLevel": "apply",
+    "estimatedSeconds": 60,
+    "misconception": "Summing losses without dividing by the data size.",
+    "visualHook": "Animate individual losses collapsing into their mean.",
+    "courseId": "DSA5105",
+    "lessonId": "dsa5105-linear-week1",
+    "schemaVersion": "nus.question.v1"
+  },
+  {
+    "id": "dsa5105-lw1-q13",
+    "type": "derivation",
+    "prompt": "Write the complete multiclass chain from a feature vector to cross-entropy.",
+    "accepted": [
+      "z equals W transpose phi, p is softmax of z, cross entropy is negative sum y log p",
+      "score vector then softmax probabilities then cross entropy",
+      "W transpose phi to p to CE"
+    ],
+    "rubric": [
+      {
+        "label": "score vector",
+        "required": [
+          "W",
+          "phi",
+          "z"
+        ]
+      },
+      {
+        "label": "softmax probabilities",
+        "required": [
+          "p",
+          "exp",
+          "sum"
+        ]
+      },
+      {
+        "label": "cross-entropy",
+        "required": [
+          "log",
+          "y",
+          "p"
+        ]
+      }
+    ],
+    "solution": "First compute logits $z=W^\\top\\phi(x)$. Then $p_k=\\exp(z_k)/\\sum_j\\exp(z_j)$, and for one-hot target $y$, use $\\mathcal{L}_{\\mathrm{CE}}(p,y)=-\\sum_k y_k\\log p_k$.",
+    "hint": "Keep the representation, normalization, and loss as three separate operations.",
+    "explanation": "This chain prevents the common mistake of calling logits probabilities or treating softmax as the loss.",
+    "sourceRefs": [
+      {
+        "sourceId": "DSA5105/Lec1_annotated.pdf",
+        "page": 51,
+        "sourceType": "lecture",
+        "role": "multiclass score model",
+        "status": "current"
+      },
+      {
+        "sourceId": "DSA5105/Lec1_annotated.pdf",
+        "page": 54,
+        "sourceType": "lecture",
+        "role": "softmax and cross-entropy",
+        "status": "current"
+      }
+    ],
+    "difficulty": "hard",
+    "skill": "classification-chain",
+    "cognitiveLevel": "analyze",
+    "estimatedSeconds": 150,
+    "courseId": "DSA5105",
+    "lessonId": "dsa5105-linear-week1",
+    "schemaVersion": "nus.question.v1"
+  },
+  {
+    "id": "dsa5105-lw1-q14",
+    "type": "mcq",
+    "prompt": "Training and population errors are both high, but their gap is small. What conclusion is safest?",
+    "choices": [
+      "The model may underfit; a small gap alone does not prove good performance",
+      "The model definitely overfits",
+      "The test set must have leaked into training",
+      "Optimization is necessarily perfect"
+    ],
+    "answer": 0,
+    "explanation": "A small generalization gap says the train and population errors are similar; if both are high, the model can still be underfitting or have an inadequate representation.",
+    "sourceRefs": [
+      {
+        "sourceId": "DSA5105/Lec1_annotated.pdf",
+        "page": 24,
+        "sourceType": "lecture",
+        "role": "generalization gap",
+        "status": "current"
+      },
+      {
+        "sourceId": "DSA5105/Lec1_annotated.pdf",
+        "page": 25,
+        "sourceType": "lecture",
+        "role": "three sources of error",
+        "status": "current"
+      }
+    ],
+    "difficulty": "medium",
+    "skill": "error-diagnosis",
+    "cognitiveLevel": "analyze",
+    "estimatedSeconds": 75,
+    "misconception": "Reading a small train–population gap as evidence that the model is accurate.",
+    "visualHook": "Place train and population risks on axes showing fit level and gap separately.",
+    "courseId": "DSA5105",
+    "lessonId": "dsa5105-linear-week1",
     "schemaVersion": "nus.question.v1"
   }
 ]

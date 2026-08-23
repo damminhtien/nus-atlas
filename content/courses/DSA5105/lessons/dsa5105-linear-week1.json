@@ -138,6 +138,210 @@
     }
   ],
   "visualIds": [],
+  "contrastDrills": [
+    {
+      "id": "dsa5105-linear-contrast-one-hot",
+      "type": "contrast",
+      "kind": "concept-contrast",
+      "pair": "One-hot labels vs scalar class IDs",
+      "prompt": "Why does a nominal class $k$ use $e_k\\in\\mathbb{R}^K$ instead of the scalar target $k$?",
+      "choices": [
+        "One-hot encoding avoids inventing an order or distance between class names",
+        "Scalar IDs cannot be stored in a computer",
+        "One-hot encoding always reduces the number of parameters",
+        "Scalar IDs make cross-entropy impossible"
+      ],
+      "answer": 0,
+      "explanation": "Nominal labels have identity but no meaningful numeric spacing. The one-hot vector marks the observed class without claiming that class 3 is closer to class 2 than to class 1.",
+      "estimatedSeconds": 45,
+      "difficulty": "medium",
+      "skill": "representation",
+      "cognitiveLevel": "distinguish",
+      "misconception": "Treating a class index as a quantitative measurement.",
+      "sourceRefs": [
+        {
+          "sourceId": "DSA5105/Lec1_annotated.pdf",
+          "page": 15,
+          "sourceType": "lecture",
+          "role": "one-hot encoding",
+          "status": "current"
+        },
+        {
+          "sourceId": "DSA5105/Lec1_annotated.pdf",
+          "page": 50,
+          "sourceType": "lecture",
+          "role": "multiclass targets",
+          "status": "current"
+        }
+      ]
+    },
+    {
+      "id": "dsa5105-linear-contrast-softmax-ce",
+      "type": "contrast",
+      "kind": "concept-contrast",
+      "pair": "Softmax vs cross-entropy",
+      "prompt": "Which operation maps logits $z$ to probabilities, and which operation scores the probability assigned to the one-hot target?",
+      "choices": [
+        "Softmax maps logits; cross-entropy scores the target probability",
+        "Cross-entropy maps logits; softmax chooses the target class",
+        "Both are probability normalizers",
+        "Neither depends on the target class"
+      ],
+      "answer": 0,
+      "explanation": "Softmax produces $p_k=\\exp(z_k)/\\sum_j\\exp(z_j)$. Cross-entropy then penalizes low probability for the observed class, for example $-\\log p_k$.",
+      "estimatedSeconds": 45,
+      "difficulty": "medium",
+      "skill": "loss-selection",
+      "cognitiveLevel": "distinguish",
+      "misconception": "Calling softmax itself the training loss.",
+      "sourceRefs": [
+        {
+          "sourceId": "DSA5105/Lec1_annotated.pdf",
+          "page": 54,
+          "sourceType": "lecture",
+          "role": "softmax and cross-entropy",
+          "status": "current"
+        }
+      ]
+    },
+    {
+      "id": "dsa5105-linear-contrast-squared-zero-one",
+      "type": "contrast",
+      "kind": "concept-contrast",
+      "pair": "Squared loss vs 0–1 loss",
+      "prompt": "What information does squared loss use that 0–1 loss discards?",
+      "choices": [
+        "The magnitude of the score error, not only whether the winning class is correct",
+        "The test-set labels before training",
+        "The order of nominal class names",
+        "Only the sign of the largest logit"
+      ],
+      "answer": 0,
+      "explanation": "Squared loss measures Euclidean distance to the one-hot target. 0–1 loss only records correct versus incorrect classification, so it is directly task-relevant but difficult to optimize.",
+      "estimatedSeconds": 45,
+      "difficulty": "medium",
+      "skill": "loss-geometry",
+      "cognitiveLevel": "distinguish",
+      "misconception": "Assuming a surrogate loss and the evaluation loss encode exactly the same geometry.",
+      "sourceRefs": [
+        {
+          "sourceId": "DSA5105/Lec1_annotated.pdf",
+          "page": 52,
+          "sourceType": "lecture",
+          "role": "least-squares classification",
+          "status": "current"
+        },
+        {
+          "sourceId": "DSA5105/Lec1_annotated.pdf",
+          "page": 53,
+          "sourceType": "lecture",
+          "role": "0–1 loss and surrogate",
+          "status": "current"
+        }
+      ]
+    },
+    {
+      "id": "dsa5105-linear-contrast-pinv-ridge",
+      "type": "contrast",
+      "kind": "concept-contrast",
+      "pair": "Pseudoinverse vs ridge",
+      "prompt": "When $\\Phi^\\top\\Phi$ is singular, which method changes the objective by adding a positive penalty?",
+      "choices": [
+        "Ridge",
+        "The Moore–Penrose pseudoinverse",
+        "Both methods in exactly the same way",
+        "Neither method"
+      ],
+      "answer": 0,
+      "explanation": "The pseudoinverse selects a canonical least-squares solution without changing the OLS objective. Ridge changes the objective by adding $\\lambda\\lVert w\\rVert_2^2/2$ and gives a unique solution for $\\lambda>0$.",
+      "estimatedSeconds": 45,
+      "difficulty": "hard",
+      "skill": "regularization",
+      "cognitiveLevel": "distinguish",
+      "misconception": "Treating the pseudoinverse and ridge as interchangeable definitions of the same estimator.",
+      "sourceRefs": [
+        {
+          "sourceId": "DSA5105/Lec1_annotated.pdf",
+          "page": 47,
+          "sourceType": "lecture",
+          "role": "singular OLS",
+          "status": "current"
+        },
+        {
+          "sourceId": "DSA5105/Lec1_annotated.pdf",
+          "page": 48,
+          "sourceType": "lecture",
+          "role": "regularization",
+          "status": "current"
+        }
+      ]
+    },
+    {
+      "id": "dsa5105-linear-contrast-rank-conditioning",
+      "type": "contrast",
+      "kind": "concept-contrast",
+      "pair": "Full rank vs well-conditioned",
+      "prompt": "What does full column rank guarantee for OLS, and what does it not guarantee?",
+      "choices": [
+        "A unique inverse-form solution, but not numerical stability when the smallest eigenvalue is tiny",
+        "A stable solution, even when the normal matrix has a zero eigenvalue",
+        "No solution whenever the design has more rows than columns",
+        "That validation is unnecessary"
+      ],
+      "answer": 0,
+      "explanation": "Full rank makes $\\Phi^\\top\\Phi$ invertible and the OLS minimizer unique. Conditioning is a separate issue: very small positive eigenvalues still amplify sensitivity.",
+      "estimatedSeconds": 45,
+      "difficulty": "hard",
+      "skill": "linear-algebra",
+      "cognitiveLevel": "distinguish",
+      "misconception": "Equating invertibility with good numerical conditioning.",
+      "sourceRefs": [
+        {
+          "sourceId": "DSA5105/Lec1_annotated.pdf",
+          "page": 46,
+          "sourceType": "lecture",
+          "role": "full-rank OLS",
+          "status": "current"
+        },
+        {
+          "sourceId": "DSA5105/Lec1_annotated.pdf",
+          "page": 48,
+          "sourceType": "lecture",
+          "role": "regularization stability",
+          "status": "current"
+        }
+      ]
+    },
+    {
+      "id": "dsa5105-linear-contrast-validation-test",
+      "type": "contrast",
+      "kind": "concept-contrast",
+      "pair": "Validation selection vs test evaluation",
+      "prompt": "After choosing the degree and $\\lambda$ using validation data, which split should be used once for the final performance estimate?",
+      "choices": [
+        "Test",
+        "Training",
+        "Validation again for repeated tuning",
+        "The oracle distribution directly"
+      ],
+      "answer": 0,
+      "explanation": "Validation data informs model selection. The test split should remain untouched until the choices are fixed, otherwise the reported estimate becomes optimistic.",
+      "estimatedSeconds": 45,
+      "difficulty": "medium",
+      "skill": "evaluation-protocol",
+      "cognitiveLevel": "distinguish",
+      "misconception": "Using the test score as another hyperparameter-selection signal.",
+      "sourceRefs": [
+        {
+          "sourceId": "DSA5105/Lec1_annotated.pdf",
+          "page": 17,
+          "sourceType": "lecture",
+          "role": "evaluation split",
+          "status": "current"
+        }
+      ]
+    }
+  ],
   "sections": [
     {
       "title": "Lecture core · Simple linear regression",
@@ -186,7 +390,7 @@
         "trap": "A zero denominator means the slope is not identified; it is not a numerical inconvenience to ignore."
       },
       "math": {
-        "latex": "\\hat w_1 = \\frac{\\sum_{i=1}^{N}(x_i-\\bar{x})(y_i-\\bar{y})}{\\sum_{i=1}^{N}(x_i-\\bar{x})^2},\\qquad \\hat w_0=\\bar{y}-\\hat w_1\\bar{x}",
+        "latex": "\\widehat{w}_1=\\frac{\\sum_{i=1}^{N}(x_i-\\bar{x})(y_i-\\bar{y})}{\\sum_{i=1}^{N}(x_i-\\bar{x})^2},\\qquad \\widehat{w}_0=\\bar{y}-\\widehat{w}_1\\bar{x}",
         "explanation": "Compute the sample means first, then the centered numerator and denominator. If all x values are identical, the denominator is zero and the slope is not identified by this formula.",
         "symbols": [
           {
@@ -194,11 +398,11 @@
             "meaning": "sample means"
           },
           {
-            "latex": "\\hat w_1",
+            "latex": "\\widehat{w}_1",
             "meaning": "OLS slope"
           },
           {
-            "latex": "\\hat w_0",
+            "latex": "\\widehat{w}_0",
             "meaning": "OLS intercept"
           }
         ],
@@ -466,7 +670,7 @@
         "trap": "Regularization does not erase the need for a validation set and does not prove that a smoother curve is better."
       },
       "math": {
-        "latex": "\\hat w_\\lambda=\\arg\\min_w\\left[\\frac{1}{2N}\\lVert\\Phi w-y\\rVert_2^2+\\frac{\\lambda}{2}\\lVert w\\rVert_2^2\\right]",
+        "latex": "\\widehat{w}_\\lambda=\\arg\\min_w\\left[\\frac{1}{2N}\\lVert\\Phi w-y\\rVert_2^2+\\frac{\\lambda}{2}\\lVert w\\rVert_2^2\\right]",
         "explanation": "The first term measures fit and the second charges for coefficient magnitude. Increasing $\\lambda$ suppresses unstable directions; it also adds bias, so its value is a model-selection decision.",
         "symbols": [
           {
@@ -567,12 +771,12 @@
         "trap": "Do not regress scalar class IDs and call the numeric spacing a meaningful class distance."
       },
       "math": {
-        "latex": "g(z)_k=\\frac{\\exp(z_k)}{\\sum_{j=1}^{K}\\exp(z_j)},\\qquad \\mathcal{L}(y',y)=-\\sum_{k=1}^{K}y_k\\log y'_k",
-        "explanation": "Softmax normalizes class scores into a probability vector. With one-hot y, only the log probability of the true class contributes to cross-entropy; do not treat class IDs as ordinal measurements.",
+        "latex": "p_k=\\frac{\\exp(z_k)}{\\sum_{j=1}^{K}\\exp(z_j)},\\qquad \\mathcal{L}_{\\mathrm{CE}}(p,y)=-\\sum_{k=1}^{K}y_k\\log p_k",
+        "explanation": "Softmax normalizes class scores into a probability vector p. With one-hot y, only the log probability of the true class contributes to cross-entropy; do not treat class IDs as ordinal measurements.",
         "symbols": [
           {
             "latex": "z_k",
-            "meaning": "score for class k"
+            "meaning": "logit for class k"
           },
           {
             "latex": "K",
@@ -583,8 +787,8 @@
             "meaning": "one-hot target vector"
           },
           {
-            "latex": "y'",
-            "meaning": "predicted probability vector"
+            "latex": "p_k",
+            "meaning": "predicted softmax probability for class k"
           }
         ],
         "name": "Softmax cross-entropy model",
@@ -602,9 +806,9 @@
     {
       "title": "Worked example: fit a line by hand",
       "steps": [
-        "For $x = {0, 1, 2}$ and $y = {1, 2, 2}$, the means are x-$bar = 1$ and y-$bar = \\frac{5}{3}$.",
-        "The centered numerator is $(-1)(-\\frac{2}{3}) + 0(\\frac{1}{3}) + (1)(\\frac{1}{3}) = 1$. The centered denominator is $1 + 0 + 1 = 2$, so w1-$hat = \\frac{1}{2}$.",
-        "The intercept is $\\bar{y}$ - w1-hat x-$bar = \\frac{5}{3} - \\frac{1}{2} = \\frac{7}{6}$. The fitted line is f-$hat(x) = \\frac{7}{6} + x/2$."
+        "For $x=\\{0,1,2\\}$ and $y=\\{1,2,2\\}$, the means are $\\bar{x}=1$ and $\\bar{y}=\\frac{5}{3}$.",
+        "The centered numerator is $(-1)(-\\frac{2}{3})+0(\\frac{1}{3})+(1)(\\frac{1}{3})=1$. The centered denominator is $1+0+1=2$, so $\\widehat{w}_1=\\frac{1}{2}$.",
+        "The intercept is $\\widehat{w}_0=\\bar{y}-\\widehat{w}_1\\bar{x}=\\frac{5}{3}-\\frac{1}{2}=\\frac{7}{6}$. The fitted line is $\\widehat{f}(x)=\\frac{7}{6}+\\frac{x}{2}$."
       ],
       "answer": "OLS separates slope from intercept by centering first; check the denominator before dividing.",
       "sourceType": "lecture"
@@ -1096,7 +1300,7 @@
       "type": "formula",
       "name": "Centered OLS estimator",
       "purpose": "Use it to compute the slope and intercept when the centered input spread is nonzero.",
-      "latex": "\\hat w_1 = \\frac{\\sum_{i=1}^{N}(x_i-\\bar{x})(y_i-\\bar{y})}{\\sum_{i=1}^{N}(x_i-\\bar{x})^2},\\qquad \\hat w_0=\\bar{y}-\\hat w_1\\bar{x}",
+      "latex": "\\widehat{w}_1=\\frac{\\sum_{i=1}^{N}(x_i-\\bar{x})(y_i-\\bar{y})}{\\sum_{i=1}^{N}(x_i-\\bar{x})^2},\\qquad \\widehat{w}_0=\\bar{y}-\\widehat{w}_1\\bar{x}",
       "explanation": "Compute the sample means first, then the centered numerator and denominator. If all x values are identical, the denominator is zero and the slope is not identified by this formula.",
       "symbols": [
         {
@@ -1104,11 +1308,11 @@
           "meaning": "sample means"
         },
         {
-          "latex": "\\hat w_1",
+          "latex": "\\widehat{w}_1",
           "meaning": "OLS slope"
         },
         {
-          "latex": "\\hat w_0",
+          "latex": "\\widehat{w}_0",
           "meaning": "OLS intercept"
         }
       ],
@@ -1591,7 +1795,7 @@
       "type": "formula",
       "name": "Ridge objective",
       "purpose": "Use it to stabilize an underdetermined or ill-conditioned least-squares fit by penalizing large weights.",
-      "latex": "\\hat w_\\lambda=\\arg\\min_w\\left[\\frac{1}{2N}\\lVert\\Phi w-y\\rVert_2^2+\\frac{\\lambda}{2}\\lVert w\\rVert_2^2\\right]",
+      "latex": "\\widehat{w}_\\lambda=\\arg\\min_w\\left[\\frac{1}{2N}\\lVert\\Phi w-y\\rVert_2^2+\\frac{\\lambda}{2}\\lVert w\\rVert_2^2\\right]",
       "explanation": "The first term measures fit and the second charges for coefficient magnitude. Increasing $\\lambda$ suppresses unstable directions; it also adds bias, so its value is a model-selection decision.",
       "symbols": [
         {
@@ -1785,12 +1989,12 @@
       "type": "formula",
       "name": "Softmax cross-entropy model",
       "purpose": "Use it to map class scores to probabilities and train against one-hot targets.",
-      "latex": "g(z)_k=\\frac{\\exp(z_k)}{\\sum_{j=1}^{K}\\exp(z_j)},\\qquad \\mathcal{L}(y',y)=-\\sum_{k=1}^{K}y_k\\log y'_k",
-      "explanation": "Softmax normalizes class scores into a probability vector. With one-hot y, only the log probability of the true class contributes to cross-entropy; do not treat class IDs as ordinal measurements.",
+      "latex": "p_k=\\frac{\\exp(z_k)}{\\sum_{j=1}^{K}\\exp(z_j)},\\qquad \\mathcal{L}_{\\mathrm{CE}}(p,y)=-\\sum_{k=1}^{K}y_k\\log p_k",
+      "explanation": "Softmax normalizes class scores into a probability vector p. With one-hot y, only the log probability of the true class contributes to cross-entropy; do not treat class IDs as ordinal measurements.",
       "symbols": [
         {
           "latex": "z_k",
-          "meaning": "score for class k"
+          "meaning": "logit for class k"
         },
         {
           "latex": "K",
@@ -1801,8 +2005,8 @@
           "meaning": "one-hot target vector"
         },
         {
-          "latex": "y'",
-          "meaning": "predicted probability vector"
+          "latex": "p_k",
+          "meaning": "predicted softmax probability for class k"
         }
       ],
       "sourceType": "lecture",
@@ -2075,9 +2279,9 @@
       "type": "worked-example",
       "title": "Worked example: fit a line by hand",
       "steps": [
-        "For $x = {0, 1, 2}$ and $y = {1, 2, 2}$, the means are x-$bar = 1$ and y-$bar = \\frac{5}{3}$.",
-        "The centered numerator is $(-1)(-\\frac{2}{3}) + 0(\\frac{1}{3}) + (1)(\\frac{1}{3}) = 1$. The centered denominator is $1 + 0 + 1 = 2$, so w1-$hat = \\frac{1}{2}$.",
-        "The intercept is $\\bar{y}$ - w1-hat x-$bar = \\frac{5}{3} - \\frac{1}{2} = \\frac{7}{6}$. The fitted line is f-$hat(x) = \\frac{7}{6} + x/2$."
+        "For $x=\\{0,1,2\\}$ and $y=\\{1,2,2\\}$, the means are $\\bar{x}=1$ and $\\bar{y}=\\frac{5}{3}$.",
+        "The centered numerator is $(-1)(-\\frac{2}{3})+0(\\frac{1}{3})+(1)(\\frac{1}{3})=1$. The centered denominator is $1+0+1=2$, so $\\widehat{w}_1=\\frac{1}{2}$.",
+        "The intercept is $\\widehat{w}_0=\\bar{y}-\\widehat{w}_1\\bar{x}=\\frac{5}{3}-\\frac{1}{2}=\\frac{7}{6}$. The fitted line is $\\widehat{f}(x)=\\frac{7}{6}+\\frac{x}{2}$."
       ],
       "answer": "OLS separates slope from intercept by centering first; check the denominator before dividing.",
       "sourceType": "lecture",
@@ -2906,7 +3110,16 @@
     "dsa5105-lw1-q4",
     "dsa5105-lw1-q5",
     "dsa5105-bank-003",
-    "dsa5105-bank-004"
+    "dsa5105-bank-004",
+    "dsa5105-lw1-q6",
+    "dsa5105-lw1-q7",
+    "dsa5105-lw1-q8",
+    "dsa5105-lw1-q9",
+    "dsa5105-lw1-q10",
+    "dsa5105-lw1-q11",
+    "dsa5105-lw1-q12",
+    "dsa5105-lw1-q13",
+    "dsa5105-lw1-q14"
   ],
   "labIds": [],
   "schemaVersion": "nus.lesson.v1"

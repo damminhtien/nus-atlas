@@ -66,7 +66,7 @@
         "trap": "A closed form does not imply a unique or stable coefficient vector when the design is rank deficient."
       },
       "math": {
-        "latex": "\\hat w = \\arg\\min_w \\lVert Xw-y\\rVert_2^2",
+        "latex": "\\widehat{w}=\\arg\\min_w\\;\\frac{1}{2N}\\lVert Xw-y\\rVert_2^2",
         "explanation": "The model predicts $Xw$ and compares it with the target vector $y$. Squaring and summing the residuals penalizes large mistakes and gives a smooth objective.",
         "symbols": [
           {
@@ -98,7 +98,7 @@
         "trap": "Sparsity is not the same as truth, and shrinkage strength must not be selected from the final test score."
       },
       "math": {
-        "latex": "\\min_w\\;\\lVert Xw-y\\rVert_2^2+\\lambda\\lVert w\\rVert_2^2\\;\\text{(ridge)},\\qquad \\min_w\\;\\lVert Xw-y\\rVert_2^2+\\lambda\\lVert w\\rVert_1\\;\\text{(lasso)}",
+        "latex": "\\min_w\\;\\frac{1}{2N}\\lVert Xw-y\\rVert_2^2+\\frac{\\lambda}{2}\\lVert w\\rVert_2^2\\;\\text{(ridge)},\\qquad \\min_w\\;\\frac{1}{2N}\\lVert Xw-y\\rVert_2^2+\\lambda\\lVert w\\rVert_1\\;\\text{(lasso)}",
         "explanation": "The first term rewards fit to the data; the penalty charges for coefficient size. Increasing $\\lambda$ makes complexity more expensive. The L2 norm is smooth, while the L1 norm has corners that allow exact zeros.",
         "symbols": [
           {
@@ -189,7 +189,7 @@
       "type": "formula",
       "name": "Ordinary least-squares objective",
       "purpose": "Use it to define the unregularized fit before comparing rank, uniqueness, or regularization.",
-      "latex": "\\hat w = \\arg\\min_w \\lVert Xw-y\\rVert_2^2",
+      "latex": "\\widehat{w}=\\arg\\min_w\\;\\frac{1}{2N}\\lVert Xw-y\\rVert_2^2",
       "explanation": "The model predicts $Xw$ and compares it with the target vector $y$. Squaring and summing the residuals penalizes large mistakes and gives a smooth objective.",
       "symbols": [
         {
@@ -257,7 +257,7 @@
       "type": "formula",
       "name": "L2 and L1 regularized objectives",
       "purpose": "Use it to compare continuous shrinkage with sparsity-inducing penalization and choose a validation strategy.",
-      "latex": "\\min_w\\;\\lVert Xw-y\\rVert_2^2+\\lambda\\lVert w\\rVert_2^2\\;\\text{(ridge)},\\qquad \\min_w\\;\\lVert Xw-y\\rVert_2^2+\\lambda\\lVert w\\rVert_1\\;\\text{(lasso)}",
+      "latex": "\\min_w\\;\\frac{1}{2N}\\lVert Xw-y\\rVert_2^2+\\frac{\\lambda}{2}\\lVert w\\rVert_2^2\\;\\text{(ridge)},\\qquad \\min_w\\;\\frac{1}{2N}\\lVert Xw-y\\rVert_2^2+\\lambda\\lVert w\\rVert_1\\;\\text{(lasso)}",
       "explanation": "The first term rewards fit to the data; the penalty charges for coefficient size. Increasing $\\lambda$ makes complexity more expensive. The L2 norm is smooth, while the L1 norm has corners that allow exact zeros.",
       "symbols": [
         {

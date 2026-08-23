@@ -122,23 +122,23 @@
     "steps": [
       [
         "Hypothesis",
-        "$f(x)=w_0+w_1x$",
+        "$f_w(x)=w_0+w_1x$",
         "Start by naming the function class and its parameters."
       ],
       [
         "Loss",
-        "$\\widehat{R}(w)=\\frac{1}{N}\\sum_{i=1}^{N}\\ell(f_w(x_i),y_i)$",
-        "ERM averages the observed losses; it does not directly reveal population risk."
+        "$\\widehat{R}(w)=\\frac{1}{2N}\\sum_{i=1}^{N}(w_0+w_1x_i-y_i)^2$",
+        "ERM averages the observed squared losses; it does not directly reveal population risk."
       ],
       [
         "OLS",
-        "$\\widehat{w}=(X^\\top X)^{-1}X^\\top y$",
-        "Full column rank is the assumption behind uniqueness."
+        "$\\widehat{w}=(\\Phi^\\top\\Phi)^{-1}\\Phi^\\top y$",
+        "Full column rank of the design matrix is the assumption behind this unique solution."
       ],
       [
         "Ridge",
-        "$\\widehat{w}=(X^\\top X+\\lambda I)^{-1}X^\\top y$",
-        "The penalty stabilizes directions that OLS cannot identify well."
+        "$\\widehat{w}_{\\lambda}=(A+\\lambda I)^{-1}b,\\quad A=\\frac{1}{N}\\Phi^\\top\\Phi,\\quad b=\\frac{1}{N}\\Phi^\\top y,\\quad \\lambda>0$",
+        "Under the exercise convention, the penalty makes the normal matrix positive definite and stabilizes weakly identified directions."
       ]
     ],
     "initialState": {
@@ -387,12 +387,12 @@
           ],
           [
             "Piecewise",
-            "$\\psi_\\delta(r)=r\\;\\text{or}\\;\\delta\\operatorname{sign}(r)$",
+            "$\\psi_\\delta(r)=\\begin{cases}r,&|r|\\le\\delta\\\\\\delta\\operatorname{sign}(r),&|r|>\\delta\\end{cases}$",
             "Outside the threshold, the derivative stops growing with the residual magnitude."
           ],
           [
             "Optimality",
-            "$\\sum_i\\psi_\\delta(\\hat m-y_i)=0$",
+            "$\\sum_i\\psi_\\delta(\\widehat{m}-y_i)=0$",
             "An outlier can contribute only plus or minus $\\delta$ to the location equation."
           ]
         ],
@@ -441,12 +441,12 @@
           ],
           [
             "Particular",
-            "$w_0=\\Phi^\\dagger y$",
+            "$\\widehat{w}_{\\mathrm{pinv}}=\\Phi^\\dagger y$",
             "The pseudoinverse returns a canonical minimum-norm solution."
           ],
           [
             "Null space",
-            "$w(u)=\\Phi^\\dagger y+(I-\\Phi^\\dagger\\Phi)u$",
+            "$\\widehat{w}(u)=\\Phi^\\dagger y+(I-\\Phi^\\dagger\\Phi)u$",
             "The added component is invisible to the observed rows of Phi."
           ],
           [
@@ -464,27 +464,27 @@
         "steps": [
           [
             "Objective",
-            "$\\min_w\\frac{1}{2N}\\|\\Phi w-y\\|^2+\\frac\\lambda2\\|w\\|^2$",
+            "$\\min_w\\;\\frac{1}{2N}\\lVert\\Phi w-y\\rVert_2^2+\\frac{\\lambda}{2}\\lVert w\\rVert_2^2$",
             "Combine fit with a cost for large coefficients."
           ],
           [
             "Stationarity",
-            "$(A+\\lambda I)\\hat w_\\lambda=b$",
+            "$(A+\\lambda I)\\widehat{w}_\\lambda=b$",
             "Differentiate with $A=\\Phi^\\top \\Phi/N$ and $b=\\Phi^\\top y/N$."
           ],
           [
             "Eigenbasis",
-            "$Av_j=\\mu_jv_j$",
-            "$In an eigen-direction, the normal matrix acts like scalar curvature \\mu_j.$"
+            "$Av_j=\\mu_jv_j,\\qquad A\\succ0\\Longleftrightarrow\\mu_j>0\\ \\forall j$",
+            "For comparison with the unique OLS solution, assume positive-definite A; each eigen-direction has curvature mu_j."
           ],
           [
             "Filter",
-            "$\\frac{\\langle\\hat w_\\lambda,v_j\\rangle}{\\langle\\hat w_0,v_j\\rangle}=\\frac{\\mu_j}{\\mu_j+\\lambda}$",
-            "Small $\\mu_{j}$ receives strong shrinkage; large $\\mu_{j}$ survives when it dominates $\\lambda$."
+            "$\\langle\\widehat{w}_\\lambda,v_j\\rangle=\\frac{\\mu_j}{\\mu_j+\\lambda}\\langle\\widehat{w}_0,v_j\\rangle$",
+            "Under the positive-definite comparison, the spectral factor shrinks each OLS coordinate."
           ],
           [
             "Interpret",
-            "$\\mu_j\\ll\\lambda\\Rightarrow0;\\quad\\mu_j\\gg\\lambda\\Rightarrow1$",
+            "$\\mu_j\\ll\\lambda\\Rightarrow\\frac{\\mu_j}{\\mu_j+\\lambda}\\approx0,\\qquad\\mu_j\\gg\\lambda\\Rightarrow\\frac{\\mu_j}{\\mu_j+\\lambda}\\approx1$",
             "Ridge is a spectral filter, not merely a penalty slogan."
           ]
         ],
@@ -536,7 +536,7 @@
         "steps": [
           [
             "Target metric",
-            "$\\mathbf 1\\{\\hat y\\ne y\\}$",
+            "$\\mathbf 1\\{\\widehat{y}\\ne y\\}$",
             "This is what we ultimately report for classification correctness."
           ],
           [
@@ -551,7 +551,7 @@
           ],
           [
             "Softmax",
-            "$p_k=\\frac{e^{z_k}}{\\sum_j e^{z_j}}$",
+            "$p_k=\\frac{e^{z_k}}{\\sum_{j=1}^{K}e^{z_j}}$",
             "Cross-entropy turns class scores into a probability-aware training objective."
           ]
         ]
@@ -569,8 +569,8 @@
           ],
           [
             "Decision",
-            "$\\hat y=\\begin{cases}+1,&s>0\\\\-1,&s<0\\end{cases}$",
-            "Use an explicit tie rule when $s=0$; the sign shorthand hides that convention."
+            "$\\widehat{y}=\\begin{cases}+1,&s>0\\\\-1,&s<0\\\\\\text{declared tie-break},&s=0\\end{cases}$",
+            "The decision rule is incomplete until the tie behavior at $s=0$ is declared."
           ],
           [
             "Loss",

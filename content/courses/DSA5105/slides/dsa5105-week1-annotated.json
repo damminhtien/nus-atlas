@@ -5126,7 +5126,7 @@
       "socraticQuestions": [
         {
           "type": "derive",
-          "prompt": "Why does the optimal intercept satisfy $\\hat w_0=\\bar y-\\hat w_1\\bar x$?",
+          "prompt": "Why does the optimal intercept satisfy $\\widehat{w}_0=\\bar y-\\widehat{w}_1\\bar x$?",
           "answer": "The derivative with respect to $w_0$ makes the average residual zero, so the fitted line passes through $(\\bar x,\\bar y)$.",
           "hint": "Set the sum of residuals to zero."
         },
@@ -5646,13 +5646,13 @@
         "whatYouSee": "The slide displays the ERM problem, sets both partial derivatives to zero, defines the sample means, and gives the fitted intercept and slope.",
         "whyItMatters": "It is the main calculation target for simple linear regression and a frequent source of algebra and interpretation questions.",
         "intuition": "Center first, measure how x and y move together, divide by how much x varies, then choose the intercept so the line passes through the means.",
-        "technicalDetail": "$\\hat w_1=\\frac{\\sum_i(x_i-\\bar x)(y_i-\\bar y)}{\\sum_i(x_i-\\bar x)^2}$ and $\\hat w_0=\\bar y-\\hat w_1\\bar x$. The denominator encodes uniqueness of the slope.",
+        "technicalDetail": "$\\widehat{w}_1=\\frac{\\sum_i(x_i-\\bar x)(y_i-\\bar y)}{\\sum_i(x_i-\\bar x)^2}$ and $\\widehat{w}_0=\\bar y-\\widehat{w}_1\\bar x$. The denominator encodes uniqueness of the slope.",
         "pitfall": "Do not confuse the slope numerator with $\\sum_i x_i y_i$ when an intercept is present; centering is essential.",
-        "connection": "The formula is the scalar precursor of $\\hat w=(\\Phi^\\top\\Phi)^{-1}\\Phi^\\top y$ on slide 46."
+        "connection": "The formula is the scalar precursor of $\\widehat{w}=(\\Phi^\\top\\Phi)^{-1}\\Phi^\\top y$ on slide 46."
       },
       "keyFormula": {
         "name": "Centered simple-OLS estimator",
-        "latex": "\\hat w_1=\\frac{\\sum_i(x_i-\\bar x)(y_i-\\bar y)}{\\sum_i(x_i-\\bar x)^2},\\qquad\\hat w_0=\\bar y-\\hat w_1\\bar x",
+        "latex": "\\widehat{w}_1=\\frac{\\sum_i(x_i-\\bar x)(y_i-\\bar y)}{\\sum_i(x_i-\\bar x)^2},\\qquad\\widehat{w}_0=\\bar y-\\widehat{w}_1\\bar x",
         "purpose": "Use it to calculate the line when the centered input spread is nonzero and interpret slope as normalized co-movement."
       },
       "textbookRefs": [
@@ -8529,7 +8529,7 @@
         ]
       },
       "explanation": {
-        "whatYouSee": "The slide turns the expanded basis objective into min_w 1/(2N)||$\\Phi$ w-y||^2 and displays $\\Phi$, w, and y with their dimensions.",
+        "whatYouSee": "The slide turns the expanded basis objective into $\\min_w\\frac{1}{2N}\\lVert\\Phi w-y\\rVert_2^2$ and displays $\\Phi$, $w$, and $y$ with their dimensions.",
         "whyItMatters": "This is the notational compression needed to derive normal equations and reason about rank, null spaces, and pseudoinverses.",
         "intuition": "Each training example becomes a row of $\\Phi$; each basis function becomes a column. Multiplying $\\Phi w$ produces all $N$ predictions at once.",
         "technicalDetail": "$\\Phi\\in\\mathbb R^{N\\times M}$, $w\\in\\mathbb R^M$, and $y\\in\\mathbb R^N$. Entry $\\Phi_{ij}=\\phi_j(x_i)$. Dimension checks catch many transpose mistakes.",
@@ -8617,7 +8617,7 @@
         ]
       },
       "explanation": {
-        "whatYouSee": "The annotated page contains handwritten expansion of $R(w)$, its gradient, the normal equation $\\Phi$^T $\\Phi$ w=$\\Phi$^T y, and a split between full-rank and singular cases.",
+        "whatYouSee": "The annotated page contains handwritten expansion of $R(w)$, its gradient, the normal equation $\\Phi^\\top\\Phi w=\\Phi^\\top y$, and a split between full-rank and singular cases.",
         "whyItMatters": "It is the bridge between the geometric least-squares problem and the algebraic solution, including the uniqueness condition emphasized by the lecturer.",
         "intuition": "At the optimum, the residual is orthogonal to every feature direction. The normal equations express that residual orthogonality in matrix form.",
         "technicalDetail": "Expanding $R(w)=\\frac{1}{2N}\\lVert\\Phi w-y\\rVert^2$ gives gradient $\\frac{1}{N}\\Phi^\\top(\\Phi w-y)$. Setting it to zero yields $\\Phi^\\top\\Phi w=\\Phi^\\top y$. If $\\Phi$ has full column rank, $\\Phi^\\top\\Phi$ is invertible and the solution is unique.",
@@ -8643,8 +8643,8 @@
       "socraticQuestions": [
         {
           "type": "derive",
-          "prompt": "What geometric statement is encoded by $\\Phi^\\top(\\Phi\\hat w-y)=0$?",
-          "answer": "The residual $y-\\Phi\\hat w$ is orthogonal to every column of $\\Phi$, hence to the whole column space used for prediction.",
+          "prompt": "What geometric statement is encoded by $\\Phi^\\top(\\Phi\\widehat{w}-y)=0$?",
+          "answer": "The residual $y-\\Phi\\widehat{w}$ is orthogonal to every column of $\\Phi$, hence to the whole column space used for prediction.",
           "hint": "Multiply out the inner products with every feature column."
         },
         {
@@ -8989,7 +8989,7 @@
         ]
       },
       "explanation": {
-        "whatYouSee": "The slide minimizes $\\lVert\\Phi w-y\\rVert^2$, sets the gradient to zero, derives $\\Phi^\\top(\\Phi\\hat w-y)=0$, and states $\\hat w=(\\Phi^\\top\\Phi)^{-1}\\Phi^\\top y$ when $\\Phi^\\top\\Phi$ is invertible.",
+        "whatYouSee": "The slide minimizes $\\lVert\\Phi w-y\\rVert^2$, sets the gradient to zero, derives $\\Phi^\\top(\\Phi\\widehat{w}-y)=0$, and states $\\widehat{w}=(\\Phi^\\top\\Phi)^{-1}\\Phi^\\top y$ when $\\Phi^\\top\\Phi$ is invertible.",
         "whyItMatters": "It is the multivariate/general-basis analogue of the 1D OLS formula and a core derivation target.",
         "intuition": "Project y onto the column space of $\\Phi$. The coefficient vector is the coordinate representation of that projection when the columns are independent.",
         "technicalDetail": "The inverse formula requires full column rank. With the normalization $1/(2N)$, the constant does not change the optimizer. The solution is unique under invertibility.",
@@ -8998,7 +8998,7 @@
       },
       "keyFormula": {
         "name": "Full-rank OLS solution",
-        "latex": "\\hat w=(\\Phi^\\top\\Phi)^{-1}\\Phi^\\top y",
+        "latex": "\\widehat{w}=(\\Phi^\\top\\Phi)^{-1}\\Phi^\\top y",
         "purpose": "Use it only after stating that the normal matrix is invertible, equivalently that the design has full column rank."
       },
       "textbookRefs": [
@@ -9187,7 +9187,7 @@
         ]
       },
       "explanation": {
-        "whatYouSee": "The slide gives the family $\\hat w$(u)=$\\Phi$^†y+(I-$\\Phi$^†$\\Phi$)u, states that all solutions have the same empirical risk, and warns that some have arbitrarily large coefficients and wiggly functions.",
+        "whatYouSee": "The slide gives the family $\\widehat{w}(u)=\\Phi^\\dagger y+(I-\\Phi^\\dagger\\Phi)u$, states that all solutions have the same empirical risk, and warns that some have arbitrarily large coefficients and wiggly functions.",
         "whyItMatters": "It explains why rank deficiency is not merely a computational nuisance: non-unique coefficients can correspond to very different functions outside the observed data.",
         "intuition": "The null-space component changes the weights without changing the fitted training predictions. The pseudoinverse selects the minimum-norm member when used alone.",
         "technicalDetail": "$\\Phi^\\dagger$ is the Moore–Penrose pseudoinverse. $I-\\Phi^\\dagger\\Phi$ projects $u$ onto directions invisible to $\\Phi$. All members produce the same projection $\\Phi w$, but norms and extrapolations can differ.",
@@ -9196,7 +9196,7 @@
       },
       "keyFormula": {
         "name": "Singular OLS solution family",
-        "latex": "\\hat w(u)=\\Phi^\\dagger y+(I-\\Phi^\\dagger\\Phi)u",
+        "latex": "\\widehat{w}(u)=\\Phi^\\dagger y+(I-\\Phi^\\dagger\\Phi)u",
         "purpose": "Use it to describe all least-squares minimizers and identify the null-space directions invisible to the training predictions."
       },
       "textbookRefs": [
@@ -9204,9 +9204,9 @@
           "sourceId": "DSA5105/Textbook.pdf",
           "page": {
             "type": "derive",
-            "prompt": "What does the term (I-Phi^†Phi)u contribute?",
-            "answer": "A null-space component that does not change Phi w and therefore does not change the training fit.",
-            "hint": "Multiply by Phi."
+            "prompt": "What does the term $(I-\\Phi^\\dagger\\Phi)u$ contribute?",
+            "answer": "A null-space component that does not change $\\Phi w$ and therefore does not change the training fit.",
+            "hint": "Multiply by $\\Phi$."
           },
           "sourceType": "textbook",
           "role": "optional depth"

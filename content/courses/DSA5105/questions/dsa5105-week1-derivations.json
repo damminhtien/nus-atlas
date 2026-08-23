@@ -89,7 +89,7 @@
         ]
       }
     ],
-    "solution": "$\\psi_\\delta(r)=r$ for $|r|\\le\\delta$ and $\\psi_\\delta(r)=\\delta\\operatorname{sign}(r)$ otherwise; optimality gives $\\sum_i\\psi_\\delta(\\hat m-y_i)=0$.",
+    "solution": "$\\psi_\\delta(r)=r$ for $|r|\\le\\delta$ and $\\psi_\\delta(r)=\\delta\\operatorname{sign}(r)$ otherwise; optimality gives $\\sum_i\\psi_\\delta(\\widehat{m}-y_i)=0$.",
     "explanation": "The key interpretation is that each residual's score contribution is bounded outside the quadratic region.",
     "sourceRefs": [
       {
@@ -148,7 +148,7 @@
         ]
       }
     ],
-    "solution": "$\\hat w(u)=\\Phi^\\dagger y+(I-\\Phi^\\dagger\\Phi)u$. The second term lies in the null space of $\\Phi$.",
+    "solution": "$\\widehat{w}(u)=\\Phi^\\dagger y+(I-\\Phi^\\dagger\\Phi)u$. The second term lies in the null space of $\\Phi$.",
     "explanation": "State why the training predictions stay fixed and why off-sample behavior can still change.",
     "sourceRefs": [
       {
@@ -208,7 +208,7 @@
         ]
       }
     ],
-    "solution": "From $(A+\\lambda I)\\hat w_\\lambda=b$ and $Av_j=\\mu_jv_j$, project onto $v_j$: $(\\mu_j+\\lambda)\\langle\\hat w_\\lambda,v_j\\rangle=\\langle b,v_j\\rangle$. Since $\\langle\\hat w_0,v_j\\rangle=\\langle b,v_j\\rangle/\\mu_j$, the ratio is $\\mu_j/(\\mu_j+\\lambda)$.",
+    "solution": "Assume $A\\succ0$, so $\\mu_j>0$ and the unique OLS solution is $\\widehat{w}_0=A^{-1}b$. From $(A+\\lambda I)\\widehat{w}_\\lambda=b$ and $Av_j=\\mu_jv_j$, projection onto $v_j$ gives $(\\mu_j+\\lambda)\\langle\\widehat{w}_\\lambda,v_j\\rangle=\\langle b,v_j\\rangle$. Therefore $\\langle\\widehat{w}_\\lambda,v_j\\rangle=\\frac{\\mu_j}{\\mu_j+\\lambda}\\langle\\widehat{w}_0,v_j\\rangle$.",
     "explanation": "Small eigenvalues are weakly identified directions and receive the strongest shrinkage.",
     "sourceRefs": [
       {

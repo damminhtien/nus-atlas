@@ -8,7 +8,7 @@ test("DSA5105 has the required concept contrast set", () => {
   const state = loadCanonicalState();
   const result = validateContrastDrills(state);
   assert.equal(result.ok, true, result.errors.join("\n"));
-  assert.equal(result.counts.drills, REQUIRED_PAIRS.length);
+  assert.ok(result.counts.drills >= REQUIRED_PAIRS.length);
 });
 
 test("DSA5101 has a complete concept contrast set", () => {
@@ -36,7 +36,7 @@ test("contrast feature flattens lesson drills and supports lesson scope", () => 
   const state = loadCanonicalState();
   const lessons = state.content.DSA5105.modules.flatMap(module => module.lessons || []);
   const feature = createContrastDrills({ getLessons: () => lessons });
-  assert.equal(feature.drillsFor("DSA5105").length, REQUIRED_PAIRS.length);
+  assert.ok(feature.drillsFor("DSA5105").length >= REQUIRED_PAIRS.length);
   assert.equal(feature.drillsFor("DSA5105", "dsa5105-erm").length, REQUIRED_PAIRS.length);
   assert.equal(feature.drillsFor("DSA5105", "dsa5105-contrast-splits").length, 1);
 });

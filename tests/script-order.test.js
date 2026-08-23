@@ -4,7 +4,7 @@ const fs = require("node:fs");
 
 test("browser script order loads NUS dependencies before the entrypoint", () => {
   const html = fs.readFileSync("index.html", "utf8");
-  const before = ["src/core/content/transport.js", "src/core/content/repository.js", "src/app/bootstrap.js", "src/core/study-store.js", "src/core/router.js", "src/features/nus/presentation.js", "src/features/nus/sql.js", "src/features/nus/simulations.js", "src/features/nus/retrieval.js"];
+  const before = ["src/core/content/transport.js", "src/core/content/repository.js", "src/app/bootstrap.js", "src/core/study-store.js", "src/core/router.js", "src/features/nus/presentation.js", "src/features/nus/sql.js", "src/features/nus/simulations.js", "src/features/nus/retrieval.js", "src/features/nus/exam-schedule.js"];
   const nus = html.indexOf('src="js/nus.js');
   assert.ok(nus > 0);
   before.forEach(script => assert.ok(html.indexOf(script) < nus, `${script} must load before js/nus.js`));
@@ -21,6 +21,7 @@ test("app shell exposes a persistent collapsible left navigation", () => {
   assert.match(css, /body\.nus-slide-focus-mode \.nus-slide-reader-grid[^}]*grid-template-columns:minmax\(0, 3fr\) minmax\(0, 1fr\)/);
   assert.match(css, /body\.nus-slide-focus-mode \.nus-slide-reader-page \.nus-slide-main,[\s\S]*height:clamp\(520px, 75vh, 820px\)/);
   assert.match(css, /\.nus-socratic-modal/);
+  assert.match(css, /\.nus-exam-schedule-overlay/);
   assert.match(css, /body\.nus-slide-focus-mode \.nus-slide-image[^}]*height:100%/);
   assert.match(css, /body\.nus-slide-focus-mode \.nus-slide-context \.nus-slide-depth[^}]*display:none/);
   assert.match(css, /\.nus-derivation-trace \.nus-lab-step \{ grid-template-columns:minmax\(0, 1fr\); \}/);
