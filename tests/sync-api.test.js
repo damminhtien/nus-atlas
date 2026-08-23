@@ -1,7 +1,22 @@
 const test = require("node:test");
 const assert = require("node:assert/strict");
 const crypto = require("node:crypto");
-const { passwordHashParts, verifyPassword } = require("../api/sync");
+const { originFor, passwordHashParts, verifyPassword } = require("../api/sync");
+
+test("sync CORS keeps the deployed origin and permits loopback development", () => {
+  const previous = process.env.ATLAS_SYNC_ORIGIN;
+  process.env.ATLAS_SYNC_ORIGIN = "https://damminhtien.github.io";
+  try {
+    const requestFor = origin => ({ headers: { origin } });
+    assert.equal(originFor(requestFor("https://damminhtien.github.io")), "https://damminhtien.github.io");
+    assert.equal(originFor(requestFor("http://localhost:3000")), "http://localhost:3000");
+    assert.equal(originFor(requestFor("http://127.0.0.1:5173")), "http://127.0.0.1:5173");
+    assert.equal(originFor(requestFor("https://example.com")), "");
+  } finally {
+    if (previous === undefined) delete process.env.ATLAS_SYNC_ORIGIN;
+    else process.env.ATLAS_SYNC_ORIGIN = previous;
+  }
+});
 
 test("sync password verifier accepts the configured scrypt format", () => {
   const previous = process.env.ATLAS_SYNC_PASSWORD_HASH;

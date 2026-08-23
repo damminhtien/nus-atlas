@@ -10,10 +10,19 @@ const DEFAULT_ORIGINS = new Set([
 ]);
 
 function originFor(request) {
-  const origin = request.headers && request.headers.origin;
-  const configured = String(process.env.ATLAS_SYNC_ORIGIN || "").trim();
-  const allowed = configured ? new Set([configured]) : DEFAULT_ORIGINS;
-  return allowed.has(origin) ? origin : "";
+  const origin = String(request.headers && request.headers.origin || "").trim();
+  if (!origin) return "";
+  const configured = String(process.env.ATLAS_SYNC_ORIGIN || "")
+    .split(",")
+    .map(value => value.trim())
+    .filter(Boolean);
+  if (DEFAULT_ORIGINS.has(origin) || configured.includes(origin)) return origin;
+  try {
+    const url = new URL(origin);
+    return url.protocol === "http:" && ["localhost", "127.0.0.1", "[::1]"].includes(url.hostname) ? origin : "";
+  } catch (_) {
+    return "";
+  }
 }
 
 function sendJson(response, status, body, origin) {
@@ -234,5 +243,6 @@ async function handler(request, response) {
 }
 
 module.exports = handler;
+module.exports.originFor = originFor;
 module.exports.passwordHashParts = passwordHashParts;
 module.exports.verifyPassword = verifyPassword;
