@@ -1,7 +1,7 @@
 {
   "id": "dsa5105-svm-margin",
   "title": "SVM margins and support vectors",
-  "week": 5,
+  "week": 2,
   "minutes": 60,
   "summary": "Derive the geometric margin, connect it to the hard-margin objective, and explain support vectors and hinge loss.",
   "objectives": [
@@ -32,46 +32,74 @@
       "status": "course-depth"
     },
     {
-      "sourceId": "DSA5105/DSA5105_lecture2_annotated_tuesday.pdf",
+      "sourceId": "DSA5105/DSA5105_lecture2_annotated_friday.pdf",
       "page": 25,
       "sourceType": "lecture",
-      "role": "binary logistic setup",
+      "role": "binary logistic setup · latest Friday annotated source",
       "status": "current"
     },
     {
-      "sourceId": "DSA5105/DSA5105_lecture2_annotated_tuesday.pdf",
+      "sourceId": "DSA5105/DSA5105_lecture2_annotated_friday.pdf",
       "page": 31,
       "sourceType": "lecture",
-      "role": "maximum-margin classifier",
+      "role": "maximum-margin classifier · latest Friday annotated source",
       "status": "current"
     },
     {
-      "sourceId": "DSA5105/DSA5105_lecture2_annotated_tuesday.pdf",
+      "sourceId": "DSA5105/DSA5105_lecture2_annotated_friday.pdf",
       "page": 32,
       "sourceType": "lecture",
-      "role": "hinge loss and hard-margin primal",
+      "role": "hinge loss and hard-margin primal · latest Friday annotated source",
       "status": "current"
     },
     {
-      "sourceId": "DSA5105/DSA5105_lecture2_annotated_tuesday.pdf",
+      "sourceId": "DSA5105/DSA5105_lecture2_annotated_friday.pdf",
       "page": 34,
       "sourceType": "lecture",
-      "role": "support-vector criterion",
+      "role": "support-vector criterion · latest Friday annotated source",
       "status": "current"
     },
     {
-      "sourceId": "DSA5105/DSA5105_lecture2_annotated_tuesday.pdf",
+      "sourceId": "DSA5105/DSA5105_lecture2_annotated_friday.pdf",
       "page": 41,
       "sourceType": "lecture",
-      "role": "KKT conditions",
+      "role": "KKT conditions · latest Friday annotated source",
       "status": "current"
     },
     {
-      "sourceId": "DSA5105/DSA5105_lecture2_annotated_tuesday.pdf",
+      "sourceId": "DSA5105/DSA5105_lecture2_annotated_friday.pdf",
       "page": 46,
       "sourceType": "lecture",
-      "role": "kernel SVM dual and prediction",
+      "role": "kernel SVM dual and prediction · latest Friday annotated source",
       "status": "current"
+    },
+    {
+      "sourceId": "DSA5105/Lec2_exercises-solutions.pdf",
+      "page": 3,
+      "sourceType": "exercise",
+      "role": "hard-margin SVM dual setup",
+      "status": "current-context"
+    },
+    {
+      "sourceId": "DSA5105/Lec2_exercises-solutions.pdf",
+      "page": 4,
+      "sourceType": "exercise",
+      "role": "KKT and support-vector solution",
+      "status": "current-context"
+    },
+    {
+      "sourceId": "DSA5105/Lec2_exercises-solutions.pdf",
+      "page": 5,
+      "sourceType": "exercise",
+      "role": "logistic and hinge setup",
+      "status": "current-context"
+    },
+    {
+      "sourceId": "DSA5105/Lec2_exercises-solutions.pdf",
+      "page": 6,
+      "sourceType": "exercise",
+      "role": "kernel score representations",
+      "status": "current-context"
     }
   ],
   "visualIds": [],
@@ -100,7 +128,8 @@
         "name": "Signed geometric margin",
         "purpose": "Use it to convert a label-scaled classifier score into distance from the separating hyperplane.",
         "sourceType": "textbook"
-      }
+      },
+      "sourceRefs": []
     },
     {
       "title": "Textbook depth · Hard margin",
@@ -122,17 +151,20 @@
         "name": "Hard-margin SVM objective",
         "purpose": "Use it when every training point is assumed separable and the goal is the widest feasible margin.",
         "sourceType": "textbook"
-      }
+      },
+      "sourceRefs": []
     },
     {
       "title": "Textbook depth · Support vectors and slack",
       "body": "Support vectors are the observations with active constraints or non-zero dual multipliers; they determine the boundary in the dual representation. When perfect separation is unrealistic, slack variables and hinge loss allow violations while still penalizing them.",
-      "sourceType": "textbook"
+      "sourceType": "textbook",
+      "sourceRefs": []
     },
     {
       "title": "Scope boundary",
       "body": "This page is textbook depth. Treat the derivation as a worked mathematical extension and verify the current lecture sequence before calling every SVM detail examinable.",
-      "sourceType": "ref"
+      "sourceType": "ref",
+      "sourceRefs": []
     }
   ],
   "examples": [
@@ -144,7 +176,8 @@
         "The signed geometric margin is $0.5$. A larger norm with the same score would reduce the geometric distance."
       ],
       "answer": "The margin is $0.5$; keep the label inside the numerator when using the signed form.",
-      "sourceType": "textbook"
+      "sourceType": "textbook",
+      "sourceRefs": []
     }
   ],
   "math": [],
@@ -153,13 +186,15 @@
       "prompt": "Why is the SVM scale convention necessary?",
       "angle": "Show what happens if $(w,b)$ is multiplied by a positive constant.",
       "modelAnswer": "The boundary is unchanged but the raw scores change. Fixing the closest scores at one removes this arbitrary scale and makes the geometric margin comparable.",
-      "focus": "invariance"
+      "focus": "invariance",
+      "sourceRefs": []
     },
     {
       "prompt": "When is a hard-margin SVM the wrong model even if a separator exists?",
       "angle": "Consider noise, outliers, measurement error, and the cost of treating every point as perfectly separable.",
       "modelAnswer": "A separator can be created by an outlier or an overly flexible feature map. Soft margins and validation can produce a more robust boundary.",
-      "focus": "robustness"
+      "focus": "robustness",
+      "sourceRefs": []
     }
   ],
   "courseId": "DSA5105",
@@ -476,8 +511,98 @@
     "dsa5105-svm-q2",
     "dsa5105-svm-q3",
     "dsa5105-bank-009",
-    "dsa5105-bank-010"
+    "dsa5105-bank-010",
+    "dsa5105-week2-ex-logistic-hinge"
   ],
   "labIds": [],
-  "schemaVersion": "nus.lesson.v1"
+  "schemaVersion": "nus.lesson.v1",
+  "contentStatus": "CURRENT LECTURE",
+  "sourceLens": {
+    "status": "Week 2 lecture + official exercise depth",
+    "whyExaminable": "The annotated lecture establishes the concept boundary; the official Lecture 2 exercise solutions require the algebraic construction, dual, KKT, or kernel representation.",
+    "lecture": [
+      {
+        "sourceId": "DSA5105/DSA5105_lecture2_annotated_friday.pdf",
+        "page": 25,
+        "sourceType": "lecture",
+        "role": "binary logistic setup · latest Friday annotated source",
+        "status": "current"
+      },
+      {
+        "sourceId": "DSA5105/DSA5105_lecture2_annotated_friday.pdf",
+        "page": 31,
+        "sourceType": "lecture",
+        "role": "maximum-margin classifier · latest Friday annotated source",
+        "status": "current"
+      },
+      {
+        "sourceId": "DSA5105/DSA5105_lecture2_annotated_friday.pdf",
+        "page": 32,
+        "sourceType": "lecture",
+        "role": "hinge loss and hard-margin primal · latest Friday annotated source",
+        "status": "current"
+      },
+      {
+        "sourceId": "DSA5105/DSA5105_lecture2_annotated_friday.pdf",
+        "page": 34,
+        "sourceType": "lecture",
+        "role": "support-vector criterion · latest Friday annotated source",
+        "status": "current"
+      }
+    ],
+    "officialExercise": [
+      {
+        "sourceId": "DSA5105/Lec2_exercises-solutions.pdf",
+        "page": 3,
+        "sourceType": "exercise",
+        "role": "hard-margin SVM dual setup",
+        "status": "current-context"
+      },
+      {
+        "sourceId": "DSA5105/Lec2_exercises-solutions.pdf",
+        "page": 4,
+        "sourceType": "exercise",
+        "role": "KKT and support-vector solution",
+        "status": "current-context"
+      },
+      {
+        "sourceId": "DSA5105/Lec2_exercises-solutions.pdf",
+        "page": 5,
+        "sourceType": "exercise",
+        "role": "logistic and hinge setup",
+        "status": "current-context"
+      },
+      {
+        "sourceId": "DSA5105/Lec2_exercises-solutions.pdf",
+        "page": 6,
+        "sourceType": "exercise",
+        "role": "kernel score representations",
+        "status": "current-context"
+      }
+    ],
+    "textbook": [
+      {
+        "sourceId": "DSA5105/Textbook.pdf",
+        "page": 31,
+        "sourceType": "textbook",
+        "role": "linear SVM geometry",
+        "status": "course-depth"
+      },
+      {
+        "sourceId": "DSA5105/Textbook.pdf",
+        "page": 35,
+        "sourceType": "textbook",
+        "role": "dual and support vectors",
+        "status": "course-depth"
+      },
+      {
+        "sourceId": "DSA5105/Textbook.pdf",
+        "page": 36,
+        "sourceType": "textbook",
+        "role": "soft margin and hinge loss",
+        "status": "course-depth"
+      }
+    ],
+    "reference": []
+  }
 }

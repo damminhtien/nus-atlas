@@ -707,12 +707,14 @@
         "name": "Week 1 learning pipeline",
         "purpose": "Use it to reconstruct the complete path from data and modeling choices to fitted and population risk.",
         "sourceType": "lecture"
-      }
+      },
+      "sourceRefs": []
     },
     {
       "title": "Source boundary · Lecture first, exercise depth second",
       "body": "The annotated lecture supplies the Week 1 scope. The official exercise sheet and its solutions are used here for derivation depth; textbook material is labeled as supporting context. These proofs deepen the lecture rather than silently changing the examinable source boundary.",
-      "sourceType": "lecture"
+      "sourceType": "lecture",
+      "sourceRefs": []
     }
   ],
   "examples": [
@@ -725,7 +727,8 @@
         "Interpret the result in a direction, score-contribution, or generalization language—not only as a formula."
       ],
       "answer": "A complete Week 1 answer connects algebra to the assumption and then to the modeling consequence.",
-      "sourceType": "lecture"
+      "sourceType": "lecture",
+      "sourceRefs": []
     }
   ],
   "criticalQuestions": [
@@ -733,25 +736,29 @@
       "prompt": "If two singular-OLS parameter vectors produce the same training predictions, what can still differ?",
       "angle": "Look outside the row space of Phi and compare coefficient norms or predictions on new inputs.",
       "modelAnswer": "Their null-space components can differ. The training fit is unchanged, but coefficient magnitude and off-sample behavior can be very different.",
-      "focus": "identifiability"
+      "focus": "identifiability",
+      "sourceRefs": []
     },
     {
       "prompt": "Why does a small eigenvalue create a direction that ridge should suppress?",
       "angle": "Inspect how much the empirical design changes when the parameter moves along that eigenvector.",
       "modelAnswer": "A small eigenvalue means the sample objective has weak curvature in that direction, so noise can cause a large OLS coefficient change. Ridge multiplies that component by $\\mu/(\\mu+\\lambda)$.",
-      "focus": "spectral regularization"
+      "focus": "spectral regularization",
+      "sourceRefs": []
     },
     {
       "prompt": "Why is a low empirical risk not enough to claim a good learner?",
       "angle": "Name the expectation, the iid bridge, and the three lecture sources of error.",
       "modelAnswer": "Empirical risk is a sample average. It informs population risk only under a relevant sampling assumption and a suitable class/optimization process; it can be low while approximation, estimation, or optimization is still poor.",
-      "focus": "generalization"
+      "focus": "generalization",
+      "sourceRefs": []
     },
     {
       "prompt": "What exactly is bounded in the Huber argument?",
       "angle": "Differentiate with respect to the residual and compare it with squared loss.",
       "modelAnswer": "The derivative $\\psi_delta(r)$, which is the residual's score contribution to the first-order condition, is capped at plus or minus $\\delta$ outside the quadratic region.",
-      "focus": "robustness"
+      "focus": "robustness",
+      "sourceRefs": []
     }
   ],
   "courseId": "DSA5105",
@@ -2419,5 +2426,6 @@
     "dsa5105-w1d-q6"
   ],
   "labIds": [],
-  "schemaVersion": "nus.lesson.v1"
+  "schemaVersion": "nus.lesson.v1",
+  "contentStatus": "CURRENT LECTURE"
 }

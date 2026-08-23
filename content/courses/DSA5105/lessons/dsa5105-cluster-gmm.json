@@ -78,7 +78,8 @@
         "name": "K-means alternating update",
         "purpose": "Use it to alternate hard assignments and centroid updates while reducing the within-cluster objective.",
         "sourceType": "lecture"
-      }
+      },
+      "sourceRefs": []
     },
     {
       "title": "Textbook depth · GMM responsibilities",
@@ -108,17 +109,20 @@
         "name": "GMM responsibility",
         "purpose": "Use it to compute the posterior membership weight of a point under each mixture component.",
         "sourceType": "textbook"
-      }
+      },
+      "sourceRefs": []
     },
     {
       "title": "Textbook depth · Expectation–maximization",
       "body": "The E-step computes responsibilities using the current parameters. The M-step updates weights, means, and covariances using those responsibilities. The observed-data likelihood is improved in the idealized update, but the non-convex objective can still finish at a local optimum.",
-      "sourceType": "textbook"
+      "sourceType": "textbook",
+      "sourceRefs": []
     },
     {
       "title": "Reference boundary",
       "body": "The draft mathematics reference adds a wider clustering and spectral context. Use it to connect ideas after the K-means and EM loop is clear; it is not a replacement for current lecture scope.",
-      "sourceType": "ref"
+      "sourceType": "ref",
+      "sourceRefs": []
     }
   ],
   "examples": [
@@ -130,7 +134,8 @@
         "Normalize: the responsibilities are $0.4/(0.5)=0.8$ and $0.1/(0.5)=0.2$."
       ],
       "answer": "The E-step normalizes weighted likelihoods; it does not turn the current highest component into permanent ground-truth labeling.",
-      "sourceType": "textbook"
+      "sourceType": "textbook",
+      "sourceRefs": []
     }
   ],
   "math": [],
@@ -139,13 +144,15 @@
       "prompt": "Why does a lower K-means objective not prove that the clustering is semantically better?",
       "angle": "Separate geometric fit under squared distance from the meaning of the labels.",
       "modelAnswer": "K-means optimizes within-cluster squared distance. A lower value can reflect scale, outliers, or a chosen $K$ without matching the downstream concept of a useful group.",
-      "focus": "objective mismatch"
+      "focus": "objective mismatch",
+      "sourceRefs": []
     },
     {
       "prompt": "Why should EM be run from multiple initializations?",
       "angle": "Connect non-convex likelihood surfaces to local optima.",
       "modelAnswer": "Different starts can converge to different local solutions. Comparing likelihood, stability, and downstream usefulness is stronger than trusting one run.",
-      "focus": "reproducibility"
+      "focus": "reproducibility",
+      "sourceRefs": []
     }
   ],
   "courseId": "DSA5105",
@@ -605,5 +612,6 @@
     "dsa5105-bank-016"
   ],
   "labIds": [],
-  "schemaVersion": "nus.lesson.v1"
+  "schemaVersion": "nus.lesson.v1",
+  "contentStatus": "CURRENT LECTURE"
 }

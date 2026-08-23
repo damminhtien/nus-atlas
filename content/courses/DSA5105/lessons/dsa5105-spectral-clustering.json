@@ -61,7 +61,8 @@
         "name": "Graph Laplacian",
         "purpose": "Use it to encode degree minus adjacency and prepare the spectral relaxation of a cut problem.",
         "sourceType": "ref"
-      }
+      },
+      "sourceRefs": []
     },
     {
       "title": "Reference depth · Smoothness and cuts",
@@ -83,17 +84,20 @@
         "name": "Laplacian smoothness identity",
         "purpose": "Use it to connect a quadratic form with disagreement across graph edges and the quality of a partition.",
         "sourceType": "ref"
-      }
+      },
+      "sourceRefs": []
     },
     {
       "title": "Reference depth · Spectral-clustering pipeline",
       "body": "Build an affinity graph, choose a Laplacian, compute the smallest non-trivial eigenvectors, use their rows as an embedding, and run K-means in that embedding. The final K-means step is a separate approximation; spectral eigenvectors do not themselves assign arbitrary cluster names.",
-      "sourceType": "ref"
+      "sourceType": "ref",
+      "sourceRefs": []
     },
     {
       "title": "Assessment habit · Link the objects",
       "body": "If asked for a Laplacian eigenvector, write the matrix before the eigendecomposition. If asked for a clustering interpretation, explain why smooth eigenvectors separate weakly connected groups. If asked for a numerical eigenvector, remember its sign and scale can be chosen by convention.",
-      "sourceType": "ref"
+      "sourceType": "ref",
+      "sourceRefs": []
     }
   ],
   "examples": [
@@ -105,7 +109,8 @@
         "The remaining eigenvectors vary across the path; the lowest non-constant one changes slowly and can be thresholded to form a two-way partition."
       ],
       "answer": "The Laplacian encodes disagreement across edges, not a generic dense covariance matrix.",
-      "sourceType": "ref"
+      "sourceType": "ref",
+      "sourceRefs": []
     }
   ],
   "criticalQuestions": [
@@ -113,13 +118,15 @@
       "prompt": "Why does the Laplacian quadratic form encourage smoothness?",
       "focus": "graph geometry",
       "angle": "expand f transpose L f",
-      "modelAnswer": "It is a sum of edge-weighted squared differences. Large disagreement across a strong edge costs more, so low-energy vectors vary slowly along connected regions."
+      "modelAnswer": "It is a sum of edge-weighted squared differences. Large disagreement across a strong edge costs more, so low-energy vectors vary slowly along connected regions.",
+      "sourceRefs": []
     },
     {
       "prompt": "Why is K-means still present after the eigenvectors?",
       "focus": "pipeline",
       "angle": "separate embedding and assignment",
-      "modelAnswer": "Spectral analysis creates a geometry-aware embedding; K-means is then used to assign embedded points to clusters. These are distinct stages with distinct objectives."
+      "modelAnswer": "Spectral analysis creates a geometry-aware embedding; K-means is then used to assign embedded points to clusters. These are distinct stages with distinct objectives.",
+      "sourceRefs": []
     }
   ],
   "courseId": "DSA5105",
@@ -441,5 +448,6 @@
   "labIds": [
     "dsa5105-spectral-clustering"
   ],
-  "schemaVersion": "nus.lesson.v1"
+  "schemaVersion": "nus.lesson.v1",
+  "contentStatus": "REFERENCE ONLY"
 }

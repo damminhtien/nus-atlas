@@ -36,7 +36,8 @@
         "useWhen": "Use the distinction when two models have similar training loss but differ in stability, capacity, or convergence.",
         "examMove": "Ask first whether the function is representable, then whether finite data identify it, then whether the algorithm found the intended solution.",
         "trap": "Improving the optimizer cannot repair a hypothesis class that excludes the target."
-      }
+      },
+      "sourceRefs": []
     },
     {
       "title": "Lecture core · Kernel idea",
@@ -68,12 +69,14 @@
         "name": "Kernel inner-product identity",
         "purpose": "Use it to work in an implicit feature geometry without explicitly constructing the transformed coordinates.",
         "sourceType": "lecture"
-      }
+      },
+      "sourceRefs": []
     },
     {
       "title": "Textbook depth · Do not conflate objectives",
       "body": "PCA is not a clustering algorithm, and a high-variance direction is not automatically a predictive direction. Compare each method by its objective, output, and failure mode before choosing it for a dataset.",
-      "sourceType": "textbook"
+      "sourceType": "textbook",
+      "sourceRefs": []
     }
   ],
   "examples": [
@@ -85,7 +88,8 @@
         "If points overlap and you need uncertainty such as $P(cluster 1 | x)$, use a probabilistic mixture such as a GMM."
       ],
       "answer": "Method choice follows the question: compression, hard grouping, or probabilistic membership.",
-      "sourceType": "lecture"
+      "sourceType": "lecture",
+      "sourceRefs": []
     }
   ],
   "math": [
@@ -109,7 +113,8 @@
       "name": "Kernel inner-product identity",
       "purpose": "Use it to reason about an implicit feature map without constructing its coordinates explicitly.",
       "sourceType": "lecture",
-      "caveat": "A kernel is not automatically a probability or a distance; its role depends on the algorithm using it."
+      "caveat": "A kernel is not automatically a probability or a distance; its role depends on the algorithm using it.",
+      "sourceRefs": []
     },
     {
       "latex": "\\operatorname{Var}(v^\\top X)=v^\\top\\Sigma v",
@@ -130,7 +135,8 @@
       ],
       "name": "Projected variance quadratic form",
       "purpose": "Use it to compute the variance visible along a unit PCA direction.",
-      "sourceType": "lecture"
+      "sourceType": "lecture",
+      "sourceRefs": []
     }
   ],
   "criticalQuestions": [
@@ -138,13 +144,15 @@
       "prompt": "Why does a high-variance direction not necessarily give the best predictive feature?",
       "angle": "Separate unsupervised reconstruction from supervised target information.",
       "modelAnswer": "PCA optimizes variance in $X$ without looking at $Y$. A low-variance direction can contain the signal that predicts the target, while a high-variance direction can be nuisance variation.",
-      "focus": "objective mismatch"
+      "focus": "objective mismatch",
+      "sourceRefs": []
     },
     {
       "prompt": "What must be true for a kernel matrix to represent a valid inner-product geometry?",
       "angle": "Think about symmetry and non-negative quadratic forms.",
       "modelAnswer": "The Gram matrix should be symmetric positive semidefinite; otherwise the implicit inner-product interpretation breaks.",
-      "focus": "validity"
+      "focus": "validity",
+      "sourceRefs": []
     }
   ],
   "courseId": "DSA5105",
@@ -432,5 +440,6 @@
     "dsa5105-bank-012"
   ],
   "labIds": [],
-  "schemaVersion": "nus.lesson.v1"
+  "schemaVersion": "nus.lesson.v1",
+  "contentStatus": "CURRENT LECTURE"
 }

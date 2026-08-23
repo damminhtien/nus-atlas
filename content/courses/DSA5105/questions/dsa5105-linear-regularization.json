@@ -135,5 +135,43 @@
     ],
     "courseId": "DSA5105",
     "schemaVersion": "nus.question.v1"
+  },
+  {
+    "id": "dsa5105-week2-ex-kernel-feature-map",
+    "lessonId": "dsa5105-linear-regularization",
+    "type": "derivation",
+    "difficulty": "medium",
+    "skill": "kernel-feature-map",
+    "cognitiveLevel": "apply",
+    "estimatedSeconds": 150,
+    "prompt": "Let $k_1$ and $k_2$ have feature maps $\\phi_1$ and $\\phi_2$. For $a,b\\ge 0$, construct a feature map for $a k_1+b k_2$.",
+    "accepted": [
+      "concatenate sqrt a phi1 and sqrt b phi2",
+      "(sqrt(a) phi1(x), sqrt(b) phi2(x))",
+      "scaled concatenation"
+    ],
+    "solution": "A valid feature map is $\\phi(x)=(\\sqrt{a}\\,\\phi_1(x),\\sqrt{b}\\,\\phi_2(x))$. Its inner product is $a k_1(x,x')+b k_2(x,x')$.",
+    "hint": "Scale each feature map before concatenating the coordinates.",
+    "explanation": "Nonnegative weighted sums preserve positive semidefiniteness because the scaled concatenation reproduces the weighted kernel sum.",
+    "misconception": "Using $a\\phi_1$ and $b\\phi_2$ without square roots produces weights $a^2$ and $b^2$ in the kernel.",
+    "visualHook": "Toggle the two scaled feature blocks and watch their inner products add.",
+    "sourceRefs": [
+      {
+        "sourceId": "DSA5105/Lec2_execises.pdf",
+        "page": 1,
+        "sourceType": "exercise",
+        "role": "PSD kernel weighted-sum exercise",
+        "status": "current-context"
+      },
+      {
+        "sourceId": "DSA5105/Lec2_exercises-solutions.pdf",
+        "page": 1,
+        "sourceType": "exercise",
+        "role": "scaled concatenated feature-map solution",
+        "status": "current-context"
+      }
+    ],
+    "courseId": "DSA5105",
+    "schemaVersion": "nus.question.v1"
   }
 ]

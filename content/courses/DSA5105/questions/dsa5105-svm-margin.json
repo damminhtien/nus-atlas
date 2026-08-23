@@ -164,5 +164,43 @@
     ],
     "courseId": "DSA5105",
     "schemaVersion": "nus.question.v1"
+  },
+  {
+    "id": "dsa5105-week2-ex-logistic-hinge",
+    "lessonId": "dsa5105-svm-margin",
+    "type": "derivation",
+    "difficulty": "hard",
+    "skill": "loss-comparison",
+    "cognitiveLevel": "analyze",
+    "estimatedSeconds": 180,
+    "prompt": "For margin $z=yf(x)$, compare the derivatives of $\\ell_{\\mathrm{log}}(z)=\\log(1+e^{-z})$ and $\\ell_{\\mathrm{hinge}}(z)=\\max\\{0,1-z\\}$. What happens at a large positive margin and at $z=1$?",
+    "accepted": [
+      "logistic derivative remains nonzero while hinge derivative is zero after one",
+      "logistic decays to zero; hinge is exactly zero for z greater than one",
+      "hinge subdifferential at one is [-1, 0]"
+    ],
+    "solution": "For differentiable points, $\\ell_{\\mathrm{log}}'(z)=-1/(1+e^z)$ and $\\ell_{\\mathrm{hinge}}'(z)=-1$ for $z<1$, $0$ for $z>1$. At $z=1$, $\\partial\\ell_{\\mathrm{hinge}}(1)=[-1,0]$. Thus logistic influence becomes small but remains nonzero, while hinge influence is exactly zero beyond the margin.",
+    "hint": "Separate the smooth logistic tail from the hinge kink and flat region.",
+    "explanation": "This distinction explains dense logistic influence versus support-vector sparsity for hinge-loss SVMs.",
+    "misconception": "Assuming both losses become exactly zero once a point is correctly classified.",
+    "visualHook": "Sweep the margin and compare the live slope of the two loss curves.",
+    "sourceRefs": [
+      {
+        "sourceId": "DSA5105/Lec2_execises.pdf",
+        "page": 5,
+        "sourceType": "exercise",
+        "role": "logistic and hinge comparison task",
+        "status": "current-context"
+      },
+      {
+        "sourceId": "DSA5105/Lec2_exercises-solutions.pdf",
+        "page": 5,
+        "sourceType": "exercise",
+        "role": "loss derivatives and influence solution",
+        "status": "current-context"
+      }
+    ],
+    "courseId": "DSA5105",
+    "schemaVersion": "nus.question.v1"
   }
 ]

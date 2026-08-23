@@ -57,7 +57,8 @@
         "name": "Q-function Bellman backup",
         "purpose": "Use it to evaluate one-step action choices using immediate reward and discounted continuation value.",
         "sourceType": "lecture"
-      }
+      },
+      "sourceRefs": []
     },
     {
       "title": "Reference depth · Message passing",
@@ -83,12 +84,14 @@
         "name": "Permutation-invariant message-passing layer",
         "purpose": "Use it to aggregate unordered neighbor information while preserving the node's own state.",
         "sourceType": "ref"
-      }
+      },
+      "sourceRefs": []
     },
     {
       "title": "Bridge, not equivalence",
       "body": "RL propagates values over possible state transitions; a GNN propagates representations over observed graph edges. The shared pattern is local information flow, not a claim that the two algorithms solve the same objective.",
-      "sourceType": "lecture"
+      "sourceType": "lecture",
+      "sourceRefs": []
     }
   ],
   "examples": [
@@ -100,7 +103,8 @@
         "The target is $2+0.9\\times4=5.6$. A Q-learning update moves the current estimate toward this target."
       ],
       "answer": "The backup is immediate reward plus discounted best continuation value.",
-      "sourceType": "lecture"
+      "sourceType": "lecture",
+      "sourceRefs": []
     }
   ],
   "math": [],
@@ -109,13 +113,15 @@
       "prompt": "What is the common structure between a Bellman backup and a GNN layer, and where does the analogy stop?",
       "angle": "Identify local information propagation without claiming identical objectives.",
       "modelAnswer": "Both propagate information from a local neighborhood: next states for RL, graph neighbors for GNNs. RL optimizes expected return; a GNN optimizes a task loss over representations.",
-      "focus": "analogy"
+      "focus": "analogy",
+      "sourceRefs": []
     },
     {
       "prompt": "What evidence would show that the analogy is misleading for a design decision?",
       "angle": "Compare the data source, optimization target, and update semantics instead of matching equations by shape.",
       "modelAnswer": "If the task needs a policy over actions and delayed rewards, a GNN layer alone is not an RL solution. Similar local aggregation does not supply the reward objective or control loop.",
-      "focus": "boundary"
+      "focus": "boundary",
+      "sourceRefs": []
     }
   ],
   "courseId": "DSA5105",
@@ -358,5 +364,6 @@
     "dsa5105-bank-040"
   ],
   "labIds": [],
-  "schemaVersion": "nus.lesson.v1"
+  "schemaVersion": "nus.lesson.v1",
+  "contentStatus": "CURRENT LECTURE"
 }

@@ -81,7 +81,8 @@
         "name": "K-means assignment and centroid update",
         "purpose": "Use it to carry out one concrete iteration and verify which objective each step improves.",
         "sourceType": "lecture"
-      }
+      },
+      "sourceRefs": []
     },
     {
       "title": "Textbook depth · GMM responsibilities",
@@ -107,7 +108,8 @@
         "name": "GMM responsibility",
         "purpose": "Use it to compute the posterior membership weight of a point under each mixture component.",
         "sourceType": "textbook"
-      }
+      },
+      "sourceRefs": []
     },
     {
       "title": "Textbook depth · M-step",
@@ -129,12 +131,14 @@
         "name": "GMM M-step parameter update",
         "purpose": "Use it to refit mixture weights, means, or covariances using the responsibilities from the E-step.",
         "sourceType": "textbook"
-      }
+      },
+      "sourceRefs": []
     },
     {
       "title": "Assessment habit · Keep probability and distance reasoning distinct",
       "body": "K-means chooses one nearest centroid using a distance. GMM compares weighted probability densities and can model covariance shape. A responsibility is not simply the inverse distance and it must sum to one over components for each point.",
-      "sourceType": "ref"
+      "sourceType": "ref",
+      "sourceRefs": []
     }
   ],
   "examples": [
@@ -146,7 +150,8 @@
         "Normalize by 0.34: $\\gamma_1\\approx0.8824$ and $\\gamma_2\\approx0.1176$."
       ],
       "answer": "Always multiply by the prior before normalizing the component likelihoods.",
-      "sourceType": "textbook"
+      "sourceType": "textbook",
+      "sourceRefs": []
     },
     {
       "title": "One M-step mean",
@@ -156,7 +161,8 @@
         "The updated mean is ($0.8*0+0.2*4$)/1.0=0.8."
       ],
       "answer": "The M-step mean is a responsibility-weighted average, not an unweighted average of all data.",
-      "sourceType": "textbook"
+      "sourceType": "textbook",
+      "sourceRefs": []
     }
   ],
   "criticalQuestions": [
@@ -164,13 +170,15 @@
       "prompt": "Why is EM called an alternating procedure?",
       "focus": "latent variables",
       "angle": "separate E and M",
-      "modelAnswer": "The E-step estimates latent memberships with current parameters; the M-step fits parameters with those memberships held as weights. Each step makes a different part of the coupled problem tractable."
+      "modelAnswer": "The E-step estimates latent memberships with current parameters; the M-step fits parameters with those memberships held as weights. Each step makes a different part of the coupled problem tractable.",
+      "sourceRefs": []
     },
     {
       "prompt": "Why can repeated EM runs disagree?",
       "focus": "non-convexity",
       "angle": "connect initialization and local optimum",
-      "modelAnswer": "The mixture likelihood is non-convex and can have local optima or degenerate regions. Different initial parameters can lead to different final solutions."
+      "modelAnswer": "The mixture likelihood is non-convex and can have local optima or degenerate regions. Different initial parameters can lead to different final solutions.",
+      "sourceRefs": []
     }
   ],
   "courseId": "DSA5105",
@@ -734,5 +742,6 @@
   "labIds": [
     "dsa5105-gmm-em-numerical"
   ],
-  "schemaVersion": "nus.lesson.v1"
+  "schemaVersion": "nus.lesson.v1",
+  "contentStatus": "TEXTBOOK DEPTH"
 }

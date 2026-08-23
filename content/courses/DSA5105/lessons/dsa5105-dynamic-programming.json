@@ -46,7 +46,8 @@
         "useWhen": "Use it to define a state, recurrence, base cases, and complexity for a shortest-path or sequence problem.",
         "examMove": "Derive the recurrence from the final move, not from a memorized pattern, and state what cost is charged.",
         "trap": "A recurrence without boundary conditions or a precise state is not a complete algorithm."
-      }
+      },
+      "sourceRefs": []
     },
     {
       "title": "Textbook depth · One- and two-step recurrence",
@@ -68,17 +69,20 @@
         "name": "Dynamic-programming recurrence",
         "purpose": "Use it to express optimal substructure and compute a solution table with explicit base cases.",
         "sourceType": "textbook"
-      }
+      },
+      "sourceRefs": []
     },
     {
       "title": "Assessment habit · Table, recurrence, complexity",
       "body": "A complete written answer should name the state, give the base cases, derive the recurrence from the final move, show enough table entries to demonstrate evaluation order, and state $O(n)$ time with $O(n)$ memory (or $O(1)$ extra memory if only the last two entries are retained).",
-      "sourceType": "ref"
+      "sourceType": "ref",
+      "sourceRefs": []
     },
     {
       "title": "Bridge · Bellman recursion is a family resemblance",
       "body": "Finite-horizon shortest path DP, MDP value iteration, and policy evaluation all reuse the idea of replacing a long plan with a local decision plus an optimal continuation. The state definition and boundary conditions determine whether the recurrence is correct.",
-      "sourceType": "textbook"
+      "sourceType": "textbook",
+      "sourceRefs": []
     }
   ],
   "examples": [
@@ -90,7 +94,8 @@
         "For position 4, dp[4]=7+$min(3,4)=10$. The best predecessor of position 4 is position 3."
       ],
       "answer": "The table exposes the dependency order and makes a greedy mistake easy to detect.",
-      "sourceType": "textbook"
+      "sourceType": "textbook",
+      "sourceRefs": []
     }
   ],
   "criticalQuestions": [
@@ -98,13 +103,15 @@
       "prompt": "Why is a greedy nearest step not enough?",
       "focus": "future cost",
       "angle": "compare local and continuation costs",
-      "modelAnswer": "The cheapest immediate move can lead to an expensive suffix. DP compares all allowed final moves after storing their optimal continuation costs."
+      "modelAnswer": "The cheapest immediate move can lead to an expensive suffix. DP compares all allowed final moves after storing their optimal continuation costs.",
+      "sourceRefs": []
     },
     {
       "prompt": "What must be stated before a recurrence?",
       "focus": "state semantics",
       "angle": "define cost and boundary",
-      "modelAnswer": "Define what dp[i] means, when cost is charged, and the base cases. Without these, the same-looking recurrence can have an off-by-one or wrong-terminal-state error."
+      "modelAnswer": "Define what dp[i] means, when cost is charged, and the base cases. Without these, the same-looking recurrence can have an off-by-one or wrong-terminal-state error.",
+      "sourceRefs": []
     }
   ],
   "courseId": "DSA5105",
@@ -386,5 +393,6 @@
   "labIds": [
     "dsa5105-dynamic-programming"
   ],
-  "schemaVersion": "nus.lesson.v1"
+  "schemaVersion": "nus.lesson.v1",
+  "contentStatus": "TEXTBOOK DEPTH"
 }

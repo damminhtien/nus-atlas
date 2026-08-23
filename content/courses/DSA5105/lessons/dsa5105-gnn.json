@@ -51,17 +51,20 @@
         "name": "Permutation-invariant message-passing layer",
         "purpose": "Use it to aggregate unordered neighbor information while preserving the node's own state.",
         "sourceType": "ref"
-      }
+      },
+      "sourceRefs": []
     },
     {
       "title": "Reference depth · Receptive field",
       "body": "One layer sees one-hop neighbors. Stacking layers expands the receptive field, but it also mixes information repeatedly and can make embeddings too similar. Check held-out performance and representation separation rather than assuming deeper is better.",
-      "sourceType": "ref"
+      "sourceType": "ref",
+      "sourceRefs": []
     },
     {
       "title": "Scope boundary",
       "body": "This is reference-supported graph depth. Use it to understand the GNN idea and its invariance requirement; do not silently treat every architecture detail as current lecture exam scope.",
-      "sourceType": "lecture"
+      "sourceType": "lecture",
+      "sourceRefs": []
     }
   ],
   "examples": [
@@ -73,7 +76,8 @@
         "A sequence-sensitive operation could return different values, which would make the result depend on an arbitrary neighbor ordering."
       ],
       "answer": "Set aggregation preserves graph semantics because neighbor order has no meaning.",
-      "sourceType": "ref"
+      "sourceType": "ref",
+      "sourceRefs": []
     }
   ],
   "math": [],
@@ -82,13 +86,15 @@
       "prompt": "Why is permutation invariance necessary but not sufficient for a useful GNN?",
       "angle": "A valid set function can still discard information or oversmooth nodes.",
       "modelAnswer": "Invariance prevents arbitrary ordering effects, but the aggregator and update still need enough expressive power, depth, and regularization for the task.",
-      "focus": "expressivity"
+      "focus": "expressivity",
+      "sourceRefs": []
     },
     {
       "prompt": "What evidence would show that another message-passing layer is harmful?",
       "angle": "Measure validation performance and node-embedding separation as depth increases.",
       "modelAnswer": "A validation drop accompanied by increasingly similar node embeddings is evidence of oversmoothing or over-mixing.",
-      "focus": "diagnosis"
+      "focus": "diagnosis",
+      "sourceRefs": []
     }
   ],
   "courseId": "DSA5105",
@@ -286,5 +292,6 @@
     "dsa5105-bank-044"
   ],
   "labIds": [],
-  "schemaVersion": "nus.lesson.v1"
+  "schemaVersion": "nus.lesson.v1",
+  "contentStatus": "CURRENT LECTURE"
 }

@@ -81,7 +81,8 @@
         "name": "PCA centering and covariance",
         "purpose": "Use it to construct the covariance matrix whose eigenvectors define the principal directions.",
         "sourceType": "lecture"
-      }
+      },
+      "sourceRefs": []
     },
     {
       "title": "Textbook depth · Variance and Rayleigh quotient",
@@ -103,7 +104,8 @@
         "name": "PCA Rayleigh quotient",
         "purpose": "Use it to turn maximum projected variance into a constrained eigenvalue problem.",
         "sourceType": "textbook"
-      }
+      },
+      "sourceRefs": []
     },
     {
       "title": "Textbook depth · Reconstruction error",
@@ -125,7 +127,8 @@
         "name": "PCA reconstruction-error spectrum",
         "purpose": "Use it to connect discarded eigenvalues with the error introduced by retaining only a chosen number of components.",
         "sourceType": "textbook"
-      }
+      },
+      "sourceRefs": []
     },
     {
       "title": "Reference boundary · Whitening and exam bridge",
@@ -147,12 +150,14 @@
         "name": "PCA whitening transform",
         "purpose": "Use it to rescale retained principal coordinates to unit variance, checking small-eigenvalue stability.",
         "sourceType": "ref"
-      }
+      },
+      "sourceRefs": []
     },
     {
       "title": "Assessment habit · Sign and scaling conventions",
       "body": "An eigenvector and its negative represent the same PCA axis. Covariance may be divided by N or N-1 depending on convention; compare the direction and relative eigenvalues first, then follow the convention stated in the question.",
-      "sourceType": "ref"
+      "sourceType": "ref",
+      "sourceRefs": []
     }
   ],
   "examples": [
@@ -164,7 +169,8 @@
         "A one-dimensional reconstruction discards the perpendicular eigenvalue 1; the kept variance is 3 and the discarded variance is 1 under the same normalization."
       ],
       "answer": "For a symmetric covariance matrix, use orthogonal eigenvectors and sort by decreasing eigenvalue.",
-      "sourceType": "textbook"
+      "sourceType": "textbook",
+      "sourceRefs": []
     }
   ],
   "criticalQuestions": [
@@ -172,13 +178,15 @@
       "prompt": "Why center before PCA?",
       "focus": "geometry",
       "angle": "separate location from variation",
-      "modelAnswer": "PCA should describe variation around the empirical mean. Without centering, a large offset from the origin can dominate the covariance-like second moment and change the selected direction."
+      "modelAnswer": "PCA should describe variation around the empirical mean. Without centering, a large offset from the origin can dominate the covariance-like second moment and change the selected direction.",
+      "sourceRefs": []
     },
     {
       "prompt": "Why does the top eigenvalue matter for one-dimensional PCA?",
       "focus": "optimization",
       "angle": "connect Rayleigh quotient and error",
-      "modelAnswer": "The leading eigenvalue is the maximum projected variance, and the sum of the remaining eigenvalues is the minimum discarded squared reconstruction variance for a one-dimensional subspace."
+      "modelAnswer": "The leading eigenvalue is the maximum projected variance, and the sum of the remaining eigenvalues is the minimum discarded squared reconstruction variance for a one-dimensional subspace.",
+      "sourceRefs": []
     }
   ],
   "courseId": "DSA5105",
@@ -789,5 +797,6 @@
   "labIds": [
     "dsa5105-pca-numerical"
   ],
-  "schemaVersion": "nus.lesson.v1"
+  "schemaVersion": "nus.lesson.v1",
+  "contentStatus": "TEXTBOOK DEPTH"
 }

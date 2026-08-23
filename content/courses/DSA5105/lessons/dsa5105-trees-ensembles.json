@@ -81,7 +81,8 @@
         "name": "Decision-tree split model",
         "purpose": "Use it to represent a tree prediction as a region-wise constant function and evaluate a candidate split.",
         "sourceType": "lecture"
-      }
+      },
+      "sourceRefs": []
     },
     {
       "title": "Textbook depth · Entropy, Gini, depth, pruning",
@@ -103,7 +104,8 @@
         "name": "Tree impurity and complexity controls",
         "purpose": "Use it to choose a purity criterion and explain how depth or pruning changes variance and bias.",
         "sourceType": "textbook"
-      }
+      },
+      "sourceRefs": []
     },
     {
       "title": "Textbook depth · Bagging reduces variance",
@@ -125,7 +127,8 @@
         "name": "Bagging ensemble average",
         "purpose": "Use it to explain why averaging decorrelated bootstrap predictors can reduce variance.",
         "sourceType": "textbook"
-      }
+      },
+      "sourceRefs": []
     },
     {
       "title": "Textbook depth · AdaBoost focuses on mistakes",
@@ -151,12 +154,14 @@
         "name": "AdaBoost example reweighting",
         "purpose": "Use it to update observation emphasis toward mistakes and reason about the next weak learner.",
         "sourceType": "textbook"
-      }
+      },
+      "sourceRefs": []
     },
     {
       "title": "Assessment habit · Explain the bias–variance statement",
       "body": "The common trap is to say bagging always reduces bias or boosting is simply repeated bagging. Bagging mainly attacks variance through averaging. Boosting builds a sequential, weighted combination that can reduce bias but can also overfit, so the claim must be checked against the exact statement and validation evidence.",
-      "sourceType": "ref"
+      "sourceType": "ref",
+      "sourceRefs": []
     }
   ],
   "examples": [
@@ -168,17 +173,19 @@
         "The weighted child impurity is 0, so the impurity decrease is 0.5."
       ],
       "answer": "Purity is evaluated after weighting children by their sizes; do not compare an unweighted average when child sizes differ.",
-      "sourceType": "textbook"
+      "sourceType": "textbook",
+      "sourceRefs": []
     },
     {
       "title": "One AdaBoost coefficient",
       "steps": [
-    "If the weighted error is $\\epsilon=0.2$, then $\\alpha=\\frac12\\log\\left(\\frac{0.8}{0.2}\\right)=\\frac12\\log4\\approx0.693$.",
+        "If the weighted error is $\\epsilon=0.2$, then $\\alpha=\\frac12\\log\\left(\\frac{0.8}{0.2}\\right)=\\frac12\\log4\\approx0.693$.",
         "Examples classified incorrectly receive a multiplicative factor $\\exp(\\alpha)$, while correct examples receive $\\exp(-\\alpha)$, before normalization.",
         "Because $\\epsilon$ is below 0.5, $\\alpha$ is positive and the learner receives a positive vote weight."
       ],
       "answer": "AdaBoost turns weighted accuracy into both a vote coefficient and a reweighting signal.",
-      "sourceType": "textbook"
+      "sourceType": "textbook",
+      "sourceRefs": []
     }
   ],
   "criticalQuestions": [
@@ -186,13 +193,15 @@
       "prompt": "Why is greedy tree training not gradient descent?",
       "focus": "optimization structure",
       "angle": "look at split decisions",
-      "modelAnswer": "A tree changes discrete structure—feature, threshold, and child membership—rather than smoothly updating a fixed differentiable parameter vector. Standard tree induction searches splits greedily and then controls depth or prunes."
+      "modelAnswer": "A tree changes discrete structure—feature, threshold, and child membership—rather than smoothly updating a fixed differentiable parameter vector. Standard tree induction searches splits greedily and then controls depth or prunes.",
+      "sourceRefs": []
     },
     {
       "prompt": "What does bagging buy that one tree does not?",
       "focus": "variance",
       "angle": "average decorrelated errors",
-      "modelAnswer": "Bootstrap learners vary; averaging their partially uncorrelated errors reduces variance. It does not guarantee lower bias or a global optimum."
+      "modelAnswer": "Bootstrap learners vary; averaging their partially uncorrelated errors reduces variance. It does not guarantee lower bias or a global optimum.",
+      "sourceRefs": []
     }
   ],
   "courseId": "DSA5105",
@@ -857,5 +866,6 @@
   "labIds": [
     "dsa5105-trees-ensembles"
   ],
-  "schemaVersion": "nus.lesson.v1"
+  "schemaVersion": "nus.lesson.v1",
+  "contentStatus": "CURRENT LECTURE"
 }

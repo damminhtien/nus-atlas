@@ -64,7 +64,8 @@
         "name": "Ridge normal equations",
         "purpose": "Use it to solve the unique regularized least-squares system and compare it with unregularized OLS.",
         "sourceType": "textbook"
-      }
+      },
+      "sourceRefs": []
     },
     {
       "title": "Assessment bridge · LS-SVM KKT system",
@@ -90,7 +91,8 @@
         "name": "LS-SVM KKT linear system",
         "purpose": "Use it to solve the equality-constrained least-squares SVM formulation as one block linear system.",
         "sourceType": "ref"
-      }
+      },
+      "sourceRefs": []
     },
     {
       "title": "Textbook depth · Hat matrix and LOO",
@@ -112,12 +114,14 @@
         "name": "Ridge leave-one-out residual",
         "purpose": "Use it to estimate held-out residuals from one fitted model without refitting once per observation.",
         "sourceType": "textbook"
-      }
+      },
+      "sourceRefs": []
     },
     {
       "title": "Assessment habit · Compare constraint types",
       "body": "Hard-margin SVM has inequality constraints and complementary slackness. LS-SVM replaces them with equality constraints and squared errors, producing a block linear system. Ridge has no margin labels but shares the regularized linear-algebra pattern.",
-      "sourceType": "ref"
+      "sourceType": "ref",
+      "sourceRefs": []
     }
   ],
   "examples": [
@@ -129,7 +133,8 @@
         "$Solve the block system, then predict with f(x)=\\sum_{i} \\alpha_i y_i k(x_i,x)+b.$"
       ],
       "answer": "The matrix form is the compact answer; explain where each block came from if the question asks for a derivation.",
-      "sourceType": "ref"
+      "sourceType": "ref",
+      "sourceRefs": []
     },
     {
       "title": "LOO residual",
@@ -139,7 +144,8 @@
         "A high leverage value inflates the correction because the observation strongly affected its own fitted value."
       ],
       "answer": "LOO estimates the error after removing point i without fitting N separate models.",
-      "sourceType": "textbook"
+      "sourceType": "textbook",
+      "sourceRefs": []
     }
   ],
   "criticalQuestions": [
@@ -147,13 +153,15 @@
       "prompt": "Why does ridge restore invertibility?",
       "focus": "regularized linear algebra",
       "angle": "look at eigenvalues",
-      "modelAnswer": "Phi transpose Phi is positive semidefinite; adding $\\lambda$ I shifts every eigenvalue by $\\lambda$, making the matrix positive definite for $\\lambda>0$."
+      "modelAnswer": "Phi transpose Phi is positive semidefinite; adding $\\lambda$ I shifts every eigenvalue by $\\lambda$, making the matrix positive definite for $\\lambda>0$.",
+      "sourceRefs": []
     },
     {
       "prompt": "How is LS-SVM different from hard-margin SVM?",
       "focus": "KKT structure",
       "angle": "compare constraints",
-      "modelAnswer": "LS-SVM uses equality constraints with squared error slack and yields a block linear system; hard-margin SVM uses inequalities, nonnegative multipliers, and complementary slackness."
+      "modelAnswer": "LS-SVM uses equality constraints with squared error slack and yields a block linear system; hard-margin SVM uses inequalities, nonnegative multipliers, and complementary slackness.",
+      "sourceRefs": []
     }
   ],
   "courseId": "DSA5105",
@@ -630,5 +638,6 @@
   "labIds": [
     "dsa5105-ls-svm-loo"
   ],
-  "schemaVersion": "nus.lesson.v1"
+  "schemaVersion": "nus.lesson.v1",
+  "contentStatus": "TEXTBOOK DEPTH"
 }

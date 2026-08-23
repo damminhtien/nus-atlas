@@ -225,5 +225,43 @@
     ],
     "courseId": "DSA5105",
     "schemaVersion": "nus.question.v1"
+  },
+  {
+    "id": "dsa5105-week2-ex-svm-stationarity",
+    "lessonId": "dsa5105-svm-dual-kkt",
+    "type": "derivation",
+    "difficulty": "hard",
+    "skill": "svm-dual",
+    "cognitiveLevel": "analyze",
+    "estimatedSeconds": 150,
+    "prompt": "For the hard-margin SVM Lagrangian, differentiate with respect to $w$ and write the stationarity representation of $w(\\mu)$.",
+    "accepted": [
+      "sum mu_i y_i phi(x_i)",
+      "w(mu) = sum mu_i y_i phi(x_i)",
+      "linear combination of training feature vectors"
+    ],
+    "solution": "Stationarity gives $\\nabla_w L=w-\\sum_i\\mu_i y_i\\phi(x_i)=0$, so $w(\\mu)=\\sum_{i=1}^{N}\\mu_i y_i\\phi(x_i)$.",
+    "hint": "The derivative of $\\frac12\\lVert w\\rVert_2^2$ is $w$.",
+    "explanation": "This representation is the bridge from the primal vector to the kernelized dual score and explains why support vectors determine the classifier.",
+    "misconception": "Dropping the labels $y_i$ or replacing the feature vectors with the raw inputs when the model is defined in feature space.",
+    "visualHook": "Increase one dual multiplier and highlight its contribution to the primal vector.",
+    "sourceRefs": [
+      {
+        "sourceId": "DSA5105/Lec2_execises.pdf",
+        "page": 3,
+        "sourceType": "exercise",
+        "role": "hard-margin SVM dual stationarity task",
+        "status": "current-context"
+      },
+      {
+        "sourceId": "DSA5105/Lec2_exercises-solutions.pdf",
+        "page": 3,
+        "sourceType": "exercise",
+        "role": "stationarity derivation",
+        "status": "current-context"
+      }
+    ],
+    "courseId": "DSA5105",
+    "schemaVersion": "nus.question.v1"
   }
 ]

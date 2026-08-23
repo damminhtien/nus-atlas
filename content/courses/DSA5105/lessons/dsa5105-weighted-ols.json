@@ -74,7 +74,8 @@
         "name": "Linear-in-parameters basis model",
         "purpose": "Use it to separate nonlinear feature construction from the linear parameter optimization problem.",
         "sourceType": "lecture"
-      }
+      },
+      "sourceRefs": []
     },
     {
       "title": "Textbook depth · OLS normal equations and uniqueness",
@@ -100,7 +101,8 @@
         "name": "OLS normal equations and uniqueness",
         "purpose": "Use it to state the full-column-rank condition before applying the inverse closed form.",
         "sourceType": "textbook"
-      }
+      },
+      "sourceRefs": []
     },
     {
       "title": "Textbook depth · Weighted empirical risk",
@@ -126,17 +128,20 @@
         "name": "Weighted empirical-risk estimator",
         "purpose": "Use it when observations have unequal importance and verify that the weighted normal matrix is invertible.",
         "sourceType": "textbook"
-      }
+      },
+      "sourceRefs": []
     },
     {
       "title": "Bridge · Noise can induce a ridge penalty",
       "body": "If an input is perturbed by zero-mean independent noise and the expected squared loss is taken over that noise, the extra variance term penalizes sensitivity to the weights. In a simple linear model this becomes an L2-like term. The bridge is useful intuition, but it does not mean every regularizer came from noise.",
-      "sourceType": "ref"
+      "sourceType": "ref",
+      "sourceRefs": []
     },
     {
       "title": "Assessment habit · State the assumption before the formula",
       "body": "When a question asks whether OLS is unique, do not answer from the existence of a closed-form expression alone. Write the rank or invertibility assumption, then give a counterexample if it is absent. When a question asks for a hyperparameter choice, say validation—not test.",
-      "sourceType": "ref"
+      "sourceType": "ref",
+      "sourceRefs": []
     }
   ],
   "examples": [
@@ -148,7 +153,8 @@
         "Therefore the predictions are fixed for this sample, but the coefficient vector is not unique. A pseudoinverse selects the minimum-norm solution; it does not restore identifiability in the original parameterization."
       ],
       "answer": "The statement 'OLS always has a unique solution' is false unless the normal matrix is invertible.",
-      "sourceType": "textbook"
+      "sourceType": "textbook",
+      "sourceRefs": []
     },
     {
       "title": "Derive weighted OLS",
@@ -158,7 +164,8 @@
         "Solve $\\Phi^\\top A\\Phi w=\\Phi^\\top Ay$. If $A$ is positive definite and $\\Phi$ has full column rank, the weighted normal matrix is positive definite and invertible."
       ],
       "answer": "The weighted solution is $w_A=(\\Phi^\\top A\\Phi)^{-1}\\Phi^\\top Ay$.",
-      "sourceType": "textbook"
+      "sourceType": "textbook",
+      "sourceRefs": []
     }
   ],
   "criticalQuestions": [
@@ -166,13 +173,15 @@
       "prompt": "What exactly is unique in OLS?",
       "focus": "parameter identifiability",
       "angle": "separate coefficient uniqueness from fitted-value uniqueness",
-      "modelAnswer": "A unique coefficient vector needs full column rank. With rank deficiency, several coefficient vectors can give the same fitted values; the pseudoinverse chooses one convention."
+      "modelAnswer": "A unique coefficient vector needs full column rank. With rank deficiency, several coefficient vectors can give the same fitted values; the pseudoinverse chooses one convention.",
+      "sourceRefs": []
     },
     {
       "prompt": "Why is a positive-weight matrix safe for uniqueness?",
       "focus": "weighted geometry",
       "angle": "use the square-root transform",
-      "modelAnswer": "The weighted objective is ordinary least squares on $\\mathrm{A}^{\\frac{1}{2}}\\Phi$. If A is positive definite, $\\mathrm{A}^{\\frac{1}{2}}$ is invertible and does not create a new null direction, so full column rank is preserved."
+      "modelAnswer": "The weighted objective is ordinary least squares on $\\mathrm{A}^{\\frac{1}{2}}\\Phi$. If A is positive definite, $\\mathrm{A}^{\\frac{1}{2}}$ is invertible and does not create a new null direction, so full column rank is preserved.",
+      "sourceRefs": []
     }
   ],
   "courseId": "DSA5105",
@@ -701,5 +710,6 @@
   "labIds": [
     "dsa5105-weighted-ols"
   ],
-  "schemaVersion": "nus.lesson.v1"
+  "schemaVersion": "nus.lesson.v1",
+  "contentStatus": "CURRENT LECTURE"
 }

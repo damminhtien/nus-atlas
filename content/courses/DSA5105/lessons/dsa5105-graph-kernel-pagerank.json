@@ -71,7 +71,8 @@
         "name": "Graph-kernel positive-semidefinite proof",
         "purpose": "Use it to certify a kernel by rewriting its quadratic form as a squared feature-map norm.",
         "sourceType": "textbook"
-      }
+      },
+      "sourceRefs": []
     },
     {
       "title": "Assessment bridge · Opposite-edge parameter",
@@ -89,7 +90,8 @@
         "name": "Graph-kernel eigenvalue condition",
         "purpose": "Use it to determine the parameter range for which the graph-kernel Gram matrix remains positive semidefinite.",
         "sourceType": "ref"
-      }
+      },
+      "sourceRefs": []
     },
     {
       "title": "Reference depth · PageRank as a fixed point",
@@ -115,12 +117,14 @@
         "name": "PageRank fixed-point equation",
         "purpose": "Use it to compute or iterate the stationary importance vector while accounting for teleportation.",
         "sourceType": "ref"
-      }
+      },
+      "sourceRefs": []
     },
     {
       "title": "Assessment habit · Matrix orientation and normalization",
       "body": "Before multiplying, state whether P is row-stochastic or column-stochastic and whether r is a row or column vector. After each iteration, check non-negativity and that the rank vector sums to one. These checks catch most PageRank arithmetic errors.",
-      "sourceType": "ref"
+      "sourceType": "ref",
+      "sourceRefs": []
     }
   ],
   "examples": [
@@ -132,7 +136,8 @@
         "Both are non-negative exactly when q is between -1 and 1 inclusive."
       ],
       "answer": "A small Gram eigenvalue is a numerical warning even when the matrix is theoretically PSD.",
-      "sourceType": "ref"
+      "sourceType": "ref",
+      "sourceRefs": []
     },
     {
       "title": "One PageRank update",
@@ -142,7 +147,8 @@
         "Verify that the resulting entries remain non-negative and sum to one."
       ],
       "answer": "Power iteration is repeated matrix-vector multiplication plus damping; it is not an eigen-decomposition requirement for a small exam calculation.",
-      "sourceType": "ref"
+      "sourceType": "ref",
+      "sourceRefs": []
     }
   ],
   "criticalQuestions": [
@@ -150,13 +156,15 @@
       "prompt": "What makes a kernel proof robust?",
       "focus": "positive semidefiniteness",
       "angle": "write the quadratic form",
-      "modelAnswer": "Identify a feature map or a PSD Gram block, then show every coefficient quadratic form is a squared norm or has non-negative eigenvalues."
+      "modelAnswer": "Identify a feature map or a PSD Gram block, then show every coefficient quadratic form is a squared norm or has non-negative eigenvalues.",
+      "sourceRefs": []
     },
     {
       "prompt": "Why can a transpose appear in PageRank?",
       "focus": "convention",
       "angle": "row versus column vectors",
-      "modelAnswer": "A row-stochastic matrix propagates row vectors on the right; a column rank vector typically uses the transpose of that transition convention. The mathematics is the same after fixing one orientation."
+      "modelAnswer": "A row-stochastic matrix propagates row vectors on the right; a column rank vector typically uses the transpose of that transition convention. The mathematics is the same after fixing one orientation.",
+      "sourceRefs": []
     }
   ],
   "courseId": "DSA5105",
@@ -706,5 +714,6 @@
   "labIds": [
     "dsa5105-graph-kernel-pagerank"
   ],
-  "schemaVersion": "nus.lesson.v1"
+  "schemaVersion": "nus.lesson.v1",
+  "contentStatus": "TEXTBOOK DEPTH"
 }

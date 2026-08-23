@@ -88,7 +88,8 @@
         "name": "Shallow neural-network forward map",
         "purpose": "Use it to show where the nonlinearity enters and why stacked linear maps alone collapse to one linear map.",
         "sourceType": "lecture"
-      }
+      },
+      "sourceRefs": []
     },
     {
       "title": "Textbook depth · Gradient descent and non-convexity",
@@ -114,7 +115,8 @@
         "name": "Gradient-descent parameter update",
         "purpose": "Use it to describe one optimization step and distinguish local update mechanics from global optimality.",
         "sourceType": "textbook"
-      }
+      },
+      "sourceRefs": []
     },
     {
       "title": "Textbook depth · Backpropagation recurrence",
@@ -140,12 +142,14 @@
         "name": "Backpropagation error recurrence",
         "purpose": "Use it to propagate local derivatives backward through a computation graph without recomputing every path.",
         "sourceType": "textbook"
-      }
+      },
+      "sourceRefs": []
     },
     {
       "title": "Assessment habit · Direct differentiation versus backprop",
       "body": "For a tiny scalar network, direct chain-rule expansion is acceptable and often helps verify signs. For a vector network, backprop stores intermediate values and reuses shared subexpressions, reducing repeated work and making the gradient scale with the graph rather than with the number of input-output paths.",
-      "sourceType": "ref"
+      "sourceType": "ref",
+      "sourceRefs": []
     },
     {
       "title": "Textbook depth · L2-regularized neural objective",
@@ -167,7 +171,8 @@
         "name": "Regularized neural objective",
         "purpose": "Use it to balance data fit against parameter magnitude when training a flexible network.",
         "sourceType": "textbook"
-      }
+      },
+      "sourceRefs": []
     }
   ],
   "examples": [
@@ -179,7 +184,8 @@
         "Therefore $\\partial L/\\partial w\\approx0.881\\times0.105\\times1\\times x\\approx0.0925$."
       ],
       "answer": "A scalar graph is a good sign-checking exercise; the same local factors are reused in vector backprop.",
-      "sourceType": "textbook"
+      "sourceType": "textbook",
+      "sourceRefs": []
     },
     {
       "title": "Linear activations collapse",
@@ -189,7 +195,8 @@
         "Therefore an exam statement that a deep stack of purely linear layers creates a nonlinear boundary is false."
       ],
       "answer": "Nonlinear activations are structural, not an optional decoration.",
-      "sourceType": "lecture"
+      "sourceType": "lecture",
+      "sourceRefs": []
     }
   ],
   "criticalQuestions": [
@@ -197,13 +204,15 @@
       "prompt": "What does backprop guarantee?",
       "focus": "optimization versus differentiation",
       "angle": "separate gradient computation from search",
-      "modelAnswer": "Backprop computes the gradient of the chosen loss efficiently. It does not guarantee that gradient descent reaches a global optimum for a non-convex neural-network objective."
+      "modelAnswer": "Backprop computes the gradient of the chosen loss efficiently. It does not guarantee that gradient descent reaches a global optimum for a non-convex neural-network objective.",
+      "sourceRefs": []
     },
     {
       "prompt": "Why is the forward pass needed before the backward pass?",
       "focus": "computational graph",
       "angle": "reuse activation values",
-      "modelAnswer": "Local derivatives depend on intermediate pre-activations and activations. The forward pass records these values so the backward pass can multiply local Jacobian factors in reverse order."
+      "modelAnswer": "Local derivatives depend on intermediate pre-activations and activations. The forward pass records these values so the backward pass can multiply local Jacobian factors in reverse order.",
+      "sourceRefs": []
     }
   ],
   "courseId": "DSA5105",
@@ -963,5 +972,6 @@
   "labIds": [
     "dsa5105-neural-backprop"
   ],
-  "schemaVersion": "nus.lesson.v1"
+  "schemaVersion": "nus.lesson.v1",
+  "contentStatus": "CURRENT LECTURE"
 }

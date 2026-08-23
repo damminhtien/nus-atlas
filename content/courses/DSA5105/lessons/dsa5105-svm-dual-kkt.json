@@ -1,7 +1,7 @@
 {
   "id": "dsa5105-svm-dual-kkt",
   "title": "SVM duality, KKT conditions, and support vectors",
-  "week": 3,
+  "week": 2,
   "minutes": 90,
   "summary": "Derive the hard-margin SVM dual, read support vectors from KKT, and extend the geometry to kernels and soft margins.",
   "objectives": [
@@ -52,6 +52,20 @@
       "sourceType": "ref",
       "role": "past-exam SVM and KKT alignment",
       "status": "assessment-derived"
+    },
+    {
+      "sourceId": "DSA5105/Lec2_exercises-solutions.pdf",
+      "page": 3,
+      "sourceType": "exercise",
+      "role": "hard-margin SVM dual setup",
+      "status": "current-context"
+    },
+    {
+      "sourceId": "DSA5105/Lec2_exercises-solutions.pdf",
+      "page": 4,
+      "sourceType": "exercise",
+      "role": "KKT and support-vector solution",
+      "status": "current-context"
     }
   ],
   "visualIds": [
@@ -88,7 +102,8 @@
         "name": "SVM margin normalization",
         "purpose": "Use it to remove the arbitrary scale of a separating hyperplane before measuring its geometric margin.",
         "sourceType": "lecture"
-      }
+      },
+      "sourceRefs": []
     },
     {
       "title": "Textbook depth · Lagrangian and stationarity",
@@ -110,7 +125,8 @@
         "name": "Hard-margin SVM dual objective",
         "purpose": "Use it to eliminate the primal parameters and expose the dual coefficients that define the separator.",
         "sourceType": "textbook"
-      }
+      },
+      "sourceRefs": []
     },
     {
       "title": "Textbook depth · KKT and support vectors",
@@ -132,7 +148,8 @@
         "name": "SVM KKT complementarity",
         "purpose": "Use it to identify which training points lie on the margin and therefore can carry nonzero dual weight.",
         "sourceType": "textbook"
-      }
+      },
+      "sourceRefs": []
     },
     {
       "title": "Textbook depth · Kernel and soft-margin extension",
@@ -154,12 +171,14 @@
         "name": "Kernelized and soft-margin SVM",
         "purpose": "Use it to extend the margin model to nonlinear geometry or nonseparable data while tracking the new trade-off.",
         "sourceType": "textbook"
-      }
+      },
+      "sourceRefs": []
     },
     {
       "title": "Assessment habit · Read the alpha pattern",
       "body": "If the labels are +1 and -1, the dual equality says the positive $\\alpha$ sum equals the negative $\\alpha$ sum. A candidate $\\alpha$ vector that violates this is infeasible even if every $\\alpha$ is non-negative. First check equality and bounds, then inspect which points have non-zero multipliers.",
-      "sourceType": "ref"
+      "sourceType": "ref",
+      "sourceRefs": []
     }
   ],
   "examples": [
@@ -171,7 +190,8 @@
         "Therefore the bias equality is satisfied. If C is finite, also check that every multiplier is at most C."
       ],
       "answer": "The dual equality is a balance condition, not a requirement that all $\\alpha$ values be equal.",
-      "sourceType": "textbook"
+      "sourceType": "textbook",
+      "sourceRefs": []
     },
     {
       "title": "Identify support vectors",
@@ -181,7 +201,8 @@
         "In a soft-margin problem, points inside the margin or misclassified can also be active, subject to the box constraint."
       ],
       "answer": "Support vectors are active constraints, not simply the closest points by visual distance before the hyperplane is normalized.",
-      "sourceType": "textbook"
+      "sourceType": "textbook",
+      "sourceRefs": []
     }
   ],
   "criticalQuestions": [
@@ -189,13 +210,15 @@
       "prompt": "Why does the dual contain pairwise inner products?",
       "focus": "kernel trick",
       "angle": "eliminate w using stationarity",
-      "modelAnswer": "Stationarity writes w as a weighted sum of training vectors. Substituting this expansion into the norm produces $x_{i}$^T $x_{j}$ terms, which can be replaced by a valid kernel."
+      "modelAnswer": "Stationarity writes w as a weighted sum of training vectors. Substituting this expansion into the norm produces $x_{i}$^T $x_{j}$ terms, which can be replaced by a valid kernel.",
+      "sourceRefs": []
     },
     {
       "prompt": "What does complementary slackness tell you operationally?",
       "focus": "support vectors",
       "angle": "connect alpha to margin equality",
-      "modelAnswer": "A non-zero $\\alpha$ means the corresponding margin constraint is tight. Those points remain in the prediction expansion; strictly separated points have zero $\\alpha$ in the hard-margin case."
+      "modelAnswer": "A non-zero $\\alpha$ means the corresponding margin constraint is tight. Those points remain in the prediction expansion; strictly separated points have zero $\\alpha$ in the hard-margin case.",
+      "sourceRefs": []
     }
   ],
   "courseId": "DSA5105",
@@ -942,10 +965,73 @@
     "dsa5105-svm-dual-q4",
     "dsa5105-svm-dual-q5",
     "dsa5105-bank-019",
-    "dsa5105-bank-020"
+    "dsa5105-bank-020",
+    "dsa5105-week2-ex-svm-stationarity"
   ],
   "labIds": [
     "dsa5105-svm-dual-kkt"
   ],
-  "schemaVersion": "nus.lesson.v1"
+  "schemaVersion": "nus.lesson.v1",
+  "contentStatus": "CURRENT LECTURE",
+  "sourceLens": {
+    "status": "Week 2 lecture + official exercise depth",
+    "whyExaminable": "The annotated lecture establishes the concept boundary; the official Lecture 2 exercise solutions require the algebraic construction, dual, KKT, or kernel representation.",
+    "lecture": [
+      {
+        "sourceId": "DSA5105/Lec1.pdf",
+        "page": 31,
+        "sourceType": "lecture",
+        "role": "kernel and margin overview",
+        "status": "current"
+      }
+    ],
+    "officialExercise": [
+      {
+        "sourceId": "DSA5105/Lec2_exercises-solutions.pdf",
+        "page": 3,
+        "sourceType": "exercise",
+        "role": "hard-margin SVM dual setup",
+        "status": "current-context"
+      },
+      {
+        "sourceId": "DSA5105/Lec2_exercises-solutions.pdf",
+        "page": 4,
+        "sourceType": "exercise",
+        "role": "KKT and support-vector solution",
+        "status": "current-context"
+      }
+    ],
+    "textbook": [
+      {
+        "sourceId": "DSA5105/Textbook.pdf",
+        "page": 30,
+        "sourceType": "textbook",
+        "role": "SVM margin",
+        "status": "course-depth"
+      },
+      {
+        "sourceId": "DSA5105/Textbook.pdf",
+        "page": 32,
+        "sourceType": "textbook",
+        "role": "Lagrangian and KKT",
+        "status": "course-depth"
+      },
+      {
+        "sourceId": "DSA5105/Textbook.pdf",
+        "page": 34,
+        "sourceType": "textbook",
+        "role": "SVM dual",
+        "status": "course-depth"
+      }
+    ],
+    "reference": [
+      {
+        "sourceId": "DSA5105/Ref/document.pdf",
+        "page": 4,
+        "sourceType": "ref",
+        "role": "past-exam SVM and KKT alignment",
+        "status": "assessment-derived"
+      }
+    ]
+  }
 }

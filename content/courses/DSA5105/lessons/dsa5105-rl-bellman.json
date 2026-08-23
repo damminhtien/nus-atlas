@@ -78,7 +78,8 @@
         "name": "MDP return definition",
         "purpose": "Use it to define the discounted objective before deriving value and policy equations.",
         "sourceType": "lecture"
-      }
+      },
+      "sourceRefs": []
     },
     {
       "title": "Textbook depth · Value functions",
@@ -104,7 +105,8 @@
         "name": "Policy value function",
         "purpose": "Use it to express expected discounted return conditioned on the current state under a policy.",
         "sourceType": "textbook"
-      }
+      },
+      "sourceRefs": []
     },
     {
       "title": "Textbook depth · Policy versus optimality",
@@ -130,12 +132,14 @@
         "name": "Optimal Bellman equation",
         "purpose": "Use it to compare a fixed policy with the best action choice at each state.",
         "sourceType": "textbook"
-      }
+      },
+      "sourceRefs": []
     },
     {
       "title": "Reference boundary",
       "body": "The RL reference is optional background for algorithm comparisons. Secure the MDP, return, value, and Bellman core before adding algorithm names to your revision notes.",
-      "sourceType": "ref"
+      "sourceType": "ref",
+      "sourceRefs": []
     }
   ],
   "examples": [
@@ -147,7 +151,8 @@
         "With $\\gamma=0.9$, it is $1+0.9^2\\times10=9.1$. The larger discount makes delayed reward matter much more."
       ],
       "answer": "Changing $\\gamma$ changes the objective: it is not merely a learning-rate setting.",
-      "sourceType": "textbook"
+      "sourceType": "textbook",
+      "sourceRefs": []
     }
   ],
   "math": [],
@@ -156,13 +161,15 @@
       "prompt": "What changes in behavior as $\\gamma$ approaches zero?",
       "angle": "Compare the immediate-reward term with the discounted continuation terms.",
       "modelAnswer": "The agent becomes nearly myopic: immediate reward dominates and delayed consequences contribute little.",
-      "focus": "parameter meaning"
+      "focus": "parameter meaning",
+      "sourceRefs": []
     },
     {
       "prompt": "Why does the Markov property matter for tractable value functions?",
       "angle": "Ask whether the same state can imply different futures because of hidden history.",
       "modelAnswer": "If the state summarizes all decision-relevant history, one value function can condition on the state. If not, the process appears non-Markov and the value estimate can mix incompatible situations.",
-      "focus": "state representation"
+      "focus": "state representation",
+      "sourceRefs": []
     }
   ],
   "courseId": "DSA5105",
@@ -678,5 +685,6 @@
     "dsa5105-bank-042"
   ],
   "labIds": [],
-  "schemaVersion": "nus.lesson.v1"
+  "schemaVersion": "nus.lesson.v1",
+  "contentStatus": "CURRENT LECTURE"
 }

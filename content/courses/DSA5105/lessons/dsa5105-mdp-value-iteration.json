@@ -84,7 +84,8 @@
         "name": "Finite-MDP value backup",
         "purpose": "Use it to compute one Bellman optimality update from immediate rewards and successor values.",
         "sourceType": "lecture"
-      }
+      },
+      "sourceRefs": []
     },
     {
       "title": "Textbook depth · Contraction and policy extraction",
@@ -106,7 +107,8 @@
         "name": "Bellman contraction and policy extraction",
         "purpose": "Use it to justify convergence intuition and extract a greedy policy after value iteration.",
         "sourceType": "textbook"
-      }
+      },
+      "sourceRefs": []
     },
     {
       "title": "Textbook depth · TD(0)",
@@ -128,17 +130,20 @@
         "name": "TD(0) prediction error",
         "purpose": "Use it to update a value estimate from a one-step bootstrapped target rather than a complete return.",
         "sourceType": "textbook"
-      }
+      },
+      "sourceRefs": []
     },
     {
       "title": "Reference boundary · DQN replay",
       "body": "A replay buffer stores transitions sampled from past behavior so minibatches are less correlated and can be reused. The buffer is not required to contain transitions generated only by the current policy; that claim confuses replay with on-policy sampling. Target networks and replay are tools around a learned action-value function, not a replacement for the Bellman idea.",
-      "sourceType": "ref"
+      "sourceType": "ref",
+      "sourceRefs": []
     },
     {
       "title": "Assessment habit · Show the table",
       "body": "For a short value-iteration problem, make a row for each state and each sweep. Mark terminal values, write the action candidates before taking the max, and state the greedy action. This prevents a correct recurrence from turning into an arithmetic or indexing mistake.",
-      "sourceType": "ref"
+      "sourceType": "ref",
+      "sourceRefs": []
     }
   ],
   "examples": [
@@ -150,7 +155,8 @@
         "Sweep 2: $V_2(S_0)=\\max(2+0.9\\cdot3,0)=4.7$, while $V_2(S_1)=3$. Extract action $a$ at $S_0$."
       ],
       "answer": "The second sweep propagates the value of S1 backward into S0; write the initialization so the propagation is visible.",
-      "sourceType": "textbook"
+      "sourceType": "textbook",
+      "sourceRefs": []
     },
     {
       "title": "TD(0) update",
@@ -160,7 +166,8 @@
         "Update $V(s)$ to $1+0.1*3=1.3$."
       ],
       "answer": "TD(0) moves a visited estimate toward a sampled one-step bootstrap target.",
-      "sourceType": "textbook"
+      "sourceType": "textbook",
+      "sourceRefs": []
     }
   ],
   "criticalQuestions": [
@@ -168,13 +175,15 @@
       "prompt": "Why does value iteration converge for a discounted finite MDP?",
       "focus": "fixed point",
       "angle": "use contraction",
-      "modelAnswer": "The optimal Bellman operator is a $\\gamma$-contraction for $\\gamma<1$, so repeated exact backups converge to its unique fixed point V*."
+      "modelAnswer": "The optimal Bellman operator is a $\\gamma$-contraction for $\\gamma<1$, so repeated exact backups converge to its unique fixed point V*.",
+      "sourceRefs": []
     },
     {
       "prompt": "Why is replay not automatically on-policy?",
       "focus": "data distribution",
       "angle": "look at stored behavior",
-      "modelAnswer": "A replay buffer contains transitions collected at earlier behavior policies and can be sampled later. Reusing them makes the update off-policy unless extra restrictions are imposed."
+      "modelAnswer": "A replay buffer contains transitions collected at earlier behavior policies and can be sampled later. Reusing them makes the update off-policy unless extra restrictions are imposed.",
+      "sourceRefs": []
     }
   ],
   "courseId": "DSA5105",
@@ -859,5 +868,6 @@
   "labIds": [
     "dsa5105-mdp-value-iteration"
   ],
-  "schemaVersion": "nus.lesson.v1"
+  "schemaVersion": "nus.lesson.v1",
+  "contentStatus": "TEXTBOOK DEPTH"
 }

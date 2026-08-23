@@ -71,7 +71,8 @@
         "name": "Centered-data construction",
         "purpose": "Use it to remove the sample mean before interpreting covariance directions as variation.",
         "sourceType": "lecture"
-      }
+      },
+      "sourceRefs": []
     },
     {
       "title": "Textbook depth · Variance and eigenvectors",
@@ -97,17 +98,20 @@
         "name": "PCA variance maximization",
         "purpose": "Use it to select the unit direction with maximum projected variance.",
         "sourceType": "textbook"
-      }
+      },
+      "sourceRefs": []
     },
     {
       "title": "Textbook depth · Reconstruction",
       "body": "The top k principal directions span the k-dimensional linear subspace that minimizes total squared projection error. This is why PCA can be described both as variance maximization and as lossy reconstruction with the best rank-k linear subspace.",
-      "sourceType": "textbook"
+      "sourceType": "textbook",
+      "sourceRefs": []
     },
     {
       "title": "Reference boundary · Whitening",
       "body": "Whitening rotates into principal coordinates and rescales each non-zero component by the inverse square root of its eigenvalue. It can help when feature scales are very uneven, but tiny eigenvalues can amplify noise; the supporting mathematics reference is marked draft.",
-      "sourceType": "ref"
+      "sourceType": "ref",
+      "sourceRefs": []
     }
   ],
   "examples": [
@@ -119,7 +123,8 @@
         "Project each centered row onto that axis to get a one-dimensional representation, then reconstruct by multiplying the score back by the axis."
       ],
       "answer": "PCA keeps the direction with the largest eigenvalue and discards orthogonal variation according to the chosen $k$.",
-      "sourceType": "textbook"
+      "sourceType": "textbook",
+      "sourceRefs": []
     }
   ],
   "math": [],
@@ -128,13 +133,15 @@
       "prompt": "Why can failing to center data rotate the first principal component?",
       "angle": "Compare the covariance around the origin with covariance around the sample mean.",
       "modelAnswer": "The uncentered second moment includes the mean offset, so PCA may spend its first direction representing location instead of variation around the data cloud.",
-      "focus": "preprocessing"
+      "focus": "preprocessing",
+      "sourceRefs": []
     },
     {
       "prompt": "When can whitening hurt?",
       "angle": "Look at a very small eigenvalue and ask what happens when its inverse square root is applied.",
       "modelAnswer": "Whitening can amplify measurement noise in low-variance directions; regularization or dropping unstable components may be safer.",
-      "focus": "stability"
+      "focus": "stability",
+      "sourceRefs": []
     }
   ],
   "courseId": "DSA5105",
@@ -527,5 +534,6 @@
     "dsa5105-bank-014"
   ],
   "labIds": [],
-  "schemaVersion": "nus.lesson.v1"
+  "schemaVersion": "nus.lesson.v1",
+  "contentStatus": "CURRENT LECTURE"
 }

@@ -1,7 +1,7 @@
 {
   "id": "dsa5105-linear-regularization",
   "title": "OLS, ridge, and lasso",
-  "week": 3,
+  "week": 2,
   "minutes": 55,
   "summary": "Compare least squares with L2 and L1 penalties and understand how regularization changes the solution.",
   "objectives": [
@@ -25,32 +25,46 @@
       "status": "current-context"
     },
     {
-      "sourceId": "DSA5105/DSA5105_lecture2_annotated_tuesday.pdf",
+      "sourceId": "DSA5105/DSA5105_lecture2_annotated_friday.pdf",
       "page": 5,
       "sourceType": "lecture",
-      "role": "feature-map ridge objective",
+      "role": "feature-map ridge objective · latest Friday annotated source",
       "status": "current"
     },
     {
-      "sourceId": "DSA5105/DSA5105_lecture2_annotated_tuesday.pdf",
+      "sourceId": "DSA5105/DSA5105_lecture2_annotated_friday.pdf",
       "page": 7,
       "sourceType": "lecture",
-      "role": "unique ridge minimizer",
+      "role": "unique ridge minimizer · latest Friday annotated source",
       "status": "current"
     },
     {
-      "sourceId": "DSA5105/DSA5105_lecture2_annotated_tuesday.pdf",
+      "sourceId": "DSA5105/DSA5105_lecture2_annotated_friday.pdf",
       "page": 15,
       "sourceType": "lecture",
-      "role": "kernel ridge formulation",
+      "role": "kernel ridge formulation · latest Friday annotated source",
       "status": "current"
     },
     {
-      "sourceId": "DSA5105/DSA5105_lecture2_annotated_tuesday.pdf",
+      "sourceId": "DSA5105/DSA5105_lecture2_annotated_friday.pdf",
       "page": 16,
       "sourceType": "lecture",
-      "role": "feature versus kernel complexity",
+      "role": "feature versus kernel complexity · latest Friday annotated source",
       "status": "current"
+    },
+    {
+      "sourceId": "DSA5105/Lec2_exercises-solutions.pdf",
+      "page": 1,
+      "sourceType": "exercise",
+      "role": "PSD kernel closure exercise",
+      "status": "current-context"
+    },
+    {
+      "sourceId": "DSA5105/Lec2_exercises-solutions.pdf",
+      "page": 2,
+      "sourceType": "exercise",
+      "role": "feature-map construction solution",
+      "status": "current-context"
     }
   ],
   "visualIds": [],
@@ -85,7 +99,8 @@
         "name": "Ordinary least-squares objective",
         "purpose": "Use it to define the unregularized fit before comparing rank, uniqueness, or regularization.",
         "sourceType": "lecture"
-      }
+      },
+      "sourceRefs": []
     },
     {
       "title": "Lecture core · Ridge and lasso",
@@ -117,12 +132,14 @@
         "name": "L2 and L1 regularized objectives",
         "purpose": "Use it to compare continuous shrinkage with sparsity-inducing penalization and choose a validation strategy.",
         "sourceType": "lecture"
-      }
+      },
+      "sourceRefs": []
     },
     {
       "title": "Textbook depth · Choose lambda with validation",
       "body": "$\\lambda$ is not chosen by looking at the test score repeatedly. Fit a grid of $\\lambda$ values on the training data, select the value with the best validation behavior, refit if appropriate, and use the test set only for the final report. Standardize features when penalty scale should be comparable.",
-      "sourceType": "textbook"
+      "sourceType": "textbook",
+      "sourceRefs": []
     }
   ],
   "examples": [
@@ -134,7 +151,8 @@
         "The L2 constraint is rounder, so it usually shrinks both coefficients without selecting one exactly."
       ],
       "answer": "Lasso supports sparse feature selection; ridge supports stable shrinkage without the same exact-zero behavior.",
-      "sourceType": "lecture"
+      "sourceType": "lecture",
+      "sourceRefs": []
     }
   ],
   "math": [],
@@ -143,13 +161,15 @@
       "prompt": "Why can standardization change which feature lasso selects?",
       "angle": "Compare the penalty's scale across coordinates before and after normalization.",
       "modelAnswer": "The L1 penalty acts on coefficient magnitude. Without comparable feature scales, a feature measured in large units can be penalized differently even when its predictive role is similar.",
-      "focus": "preprocessing"
+      "focus": "preprocessing",
+      "sourceRefs": []
     },
     {
       "prompt": "Can stronger regularization ever improve test error while worsening training error?",
       "angle": "Use the bias–variance trade-off and distinguish optimization error from generalization error.",
       "modelAnswer": "Yes. The extra bias can reduce variance and prevent fitting noise, so unseen-data error may fall even as training error rises.",
-      "focus": "trade-off"
+      "focus": "trade-off",
+      "sourceRefs": []
     }
   ],
   "courseId": "DSA5105",
@@ -395,8 +415,62 @@
     "dsa5105-lr-q1",
     "dsa5105-lr-q2",
     "dsa5105-bank-007",
-    "dsa5105-bank-008"
+    "dsa5105-bank-008",
+    "dsa5105-week2-ex-kernel-feature-map"
   ],
   "labIds": [],
-  "schemaVersion": "nus.lesson.v1"
+  "schemaVersion": "nus.lesson.v1",
+  "contentStatus": "CURRENT LECTURE",
+  "sourceLens": {
+    "status": "Week 2 lecture + official exercise depth",
+    "whyExaminable": "The annotated lecture establishes the concept boundary; the official Lecture 2 exercise solutions require the algebraic construction, dual, KKT, or kernel representation.",
+    "lecture": [
+      {
+        "sourceId": "DSA5105/Lec1.pdf",
+        "page": 24,
+        "sourceType": "lecture",
+        "role": "linear models",
+        "status": "current"
+      },
+      {
+        "sourceId": "DSA5105/DSA5105_lecture2_annotated_friday.pdf",
+        "page": 5,
+        "sourceType": "lecture",
+        "role": "feature-map ridge objective · latest Friday annotated source",
+        "status": "current"
+      },
+      {
+        "sourceId": "DSA5105/DSA5105_lecture2_annotated_friday.pdf",
+        "page": 7,
+        "sourceType": "lecture",
+        "role": "unique ridge minimizer · latest Friday annotated source",
+        "status": "current"
+      },
+      {
+        "sourceId": "DSA5105/DSA5105_lecture2_annotated_friday.pdf",
+        "page": 15,
+        "sourceType": "lecture",
+        "role": "kernel ridge formulation · latest Friday annotated source",
+        "status": "current"
+      }
+    ],
+    "officialExercise": [
+      {
+        "sourceId": "DSA5105/Lec2_exercises-solutions.pdf",
+        "page": 1,
+        "sourceType": "exercise",
+        "role": "PSD kernel closure exercise",
+        "status": "current-context"
+      },
+      {
+        "sourceId": "DSA5105/Lec2_exercises-solutions.pdf",
+        "page": 2,
+        "sourceType": "exercise",
+        "role": "feature-map construction solution",
+        "status": "current-context"
+      }
+    ],
+    "textbook": [],
+    "reference": []
+  }
 }

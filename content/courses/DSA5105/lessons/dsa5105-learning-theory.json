@@ -63,7 +63,8 @@
         "name": "Generalization gap",
         "purpose": "Use it to compare observed training loss with expected loss on future draws and diagnose overfitting.",
         "sourceType": "lecture"
-      }
+      },
+      "sourceRefs": []
     },
     {
       "title": "Textbook depth · PAC language",
@@ -89,7 +90,8 @@
         "name": "PAC error-confidence statement",
         "purpose": "Use it to distinguish an error tolerance from the probability that a generalization guarantee fails.",
         "sourceType": "textbook"
-      }
+      },
+      "sourceRefs": []
     },
     {
       "title": "Lecture core · What breaks the estimate?",
@@ -100,12 +102,14 @@
         "useWhen": "Use this diagnostic before trusting a validation or test number in a real data pipeline.",
         "examMove": "Name the violated sampling condition and explain which future-data claim the score can no longer support.",
         "trap": "More data do not repair a systematically wrong evaluation population."
-      }
+      },
+      "sourceRefs": []
     },
     {
       "title": "Reference boundary · Optional theory",
       "body": "The learning-theory reference develops agnostic PAC and sample-complexity results beyond the current short lesson. Use it to understand why capacity and sample size affect confidence, but keep the current lecture syllabus as the exam boundary.",
-      "sourceType": "ref"
+      "sourceType": "ref",
+      "sourceRefs": []
     }
   ],
   "examples": [
@@ -117,7 +121,8 @@
         "The statement does not say that 90% of future predictions are correct on every run; it describes the probability of the guarantee over sampled training sets."
       ],
       "answer": "Translate $\\varepsilon$ as accuracy/error tolerance and $\\delta$ as the probability the guarantee fails.",
-      "sourceType": "textbook"
+      "sourceType": "textbook",
+      "sourceRefs": []
     }
   ],
   "math": [],
@@ -126,13 +131,15 @@
       "prompt": "Does a smaller empirical risk guarantee a smaller population risk?",
       "angle": "State the missing assumptions rather than answering from the training score alone.",
       "modelAnswer": "No. The guarantee requires conditions relating the sample, hypothesis class, and distribution; flexible models can have low empirical risk and poor generalization.",
-      "focus": "guarantee"
+      "focus": "guarantee",
+      "sourceRefs": []
     },
     {
       "prompt": "What changes when train and test data are not identically distributed?",
       "angle": "Ask which probability distribution appears in empirical risk and which appears in deployment risk.",
       "modelAnswer": "The basic IID PAC interpretation no longer applies directly; the evaluation must model distribution shift or use a target-domain sample.",
-      "focus": "distribution shift"
+      "focus": "distribution shift",
+      "sourceRefs": []
     }
   ],
   "courseId": "DSA5105",
@@ -468,5 +475,6 @@
     "dsa5105-bank-006"
   ],
   "labIds": [],
-  "schemaVersion": "nus.lesson.v1"
+  "schemaVersion": "nus.lesson.v1",
+  "contentStatus": "CURRENT LECTURE"
 }
