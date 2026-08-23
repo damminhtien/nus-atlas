@@ -6,6 +6,10 @@ and refresh first-party asset URLs so browsers and the service worker pick up th
 
 ## [Unreleased]
 
+## [0.2.57] - 2026-08-23
+
+- Theme free-response inputs
+
 ## [0.2.56] - 2026-08-23
 
 - Simplify the NUS learning flow
