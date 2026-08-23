@@ -6,6 +6,10 @@ and refresh first-party asset URLs so browsers and the service worker pick up th
 
 ## [Unreleased]
 
+## [0.2.59] - 2026-08-23
+
+- Simplify NUS study momentum UX
+
 ## [0.2.58] - 2026-08-23
 
 - Add external AI answer grading
