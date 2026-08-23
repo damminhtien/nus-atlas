@@ -22,6 +22,11 @@ jobs:
   build:
     runs-on: ubuntu-latest
     env:
+      # checkout initializes a temporary repository before fetching main; keep Git's
+      # legacy default-branch advice out of the Actions log.
+      GIT_CONFIG_COUNT: 1
+      GIT_CONFIG_KEY_0: advice.defaultBranchName
+      GIT_CONFIG_VALUE_0: false
       # Resolve the project-page URL from the repository running this workflow so forks do
       # not canonicalize back to the upstream repository.
       SITE_URL: https://${{ github.repository_owner }}.github.io/${{ github.event.repository.name }}
@@ -65,6 +70,10 @@ jobs:
     if: (github.event_name == 'push' || github.event_name == 'workflow_dispatch') && github.ref == format('refs/heads/{0}', github.event.repository.default_branch)
     needs: build
     runs-on: ubuntu-latest
+    env:
+      # deploy-pages currently pulls a deprecated Node dependency; scope the suppression
+      # to this action-only job so build and smoke warnings remain visible.
+      NODE_OPTIONS: --no-deprecation
     environment:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
@@ -77,6 +86,9 @@ jobs:
     needs: deploy
     runs-on: ubuntu-latest
     env:
+      GIT_CONFIG_COUNT: 1
+      GIT_CONFIG_KEY_0: advice.defaultBranchName
+      GIT_CONFIG_VALUE_0: false
       SITE_URL: https://${{ github.repository_owner }}.github.io/${{ github.event.repository.name }}
     steps:
       - uses: actions/checkout@v7
