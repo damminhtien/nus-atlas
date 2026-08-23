@@ -6,6 +6,10 @@ and refresh first-party asset URLs so browsers and the service worker pick up th
 
 ## [Unreleased]
 
+## [0.2.50] - 2026-08-23
+
+- Harden runtime lifecycle, cache isolation, and study-state integrity
+
 ## [0.2.49] - 2026-08-23
 
 - Add matrix calculus recall table
@@ -49,6 +53,18 @@ and refresh first-party asset URLs so browsers and the service worker pick up th
 ## [0.2.39] - 2026-08-21
 
 - Fix interactive lab navigation
+
+## [0.2.38] - 2026-08-21
+
+- Expand DSA5105 question bank and quizzes
+
+## [0.2.37] - 2026-08-20
+
+- Fix canonical DSA5104 SQL Studio
+
+## [0.2.36] - 2026-08-20
+
+- Show synced exam schedule on dashboard
 
 ## [0.2.35] - 2026-08-18
 
