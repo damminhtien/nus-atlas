@@ -6,6 +6,10 @@ and refresh first-party asset URLs so browsers and the service worker pick up th
 
 ## [Unreleased]
 
+## [0.2.65] - 2026-08-23
+
+- Fix in-page lesson navigation
+
 ## [0.2.64] - 2026-08-23
 
 - Fix DSA5105 practice math rendering
