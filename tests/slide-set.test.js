@@ -6,8 +6,8 @@ const { validateAll } = require("../scripts/validate-slides");
 test("DSA5105 slide packages preserve page, block, explanation, question, and asset provenance", () => {
   const result = validateAll();
   assert.equal(result.ok, true, result.errors.join("\n"));
-  assert.equal(result.counts.slideSets, 8);
-  assert.equal(result.counts.slides, 442);
+  assert.equal(result.counts.slideSets, 11);
+  assert.equal(result.counts.slides, 663);
 });
 
 test("DSA5104 Chapter 1 reader keeps 52 pages and source-layer assets", () => {
@@ -52,10 +52,13 @@ test("DSA5101 lecture reader keeps 90 pages and source-layer assets", () => {
 test("DSA5208 readers preserve both supplied lectures and page-aware assets", () => {
   const lec0 = JSON.parse(fs.readFileSync("content/courses/DSA5208/slides/dsa5208-lec0.json", "utf8"));
   const lec1 = JSON.parse(fs.readFileSync("content/courses/DSA5208/slides/dsa5208-lec1.json", "utf8"));
+  const lec2 = JSON.parse(fs.readFileSync("content/courses/DSA5208/slides/dsa5208-lec2.json", "utf8"));
   assert.equal(lec0.courseId, "DSA5208");
   assert.equal(lec0.source.pageCount, 16);
   assert.equal(lec1.source.pageCount, 36);
+  assert.equal(lec2.source.pageCount, 58);
   assert.equal(lec0.slides.length, 16);
   assert.equal(lec1.slides.length, 36);
-  assert.ok([lec0, lec1].every(set => set.slides.every(slide => slide.sourceRef.sourceType === "lecture" && slide.extraction.blocks.every(block => block.sourceId === set.source.sourceId))));
+  assert.equal(lec2.slides.length, 58);
+  assert.ok([lec0, lec1, lec2].every(set => set.slides.every(slide => slide.sourceRef.sourceType === "lecture" && slide.extraction.blocks.every(block => block.sourceId === set.source.sourceId))));
 });

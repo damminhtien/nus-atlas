@@ -53,7 +53,7 @@ test("every DSA5208 lesson has a source-backed visual lab", () => {
   const packageData = coursePackage("DSA5208");
   const lessons = packageData.content.modules.flatMap(module => module.lessons);
   const labs = new Map(Object.values(packageData.labs).map(lab => [lab.lessonId, lab]));
-  assert.equal(lessons.length, 9);
+  assert.equal(lessons.length, 12);
   assert.equal(lessons.filter(lesson => labs.has(lesson.id)).length, lessons.length);
   assert.ok(lessons.every(lesson => labs.get(lesson.id).sourceRefs.every(ref => ref.sourceType)));
 });
