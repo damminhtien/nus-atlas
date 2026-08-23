@@ -6,6 +6,10 @@ and refresh first-party asset URLs so browsers and the service worker pick up th
 
 ## [Unreleased]
 
+## [0.2.66] - 2026-08-23
+
+- Allow local Atlas progress sync without replacing production CORS.
+
 ## [0.2.65] - 2026-08-23
 
 - Fix in-page lesson navigation
