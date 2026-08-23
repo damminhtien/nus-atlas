@@ -96,3 +96,63 @@ test("planner renders the confirmed assessment time from timing metadata", () =>
 
   assert.match(root.innerHTML, /2026-09-29 · 14:00–17:00/);
 });
+
+test("planner uses a date-only formatter for deadlines without a supplied time", () => {
+  const root = { innerHTML: "", querySelectorAll: () => [] };
+  const feature = createPlannerFeature({
+    root,
+    getAssessments: () => [{
+      id: "date-only",
+      courseCode: "DSA5101",
+      title: "Assignment 1",
+      kind: "assignment",
+      weight: 15,
+      date: "2026-09-13",
+      timeStatus: "pending",
+      checklist: ["Submit"]
+    }],
+    getStore: () => ({ task: () => ({ status: "todo", checks: [] }) }),
+    pageHead: (_kicker, title) => `<h1>${title}</h1>`,
+    dayCount: () => 10,
+    fmtDate: () => "Sep 13, 2026, 8:00 AM",
+    formatAssessmentDate: () => "Sep 13, 2026",
+    statusPill: status => `<b>${status}</b>`,
+    sourceLabel: () => "",
+    esc: value => String(value)
+  });
+
+  feature.render();
+
+  assert.match(root.innerHTML, /Sep 13, 2026/);
+  assert.doesNotMatch(root.innerHTML, /8:00 AM/);
+});
+
+test("planner renders grouped assessment weights without inventing an individual percentage", () => {
+  const root = { innerHTML: "", querySelectorAll: () => [] };
+  const feature = createPlannerFeature({
+    root,
+    getAssessments: () => [{
+      id: "project-1",
+      courseCode: "DSA5104",
+      title: "Project 1",
+      kind: "project",
+      weight: null,
+      weightLabel: "part of 60%",
+      date: null,
+      checklist: ["Confirm brief"]
+    }],
+    getStore: () => ({ task: () => ({ status: "todo", checks: [] }) }),
+    pageHead: (_kicker, title) => `<h1>${title}</h1>`,
+    dayCount: () => null,
+    fmtDate: () => "Date pending",
+    formatAssessmentWeight: assessment => assessment.weightLabel,
+    statusPill: status => `<b>${status}</b>`,
+    sourceLabel: () => "",
+    esc: value => String(value)
+  });
+
+  feature.render();
+
+  assert.match(root.innerHTML, /part of 60%/);
+  assert.doesNotMatch(root.innerHTML, /null%/);
+});

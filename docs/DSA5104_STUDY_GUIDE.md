@@ -26,6 +26,8 @@ Each slide keeps page-aware extraction blocks, bounding boxes, image IDs, a comp
 
 The normalized source manifest is `content/courses/DSA5104/sources/manifest.json`. Raw PDFs and homework files remain outside the repository under `/Users/macbook/Desktop/NUS/DSA5104`; only normalized extraction, page references, and derived study notes are committed.
 
+The current final-exam map is also partial. The supplied lecture sources cover Chapters 1–3; Chapters 4, 5, 9, and the second-half materials (including XML, MongoDB, MapReduce, Spark SQL, and vector databases) remain explicit ingestion targets. Do not read the current lesson list as complete semester coverage until those official sources are added.
+
 ## A+ study loop
 
 1. Start at `#/nus/course/DSA5104` and choose one track.

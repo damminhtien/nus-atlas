@@ -19,6 +19,10 @@ The raw PDFs remain outside the repository under `/Users/macbook/Desktop/NUS/DSA
 
 Each track has a source-backed lab, source lens, retrieval questions, flashcards, homework, and a short set of concept contrasts. The twelve extra bank questions are merged into the normalized package, giving 21 prompts across the four lessons.
 
+## Final-exam coverage status
+
+The current package is not a complete final-exam map. The lecture reader covers the four tracks above, while the supplied assignment evidence also calls for expansion on hierarchical clustering, user-based collaborative filtering, latent-factor recommenders, PageRank, DGIM, Flajolet–Martin/AMS, and BALANCE online advertising. These are assignment signals, not proof that every item appears on the final. Until those topics are ingested into explicit lessons, treat DSA5101 exam readiness as partial rather than complete.
+
 ## A+ study loop
 
 1. Start on the dashboard with DSA5101 selected as the focus course.

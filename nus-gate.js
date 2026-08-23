@@ -1,7 +1,7 @@
 /* Canonical NUS content gate — run: node nus-gate.js */
 const fs = require("fs");
 const path = require("path");
-const { compileCourse } = require("./tools/content-compiler");
+const { compileCourse, assessmentWeightTotal } = require("./tools/content-compiler");
 
 const ROOT = __dirname;
 const courseIds = fs.readdirSync(path.join(ROOT, "content", "courses"), { withFileTypes: true }).filter(entry => entry.isDirectory()).map(entry => entry.name).sort();
@@ -56,13 +56,23 @@ for (const packageData of packages) {
   }
   for (const assessment of packageData.assessments || []) {
     if (assessment.courseCode !== course.code) errors.push(`assessment outside course: ${assessment.id}`);
+    if (assessment.schemaVersion !== "nus.assessment.v2" || !assessment.officialFacts || !assessment.studentGuidance) errors.push(`assessment must use v2 facts/guidance model: ${assessment.id}`);
     if (assessment.dateStatus === "pending" && assessment.date !== null) errors.push(`pending assessment has a guessed date: ${assessment.id}`);
     if (assessment.date && Number.isNaN(new Date(assessment.date).getTime())) errors.push(`invalid assessment date: ${assessment.id}`);
     if (!Array.isArray(assessment.checklist) || !assessment.checklist.length) errors.push(`missing checklist: ${assessment.id}`);
+    for (const [field, fact] of Object.entries(assessment.officialFacts || {})) {
+      if (!Array.isArray(fact.sourceRefs) || !fact.sourceRefs.length) errors.push(`official assessment fact needs source refs: ${assessment.id}/${field}`);
+      for (const ref of fact.sourceRefs || []) checkSourceRef(ref, `${assessment.id}/${field}`);
+      for (const exclusion of fact.explicitExclusions || []) for (const ref of exclusion.sourceRefs || []) checkSourceRef(ref, `${assessment.id}/${field}/exclusion`);
+    }
   }
-  const weight = (packageData.assessments || []).reduce((sum, assessment) => sum + Number(assessment.weight || 0), 0);
+  const weight = assessmentWeightTotal(packageData.assessments || []);
   if (weight !== 100) errors.push(`${course.code} assessment weights sum to ${weight}, expected 100`);
-  if (!packageData.schedule || !packageData.schedule.exam) errors.push(`missing schedule: ${course.code}`);
+  if (!packageData.schedule) errors.push(`missing schedule: ${course.code}`);
+  else if (packageData.schedule.hasFinalExam === false) {
+    if (packageData.schedule.exam !== null) errors.push(`no-exam schedule must set exam to null: ${course.code}`);
+    if (!packageData.schedule.assessmentNote) errors.push(`no-exam schedule needs assessment note: ${course.code}`);
+  } else if (!packageData.schedule.exam) errors.push(`missing schedule: ${course.code}`);
   Object.entries(packageData.visuals || {}).forEach(([id, visual]) => {
     if (!visual.courseCode || visual.courseCode !== course.code || !visual.title || !visual.kind || !visual.source || !visual.source.sourceId || !Number.isInteger(visual.source.page) || !visual.observation) errors.push(`incomplete visual ref: ${id}`);
   });

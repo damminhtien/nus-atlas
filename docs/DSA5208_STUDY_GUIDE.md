@@ -2,6 +2,8 @@
 
 DSA5208 is the current NUS Atlas focus course. The package contains nine source-backed lessons across foundations, event ordering, logical clocks, and compressed timestamps, plus two page-aware readers for the supplied Lecture 0 overview and Lecture 1 times lecture.
 
+Assessment note: the course is 100% project-based with weights 30%, 35%, and 35%; it has no midterm or final exam. The Planner tracks the three projects, while Exam Mode remains practice-only for retrieval.
+
 ## Source boundary
 
 The local source folder currently supplies only:

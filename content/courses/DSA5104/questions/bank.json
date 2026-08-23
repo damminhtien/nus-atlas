@@ -216,7 +216,7 @@
       "misconception": "A foreign key is not optional metadata; insertions are checked.",
       "visualHook": "Trace the dept_name foreign-key edge in the keys lab.",
       "sourceRefs": [
-        { "sourceId": "DSA5104/chapter2.pdf", "page": 46, "sourceType": "lecture", "role": "homework assignment slide", "status": "current" },
+        { "sourceId": "DSA5104/chapter2.pdf", "page": 8, "sourceType": "lecture", "role": "foreign-key constraint", "status": "current" },
         { "sourceId": "DSA5104/Homework Solutions/Ch02_Introduction_to_the_Relational_Model/2.2.md", "page": 1, "sourceType": "exercise", "role": "teacher-designated homework solution", "status": "current-context" }
       ]
     },
@@ -235,7 +235,10 @@
       "misconception": "Do not select on salary directly over employee before joining works, because salary does not live in employee.",
       "visualHook": "Follow the join-before-select ordering in the algebra lab.",
       "sourceRefs": [
-        { "sourceId": "DSA5104/chapter2.pdf", "page": 46, "sourceType": "lecture", "role": "homework assignment slide", "status": "current" },
+        { "sourceId": "DSA5104/chapter2.pdf", "page": 13, "sourceType": "lecture", "role": "relational-algebra query composition", "status": "current" },
+        { "sourceId": "DSA5104/chapter2.pdf", "page": 15, "sourceType": "lecture", "role": "selection", "status": "current" },
+        { "sourceId": "DSA5104/chapter2.pdf", "page": 17, "sourceType": "lecture", "role": "projection", "status": "current" },
+        { "sourceId": "DSA5104/chapter2.pdf", "page": 24, "sourceType": "lecture", "role": "join", "status": "current" },
         { "sourceId": "DSA5104/Homework Solutions/Ch02_Introduction_to_the_Relational_Model/2.6.md", "page": 1, "sourceType": "exercise", "role": "teacher-designated homework solution", "status": "current-context" }
       ]
     },
@@ -254,7 +257,7 @@
       "misconception": "A relationship table may be associated with more than one customer, so the composite relationship key must be chosen with care.",
       "visualHook": "Use the schema-diagram key chooser for the bank example.",
       "sourceRefs": [
-        { "sourceId": "DSA5104/chapter2.pdf", "page": 46, "sourceType": "lecture", "role": "homework assignment slide", "status": "current" },
+        { "sourceId": "DSA5104/chapter2.pdf", "page": 8, "sourceType": "lecture", "role": "primary and foreign keys", "status": "current" },
         { "sourceId": "DSA5104/Homework Solutions/Ch02_Introduction_to_the_Relational_Model/2.12.md", "page": 1, "sourceType": "exercise", "role": "teacher-designated homework solution", "status": "current-context" }
       ]
     },
@@ -273,7 +276,7 @@
       "misconception": "Do not read the diagram as data; it encodes structure and key relationships.",
       "visualHook": "Inspect the figure schema_diagram_2_13.png for the actual bank diagram.",
       "sourceRefs": [
-        { "sourceId": "DSA5104/chapter2.pdf", "page": 46, "sourceType": "lecture", "role": "homework assignment slide", "status": "current" },
+        { "sourceId": "DSA5104/chapter2.pdf", "page": 11, "sourceType": "lecture", "role": "schema diagram", "status": "current" },
         { "sourceId": "DSA5104/Homework Solutions/Ch02_Introduction_to_the_Relational_Model/2.13.md", "page": 1, "sourceType": "exercise", "role": "teacher-designated homework solution", "status": "current-context" }
       ]
     },
@@ -292,7 +295,9 @@
       "misconception": "Select and project act on different parts of the expression: filter rows then choose columns.",
       "visualHook": "Run this expression through the algebra pipeline in the lab.",
       "sourceRefs": [
-        { "sourceId": "DSA5104/chapter2.pdf", "page": 46, "sourceType": "lecture", "role": "homework assignment slide", "status": "current" },
+        { "sourceId": "DSA5104/chapter2.pdf", "page": 15, "sourceType": "lecture", "role": "selection", "status": "current" },
+        { "sourceId": "DSA5104/chapter2.pdf", "page": 17, "sourceType": "lecture", "role": "projection", "status": "current" },
+        { "sourceId": "DSA5104/chapter2.pdf", "page": 27, "sourceType": "lecture", "role": "theta join", "status": "current" },
         { "sourceId": "DSA5104/Homework Solutions/Ch02_Introduction_to_the_Relational_Model/2.15.md", "page": 1, "sourceType": "exercise", "role": "teacher-designated homework solution", "status": "current-context" }
       ]
     },
@@ -409,6 +414,640 @@
         { "sourceId": "DSA5104/chapter3.pdf", "page": 99, "sourceType": "lecture", "role": "homework assignment slide", "status": "current" },
         { "sourceId": "DSA5104/Homework Solutions/Ch03_Introduction_to_SQL/3.28.md", "page": 1, "sourceType": "exercise", "role": "teacher-designated homework solution", "status": "current-context" }
       ]
-    }
+    },
+    {
+      "id": "dsa5104-bank-024",
+      "lessonId": "dsa5104-relational-model",
+      "type": "mcq",
+      "prompt": "A new row is inserted into instructor without changing its table definition. What changed?",
+      "choices": ["The relation schema", "The relation instance", "The primary-key definition", "The attribute domain"],
+      "answer": 1,
+      "explanation": "An instance is the current set of tuples; inserting a row changes that state while the schema remains the same.",
+      "difficulty": "easy",
+      "skill": "classify",
+      "cognitiveLevel": "understand",
+      "estimatedSeconds": 45,
+      "misconception": "Schema describes structure; it is not the current collection of rows.",
+      "visualHook": "Compare the stable relation schema with the changing table snapshot.",
+      "sourceRefs": [{ "sourceId": "DSA5104/chapter2.pdf", "page": 4, "sourceType": "lecture", "role": "relation schema and instance", "status": "current" }, { "sourceId": "DSA5104/chapter2.pdf", "page": 7, "sourceType": "lecture", "role": "database schema and instance", "status": "current" }]
+    },
+    {
+      "id": "dsa5104-bank-025",
+      "lessonId": "dsa5104-relational-model",
+      "type": "derivation",
+      "prompt": "For Enrollment(student_id, course_id, term, grade), assume one student can take a course once per term. State a minimal candidate key and explain why it is minimal.",
+      "accepted": ["student_id course_id term is the composite candidate key", "student_id, course_id, and term uniquely identify an enrollment", "the three-attribute composite key"],
+      "solution": "A minimal candidate key is the combination of student_id, course_id, and term. Removing any one attribute allows two different enrollments to share the remaining values.",
+      "explanation": "The key encodes the business rule that a student-course pair may repeat across terms but not within the same term.",
+      "difficulty": "medium",
+      "skill": "derive",
+      "cognitiveLevel": "apply",
+      "estimatedSeconds": 120,
+      "misconception": "student_id alone is not unique because one student can enroll in many courses and terms.",
+      "visualHook": "Test uniqueness and minimality by removing one attribute at a time.",
+      "sourceRefs": [{ "sourceId": "DSA5104/chapter2.pdf", "page": 8, "sourceType": "lecture", "role": "superkey and candidate key", "status": "current" }]
+    },
+    {
+      "id": "dsa5104-bank-026",
+      "lessonId": "dsa5104-relational-model",
+      "type": "mcq",
+      "prompt": "Which relational-algebra operator keeps rows satisfying a predicate while preserving the relation's attributes?",
+      "choices": ["Selection", "Projection", "Rename", "Union"],
+      "answer": 0,
+      "explanation": "Selection filters tuples by a predicate; projection chooses attributes and therefore changes the output schema.",
+      "difficulty": "easy",
+      "skill": "classify",
+      "cognitiveLevel": "understand",
+      "estimatedSeconds": 45,
+      "misconception": "Relational selection is a row filter, not the column list written after SQL SELECT.",
+      "visualHook": "Toggle the row-filter and column-filter views side by side.",
+      "sourceRefs": [{ "sourceId": "DSA5104/chapter2.pdf", "page": 15, "sourceType": "lecture", "role": "selection operator", "status": "current" }, { "sourceId": "DSA5104/chapter2.pdf", "page": 17, "sourceType": "lecture", "role": "projection operator", "status": "current" }]
+    },
+    {
+      "id": "dsa5104-bank-027",
+      "lessonId": "dsa5104-relational-model",
+      "type": "derivation",
+      "prompt": "Write the relational-algebra construction for instructors and teaches that retains only matching instructor identifiers, then explain why the unfiltered product is insufficient.",
+      "accepted": ["selection on instructor.ID = teaches.ID over instructor cross teaches", "join equals product followed by selection", "theta join with matching IDs"],
+      "solution": "Use a theta join on the identifier condition. Equivalently, apply selection with the matching instructor and teaches identifiers to the Cartesian product. The raw product contains every possible pair, including unrelated instructor-course pairs.",
+      "explanation": "The join predicate is the semantic link; without it, the product creates false associations.",
+      "difficulty": "medium",
+      "skill": "derive",
+      "cognitiveLevel": "apply",
+      "estimatedSeconds": 150,
+      "misconception": "A Cartesian product combines rows mechanically; it does not infer a relationship.",
+      "visualHook": "Inspect how the matching predicate removes false tuple pairs.",
+      "sourceRefs": [{ "sourceId": "DSA5104/chapter2.pdf", "page": 24, "sourceType": "lecture", "role": "join construction", "status": "current" }, { "sourceId": "DSA5104/chapter2.pdf", "page": 27, "sourceType": "lecture", "role": "theta join equivalence", "status": "current" }, { "sourceId": "DSA5104/Homework Solutions/Ch02_Introduction_to_the_Relational_Model/2.6.md", "page": 1, "sourceType": "exercise", "role": "relational-algebra translation", "status": "current-context" }]
+    },
+    {
+      "id": "dsa5104-bank-028",
+      "lessonId": "dsa5104-relational-model",
+      "type": "mcq",
+      "prompt": "Which condition is required before applying union to two relations?",
+      "choices": ["They must have equal row counts", "They must have equal arity and compatible corresponding domains", "They must share a primary key name", "They must be joined first"],
+      "answer": 1,
+      "explanation": "Union is defined for compatible relation schemas: the operands need the same number of attributes and compatible domains in corresponding positions.",
+      "difficulty": "medium",
+      "skill": "classify",
+      "cognitiveLevel": "understand",
+      "estimatedSeconds": 60,
+      "misconception": "Union compatibility is about tuple shape and domains, not equal row counts.",
+      "visualHook": "Check operand compatibility before combining the tuple sets.",
+      "sourceRefs": [{ "sourceId": "DSA5104/chapter2.pdf", "page": 28, "sourceType": "lecture", "role": "union compatibility", "status": "current" }]
+    },
+    {
+      "id": "dsa5104-bank-029",
+      "lessonId": "dsa5104-relational-model",
+      "type": "short",
+      "prompt": "Explain why the queries Fall minus Spring and Spring minus Fall are generally different.",
+      "accepted": ["set difference is directional", "left operand is retained and right operand is subtracted", "difference is not commutative"],
+      "solution": "Set difference keeps tuples in its left operand that do not occur in its right operand, so reversing the operands reverses which semester's exclusive courses are returned.",
+      "explanation": "Unlike union and intersection, set difference is order-sensitive.",
+      "difficulty": "easy",
+      "skill": "explain",
+      "cognitiveLevel": "understand",
+      "estimatedSeconds": 60,
+      "misconception": "Do not assume every set operator is commutative.",
+      "visualHook": "Swap the operands and watch the exclusive set change.",
+      "sourceRefs": [{ "sourceId": "DSA5104/chapter2.pdf", "page": 31, "sourceType": "lecture", "role": "set difference", "status": "current" }]
+    },
+    {
+      "id": "dsa5104-bank-030",
+      "lessonId": "dsa5104-relational-model",
+      "type": "derivation",
+      "prompt": "Why is rename needed when finding instructors who earn more than instructor 12121? Describe the two relation roles.",
+      "accepted": ["rename creates a second named copy for self-comparison", "one instructor reference is compared with a renamed instructor reference", "self-join requires two aliases"],
+      "solution": "Rename creates a second name for the instructor relation so one reference can represent the candidate instructor and the other can represent instructor 12121. The query can then compare their salaries.",
+      "explanation": "The base relation is used twice in different logical roles; aliases make those roles distinguishable.",
+      "difficulty": "hard",
+      "skill": "derive",
+      "cognitiveLevel": "analyze",
+      "estimatedSeconds": 120,
+      "misconception": "Rename does not duplicate stored data; it gives an expression or relation reference a second name.",
+      "visualHook": "Label the candidate and benchmark copies before writing the predicate.",
+      "sourceRefs": [{ "sourceId": "DSA5104/chapter2.pdf", "page": 34, "sourceType": "lecture", "role": "rename operator", "status": "current" }, { "sourceId": "DSA5104/chapter2.pdf", "page": 35, "sourceType": "lecture", "role": "self-comparison setup", "status": "current" }, { "sourceId": "DSA5104/chapter2.pdf", "page": 36, "sourceType": "lecture", "role": "self-comparison expression", "status": "current" }]
+    },
+    {
+      "id": "dsa5104-bank-031",
+      "lessonId": "dsa5104-relational-model",
+      "type": "short",
+      "prompt": "When can two different relational-algebra expressions be called equivalent?",
+      "accepted": ["they return the same result for every database instance", "same relation on every database", "equivalent expressions preserve the logical result"],
+      "solution": "They are equivalent when they produce the same relation for every possible database instance, even if their intermediate relations or operation order differ.",
+      "explanation": "Equivalence is a semantic guarantee across all database states, not an accidental match on one sample.",
+      "difficulty": "medium",
+      "skill": "explain",
+      "cognitiveLevel": "analyze",
+      "estimatedSeconds": 75,
+      "misconception": "A query that matches one test dataset is not proven equivalent.",
+      "visualHook": "Compare two expressions across multiple relation instances.",
+      "sourceRefs": [{ "sourceId": "DSA5104/chapter2.pdf", "page": 37, "sourceType": "lecture", "role": "query equivalence", "status": "current" }, { "sourceId": "DSA5104/chapter2.pdf", "page": 38, "sourceType": "lecture", "role": "optimizer rewrites", "status": "current" }, { "sourceId": "DSA5104/chapter2.pdf", "page": 39, "sourceType": "lecture", "role": "join equivalence", "status": "current" }]
+    },
+    {
+      "id": "dsa5104-bank-032",
+      "lessonId": "dsa5104-database-design",
+      "type": "short",
+      "prompt": "What anomaly can occur when instructor and department are stored in one wide relation and the department building is repeated across instructor rows?",
+      "accepted": ["update anomaly", "repeated department facts can become inconsistent", "redundancy causes update insertion and deletion anomalies"],
+      "solution": "An update anomaly can create contradictory building values for the same department when only some repeated copies are changed. The repetition can also create insertion and deletion anomalies.",
+      "explanation": "The lecture uses the wide natural-join relation as a preview of why decomposition and normalization matter.",
+      "difficulty": "medium",
+      "skill": "diagnose",
+      "cognitiveLevel": "analyze",
+      "estimatedSeconds": 90,
+      "misconception": "Fewer tables do not automatically mean less redundancy or better integrity.",
+      "visualHook": "Highlight repeated department facts and edit only one copy.",
+      "sourceRefs": [{ "sourceId": "DSA5104/chapter2.pdf", "page": 43, "sourceType": "lecture", "role": "redundancy in relational design", "status": "current" }, { "sourceId": "DSA5104/chapter2.pdf", "page": 44, "sourceType": "lecture", "role": "decomposition preview", "status": "current" }]
+    },
+      {
+        "id": "dsa5104-bank-033",
+        "lessonId": "dsa5104-sql-foundations",
+        "courseId": "DSA5104",
+        "type": "mcq",
+        "prompt": "Which statement changes the schema rather than only the current relation instance?",
+        "choices": [
+          "INSERT INTO instructor VALUES (...)",
+          "DELETE FROM instructor",
+          "ALTER TABLE instructor ADD office varchar(20)",
+          "UPDATE assigns new tuple values"
+        ],
+        "answer": 2,
+        "explanation": "ALTER TABLE changes the relation definition; the other statements operate on tuples.",
+        "difficulty": "easy",
+        "skill": "classify",
+        "cognitiveLevel": "understand",
+        "estimatedSeconds": 45,
+        "misconception": "Separate schema-changing DDL from tuple-changing DML.",
+        "visualHook": "Toggle the schema layer and the current-instance layer.",
+        "sourceRefs": [
+          {
+            "sourceId": "DSA5104/chapter3.pdf",
+            "page": 5,
+            "sourceType": "lecture",
+            "role": "DDL scope",
+            "status": "current"
+          },
+          {
+            "sourceId": "DSA5104/chapter3.pdf",
+            "page": 17,
+            "sourceType": "lecture",
+            "role": "ALTER TABLE",
+            "status": "current"
+          }
+        ],
+        "schemaVersion": "nus.question.v1"
+      },
+      {
+        "id": "dsa5104-bank-034",
+        "lessonId": "dsa5104-sql-foundations",
+        "courseId": "DSA5104",
+        "type": "derivation",
+        "prompt": "Write an SQL query that returns the names of Computer Science instructors whose salary is above 70,000. Explain the role of each clause.",
+        "accepted": [
+          "select name from instructor where dept_name = Comp. Sci. and salary > 70000",
+          "SELECT name FROM instructor WHERE dept_name = 'Comp. Sci.' AND salary > 70000",
+          "select name, from instructor, where department and salary predicate"
+        ],
+        "solution": "Return name from instructor after filtering for the Computer Science department and salary above 70,000. SELECT supplies the output, FROM supplies the relation, and WHERE applies the row predicate.",
+        "explanation": "The query tests the basic query shape and combines two row predicates with AND.",
+        "difficulty": "medium",
+        "skill": "derive",
+        "cognitiveLevel": "apply",
+        "estimatedSeconds": 120,
+        "misconception": "Do not put the salary condition in SELECT or omit the relation source in FROM.",
+        "visualHook": "Build the query by arranging output, source, and predicate tokens.",
+        "sourceRefs": [
+          {
+            "sourceId": "DSA5104/chapter3.pdf",
+            "page": 19,
+            "sourceType": "lecture",
+            "role": "basic query structure",
+            "status": "current"
+          },
+          {
+            "sourceId": "DSA5104/chapter3.pdf",
+            "page": 28,
+            "sourceType": "lecture",
+            "role": "WHERE predicates",
+            "status": "current"
+          },
+          {
+            "sourceId": "DSA5104/Homework Solutions/Ch03_Introduction_to_SQL/3.1.md",
+            "page": 1,
+            "sourceType": "exercise",
+            "role": "basic SQL query practice",
+            "status": "current-context"
+          }
+        ],
+        "schemaVersion": "nus.question.v1"
+      },
+      {
+        "id": "dsa5104-bank-035",
+        "lessonId": "dsa5104-sql-foundations",
+        "courseId": "DSA5104",
+        "type": "mcq",
+        "prompt": "When should SELECT DISTINCT be added?",
+        "choices": [
+          "When every source row must be preserved",
+          "When duplicate projected result rows must be removed",
+          "When a table schema must change",
+          "When a foreign key must be deferred"
+        ],
+        "answer": 1,
+        "explanation": "SQL keeps duplicates by default; DISTINCT requests duplicate elimination in the projected result.",
+        "difficulty": "easy",
+        "skill": "classify",
+        "cognitiveLevel": "understand",
+        "estimatedSeconds": 45,
+        "misconception": "Do not assume SQL has pure set semantics by default.",
+        "visualHook": "Compare SELECT ALL and SELECT DISTINCT on the same result.",
+        "sourceRefs": [
+          {
+            "sourceId": "DSA5104/chapter3.pdf",
+            "page": 24,
+            "sourceType": "lecture",
+            "role": "duplicate results",
+            "status": "current"
+          }
+        ],
+        "schemaVersion": "nus.question.v1"
+      },
+      {
+        "id": "dsa5104-bank-036",
+        "lessonId": "dsa5104-sql-foundations",
+        "courseId": "DSA5104",
+        "type": "short",
+        "prompt": "Why is FROM instructor, teaches alone insufficient to identify which instructor taught which course?",
+        "accepted": [
+          "it creates a Cartesian product",
+          "every instructor is paired with every teaches row",
+          "a key equality predicate is required",
+          "join on instructor.ID and teaches.ID"
+        ],
+        "solution": "The FROM clause creates all possible instructor-teaches pairs. A WHERE predicate matching instructor.ID with teaches.ID is needed to retain only related pairs.",
+        "explanation": "A multi-table query needs an explicit relationship predicate; row position is not identity.",
+        "difficulty": "medium",
+        "skill": "diagnose",
+        "cognitiveLevel": "analyze",
+        "estimatedSeconds": 90,
+        "misconception": "Listing two relations does not automatically establish their relationship.",
+        "visualHook": "Show the product first, then animate the key predicate filtering it.",
+        "sourceRefs": [
+          {
+            "sourceId": "DSA5104/chapter3.pdf",
+            "page": 29,
+            "sourceType": "lecture",
+            "role": "FROM clause",
+            "status": "current"
+          },
+          {
+            "sourceId": "DSA5104/chapter3.pdf",
+            "page": 30,
+            "sourceType": "lecture",
+            "role": "Cartesian product",
+            "status": "current"
+          },
+          {
+            "sourceId": "DSA5104/chapter3.pdf",
+            "page": 31,
+            "sourceType": "lecture",
+            "role": "join example",
+            "status": "current"
+          }
+        ],
+        "schemaVersion": "nus.question.v1"
+      },
+      {
+        "id": "dsa5104-bank-037",
+        "lessonId": "dsa5104-sql-foundations",
+        "courseId": "DSA5104",
+        "type": "derivation",
+        "prompt": "For each course section offered in 2017, find the average total credits of enrolled students only when the section has at least two students. Which clause receives the row predicate and which receives the aggregate predicate?",
+        "accepted": [
+          "WHERE filters rows before GROUP BY and HAVING filters groups after aggregation",
+          "GROUP BY section and HAVING COUNT >= 2",
+          "WHERE year = 2017, GROUP BY section, HAVING count(student.ID) >= 2"
+        ],
+        "solution": "Use WHERE for row-level restrictions such as the target year, GROUP BY for course and section identity, and HAVING for the minimum group-size threshold. The average belongs in SELECT.",
+        "explanation": "The BIG 6 is a semantic pipeline: row filtering precedes grouping, while HAVING sees completed groups.",
+        "difficulty": "hard",
+        "skill": "derive",
+        "cognitiveLevel": "analyze",
+        "estimatedSeconds": 150,
+        "misconception": "An aggregate predicate cannot be evaluated at the row-filtering stage.",
+        "visualHook": "Trace rows through WHERE, groups through GROUP BY, and survivors through HAVING.",
+        "sourceRefs": [
+          {
+            "sourceId": "DSA5104/chapter3.pdf",
+            "page": 54,
+            "sourceType": "lecture",
+            "role": "BIG 6 worked query",
+            "status": "current"
+          },
+          {
+            "sourceId": "DSA5104/chapter3.pdf",
+            "page": 55,
+            "sourceType": "lecture",
+            "role": "BIG 6 clause roles",
+            "status": "current"
+          },
+          {
+            "sourceId": "DSA5104/Homework Solutions/Ch03_Introduction_to_SQL/3.2.md",
+            "page": 1,
+            "sourceType": "exercise",
+            "role": "aggregate query practice",
+            "status": "current-context"
+          }
+        ],
+        "schemaVersion": "nus.question.v1"
+      },
+      {
+        "id": "dsa5104-bank-038",
+        "lessonId": "dsa5104-sql-foundations",
+        "courseId": "DSA5104",
+        "type": "mcq",
+        "prompt": "Which predicate correctly finds instructors whose salary is missing?",
+        "choices": [
+          "ordinary comparison with NULL",
+          "salary IS NULL",
+          "programming-style equality with NULL",
+          "salary is equal to zero"
+        ],
+        "answer": 1,
+        "explanation": "NULL requires IS NULL or IS NOT NULL; ordinary comparison with NULL evaluates to UNKNOWN.",
+        "difficulty": "easy",
+        "skill": "classify",
+        "cognitiveLevel": "understand",
+        "estimatedSeconds": 45,
+        "misconception": "NULL is not an ordinary value and is not the same as zero.",
+        "visualHook": "Run an ordinary NULL comparison and IS NULL side by side.",
+        "sourceRefs": [
+          {
+            "sourceId": "DSA5104/chapter3.pdf",
+            "page": 45,
+            "sourceType": "lecture",
+            "role": "NULL values",
+            "status": "current"
+          },
+          {
+            "sourceId": "DSA5104/chapter3.pdf",
+            "page": 48,
+            "sourceType": "lecture",
+            "role": "UNKNOWN in WHERE",
+            "status": "current"
+          }
+        ],
+        "schemaVersion": "nus.question.v1"
+      },
+      {
+        "id": "dsa5104-bank-039",
+        "lessonId": "dsa5104-sql-foundations",
+        "courseId": "DSA5104",
+        "type": "calculation",
+        "prompt": "A column contains the values 40, NULL, and 60. What do COUNT(column) and COUNT(*) return for these three rows?",
+        "accepted": [
+          "COUNT(column) is 2 and COUNT(*) is 3",
+          "2 and 3",
+          "count ignores null values but count star counts rows"
+        ],
+        "solution": "COUNT(column) returns 2 because NULL is ignored for that column; COUNT(*) returns 3 because it counts rows.",
+        "explanation": "The distinction is essential when aggregates meet missing values.",
+        "difficulty": "medium",
+        "skill": "calculate",
+        "cognitiveLevel": "apply",
+        "estimatedSeconds": 75,
+        "misconception": "COUNT(*) and COUNT(column) do not have the same NULL behavior.",
+        "visualHook": "Highlight the NULL cell and compare the two counters.",
+        "sourceRefs": [
+          {
+            "sourceId": "DSA5104/chapter3.pdf",
+            "page": 49,
+            "sourceType": "lecture",
+            "role": "aggregate functions",
+            "status": "current"
+          },
+          {
+            "sourceId": "DSA5104/Homework Solutions/Ch03_Introduction_to_SQL/3.30.md",
+            "page": 1,
+            "sourceType": "exercise",
+            "role": "aggregate and NULL behavior",
+            "status": "current-context"
+          }
+        ],
+        "schemaVersion": "nus.question.v1"
+      },
+      {
+        "id": "dsa5104-bank-040",
+        "lessonId": "dsa5104-sql-foundations",
+        "courseId": "DSA5104",
+        "type": "short",
+        "prompt": "What is the difference between UNION and UNION ALL in SQL?",
+        "accepted": [
+          "UNION removes duplicates and UNION ALL preserves duplicates",
+          "UNION distinct, UNION ALL bag semantics",
+          "all keeps duplicate rows"
+        ],
+        "solution": "UNION combines compatible query results and removes duplicate rows. UNION ALL combines them while retaining duplicates.",
+        "explanation": "Set-operation syntax controls whether duplicate result tuples are preserved.",
+        "difficulty": "easy",
+        "skill": "contrast",
+        "cognitiveLevel": "understand",
+        "estimatedSeconds": 60,
+        "misconception": "Do not assume every set-looking SQL operator removes duplicates.",
+        "visualHook": "Overlay two semester result sets with and without deduplication.",
+        "sourceRefs": [
+          {
+            "sourceId": "DSA5104/chapter3.pdf",
+            "page": 42,
+            "sourceType": "lecture",
+            "role": "set operations",
+            "status": "current"
+          },
+          {
+            "sourceId": "DSA5104/chapter3.pdf",
+            "page": 44,
+            "sourceType": "lecture",
+            "role": "duplicate-preserving variants",
+            "status": "current"
+          }
+        ],
+        "schemaVersion": "nus.question.v1"
+      },
+      {
+        "id": "dsa5104-bank-041",
+        "lessonId": "dsa5104-sql-foundations",
+        "courseId": "DSA5104",
+        "type": "derivation",
+        "prompt": "Explain the difference between SOME and ALL in a salary comparison against a subquery result.",
+        "accepted": [
+          "SOME is existential and needs one witness",
+          "ALL is universal and needs every value",
+          "one counterexample defeats ALL"
+        ],
+        "solution": "x greater-than SOME(Q) succeeds if x is greater than at least one value in Q. x greater-than ALL(Q) succeeds only if x is greater than every value in Q.",
+        "explanation": "SOME and ALL quantify over the values returned by the subquery; they are not interchangeable.",
+        "difficulty": "hard",
+        "skill": "contrast",
+        "cognitiveLevel": "analyze",
+        "estimatedSeconds": 90,
+        "misconception": "Do not use SOME when the requirement is a universal maximum-style condition.",
+        "visualHook": "Reveal one witness for SOME and search for a counterexample to ALL.",
+        "sourceRefs": [
+          {
+            "sourceId": "DSA5104/chapter3.pdf",
+            "page": 62,
+            "sourceType": "lecture",
+            "role": "set comparison",
+            "status": "current"
+          },
+          {
+            "sourceId": "DSA5104/chapter3.pdf",
+            "page": 63,
+            "sourceType": "lecture",
+            "role": "SOME",
+            "status": "current"
+          },
+          {
+            "sourceId": "DSA5104/chapter3.pdf",
+            "page": 66,
+            "sourceType": "lecture",
+            "role": "ALL",
+            "status": "current"
+          }
+        ],
+        "schemaVersion": "nus.question.v1"
+      },
+      {
+        "id": "dsa5104-bank-042",
+        "lessonId": "dsa5104-sql-foundations",
+        "courseId": "DSA5104",
+        "type": "derivation",
+        "prompt": "How does the NOT EXISTS pattern express that a student took every course offered by the Biology department?",
+        "accepted": [
+          "find no Biology course missing from the student's takes rows",
+          "required courses minus taken courses is empty",
+          "not exists a counterexample"
+        ],
+        "solution": "For each student, form the required Biology courses and subtract the courses that student took. Keep the student only when no required course remains missing.",
+        "explanation": "Universal requirements are often easiest to implement as the absence of a counterexample.",
+        "difficulty": "hard",
+        "skill": "derive",
+        "cognitiveLevel": "analyze",
+        "estimatedSeconds": 120,
+        "misconception": "A simple equality compares one value; this requirement compares two sets.",
+        "visualHook": "Show the required set minus the student set and keep only empty differences.",
+        "sourceRefs": [
+          {
+            "sourceId": "DSA5104/chapter3.pdf",
+            "page": 73,
+            "sourceType": "lecture",
+            "role": "NOT EXISTS division pattern",
+            "status": "current"
+          },
+          {
+            "sourceId": "DSA5104/chapter3.pdf",
+            "page": 74,
+            "sourceType": "lecture",
+            "role": "correlated universal query",
+            "status": "current"
+          },
+          {
+            "sourceId": "DSA5104/Homework Solutions/Ch03_Introduction_to_SQL/3.28.md",
+            "page": 1,
+            "sourceType": "exercise",
+            "role": "NOT EXISTS practice",
+            "status": "current-context"
+          }
+        ],
+        "schemaVersion": "nus.question.v1"
+      },
+      {
+        "id": "dsa5104-bank-043",
+        "lessonId": "dsa5104-sql-foundations",
+        "courseId": "DSA5104",
+        "type": "short",
+        "prompt": "Why is a common table expression useful for a multi-step SQL query?",
+        "accepted": [
+          "it names a temporary relation",
+          "it improves readability without changing stored data",
+          "WITH makes intermediate results explicit"
+        ],
+        "solution": "WITH names a temporary relation for the duration of one statement, allowing later parts of the query to refer to a readable intermediate result.",
+        "explanation": "A CTE exposes intermediate reasoning without creating a permanent table.",
+        "difficulty": "medium",
+        "skill": "explain",
+        "cognitiveLevel": "understand",
+        "estimatedSeconds": 75,
+        "misconception": "A CTE is statement-scoped, not a permanent schema object.",
+        "visualHook": "Expand a nested query into named CTE stages.",
+        "sourceRefs": [
+          {
+            "sourceId": "DSA5104/chapter3.pdf",
+            "page": 79,
+            "sourceType": "lecture",
+            "role": "WITH clause",
+            "status": "current"
+          },
+          {
+            "sourceId": "DSA5104/chapter3.pdf",
+            "page": 80,
+            "sourceType": "lecture",
+            "role": "complex CTE query",
+            "status": "current"
+          },
+          {
+            "sourceId": "DSA5104/Homework Solutions/Ch03_Introduction_to_SQL/3.27.md",
+            "page": 1,
+            "sourceType": "exercise",
+            "role": "WITH query practice",
+            "status": "current-context"
+          }
+        ],
+        "schemaVersion": "nus.question.v1"
+      },
+      {
+        "id": "dsa5104-bank-044",
+        "lessonId": "dsa5104-sql-foundations",
+        "courseId": "DSA5104",
+        "type": "derivation",
+        "prompt": "What is the safety role of WHERE in UPDATE and DELETE statements?",
+        "accepted": [
+          "WHERE determines which tuples are mutated",
+          "without WHERE all rows are affected",
+          "SET changes values and WHERE identifies target rows"
+        ],
+        "solution": "WHERE defines the mutation set. Without it, UPDATE changes every row and DELETE removes every tuple in the target relation, subject to constraint behavior.",
+        "explanation": "DML syntax is short, but the predicate determines the scope of a potentially destructive operation.",
+        "difficulty": "medium",
+        "skill": "diagnose",
+        "cognitiveLevel": "analyze",
+        "estimatedSeconds": 90,
+        "misconception": "SET changes values; it does not select the rows to mutate.",
+        "visualHook": "Preview the mutation set before applying UPDATE or DELETE.",
+        "sourceRefs": [
+          {
+            "sourceId": "DSA5104/chapter3.pdf",
+            "page": 83,
+            "sourceType": "lecture",
+            "role": "DELETE",
+            "status": "current"
+          },
+          {
+            "sourceId": "DSA5104/chapter3.pdf",
+            "page": 91,
+            "sourceType": "lecture",
+            "role": "UPDATE",
+            "status": "current"
+          },
+          {
+            "sourceId": "DSA5104/Homework Solutions/Ch03_Introduction_to_SQL/3.3.md",
+            "page": 1,
+            "sourceType": "exercise",
+            "role": "database modification practice",
+            "status": "current-context"
+          }
+        ],
+        "schemaVersion": "nus.question.v1"
+      }
   ]
 }

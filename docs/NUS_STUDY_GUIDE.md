@@ -65,7 +65,20 @@ The local AY2024/25 and AY2025/26 exam PDFs are used as primary assessment evide
 
 The revision rule is: lecture notes define the required explanation, textbook sections deepen the derivation, and assessment-derived references determine which prompts deserve practice. A topic is marked ready only when the Atlas contains a short explanation, a worked calculation or derivation, a limitation/assumption check, and retrieval questions.
 
+Keep these boundaries explicit: exam scope is not the same as past-exam topics, textbook topics, or the course description. Only an official syllabus, instructor statement, or current lecture source can confirm scope; past papers and assignment previews raise practice priority without upgrading coverage authority.
+
 See [DSA5105_ASSESSMENT_MAP.md](DSA5105_ASSESSMENT_MAP.md) for the detailed evidence-to-lesson matrix and recommended revision order.
+
+## Assessment data contract
+
+Assessment records use `nus.assessment.v2`. The canonical record separates:
+
+- `officialFacts`: weight, timing, format, submission rules, scope, and group policy; each fact owns its `sourceRefs`.
+- `studentGuidance`: checklists and planning notes; these are useful study actions, not official requirements.
+
+The compiler projects compatibility fields such as `weight`, `date`, and `checklist` for the runtime. Those fields are generated views; edit the nested canonical facts instead. Timing preserves whether a value is an exact date, date-only, week, course-half, relative trigger, or explicitly pending. Project groups use `groupId`/`groupTotal` rather than inventing an individual weight.
+
+This prevents four common errors: invented submission times, collapsed project/quiz milestones, one citation being reused for unrelated facts, and generic study advice being presented as a rubric. A missing deadline remains pending; a course with no exam uses `schedule.exam: null` and `hasFinalExam: false`.
 
 ## Formula and reasoning standard
 

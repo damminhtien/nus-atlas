@@ -35,7 +35,26 @@ export type LessonBlock = TeachingNoteBlock | FormulaBlock | WorkedExampleBlock 
 export type QuestionType = "mcq" | "short" | "derivation" | "calculation";
 export type Difficulty = "easy" | "medium" | "hard";
 export type LabType = "compare" | "derivation-trace" | "deep-dive" | "decision-tree" | "geometry" | "concept-map" | "math-stepper" | "algorithm-trace" | "event-timeline" | "pipeline-builder";
-export type Assessment = { id: string; courseCode: string; title: string; kind: string; weight?: number; date?: string | null; checklist: string[]; source?: SourceRef };
+export type AssessmentFact<T = unknown> = { value?: T; label?: string; sourceRefs: SourceRef[]; [key: string]: unknown };
+export type AssessmentTiming = AssessmentFact<string> & { date?: string | null; time?: string | null; durationMinutes?: number; dateStatus?: string; timeStatus?: string; granularity?: string; week?: number; courseHalf?: string; relativeTrigger?: string; status?: string; description?: string };
+export type Assessment = {
+  id: string;
+  courseCode: string;
+  title: string;
+  kind: string;
+  schemaVersion: "nus.assessment.v2";
+  officialFacts: { weight?: AssessmentFact<number | null>; timing?: AssessmentTiming; format?: AssessmentFact<string>; submission?: AssessmentFact<string>; scope?: AssessmentFact<string>; groupPolicy?: AssessmentFact<string> };
+  studentGuidance: { checklist: string[]; notes?: string[] };
+  weight?: number | null;
+  weightLabel?: string;
+  weightGroup?: { id: string; total?: number; label?: string };
+  date?: string | null;
+  dateStatus?: string;
+  timeStatus?: string;
+  timing?: AssessmentTiming;
+  checklist: string[];
+  source?: SourceRef;
+};
 export type LabSummary = { id: string; courseCode: string; lessonId: string; title: string; type: LabType };
 export type Lab = LabSummary & { sourceRefs?: SourceRef[]; sourceLens?: { whyExaminable?: string; lectureScope?: string; exerciseDepth?: string }; exercises?: Array<{ id?: string; title?: string; prompt?: string; steps?: string[] }> };
 export type SlideSet = { id: string; courseId: string; lessonIds: string[]; source: { sourceId: string; sourceType: "lecture"; pageCount: number }; slides: Array<{ slideId: string; slideNumber: number; pdfPage: number; sourceRef: SourceRef; explanation: { whatYouSee: string; whyItMatters: string; intuition: string; technicalDetail: string; pitfall: string; connection: string }; socraticQuestions: Array<{ type: string; prompt: string; answer: string; hint: string }> }> };
@@ -133,7 +152,23 @@ export type Course = {
   slideSetIds: string[];
   sourceCatalog: SourceRef[];
   sourcePolicy: Record<string, string>;
+  sqlPractice?: SqlPractice;
   schemaVersion: "nus.course.v1";
+};
+export type SqlPractice = {
+  schemaVersion: "nus.sql-practice.v1";
+  engine: string;
+  schema: Array<{ name: string; columns: string[] }>;
+  seed: Record<string, Array<Array<string | number | null>>>;
+  exercises: Array<{
+    id: string;
+    level: string;
+    prompt: string;
+    starter: string;
+    expected: string[];
+    explanation: string;
+    solution?: string;
+  }>;
 };
 export type CourseSummary = Pick<Course, "code" | "entityKey" | "title" | "semester" | "schemaVersion"> & { description?: string; lessonCount?: number; questionCount?: number };
 export type CourseCollection = { id: string; entityKey: EntityKey; title: string; description?: string; lessonIds: string[]; schemaVersion: "nus.collection.v1" };

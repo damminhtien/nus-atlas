@@ -3,7 +3,7 @@
   "courseId": "DSA5105",
   "purpose": "Conceptual retrieval and worked reasoning across the DSA5105 learning arc.",
   "blueprint": {
-    "questionsPerLesson": 2,
+    "questionsPerLesson": 3,
     "sourcePolicy": "Lecture is primary; textbook and reference sources extend or clarify it.",
     "types": ["mcq", "short", "derivation", "calculation"]
   },
@@ -19,7 +19,7 @@
       "id": "dsa5105-bank-002", "lessonId": "dsa5105-erm", "type": "derivation", "difficulty": "medium", "skill": "objective-reading", "cognitiveLevel": "analyze", "estimatedSeconds": 120,
       "prompt": "Write the supervised-learning objective using a hypothesis h, loss l, and training set D.",
       "accepted": ["minimize 1/N sum loss h(x_i),y_i", "argmin h average loss over D", "minimize empirical risk"],
-      "solution": "$Choose h to minimize R_hat(h) = (1/N) \\sum_{i} l(h(x_i), y_i), optionally adding a regularization penalty.$", "hint": "Use the average over the N observed pairs.", "explanation": "ERM is an optimization statement over observed data; regularization changes the objective but not the role of the sample average.", "misconception": "Writing a population expectation as if all future data were available.", "visualHook": "Slider from individual losses to their mean empirical risk.",
+      "solution": "Choose $h$ to minimize $\\widehat{R}(h)=\\frac{1}{N}\\sum_{i=1}^{N}\\ell(h(x_i),y_i)$, optionally adding a regularization penalty.", "hint": "Use the average over the N observed pairs.", "explanation": "ERM is an optimization statement over observed data; regularization changes the objective but not the role of the sample average.", "misconception": "Writing a population expectation as if all future data were available.", "visualHook": "Slider from individual losses to their mean empirical risk.",
       "sourceRefs": [{"sourceId": "DSA5105/Lec1_annotated.pdf", "page": 23, "sourceType": "lecture", "role": "ERM objective", "status": "current"}, {"sourceId": "DSA5105/Textbook.pdf", "page": 18, "sourceType": "textbook", "role": "empirical risk", "status": "supporting"}]
     },
     {
@@ -61,7 +61,7 @@
       "id": "dsa5105-bank-008", "lessonId": "dsa5105-linear-regularization", "type": "derivation", "difficulty": "hard", "skill": "regularized-ols", "cognitiveLevel": "analyze", "estimatedSeconds": 150,
       "prompt": "State the closed-form ridge solution and identify the matrix that is made invertible by $\\lambda > 0$.",
       "accepted": ["(X^T X + lambda I)^-1 X^T y", "X transpose X plus lambda I", "ridge solution"],
-      "solution": "$w_hat_ridge = (X^\\top X + \\lambda I)^(-1) X^\\top y$. For $\\lambda > 0$, the added positive diagonal term removes zero-eigenvalue directions.", "hint": "$Start from the gradient of the squared loss plus \\lambda||w||^2.$", "explanation": "Ridge stabilizes ill-conditioned or rank-deficient least squares.", "misconception": "Adding $\\lambda$ I to X rather than to the normal-equation matrix.", "visualHook": "Highlight eigenvalues lifted away from zero.",
+      "solution": "For $\\lambda>0$, $\\widehat{w}_{\\lambda}=(X^\\top X+\\lambda I)^{-1}X^\\top y$; the added positive diagonal term removes zero-eigenvalue directions.", "hint": "Start from the gradient of the squared loss plus $\\lambda\\lVert w\\rVert_2^2$.", "explanation": "Ridge stabilizes ill-conditioned or rank-deficient least squares.", "misconception": "Adding $\\lambda I$ to $X$ rather than to the normal-equation matrix.", "visualHook": "Highlight eigenvalues lifted away from zero.",
       "sourceRefs": [{"sourceId": "DSA5105/Lec1_annotated.pdf", "page": 48, "sourceType": "lecture", "role": "ridge solution", "status": "current"}, {"sourceId": "DSA5105/Textbook.pdf", "page": 30, "sourceType": "textbook", "role": "closed form", "status": "supporting"}]
     },
     {
@@ -315,6 +315,274 @@
       "accepted": ["node representations become too similar after many propagation layers", "embeddings collapse across nodes", "neighbor mixing erases distinctions"],
       "solution": "Repeated aggregation can make node embeddings converge toward similar values, reducing the distinctions needed for prediction.", "hint": "Imagine repeatedly averaging neighboring colors.", "explanation": "Depth, graph spectrum, normalization, and skip connections all affect this trade-off.", "misconception": "Confusing oversmoothing with overfitting to labels.", "visualHook": "Increase message-passing depth and watch node colors converge.",
       "sourceRefs": [{"sourceId": "DSA5105/Ref/Chapter3_Graph_Neural_Networks.pdf", "page": 1, "sourceType": "ref", "role": "GNN depth", "status": "supporting"}, {"sourceId": "DSA5105/Lec8_annotated.pdf", "page": 54, "sourceType": "lecture", "role": "GNN limitations", "status": "current"}]
+    },
+    {
+      "id": "dsa5105-bank-045", "lessonId": "dsa5105-erm", "type": "mcq", "difficulty": "medium", "skill": "data-representation", "cognitiveLevel": "distinguish", "estimatedSeconds": 70,
+      "prompt": "Which representation is appropriate for a nominal feature such as eye colour when no ordering is meaningful?",
+      "choices": ["One-hot indicator vector", "Integer ranks 1, 2, 3", "A single continuous score", "Sorting the categories alphabetically"],
+      "answer": 0,
+      "hint": "Nominal categories should not inherit an artificial order.",
+      "explanation": "One-hot encoding gives each category its own indicator without pretending that one category is larger than another.",
+      "misconception": "Treating category IDs as measurements creates a false distance and ordering.",
+      "visualHook": "Toggle between one-hot columns and an artificial integer axis.",
+      "sourceRefs": [{"sourceId": "DSA5105/Lec1_annotated.pdf", "page": 14, "sourceType": "lecture", "role": "nominal representation", "status": "current"}, {"sourceId": "DSA5105/Lec1_annotated.pdf", "page": 15, "sourceType": "lecture", "role": "one-hot encoding", "status": "current"}]
+    },
+    {
+      "id": "dsa5105-bank-046", "lessonId": "dsa5105-linear-week1", "type": "short", "difficulty": "medium", "skill": "softmax", "cognitiveLevel": "distinguish", "estimatedSeconds": 100,
+      "prompt": "Why does adding the same constant $c$ to every logit leave the softmax class prediction unchanged?",
+      "accepted": ["the common exponential factor cancels", "softmax is invariant to a common shift", "all probabilities are unchanged"],
+      "solution": "For every class, $p_k(z+c\\mathbf{1})=\\frac{\\exp(z_k+c)}{\\sum_j\\exp(z_j+c)}=\\frac{\\exp(z_k)}{\\sum_j\\exp(z_j)}=p_k(z)$, so the argmax is unchanged.",
+      "hint": "Factor the same $\\exp(c)$ out of numerator and denominator.",
+      "explanation": "Logits are scores up to a shared additive offset; probabilities and the predicted class depend on relative, not absolute, scores.",
+      "misconception": "A shared shift changes the class ranking even though it changes no pairwise logit difference.",
+      "visualHook": "Move all logits together and watch the probability bars stay fixed.",
+      "sourceRefs": [{"sourceId": "DSA5105/Lec1_annotated.pdf", "page": 54, "sourceType": "lecture", "role": "softmax property", "status": "current"}]
+    },
+    {
+      "id": "dsa5105-bank-047", "lessonId": "dsa5105-week1-derivations", "type": "derivation", "difficulty": "hard", "skill": "error-decomposition", "cognitiveLevel": "analyze", "estimatedSeconds": 160,
+      "prompt": "Using the lecture-aligned objects, distinguish approximation, estimation, and optimization in the three sources of error.",
+      "accepted": ["approximation f star to tilde f, estimation tilde f to hat f, optimization f zero to hat f", "f* to tilde f; tilde f to hat f; f0 to hat f"],
+      "rubric": [
+        {"label": "Approximation", "required": ["$f^*\\to\\tilde f$", "best population-risk member in $\\mathcal{H}$"]},
+        {"label": "Estimation", "required": ["$\\tilde f\\to\\hat f$", "finite sample or empirical risk"]},
+        {"label": "Optimization", "required": ["initialization $f_0$", "algorithmic path toward $\\hat f$"]}
+      ],
+      "solution": "Approximation is the move $f^*\\to\\tilde f$, where $\\tilde f\\in\\arg\\min_{f\\in\\mathcal{H}}R_{\\mathrm{pop}}(f)$. Estimation is the finite-sample move $\\tilde f\\to\\hat f$, where $\\hat f\\in\\arg\\min_{f\\in\\mathcal{H}}\\widehat R(f)$. Optimization is the algorithmic move from initialization $f_0$ toward the empirical minimizer $\\hat f$.",
+      "hint": "Do not replace the lecture's estimation term with the textbook's broader generalization paradigm.",
+      "explanation": "The lecture's three-source framework uses approximation, estimation, and optimization. Generalization remains related, but it is not the label for the middle arrow in this lecture diagram.",
+      "misconception": "Merging estimation with generalization or inserting an unintroduced $f_{\\mathrm{opt}}$ obscures the finite-sample and algorithmic roles.",
+      "visualHook": "Animate the arrows $f^*\\to\\tilde f\\to\\hat f$ and the separate optimization path $f_0\\to\\hat f$.",
+      "sourceRefs": [{"sourceId": "DSA5105/Lec1_annotated.pdf", "page": 25, "sourceType": "lecture", "role": "three sources of error", "status": "current"}]
+    },
+    {
+      "id": "dsa5105-bank-048", "lessonId": "dsa5105-learning-theory", "type": "calculation", "difficulty": "medium", "skill": "pac-notation", "cognitiveLevel": "apply", "estimatedSeconds": 90,
+      "prompt": "Suppose a PAC statement is $\\Pr\\{R(\\hat h)\\le0.05\\}\\ge0.9$. What are $\\varepsilon$, $\\delta$, and the confidence level?",
+      "accepted": ["epsilon 0.05 delta 0.10 confidence 0.90", "epsilon=0.05, delta=0.1, confidence=90%", "error tolerance 5%, failure probability 10%"],
+      "solution": "The allowed error is $\\varepsilon=0.05$, the failure probability is $\\delta=0.10$, and the confidence is $1-\\delta=0.90$.",
+      "hint": "Match the risk bound to $\\varepsilon$ and the probability shortfall from one to $\\delta$.",
+      "explanation": "$\\varepsilon$ controls the error tolerance; $\\delta$ controls how often the guarantee may fail over random training samples.",
+      "misconception": "Swapping $\\varepsilon$ and $\\delta$ turns an accuracy tolerance into a probability statement.",
+      "visualHook": "Place $\\varepsilon$ on the risk axis and $1-\\delta$ on the confidence axis.",
+      "sourceRefs": [{"sourceId": "DSA5105/Textbook.pdf", "page": 70, "sourceType": "textbook", "role": "PAC error-confidence statement", "status": "supporting"}]
+    },
+    {
+      "id": "dsa5105-bank-049", "lessonId": "dsa5105-linear-regularization", "type": "calculation", "difficulty": "hard", "skill": "ridge-spectrum", "cognitiveLevel": "apply", "estimatedSeconds": 130,
+      "prompt": "Assume $A=\\frac{1}{N}\\Phi^\\top\\Phi\\succ0$ and $Av_j=\\mu_jv_j$. What shrinkage factor does ridge apply in eigen-direction $v_j$?",
+      "accepted": ["mu_j divided by mu_j plus lambda", "mu/(mu+lambda)", "mu_j/(mu_j+lambda)"],
+      "solution": "Under the unique-OLS assumption $\\mu_j>0$, the ridge-to-OLS coefficient ratio in direction $v_j$ is $\\frac{\\langle\\hat w_\\lambda,v_j\\rangle}{\\langle\\hat w_0,v_j\\rangle}=\\frac{\\mu_j}{\\mu_j+\\lambda}$.",
+      "hint": "The assumption $A\\succ0$ makes the OLS comparison well-defined; then compare the eigenvalues of $A$ and $A+\\lambda I$.",
+      "explanation": "Small-eigenvalue directions are shrunk more strongly. If $A$ is singular, OLS may be non-unique, while $A+\\lambda I\\succ0$ still gives a unique ridge solution for $\\lambda>0$.",
+      "misconception": "Quoting the spectral factor without stating the positive-definiteness assumption hides why the OLS ratio exists.",
+      "visualHook": "Plot $\\mu/(\\mu+\\lambda)$ for large and small eigenvalues as $\\lambda$ moves.",
+      "sourceRefs": [{"sourceId": "DSA5105/Lec1_exercises-solutions.pdf", "page": 2, "sourceType": "exercise", "role": "ridge spectral filter", "status": "current-context"}, {"sourceId": "DSA5105/Lec1_annotated.pdf", "page": 48, "sourceType": "lecture", "role": "regularization", "status": "current"}]
+    },
+    {
+      "id": "dsa5105-bank-050", "lessonId": "dsa5105-svm-margin", "type": "mcq", "difficulty": "medium", "skill": "geometric-margin", "cognitiveLevel": "distinguish", "estimatedSeconds": 80,
+      "prompt": "Under the canonical constraint $y_i(w^\\top x_i+b)\\ge1$, which statement is correct?",
+      "choices": ["The distance from the boundary to the closest margin is $1/\\lVert w\\rVert_2$", "The raw score $w^\\top x_i+b$ is a scale-invariant distance", "Increasing $\\lVert w\\rVert_2$ always widens the margin", "The geometric margin is independent of the normalization"],
+      "answer": 0,
+      "hint": "Separate a label-scaled functional margin from a distance in input space.",
+      "explanation": "The canonical scaling fixes the functional margin, so the geometric margin to one side is $1/\\lVert w\\rVert_2$ and the full slab is $2/\\lVert w\\rVert_2$.",
+      "misconception": "Treating the unnormalized score as a geometric distance makes the answer depend on arbitrary rescaling.",
+      "visualHook": "Rescale the same separating hyperplane and compare raw scores with physical distances.",
+      "sourceRefs": [{"sourceId": "DSA5105/Lec2_annotated.pdf", "page": 35, "sourceType": "lecture", "role": "geometric margin", "status": "current"}]
+    },
+    {
+      "id": "dsa5105-bank-051", "lessonId": "dsa5105-kernel-pca-cluster", "type": "short", "difficulty": "medium", "skill": "clustering-contrast", "cognitiveLevel": "distinguish", "estimatedSeconds": 100,
+      "prompt": "What is the key distinction between a K-means assignment and a GMM responsibility?",
+      "accepted": ["K-means is a hard nearest-centroid assignment while GMM is a soft posterior probability", "hard membership versus soft probability", "distance assignment versus probabilistic responsibility"],
+      "solution": "K-means assigns each point to one nearest centroid using a distance. A GMM gives each point a soft responsibility $\\gamma_{ik}=P(z_i=k\\mid x_i)$ that sums to one across components.",
+      "hint": "Ask whether the output is one label or a normalized set of probabilities.",
+      "explanation": "The two methods can produce similar-looking clusters, but their objectives and uncertainty semantics differ.",
+      "misconception": "Calling a responsibility the inverse of distance ignores mixture weights and covariance.",
+      "visualHook": "Switch one point between a single hard color and a probability bar across components.",
+      "sourceRefs": [{"sourceId": "DSA5105/Lec1.pdf", "page": 39, "sourceType": "lecture", "role": "unsupervised overview", "status": "current"}, {"sourceId": "DSA5105/Textbook.pdf", "page": 98, "sourceType": "textbook", "role": "GMM responsibilities", "status": "supporting"}]
+    },
+    {
+      "id": "dsa5105-bank-052", "lessonId": "dsa5105-pca-deep-dive", "type": "mcq", "difficulty": "medium", "skill": "pca-variance", "cognitiveLevel": "understand", "estimatedSeconds": 80,
+      "prompt": "Which description matches the first principal direction for centered data?",
+      "choices": ["A unit vector maximizing projected variance", "The eigenvector with the smallest covariance eigenvalue", "A direction chosen from the label classes", "The feature column with the largest raw mean"],
+      "answer": 0,
+      "hint": "PCA is an unsupervised variance-maximization problem.",
+      "explanation": "The first direction solves $\\max_{\\lVert u\\rVert_2=1}u^\\top\\Sigma u$, so it is the eigenvector associated with the largest covariance eigenvalue.",
+      "misconception": "Using the smallest eigenvalue confuses a low-variance residual direction with the first principal component.",
+      "visualHook": "Rotate a unit vector and display the variance of its projection.",
+      "sourceRefs": [{"sourceId": "DSA5105/Textbook.pdf", "page": 86, "sourceType": "textbook", "role": "variance maximization", "status": "supporting"}]
+    },
+    {
+      "id": "dsa5105-bank-053", "lessonId": "dsa5105-cluster-gmm", "type": "calculation", "difficulty": "easy", "skill": "kmeans-update", "cognitiveLevel": "apply", "estimatedSeconds": 80,
+      "prompt": "A K-means cluster currently contains the one-dimensional points $1$, $3$, and $5$. What is its next centroid after the assignment step?",
+      "accepted": ["3", "three", "the mean is 3"],
+      "solution": "The centroid is the arithmetic mean $\\mu_k=\\frac{1+3+5}{3}=3$.",
+      "hint": "K-means minimizes squared distance for a fixed assignment by using the mean.",
+      "explanation": "Do not use the nearest point or the median: the squared-distance objective produces the arithmetic mean.",
+      "misconception": "Confusing K-means' centroid update with a medoid or a GMM posterior update.",
+      "visualHook": "Move the centroid until the left and right squared-distance forces balance.",
+      "sourceRefs": [{"sourceId": "DSA5105/Textbook.pdf", "page": 92, "sourceType": "textbook", "role": "K-means update", "status": "supporting"}]
+    },
+    {
+      "id": "dsa5105-bank-054", "lessonId": "dsa5105-weighted-ols", "type": "derivation", "difficulty": "hard", "skill": "weighted-ols", "cognitiveLevel": "analyze", "estimatedSeconds": 150,
+      "prompt": "For positive diagonal weights $A=\\operatorname{diag}(a_1,\\ldots,a_N)$, state the weighted least-squares normal equations and the uniqueness condition.",
+      "accepted": ["Phi transpose A Phi w equals Phi transpose A y and Phi transpose A Phi invertible", "weighted normal equations and positive definite normal matrix"],
+      "rubric": [
+        {"label": "Objective", "required": ["weighted residual objective", "$A=\\operatorname{diag}(a_1,\\ldots,a_N)$"]},
+        {"label": "Normal equations", "required": ["$\\Phi^\\top A\\Phi\\hat w_A=\\Phi^\\top Ay$"]},
+        {"label": "Uniqueness", "required": ["$\\Phi^\\top A\\Phi$ invertible", "positive weights and full column rank"]}
+      ],
+      "solution": "Minimize $\\frac12(\\Phi w-y)^\\top A(\\Phi w-y)$. Differentiation gives $\\Phi^\\top A\\Phi\\hat w_A=\\Phi^\\top Ay$, and the solution is unique when $\\Phi^\\top A\\Phi$ is invertible; positive weights preserve this when $\\Phi$ has full column rank.",
+      "hint": "Treat $A^{1/2}\\Phi$ as a row-scaled design matrix.",
+      "explanation": "Weights change the objective geometry, not the feature values. The inverse still requires an explicit rank or positive-definiteness assumption.",
+      "misconception": "Writing $\\Phi^\\top\\Phi$ after introducing weights silently solves a different problem.",
+      "visualHook": "Scale each residual row by $\\sqrt{a_i}$ and compare the two normal matrices.",
+      "sourceRefs": [{"sourceId": "DSA5105/Lec1_annotated.pdf", "page": 46, "sourceType": "lecture", "role": "matrix OLS", "status": "current"}, {"sourceId": "DSA5105/Textbook.pdf", "page": 24, "sourceType": "textbook", "role": "weighted normal equations", "status": "supporting"}]
+    },
+    {
+      "id": "dsa5105-bank-055", "lessonId": "dsa5105-svm-dual-kkt", "type": "derivation", "difficulty": "hard", "skill": "svm-kkt", "cognitiveLevel": "analyze", "estimatedSeconds": 170,
+      "prompt": "For a soft-margin SVM candidate $\\alpha$, list the dual feasibility checks and explain the meaning of an index with $0<\\alpha_i<C$.",
+      "accepted": ["sum alpha_i y_i equals zero, 0 <= alpha_i <= C, and an interior alpha lies on the margin", "equality constraint, box constraint, margin support vector"],
+      "rubric": [
+        {"label": "Balance", "required": ["$\\sum_i\\alpha_i y_i=0$"]},
+        {"label": "Box constraints", "required": ["$0\\le\\alpha_i\\le C$"]},
+        {"label": "Interior KKT case", "required": ["$0<\\alpha_i<C$", "margin equality"]}
+      ],
+      "solution": "Check the balance equation $\\sum_i\\alpha_i y_i=0$ and the box constraints $0\\le\\alpha_i\\le C$. For an interior multiplier $0<\\alpha_i<C$, complementary slackness gives the margin equality $y_i(w^\\top x_i+b)=1$ in the standard soft-margin formulation.",
+      "hint": "Separate dual feasibility from complementary slackness.",
+      "explanation": "A nonnegative alpha vector is not enough: the bias-stationarity equality and finite-$C$ bounds must also hold before reading the support-vector pattern.",
+      "misconception": "Assuming every nonzero alpha is an interior margin point ignores the upper-bound case $\\alpha_i=C$.",
+      "visualHook": "Place each alpha on a slider from zero to $C$ and mark the three KKT regimes.",
+      "sourceRefs": [{"sourceId": "DSA5105/Textbook.pdf", "page": 34, "sourceType": "textbook", "role": "SVM dual", "status": "supporting"}, {"sourceId": "DSA5105/Ref/document.pdf", "page": 4, "sourceType": "ref", "role": "past-exam KKT alignment", "status": "assessment-derived"}]
+    },
+    {
+      "id": "dsa5105-bank-056", "lessonId": "dsa5105-trees-ensembles", "type": "calculation", "difficulty": "medium", "skill": "tree-impurity", "cognitiveLevel": "apply", "estimatedSeconds": 120,
+      "prompt": "A parent node has two positive and two negative examples. A split creates a pure left child with two positives and a right child with one positive and one negative. Using Gini impurity, what is the impurity decrease?",
+      "accepted": ["0.25", "1/4", "one quarter"],
+      "solution": "The parent has $G=1-(1/2)^2-(1/2)^2=0.5$. The left child has $G=0$ and the right child has $G=0.5$, so the weighted child impurity is $\\frac{2}{4}(0)+\\frac{2}{4}(0.5)=0.25$. Therefore $\\Delta I=0.5-0.25=0.25$.",
+      "hint": "Compute parent impurity, weighted child impurity, then subtract.",
+      "explanation": "Child impurities are weighted by their sample counts; comparing unweighted child scores would give the wrong split value.",
+      "misconception": "Averaging the two child impurities without accounting for their different sample counts.",
+      "visualHook": "Show class proportions and the weighted impurity contribution for each child.",
+      "sourceRefs": [{"sourceId": "DSA5105/Textbook.pdf", "page": 36, "sourceType": "textbook", "role": "Gini impurity", "status": "supporting"}]
+    },
+    {
+      "id": "dsa5105-bank-057", "lessonId": "dsa5105-neural-backprop", "type": "calculation", "difficulty": "easy", "skill": "backpropagation", "cognitiveLevel": "apply", "estimatedSeconds": 80,
+      "prompt": "For $z=wx$, if $x=2$ and $\\frac{\\partial L}{\\partial z}=3$, what is $\\frac{\\partial L}{\\partial w}$?",
+      "accepted": ["6", "six", "3 times 2"],
+      "solution": "The chain rule gives $\\frac{\\partial L}{\\partial w}=\\frac{\\partial L}{\\partial z}\\frac{\\partial z}{\\partial w}=3\\cdot2=6$.",
+      "hint": "Differentiate the local operation $z=wx$ with respect to $w$.",
+      "explanation": "Backpropagation multiplies the upstream derivative by the local derivative at each edge of the computation graph.",
+      "misconception": "Dropping the input factor $x$ treats the edge as if it were an identity operation.",
+      "visualHook": "Animate the derivative signal flowing through the multiplication node.",
+      "sourceRefs": [{"sourceId": "DSA5105/Textbook.pdf", "page": 52, "sourceType": "textbook", "role": "backpropagation", "status": "supporting"}]
+    },
+    {
+      "id": "dsa5105-bank-058", "lessonId": "dsa5105-pca-numerical", "type": "calculation", "difficulty": "medium", "skill": "pca-variance", "cognitiveLevel": "apply", "estimatedSeconds": 100,
+      "prompt": "A centered data matrix has singular values $3$ and $1$. What fraction of its centered squared norm is captured by the first principal component?",
+      "accepted": ["0.9", "90%", "9/10"],
+      "solution": "Squared singular values measure the component energy, so the explained fraction is $\\frac{3^2}{3^2+1^2}=\\frac{9}{10}=0.9$.",
+      "hint": "PCA variance is proportional to squared singular values, not the singular values themselves.",
+      "explanation": "The ratio is independent of whether the covariance uses $1/N$ or $1/(N-1)$ because the same normalization cancels.",
+      "misconception": "Using $3/(3+1)=0.75$ treats singular values as variance contributions.",
+      "visualHook": "Convert singular-value bars into squared-energy bars and show the retained fraction.",
+      "sourceRefs": [{"sourceId": "DSA5105/Textbook.pdf", "page": 82, "sourceType": "textbook", "role": "PCA covariance", "status": "supporting"}, {"sourceId": "DSA5105/Ref/document.pdf", "page": 4, "sourceType": "ref", "role": "past-exam PCA alignment", "status": "assessment-derived"}]
+    },
+    {
+      "id": "dsa5105-bank-059", "lessonId": "dsa5105-gmm-em-numerical", "type": "calculation", "difficulty": "medium", "skill": "em-m-step", "cognitiveLevel": "apply", "estimatedSeconds": 110,
+      "prompt": "For points $x_1=0$ and $x_2=4$ with responsibilities $\\gamma_{1k}=0.25$ and $\\gamma_{2k}=0.75$, what is the new one-dimensional GMM mean $\\mu_k$?",
+      "accepted": ["3", "three", "3.0"],
+      "solution": "The M-step uses a responsibility-weighted mean: $\\mu_k=\\frac{0.25\\cdot0+0.75\\cdot4}{0.25+0.75}=3$.",
+      "hint": "Responsibilities act as soft weights and must appear in both numerator and denominator.",
+      "explanation": "The M-step does not first turn responsibilities into hard labels; it keeps their probabilistic weights.",
+      "misconception": "Averaging $0$ and $4$ equally ignores the soft assignment information.",
+      "visualHook": "Resize the two responsibility bars and watch the mean move toward the heavier point.",
+      "sourceRefs": [{"sourceId": "DSA5105/Textbook.pdf", "page": 100, "sourceType": "textbook", "role": "EM mean update", "status": "supporting"}]
+    },
+    {
+      "id": "dsa5105-bank-060", "lessonId": "dsa5105-mdp-value-iteration", "type": "calculation", "difficulty": "medium", "skill": "value-iteration", "cognitiveLevel": "apply", "estimatedSeconds": 110,
+      "prompt": "In a deterministic MDP, action $a$ gives reward $2$, transitions to a state with value $5$, and uses $\\gamma=0.8$. What is its one-step backup value?",
+      "accepted": ["6", "6.0", "two plus zero point eight times five"],
+      "solution": "The backup is $Q(s,a)=r(s,a)+\\gamma V(s')=2+0.8\\cdot5=6$.",
+      "hint": "Discount only the successor value, not the immediate reward.",
+      "explanation": "Value iteration combines immediate reward with discounted future value before comparing actions.",
+      "misconception": "Multiplying the immediate reward by $\\gamma$ shifts the time convention and gives the wrong backup.",
+      "visualHook": "Draw the reward as an immediate token and the future value as a discounted token on the transition edge.",
+      "sourceRefs": [{"sourceId": "DSA5105/Textbook.pdf", "page": 115, "sourceType": "textbook", "role": "value iteration", "status": "supporting"}, {"sourceId": "DSA5105/Ref/document.pdf", "page": 1, "sourceType": "ref", "role": "past-exam Bellman alignment", "status": "assessment-derived"}]
+    },
+    {
+      "id": "dsa5105-bank-061", "lessonId": "dsa5105-dynamic-programming", "type": "short", "difficulty": "medium", "skill": "overlapping-subproblems", "cognitiveLevel": "distinguish", "estimatedSeconds": 90,
+      "prompt": "Why is optimal substructure alone not enough to justify dynamic programming?",
+      "accepted": ["overlapping subproblems are also needed for reuse", "without overlap there is no repeated work to memoize", "optimal substructure plus overlapping subproblems"],
+      "solution": "Optimal substructure explains how an optimal solution decomposes, but overlapping subproblems explain why memoization or tabulation can avoid solving the same states repeatedly.",
+      "hint": "Separate the correctness property from the computational reuse property.",
+      "explanation": "A problem can have an optimal decomposition without enough repeated states for dynamic programming to improve over a direct recursive solution.",
+      "misconception": "Calling every recursive recurrence dynamic programming even when no subproblem is reused.",
+      "visualHook": "Compare a tree of repeated recursive calls with a merged memoization DAG.",
+      "sourceRefs": [{"sourceId": "DSA5105/Textbook.pdf", "page": 107, "sourceType": "textbook", "role": "dynamic programming pattern", "status": "supporting"}]
+    },
+    {
+      "id": "dsa5105-bank-062", "lessonId": "dsa5105-graph-kernel-pagerank", "type": "calculation", "difficulty": "hard", "skill": "pagerank-update", "cognitiveLevel": "apply", "estimatedSeconds": 140,
+      "prompt": "A PageRank update uses damping $\\alpha=0.85$ on $n=3$ nodes. A source node has rank $0.4$ and two outgoing links. What rank contribution does each linked node receive from this source plus uniform teleportation?",
+      "accepted": ["0.22", "0.220", "0.17 plus 0.05"],
+      "solution": "The link contribution is $0.85\\cdot0.4/2=0.17$ and the teleport contribution is $(1-0.85)/3=0.05$, giving $0.22$ for each linked node.",
+      "hint": "Split the update into damped link following and uniform teleportation.",
+      "explanation": "Damping is a probabilistic transition rule: it reduces link-following mass and adds a baseline mass to every node.",
+      "misconception": "Applying teleportation only to sink nodes or dividing the full source rank equally without damping.",
+      "visualHook": "Separate the source mass into a link-flow stream and a teleportation stream.",
+      "sourceRefs": [{"sourceId": "DSA5105/Ref/Mathematics_of_Data_Science.pdf", "page": 47, "sourceType": "ref", "role": "PageRank", "status": "supporting"}, {"sourceId": "DSA5105/Ref/document.pdf", "page": 2, "sourceType": "ref", "role": "past-exam PageRank alignment", "status": "assessment-derived"}]
+    },
+    {
+      "id": "dsa5105-bank-063", "lessonId": "dsa5105-spectral-clustering", "type": "short", "difficulty": "hard", "skill": "laplacian-spectrum", "cognitiveLevel": "analyze", "estimatedSeconds": 110,
+      "prompt": "Why is the smallest Laplacian eigenvector usually not the informative coordinate for a connected graph, and what replaces it?",
+      "accepted": ["it is the constant vector with eigenvalue zero; use the Fiedler or second-smallest eigenvector", "constant zero-eigenvalue vector, then second eigenvector", "use the first nontrivial eigenvector"],
+      "solution": "For a connected graph, the smallest eigenvalue is $0$ with a constant eigenvector, which cannot separate nodes. Spectral clustering therefore uses the first nontrivial eigenvectors, beginning with the second-smallest eigenvector.",
+      "hint": "Evaluate the smoothness of a constant signal on every edge.",
+      "explanation": "The constant vector has no between-node variation, while the first nontrivial eigenvectors reveal low-cost graph cuts and community structure.",
+      "misconception": "Choosing the largest eigenvector by default ignores the Laplacian smoothness objective.",
+      "visualHook": "Color the constant signal, then switch to the Fiedler vector and reveal the cut.",
+      "sourceRefs": [{"sourceId": "DSA5105/Ref/Mathematics_of_Data_Science.pdf", "page": 53, "sourceType": "ref", "role": "spectral clustering", "status": "supporting"}, {"sourceId": "DSA5105/Ref/document.pdf", "page": 5, "sourceType": "ref", "role": "past-exam Laplacian alignment", "status": "assessment-derived"}]
+    },
+    {
+      "id": "dsa5105-bank-064", "lessonId": "dsa5105-ls-svm-loo", "type": "short", "difficulty": "medium", "skill": "loo-computation", "cognitiveLevel": "understand", "estimatedSeconds": 80,
+      "prompt": "How many model fits does naive leave-one-out validation require for a dataset of $N$ examples?",
+      "accepted": ["N fits", "one fit for each held-out example", "N retrainings"],
+      "solution": "Naive leave-one-out fits the model $N$ times, each time leaving out a different example and evaluating that held-out point.",
+      "hint": "There is one held-out choice for every training example.",
+      "explanation": "LOO uses nearly all data in each fit but can be expensive because the model is retrained once per held-out index.",
+      "misconception": "Treating LOO as one fit followed by an in-sample evaluation.",
+      "visualHook": "Cycle a held-out marker through all $N$ positions and count the fits.",
+      "sourceRefs": [{"sourceId": "DSA5105/Textbook.pdf", "page": 70, "sourceType": "textbook", "role": "cross validation", "status": "supporting"}, {"sourceId": "DSA5105/Ref/document.pdf", "page": 1, "sourceType": "ref", "role": "past-exam LOO alignment", "status": "assessment-derived"}]
+    },
+    {
+      "id": "dsa5105-bank-065", "lessonId": "dsa5105-rl-gnn", "type": "short", "difficulty": "hard", "skill": "markov-state", "cognitiveLevel": "analyze", "estimatedSeconds": 110,
+      "prompt": "Why must an RL state representation preserve the information needed for the Markov property?",
+      "accepted": ["the current representation must be sufficient to predict reward and transitions", "otherwise states become aliased and one policy cannot act optimally", "state sufficiency for future dynamics"],
+      "solution": "The representation must retain all reward-relevant information needed to predict the next-step distribution and future return. If distinct situations collapse to one vector, the state is aliased and a policy may be unable to choose correctly.",
+      "hint": "Ask whether two histories that map to the same state can have different optimal actions.",
+      "explanation": "A graph encoder can compress relational data, but compression is useful only when it preserves the decision-relevant state information.",
+      "misconception": "Assuming any lower-dimensional embedding is a valid Markov state.",
+      "visualHook": "Merge two histories into one embedding and show their incompatible optimal actions.",
+      "sourceRefs": [{"sourceId": "DSA5105/syllabus.pdf", "page": 1, "sourceType": "lecture", "role": "current RL scope", "status": "current"}, {"sourceId": "DSA5105/Ref/Chapter3_Graph_Neural_Networks.pdf", "page": 1, "sourceType": "ref", "role": "graph state representation", "status": "supporting"}]
+    },
+    {
+      "id": "dsa5105-bank-066", "lessonId": "dsa5105-rl-bellman", "type": "calculation", "difficulty": "easy", "skill": "bellman-backup", "cognitiveLevel": "apply", "estimatedSeconds": 90,
+      "prompt": "For a deterministic transition with reward $1$, successor value $4$, and discount $\\gamma=0.9$, what is the action value backup?",
+      "accepted": ["4.6", "4.60", "one plus zero point nine times four"],
+      "solution": "The Bellman backup is $Q(s,a)=1+0.9\\cdot4=4.6$.",
+      "hint": "The immediate reward is undiscounted; discount the successor value.",
+      "explanation": "The same local backup underlies value iteration and the action comparison in a greedy policy.",
+      "misconception": "Using $0.9(1+4)$ discounts the reward at the wrong time step.",
+      "visualHook": "Place the immediate reward at time $t$ and the successor value at time $t+1$.",
+      "sourceRefs": [{"sourceId": "DSA5105/Textbook.pdf", "page": 108, "sourceType": "textbook", "role": "Bellman equation", "status": "supporting"}]
+    },
+    {
+      "id": "dsa5105-bank-067", "lessonId": "dsa5105-gnn", "type": "mcq", "difficulty": "medium", "skill": "permutation-invariance", "cognitiveLevel": "distinguish", "estimatedSeconds": 80,
+      "prompt": "What property should a neighborhood aggregator have so that a GNN does not depend on the arbitrary order of a node's neighbors?",
+      "choices": ["Permutation invariance", "Dependence on the neighbor index", "A separate output for every ordering", "Sorting by target label"],
+      "answer": 0,
+      "hint": "The graph defines a set of neighbors, not a sequence.",
+      "explanation": "A sum, mean, or another permutation-invariant aggregator produces the same representation when the neighbor list is reordered.",
+      "misconception": "Treating the storage order of an adjacency list as semantic information.",
+      "visualHook": "Shuffle the neighbor list and compare the aggregate output.",
+      "sourceRefs": [{"sourceId": "DSA5105/Ref/Chapter3_Graph_Neural_Networks.pdf", "page": 1, "sourceType": "ref", "role": "permutation-invariant aggregation", "status": "supporting"}]
     }
   ]
 }
