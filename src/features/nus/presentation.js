@@ -68,7 +68,7 @@
     void kicker;
     return "";
   }
-  function pageHead(kicker, title, desc) { return `<div class="page-head reveal"><div class="eyebrow">${esc(kicker)}</div><h2>${esc(title)}</h2>${desc ? `<p>${text(desc)}</p>` : ""}</div>`; }
+  function pageHead(kicker, title, desc, status) { return `<div class="page-head reveal"><div class="eyebrow">${esc(kicker)}</div><h2>${esc(title)}</h2>${status ? `<span class="pill gold nus-content-status">${esc(status)}</span>` : ""}${desc ? `<p>${text(desc)}</p>` : ""}</div>`; }
   function card(title, body, cls) { return `<section class="nus-card ${cls || ""}"><h3>${esc(title)}</h3>${body}</section>`; }
   function button(label, href, cls) { return `<a class="btn ${cls || "ghost"}" href="${esc(href)}" data-route>${esc(label)}</a>`; }
   function statusPill(status) { return `<span class="pill ${status === "done" ? "sage" : status === "in-progress" ? "gold" : ""}">${esc(status === "in-progress" ? "In progress" : status === "done" ? "Done" : "To do")}</span>`; }

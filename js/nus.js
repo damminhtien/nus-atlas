@@ -535,7 +535,7 @@
     const previous = courseLessons[index - 1], next = courseLessons[index + 1];
     const courseTextbook = repository() && repository().getTextbook ? repository().getTextbook(c.code) : null;
     setReaderMode(readerModeOn());
-    let body = pageHead(`${c.code} · Week ${l.week}`, l.title, l.summary);
+    let body = pageHead(`${c.code} · Week ${l.week}`, l.title, l.summary, l.contentStatus);
     const slideSet = slideSets(code).find(item => (item.lessonIds || []).includes(l.id)) || ((l.slideSetIds || [])[0] ? { id: l.slideSetIds[0] } : null);
     const slideResumeState = slideResume(code, slideSet);
     const resources = `<details class="nus-lesson-more"><summary>More</summary><div class="nus-lesson-more-actions"><button class="btn ghost" id="nus-mark-lesson" type="button">${done ? "✓ Completed" : "Mark complete"}</button>${slideSet ? button(slideResumeState.label, `#/nus/slides/${c.code}/${slideSet.id}/${slideResumeState.number}`, "ghost") : ""}${(courseTextbook && courseTextbook.reader) || (repository() && repository().hasTextbook && repository().hasTextbook(c.code)) ? button("Open textbook PDF", `#/nus/textbook/${c.code}/1`, "ghost") : ""}${l.contrastDrills && l.contrastDrills.length ? button("Clarify similar concepts", `#/nus/contrast/${c.code}/${l.id}`, "ghost") : ""}${button("Review mistakes", `#/nus/review/mistakes`, "ghost")}${readerButton()}</div></details>`;
