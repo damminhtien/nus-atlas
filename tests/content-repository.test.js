@@ -37,7 +37,7 @@ test("repository joins lazy lesson, questions, study kit, and course artifacts",
   assert.equal(lesson.schemaVersion, "nus.lesson.v1");
   assert.ok(lesson.questions.length > 0);
   assert.ok(lesson.flashcards.length > 0);
-  assert.equal(repo.getAssessment("DSA5105").length, 3);
+  assert.equal(repo.getAssessment("DSA5105").length, 5);
   assert.equal(repo.getAssessmentMap("DSA5105").topics.length, 12);
   const slideSets = await repo.loadSlides("DSA5105");
   assert.equal(slideSets[0].slides.length, 55);
