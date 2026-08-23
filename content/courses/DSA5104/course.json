@@ -7,6 +7,21 @@
   "sqlPractice": {
     "schemaVersion": "nus.sql-practice.v1",
     "engine": "SQLite/WASM",
+    "officialArtifacts": [
+      {
+        "id": "dsa5104-chapter3-mysql-code",
+        "title": "Chapter 3 MySQL code from the slides",
+        "sourceId": "DSA5104/chap3_mysql_code_in_slides.sql",
+        "sourceType": "exercise",
+        "status": "OFFICIAL EXERCISE",
+        "assetPath": "assets/nus/dsa5104/chap3_mysql_code_in_slides.sql",
+        "sourceRefs": [
+          { "sourceId": "DSA5104/chapter3.pdf", "page": 11, "sourceType": "lecture", "role": "Chapter 3 code context", "status": "current" },
+          { "sourceId": "DSA5104/chap3_mysql_code_in_slides.sql", "page": 1, "sourceType": "exercise", "role": "official code companion", "status": "current-context" }
+        ],
+        "notes": "This is MySQL code from the supplied Chapter 3 companion file. SQL Studio remains SQLite/WASM, so use this artifact for source-faithful MySQL syntax and comparison, not as an automatically executable SQLite script."
+      }
+    ],
     "schema": [
       { "name": "Department", "columns": ["id INTEGER PRIMARY KEY", "name TEXT NOT NULL"] },
       { "name": "Student", "columns": ["id INTEGER PRIMARY KEY", "name TEXT NOT NULL", "department_id INTEGER", "FOREIGN KEY (department_id) REFERENCES Department(id)"] },
@@ -73,6 +88,7 @@
     "DSA5104/chapter1.pdf",
     "DSA5104/chapter2.pdf",
     "DSA5104/chapter3.pdf",
+    "DSA5104/chap3_mysql_code_in_slides.sql",
     "DSA5104/chapter1_appendix_codex.pdf",
     "DSA5104/Homework Solutions/Ch02_Introduction_to_the_Relational_Model",
     "DSA5104/Homework Solutions/Ch03_Introduction_to_SQL",
@@ -116,6 +132,12 @@
       "sourceId": "DSA5104/Homework Solutions/Ch03_Introduction_to_SQL",
       "sourceType": "exercise",
       "role": "SQL homework solutions",
+      "status": "current-context"
+    },
+    {
+      "sourceId": "DSA5104/chap3_mysql_code_in_slides.sql",
+      "sourceType": "exercise",
+      "role": "official Chapter 3 MySQL code companion",
       "status": "current-context"
     },
     {

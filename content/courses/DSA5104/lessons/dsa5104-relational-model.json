@@ -205,25 +205,85 @@
         "Check operand compatibility before union, intersection, or difference."
       ],
       "sourceRefs": [
-        { "sourceId": "DSA5104/chapter2.pdf", "page": 13, "sourceType": "lecture", "role": "worked query example", "status": "current" },
-        { "sourceId": "DSA5104/chapter2.pdf", "page": 14, "sourceType": "lecture", "role": "relational algebra", "status": "current" },
-        { "sourceId": "DSA5104/chapter2.pdf", "page": 20, "sourceType": "lecture", "role": "composition", "status": "current" },
-        { "sourceId": "DSA5104/chapter2.pdf", "page": 27, "sourceType": "lecture", "role": "join equivalence", "status": "current" }
+        {
+          "sourceId": "DSA5104/chapter2.pdf",
+          "page": 13,
+          "sourceType": "lecture",
+          "role": "worked query example",
+          "status": "current"
+        },
+        {
+          "sourceId": "DSA5104/chapter2.pdf",
+          "page": 14,
+          "sourceType": "lecture",
+          "role": "relational algebra",
+          "status": "current"
+        },
+        {
+          "sourceId": "DSA5104/chapter2.pdf",
+          "page": 20,
+          "sourceType": "lecture",
+          "role": "composition",
+          "status": "current"
+        },
+        {
+          "sourceId": "DSA5104/chapter2.pdf",
+          "page": 27,
+          "sourceType": "lecture",
+          "role": "join equivalence",
+          "status": "current"
+        }
       ],
       "sourceLens": {
         "status": "core DSA5104 Chapter 2",
         "whyExaminable": "The homework asks for complete relational-algebra expressions, so mastery requires choosing operators and ordering them, not only naming the operators.",
         "lecture": [
-          { "sourceId": "DSA5104/chapter2.pdf", "page": 13, "sourceType": "lecture", "role": "worked query example", "status": "current" },
-          { "sourceId": "DSA5104/chapter2.pdf", "page": 14, "sourceType": "lecture", "role": "operator vocabulary", "status": "current" },
-          { "sourceId": "DSA5104/chapter2.pdf", "page": 24, "sourceType": "lecture", "role": "join construction", "status": "current" }
+          {
+            "sourceId": "DSA5104/chapter2.pdf",
+            "page": 13,
+            "sourceType": "lecture",
+            "role": "worked query example",
+            "status": "current"
+          },
+          {
+            "sourceId": "DSA5104/chapter2.pdf",
+            "page": 14,
+            "sourceType": "lecture",
+            "role": "operator vocabulary",
+            "status": "current"
+          },
+          {
+            "sourceId": "DSA5104/chapter2.pdf",
+            "page": 24,
+            "sourceType": "lecture",
+            "role": "join construction",
+            "status": "current"
+          }
         ],
         "officialExercise": [
-          { "sourceId": "DSA5104/Homework Solutions/Ch02_Introduction_to_the_Relational_Model/2.6.md", "page": 1, "sourceType": "exercise", "role": "select-project-join derivation", "status": "current-context" },
-          { "sourceId": "DSA5104/Homework Solutions/Ch02_Introduction_to_the_Relational_Model/2.15.md", "page": 1, "sourceType": "exercise", "role": "set-based query derivation", "status": "current-context" }
+          {
+            "sourceId": "DSA5104/Homework Solutions/Ch02_Introduction_to_the_Relational_Model/2.6.md",
+            "page": 1,
+            "sourceType": "exercise",
+            "role": "select-project-join derivation",
+            "status": "current-context"
+          },
+          {
+            "sourceId": "DSA5104/Homework Solutions/Ch02_Introduction_to_the_Relational_Model/2.15.md",
+            "page": 1,
+            "sourceType": "exercise",
+            "role": "set-based query derivation",
+            "status": "current-context"
+          }
         ],
         "textbook": [
-          { "sourceId": "DSA5104/Database System Concepts, 7th edition", "page": 2, "sourceType": "textbook", "role": "Chapter 2 pointer", "status": "course-depth" }
+          {
+            "sourceId": "DSA5104/Database System Concepts, 7th edition",
+            "page": 2,
+            "sourceType": "textbook",
+            "role": "Chapter 2 pointer",
+            "status": "course-depth"
+          }
         ],
         "reference": []
       }
@@ -307,7 +367,12 @@
       "kind": "concept-contrast",
       "pair": "Schema vs current instance",
       "prompt": "An INSERT adds a tuple but the table definition is unchanged. Which object changed?",
-      "choices": ["Schema", "Instance", "Candidate key", "Domain"],
+      "choices": [
+        "Schema",
+        "Instance",
+        "Candidate key",
+        "Domain"
+      ],
       "answer": 1,
       "explanation": "The instance is the current set of tuples. The schema is the stable relation structure and changes only when the definition changes.",
       "estimatedSeconds": 40,
@@ -315,7 +380,22 @@
       "skill": "concept-contrast",
       "cognitiveLevel": "distinguish",
       "misconception": "Current rows are an instance, not the schema.",
-      "sourceRefs": [{ "sourceId": "DSA5104/chapter2.pdf", "page": 4, "sourceType": "lecture", "role": "relation schema and instance", "status": "current" }, { "sourceId": "DSA5104/chapter2.pdf", "page": 7, "sourceType": "lecture", "role": "database schema and instance", "status": "current" }]
+      "sourceRefs": [
+        {
+          "sourceId": "DSA5104/chapter2.pdf",
+          "page": 4,
+          "sourceType": "lecture",
+          "role": "relation schema and instance",
+          "status": "current"
+        },
+        {
+          "sourceId": "DSA5104/chapter2.pdf",
+          "page": 7,
+          "sourceType": "lecture",
+          "role": "database schema and instance",
+          "status": "current"
+        }
+      ]
     },
     {
       "id": "dsa5104-contrast-selection-projection-ch2",
@@ -323,7 +403,12 @@
       "kind": "concept-contrast",
       "pair": "Selection vs projection",
       "prompt": "Which operator answers: keep instructors whose salary exceeds 90,000?",
-      "choices": ["Selection", "Projection", "Rename", "Assignment"],
+      "choices": [
+        "Selection",
+        "Projection",
+        "Rename",
+        "Assignment"
+      ],
       "answer": 0,
       "explanation": "Selection filters tuples using a predicate. Projection keeps selected attributes and does not test row conditions.",
       "estimatedSeconds": 40,
@@ -331,7 +416,22 @@
       "skill": "concept-contrast",
       "cognitiveLevel": "distinguish",
       "misconception": "Relational selection is the row-filter operator, even though SQL uses SELECT for a column list.",
-      "sourceRefs": [{ "sourceId": "DSA5104/chapter2.pdf", "page": 15, "sourceType": "lecture", "role": "selection operator", "status": "current" }, { "sourceId": "DSA5104/chapter2.pdf", "page": 17, "sourceType": "lecture", "role": "projection operator", "status": "current" }]
+      "sourceRefs": [
+        {
+          "sourceId": "DSA5104/chapter2.pdf",
+          "page": 15,
+          "sourceType": "lecture",
+          "role": "selection operator",
+          "status": "current"
+        },
+        {
+          "sourceId": "DSA5104/chapter2.pdf",
+          "page": 17,
+          "sourceType": "lecture",
+          "role": "projection operator",
+          "status": "current"
+        }
+      ]
     },
     {
       "id": "dsa5104-contrast-product-join-ch2",
@@ -339,7 +439,12 @@
       "kind": "concept-contrast",
       "pair": "Cartesian product vs join",
       "prompt": "Which operation keeps every possible tuple pair before any matching predicate is applied?",
-      "choices": ["Cartesian product", "Theta join", "Projection", "Intersection"],
+      "choices": [
+        "Cartesian product",
+        "Theta join",
+        "Projection",
+        "Intersection"
+      ],
       "answer": 0,
       "explanation": "The Cartesian product creates all pairs. A join is the product restricted by a predicate, such as matching instructor and teaches identifiers.",
       "estimatedSeconds": 45,
@@ -347,7 +452,22 @@
       "skill": "concept-contrast",
       "cognitiveLevel": "distinguish",
       "misconception": "A product creates candidate pairs; it does not establish that the pairs are related.",
-      "sourceRefs": [{ "sourceId": "DSA5104/chapter2.pdf", "page": 21, "sourceType": "lecture", "role": "Cartesian product", "status": "current" }, { "sourceId": "DSA5104/chapter2.pdf", "page": 24, "sourceType": "lecture", "role": "join construction", "status": "current" }]
+      "sourceRefs": [
+        {
+          "sourceId": "DSA5104/chapter2.pdf",
+          "page": 21,
+          "sourceType": "lecture",
+          "role": "Cartesian product",
+          "status": "current"
+        },
+        {
+          "sourceId": "DSA5104/chapter2.pdf",
+          "page": 24,
+          "sourceType": "lecture",
+          "role": "join construction",
+          "status": "current"
+        }
+      ]
     },
     {
       "id": "dsa5104-contrast-union-intersection-ch2",
@@ -355,7 +475,12 @@
       "kind": "concept-contrast",
       "pair": "Union vs intersection",
       "prompt": "Which set operator keeps a tuple when it appears in at least one compatible input relation?",
-      "choices": ["Union", "Intersection", "Difference", "Join"],
+      "choices": [
+        "Union",
+        "Intersection",
+        "Difference",
+        "Join"
+      ],
       "answer": 0,
       "explanation": "Union keeps tuples from either input; intersection keeps only tuples present in both inputs.",
       "estimatedSeconds": 40,
@@ -363,7 +488,22 @@
       "skill": "concept-contrast",
       "cognitiveLevel": "distinguish",
       "misconception": "Intersection is the both-inputs operator; union is the either-or-both operator.",
-      "sourceRefs": [{ "sourceId": "DSA5104/chapter2.pdf", "page": 28, "sourceType": "lecture", "role": "union", "status": "current" }, { "sourceId": "DSA5104/chapter2.pdf", "page": 30, "sourceType": "lecture", "role": "intersection", "status": "current" }]
+      "sourceRefs": [
+        {
+          "sourceId": "DSA5104/chapter2.pdf",
+          "page": 28,
+          "sourceType": "lecture",
+          "role": "union",
+          "status": "current"
+        },
+        {
+          "sourceId": "DSA5104/chapter2.pdf",
+          "page": 30,
+          "sourceType": "lecture",
+          "role": "intersection",
+          "status": "current"
+        }
+      ]
     },
     {
       "id": "dsa5104-contrast-assignment-rename-ch2",
@@ -371,7 +511,12 @@
       "kind": "concept-contrast",
       "pair": "Assignment vs rename",
       "prompt": "Which operator names an intermediate result so a multi-step expression can refer to it later?",
-      "choices": ["Assignment", "Rename", "Selection", "Union"],
+      "choices": [
+        "Assignment",
+        "Rename",
+        "Selection",
+        "Union"
+      ],
       "answer": 0,
       "explanation": "Assignment binds a temporary relation name to an expression result. Rename gives an expression or relation reference a name or aliases its attributes.",
       "estimatedSeconds": 45,
@@ -379,7 +524,22 @@
       "skill": "concept-contrast",
       "cognitiveLevel": "distinguish",
       "misconception": "Both introduce names, but assignment structures a sequence of query steps while rename supports naming and self-reference.",
-      "sourceRefs": [{ "sourceId": "DSA5104/chapter2.pdf", "page": 32, "sourceType": "lecture", "role": "assignment operator", "status": "current" }, { "sourceId": "DSA5104/chapter2.pdf", "page": 34, "sourceType": "lecture", "role": "rename operator", "status": "current" }]
+      "sourceRefs": [
+        {
+          "sourceId": "DSA5104/chapter2.pdf",
+          "page": 32,
+          "sourceType": "lecture",
+          "role": "assignment operator",
+          "status": "current"
+        },
+        {
+          "sourceId": "DSA5104/chapter2.pdf",
+          "page": 34,
+          "sourceType": "lecture",
+          "role": "rename operator",
+          "status": "current"
+        }
+      ]
     }
   ],
   "math": [
@@ -426,36 +586,130 @@
       "name": "Selection operator",
       "purpose": "Use it to keep tuples that satisfy predicate p while preserving the relation's attributes.",
       "explanation": "Selection is the relational-algebra row filter.",
-      "symbols": [{ "latex": "\\sigma", "meaning": "selection" }, { "latex": "p", "meaning": "tuple predicate" }, { "latex": "r", "meaning": "input relation" }],
+      "symbols": [
+        {
+          "latex": "\\sigma",
+          "meaning": "selection"
+        },
+        {
+          "latex": "p",
+          "meaning": "tuple predicate"
+        },
+        {
+          "latex": "r",
+          "meaning": "input relation"
+        }
+      ],
       "sourceType": "lecture",
-      "sourceRefs": [{ "sourceId": "DSA5104/chapter2.pdf", "page": 15, "sourceType": "lecture", "role": "selection operator", "status": "current" }]
+      "sourceRefs": [
+        {
+          "sourceId": "DSA5104/chapter2.pdf",
+          "page": 15,
+          "sourceType": "lecture",
+          "role": "selection operator",
+          "status": "current"
+        }
+      ]
     },
     {
       "latex": "\\pi_{A_1,\\ldots,A_k}(r)",
       "name": "Projection operator",
       "purpose": "Use it to keep the requested attributes and remove the other columns from the result.",
       "explanation": "Projection changes the output schema and may remove duplicate result tuples under set semantics.",
-      "symbols": [{ "latex": "\\pi", "meaning": "projection" }, { "latex": "A_1,\\ldots,A_k", "meaning": "retained attributes" }, { "latex": "r", "meaning": "input relation" }],
+      "symbols": [
+        {
+          "latex": "\\pi",
+          "meaning": "projection"
+        },
+        {
+          "latex": "A_1,\\ldots,A_k",
+          "meaning": "retained attributes"
+        },
+        {
+          "latex": "r",
+          "meaning": "input relation"
+        }
+      ],
       "sourceType": "lecture",
-      "sourceRefs": [{ "sourceId": "DSA5104/chapter2.pdf", "page": 17, "sourceType": "lecture", "role": "projection operator", "status": "current" }]
+      "sourceRefs": [
+        {
+          "sourceId": "DSA5104/chapter2.pdf",
+          "page": 17,
+          "sourceType": "lecture",
+          "role": "projection operator",
+          "status": "current"
+        }
+      ]
     },
     {
       "latex": "r\\bowtie_\\theta s=\\sigma_\\theta(r\\times s)",
       "name": "Theta-join construction",
       "purpose": "Use it to expand a join into a product followed by a predicate that retains matching tuple pairs.",
       "explanation": "The join predicate gives the Cartesian product its relational meaning.",
-      "symbols": [{ "latex": "\\bowtie_\\theta", "meaning": "theta join" }, { "latex": "\\theta", "meaning": "join predicate" }, { "latex": "\\times", "meaning": "Cartesian product" }],
+      "symbols": [
+        {
+          "latex": "\\bowtie_\\theta",
+          "meaning": "theta join"
+        },
+        {
+          "latex": "\\theta",
+          "meaning": "join predicate"
+        },
+        {
+          "latex": "\\times",
+          "meaning": "Cartesian product"
+        }
+      ],
       "sourceType": "lecture",
-      "sourceRefs": [{ "sourceId": "DSA5104/chapter2.pdf", "page": 24, "sourceType": "lecture", "role": "join construction", "status": "current" }, { "sourceId": "DSA5104/chapter2.pdf", "page": 27, "sourceType": "lecture", "role": "theta join equivalence", "status": "current" }]
+      "sourceRefs": [
+        {
+          "sourceId": "DSA5104/chapter2.pdf",
+          "page": 24,
+          "sourceType": "lecture",
+          "role": "join construction",
+          "status": "current"
+        },
+        {
+          "sourceId": "DSA5104/chapter2.pdf",
+          "page": 27,
+          "sourceType": "lecture",
+          "role": "theta join equivalence",
+          "status": "current"
+        }
+      ]
     },
     {
       "latex": "E_1\\equiv E_2\\Longleftrightarrow\\forall D:\\ E_1(D)=E_2(D)",
       "name": "Query equivalence",
       "purpose": "Use it to justify a rewrite only when both expressions return the same relation for every database instance.",
       "explanation": "Equivalent expressions can have different intermediate relations and costs while preserving the logical answer.",
-      "symbols": [{ "latex": "\\equiv", "meaning": "equivalent on every database" }, { "latex": "D", "meaning": "database instance" }],
+      "symbols": [
+        {
+          "latex": "\\equiv",
+          "meaning": "equivalent on every database"
+        },
+        {
+          "latex": "D",
+          "meaning": "database instance"
+        }
+      ],
       "sourceType": "lecture",
-      "sourceRefs": [{ "sourceId": "DSA5104/chapter2.pdf", "page": 37, "sourceType": "lecture", "role": "query equivalence", "status": "current" }, { "sourceId": "DSA5104/chapter2.pdf", "page": 38, "sourceType": "lecture", "role": "optimizer rewrites", "status": "current" }]
+      "sourceRefs": [
+        {
+          "sourceId": "DSA5104/chapter2.pdf",
+          "page": 37,
+          "sourceType": "lecture",
+          "role": "query equivalence",
+          "status": "current"
+        },
+        {
+          "sourceId": "DSA5104/chapter2.pdf",
+          "page": 38,
+          "sourceType": "lecture",
+          "role": "optimizer rewrites",
+          "status": "current"
+        }
+      ]
     }
   ],
   "criticalQuestions": [
@@ -780,5 +1034,6 @@
   "labIds": [
     "dsa5104-relational-model"
   ],
-  "schemaVersion": "nus.lesson.v1"
+  "schemaVersion": "nus.lesson.v1",
+  "contentStatus": "CURRENT LECTURE"
 }
