@@ -7,6 +7,15 @@
   <meta name="description" content="A focused study workspace for NUS DSA5101, DSA5104, DSA5105, and DSA5208: lessons, practice, deadlines, SQL, and distributed-systems simulations." />
   <meta name="atlas-version" content="0.2.59" />
   <meta name="atlas-grader-endpoint" content="https://nus-atlas-grader.vercel.app/api/grade" />
+  <script>
+    (function () {
+      try {
+        if (sessionStorage.getItem("atlas.access.v1") !== "unlocked") document.documentElement.classList.add("atlas-locked");
+      } catch (_) {
+        document.documentElement.classList.add("atlas-locked");
+      }
+    })();
+  </script>
   <link rel="manifest" href="manifest.webmanifest" />
   <meta name="theme-color" content="#061a33" />
   <link rel="icon" href="icon.svg" type="image/svg+xml" />
@@ -32,6 +41,37 @@
 <body>
   <div id="read-progress" aria-hidden="true"><div class="rp-fill"></div></div>
   <button class="skip-link" id="skip-link">Skip to content</button>
+  <section class="access-gate" id="access-gate" aria-labelledby="access-title" aria-live="polite">
+    <div class="access-gate-card">
+      <div class="access-gate-brand"><span class="access-gate-mark" aria-hidden="true">N</span><span>Private study studio</span></div>
+      <div class="eyebrow">NUS · FOCUSED LEARNING</div>
+      <h1 id="access-title">NUS Atlas</h1>
+      <p class="access-gate-intro">A calm workspace for lectures, practice, review, and assessment planning.</p>
+      <div class="access-gate-features" aria-label="Atlas features">
+        <span>Read deeply</span><span>Practise deliberately</span><span>Review what matters</span>
+      </div>
+      <div class="access-code" aria-label="Master password entry">
+        <input id="access-passcode" class="access-code-input" type="password" inputmode="numeric" autocomplete="off" maxlength="6" aria-label="Six-digit master password" />
+        <div class="access-code-dots" id="access-code-dots" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i></div>
+        <p class="access-code-status" id="access-code-status">Enter your 6-digit passcode</p>
+      </div>
+      <div class="access-keypad" aria-label="Passcode keypad">
+        <button class="access-key" type="button" data-access-digit="1">1</button>
+        <button class="access-key" type="button" data-access-digit="2">2</button>
+        <button class="access-key" type="button" data-access-digit="3">3</button>
+        <button class="access-key" type="button" data-access-digit="4">4</button>
+        <button class="access-key" type="button" data-access-digit="5">5</button>
+        <button class="access-key" type="button" data-access-digit="6">6</button>
+        <button class="access-key" type="button" data-access-digit="7">7</button>
+        <button class="access-key" type="button" data-access-digit="8">8</button>
+        <button class="access-key" type="button" data-access-digit="9">9</button>
+        <span class="access-key-spacer" aria-hidden="true"></span>
+        <button class="access-key" type="button" data-access-digit="0">0</button>
+        <button class="access-key access-key-delete" type="button" data-access-delete aria-label="Delete last digit">⌫</button>
+      </div>
+      <p class="access-gate-note">This private workspace is protected for personal study.</p>
+    </div>
+  </section>
   <div class="shell">
     <!-- Sidebar -->
     <aside class="sidebar" id="sidebar" aria-label="Sidebar">
@@ -158,6 +198,7 @@
   </script>
 
   <!-- data + logic — `defer`: fetched in parallel, executed in document order after parse, before DOMContentLoaded -->
+  <script defer src="src/core/access-gate.js?v=0.2.59"></script>
   <!-- curriculum order (holistic reorder, iter 1217): foundations → core ML → frontier.
        Under this order every cross-topic edge in data/prereqs.js points backward. -->
   <script defer src="data/linear-algebra.js?v=0.2.59"></script>

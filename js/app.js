@@ -3230,8 +3230,11 @@
     showIntro(false);
   }
   function startBoot() {
-    const ready = window.ATLAS_CONTENT_READY && typeof window.ATLAS_CONTENT_READY.then === "function" ? window.ATLAS_CONTENT_READY : Promise.resolve();
-    ready.catch(() => null).then(() => boot());
+    const accessReady = window.ATLAS_ACCESS_READY && typeof window.ATLAS_ACCESS_READY.then === "function" ? window.ATLAS_ACCESS_READY : Promise.resolve();
+    accessReady.then(() => {
+      const ready = window.ATLAS_CONTENT_READY && typeof window.ATLAS_CONTENT_READY.then === "function" ? window.ATLAS_CONTENT_READY : Promise.resolve();
+      return ready.catch(() => null);
+    }).then(() => boot());
   }
   if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", startBoot);
   else startBoot();
