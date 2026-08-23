@@ -6,6 +6,10 @@ and refresh first-party asset URLs so browsers and the service worker pick up th
 
 ## [Unreleased]
 
+## [0.2.45] - 2026-08-23
+
+- Record DSA5105 final exam timezone.
+
 ## [0.2.44] - 2026-08-23
 
 - Display confirmed DSA5105 midterm window.
