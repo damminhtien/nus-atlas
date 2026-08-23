@@ -1,10 +1,11 @@
 {
   "name": "nus-atlas",
   "private": true,
-  "version": "0.2.61",
+  "version": "0.2.62",
   "scripts": {
     "dev": "npm run content:build && vite",
     "build": "node prerender.js",
+    "vercel-build": "node scripts/vercel-build.js",
     "content:build": "node scripts/content-build.js --all",
     "content:validate": "node scripts/validate-content.js",
     "content:migrate:legacy": "node tools/migrations/legacy-nus/import.js",
@@ -33,5 +34,8 @@
     "typescript": "^5.9.3",
     "vite": "^7.3.3",
     "vitest": "^4.1.9"
+  },
+  "dependencies": {
+    "@vercel/blob": "^2.8.0"
   }
 }
