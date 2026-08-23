@@ -6,6 +6,10 @@ and refresh first-party asset URLs so browsers and the service worker pick up th
 
 ## [Unreleased]
 
+## [0.2.63] - 2026-08-23
+
+- Harden account-aware automatic study sync
+
 ## [0.2.62] - 2026-08-23
 
 - Add cross-device study sync
