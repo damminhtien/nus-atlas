@@ -15,6 +15,10 @@ test("access gate blocks the shell until the session passcode is accepted", () =
   assert.match(gateSource, /SESSION_KEY = "atlas\.access\.v1"/);
   assert.match(gateSource, /PASSCODE = "658215"/);
   assert.match(gateSource, /ATLAS_ACCESS_READY/);
+  assert.match(gateSource, /DEFAULT_USERNAME = "damminhtien"/);
+  assert.match(gateSource, /consumeCredential/);
+  assert.match(appSource, /consumeCredential/);
+  assert.match(appSource, /await syncTask/);
   assert.match(appSource, /ATLAS_ACCESS_READY/);
   assert.match(styles, /html\.atlas-locked \.shell/);
 });

@@ -57,3 +57,55 @@ test("empty last-lesson values remain null instead of becoming an empty object",
   assert.equal(merged.legacy.lastLesson, null);
   assert.equal(merged.study.lastLesson, null);
 });
+
+test("legacy last-lesson strings survive a cross-device merge", () => {
+  const { client } = clientWithState({}, {});
+  const merged = client.mergeSnapshots(
+    { schemaVersion: "atlas.sync.v1", legacy: { lastLesson: "DSA5105/week1" }, study: {}, preferences: {} },
+    { schemaVersion: "atlas.sync.v1", legacy: { lastLesson: "DSA5105/week2" }, study: {}, preferences: {} }
+  );
+  assert.equal(merged.legacy.lastLesson, "DSA5105/week1");
+});
+
+test("an expired session becomes signed out so the user can sign in again", async () => {
+  const session = new MemoryStorage({ "atlas.sync.session.v1": "expired-token" });
+  const root = { Store: { exportData: () => "{}" }, ATLAS_STUDY_STORE: { raw: {} } };
+  const client = createSyncClient({
+    root,
+    storage: new MemoryStorage(),
+    sessionStorage: session,
+    endpoint: "https://example.test/api/sync",
+    fetchImpl: async () => ({ ok: false, status: 401, json: async () => ({ error: "Authentication required" }) })
+  });
+  assert.equal(await client.syncNow(), false);
+  assert.equal(client.status(), "signed-out");
+  assert.equal(session.getItem("atlas.sync.session.v1"), null);
+});
+
+test("switching accounts never uploads the previous account's local mirror", async () => {
+  const storage = new MemoryStorage({ "atlas.sync.account.v1": "damminhtien" });
+  const session = new MemoryStorage();
+  let legacy = { xp: 900, lessons: { privateToDefault: true } };
+  let study = { lessons: { privateToDefault: true } };
+  let uploaded;
+  const root = {
+    Store: { exportData: () => JSON.stringify(legacy), importData: value => { legacy = JSON.parse(value); } },
+    ATLAS_STUDY_STORE: { get raw() { return study; }, importData: value => { study = value; } }
+  };
+  const client = createSyncClient({
+    root,
+    storage,
+    sessionStorage: session,
+    endpoint: "https://example.test/api/sync",
+    fetchImpl: async (_url, options) => {
+      if (options.method === "POST") return { ok: true, json: async () => ({ token: "new-token", username: "secondUser", revision: 0, state: { schemaVersion: "atlas.sync.v1", legacy: { xp: 4 }, study: { lessons: { second: true } }, preferences: {} } }) };
+      uploaded = JSON.parse(options.body).state;
+      return { ok: true, json: async () => ({ revision: 1 }) };
+    }
+  });
+  await client.login("secondUser", "second-password");
+  assert.equal(legacy.xp, 4);
+  assert.deepEqual(study.lessons, { second: true });
+  assert.equal(uploaded.legacy.xp, 4);
+  assert.equal(storage.getItem("atlas.sync.account.v1"), "seconduser");
+});

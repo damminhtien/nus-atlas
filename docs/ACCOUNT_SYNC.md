@@ -10,12 +10,14 @@ Chrome cookies, browsing history, saved passwords, and unrelated browser-profile
 
 ## Runtime flow
 
-1. Open **Sync progress** in the Atlas top bar.
-2. Sign in with the Atlas account on each device.
-3. Atlas pulls the private snapshot, merges local and remote progress, then writes a revision-checked snapshot back.
-4. Later local study actions are debounced and synced automatically while the session is valid.
+1. Enter the default six-digit unlock code on a new device. `658215` identifies the default Atlas account `damminhtien` and starts the first sync automatically.
+2. Atlas pulls the private snapshot, merges local and remote progress, then writes a revision-checked snapshot back before the first route is shown.
+3. Later local study actions are debounced and synced automatically while the session is valid.
+4. Other configured users sign in through **Sync progress** with their own username and password.
 
-The bearer session is kept in `sessionStorage`, so the password is not stored in the browser. The app-owned snapshot remains in local storage as an offline cache for the current browser.
+The bearer session is kept in `sessionStorage`, so the password is not stored in the browser. The app-owned snapshot remains in local storage as an offline cache for the current browser. The client binds that mirror to the authenticated username and will not merge one account's mirror into another account.
+
+The six-digit unlock screen is a convenience gate, not a security boundary: the default code is present in the public client so the default account can auto-sync. Do not use that default account for sensitive data. A private account must use a separate password configured only on the server.
 
 ## Vercel configuration
 
@@ -24,8 +26,9 @@ The API is `api/sync.js` and is deployed with the existing `nus-atlas-grader` Ve
 | Variable | Purpose |
 | --- | --- |
 | `BLOB_READ_WRITE_TOKEN` | Token for a **private** Vercel Blob store |
-| `ATLAS_SYNC_USERNAME` | Account username, normally `damminhtien` |
-| `ATLAS_SYNC_PASSWORD_HASH` | Scrypt hash; never the plain password |
+| `ATLAS_SYNC_USERS_JSON` | JSON object mapping each username to its scrypt hash |
+| `ATLAS_SYNC_USERNAME` | Default username for the legacy single-user fallback |
+| `ATLAS_SYNC_PASSWORD_HASH` | Legacy single-user fallback; never the plain password |
 | `ATLAS_SYNC_SESSION_SECRET` | Random secret used to sign 30-day bearer sessions |
 | `ATLAS_SYNC_ORIGIN` | Allowed browser origin, `https://damminhtien.github.io` |
 
@@ -49,7 +52,7 @@ The API accepts this format:
 scrypt$N$r$p$<salt-hex>$<derived-key-hex>
 ```
 
-Never put the password, hash, session secret, or Blob token in Git, `index.html`, a GitHub Pages bundle, or a client-side environment variable.
+For another account, add another normalized username/hash entry to `ATLAS_SYNC_USERS_JSON`; each account gets a separate Blob path. Never put a private user's password, hash, session secret, or Blob token in Git, `index.html`, a GitHub Pages bundle, or a client-side environment variable.
 
 ## Conflict behavior
 

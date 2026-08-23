@@ -29,3 +29,26 @@ test("sync password verifier rejects malformed hashes", () => {
     else process.env.ATLAS_SYNC_PASSWORD_HASH = previous;
   }
 });
+
+test("sync password verifier supports separate users in one server configuration", () => {
+  const previousUsers = process.env.ATLAS_SYNC_USERS_JSON;
+  const previousHash = process.env.ATLAS_SYNC_PASSWORD_HASH;
+  const makeHash = password => {
+    const salt = crypto.randomBytes(16);
+    const hash = crypto.scryptSync(password, salt, 32, { N: 16384, r: 8, p: 1 });
+    return `scrypt$16384$8$1$${salt.toString("hex")}$${hash.toString("hex")}`;
+  };
+  process.env.ATLAS_SYNC_USERS_JSON = JSON.stringify({ damminhtien: makeHash("default-password"), secondUser: makeHash("second-password") });
+  delete process.env.ATLAS_SYNC_PASSWORD_HASH;
+  try {
+    assert.equal(verifyPassword("damminhtien", "default-password"), true);
+    assert.equal(verifyPassword("seconduser", "second-password"), true);
+    assert.equal(verifyPassword("seconduser", "default-password"), false);
+    assert.equal(verifyPassword("missing", "second-password"), false);
+  } finally {
+    if (previousUsers === undefined) delete process.env.ATLAS_SYNC_USERS_JSON;
+    else process.env.ATLAS_SYNC_USERS_JSON = previousUsers;
+    if (previousHash === undefined) delete process.env.ATLAS_SYNC_PASSWORD_HASH;
+    else process.env.ATLAS_SYNC_PASSWORD_HASH = previousHash;
+  }
+});
