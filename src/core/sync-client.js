@@ -17,6 +17,7 @@
   const endpoint = String(config.endpoint || "").trim();
   const fetchImpl = config.fetchImpl || (typeof fetch === "function" ? fetch.bind(globalThis) : null);
   const TOKEN_KEY = "atlas.sync.session.v1";
+  const ACCOUNT_KEY = "atlas.sync.account.v1";
   const PREFERENCE_KEYS = [
     "atlas.textScale",
     "atlas.theme",
@@ -42,11 +43,19 @@
   function object(value) { return value && typeof value === "object" && !Array.isArray(value) ? value : {}; }
   function array(value) { return Array.isArray(value) ? value : []; }
   function latest(a, b, field) {
+    if (typeof a === "string" || typeof b === "string") return a || b || null;
     const left = object(a), right = object(b);
     if (!a && !b) return null;
     return String(right[field] || "") > String(left[field] || "") ? clone(right) : clone(left);
   }
   function unionMap(left, right) { return { ...object(right), ...object(left) }; }
+  function mergeBooleanMap(left, right) {
+    const merged = { ...object(right), ...object(left) };
+    new Set([...Object.keys(object(left)), ...Object.keys(object(right))]).forEach(key => {
+      merged[key] = !!object(left)[key] || !!object(right)[key];
+    });
+    return merged;
+  }
   function uniqueArray(left, right, id) {
     const values = [...array(right), ...array(left)];
     const seen = new Set();
@@ -83,6 +92,7 @@
         if (leftScore !== rightScore) return leftScore > rightScore ? clone(a || b) : clone(b || a);
         return String(a && (a.ts || a.lastAt) || "") >= String(b && (b.ts || b.lastAt) || "") ? clone(a || b) : clone(b || a);
       });
+      else if (key === "lessons") merged[key] = mergeBooleanMap(local[key], remote[key]);
       else if (key === "notes") merged[key] = { ...object(remote[key]), ...object(local[key]) };
       else merged[key] = unionMap(local[key], remote[key]);
     });
@@ -100,7 +110,8 @@
   function mergeStudy(left, right) {
     const local = object(left), remote = object(right);
     const merged = { ...remote, ...local };
-    ["tasks", "lessons", "questHistory"].forEach(key => { merged[key] = unionMap(local[key], remote[key]); });
+    ["tasks", "questHistory"].forEach(key => { merged[key] = unionMap(local[key], remote[key]); });
+    merged.lessons = mergeBooleanMap(local.lessons, remote.lessons);
     merged.events = { ...object(remote.events), ...object(local.events) };
     merged.attempts = uniqueArray(local.attempts, remote.attempts, item => String(item && (item.attemptId || item.at) || JSON.stringify(item)));
     merged.mastery = mergeRecordMap(local.mastery, remote.mastery, (a, b) => {
@@ -145,9 +156,15 @@
   function clearToken() {
     try { if (sessionStorage) sessionStorage.removeItem(TOKEN_KEY); } catch (_) {}
   }
+  function readAccount() {
+    try { return storage && String(storage.getItem(ACCOUNT_KEY) || "").trim().toLowerCase() || ""; } catch (_) { return ""; }
+  }
+  function writeAccount(username) {
+    try { if (storage) storage.setItem(ACCOUNT_KEY, String(username || "").trim().toLowerCase()); } catch (_) {}
+  }
   function setStatus(status, detail) {
     currentStatus = status;
-    listeners.forEach(listener => listener({ status, detail: detail || "", revision }));
+    listeners.forEach(listener => { try { listener({ status, detail: detail || "", revision }); } catch (_) {} });
   }
   function readJson(value) { try { return value ? JSON.parse(value) : null; } catch (_) { return null; } }
 
@@ -176,7 +193,9 @@
       if (state.legacy && root.Store && typeof root.Store.importData === "function") root.Store.importData(JSON.stringify(state.legacy));
       if (state.study && root.ATLAS_STUDY_STORE && typeof root.ATLAS_STUDY_STORE.importData === "function") root.ATLAS_STUDY_STORE.importData(state.study);
       Object.entries(object(state.preferences)).forEach(([key, item]) => {
-        if (PREFERENCE_KEYS.includes(key) && storage) storage.setItem(key, String(item));
+        if (PREFERENCE_KEYS.includes(key) && storage) {
+          try { storage.setItem(key, String(item)); } catch (_) {}
+        }
       });
     } finally {
       suspended = false;
@@ -226,7 +245,11 @@
       setStatus("synced");
       return true;
     } catch (error) {
-      setStatus("error", error.message);
+      if (error.status === 401) {
+        clearToken();
+        revision = 0;
+        setStatus("signed-out", "Your sync session expired. Sign in again.");
+      } else setStatus("error", error.message);
       return false;
     } finally {
       busy = false;
@@ -239,11 +262,15 @@
     setStatus("syncing");
     try {
       const response = await request("POST", { action: "login", username, password });
+      if (!response.token || !response.username) throw new Error("Sync service returned an invalid session");
       writeToken(response.token);
       revision = Number(response.revision) || 0;
       const local = snapshot();
-      const merged = mergeSnapshots(local, response.state);
+      // Never merge account A's local mirror into account B's remote snapshot.
+      const account = String(response.username).trim().toLowerCase();
+      const merged = mergeSnapshots(!readAccount() || readAccount() === account ? local : null, response.state);
       applySnapshot(merged);
+      writeAccount(account);
       await putSnapshot(merged, revision);
       setStatus("synced");
       return { username: response.username, revision };

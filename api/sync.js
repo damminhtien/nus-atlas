@@ -85,11 +85,36 @@ function passwordHashParts(value) {
   if (parts.length !== 6 || parts[0] !== "scrypt") return null;
   const [_, N, r, p, salt, hash] = parts;
   if (![N, r, p].every(item => /^\d+$/.test(item)) || !/^[0-9a-f]+$/i.test(salt) || !/^[0-9a-f]+$/i.test(hash)) return null;
-  return { N: Number(N), r: Number(r), p: Number(p), salt: Buffer.from(salt, "hex"), hash: Buffer.from(hash, "hex") };
+  const params = { N: Number(N), r: Number(r), p: Number(p), salt: Buffer.from(salt, "hex"), hash: Buffer.from(hash, "hex") };
+  if (!Number.isSafeInteger(params.N) || params.N < 2 || params.N > 1048576 || (params.N & (params.N - 1)) !== 0) return null;
+  if (!Number.isSafeInteger(params.r) || params.r < 1 || params.r > 32 || !Number.isSafeInteger(params.p) || params.p < 1 || params.p > 16) return null;
+  if (params.salt.length < 8 || params.salt.length > 64 || params.hash.length < 16 || params.hash.length > 64) return null;
+  return params;
 }
 
-function verifyPassword(password) {
-  const parts = passwordHashParts(process.env.ATLAS_SYNC_PASSWORD_HASH);
+function configuredUsers() {
+  const users = {};
+  const raw = String(process.env.ATLAS_SYNC_USERS_JSON || "").trim();
+  if (raw) {
+    try {
+      const parsed = JSON.parse(raw);
+      if (parsed && typeof parsed === "object" && !Array.isArray(parsed)) {
+        Object.entries(parsed).forEach(([username, passwordHash]) => {
+          const normalized = usernameFor(username);
+          if (normalized && typeof passwordHash === "string" && passwordHashParts(passwordHash)) users[normalized] = passwordHash;
+        });
+      }
+    } catch (_) {}
+  }
+  // Backwards-compatible single-user fallback while all deployments migrate
+  // to ATLAS_SYNC_USERS_JSON.
+  if (!Object.keys(users).length && process.env.ATLAS_SYNC_PASSWORD_HASH) users[configuredUsername()] = process.env.ATLAS_SYNC_PASSWORD_HASH;
+  return users;
+}
+
+function verifyPassword(username, password) {
+  if (arguments.length === 1) { password = username; username = configuredUsername(); }
+  const parts = passwordHashParts(configuredUsers()[usernameFor(username)]);
   if (!parts || !String(password || "")) return false;
   try {
     const candidate = crypto.scryptSync(String(password), parts.salt, parts.hash.length, { N: parts.N, r: parts.r, p: parts.p });
@@ -116,7 +141,7 @@ function authUsername(request) {
   const header = request.headers && (request.headers.authorization || request.headers.Authorization);
   const token = String(header || "").replace(/^Bearer\s+/i, "");
   const payload = verifyToken(token);
-  return payload && payload.sub === configuredUsername() ? payload.sub : null;
+  return payload && configuredUsers()[payload.sub] ? payload.sub : null;
 }
 
 function statePath(username) {
@@ -160,13 +185,13 @@ async function handler(request, response) {
   if (request.headers && request.headers.origin && !origin) return sendJson(response, 403, { error: "Origin not allowed" }, "");
   if (request.method === "GET") return sendJson(response, 200, { ok: true, service: "atlas-study-sync" }, origin);
   if (!['POST', 'PUT'].includes(request.method)) return sendJson(response, 405, { error: "Method not allowed" }, origin);
-  if (!process.env.ATLAS_SYNC_SESSION_SECRET || !process.env.ATLAS_SYNC_PASSWORD_HASH) return sendJson(response, 503, { error: "Sync authentication is not configured" }, origin);
+  if (!process.env.ATLAS_SYNC_SESSION_SECRET || !Object.keys(configuredUsers()).length) return sendJson(response, 503, { error: "Sync authentication is not configured" }, origin);
 
   try {
     const input = await readBody(request);
     if (request.method === "POST" && input.action === "login") {
       const username = usernameFor(input.username);
-      if (username !== configuredUsername() || !verifyPassword(input.password)) return sendJson(response, 401, { error: "Invalid username or password" }, origin);
+      if (!username || !verifyPassword(username, input.password)) return sendJson(response, 401, { error: "Invalid username or password" }, origin);
       const remote = await readRemote(username);
       return sendJson(response, 200, {
         ok: true,

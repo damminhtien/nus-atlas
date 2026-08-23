@@ -71,15 +71,21 @@
     username.focus();
   }
 
-  function mount(client) {
-    if (mounted || !doc || !client || !client.endpoint) return;
+  function mount(client, accessCredential) {
+    if (mounted || !doc || !client || !client.endpoint) return Promise.resolve(false);
     const button = doc.getElementById("atlas-sync-btn");
-    if (!button) return;
+    if (!button) return Promise.resolve(false);
     mounted = true;
     buttonState(button, client);
     button.addEventListener("click", () => client.isSignedIn() ? client.syncNow() : open(client, button));
     client.onStatus(() => buttonState(button, client));
-    if (client.isSignedIn()) client.syncNow();
+    if (accessCredential && accessCredential.username && accessCredential.password) {
+      // The access gate supplies this once, in memory only. login() never
+      // persists the password; the session token is the only browser secret.
+      return client.login(accessCredential.username, accessCredential.password).catch(() => false);
+    }
+    if (client.isSignedIn()) return client.syncNow();
+    return Promise.resolve(false);
   }
 
   return Object.freeze({ mount });

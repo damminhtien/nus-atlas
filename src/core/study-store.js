@@ -51,7 +51,8 @@
       attempts: Array.isArray(data.attempts) ? data.attempts : [],
       lastLesson: data.lastLesson && typeof data.lastLesson === "object" ? {
         courseCode: String(data.lastLesson.courseCode || ""),
-        lessonId: String(data.lastLesson.lessonId || "")
+        lessonId: String(data.lastLesson.lessonId || ""),
+        at: data.lastLesson.at || null
       } : null,
       events: objectOrEmpty(data.events),
       mastery: objectOrEmpty(data.mastery),

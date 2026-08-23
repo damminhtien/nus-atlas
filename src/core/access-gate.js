@@ -3,9 +3,11 @@
   "use strict";
 
   const PASSCODE = "658215";
+  const DEFAULT_USERNAME = "damminhtien";
   const SESSION_KEY = "atlas.access.v1";
   const doc = root.document;
   let unlocked = false;
+  let pendingCredential = null;
   let resolveAccess;
 
   const accessReady = new Promise(resolve => { resolveAccess = resolve; });
@@ -19,9 +21,10 @@
     try { root.sessionStorage.setItem(SESSION_KEY, "unlocked"); } catch (_) { /* private browsing may reject storage */ }
   }
 
-  function release(gate) {
+  function release(gate, credential) {
     if (unlocked) return;
     unlocked = true;
+    pendingCredential = credential || null;
     rememberSession();
     doc.documentElement.classList.remove("atlas-locked");
     if (gate) {
@@ -29,7 +32,9 @@
       gate.setAttribute("aria-hidden", "true");
       setTimeout(() => gate.remove(), 280);
     }
-    resolveAccess();
+    // Keep the password in memory only long enough for the boot flow to hand
+    // it to the authenticated sync client. It is never written to storage.
+    resolveAccess(pendingCredential);
   }
 
   function mount() {
@@ -64,7 +69,7 @@
 
     function check() {
       if (input.value.length !== PASSCODE.length) return;
-      if (input.value === PASSCODE) release(gate);
+      if (input.value === PASSCODE) release(gate, { username: DEFAULT_USERNAME, password: PASSCODE });
       else fail();
     }
 
@@ -89,7 +94,14 @@
     gate.querySelector("[data-access-digit]")?.focus();
   }
 
-  root.ATLAS_ACCESS_GATE = { isUnlocked: () => unlocked };
+  root.ATLAS_ACCESS_GATE = {
+    isUnlocked: () => unlocked,
+    consumeCredential() {
+      const credential = pendingCredential;
+      pendingCredential = null;
+      return credential;
+    }
+  };
   if (doc.readyState === "loading") doc.addEventListener("DOMContentLoaded", mount, { once: true });
   else mount();
 })(typeof window === "object" ? window : globalThis);

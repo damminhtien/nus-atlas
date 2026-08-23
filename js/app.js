@@ -3198,7 +3198,7 @@
   }
 
   // ---------- boot ----------
-  function boot() {
+  async function boot() {
     normalizeMath();               // escape "<" inside math so KaTeX delimiters survive innerHTML
     Store.touchStreak();           // count today toward streak on open
     applyTextScale();
@@ -3217,7 +3217,13 @@
     window.addEventListener("keydown", studyKeys);
     const sb = document.getElementById("search-btn"); if (sb) sb.addEventListener("click", openPalette);
     const tsb = document.getElementById("topbar-search"); if (tsb) tsb.addEventListener("click", openPalette);   // one-tap search in the mobile topbar
-    if (window.ATLAS_SYNC_UI && window.ATLAS_SYNC_CLIENT) window.ATLAS_SYNC_UI({ document }).mount(window.ATLAS_SYNC_CLIENT);
+    const accessCredential = window.ATLAS_ACCESS_GATE && typeof window.ATLAS_ACCESS_GATE.consumeCredential === "function" ? window.ATLAS_ACCESS_GATE.consumeCredential() : null;
+    if (window.ATLAS_SYNC_UI && window.ATLAS_SYNC_CLIENT) {
+      const syncTask = window.ATLAS_SYNC_UI({ document }).mount(window.ATLAS_SYNC_CLIENT, accessCredential);
+      // On first unlock, wait for the initial pull/merge before drawing the
+      // route so a second device never briefly shows stale local state.
+      if (accessCredential && syncTask && typeof syncTask.then === "function") await syncTask;
+    }
     const scb = document.getElementById("shortcuts-btn"); if (scb) scb.addEventListener("click", showShortcuts);
     const skip = document.getElementById("skip-link"); if (skip) skip.addEventListener("click", () => { app.focus(); app.scrollIntoView(); });
     const guide = document.getElementById("guide-btn"); if (guide) guide.addEventListener("click", () => showIntro(true));
