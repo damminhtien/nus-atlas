@@ -6,6 +6,10 @@ and refresh first-party asset URLs so browsers and the service worker pick up th
 
 ## [Unreleased]
 
+## [0.2.41] - 2026-08-23
+
+- Confirm DSA5105 midterm schedule.
+
 ## [0.2.40] - 2026-08-21
 
 - Fix DSA5104 SQL Studio route and refresh production cache.
