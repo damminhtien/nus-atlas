@@ -6,6 +6,10 @@ and refresh first-party asset URLs so browsers and the service worker pick up th
 
 ## [Unreleased]
 
+## [0.2.44] - 2026-08-23
+
+- Display confirmed DSA5105 midterm window.
+
 ## [0.2.43] - 2026-08-23
 
 - Track split DSA5105 assessment records.
