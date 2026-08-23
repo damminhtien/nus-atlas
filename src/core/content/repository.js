@@ -59,6 +59,8 @@
       courseId,
       course: item.course,
       modules: item.outlineData ? item.outlineData.modules || [] : item.modules || [],
+      collections: item.outlineData ? item.outlineData.collections || [] : item.collections || [],
+      timelineLessonIds: item.outlineData ? item.outlineData.timelineLessonIds || [] : item.timelineLessonIds || [],
       labs: item.labs || []
     } : null;
   }
@@ -74,12 +76,21 @@
   function getCatalog(courseId) {
     const outline = courseOutline(courseId);
     if (!outline) return { modules: [] };
-    return { modules: (outline.modules || []).map(module => ({ ...module, lessons: (module.lessons || []).map(lesson => outlineLesson(courseId, lesson, module.id)) })) };
+    return {
+      modules: (outline.modules || []).map(module => ({ ...module, lessons: (module.lessons || []).map(lesson => outlineLesson(courseId, lesson, module.id)) })),
+      collections: (outline.collections || []).map(collection => ({ ...collection, lessonIds: (collection.lessonIds || []).slice() })),
+      timelineLessonIds: Array.isArray(outline.timelineLessonIds) ? outline.timelineLessonIds.slice() : []
+    };
   }
   function listLessons(courseId) {
     const packageData = packageFor(courseId);
-    const modules = packageData && packageData.content ? packageData.content.modules || [] : getCatalog(courseId).modules;
-    return modules.flatMap(module => (module.lessons || []).map(lesson => cachedLesson(courseId, lesson.id) || { ...lesson }));
+    const catalogData = getCatalog(courseId);
+    const modules = packageData && packageData.content ? packageData.content.modules || [] : catalogData.modules;
+    const all = modules.flatMap(module => (module.lessons || []).map(lesson => cachedLesson(courseId, lesson.id) || { ...lesson }));
+    const byId = new Map(all.map(lesson => [lesson.id, lesson]));
+    const order = (packageData && packageData.content && packageData.content.timelineLessonIds) || catalogData.timelineLessonIds || [];
+    if (!order.length) return all;
+    return [...order.map(id => byId.get(id)).filter(Boolean), ...all.filter(lesson => !order.includes(lesson.id))];
   }
   function peekLesson(courseId, lessonId) { return cachedLesson(courseId, lessonId) || listLessons(courseId).find(lesson => lesson.id === lessonId) || null; }
   function needsLoad(courseId) { return !!entry(courseId) && !packageFor(courseId); }

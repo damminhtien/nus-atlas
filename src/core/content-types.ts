@@ -74,6 +74,9 @@ export type Lesson = {
   entityKey: EntityKey;
   courseId: string;
   moduleId: string;
+  sequence?: number;
+  orderInWeek?: number;
+  collectionIds?: string[];
   title: string;
   week?: number;
   minutes?: number;
@@ -96,6 +99,9 @@ export type LessonOutline = {
   title: string;
   courseId: string;
   moduleId: string;
+  sequence?: number;
+  orderInWeek?: number;
+  collectionIds?: string[];
   week?: number;
   minutes?: number;
   summary?: string;
@@ -121,6 +127,8 @@ export type Course = {
   workload?: string[];
   nusmods?: { url: string };
   moduleIds: string[];
+  collectionIds?: string[];
+  timelineLessonIds?: string[];
   assessmentIds: string[];
   slideSetIds: string[];
   sourceCatalog: SourceRef[];
@@ -128,18 +136,22 @@ export type Course = {
   schemaVersion: "nus.course.v1";
 };
 export type CourseSummary = Pick<Course, "code" | "entityKey" | "title" | "semester" | "schemaVersion"> & { description?: string; lessonCount?: number; questionCount?: number };
+export type CourseCollection = { id: string; entityKey: EntityKey; title: string; description?: string; lessonIds: string[]; schemaVersion: "nus.collection.v1" };
 export type CourseOutline = {
   courseId: string;
   entityKey: EntityKey;
   course: CourseSummary;
   modules: Array<{ id: string; entityKey: EntityKey; title: string; lessonIds: string[]; lessons: LessonOutline[] }>;
+  collections?: CourseCollection[];
+  timelineLessonIds?: string[];
   labs: LabSummary[];
   schemaVersion: "nus.course-outline.v1";
 };
 export type CoursePackage = {
   course: Course;
   outline: CourseOutline;
-  content: { modules: CourseOutline["modules"] };
+  content: { modules: CourseOutline["modules"]; collections?: CourseCollection[]; timelineLessonIds?: string[] };
+  collections?: CourseCollection[];
   assessments: Assessment[];
   lessonAssets: Record<string, string>;
   questionAssets: Record<string, string>;

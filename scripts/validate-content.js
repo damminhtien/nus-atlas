@@ -56,6 +56,8 @@ function loadCanonicalState(root = ROOT) {
     // content contract focused on authored lesson questions so a bank item is
     // not reported as a false duplicate after compilation merges both layers.
     state.content[courseId] = {
+      timelineLessonIds: Array.isArray(source.course.timelineLessonIds) ? source.course.timelineLessonIds.slice() : [],
+      collections: (source.collections || []).map(collection => ({ ...collection, lessonIds: (collection.lessonIds || []).slice() })),
       modules: source.modules.map(module => ({
         ...module,
         lessons: (module.lessons || []).map(lesson => ({
@@ -89,7 +91,30 @@ function validateContentState(state) {
     courseIds.add(course.code);
     if (!course.title) errors.push(`missing course title: ${course.code}`);
     const modules = content[course.code] && Array.isArray(content[course.code].modules) ? content[course.code].modules : [];
+    const courseContent = content[course.code] || {};
     if (!modules.length) errors.push(`course has no modules: ${course.code}`);
+    const moduleIds = modules.map(module => module && module.id).filter(Boolean);
+    if (Array.isArray(course.moduleIds) && JSON.stringify(moduleIds) !== JSON.stringify(course.moduleIds)) errors.push(`module order does not match course.moduleIds: ${course.code}`);
+    const declaredTimeline = Array.isArray(course.timelineLessonIds) ? course.timelineLessonIds : (Array.isArray(courseContent.timelineLessonIds) && courseContent.timelineLessonIds.length ? courseContent.timelineLessonIds : null);
+    if (declaredTimeline) {
+      const seenTimeline = new Set(declaredTimeline);
+      const authoredIds = modules.flatMap(module => (module && module.lessons || []).map(lesson => lesson && lesson.id).filter(Boolean));
+      const missingTimeline = authoredIds.filter(id => !seenTimeline.has(id));
+      const unknownTimeline = declaredTimeline.filter(id => !authoredIds.includes(id));
+      if (seenTimeline.size !== declaredTimeline.length || missingTimeline.length || unknownTimeline.length || declaredTimeline.length !== authoredIds.length) errors.push(`timeline does not cover each lesson exactly once: ${course.code}`);
+      const weekById = new Map(modules.flatMap(module => (module.lessons || []).map(lesson => [lesson.id, Number(lesson.week) || 0])));
+      const weeks = declaredTimeline.map(id => weekById.get(id)).filter(week => week !== undefined);
+      if (weeks.some((week, index) => index > 0 && week < weeks[index - 1])) errors.push(`timeline weeks are not chronological: ${course.code}`);
+    }
+    const collections = Array.isArray(courseContent.collections) ? courseContent.collections : [];
+    const knownLessonIds = new Set(modules.flatMap(module => (module.lessons || []).map(lesson => lesson && lesson.id).filter(Boolean)));
+    const collectionIds = new Set();
+    for (const collection of collections) {
+      if (!collection || !collection.id) { errors.push(`collection missing id: ${course.code}`); continue; }
+      if (collectionIds.has(collection.id)) errors.push(`duplicate collection id: ${collection.id}`);
+      collectionIds.add(collection.id);
+      for (const lessonId of collection.lessonIds || []) if (!knownLessonIds.has(lessonId)) errors.push(`collection references unknown lesson: ${course.code}/${collection.id}/${lessonId}`);
+    }
     for (const module of modules) {
       if (!module || !module.id) { errors.push(`module missing id: ${course.code}`); continue; }
       for (const lesson of Array.isArray(module.lessons) ? module.lessons : []) {

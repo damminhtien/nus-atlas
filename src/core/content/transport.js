@@ -61,7 +61,7 @@
     if (!entry) return null;
     const outline = await requestJson(assetUrl(entry.outline));
     const courseData = await requestJson(assetUrl(entry.courseAsset));
-    return { ...courseData, outline, content: { modules: outline.modules || [] } };
+    return { ...courseData, outline, content: { modules: outline.modules || [], collections: outline.collections || [], timelineLessonIds: outline.timelineLessonIds || [] } };
   }
 
   async function loadLesson(courseId, lessonId) {

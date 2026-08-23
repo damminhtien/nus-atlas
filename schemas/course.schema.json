@@ -10,6 +10,10 @@
     "title": { "type": "string", "minLength": 1 },
     "semester": { "type": "string", "minLength": 1 },
     "modules": { "type": "array" },
+    "moduleIds": { "type": "array", "items": { "type": "string", "minLength": 1 } },
+    "collectionIds": { "type": "array", "items": { "type": "string", "minLength": 1 } },
+    "timelineLessonIds": { "type": "array", "items": { "type": "string", "minLength": 1 } },
+    "collections": { "type": "array", "items": { "$ref": "collection.schema.json" } },
     "sourceCatalog": { "type": "array", "items": { "$ref": "source.schema.json" } },
     "schemaVersion": { "const": "nus.course.v1" }
   },

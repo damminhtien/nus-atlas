@@ -20,6 +20,23 @@ function cleanObject(value) { return JSON.parse(JSON.stringify(value)); }
 function readJson(file) { return JSON.parse(fs.readFileSync(file, "utf8")); }
 function readJsonIfExists(file) { return fs.existsSync(file) ? readJson(file) : null; }
 function sortedJsonFiles(dir) { return fs.existsSync(dir) ? fs.readdirSync(dir).filter(file => file.endsWith(".json")).sort() : []; }
+function orderedJsonFiles(dir, ids, label) {
+  const files = sortedJsonFiles(dir);
+  if (!Array.isArray(ids)) return files;
+  const fileIds = new Set(files.map(file => path.basename(file, ".json")));
+  const expectedIds = new Set(ids);
+  const missing = ids.filter(id => !fileIds.has(id));
+  const unexpected = files.filter(file => !expectedIds.has(path.basename(file, ".json")));
+  if (missing.length || unexpected.length || new Set(ids).size !== ids.length) {
+    const details = [
+      missing.length ? `missing ${label} files: ${missing.join(", ")}` : "",
+      unexpected.length ? `unlisted ${label} files: ${unexpected.map(file => path.basename(file, ".json")).join(", ")}` : "",
+      new Set(ids).size !== ids.length ? `duplicate ${label} ids in course manifest` : ""
+    ].filter(Boolean).join("; ");
+    throw new Error(`Canonical ${label} order is invalid: ${details}`);
+  }
+  return ids.map(id => `${id}.json`);
+}
 function mergeQuestions(primary, extras) {
   const seen = new Set();
   return [...(primary || []), ...(extras || [])].filter(question => {
@@ -136,7 +153,7 @@ function lessonBlocks(lesson) {
   return blocks;
 }
 
-function normalizeLesson(courseId, module, lesson, questions, kit) {
+function normalizeLesson(courseId, module, lesson, questions, kit, ordering = {}) {
   const normalizedQuestions = (questions || []).map(question => normalizeQuestion(question, courseId, lesson.id));
   const artifacts = {
     lessonId: lesson.id,
@@ -153,6 +170,9 @@ function normalizeLesson(courseId, module, lesson, questions, kit) {
       entityKey: `lesson:${courseId}/${lesson.id}`,
       courseId,
       moduleId: module.id,
+      ...(Number.isInteger(ordering.sequence) ? { sequence: ordering.sequence } : {}),
+      ...(Number.isInteger(ordering.orderInWeek) ? { orderInWeek: ordering.orderInWeek } : {}),
+      ...(Array.isArray(ordering.collectionIds) && ordering.collectionIds.length ? { collectionIds: ordering.collectionIds.slice() } : {}),
       slideSetIds: Array.isArray(lesson.slideSetIds) ? lesson.slideSetIds.slice() : [],
       visualIds: Array.isArray(lesson.visualIds) ? lesson.visualIds.slice() : [],
       blocks: Array.isArray(core.blocks) && core.blocks.length ? core.blocks : lessonBlocks(lesson),
@@ -169,7 +189,7 @@ function normalizeLesson(courseId, module, lesson, questions, kit) {
 function loadCourseSource(root, courseId) {
   const courseRoot = path.join(root, "content", "courses", courseId);
   const course = readJson(path.join(courseRoot, "course.json"));
-  const moduleFiles = sortedJsonFiles(path.join(courseRoot, "modules"));
+  const moduleFiles = orderedJsonFiles(path.join(courseRoot, "modules"), course.moduleIds, "module");
   const lessonFiles = new Map(sortedJsonFiles(path.join(courseRoot, "lessons")).map(file => [path.basename(file, ".json"), file]));
   const questionBank = readJsonIfExists(path.join(courseRoot, "questions", "bank.json"));
   const bankByLesson = new Map();
@@ -178,21 +198,40 @@ function loadCourseSource(root, courseId) {
     list.push(question);
     bankByLesson.set(question.lessonId, list);
   });
+  const loadLessons = (lessonIds, ownerId) => (lessonIds || []).map(id => {
+    const lessonFile = lessonFiles.get(id) || `${id}.json`;
+    if (!fs.existsSync(path.join(courseRoot, "lessons", lessonFile))) throw new Error(`Missing lesson ${id} referenced by ${ownerId}`);
+    const lesson = readJson(path.join(courseRoot, "lessons", lessonFile));
+    const questionFile = path.join(courseRoot, "questions", `${id}.json`);
+    const artifactFile = path.join(courseRoot, "artifacts", `${id}.json`);
+    const questions = mergeQuestions(fs.existsSync(questionFile) ? readJson(questionFile) : [], bankByLesson.get(id) || []);
+    const kit = fs.existsSync(artifactFile) ? readJson(artifactFile) : {};
+    return { ...lesson, questions, ...kit };
+  });
   const modules = moduleFiles.map(file => {
     const module = readJson(path.join(courseRoot, "modules", file));
-    const lessons = (module.lessonIds || []).map(id => {
-      const lesson = readJson(path.join(courseRoot, "lessons", lessonFiles.get(id) || `${id}.json`));
-      const questionFile = path.join(courseRoot, "questions", `${id}.json`);
-      const artifactFile = path.join(courseRoot, "artifacts", `${id}.json`);
-      const questions = mergeQuestions(fs.existsSync(questionFile) ? readJson(questionFile) : [], bankByLesson.get(id) || []);
-      const kit = fs.existsSync(artifactFile) ? readJson(artifactFile) : {};
-      return { ...lesson, questions, ...kit };
-    });
+    if (module.id !== path.basename(file, ".json")) throw new Error(`Module filename/id mismatch: ${courseId}/${file}`);
+    const lessons = loadLessons(module.lessonIds, module.id);
+    const mismatched = lessons.filter(lesson => lesson.moduleId && lesson.moduleId !== module.id).map(lesson => `${lesson.id} -> ${lesson.moduleId}`);
+    if (mismatched.length) throw new Error(`Lesson module ownership mismatch in ${module.id}: ${mismatched.join(", ")}`);
     return { ...module, lessons };
+  });
+  const allModuleLessonIds = modules.flatMap(module => module.lessons.map(lesson => lesson.id));
+  if (new Set(allModuleLessonIds).size !== allModuleLessonIds.length) throw new Error(`Duplicate lesson ownership in ${courseId}`);
+  const moduleLessonIds = new Set(allModuleLessonIds);
+  const collectionFiles = orderedJsonFiles(path.join(courseRoot, "collections"), course.collectionIds, "collection");
+  const collections = collectionFiles.map(file => {
+    const collection = readJson(path.join(courseRoot, "collections", file));
+    if (collection.id !== path.basename(file, ".json")) throw new Error(`Collection filename/id mismatch: ${courseId}/${file}`);
+    const lessonIds = Array.isArray(collection.lessonIds) ? collection.lessonIds.slice() : [];
+    const missing = lessonIds.filter(id => !moduleLessonIds.has(id));
+    if (missing.length) throw new Error(`Collection ${collection.id} references lessons outside the course timeline: ${missing.join(", ")}`);
+    return { ...collection, lessonIds };
   });
   return {
     course,
     modules,
+    collections,
     assessments: readJsonIfExists(path.join(courseRoot, "assessments.json")) || [],
     labs: readJsonIfExists(path.join(courseRoot, "labs", "index.json")) || {},
     visuals: readJsonIfExists(path.join(courseRoot, "visuals.json")) || {},
@@ -232,6 +271,41 @@ function collectSources(course, modules, assessments = []) {
   return [...byKey.values()];
 }
 
+function timelineMetadata(course, modules) {
+  const entries = modules.flatMap((module, moduleIndex) => (module.lessons || []).map((lesson, lessonIndex) => ({ lesson, moduleIndex, lessonIndex })));
+  const byId = new Map(entries.map(entry => [entry.lesson.id, entry]));
+  const authoredIds = entries.map(entry => entry.lesson.id);
+  let orderedIds;
+  if (Array.isArray(course.timelineLessonIds)) {
+    const seen = new Set(course.timelineLessonIds);
+    const missing = authoredIds.filter(id => !seen.has(id));
+    const unknown = course.timelineLessonIds.filter(id => !byId.has(id));
+    if (seen.size !== course.timelineLessonIds.length || missing.length || unknown.length || course.timelineLessonIds.length !== authoredIds.length) {
+      throw new Error(`Canonical timeline is invalid for ${course.code}: missing [${missing.join(", ")}], unknown [${unknown.join(", ")}]`);
+    }
+    orderedIds = course.timelineLessonIds.slice();
+  } else {
+    orderedIds = entries.slice().sort((a, b) => {
+      const week = (Number(a.lesson.week) || 0) - (Number(b.lesson.week) || 0);
+      if (week) return week;
+      const order = (Number(a.lesson.orderInWeek) || Number.MAX_SAFE_INTEGER) - (Number(b.lesson.orderInWeek) || Number.MAX_SAFE_INTEGER);
+      if (order) return order;
+      return a.moduleIndex - b.moduleIndex || a.lessonIndex - b.lessonIndex;
+    }).map(entry => entry.lesson.id);
+  }
+  const orderById = new Map(orderedIds.map((id, index) => [id, index + 1]));
+  const weekCounts = new Map();
+  const metadata = new Map();
+  orderedIds.forEach((id, index) => {
+    const lesson = byId.get(id).lesson;
+    const week = Number(lesson.week) || 0;
+    const orderInWeek = (weekCounts.get(week) || 0) + 1;
+    weekCounts.set(week, orderInWeek);
+    metadata.set(id, { sequence: index + 1, orderInWeek });
+  });
+  return { ids: orderedIds, orderById, metadata };
+}
+
 function compileCourseSource(source, courseId = source && source.course && source.course.code) {
   if (!source || !source.course || !courseId) throw new TypeError("compileCourseSource requires a course source and course id");
   const course = source.course;
@@ -243,16 +317,26 @@ function compileCourseSource(source, courseId = source && source.course && sourc
   const joinedModules = [];
   const visualIds = new Set();
   const labIds = new Set();
+  const timeline = timelineMetadata(course, source.modules);
+  const collectionIdsByLesson = new Map();
+  (source.collections || []).forEach(collection => (collection.lessonIds || []).forEach(lessonId => {
+    const ids = collectionIdsByLesson.get(lessonId) || [];
+    ids.push(collection.id);
+    collectionIdsByLesson.set(lessonId, ids);
+  }));
   for (const module of source.modules) {
     const lessonMeta = [];
     const joinedLessons = [];
     for (const rawLesson of module.lessons || []) {
       const slideSetIds = source.slideSets.filter(slideSet => (slideSet.lessonIds || []).includes(rawLesson.id)).map(slideSet => slideSet.id);
-      const normalized = normalizeLesson(courseId, module, { ...rawLesson, slideSetIds }, rawLesson.questions, rawLesson);
+      const normalized = normalizeLesson(courseId, module, { ...rawLesson, slideSetIds }, rawLesson.questions, rawLesson, {
+        ...timeline.metadata.get(rawLesson.id),
+        collectionIds: collectionIdsByLesson.get(rawLesson.id) || []
+      });
       lessons[rawLesson.id] = normalized.lesson;
       questions[rawLesson.id] = normalized.questions;
       studyKits[rawLesson.id] = normalized.artifacts;
-      lessonMeta.push({ id: rawLesson.id, title: rawLesson.title, week: rawLesson.week, minutes: rawLesson.minutes, summary: rawLesson.summary, objectiveCount: (rawLesson.objectives || []).length, questionCount: normalized.questions.length, questionIds: normalized.questions.map(question => question.id), hasVisualLab: !!source.labs[rawLesson.id], visualIds: rawLesson.visualIds || [], slideSetIds });
+      lessonMeta.push({ id: rawLesson.id, title: rawLesson.title, week: rawLesson.week, sequence: normalized.lesson.sequence, orderInWeek: normalized.lesson.orderInWeek, minutes: rawLesson.minutes, summary: rawLesson.summary, objectiveCount: (rawLesson.objectives || []).length, questionCount: normalized.questions.length, questionIds: normalized.questions.map(question => question.id), hasVisualLab: !!source.labs[rawLesson.id], visualIds: rawLesson.visualIds || [], slideSetIds });
       joinedLessons.push({ ...normalized.lesson, questions: normalized.questions, ...normalized.artifacts });
       (rawLesson.visualIds || []).forEach(id => visualIds.add(id));
       if (source.labs[rawLesson.id]) labIds.add(rawLesson.id);
@@ -265,7 +349,9 @@ function compileCourseSource(source, courseId = source && source.course && sourc
     code: courseId,
     entityKey: `course:${courseId}/course`,
     schemaVersion: "nus.course.v1",
-    moduleIds: modules.map(module => module.id),
+    moduleIds: Array.isArray(course.moduleIds) ? course.moduleIds.slice() : modules.map(module => module.id),
+    collectionIds: Array.isArray(course.collectionIds) ? course.collectionIds.slice() : (source.collections || []).map(collection => collection.id),
+    timelineLessonIds: timeline.ids,
     assessmentIds: assessments.map(item => item.id),
     sourceCatalog: collectSources(course, source.modules, assessments),
     questionBank: source.questionBank ? { schemaVersion: source.questionBank.schemaVersion, purpose: source.questionBank.purpose, blueprint: cleanObject(source.questionBank.blueprint || {}), questionIds: source.questionBank.questions.map(question => question.id), extensionCount: source.questionBank.questions.length } : null,
@@ -274,9 +360,18 @@ function compileCourseSource(source, courseId = source && source.course && sourc
     visualIds: [...visualIds],
     labIds: [...labIds]
   };
+  const collections = (source.collections || []).map(collection => ({
+    id: collection.id,
+    entityKey: `collection:${courseId}/${collection.id}`,
+    title: collection.title,
+    description: collection.description,
+    lessonIds: collection.lessonIds.slice(),
+    schemaVersion: "nus.collection.v1"
+  }));
   const joined = {
     course: packageCourse,
-    content: { modules: joinedModules },
+    content: { modules: joinedModules, collections, timelineLessonIds: timeline.ids },
+    collections,
     assessments,
     sources: packageCourse.sourceCatalog,
     ...(source.assessmentMap ? { assessmentMap: cleanObject(source.assessmentMap) } : {}),
@@ -289,7 +384,7 @@ function compileCourseSource(source, courseId = source && source.course && sourc
     schedule: source.schedule || null,
     counts: { modules: modules.length, lessons: Object.keys(lessons).length, questions: Object.values(questions).reduce((n, list) => n + list.length, 0), questionBank: source.questionBank ? source.questionBank.questions.length : 0, artifacts: Object.keys(studyKits).length, slideSets: source.slideSets.length, slides: source.slideSets.reduce((total, set) => total + (set.slides || []).length, 0) }
   };
-  const outline = { schemaVersion: "nus.course-outline.v1", courseId, entityKey: `course:${courseId}/outline`, course: courseManifest(packageCourse), modules: modules.map((module, index) => ({ ...module, title: source.modules[index].title, lessons: source.modules[index].lessons.map(lesson => ({ id: lesson.id, entityKey: `lesson:${courseId}/${lesson.id}`, title: lesson.title, courseId, moduleId: module.id, week: lesson.week, minutes: lesson.minutes, summary: lesson.summary, objectiveCount: (lesson.objectives || []).length, questionCount: questions[lesson.id].length, questionIds: questions[lesson.id].map(question => question.id), hasVisualLab: !!source.labs[lesson.id], visualIds: lesson.visualIds || [], slideSetIds: source.slideSets.filter(slideSet => (slideSet.lessonIds || []).includes(lesson.id)).map(slideSet => slideSet.id), schemaVersion: "nus.lesson-outline.v1" })) })), labs: Object.values(source.labs).map(lab => ({ id: lab.id || lab.lessonId, courseCode: lab.courseCode, lessonId: lab.lessonId, title: lab.title, type: lab.type })) };
+  const outline = { schemaVersion: "nus.course-outline.v1", courseId, entityKey: `course:${courseId}/outline`, course: courseManifest(packageCourse), timelineLessonIds: timeline.ids, collections, modules: modules.map((module, index) => ({ ...module, title: source.modules[index].title, lessons: source.modules[index].lessons.map(lesson => ({ id: lesson.id, entityKey: `lesson:${courseId}/${lesson.id}`, title: lesson.title, courseId, moduleId: module.id, week: lesson.week, sequence: timeline.metadata.get(lesson.id).sequence, orderInWeek: timeline.metadata.get(lesson.id).orderInWeek, collectionIds: collectionIdsByLesson.get(lesson.id) || [], minutes: lesson.minutes, summary: lesson.summary, objectiveCount: (lesson.objectives || []).length, questionCount: questions[lesson.id].length, questionIds: questions[lesson.id].map(question => question.id), hasVisualLab: !!source.labs[lesson.id], visualIds: lesson.visualIds || [], slideSetIds: source.slideSets.filter(slideSet => (slideSet.lessonIds || []).includes(lesson.id)).map(slideSet => slideSet.id), schemaVersion: "nus.lesson-outline.v1" })) })), labs: Object.values(source.labs).map(lab => ({ id: lab.id || lab.lessonId, courseCode: lab.courseCode, lessonId: lab.lessonId, title: lab.title, type: lab.type })) };
   return { source, package: joined, outline, lessons, questions, studyKits };
 }
 
@@ -357,6 +452,8 @@ function writeCourseArtifacts(outputRoot, compiled) {
   }
   const courseAssetValue = {
     course: compiled.package.course,
+    collections: compiled.package.collections || [],
+    timelineLessonIds: compiled.package.course.timelineLessonIds || [],
     assessments: compiled.package.assessments,
     sources: compiled.package.sources,
     assessmentMap: compiled.package.assessmentMap,
@@ -377,7 +474,7 @@ function writeCourseArtifacts(outputRoot, compiled) {
   writeJson(path.join(courseRoot, courseAsset), courseAssetValue);
   const outline = { ...compiled.outline, courseAsset, lessonAssets, questionAssets, studyKitAssets, labAssets, visualAssets, slideAssets, ...(textbookAsset ? { textbookAsset } : {}) };
   writeJson(path.join(courseRoot, "outline.json"), outline);
-  return { code: courseId, courseId, course: compiled.outline.course, modules: compiled.outline.modules, labs: compiled.outline.labs, assessments: compiled.package.assessments, schedule: compiled.package.schedule, outline: `${courseId}/outline.json`, courseAsset: `${courseId}/${courseAsset}`, lessonAssets: Object.fromEntries(Object.entries(lessonAssets).map(([id, asset]) => [id, `${courseId}/${asset}`])), questionAssets: Object.fromEntries(Object.entries(questionAssets).map(([id, asset]) => [id, `${courseId}/${asset}`])), studyKitAssets: Object.fromEntries(Object.entries(studyKitAssets).map(([id, asset]) => [id, `${courseId}/${asset}`])), labAssets: Object.fromEntries(Object.entries(labAssets).map(([id, asset]) => [id, `${courseId}/${asset}`])), visualAssets: Object.fromEntries(Object.entries(visualAssets).map(([id, asset]) => [id, `${courseId}/${asset}`])), slideAssets: Object.fromEntries(Object.entries(slideAssets).map(([id, asset]) => [id, `${courseId}/${asset}`])), ...(textbookAsset ? { textbookAsset: `${courseId}/${textbookAsset}` } : {}), ...(sourceManifestAsset ? { sourceManifestAsset: `${courseId}/${sourceManifestAsset}` } : {}), hasTextbook: !!textbookAsset, counts: compiled.package.counts, version: hash({ outline, courseAssetValue }), schemaVersion: "nus.content-course-manifest.v1" };
+  return { code: courseId, courseId, course: compiled.outline.course, modules: compiled.outline.modules, collections: compiled.outline.collections || [], timelineLessonIds: compiled.outline.timelineLessonIds || [], labs: compiled.outline.labs, assessments: compiled.package.assessments, schedule: compiled.package.schedule, outline: `${courseId}/outline.json`, courseAsset: `${courseId}/${courseAsset}`, lessonAssets: Object.fromEntries(Object.entries(lessonAssets).map(([id, asset]) => [id, `${courseId}/${asset}`])), questionAssets: Object.fromEntries(Object.entries(questionAssets).map(([id, asset]) => [id, `${courseId}/${asset}`])), studyKitAssets: Object.fromEntries(Object.entries(studyKitAssets).map(([id, asset]) => [id, `${courseId}/${asset}`])), labAssets: Object.fromEntries(Object.entries(labAssets).map(([id, asset]) => [id, `${courseId}/${asset}`])), visualAssets: Object.fromEntries(Object.entries(visualAssets).map(([id, asset]) => [id, `${courseId}/${asset}`])), slideAssets: Object.fromEntries(Object.entries(slideAssets).map(([id, asset]) => [id, `${courseId}/${asset}`])), ...(textbookAsset ? { textbookAsset: `${courseId}/${textbookAsset}` } : {}), ...(sourceManifestAsset ? { sourceManifestAsset: `${courseId}/${sourceManifestAsset}` } : {}), hasTextbook: !!textbookAsset, counts: compiled.package.counts, version: hash({ outline, courseAssetValue }), schemaVersion: "nus.content-course-manifest.v1" };
 }
 
 function compileAll(root, outputRoot) {
