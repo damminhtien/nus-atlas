@@ -1,15 +1,44 @@
 {
   "id": "dsa5101-minhash-lsh",
-  "title": "MinHash signatures and LSH probability",
-  "week": 3,
+  "title": "Finding similar items: shingling, MinHash, and LSH",
+  "week": 2,
+  "contentStatus": "CURRENT LECTURE",
   "minutes": 50,
-  "summary": "Estimate Jaccard similarity compactly, then use banding to make near-neighbor search practical.",
+  "summary": "Follow the official Lecture 2 pipeline from shingled sets to MinHash signatures, LSH candidate generation, and exact verification.",
   "objectives": [
     "Relate MinHash collision probability to Jaccard similarity",
     "Compute an LSH candidate probability",
     "Explain false positives and false negatives"
   ],
   "sourceRefs": [
+    {
+      "sourceId": "DSA5101/Lec 2 - Finding Similar items, LSH.pdf",
+      "page": 19,
+      "sourceType": "lecture",
+      "role": "three-step finding-similar-items pipeline",
+      "status": "current"
+    },
+    {
+      "sourceId": "DSA5101/Lec 2 - Finding Similar items, LSH.pdf",
+      "page": 25,
+      "sourceType": "lecture",
+      "role": "Jaccard similarity for shingles",
+      "status": "current"
+    },
+    {
+      "sourceId": "DSA5101/Lec 2 - Finding Similar items, LSH.pdf",
+      "page": 37,
+      "sourceType": "lecture",
+      "role": "MinHash collision property",
+      "status": "current"
+    },
+    {
+      "sourceId": "DSA5101/Lec 2 - Finding Similar items, LSH.pdf",
+      "page": 62,
+      "sourceType": "lecture",
+      "role": "LSH banding candidate probability",
+      "status": "current"
+    },
     {
       "sourceId": "DSA5101/Assignments/DSA5101_Assignment_1.pdf",
       "page": 3,
@@ -383,5 +412,54 @@
   "labIds": [
     "dsa5101-minhash-bands"
   ],
+  "slideSetIds": [
+    "dsa5101-lecture2"
+  ],
+  "sourceLens": {
+    "status": "core DSA5101 Lecture 2",
+    "whyExaminable": "Lecture 2 defines the official high-dimensional similarity pipeline: shingling, MinHash, and LSH. Assignment 1 supplies practice; MMDS is depth.",
+    "lecture": [
+      {
+        "sourceId": "DSA5101/Lec 2 - Finding Similar items, LSH.pdf",
+        "page": 19,
+        "sourceType": "lecture",
+        "role": "official pipeline",
+        "status": "current"
+      },
+      {
+        "sourceId": "DSA5101/Lec 2 - Finding Similar items, LSH.pdf",
+        "page": 62,
+        "sourceType": "lecture",
+        "role": "candidate probability",
+        "status": "current"
+      }
+    ],
+    "officialExercise": [
+      {
+        "sourceId": "DSA5101/Assignments/DSA5101_Assignment_1.pdf",
+        "page": 3,
+        "sourceType": "exercise",
+        "role": "MinHash practice",
+        "status": "current-context"
+      },
+      {
+        "sourceId": "DSA5101/Assignments/DSA5101_Assignment_1.pdf",
+        "page": 4,
+        "sourceType": "exercise",
+        "role": "LSH banding practice",
+        "status": "current-context"
+      }
+    ],
+    "textbook": [
+      {
+        "sourceId": "DSA5101/Reference textbook MMDS 3rd Edition.pdf",
+        "page": 95,
+        "sourceType": "textbook",
+        "role": "MinHash and LSH depth",
+        "status": "course-depth"
+      }
+    ],
+    "reference": []
+  },
   "schemaVersion": "nus.lesson.v1"
 }
