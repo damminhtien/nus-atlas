@@ -6,6 +6,10 @@ and refresh first-party asset URLs so browsers and the service worker pick up th
 
 ## [Unreleased]
 
+## [0.2.55] - 2026-08-23
+
+- Recover stale production content shards
+
 ## [0.2.54] - 2026-08-23
 
 - Publish assessment and study-content audit
