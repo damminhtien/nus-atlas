@@ -6,6 +6,10 @@ and refresh first-party asset URLs so browsers and the service worker pick up th
 
 ## [Unreleased]
 
+## [0.2.61] - 2026-08-23
+
+- Sync official Week 2 learning sources
+
 ## [0.2.60] - 2026-08-23
 
 - Add private study access gate
