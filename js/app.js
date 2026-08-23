@@ -2893,7 +2893,7 @@
     if (p === "nus") {
       if (parts[1] === "course") { const c = nusRepository() ? nusRepository().getCourse(parts[2]) : nusCourses().find(x => x.code === parts[2]); return (c ? c.code + " · " + c.title : "NUS Course") + " · " + BASE; }
       if (parts[1] === "lesson") { const repo = nusRepository(); const l = repo ? (repo.peekLesson ? repo.peekLesson(parts[2], parts[3]) : null) : (nusContent(parts[2]).modules || []).flatMap(m => m.lessons || []).find(x => x.id === parts[3]); return (l ? l.title : "NUS Lesson") + " · " + BASE; }
-      const np = { planner: "NUS Planner", exam: "NUS Exam Mode", review: "Spaced Retrieval", contrast: "Concept Contrast Drills", sql: "SQL Studio", simulations: "Distributed Simulations" };
+      const np = { courses: "NUS Courses", planner: "NUS Plan", exam: "NUS Practice", review: "NUS Review", contrast: "Concept contrast", sql: "SQL Studio", simulations: "Distributed Simulations" };
       return (np[parts[1]] || "NUS Dashboard") + " · " + BASE;
     }
     if (p === "atlas") return "General Atlas · " + BASE;
@@ -2939,6 +2939,7 @@
       if (window.ATLAS_NUS_UI && typeof window.ATLAS_NUS_UI.stopTransient === "function") window.ATLAS_NUS_UI.stopTransient();
       const isNusRoute = parts.length === 0 || parts[0] === "nus";
       app.classList.toggle("nus-root", isNusRoute);
+      document.body.classList.toggle("atlas-nus-surface", isNusRoute);
       if (!isNusRoute || parts[1] !== "lesson") document.body.classList.remove("nus-reading-mode");
       if (!isNusRoute || parts[1] !== "slides") document.body.classList.remove("nus-slide-focus-mode");
       try { document.title = docTitleFor(parts); } catch (e) { document.title = "NUS Atlas · Study Studio"; }

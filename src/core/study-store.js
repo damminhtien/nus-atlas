@@ -34,7 +34,7 @@
   ];
 
   function blank() {
-    return { schemaVersion: SCHEMA_VERSION, version: 4, tasks: {}, lessons: {}, attempts: [], lastStudy: null, events: {}, mastery: {}, retrieval: {}, reading: {}, questHistory: {} };
+    return { schemaVersion: SCHEMA_VERSION, version: 4, tasks: {}, lessons: {}, attempts: [], lastStudy: null, lastLesson: null, events: {}, mastery: {}, retrieval: {}, reading: {}, questHistory: {} };
   }
 
   function objectOrEmpty(value) { return value && typeof value === "object" && !Array.isArray(value) ? value : {}; }
@@ -49,6 +49,10 @@
       tasks: objectOrEmpty(data.tasks),
       lessons: objectOrEmpty(data.lessons),
       attempts: Array.isArray(data.attempts) ? data.attempts : [],
+      lastLesson: data.lastLesson && typeof data.lastLesson === "object" ? {
+        courseCode: String(data.lastLesson.courseCode || ""),
+        lessonId: String(data.lastLesson.lessonId || "")
+      } : null,
       events: objectOrEmpty(data.events),
       mastery: objectOrEmpty(data.mastery),
       retrieval: objectOrEmpty(data.retrieval),
@@ -129,6 +133,16 @@
     if (done && !wasDone) recordEvidence({ eventId: `lesson:${id}`, type: "lesson_complete", courseCode: meta && meta.courseCode, lessonId: id, xp: 40, meta: { sourceRefs: (meta && meta.sourceRefs) || [] } });
     else touch();
     return !wasDone && !!done;
+  }
+
+  function setLastLesson(input) {
+    const item = input || {};
+    const courseCode = String(item.courseCode || "").trim();
+    const lessonId = String(item.lessonId || "").trim();
+    if (!courseCode || !lessonId) return null;
+    state.lastLesson = { courseCode, lessonId, at: timestamp() };
+    touch();
+    return { ...state.lastLesson };
   }
 
   function recordAttempt(result) {
@@ -356,6 +370,8 @@
     setTask(id, patch) { state.tasks[id] = { ...this.task(id), ...patch }; touch(); },
     toggleCheck(id, index) { const task = this.task(id), checks = Array.isArray(task.checks) ? task.checks.slice() : []; checks[index] = !checks[index]; this.setTask(id, { checks }); },
     markLesson,
+    setLastLesson,
+    lastLesson() { return state.lastLesson ? { ...state.lastLesson } : null; },
     lessonDone(id) { return !!state.lessons[id]; },
     recordEvidence,
     recordSimulation(name, courseCode, lessonId) { return recordEvidence({ eventId: `lab:${name}`, type: "simulation_completed", courseCode, lessonId, xp: 10, meta: { lab: name } }); },

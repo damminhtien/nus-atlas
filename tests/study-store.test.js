@@ -72,6 +72,21 @@ test("study store persists and resumes slide/textbook reading positions", () => 
   assert.equal(store.readingFor(slide.resourceId).furthest, 12, "furthest progress is never lost");
 });
 
+test("study store remembers the last lesson without awarding learning evidence", () => {
+  const storage = memoryStorage();
+  const store = createStudyStore({ storage, now: () => new Date("2026-08-15T10:00:00.000Z") });
+
+  assert.deepEqual(store.lastLesson(), null);
+  assert.deepEqual(store.setLastLesson({ courseCode: "DSA5105", lessonId: "basis-functions" }), {
+    courseCode: "DSA5105", lessonId: "basis-functions", at: "2026-08-15T10:00:00.000Z"
+  });
+  assert.deepEqual(store.lastLesson(), {
+    courseCode: "DSA5105", lessonId: "basis-functions", at: "2026-08-15T10:00:00.000Z"
+  });
+  assert.equal(store.events().length, 0);
+  assert.equal(storage.read().lastLesson.lessonId, "basis-functions");
+});
+
 test("study store keeps evidence idempotent and updates mastery", () => {
   const store = createStudyStore({ storage: memoryStorage(), now: () => new Date("2026-08-15T10:00:00.000Z") });
   const first = store.recordEvidence({ eventId: "recall:q1", type: "recall_correct", lessonId: "lesson1", xp: 5 });

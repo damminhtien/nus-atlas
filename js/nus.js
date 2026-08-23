@@ -11,7 +11,6 @@
   const presentation = window.ATLAS_PRESENTATION({ getSourceTypes: sourceTypes, getVisuals: visuals });
   const { esc, text, sourceLabel, sourceBadge, sourceItem, sourceGroups, pageHead, card, button, statusPill,
     visualCard, mathBlock, sourceDisclosure, lessonSection, workedExample, recallItem, criticalThinking, studyKit, studyCompass } = presentation;
-  const DEFAULT_FOCUS_COURSE = "DSA5208";
   const VISUAL_CUE_KEY = "nus.visual-cues.v1";
   let focusTimer = null;
 
@@ -60,9 +59,10 @@
     return { number: 1, label: "Open lecture slides" };
   }
   function focusCourseCode() {
-    let saved = "";
-    try { saved = localStorage.getItem("nus.focus-course") || ""; } catch (_) { saved = ""; }
-    return courses().some(item => item.code === saved) ? saved : (courses().some(item => item.code === DEFAULT_FOCUS_COURSE) ? DEFAULT_FOCUS_COURSE : (courses()[0] || {}).code);
+    const resume = window.ATLAS_STUDY_STORE && typeof window.ATLAS_STUDY_STORE.lastLesson === "function" ? window.ATLAS_STUDY_STORE.lastLesson() : null;
+    if (resume && courses().some(item => item.code === resume.courseCode)) return resume.courseCode;
+    const recommended = recommendedNext();
+    return recommended ? recommended.course.code : (courses()[0] || {}).code;
   }
   function focusCourseSelector(code) {
     return `<label class="nus-focus-course"><span>Focus course</span><select id="nus-focus-course">${courses().map(item => `<option value="${esc(item.code)}" ${item.code === code ? "selected" : ""}>${esc(item.code)}</option>`).join("")}</select></label>`;
@@ -87,14 +87,24 @@
   }
   function courseProgressBar(code) { const p = progress(code); return `<div class="nus-progress"><span style="width:${p.pct}%;background:${esc(course(code).color)}"></span></div><div class="nus-muted">${p.done}/${p.total} lessons complete · ${p.pct}%</div>`; }
   function courseTimeline(code) {
-    const catalog = content(code), modules = catalog.modules || [], all = modules.flatMap(module => (module.lessons || []).map(lesson => ({ ...lesson, moduleTitle: module.title })));
+    const catalog = content(code), modules = catalog.modules || [], all = modules.flatMap((module, moduleIndex) => (module.lessons || []).map((lesson, lessonIndex) => ({ ...lesson, moduleTitle: module.title, moduleIndex, lessonIndex })));
     const byId = new Map(all.map(lesson => [lesson.id, lesson]));
-    const ids = Array.isArray(catalog.timelineLessonIds) && catalog.timelineLessonIds.length ? catalog.timelineLessonIds : all.slice().sort((a, b) => (Number(a.sequence) || Number.MAX_SAFE_INTEGER) - (Number(b.sequence) || Number.MAX_SAFE_INTEGER)).map(lesson => lesson.id);
+    const ids = Array.isArray(catalog.timelineLessonIds) && catalog.timelineLessonIds.length
+      ? catalog.timelineLessonIds
+      : all.slice().sort((a, b) => {
+        const sequence = (Number(a.sequence) || Number.MAX_SAFE_INTEGER) - (Number(b.sequence) || Number.MAX_SAFE_INTEGER);
+        if (sequence) return sequence;
+        const week = (Number(a.week) || Number.MAX_SAFE_INTEGER) - (Number(b.week) || Number.MAX_SAFE_INTEGER);
+        if (week) return week;
+        const orderInWeek = (Number(a.orderInWeek) || Number.MAX_SAFE_INTEGER) - (Number(b.orderInWeek) || Number.MAX_SAFE_INTEGER);
+        return orderInWeek || a.moduleIndex - b.moduleIndex || a.lessonIndex - b.lessonIndex;
+      }).map(lesson => lesson.id);
     return [...ids.map(id => byId.get(id)).filter(Boolean), ...all.filter(lesson => !ids.includes(lesson.id))];
   }
   function lessonRow(code, lesson, metaLabel) {
     const done = window.ATLAS_STUDY_STORE.lessonDone(lesson.id);
-    return `<a class="nus-lesson-row" href="#/nus/lesson/${esc(code)}/${esc(lesson.id)}" data-route><span class="nus-lesson-dot ${done ? "done" : ""}">${done ? "✓" : ""}</span><div><b>${esc(lesson.title)}</b><span>${esc(metaLabel || `Week ${lesson.week}`)} · ${esc(lesson.minutes)} min · ${(lesson.questionIds || []).length} practice prompts${lesson.hasVisualLab ? " · visual lab" : ""}</span></div><span>→</span></a>`;
+    const meta = metaLabel || `Week ${lesson.week} · ${lesson.minutes} min · ${(lesson.questionIds || []).length} practice prompts${lesson.hasVisualLab ? " · visual lab" : ""}`;
+    return `<a class="nus-lesson-row" href="#/nus/lesson/${esc(code)}/${esc(lesson.id)}" data-route><span class="nus-lesson-dot ${done ? "done" : ""}">${done ? "✓" : ""}</span><div><b>${esc(lesson.title)}</b><span>${esc(meta)}</span></div><span>→</span></a>`;
   }
   function timelineSections(code) {
     const groups = [];
@@ -104,7 +114,18 @@
       if (!group || group.week !== week) { group = { week, lessons: [] }; groups.push(group); }
       group.lessons.push(lesson);
     });
-    return groups.map(group => `<section class="nus-module reveal"><div class="eyebrow">Week ${esc(group.week)} · lecture timeline</div>${group.lessons.map(lesson => lessonRow(code, lesson, `Week ${lesson.week} · ${lesson.moduleTitle || "course topic"}`)).join("")}</section>`).join("");
+    let reachedCurrent = false;
+    return groups.map(group => {
+      const complete = group.lessons.every(item => window.ATLAS_STUDY_STORE.lessonDone(item.id));
+      const state = complete ? "complete" : (reachedCurrent ? "upcoming" : "current");
+      if (!complete) reachedCurrent = true;
+      const marker = state === "complete" ? "✓ Completed" : state === "current" ? "● Current" : "○ Upcoming";
+      return `<section class="nus-module nus-timeline-week is-${state} reveal"><div class="nus-timeline-week-head"><div class="eyebrow">Week ${esc(group.week)}</div><span>${marker}</span></div>${group.lessons.map(lesson => lessonRow(code, lesson, `${lesson.minutes} min · ${(lesson.questionIds || []).length} practice prompts`)).join("")}</section>`;
+    }).join("");
+  }
+  function topicSections(code) {
+    const catalog = content(code);
+    return (catalog.modules || []).map(module => `<section class="nus-module nus-topic-section reveal"><div class="eyebrow">Topic</div><h3>${esc(module.title)}</h3>${module.description ? `<p class="nus-muted">${text(module.description)}</p>` : ""}${(module.lessons || []).map(item => lessonRow(code, item, `Week ${item.week} · ${item.minutes} min`)).join("")}</section>`).join("");
   }
   async function renderCollection(code, collectionId, context) {
     const loading = ensureCourseLoaded(code, context);
@@ -182,7 +203,40 @@
       return Date.parse(aDate) - Date.parse(bDate);
     });
   }
-  function firstOpenLesson() { for (const c of courses()) { const l = lessons(c.code).find(x => !window.ATLAS_STUDY_STORE.lessonDone(x.id)); if (l) return { course: c, lesson: l }; } return null; }
+  function firstOpenLessonInCourse(code) {
+    const c = course(code);
+    if (!c) return null;
+    const l = courseTimeline(c.code).find(item => !window.ATLAS_STUDY_STORE.lessonDone(item.id));
+    return l ? { course: c, lesson: l } : null;
+  }
+  function firstOpenLesson(preferredCode) {
+    const orderedCourses = preferredCode
+      ? [...courses().filter(item => item.code === preferredCode), ...courses().filter(item => item.code !== preferredCode)]
+      : courses();
+    for (const c of orderedCourses) {
+      const open = firstOpenLessonInCourse(c.code);
+      if (open) return open;
+    }
+    return null;
+  }
+  function recommendedNext() {
+    const store = window.ATLAS_STUDY_STORE;
+    const resume = store && typeof store.lastLesson === "function" ? store.lastLesson() : null;
+    if (resume && courses().some(item => item.code === resume.courseCode)) {
+      const c = course(resume.courseCode), ordered = courseTimeline(resume.courseCode), index = ordered.findIndex(item => item.id === resume.lessonId);
+      if (c && index >= 0) {
+        const candidate = ordered.slice(index).find(item => !store.lessonDone(item.id));
+        if (candidate) return { course: c, lesson: candidate, reason: candidate.id === resume.lessonId ? "Continue where you left off" : "Continue this course in chronological order" };
+      }
+    }
+    const nearestCourse = allUpcoming().map(item => item.courseCode).find(code => firstOpenLessonInCourse(code));
+    const open = nearestCourse ? firstOpenLessonInCourse(nearestCourse) : firstOpenLesson();
+    return open ? { ...open, reason: nearestCourse ? "This course has the nearest confirmed assessment" : "Next unfinished lesson" } : null;
+  }
+  function lessonTiming(code) {
+    const next = courseTimeline(code).find(item => !window.ATLAS_STUDY_STORE.lessonDone(item.id));
+    return next ? { week: next.week, state: "Current" } : { week: null, state: "Complete" };
+  }
   function syncRetrievalSchedules() {
     if (!window.ATLAS_STUDY_STORE || typeof window.ATLAS_STUDY_STORE.ensureRetrievalSchedules !== "function") return;
     courses().forEach(c => window.ATLAS_STUDY_STORE.ensureRetrievalSchedules(lessons(c.code)));
@@ -219,23 +273,64 @@
     focusTimer = null;
   }
 
+  function greeting() {
+    const hour = Number(new Intl.DateTimeFormat("en-SG", { timeZone: "Asia/Singapore", hour: "numeric", hourCycle: "h23" }).format(new Date()));
+    return hour < 12 ? "Good morning" : hour < 18 ? "Good afternoon" : "Good evening";
+  }
+  function courseDirectoryRows() {
+    return courses().map(c => {
+      const p = progress(c.code), timing = lessonTiming(c.code);
+      return `<a class="nus-course-directory-row" href="#/nus/course/${esc(c.code)}" data-route style="--course:${esc(c.color)}"><span class="nus-course-directory-mark"></span><div><b>${esc(c.code)}</b><span>${esc(c.title)} · ${timing.week ? `Week ${timing.week}` : timing.state}</span></div><div><strong>${p.pct}% complete</strong><i><em style="width:${p.pct}%"></em></i></div><span aria-hidden="true">→</span></a>`;
+    }).join("");
+  }
   function renderDashboard(showExamPopup = false) {
-    const upcoming = allUpcoming().slice(0, 5);
-    const pending = assessments().filter(a => !a.date).length;
-    const nearest = upcoming[0], nearestDays = nearest && dayCount(nearest.date);
-    const open = firstOpenLesson(), latest = window.ATLAS_STUDY_STORE.attempts().slice(-1)[0];
-    let body = pageHead("NUS · AY2026/27 Semester 1", "Your NUS study desk", "A source-backed study space for DSA5101, DSA5104, DSA5105, and DSA5208. Dates marked pending are deliberately not guessed.");
-    body += `<section class="nus-hero nus-study-hero reveal"><div><div class="eyebrow">Start here · today’s lesson</div><h3>${open ? esc(open.lesson.title) : "Your seeded lessons are complete"}</h3><p>${open ? `${esc(open.course.code)} · ${esc(open.lesson.summary)}` : "Use Exam Mode for maintenance or revisit a weak topic."}</p>${nearest ? `<small class="nus-hero-deadline">Next deadline: ${esc(nearest.title)} · ${nearestDays < 0 ? "overdue" : `${nearestDays} days left`}</small>` : ""}</div><div class="nus-hero-actions">${open ? button("Read lesson", `#/nus/lesson/${open.course.code}/${open.lesson.id}`, "primary") : button("Open planner", "#/nus/planner", "primary")}${button("Start exam mode", "#/nus/exam", "ghost")}</div></section>`;
-    body += `<div class="nus-grid nus-grid-4">${courses().map(c => `<article class="nus-course-card reveal" style="--course:${esc(c.color)}"><div class="nus-course-top"><span class="nus-code">${esc(c.code)}</span><span class="pill">${progress(c.code).pct}%</span></div><h3>${esc(c.title)}</h3><p>${text(c.description)}</p>${courseProgressBar(c.code)}<div class="nus-card-actions">${button("Study course", `#/nus/course/${c.code}`, "ghost")}${button("Practice", `#/nus/exam/${c.code}`, "ghost")}</div></article>`).join("")}</div>`;
-    body += learningSignals(focusCourseCode());
-    body += retrievalCard();
-    body += `<div class="nus-two-col"><div>${card("Today’s focus", `<p>${open ? `Continue <b>${esc(open.lesson.title)}</b> in ${esc(open.course.code)}.` : "All seeded lessons are complete — use Exam Mode for maintenance."}</p><div class="nus-focus-clock"><b id="nus-focus-time">25:00</b><span id="nus-focus-state">Choose a focus block</span></div><div class="nus-tool-grid"><button class="btn ghost" data-nus-focus="25">25 min</button><button class="btn ghost" data-nus-focus="50">50 min</button>${open ? button("Open lesson", `#/nus/lesson/${open.course.code}/${open.lesson.id}`, "ghost") : ""}</div>`, "reveal")}</div><div>${card("Exam countdown", `<div class="nus-exam-counts">${examCountdownCards()}</div><p class="nus-muted">DSA5208 has no midterm or final exam; its three projects are tracked in Planner.</p>`, "reveal")}</div></div>`;
-    body += card("Practice history", latest ? `<p>Latest ${esc(latest.courseCode)} attempt: <b>${latest.score}/${latest.total}</b>. Use the review deck after each attempt to target misses.</p>${button("Practice again", `#/nus/exam/${latest.courseCode}`, "ghost")}` : `<p class="nus-muted">No NUS attempt yet. Start a short scoped run to create a personal weak-topic signal.</p>${button("Start a practice run", "#/nus/exam", "ghost")}`, "reveal");
-    body += `<div class="nus-two-col"><div>${card("Upcoming work", upcoming.length ? `<div class="nus-list">${upcoming.map(a => assessmentRow(a)).join("")}</div>` : `<div class="nus-empty">No confirmed dates.</div>`, "reveal")}</div><div>${card("What needs confirmation", `<p class="nus-muted">${pending} assessment milestone${pending === 1 ? "" : "s"} still has a date pending.</p><p class="nus-muted">Reminders are shown at 7, 3, and 1 day before a confirmed date. The app never invents a deadline.</p>${button("Review planner", "#/nus/planner", "ghost")}`, "reveal")}</div></div>`;
-    body += card("Study spaces", `<div class="nus-tool-grid">${button("SQL practice · DSA5104", "#/nus/sql", "ghost")}${button("Distributed simulations · DSA5208", "#/nus/simulations", "ghost")}${button("Mixed practice · DSA5101/5105", "#/nus/exam", "ghost")}${button("Reference library", "#/atlas", "ghost")}</div>`, "reveal");
+    syncRetrievalSchedules();
+    const upcoming = allUpcoming().slice(0, 3), nearest = upcoming[0], nearestDays = nearest && dayCount(nearest.date);
+    const recommended = recommendedNext();
+    const store = window.ATLAS_STUDY_STORE;
+    const due = store && typeof store.dueRetrievals === "function" ? store.dueRetrievals().length : 0;
+    const today = [
+      recommended ? `<a href="#/nus/lesson/${esc(recommended.course.code)}/${esc(recommended.lesson.id)}" data-route>Continue <b>${esc(recommended.course.code)} · Week ${esc(recommended.lesson.week)}</b><span>${esc(recommended.lesson.title)}</span></a>` : "",
+      due ? `<a href="#/nus/review/retrieval" data-route>Review <b>${due} due concept${due === 1 ? "" : "s"}</b><span>Retrieval keeps mastered material available.</span></a>` : "",
+      nearest ? `<a href="#/nus/planner" data-route>Plan <b>${esc(nearest.title)}</b><span>${nearestDays === 0 ? "Today" : `${nearestDays} days left`} · ${esc(nearest.courseCode)}</span></a>` : ""
+    ].filter(Boolean);
+    let body = pageHead("NUS Atlas · AY2026/27 Semester 1", `${greeting()}.`, "One clear study loop: learn the next idea, practise it, then review what needs attention.");
+    body += `<section class="nus-hero nus-home-continue reveal"><div><div class="eyebrow">Continue</div><h3>${recommended ? esc(recommended.lesson.title) : "Your seeded lessons are complete"}</h3><p>${recommended ? `${esc(recommended.course.code)} · Week ${esc(recommended.lesson.week)} · ${esc(recommended.lesson.summary)}` : "Use Review to keep previously learned material active."}</p>${recommended ? `<small class="nus-home-why">Why this? ${esc(recommended.reason)} · about ${esc(recommended.lesson.minutes)} min.</small>` : ""}</div><div class="nus-hero-actions">${recommended ? button("Continue learning →", `#/nus/lesson/${recommended.course.code}/${recommended.lesson.id}`, "primary") : button("Open Review", "#/nus/review", "primary")}</div></section>`;
+    body += `<section class="nus-home-section reveal"><div class="nus-section-heading"><div><div class="eyebrow">Today</div><h3>Make the next useful move</h3></div></div><div class="nus-today-list">${today.length ? today.join("") : `<p class="nus-muted">No confirmed deadline or due review right now. Choose a course to continue.</p>`}</div></section>`;
+    body += `<section class="nus-home-section reveal"><div class="nus-section-heading"><div><div class="eyebrow">Your courses</div><h3>Follow the semester, week by week</h3></div>${button("View all courses", "#/nus/courses", "ghost")}</div><div class="nus-course-directory">${courseDirectoryRows()}</div></section>`;
+    body += `<section class="nus-home-section reveal"><div class="nus-section-heading"><div><div class="eyebrow">Upcoming</div><h3>What is coming next?</h3></div>${button("Open Plan", "#/nus/planner", "ghost")}</div>${upcoming.length ? `<div class="nus-list">${upcoming.map(assessmentRow).join("")}</div>` : `<p class="nus-muted">No confirmed dates yet. Atlas will not invent a deadline.</p>`}</section>`;
     root.innerHTML = body;
-    bindDashboard();
     if (showExamPopup && examScheduleFeature) window.setTimeout(() => examScheduleFeature.showPopup(), 0);
+  }
+
+  function renderCourses() {
+    const recommended = recommendedNext();
+    let body = pageHead("Courses", "Your semester, in order", "Open a course to follow its lecture timeline. Topic and revision views stay available when you need them.");
+    if (recommended) body += `<section class="nus-course-continue reveal"><span>Continue</span><b>${esc(recommended.course.code)} · Week ${esc(recommended.lesson.week)}</b><a href="#/nus/lesson/${esc(recommended.course.code)}/${esc(recommended.lesson.id)}" data-route>${esc(recommended.lesson.title)} →</a></section>`;
+    body += `<section class="nus-home-section reveal"><div class="nus-course-directory">${courseDirectoryRows()}</div></section>`;
+    root.innerHTML = body;
+  }
+
+  function weakLessonRows() {
+    const store = window.ATLAS_STUDY_STORE;
+    const counts = new Map();
+    courses().flatMap(c => store.mistakes(c.code)).forEach(item => {
+      const key = `${item.courseCode}:${item.lessonId || ""}`;
+      counts.set(key, (counts.get(key) || 0) + 1);
+    });
+    return [...counts.entries()].sort((a, b) => b[1] - a[1]).slice(0, 3).map(([key, count]) => {
+      const [code, id] = key.split(":"), item = lesson(code, id);
+      return `<a class="nus-list-row" href="#/nus/lesson/${esc(code)}/${esc(id)}" data-route><div><b>${esc(item ? item.title : id || code)}</b><span>${esc(code)} · ${count} unresolved mistake${count === 1 ? "" : "s"}</span></div><span>→</span></a>`;
+    }).join("");
+  }
+  function renderReviewHub() {
+    syncRetrievalSchedules();
+    const store = window.ATLAS_STUDY_STORE, code = focusCourseCode(), due = store.dueRetrievals().length;
+    const mistakes = courses().reduce((sum, c) => sum + store.mistakes(c.code).length, 0);
+    const readiness = readinessFor(code), weak = weakLessonRows();
+    let body = pageHead("Review", "Keep the important ideas available", "Atlas chooses the type of review. You only need to make the next short, focused move.");
+    body += `<div class="nus-review-hub"><section class="nus-review-priority reveal"><div><div class="eyebrow">Recommended</div><h3>${due ? `${due} concept${due === 1 ? "" : "s"} due for retrieval` : "No retrieval due right now"}</h3><p>${due ? "Answer one or two questions without rereading the lesson." : "Practice or revisit a mistake to create your next review signal."}</p></div>${button(due ? "Start review →" : "Practice a course →", due ? "#/nus/review/retrieval" : `#/nus/exam/${code}`, "primary")}</section><div class="nus-review-grid"><section class="nus-card reveal"><div class="eyebrow">Mistakes</div><h3>${mistakes ? `${mistakes} unresolved` : "Nothing unresolved"}</h3><p>${mistakes ? "Repair the misconception, then mark the idea as fixed." : "Missed questions will appear here after practice."}</p>${button("Review mistakes", "#/nus/review/mistakes", "ghost")}</section><section class="nus-card reveal"><div class="eyebrow">Exam preparation</div><h3>${esc(code)} · ${readiness.coverage}% covered</h3><p>${readiness.unresolved ? `${readiness.unresolved} unresolved idea${readiness.unresolved === 1 ? "" : "s"}.` : "No unresolved mistakes in this course."}</p>${button("Practice this course", `#/nus/exam/${code}`, "ghost")}</section></div><section class="nus-card reveal"><div class="eyebrow">Weak concepts</div><h3>Clarify before the next practice run</h3>${weak ? `<div class="nus-list">${weak}</div>` : `<p class="nus-muted">Atlas will surface concepts here after it sees an incorrect answer.</p>`}</section></div>`;
+    root.innerHTML = body;
   }
 
   function assessmentRow(a) {
@@ -350,18 +445,20 @@
     });
   }
 
-  async function renderCourse(code, context) {
+  async function renderCourse(code, context, view) {
     const loading = ensureCourseLoaded(code, context);
     if (loading) {
       if (!await loading || (context && !context.isCurrent())) return;
-      return renderCourse(code, context);
+      return renderCourse(code, context, view);
     }
     const c = course(code);
     if (!c) return renderNotFound();
+    const selectedView = view === "topics" ? "topics" : "timeline";
     let body = pageHead(c.code, c.title, c.description);
-    const hasContrasts = lessons(c.code).some(item => Array.isArray(item.contrastDrills) && item.contrastDrills.length), catalog = content(c.code), collections = catalog.collections || [];
-    body += `<div class="nus-course-meta"><span>${esc(c.department)} · ${esc(c.faculty)}</span><span>Workload ${esc(c.workload.join(" / "))}</span>${c.code === "DSA5105" ? button("Exam & homework map", `#/nus/assessment-map/${c.code}`, "ghost") : ""}${collections.map(collection => button(collection.title, `#/nus/collection/${c.code}/${collection.id}`, "ghost")).join("")}${hasContrasts ? button("Concept contrasts", `#/nus/contrast/${c.code}`, "ghost") : ""}${repository() && repository().hasTextbook && repository().hasTextbook(c.code) ? button("Textbook PDF", `#/nus/textbook/${c.code}/1`, "ghost") : ""}${button("Exam mode", `#/nus/exam/${c.code}`, "primary")}</div>`;
-    body += `<div class="nus-course-layout"><div><div class="nus-course-progress"><b>Lecture timeline</b><span class="nus-muted">Chronological order is independent from topic modules and revision collections.</span>${courseProgressBar(c.code)}</div>${timelineSections(c.code)}</div><aside>${card("Assessment weight", assessments().filter(a => a.courseCode === c.code).map(a => `<div class="nus-weight"><span>${esc(a.title)}</span><b>${esc(assessmentWeightLabel(a))}</b></div>`).join(""), "reveal")}${collections.length ? card("Study collections", collections.map(collection => `<a class="nus-list-row" href="#/nus/collection/${c.code}/${collection.id}" data-route><div><b>${esc(collection.title)}</b><span>${collection.lessonIds.length} lessons · revision lens</span></div><span>→</span></a>`).join(""), "reveal") : ""}${card("Sources", sourceGroups(c).map(g => `<div class="nus-source-group"><b>${esc(g.label)}</b><ul class="nus-source-list">${g.refs.map(r => `<li>${sourceItem(r)}</li>`).join("")}</ul></div>`).join("")+`<a class="nus-external" href="${esc(c.nusmods.url)}" target="_blank" rel="noreferrer">NUSMods course page ↗</a>`, "reveal")}</aside></div>`;
+    const catalog = content(c.code), collections = catalog.collections || [], next = firstOpenLessonInCourse(c.code);
+    body += `<div class="nus-course-meta"><span>${esc(c.department)} · ${esc(c.faculty)}</span><span>Workload ${esc(c.workload.join(" / "))}</span></div>`;
+    body += `<nav class="nus-course-tabs" aria-label="${esc(c.code)} views"><a class="${selectedView === "timeline" ? "is-active" : ""}" href="#/nus/course/${esc(c.code)}" data-route>Timeline</a><a class="${selectedView === "topics" ? "is-active" : ""}" href="#/nus/course/${esc(c.code)}/topics" data-route>Topics</a></nav>`;
+    body += `<div class="nus-course-layout"><main><section class="nus-course-progress reveal"><div><div class="eyebrow">${selectedView === "timeline" ? "Lecture timeline" : "Topic view"}</div><b>${selectedView === "timeline" ? "Follow the semester in chronological order" : "Revisit ideas without changing the course sequence"}</b><span class="nus-muted">${selectedView === "timeline" ? "Weeks remain the primary learning path; topics and collections are secondary lenses." : "Every topic item keeps its original lecture week."}</span></div>${courseProgressBar(c.code)}${next && selectedView === "timeline" ? button(`Continue Week ${next.lesson.week} →`, `#/nus/lesson/${c.code}/${next.lesson.id}`, "primary") : ""}</section>${selectedView === "timeline" ? timelineSections(c.code) : topicSections(c.code)}</main><aside>${card("Assessments", assessments().filter(a => a.courseCode === c.code).map(a => `<div class="nus-weight"><span>${esc(a.title)}</span><b>${esc(assessmentWeightLabel(a))}</b></div>`).join("") || `<p class="nus-muted">Assessment details are pending.</p>`, "reveal")}${collections.length ? card("Study collections", collections.map(collection => `<a class="nus-list-row" href="#/nus/collection/${c.code}/${collection.id}" data-route><div><b>${esc(collection.title)}</b><span>${collection.lessonIds.length} lessons · revision lens</span></div><span>→</span></a>`).join(""), "reveal") : ""}<details class="nus-course-resources"><summary>Resources and sources</summary>${repository() && repository().hasTextbook && repository().hasTextbook(c.code) ? `<p>${button("Open textbook PDF", `#/nus/textbook/${c.code}/1`, "ghost")}</p>` : ""}${c.code === "DSA5105" ? `<p>${button("Assessment map", `#/nus/assessment-map/${c.code}`, "ghost")}</p>` : ""}<div class="nus-source-groups">${sourceGroups(c).map(g => `<div class="nus-source-group"><b>${esc(g.label)}</b><ul class="nus-source-list">${g.refs.map(r => `<li>${sourceItem(r)}</li>`).join("")}</ul></div>`).join("")}</div><a class="nus-external" href="${esc(c.nusmods.url)}" target="_blank" rel="noreferrer">NUSMods course page ↗</a></details></aside></div>`;
     root.innerHTML = body;
   }
 
@@ -401,23 +498,28 @@
     const c = course(code), l = lesson(code, id);
     if (!c || !l) return renderNotFound();
     const done = window.ATLAS_STUDY_STORE.lessonDone(l.id);
-    const courseLessons = lessons(code), index = courseLessons.findIndex(x => x.id === l.id);
+    const courseLessons = courseTimeline(code), index = courseLessons.findIndex(x => x.id === l.id);
     const previous = courseLessons[index - 1], next = courseLessons[index + 1];
     const courseTextbook = repository() && repository().getTextbook ? repository().getTextbook(c.code) : null;
     setReaderMode(readerModeOn());
     let body = pageHead(`${c.code} · Week ${l.week}`, l.title, l.summary);
     const slideSet = slideSets(code).find(item => (item.lessonIds || []).includes(l.id)) || ((l.slideSetIds || [])[0] ? { id: l.slideSetIds[0] } : null);
     const slideResumeState = slideResume(code, slideSet);
-    body += `<div class="nus-lesson-actions">${button("← Course", `#/nus/course/${c.code}`, "ghost")}<button class="btn ${done ? "ghost" : "primary"}" id="nus-mark-lesson">${done ? "✓ Completed" : "Mark complete"}</button>${slideSet ? button(slideResumeState.label, `#/nus/slides/${c.code}/${slideSet.id}/${slideResumeState.number}`, "primary") : ""}${(courseTextbook && courseTextbook.reader) || (repository() && repository().hasTextbook && repository().hasTextbook(c.code)) ? button("Textbook PDF", `#/nus/textbook/${c.code}/1`, "ghost") : ""}${l.contrastDrills && l.contrastDrills.length ? button("Concept contrasts", `#/nus/contrast/${c.code}/${l.id}`, "ghost") : ""}${button("Exam mode", `#/nus/exam/${c.code}/${l.id}`, "ghost")}${button("Mistake Clinic", `#/nus/mistakes/${c.code}`, "ghost")}${readerButton()}</div>`;
+    const primaryHref = slideSet ? `#/nus/slides/${c.code}/${slideSet.id}/${slideResumeState.number}` : `#/nus/exam/${c.code}/${l.id}`;
+    const primaryLabel = slideSet ? slideResumeState.label : `Practice ${l.questions.length} questions`;
+    const resources = `<details class="nus-lesson-more"><summary>More</summary><div class="nus-lesson-more-actions"><button class="btn ghost" id="nus-mark-lesson" type="button">${done ? "✓ Completed" : "Mark complete"}</button>${(courseTextbook && courseTextbook.reader) || (repository() && repository().hasTextbook && repository().hasTextbook(c.code)) ? button("Open textbook PDF", `#/nus/textbook/${c.code}/1`, "ghost") : ""}${l.contrastDrills && l.contrastDrills.length ? button("Clarify similar concepts", `#/nus/contrast/${c.code}/${l.id}`, "ghost") : ""}${button("Review mistakes", `#/nus/review/mistakes`, "ghost")}${readerButton()}</div></details>`;
+    body += `<div class="nus-lesson-actions nus-lesson-primary-actions">${button(`← Week ${l.week}`, `#/nus/course/${c.code}`, "ghost")}${button(primaryLabel, primaryHref, "primary")}${resources}</div>`;
     body += studyCompass(l);
     const lab = repository() ? repository().getLab(l.id) : null;
     const visualCueIds = Array.isArray(l.visualIds) ? l.visualIds : [];
     const visualCueBody = visualCueIds.length ? `<p class="nus-visual-cue-intro">Use each cue as a short loop: <b>look → predict → explain</b>. <span data-nus-visual-progress>0/${visualCueIds.length} practiced</span></p>${visualCueIds.map(visualId => visualCard(visualId, { courseCode: c.code, lessonId: l.id, labId: lab && (lab.lessonId || l.id), hasLab: !!lab })).join("")}` : "";
-    body += `<div class="nus-lesson-grid"><main><section class="nus-card nus-objectives reveal"><div class="nus-teach-head"><h3>What you should be able to do</h3><span class="pill gold">${esc(l.minutes)} min</span></div><ul>${(l.objectives || []).map(objective => `<li>${esc(objective)}</li>`).join("")}</ul></section>${lab && window.ATLAS_COMPONENTS ? window.ATLAS_COMPONENTS.renderLab(l, lab) : ""}<div id="nus-lesson-read">${(l.sections || []).map(lessonSection).join("")}${(l.math || []).map(mathBlock).join("")}</div><div id="nus-lesson-work">${(l.examples || []).map(workedExample).join("")}</div>${criticalThinking(l)}<section class="nus-card nus-recall reveal" id="nus-lesson-recall"><div class="nus-teach-head"><h3>Recall before you test</h3><span class="pill">${l.questions.length} prompts</span></div><p class="nus-muted">Answer on paper first. Open each prompt only after you commit to an answer.</p><div class="nus-question-list">${l.questions.map(recallItem).join("")}</div>${button("Start this lesson in Exam Mode", `#/nus/exam/${c.code}/${l.id}`, "primary")}</section>${studyKit(l)}<div class="nus-lesson-nav">${previous ? button(`← ${previous.title}`, `#/nus/lesson/${c.code}/${previous.id}`, "ghost") : `<span></span>`}${next ? button(`Next: ${next.title} →`, `#/nus/lesson/${c.code}/${next.id}`, "primary") : button("Back to course", `#/nus/course/${c.code}`, "primary")}</div></main><aside>${visualCueIds.length ? card("Visual study cues", visualCueBody, "reveal") : ""}${card("Provenance", sourceDisclosure(l.sourceRefs, "Open source pages"), "reveal")}</aside></div>`;
+    const miniMap = `<nav class="nus-lesson-mini-map" aria-label="Lesson outline"><div class="eyebrow">In this lesson</div><a href="#nus-lesson-read" data-nus-jump="nus-lesson-read">Introduction</a>${(l.sections || []).map((section, sectionIndex) => `<a href="#nus-lesson-concept-${sectionIndex}" data-nus-jump="nus-lesson-concept-${sectionIndex}">${esc(section.title)}</a>`).join("")}<a href="#nus-lesson-recall" data-nus-jump="nus-lesson-recall">Check yourself</a><a href="#nus-lesson-practice" data-nus-jump="nus-lesson-practice">Practice</a></nav>`;
+    body += `<div class="nus-lesson-grid"><main><section class="nus-card nus-objectives reveal"><div class="nus-teach-head"><h3>What you will learn</h3><span class="pill gold">${esc(l.minutes)} min</span></div><ul>${(l.objectives || []).map(objective => `<li>${esc(objective)}</li>`).join("")}</ul></section>${lab && window.ATLAS_COMPONENTS ? window.ATLAS_COMPONENTS.renderLab(l, lab) : ""}<div id="nus-lesson-read">${(l.sections || []).map((section, sectionIndex) => lessonSection(section, sectionIndex)).join("")}${(l.math || []).map(mathBlock).join("")}</div><div id="nus-lesson-work">${(l.examples || []).map(workedExample).join("")}</div>${criticalThinking(l)}<section class="nus-card nus-recall reveal" id="nus-lesson-recall"><div class="nus-teach-head"><h3>Check yourself</h3><span class="pill">${l.questions.length} prompts</span></div><p class="nus-muted">Answer on paper first. Open each prompt only after you commit to an answer.</p><div class="nus-question-list">${l.questions.map(recallItem).join("")}</div></section>${studyKit(l, { practiceHref: `#/nus/exam/${c.code}/${l.id}`, practiceClass: "ghost" })}<div class="nus-lesson-nav">${previous ? button(`← ${previous.title}`, `#/nus/lesson/${c.code}/${previous.id}`, "ghost") : `<span></span>`}${next ? button(`Next: ${next.title} →`, `#/nus/lesson/${c.code}/${next.id}`, "ghost") : button("Back to course", `#/nus/course/${c.code}`, "ghost")}</div></main><aside>${miniMap}${visualCueIds.length ? card("Visual study cues", visualCueBody, "reveal") : ""}<details class="nus-lesson-sources"><summary>ⓘ Sources</summary>${sourceDisclosure(l.sourceRefs, "Verified source pages")}</details></aside></div>`;
     root.innerHTML = body;
     typesetNus();
     if (window.ATLAS_COMPONENTS) window.ATLAS_COMPONENTS.bind(root);
-    root.querySelector("#nus-mark-lesson").addEventListener("click", () => { window.ATLAS_STUDY_STORE.markLesson(l.id, !done, { courseCode: code, sourceRefs: l.sourceRefs }); renderLesson(code, id); });
+    if (typeof window.ATLAS_STUDY_STORE.setLastLesson === "function") window.ATLAS_STUDY_STORE.setLastLesson({ courseCode: code, lessonId: l.id });
+    root.querySelector("#nus-mark-lesson")?.addEventListener("click", () => { window.ATLAS_STUDY_STORE.markLesson(l.id, !done, { courseCode: code, sourceRefs: l.sourceRefs }); renderLesson(code, id); });
     bindLessonInteractions(code, id);
   }
 
@@ -585,13 +687,18 @@
 
   const routeTable = window.ATLAS_ROUTE_TABLE ? window.ATLAS_ROUTE_TABLE({
     dashboard: () => renderDashboard(true),
+    courses: () => renderCourses(),
     planner: () => renderPlanner(),
-    course: (parts, context) => renderCourse(parts[1], context),
+    course: (parts, context) => renderCourse(parts[1], context, parts[2]),
     collection: (parts, context) => renderCollection(parts[1], parts[2], context),
     lesson: (parts, context) => renderLesson(parts[1], parts[2], context),
     exam: (parts, context) => renderExam(parts[1], parts[2], false, context),
     "assessment-map": (parts, context) => renderAssessmentMap(parts[1] || "DSA5105", context),
-    review: (parts, context) => renderRetrieval(parts[1], context),
+    review: (parts, context) => {
+      if (parts[1] === "retrieval") return renderRetrieval(parts[2], context);
+      if (parts[1] === "mistakes") return renderMistakes(parts[2] || focusCourseCode(), context);
+      return parts[1] ? renderRetrieval(parts[1], context) : renderReviewHub();
+    },
     mistakes: (parts, context) => renderMistakes(parts[1] || focusCourseCode(), context),
     contrast: (parts, context) => renderContrast(parts[1] || focusCourseCode(), parts[2], context),
     slides: (parts, context) => renderSlides(parts[1], parts[2], parts[3], context),

@@ -147,7 +147,7 @@
   function renderMistakes(code) {
     const store = getStore();
     const mistakes = store && typeof store.mistakes === "function" ? store.mistakes(code) : [];
-    let body = pageHead(`${esc(code || "NUS")} · mistake clinic`, "Mistake Clinic", "Repair the ideas you missed recently. Each item keeps its source trail and misconception cue visible.");
+    let body = pageHead(`${esc(code || "NUS")} · review`, "Mistakes", "Repair the ideas you missed recently. Each item keeps its source trail and misconception cue visible.");
     if (!mistakes.length) {
       root.innerHTML = body + `<section class="nus-card nus-empty-state"><h3>No unresolved mistakes</h3><p>Complete a practice run first. Missed questions will appear here with a focused repair path.</p><div class="nus-lesson-actions">${button("Start a smart run", `#/nus/exam/${esc(code || "DSA5208")}`, "primary")}${button("Course map", `#/nus/course/${esc(code || "DSA5208")}`, "ghost")}${button("Back to dashboard", "#/", "ghost")}</div></section>`;
       return;

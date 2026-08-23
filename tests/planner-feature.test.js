@@ -28,7 +28,7 @@ test("planner renders assessment state without owning the data source", () => {
 
   feature.render();
 
-  assert.match(root.innerHTML, /Deadlines, checklists, and reminders/);
+  assert.match(root.innerHTML, /What is coming next\?/);
   assert.match(root.innerHTML, /DSA5105/);
   assert.match(root.innerHTML, /1\/2 checklist items/);
   assert.match(root.innerHTML, /lecture\.pdf · p\.3/);

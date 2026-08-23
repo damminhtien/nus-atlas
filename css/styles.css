@@ -737,7 +737,14 @@ html, body, .sidebar, .palette-list { scrollbar-width: thin; scrollbar-color: co
 
 /* mobile menu button */
 .menu-btn { display: none; }
-.topbar-search { display: none; }   /* one-tap search affordance, shown only when the sidebar collapses (mobile/tablet) */
+.topbar-search { display:flex; align-items:center; gap:8px; margin-left:auto; padding:7px 10px; border:1px solid var(--line); border-radius:999px; background:transparent; color:var(--ink-soft); cursor:pointer; font:12px var(--font-ui); }
+.topbar-search span { color:var(--ink-mute); font:10px var(--font-mono); }
+.topbar-search:hover, .topbar-search:focus-visible { border-color:var(--gold); color:var(--ink); }
+.mobile-primary-nav { display:none; }
+body.atlas-nus-surface .level-badge,
+body.atlas-nus-surface .xp-wrap,
+body.atlas-nus-surface .streak { display:none; }
+body.atlas-nus-surface .topbar { min-height:62px; }
 
 @media (min-width: 901px) {
   .shell { transition: grid-template-columns .24s ease; }
@@ -756,7 +763,8 @@ html, body, .sidebar, .palette-list { scrollbar-width: thin; scrollbar-color: co
   }
   .sidebar.open { transform: none; }
   .menu-btn, .topbar-search { display: grid; place-items: center; width: 42px; height: 42px; border-radius: 10px; border: 1px solid var(--line); background: var(--panel); color: var(--ink); cursor: pointer; font-size: 20px; }
-  .topbar-search { font-size: 18px; }
+  .topbar-search { font-size:18px; }
+  .topbar-search span { display:none; }
   .topbar { padding: 12px 18px; gap: 12px; flex-wrap: wrap; }
   .xp-wrap { order: 5; max-width: 100%; flex-basis: 100%; }
   /* the streak pill must never clip off the right edge on narrow screens: drop the auto-margin
@@ -1708,6 +1716,79 @@ a.gloss-item:hover .gloss-go, a.gloss-item:focus-visible .gloss-go { opacity: 1;
 .nus-visual-head b { color:var(--ink); font:600 14px/1.35 var(--font-ui); }
 .nus-visual-copy p { margin:8px 0 7px; color:var(--ink-soft); font-size:14px; line-height:1.55; }
 .nus-visual-copy strong { color:var(--gold); font-family:var(--font-ui); }
+.nus-home-continue { align-items:center; }
+.nus-home-continue h3 { max-width:27ch; }
+.nus-home-why { display:block; margin-top:12px; color:var(--gold); font:12px/1.5 var(--font-ui); }
+.nus-home-section { margin:34px 0; }
+.nus-section-heading { display:flex; align-items:end; justify-content:space-between; gap:16px; margin-bottom:12px; }
+.nus-section-heading h3 { margin:3px 0 0; font:500 24px/1.15 var(--font-disp); }
+.nus-today-list { display:grid; border-top:1px solid var(--line); }
+.nus-today-list a { display:grid; grid-template-columns:104px minmax(0, 1fr); gap:6px 16px; padding:15px 0; border-bottom:1px solid var(--line); color:var(--ink-soft); text-decoration:none; }
+.nus-today-list a::before { content:"○"; color:var(--gold); font:16px/1 var(--font-mono); }
+.nus-today-list a > b { grid-column:2; color:var(--ink); font:600 14px var(--font-ui); }
+.nus-today-list a > span { grid-column:2; color:var(--ink-mute); font:13px/1.45 var(--font-ui); }
+.nus-today-list a:hover b, .nus-today-list a:focus-visible b { color:var(--gold); }
+.nus-course-directory { display:grid; border-top:1px solid var(--line); }
+.nus-course-directory-row { display:grid; grid-template-columns:5px minmax(0, 1fr) minmax(130px, .5fr) auto; align-items:center; gap:14px; padding:16px 0; border-bottom:1px solid var(--line); color:var(--ink-soft); text-decoration:none; }
+.nus-course-directory-mark { align-self:stretch; border-radius:99px; background:var(--course); }
+.nus-course-directory-row > div { display:grid; gap:3px; min-width:0; }
+.nus-course-directory-row > div:first-of-type b { color:var(--course); font:700 12px var(--font-mono); letter-spacing:.04em; }
+.nus-course-directory-row > div:first-of-type span { overflow:hidden; color:var(--ink-soft); font:13px/1.35 var(--font-ui); text-overflow:ellipsis; white-space:nowrap; }
+.nus-course-directory-row > div:nth-of-type(2) { justify-items:end; }
+.nus-course-directory-row strong { color:var(--ink); font:600 12px var(--font-mono); }
+.nus-course-directory-row i { display:block; width:100%; height:5px; overflow:hidden; border-radius:99px; background:var(--line); }
+.nus-course-directory-row em { display:block; height:100%; border-radius:inherit; background:var(--course); }
+.nus-course-directory-row > span:last-child { color:var(--ink-mute); }
+.nus-course-directory-row:hover, .nus-course-directory-row:focus-visible { background:color-mix(in srgb, var(--course) 5%, transparent); }
+.nus-course-continue { display:flex; flex-wrap:wrap; align-items:center; gap:8px 12px; margin:0 0 26px; padding:12px 0; border-bottom:1px solid var(--line); color:var(--ink-soft); font:13px var(--font-ui); }
+.nus-course-continue > span { color:var(--gold); font:700 10px var(--font-mono); letter-spacing:.08em; text-transform:uppercase; }
+.nus-course-continue > a { color:var(--ink); text-decoration:none; }
+.nus-course-continue > a:hover { color:var(--gold); }
+.nus-review-hub { display:grid; gap:18px; }
+.nus-review-priority { display:flex; align-items:center; justify-content:space-between; gap:24px; padding:clamp(24px, 3vw, 34px); border:1px solid color-mix(in srgb, var(--nus-orange) 65%, var(--line)); border-radius:var(--radius); background:linear-gradient(135deg, color-mix(in srgb, var(--nus-orange) 14%, var(--panel)), color-mix(in srgb, var(--nus-blue) 72%, var(--panel))); }
+.nus-review-priority h3 { margin:5px 0; font:500 27px/1.12 var(--font-disp); }
+.nus-review-priority p { max-width:58ch; margin:0; color:var(--ink-soft); line-height:1.55; }
+.nus-review-grid { display:grid; grid-template-columns:repeat(2, minmax(0, 1fr)); gap:18px; }
+.nus-course-tabs { display:flex; gap:4px; width:max-content; margin:0 0 22px; padding:4px; border:1px solid var(--line); border-radius:999px; background:color-mix(in srgb, var(--panel) 78%, transparent); }
+.nus-course-tabs a { padding:7px 13px; border-radius:999px; color:var(--ink-mute); font:600 12px var(--font-ui); text-decoration:none; }
+.nus-course-tabs a.is-active { background:var(--panel-2); color:var(--ink); box-shadow:0 3px 14px -10px var(--shadow); }
+.nus-course-tabs a:hover, .nus-course-tabs a:focus-visible { color:var(--gold); }
+.nus-course-progress { grid-template-columns:minmax(0, 1fr) auto; align-items:center; }
+.nus-course-progress > div { display:grid; gap:4px; }
+.nus-course-progress > b { color:var(--ink); font:600 15px var(--font-ui); }
+.nus-course-progress .nus-progress, .nus-course-progress > .nus-muted { grid-column:1 / -1; }
+.nus-course-progress .btn { justify-self:start; }
+.nus-timeline-week { padding:16px 0; border-top:1px solid var(--line); }
+.nus-timeline-week:last-child { border-bottom:1px solid var(--line); }
+.nus-timeline-week-head { display:flex; align-items:start; justify-content:space-between; gap:16px; margin-bottom:6px; }
+.nus-timeline-week-head h3, .nus-topic-section h3 { margin:3px 0 0; color:var(--ink); font:500 22px/1.2 var(--font-disp); }
+.nus-timeline-week-head > span { color:var(--ink-mute); font:11px var(--font-mono); white-space:nowrap; }
+.nus-timeline-week.is-current { position:relative; margin:8px -14px; padding:18px 14px; border:1px solid color-mix(in srgb, var(--gold) 34%, var(--line)); border-radius:13px; background:color-mix(in srgb, var(--gold) 6%, transparent); }
+.nus-timeline-week.is-current .nus-timeline-week-head > span { color:var(--gold); }
+.nus-timeline-week.is-complete { opacity:.76; }
+.nus-topic-section { margin:0; padding:18px 0; border-top:1px solid var(--line); }
+.nus-topic-section:last-child { border-bottom:1px solid var(--line); }
+.nus-course-resources, .nus-lesson-sources { padding:15px 0; border-top:1px solid var(--line); }
+.nus-course-resources summary, .nus-lesson-sources summary { cursor:pointer; color:var(--ink-soft); font:600 13px var(--font-ui); }
+.nus-course-resources[open], .nus-lesson-sources[open] { display:grid; gap:13px; }
+.nus-course-resources p { margin:0; }
+.nus-source-groups { display:grid; gap:14px; }
+.nus-lesson-primary-actions { align-items:center; }
+.nus-lesson-more { margin-left:auto; }
+.nus-lesson-more summary { padding:8px 10px; border:1px solid var(--line); border-radius:9px; color:var(--ink-soft); cursor:pointer; font:600 12px var(--font-ui); list-style:none; }
+.nus-lesson-more summary::-webkit-details-marker { display:none; }
+.nus-lesson-more[open] { position:relative; }
+.nus-lesson-more[open] > summary { border-color:var(--gold); color:var(--gold); }
+.nus-lesson-more-actions { position:absolute; right:0; z-index:30; display:grid; gap:7px; min-width:210px; margin-top:8px; padding:9px; border:1px solid var(--line); border-radius:12px; background:var(--panel); box-shadow:0 22px 45px -26px var(--shadow); }
+.nus-lesson-more-actions .btn { justify-content:flex-start; width:100%; text-align:left; }
+.nus-lesson-more-actions .nus-reader-toggle { margin:0; }
+.nus-lesson-mini-map { display:grid; gap:2px; padding:16px; border:1px solid var(--line); border-radius:var(--radius); background:color-mix(in srgb, var(--panel) 90%, transparent); }
+.nus-lesson-mini-map .eyebrow { margin-bottom:6px; }
+.nus-lesson-mini-map a { padding:7px 0; border-bottom:1px solid color-mix(in srgb, var(--line) 72%, transparent); color:var(--ink-mute); font:12px/1.4 var(--font-ui); text-decoration:none; }
+.nus-lesson-mini-map a:last-child { border-bottom:0; }
+.nus-lesson-mini-map a:hover, .nus-lesson-mini-map a:focus-visible { color:var(--gold); }
+.nus-practice-next details { margin-top:14px; }
+.nus-practice-next > details > summary { color:var(--ink-soft); cursor:pointer; font:600 13px var(--font-ui); }
 .nus-visual-copy small { color:var(--ink-mute); font:11px/1.45 var(--font-ui); }
 .nus-visual-status { justify-self:start; color:var(--ink-mute); font:10px var(--font-mono); letter-spacing:.4px; text-transform:uppercase; }
 .nus-visual.is-practiced { border-left:2px solid var(--sage); padding-left:12px; }
@@ -1733,8 +1814,8 @@ body.nus-reading-mode #app.nus-root .nus-lesson-grid { grid-template-columns:min
 body.nus-reading-mode #app.nus-root .nus-lesson-grid > aside { display:none; }
 body.nus-reading-mode .nus-study-compass { position:sticky; top:16px; z-index:20; backdrop-filter:blur(12px); }
 @media (max-width: 1050px) { #app.nus-root .nus-grid-4 { grid-template-columns:repeat(2, minmax(0, 1fr)); } #app.nus-root .nus-course-layout, #app.nus-root .nus-lesson-grid, #app.nus-root .nus-sql-layout { grid-template-columns:1fr; } #app.nus-root .nus-lesson-grid > aside { position:static; grid-template-columns:repeat(2, minmax(0, 1fr)); } }
-@media (max-width: 760px) { .topbar-context, .level-meta, .xp-wrap { display:none; } .topbar { justify-content:space-between; } #app.nus-root { padding:28px 18px 84px; } .nus-reader-toggle { margin-left:0; } .nus-study-compass { grid-template-columns:repeat(2, minmax(0, 1fr)); } #app.nus-root .nus-lesson-grid > aside { grid-template-columns:1fr; } }
-@media (max-width: 700px) { .nus-hero, .nus-two-col, .nus-sim-grid { grid-template-columns:1fr; display:grid; } .nus-grid-4 { grid-template-columns:1fr; } .nus-teach-card, .nus-example { padding:18px; } .nus-assessment-controls, .nus-exam-footer { align-items:flex-start; flex-direction:column; } .nus-source { text-align:left; } .nus-assessment-head { align-items:flex-start; flex-direction:column; } .nus-assessment-meta { text-align:left; } .nus-course-meta .btn { margin-left:0; } .nus-date { white-space:normal; } .nus-pipeline i { display:none; } .nus-exam-counts { grid-template-columns:1fr; } .nus-lesson-nav { align-items:stretch; flex-direction:column; } }
+@media (max-width: 760px) { .topbar-context, .level-meta, .xp-wrap { display:none; } .topbar { justify-content:space-between; } #app.nus-root { padding:28px 18px 98px; } .nus-reader-toggle { margin-left:0; } .nus-study-compass { grid-template-columns:repeat(2, minmax(0, 1fr)); } #app.nus-root .nus-lesson-grid > aside { grid-template-columns:1fr; } body.atlas-nus-surface .mobile-primary-nav { position:fixed; right:12px; bottom:12px; left:12px; z-index:70; display:grid; grid-template-columns:repeat(4, minmax(0, 1fr)); padding:5px; border:1px solid var(--line); border-radius:14px; background:color-mix(in srgb, var(--panel) 93%, transparent); box-shadow:0 18px 42px -22px var(--shadow); backdrop-filter:blur(12px); } body.atlas-nus-surface .mobile-primary-nav a { padding:9px 5px; border-radius:10px; color:var(--ink-mute); font:600 11px var(--font-ui); text-align:center; text-decoration:none; } body.atlas-nus-surface .mobile-primary-nav a.active { background:color-mix(in srgb, var(--gold) 13%, var(--panel)); color:var(--gold); } }
+@media (max-width: 700px) { .nus-hero, .nus-two-col, .nus-sim-grid { grid-template-columns:1fr; display:grid; } .nus-grid-4 { grid-template-columns:1fr; } .nus-teach-card, .nus-example { padding:18px; } .nus-assessment-controls, .nus-exam-footer { align-items:flex-start; flex-direction:column; } .nus-source { text-align:left; } .nus-assessment-head { align-items:flex-start; flex-direction:column; } .nus-assessment-meta { text-align:left; } .nus-course-meta .btn { margin-left:0; } .nus-date { white-space:normal; } .nus-pipeline i { display:none; } .nus-exam-counts { grid-template-columns:1fr; } .nus-lesson-nav { align-items:stretch; flex-direction:column; } .nus-section-heading, .nus-review-priority { align-items:flex-start; flex-direction:column; } .nus-course-directory-row { grid-template-columns:5px minmax(0, 1fr) auto; } .nus-course-directory-row > div:nth-of-type(2) { display:none; } .nus-today-list a { grid-template-columns:24px minmax(0, 1fr); gap:4px 10px; } .nus-lesson-more { margin-left:0; } .nus-lesson-primary-actions .btn.primary { flex:1; text-align:center; } }
 @media (max-width: 560px) { .nus-exam-schedule-row { align-items:flex-start; flex-direction:column; } .nus-exam-schedule-count { min-width:0; text-align:left; } .nus-exam-schedule-actions { justify-content:stretch; } .nus-exam-schedule-actions .btn { flex:1; text-align:center; } }
 
 /* Evidence-based study loop and reusable visual-learning labs. */

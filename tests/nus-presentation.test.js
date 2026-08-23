@@ -13,7 +13,7 @@ test("presentation helpers escape reader content and preserve source labels", ()
   const view = presentation();
   assert.equal(view.esc("<script>"), "&lt;script&gt;");
   assert.match(view.pageHead("Week 1", "Title", "A & B"), /A &amp; B/);
-  assert.match(view.pageHead("DSA5104", "Title", ""), /href="#\/nus\/exam\/DSA5104"/);
+  assert.doesNotMatch(view.pageHead("DSA5104", "Title", ""), /nus-quick-nav|Practice|Planner/);
   assert.match(view.sourceItem({ sourceId: "Textbook.pdf", sourceType: "textbook", page: 31, role: "depth" }), /Textbook\.pdf · p\.31/);
 });
 
@@ -65,6 +65,16 @@ test("presentation helpers render visual cues without owning data", () => {
   assert.match(html, /data-nus-visual-practice="visual"/);
   assert.match(view.visualCard("missing"), /^$/);
   assert.match(view.studyCompass({ sections: [], examples: [], criticalQuestions: [], questions: [] }), /Read/);
+});
+
+test("lesson helpers keep practice contextual and extra material collapsed", () => {
+  const view = presentation();
+  const section = view.lessonSection({ title: "Empirical risk", body: "Observed loss." }, 2);
+  const practice = view.studyKit({ questions: [{ id: "q1" }], flashcards: [], homework: [], codeExercises: [] }, { practiceHref: "#/nus/exam/DSA5105/erm", practiceClass: "ghost" });
+  assert.match(section, /id="nus-lesson-concept-2"/);
+  assert.match(practice, /Ready to test yourself\?/);
+  assert.match(practice, /Practice 1 questions/);
+  assert.match(practice, /More practice materials/);
 });
 
 test("same-lesson visual labs use an in-page anchor instead of an SPA route", () => {

@@ -42,11 +42,11 @@
   function render() {
     const store = getStore();
     let body = pageHead(
-      "NUS planner",
-      "Deadlines, checklists, and reminders",
-      "Use status and checklist items to turn each assessment into a reverse study plan. Dates come from local course sources or the NUSMods snapshot."
+      "Plan",
+      "What is coming next?",
+      "Confirmed assessments appear here with the next useful preparation step. Dates stay pending until an official source confirms them."
     );
-    body += `<div class="nus-callout"><b>Reminder policy</b><span>Confirmed dates surface at 7, 3, and 1 day. Partially confirmed timing stays visible without inventing a date or time.</span></div>`;
+    body += `<div class="nus-callout"><b>Plan with confidence</b><span>Confirmed dates surface at 7, 3, and 1 day. Partially confirmed timing stays visible without inventing a date or time.</span></div>`;
     body += `<div class="nus-planner-list">${getAssessments().map(assessment => {
       const task = store.task(assessment.id);
       const checks = Array.isArray(task.checks) ? task.checks : [];
