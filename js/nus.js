@@ -34,10 +34,22 @@
     if (timing.timeStatus === "confirmed" && timing.time) return `${fmtDateOnly(assessment.date)} · ${timing.time}`;
     return fmtDate(assessment.date);
   }
+  function assessmentWeightLabel(assessment) {
+    return assessment && assessment.weightLabel ? assessment.weightLabel : (assessment && assessment.weight != null ? `${assessment.weight}%` : "Weight pending");
+  }
   function dayCount(value) {
     if (!value) return null;
     return Math.ceil((new Date(value).getTime() - Date.now()) / 86400000);
   }
+  const examScheduleFeature = window.ATLAS_EXAM_SCHEDULE_FEATURE ? window.ATLAS_EXAM_SCHEDULE_FEATURE({
+    getCourses: courses,
+    getSchedule: schedule,
+    getAssessments: assessments,
+    esc,
+    button,
+    formatDate: fmtDate,
+    isDashboard: () => !location.hash || location.hash === "#/"
+  }) : null;
   function progress(code) { return window.ATLAS_STUDY_STORE.courseProgress(code, lessons(code)); }
   function slideResume(code, slideSet) {
     if (!slideSet || !window.ATLAS_STUDY_STORE || typeof window.ATLAS_STUDY_STORE.readingFor !== "function") return { number: 1, label: "Open lecture slides" };
@@ -128,7 +140,7 @@
     const status = due ? `${due} concept${due === 1 ? "" : "s"} due now` : next ? `Next: ${fmtDate(next.dueAt)}` : "Mastered concepts will be scheduled automatically.";
     return card("Spaced retrieval", `<p>Keep mastered ideas active with <b>1–2 questions</b>. No lesson reread is required.</p><p class="nus-muted">${esc(status)}</p>${button(due ? "Start retrieval" : "Open retrieval queue", "#/nus/review", due ? "primary" : "ghost")}`, "reveal");
   }
-  function examCountdownCards() { return courses().map(c => ({ code: c.code, exam: (schedule().courses[c.code] || {}).exam })).map(x => `<div class="nus-exam-count"><b>${esc(x.code)}</b><span>${x.exam && x.exam.date ? esc(fmtDate(x.exam.date)) : "Date pending"}</span><small>${x.exam && x.exam.date ? `${Math.max(0, dayCount(x.exam.date))} days left` : "Check course announcement"}</small></div>`).join(""); }
+  function examCountdownCards() { return examScheduleFeature ? examScheduleFeature.renderCards() : ""; }
   function bindDashboard() {
     root.querySelectorAll("[data-nus-focus]").forEach(b => b.addEventListener("click", () => startFocus(Number(b.dataset.nusFocus))));
     root.querySelector("#nus-focus-course")?.addEventListener("change", event => {
@@ -146,7 +158,13 @@
     tick(); focusTimer = setInterval(tick, 1000);
   }
 
-  function renderDashboard() {
+  function stopFocusBlock() {
+    if (!focusTimer) return;
+    clearInterval(focusTimer);
+    focusTimer = null;
+  }
+
+  function renderDashboard(showExamPopup = false) {
     const upcoming = allUpcoming().slice(0, 5);
     const pending = assessments().filter(a => !a.date).length;
     const nearest = upcoming[0], nearestDays = nearest && dayCount(nearest.date);
@@ -156,17 +174,18 @@
     body += `<div class="nus-grid nus-grid-4">${courses().map(c => `<article class="nus-course-card reveal" style="--course:${esc(c.color)}"><div class="nus-course-top"><span class="nus-code">${esc(c.code)}</span><span class="pill">${progress(c.code).pct}%</span></div><h3>${esc(c.title)}</h3><p>${text(c.description)}</p>${courseProgressBar(c.code)}<div class="nus-card-actions">${button("Study course", `#/nus/course/${c.code}`, "ghost")}${button("Practice", `#/nus/exam/${c.code}`, "ghost")}</div></article>`).join("")}</div>`;
     body += learningSignals(focusCourseCode());
     body += retrievalCard();
-    body += `<div class="nus-two-col"><div>${card("Today’s focus", `<p>${open ? `Continue <b>${esc(open.lesson.title)}</b> in ${esc(open.course.code)}.` : "All seeded lessons are complete — use Exam Mode for maintenance."}</p><div class="nus-focus-clock"><b id="nus-focus-time">25:00</b><span id="nus-focus-state">Choose a focus block</span></div><div class="nus-tool-grid"><button class="btn ghost" data-nus-focus="25">25 min</button><button class="btn ghost" data-nus-focus="50">50 min</button>${open ? button("Open lesson", `#/nus/lesson/${open.course.code}/${open.lesson.id}`, "ghost") : ""}</div>`, "reveal")}</div><div>${card("Exam countdown", `<div class="nus-exam-counts">${examCountdownCards()}</div><p class="nus-muted">DSA5208 remains date pending until an official date is available.</p>`, "reveal")}</div></div>`;
+    body += `<div class="nus-two-col"><div>${card("Today’s focus", `<p>${open ? `Continue <b>${esc(open.lesson.title)}</b> in ${esc(open.course.code)}.` : "All seeded lessons are complete — use Exam Mode for maintenance."}</p><div class="nus-focus-clock"><b id="nus-focus-time">25:00</b><span id="nus-focus-state">Choose a focus block</span></div><div class="nus-tool-grid"><button class="btn ghost" data-nus-focus="25">25 min</button><button class="btn ghost" data-nus-focus="50">50 min</button>${open ? button("Open lesson", `#/nus/lesson/${open.course.code}/${open.lesson.id}`, "ghost") : ""}</div>`, "reveal")}</div><div>${card("Exam countdown", `<div class="nus-exam-counts">${examCountdownCards()}</div><p class="nus-muted">DSA5208 has no midterm or final exam; its three projects are tracked in Planner.</p>`, "reveal")}</div></div>`;
     body += card("Practice history", latest ? `<p>Latest ${esc(latest.courseCode)} attempt: <b>${latest.score}/${latest.total}</b>. Use the review deck after each attempt to target misses.</p>${button("Practice again", `#/nus/exam/${latest.courseCode}`, "ghost")}` : `<p class="nus-muted">No NUS attempt yet. Start a short scoped run to create a personal weak-topic signal.</p>${button("Start a practice run", "#/nus/exam", "ghost")}`, "reveal");
     body += `<div class="nus-two-col"><div>${card("Upcoming work", upcoming.length ? `<div class="nus-list">${upcoming.map(a => assessmentRow(a)).join("")}</div>` : `<div class="nus-empty">No confirmed dates.</div>`, "reveal")}</div><div>${card("What needs confirmation", `<p class="nus-muted">${pending} assessment milestone${pending === 1 ? "" : "s"} still has a date pending.</p><p class="nus-muted">Reminders are shown at 7, 3, and 1 day before a confirmed date. The app never invents a deadline.</p>${button("Review planner", "#/nus/planner", "ghost")}`, "reveal")}</div></div>`;
     body += card("Study spaces", `<div class="nus-tool-grid">${button("SQL practice · DSA5104", "#/nus/sql", "ghost")}${button("Distributed simulations · DSA5208", "#/nus/simulations", "ghost")}${button("Mixed practice · DSA5101/5105", "#/nus/exam", "ghost")}${button("Reference library", "#/atlas", "ghost")}</div>`, "reveal");
     root.innerHTML = body;
     bindDashboard();
+    if (showExamPopup && examScheduleFeature) window.setTimeout(() => examScheduleFeature.showPopup(), 0);
   }
 
   function assessmentRow(a) {
     const days = dayCount(a.date), reminder = days != null && [7, 3, 1].includes(days) ? ` · reminder ${days}d` : "";
-    return `<a class="nus-list-row" href="#/nus/planner" data-route><div><b>${esc(a.title)}</b><span>${esc(courseName(a.courseCode))} · ${esc(a.kind)} · ${a.weight}%</span></div><div class="nus-date">${esc(fmtAssessmentDate(a))}<small>${days < 0 ? "overdue" : `${Math.max(0, days)}d left`}${reminder}</small></div></a>`;
+    return `<a class="nus-list-row" href="#/nus/planner" data-route><div><b>${esc(a.title)}</b><span>${esc(courseName(a.courseCode))} · ${esc(a.kind)} · ${esc(assessmentWeightLabel(a))}</span></div><div class="nus-date">${esc(fmtAssessmentDate(a))}<small>${days < 0 ? "overdue" : `${Math.max(0, days)}d left`}${reminder}</small></div></a>`;
   }
 
   const plannerFeature = window.ATLAS_PLANNER_FEATURE ? window.ATLAS_PLANNER_FEATURE({
@@ -178,96 +197,116 @@
     dayCount,
     fmtDate,
     formatAssessmentDate: fmtAssessmentDate,
+    formatAssessmentWeight: assessmentWeightLabel,
     statusPill,
     sourceLabel,
     esc
   }) : null;
   function renderPlanner() { return plannerFeature ? plannerFeature.render() : renderNotFound(); }
 
-  function ensureCourseLoaded(code, onReady) {
+  function routeIsCurrent(context, route) {
+    return (!context || typeof context.isCurrent !== "function" || context.isCurrent()) && location.hash === route;
+  }
+
+  function ensureCourseLoaded(code, context) {
     const repo = repository();
-    if (!repo || typeof repo.needsLoad !== "function" || !repo.needsLoad(code)) return false;
+    if (!repo || typeof repo.needsLoad !== "function" || !repo.needsLoad(code)) return null;
     const route = location.hash;
     root.innerHTML = `<section class="nus-card reveal"><div class="eyebrow">Loading course package</div><h2>${esc(code)}</h2><p>Fetching the normalized lessons, questions, and study kit…</p></section>`;
-    repo.loadCourse(code).then(packageData => {
-      if (location.hash !== route) return;
-      if (packageData) onReady();
-      else root.innerHTML = `<section class="nus-card reveal"><div class="eyebrow">Course unavailable</div><h2>${esc(code)}</h2><p>The course package could not be loaded. The legacy adapter remains available for other courses.</p></section>`;
+    return repo.loadCourse(code).then(packageData => {
+      if (!routeIsCurrent(context, route)) return false;
+      if (packageData) return true;
+      root.innerHTML = `<section class="nus-card reveal"><div class="eyebrow">Course unavailable</div><h2>${esc(code)}</h2><p>The course package could not be loaded. The legacy adapter remains available for other courses.</p></section>`;
+      return false;
     }).catch(error => {
-      if (location.hash !== route) return;
-      root.innerHTML = `<section class="nus-card reveal"><div class="eyebrow">Course unavailable</div><h2>${esc(code)}</h2><p>${esc(error.message || "The course package could not be loaded.")}</p></section>`;
+      if (routeIsCurrent(context, route)) root.innerHTML = `<section class="nus-card reveal"><div class="eyebrow">Course unavailable</div><h2>${esc(code)}</h2><p>${esc(error.message || "The course package could not be loaded.")}</p></section>`;
+      return false;
     });
-    return true;
   }
 
-  function ensureLessonLoaded(code, id, onReady) {
+  function ensureLessonLoaded(code, id, context) {
     const repo = repository();
-    if (!repo || typeof repo.loadLesson !== "function" || (typeof repo.isLessonLoaded === "function" && repo.isLessonLoaded(code, id))) return false;
+    if (!repo || typeof repo.loadLesson !== "function" || (typeof repo.isLessonLoaded === "function" && repo.isLessonLoaded(code, id))) return null;
     const route = location.hash;
     root.innerHTML = `<section class="nus-card reveal"><div class="eyebrow">Loading lesson payload</div><h2>${esc(id)}</h2><p>Fetching this lesson, its questions, and study kit…</p></section>`;
-    repo.loadLesson(code, id).then(payload => {
-      if (location.hash !== route) return;
-      if (payload) onReady();
-      else renderNotFound();
+    return repo.loadLesson(code, id).then(payload => {
+      if (!routeIsCurrent(context, route)) return false;
+      if (payload) return true;
+      renderNotFound();
+      return false;
     }).catch(error => {
-      if (location.hash !== route) return;
-      root.innerHTML = `<section class="nus-card reveal"><div class="eyebrow">Lesson unavailable</div><h2>${esc(id)}</h2><p>${esc(error.message || "The lesson payload could not be loaded.")}</p></section>`;
+      if (routeIsCurrent(context, route)) root.innerHTML = `<section class="nus-card reveal"><div class="eyebrow">Lesson unavailable</div><h2>${esc(id)}</h2><p>${esc(error.message || "The lesson payload could not be loaded.")}</p></section>`;
+      return false;
     });
-    return true;
   }
 
-  function ensureSlidesLoaded(code, onReady) {
+  function ensureSlidesLoaded(code, context) {
     const repo = repository();
-    if (!repo || typeof repo.loadSlides !== "function" || (repo.getSlideSets(code) || []).length) return false;
+    if (!repo || typeof repo.loadSlides !== "function" || (repo.getSlideSets(code) || []).length) return null;
     const route = location.hash;
     root.innerHTML = `<section class="nus-card reveal"><div class="eyebrow">Loading lecture slides</div><h2>${esc(code)}</h2><p>Fetching the slide shard for this lecture…</p></section>`;
-    repo.loadSlides(code).then(() => { if (location.hash === route) onReady(); }).catch(error => {
-      if (location.hash === route) root.innerHTML = `<section class="nus-card reveal"><div class="eyebrow">Slides unavailable</div><h2>${esc(code)}</h2><p>${esc(error.message || "The slide payload could not be loaded.")}</p></section>`;
+    return repo.loadSlides(code).then(slides => {
+      if (!routeIsCurrent(context, route)) return false;
+      if (slides && slides.length) return true;
+      root.innerHTML = `<section class="nus-card reveal"><div class="eyebrow">Slides unavailable</div><h2>${esc(code)}</h2><p>No lecture slide set is available for this course.</p></section>`;
+      return false;
+    }).catch(error => {
+      if (routeIsCurrent(context, route)) root.innerHTML = `<section class="nus-card reveal"><div class="eyebrow">Slides unavailable</div><h2>${esc(code)}</h2><p>${esc(error.message || "The slide payload could not be loaded.")}</p></section>`;
+      return false;
     });
-    return true;
   }
 
-  function ensureTextbookLoaded(code, onReady) {
+  function ensureTextbookLoaded(code, context) {
     const repo = repository();
-    if (!repo || typeof repo.loadTextbook !== "function" || (repo.getTextbook && repo.getTextbook(code))) return false;
+    if (!repo || typeof repo.loadTextbook !== "function" || (repo.getTextbook && repo.getTextbook(code))) return null;
     const route = location.hash;
     root.innerHTML = `<section class="nus-card reveal"><div class="eyebrow">Loading textbook reader</div><h2>${esc(code)}</h2><p>Fetching the textbook PDF reader metadata…</p></section>`;
-    repo.loadTextbook(code).then(textbook => { if (location.hash === route && textbook) onReady(); }).catch(error => {
-      if (location.hash === route) root.innerHTML = `<section class="nus-card reveal"><div class="eyebrow">Textbook unavailable</div><h2>${esc(code)}</h2><p>${esc(error.message || "The textbook payload could not be loaded.")}</p></section>`;
+    return repo.loadTextbook(code).then(textbook => {
+      if (!routeIsCurrent(context, route)) return false;
+      if (textbook) return true;
+      root.innerHTML = `<section class="nus-card reveal"><div class="eyebrow">Textbook unavailable</div><h2>${esc(code)}</h2><p>The textbook reader metadata is not available for this course.</p></section>`;
+      return false;
+    }).catch(error => {
+      if (routeIsCurrent(context, route)) root.innerHTML = `<section class="nus-card reveal"><div class="eyebrow">Textbook unavailable</div><h2>${esc(code)}</h2><p>${esc(error.message || "The textbook payload could not be loaded.")}</p></section>`;
+      return false;
     });
-    return true;
   }
 
-  function ensurePracticeLoaded(code, onReady) {
+  function ensurePracticeLoaded(code, context) {
     const repo = repository();
-    if (!repo || typeof repo.loadCourse !== "function") return false;
+    if (!repo || typeof repo.loadCourse !== "function") return null;
     const codes = code ? [code] : courses().map(item => item.code);
     const pending = codes.flatMap(courseCode => lessons(courseCode)
       .filter(item => !(typeof repo.isLessonLoaded === "function" && repo.isLessonLoaded(courseCode, item.id)))
       .map(item => ({ courseCode, lessonId: item.id })));
     const needsCourse = codes.some(courseCode => typeof repo.needsLoad === "function" && repo.needsLoad(courseCode));
-    if (!pending.length && !needsCourse) return false;
+    if (!pending.length && !needsCourse) return null;
     const route = location.hash;
     root.innerHTML = `<section class="nus-card reveal"><div class="eyebrow">Preparing practice surface</div><h2>${esc(code || "NUS courses")}</h2><p>Loading question and study-kit shards only for this practice run…</p></section>`;
-    Promise.all(codes.map(courseCode => repo.loadCourse(courseCode)))
+    return Promise.all(codes.map(courseCode => repo.loadCourse(courseCode)))
       .then(() => Promise.all(pending.map(item => repo.loadLesson(item.courseCode, item.lessonId))))
       .then(() => {
-      if (location.hash === route) onReady();
+      if (!routeIsCurrent(context, route)) return false;
+      return true;
     }).catch(error => {
-      if (location.hash === route) root.innerHTML = `<section class="nus-card reveal"><div class="eyebrow">Practice unavailable</div><h2>${esc(code)}</h2><p>${esc(error.message || "The practice payload could not be loaded.")}</p></section>`;
+      if (routeIsCurrent(context, route)) root.innerHTML = `<section class="nus-card reveal"><div class="eyebrow">Practice unavailable</div><h2>${esc(code || "NUS courses")}</h2><p>${esc(error.message || "The practice payload could not be loaded.")}</p></section>`;
+      return false;
     });
-    return true;
   }
 
-  function renderCourse(code) {
-    if (ensureCourseLoaded(code, () => renderCourse(code))) return;
+  async function renderCourse(code, context) {
+    const loading = ensureCourseLoaded(code, context);
+    if (loading) {
+      if (!await loading || (context && !context.isCurrent())) return;
+      return renderCourse(code, context);
+    }
     const c = course(code);
     if (!c) return renderNotFound();
     let body = pageHead(c.code, c.title, c.description);
     const hasContrasts = lessons(c.code).some(item => Array.isArray(item.contrastDrills) && item.contrastDrills.length);
     body += `<div class="nus-course-meta"><span>${esc(c.department)} · ${esc(c.faculty)}</span><span>Workload ${esc(c.workload.join(" / "))}</span>${c.code === "DSA5105" ? button("Exam & homework map", `#/nus/assessment-map/${c.code}`, "ghost") : ""}${hasContrasts ? button("Concept contrasts", `#/nus/contrast/${c.code}`, "ghost") : ""}${repository() && repository().hasTextbook && repository().hasTextbook(c.code) ? button("Textbook PDF", `#/nus/textbook/${c.code}/1`, "ghost") : ""}${button("Exam mode", `#/nus/exam/${c.code}`, "primary")}</div>`;
     const lessonsByWeek = list => (list || []).slice().sort((a, b) => (Number(a.week) || 0) - (Number(b.week) || 0) || String(a.id).localeCompare(String(b.id)));
-    body += `<div class="nus-course-layout"><div><div class="nus-course-progress"><b>Course progress</b>${courseProgressBar(c.code)}</div>${content(c.code).modules.map(m => `<section class="nus-module reveal"><div class="eyebrow">${esc(m.title)}</div>${lessonsByWeek(m.lessons).map(l => `<a class="nus-lesson-row" href="#/nus/lesson/${esc(c.code)}/${esc(l.id)}" data-route><span class="nus-lesson-dot ${window.ATLAS_STUDY_STORE.lessonDone(l.id) ? "done" : ""}">${window.ATLAS_STUDY_STORE.lessonDone(l.id) ? "✓" : ""}</span><div><b>${esc(l.title)}</b><span>Week ${esc(l.week)} · ${esc(l.minutes)} min · ${(l.questionIds || []).length} practice prompts${l.hasVisualLab ? " · visual lab" : ""}</span></div><span>→</span></a>`).join("")}</section>`).join("")}</div><aside>${card("Assessment weight", assessments().filter(a => a.courseCode === c.code).map(a => `<div class="nus-weight"><span>${esc(a.title)}</span><b>${a.weight}%</b></div>`).join(""), "reveal")}${card("Sources", sourceGroups(c).map(g => `<div class="nus-source-group"><b>${esc(g.label)}</b><ul class="nus-source-list">${g.refs.map(r => `<li>${sourceItem(r)}</li>`).join("")}</ul></div>`).join("")+`<a class="nus-external" href="${esc(c.nusmods.url)}" target="_blank" rel="noreferrer">NUSMods course page ↗</a>`, "reveal")}</aside></div>`;
+    body += `<div class="nus-course-layout"><div><div class="nus-course-progress"><b>Course progress</b>${courseProgressBar(c.code)}</div>${content(c.code).modules.map(m => `<section class="nus-module reveal"><div class="eyebrow">${esc(m.title)}</div>${lessonsByWeek(m.lessons).map(l => `<a class="nus-lesson-row" href="#/nus/lesson/${esc(c.code)}/${esc(l.id)}" data-route><span class="nus-lesson-dot ${window.ATLAS_STUDY_STORE.lessonDone(l.id) ? "done" : ""}">${window.ATLAS_STUDY_STORE.lessonDone(l.id) ? "✓" : ""}</span><div><b>${esc(l.title)}</b><span>Week ${esc(l.week)} · ${esc(l.minutes)} min · ${(l.questionIds || []).length} practice prompts${l.hasVisualLab ? " · visual lab" : ""}</span></div><span>→</span></a>`).join("")}</section>`).join("")}</div><aside>${card("Assessment weight", assessments().filter(a => a.courseCode === c.code).map(a => `<div class="nus-weight"><span>${esc(a.title)}</span><b>${esc(assessmentWeightLabel(a))}</b></div>`).join(""), "reveal")}${card("Sources", sourceGroups(c).map(g => `<div class="nus-source-group"><b>${esc(g.label)}</b><ul class="nus-source-list">${g.refs.map(r => `<li>${sourceItem(r)}</li>`).join("")}</ul></div>`).join("")+`<a class="nus-external" href="${esc(c.nusmods.url)}" target="_blank" rel="noreferrer">NUSMods course page ↗</a>`, "reveal")}</aside></div>`;
     root.innerHTML = body;
   }
 
@@ -293,9 +332,17 @@
     }));
     bindVisualCueProgress();
   }
-  function renderLesson(code, id) {
-    if (ensureCourseLoaded(code, () => renderLesson(code, id))) return;
-    if (ensureLessonLoaded(code, id, () => renderLesson(code, id))) return;
+  async function renderLesson(code, id, context) {
+    const courseLoading = ensureCourseLoaded(code, context);
+    if (courseLoading) {
+      if (!await courseLoading || (context && !context.isCurrent())) return;
+      return renderLesson(code, id, context);
+    }
+    const lessonLoading = ensureLessonLoaded(code, id, context);
+    if (lessonLoading) {
+      if (!await lessonLoading || (context && !context.isCurrent())) return;
+      return renderLesson(code, id, context);
+    }
     const c = course(code), l = lesson(code, id);
     if (!c || !l) return renderNotFound();
     const done = window.ATLAS_STUDY_STORE.lessonDone(l.id);
@@ -332,13 +379,21 @@
     typeset: typesetNus
   }) : null;
   function stopExamTimer() { if (examFeature) examFeature.stopTimer(); }
-  function renderExam(code, scope, internal) {
+  async function renderExam(code, scope, internal, context) {
     const selectedCode = code || focusCourseCode();
-    if (!internal && ensurePracticeLoaded(selectedCode, () => renderExam(selectedCode, scope, false))) return;
+    const loading = !internal && ensurePracticeLoaded(selectedCode, context);
+    if (loading) {
+      if (!await loading || (context && !context.isCurrent())) return;
+      return renderExam(selectedCode, scope, false, context);
+    }
     return examFeature ? examFeature.render(selectedCode, scope, internal) : renderNotFound();
   }
-  function renderMistakes(code) {
-    if (ensurePracticeLoaded(code, () => renderMistakes(code))) return;
+  async function renderMistakes(code, context) {
+    const loading = ensurePracticeLoaded(code, context);
+    if (loading) {
+      if (!await loading || (context && !context.isCurrent())) return;
+      return renderMistakes(code, context);
+    }
     return examFeature ? examFeature.renderMistakes(code) : renderNotFound();
   }
 
@@ -353,8 +408,12 @@
     button,
     notFound: renderNotFound
   }) : null;
-  function renderAssessmentMap(code) {
-    if (ensureCourseLoaded(code, () => renderAssessmentMap(code))) return;
+  async function renderAssessmentMap(code, context) {
+    const loading = ensureCourseLoaded(code, context);
+    if (loading) {
+      if (!await loading || (context && !context.isCurrent())) return;
+      return renderAssessmentMap(code, context);
+    }
     return assessmentMapFeature ? assessmentMapFeature.render(code || "DSA5105") : renderNotFound();
   }
 
@@ -371,8 +430,12 @@
     typeset: typesetNus,
     answerKey: examFeature && examFeature.answerKey
   }) : null;
-  function renderRetrieval(code) {
-    if (ensurePracticeLoaded(code, () => renderRetrieval(code))) return;
+  async function renderRetrieval(code, context) {
+    const loading = ensurePracticeLoaded(code, context);
+    if (loading) {
+      if (!await loading || (context && !context.isCurrent())) return;
+      return renderRetrieval(code, context);
+    }
     return retrievalFeature ? retrievalFeature.render(code) : renderNotFound();
   }
 
@@ -388,15 +451,23 @@
     button,
     typeset: typesetNus
   }) : null;
-  function renderContrast(code, scope) {
-    if (ensurePracticeLoaded(code, () => renderContrast(code, scope))) return;
+  async function renderContrast(code, scope, context) {
+    const loading = ensurePracticeLoaded(code, context);
+    if (loading) {
+      if (!await loading || (context && !context.isCurrent())) return;
+      return renderContrast(code, scope, context);
+    }
     return contrastFeature ? contrastFeature.render(code || focusCourseCode(), scope) : renderNotFound();
   }
 
   const sqlFeature = window.ATLAS_SQL_FEATURE ? window.ATLAS_SQL_FEATURE({ root, getContent: content, getPractice: () => { const item = course("DSA5104"); return item && item.sqlPractice; }, pageHead, card, esc, text, notFound: renderNotFound }) : null;
   const simulationsFeature = window.ATLAS_SIMULATIONS_FEATURE ? window.ATLAS_SIMULATIONS_FEATURE({ root, pageHead, esc, getStore: () => window.ATLAS_STUDY_STORE }) : null;
-  function renderSql() {
-    if (ensureCourseLoaded("DSA5104", () => renderSql())) return;
+  async function renderSql(context) {
+    const loading = ensureCourseLoaded("DSA5104", context);
+    if (loading) {
+      if (!await loading || (context && !context.isCurrent())) return;
+      return renderSql(context);
+    }
     return sqlFeature ? sqlFeature.render() : renderNotFound();
   }
   function renderSimulations() { return simulationsFeature ? simulationsFeature.render() : renderNotFound(); }
@@ -417,9 +488,17 @@
     notFound: renderNotFound,
     readingTimer: readingTimerFeature
   }) : null;
-  function renderSlides(code, setId, slideNumber) {
-    if (ensureCourseLoaded(code, () => renderSlides(code, setId, slideNumber))) return;
-    if (ensureSlidesLoaded(code, () => renderSlides(code, setId, slideNumber))) return;
+  async function renderSlides(code, setId, slideNumber, context) {
+    const courseLoading = ensureCourseLoaded(code, context);
+    if (courseLoading) {
+      if (!await courseLoading || (context && !context.isCurrent())) return;
+      return renderSlides(code, setId, slideNumber, context);
+    }
+    const slideLoading = ensureSlidesLoaded(code, context);
+    if (slideLoading) {
+      if (!await slideLoading || (context && !context.isCurrent())) return;
+      return renderSlides(code, setId, slideNumber, context);
+    }
     return slideReaderFeature ? slideReaderFeature.render(code, setId, slideNumber) : renderNotFound();
   }
   const textbookReaderFeature = window.ATLAS_TEXTBOOK_READER_FEATURE ? window.ATLAS_TEXTBOOK_READER_FEATURE({
@@ -435,38 +514,53 @@
     notFound: renderNotFound,
     readingTimer: readingTimerFeature
   }) : null;
-  function renderTextbook(code, page) {
-    if (ensureCourseLoaded(code, () => renderTextbook(code, page))) return;
-    if (ensureTextbookLoaded(code, () => renderTextbook(code, page))) return;
+  async function renderTextbook(code, page, context) {
+    const courseLoading = ensureCourseLoaded(code, context);
+    if (courseLoading) {
+      if (!await courseLoading || (context && !context.isCurrent())) return;
+      return renderTextbook(code, page, context);
+    }
+    const textbookLoading = ensureTextbookLoaded(code, context);
+    if (textbookLoading) {
+      if (!await textbookLoading || (context && !context.isCurrent())) return;
+      return renderTextbook(code, page, context);
+    }
     return textbookReaderFeature ? textbookReaderFeature.render(code, page) : renderNotFound();
   }
 
   const routeTable = window.ATLAS_ROUTE_TABLE ? window.ATLAS_ROUTE_TABLE({
-    dashboard: () => renderDashboard(),
+    dashboard: () => renderDashboard(true),
     planner: () => renderPlanner(),
-    course: parts => renderCourse(parts[1]),
-    lesson: parts => renderLesson(parts[1], parts[2]),
-    exam: parts => renderExam(parts[1], parts[2]),
-    "assessment-map": parts => renderAssessmentMap(parts[1] || "DSA5105"),
-    review: parts => renderRetrieval(parts[1]),
-    mistakes: parts => renderMistakes(parts[1] || focusCourseCode()),
-    contrast: parts => renderContrast(parts[1] || focusCourseCode(), parts[2]),
-    slides: parts => renderSlides(parts[1], parts[2], parts[3]),
-    textbook: parts => renderTextbook(parts[1], parts[2]),
-    sql: () => renderSql(),
+    course: (parts, context) => renderCourse(parts[1], context),
+    lesson: (parts, context) => renderLesson(parts[1], parts[2], context),
+    exam: (parts, context) => renderExam(parts[1], parts[2], false, context),
+    "assessment-map": (parts, context) => renderAssessmentMap(parts[1] || "DSA5105", context),
+    review: (parts, context) => renderRetrieval(parts[1], context),
+    mistakes: (parts, context) => renderMistakes(parts[1] || focusCourseCode(), context),
+    contrast: (parts, context) => renderContrast(parts[1] || focusCourseCode(), parts[2], context),
+    slides: (parts, context) => renderSlides(parts[1], parts[2], parts[3], context),
+    textbook: (parts, context) => renderTextbook(parts[1], parts[2], context),
+    sql: (_parts, context) => renderSql(context),
     simulations: () => renderSimulations()
   }) : null;
   function renderNotFound() { root.innerHTML = pageHead("NUS", "Not found", "That study page does not exist.") + button("Back to NUS dashboard", "#/", "primary"); }
-  function renderRoute(parts) {
+  function stopTransient() {
+    if (examScheduleFeature) examScheduleFeature.close();
     stopExamTimer();
     if (readingTimerFeature && typeof readingTimerFeature.stop === "function") readingTimerFeature.stop();
+    stopFocusBlock();
+  }
+  async function renderRoute(parts, context) {
+    stopTransient();
     const p = parts || [];
     if (p[0] !== "lesson") setReaderMode(false);
     if (p[0] !== "slides") document.body.classList.remove("nus-slide-focus-mode");
     const handler = routeTable && routeTable.resolve(p);
-    const result = handler ? handler(p) : renderNotFound();
+    const result = handler ? handler(p, context) : renderNotFound();
+    const rendered = result && typeof result.then === "function" ? await result : result;
+    if (context && !context.isCurrent()) return rendered;
     typesetNus();
-    return result;
+    return rendered;
   }
-  window.ATLAS_NUS_UI = { renderRoute, courseName };
+  window.ATLAS_NUS_UI = { renderRoute, courseName, stopTransient };
 })();

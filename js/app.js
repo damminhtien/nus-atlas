@@ -2908,9 +2908,9 @@
     if (PAGES[p]) return PAGES[p] + " · " + BASE;
     return BASE + " · Study Studio";
   }
-  function renderRoute(parts) {
-    if (parts.length === 0) window.ATLAS_NUS_UI ? window.ATLAS_NUS_UI.renderRoute([]) : viewDashboard();
-    else if (parts[0] === "nus") window.ATLAS_NUS_UI ? window.ATLAS_NUS_UI.renderRoute(parts.slice(1)) : viewDashboard();
+  function renderRoute(parts, context) {
+    if (parts.length === 0) window.ATLAS_NUS_UI ? window.ATLAS_NUS_UI.renderRoute([], context) : viewDashboard();
+    else if (parts[0] === "nus") window.ATLAS_NUS_UI ? window.ATLAS_NUS_UI.renderRoute(parts.slice(1), context) : viewDashboard();
     else if (parts[0] === "atlas") viewDashboard();
     else if (parts[0] === "course") viewCourse(parts[1]);
     else if (parts[0] === "lesson") viewLesson(parts[1], parts[2], parts[3]);
@@ -2936,6 +2936,7 @@
     location: window.location,
     beforeRoute(parts) {
       if (window.VIZUtil) window.VIZUtil.stopAll(); // kill any running animation loops
+      if (window.ATLAS_NUS_UI && typeof window.ATLAS_NUS_UI.stopTransient === "function") window.ATLAS_NUS_UI.stopTransient();
       const isNusRoute = parts.length === 0 || parts[0] === "nus";
       app.classList.toggle("nus-root", isNusRoute);
       if (!isNusRoute || parts[1] !== "lesson") document.body.classList.remove("nus-reading-mode");
@@ -2950,7 +2951,7 @@
       closeSidebar();
       // SPA focus management (a11y): move keyboard/screen-reader focus to the new view's heading so navigation is
       // announced and the focus point isn't stranded on the removed element. Skip while a modal owns focus.
-      if (!document.querySelector(".intro-ov, .palette-scrim, .levelup-ov, .sc-ov")) {
+      if (!document.querySelector(".intro-ov, .palette-scrim, .levelup-ov, .sc-ov, .nus-exam-schedule-overlay")) {
         const fh = app.querySelector(".page-head h2") || app.querySelector("h2") || app;
         if (fh !== app) fh.setAttribute("tabindex", "-1");
         try { fh.focus({ preventScroll: true }); } catch (e) { try { fh.focus(); } catch (e2) {} }
@@ -3075,7 +3076,7 @@
     if (e.metaKey || e.ctrlKey || e.altKey) return;
     const tag = (e.target && e.target.tagName) || "";
     if (/INPUT|TEXTAREA|SELECT/.test(tag)) return;
-    if (document.querySelector(".palette-scrim, .levelup-ov, .intro-ov, .sc-ov")) return; // a modal owns the keys
+    if (document.querySelector(".palette-scrim, .levelup-ov, .intro-ov, .sc-ov, .nus-exam-schedule-overlay")) return; // a modal owns the keys
     if (e.key === "\\") { e.preventDefault(); toggleSidebar(); return; }
     // flashcards: Space/Enter flips; once flipped, 1-4 grades
     const card = document.getElementById("card3d");
@@ -3209,7 +3210,7 @@
     window.addEventListener("keydown", e => {   // "?" opens the shortcuts help (unless typing or a modal is open)
       if (e.key !== "?" || e.metaKey || e.ctrlKey || e.altKey) return;
       const tag = (e.target && e.target.tagName) || ""; if (/INPUT|TEXTAREA|SELECT/.test(tag)) return;
-      if (document.querySelector(".palette-scrim, .levelup-ov, .intro-ov, .sc-ov")) return;
+      if (document.querySelector(".palette-scrim, .levelup-ov, .intro-ov, .sc-ov, .nus-exam-schedule-overlay")) return;
       e.preventDefault(); showShortcuts();
     });
     window.addEventListener("keydown", studyKeys);

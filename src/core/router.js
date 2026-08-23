@@ -7,6 +7,7 @@
 })(typeof globalThis === "object" ? globalThis : this, function createAtlasRouter(config) {
   const options = config || {};
   const location = options.location || (typeof globalThis === "object" ? globalThis.location : null);
+  let navigationId = 0;
 
   function parseHash(hash) {
     return String(hash || "#/" ).slice(1).split("/").filter(Boolean);
@@ -14,15 +15,28 @@
 
   function navigate(input) {
     const parts = Array.isArray(input) ? input.slice() : parseHash(location && location.hash);
-    if (typeof options.beforeRoute === "function") options.beforeRoute(parts);
+    const id = ++navigationId;
+    const context = Object.freeze({ id, isCurrent: () => id === navigationId });
+    if (typeof options.beforeRoute === "function") options.beforeRoute(parts, context);
     let result;
     try {
-      result = typeof options.renderRoute === "function" ? options.renderRoute(parts) : undefined;
-    } finally {
-      if (typeof options.afterRoute === "function") options.afterRoute(parts, result);
+      result = typeof options.renderRoute === "function" ? options.renderRoute(parts, context) : undefined;
+    } catch (error) {
+      if (typeof options.afterRoute === "function" && context.isCurrent()) options.afterRoute(parts, undefined, { ...context, error });
+      throw error;
     }
-    return result;
+    if (!result || typeof result.then !== "function") {
+      if (typeof options.afterRoute === "function" && context.isCurrent()) options.afterRoute(parts, result, context);
+      return result;
+    }
+    return Promise.resolve(result).then(value => {
+      if (typeof options.afterRoute === "function" && context.isCurrent()) options.afterRoute(parts, value, context);
+      return value;
+    }, error => {
+      if (typeof options.afterRoute === "function" && context.isCurrent()) options.afterRoute(parts, undefined, { ...context, error });
+      throw error;
+    });
   }
 
-  return Object.freeze({ parseHash, navigate });
+  return Object.freeze({ parseHash, navigate, currentNavigation: () => navigationId });
 });

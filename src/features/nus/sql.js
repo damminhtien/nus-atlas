@@ -16,8 +16,10 @@
   const esc = options.esc || (value => String(value == null ? "" : value));
   const text = options.text || esc;
   const notFound = options.notFound || (() => "");
+  const getRoute = options.getRoute || (() => typeof location === "object" ? location.hash : "");
   let state = { index: 0, result: null, error: null, ran: false, reveal: false };
   let sqlPromise = null;
+  let selectionGeneration = 0;
 
   function practiceSpec() {
     return getPractice() || {};
@@ -31,6 +33,7 @@
     body += `<div class="nus-sql-layout"><aside>${card("Schema", spec.schema.map(table => `<div class="nus-schema-table"><b>${esc(table.name)}</b>${table.columns.map(column => `<code>${esc(column)}</code>`).join("")}</div>`).join(""), "reveal")}${card("Exercises", spec.exercises.map((item, index) => `<button class="nus-exercise-link ${index === state.index ? "active" : ""}" data-sql-index="${index}"><span>${index + 1}</span><div><b>${esc(item.level)}</b><small>${esc(item.prompt)}</small></div></button>`).join(""), "reveal")}</aside><main><section class="nus-card nus-sql-editor reveal"><div class="nus-assessment-line"><span>${esc(exercise.level)} · Exercise ${state.index + 1}/${spec.exercises.length}</span><span>${state.ran ? "Query executed" : "Not run"}</span></div><h3>${esc(exercise.prompt)}</h3><textarea id="nus-sql-input" rows="9">${esc(exercise.starter)}</textarea><div class="nus-lesson-actions"><button class="btn primary" id="nus-run-sql">Run query</button><button class="btn ghost" id="nus-reveal-sql" ${state.ran ? "" : "disabled"}>Reveal solution</button></div>${state.error ? `<div class="nus-output error">${text(state.error)}</div>` : ""}${state.result ? `<div class="nus-output ${state.result.pass ? "success" : "error"}"><b>${state.result.pass ? "Looks right" : "Check the result"}</b><pre>${esc(state.result.text)}</pre><p>${text(exercise.explanation)}</p>${state.reveal ? `<details open><summary>Solution</summary><pre>${esc(exercise.solution || exercise.starter)}</pre></details>` : ""}</div>` : ""}</section></main></div>`;
     host.innerHTML = body;
     host.querySelectorAll("[data-sql-index]").forEach(button => button.addEventListener("click", () => {
+      selectionGeneration += 1;
       state = { index: Number(button.dataset.sqlIndex), result: null, error: null, ran: false, reveal: false };
       render();
     }));
@@ -82,6 +85,10 @@
   }
 
   async function execute(exercise) {
+    const exerciseIndex = state.index;
+    const generation = selectionGeneration;
+    const route = getRoute();
+    const isCurrent = () => generation === selectionGeneration && state.index === exerciseIndex && getRoute() === route;
     const input = host.querySelector("#nus-sql-input").value.trim();
     if (!input) {
       state = { ...state, error: "Enter a SQL query or answer before running.", result: null, ran: true };
@@ -91,6 +98,7 @@
     state = { ...state, error: null, result: null, ran: true };
     if (exercise.id === "sql-4") {
       const normalized = input.toLowerCase().replace(/\s+/g, " ");
+      if (!isCurrent()) return;
       state.result = { pass: (exercise.expected || []).some(value => normalized.includes(value)), text: input || "No answer" };
       render();
       return;
@@ -102,14 +110,15 @@
       db = createDatabase(SQL, practiceSpec());
       const rows = db.exec(input)[0];
       const values = resultLines(rows);
+      if (!isCurrent()) return;
       state.result = { pass: values.join("\n") === (exercise.expected || []).join("\n"), text: rows ? [rows.columns.join(" | "), ...values].join("\n") : "Query returned no rows" };
     } catch (error) {
-      state.error = error.message || "SQL error";
+      if (isCurrent()) state.error = error.message || "SQL error";
     } finally {
       if (db) db.close();
     }
-    render();
+    if (isCurrent()) render();
   }
 
-  return Object.freeze({ render });
+  return Object.freeze({ render, execute });
 });

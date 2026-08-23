@@ -30,3 +30,31 @@ test("router still runs after-route cleanup when rendering fails", () => {
   assert.throws(() => router.navigate(), /render failed/);
   assert.deepEqual(calls, [["broken"]]);
 });
+
+test("router waits for async rendering and skips stale after-route work", async () => {
+  const location = { hash: "#/first" };
+  const calls = [];
+  const pending = new Map();
+  const router = createAtlasRouter({
+    location,
+    beforeRoute: (parts, context) => calls.push(["before", parts[0], context.id]),
+    renderRoute: (parts, context) => new Promise(resolve => {
+      pending.set(parts[0], { resolve, context });
+    }),
+    afterRoute: (parts, result, context) => calls.push(["after", parts[0], result, context.id])
+  });
+
+  const first = router.navigate();
+  location.hash = "#/second";
+  const second = router.navigate();
+  pending.get("first").resolve("stale");
+  pending.get("second").resolve("current");
+
+  assert.equal(await first, "stale");
+  assert.equal(await second, "current");
+  assert.deepEqual(calls, [
+    ["before", "first", 1],
+    ["before", "second", 2],
+    ["after", "second", "current", 2]
+  ]);
+});
