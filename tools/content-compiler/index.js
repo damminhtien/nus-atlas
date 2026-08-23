@@ -55,6 +55,74 @@ function normalizeQuestion(question, courseId, lessonId) {
   };
 }
 
+function legacyAssessmentFacts(assessment) {
+  const sourceRefs = assessment.source ? [assessment.source] : [];
+  return {
+    weight: { value: assessment.weight ?? null, sourceRefs },
+    timing: {
+      ...(assessment.timing || {}),
+      date: assessment.date ?? null,
+      dateStatus: assessment.dateStatus || (assessment.date ? "confirmed" : "pending"),
+      timeStatus: assessment.timeStatus || (assessment.date ? "confirmed" : "pending"),
+      sourceRefs
+    }
+  };
+}
+
+function firstAssessmentSource(facts) {
+  for (const fact of Object.values(facts || {})) {
+    if (fact && Array.isArray(fact.sourceRefs) && fact.sourceRefs.length) return fact.sourceRefs[0];
+    if (fact && Array.isArray(fact.explicitExclusions)) {
+      for (const exclusion of fact.explicitExclusions) if (exclusion && Array.isArray(exclusion.sourceRefs) && exclusion.sourceRefs.length) return exclusion.sourceRefs[0];
+    }
+  }
+  return undefined;
+}
+
+function normalizeAssessment(assessment) {
+  if (!assessment || !assessment.id) return assessment;
+  const facts = cleanObject(assessment.officialFacts || legacyAssessmentFacts(assessment));
+  const guidance = cleanObject(assessment.studentGuidance || { checklist: assessment.checklist || [] });
+  const weightSpec = facts.weight || {};
+  const timing = facts.timing || {};
+  const weight = Number.isFinite(weightSpec.value) ? weightSpec.value : null;
+  const normalized = {
+    ...cleanObject(assessment),
+    schemaVersion: "nus.assessment.v2",
+    officialFacts: facts,
+    studentGuidance: guidance,
+    weight,
+    weightLabel: weightSpec.label || (Number.isFinite(weightSpec.groupTotal) ? `part of ${weightSpec.groupTotal}%` : (weight == null ? "Weight pending" : `${weight}%`)),
+    date: timing.date ?? null,
+    dateStatus: timing.dateStatus || (timing.date ? "confirmed" : "pending"),
+    timeStatus: timing.timeStatus || (timing.time ? "confirmed" : "pending"),
+    timing: cleanObject(timing),
+    checklist: Array.isArray(guidance.checklist) ? guidance.checklist.slice() : [],
+    source: firstAssessmentSource(facts)
+  };
+  if (weightSpec.groupId) normalized.weightGroup = { id: weightSpec.groupId, total: weightSpec.groupTotal, label: weightSpec.label };
+  ["format", "submission", "scope", "groupPolicy"].forEach(field => {
+    if (facts[field] !== undefined) normalized[field] = cleanObject(facts[field]);
+  });
+  return normalized;
+}
+
+function assessmentWeightTotal(assessments) {
+  let total = 0;
+  const groups = new Set();
+  for (const assessment of assessments || []) {
+    const spec = assessment && assessment.officialFacts && assessment.officialFacts.weight;
+    if (spec && spec.groupId) {
+      if (!groups.has(spec.groupId) && Number.isFinite(spec.groupTotal)) {
+        total += spec.groupTotal;
+        groups.add(spec.groupId);
+      }
+    } else if (spec && Number.isFinite(spec.value)) total += spec.value;
+    else if (Number.isFinite(assessment && assessment.weight)) total += assessment.weight;
+  }
+  return total;
+}
+
 function lessonBlocks(lesson) {
   const blocks = [];
   const refsFor = block => Array.isArray(block && block.sourceRefs) && block.sourceRefs.length ? block.sourceRefs : (lesson.sourceRefs || []);
@@ -143,7 +211,7 @@ function courseManifest(course) {
   return Object.fromEntries(fields.filter(field => course[field] !== undefined).map(field => [field, cleanObject(course[field])]));
 }
 
-function collectSources(course, modules) {
+function collectSources(course, modules, assessments = []) {
   const byKey = new Map();
   const add = ref => {
     if (!ref || !ref.sourceId) return;
@@ -155,6 +223,12 @@ function collectSources(course, modules) {
     (lesson.sourceRefs || []).forEach(add);
     (lesson.questions || []).forEach(question => (question.sourceRefs || []).forEach(add));
   }));
+  assessments.forEach(assessment => {
+    Object.values(assessment.officialFacts || {}).forEach(fact => {
+      (fact.sourceRefs || []).forEach(add);
+      (fact.explicitExclusions || []).forEach(exclusion => (exclusion.sourceRefs || []).forEach(add));
+    });
+  });
   return [...byKey.values()];
 }
 
@@ -165,6 +239,7 @@ function compileCourseSource(source, courseId = source && source.course && sourc
   const lessons = {};
   const questions = {};
   const studyKits = {};
+  const assessments = (source.assessments || []).map(normalizeAssessment);
   const joinedModules = [];
   const visualIds = new Set();
   const labIds = new Set();
@@ -191,8 +266,8 @@ function compileCourseSource(source, courseId = source && source.course && sourc
     entityKey: `course:${courseId}/course`,
     schemaVersion: "nus.course.v1",
     moduleIds: modules.map(module => module.id),
-    assessmentIds: source.assessments.map(item => item.id),
-    sourceCatalog: collectSources(course, source.modules),
+    assessmentIds: assessments.map(item => item.id),
+    sourceCatalog: collectSources(course, source.modules, assessments),
     questionBank: source.questionBank ? { schemaVersion: source.questionBank.schemaVersion, purpose: source.questionBank.purpose, blueprint: cleanObject(source.questionBank.blueprint || {}), questionIds: source.questionBank.questions.map(question => question.id), extensionCount: source.questionBank.questions.length } : null,
     slideSetIds: source.slideSets.map(slideSet => slideSet.id),
     sourcePolicy: source.sourceManifest ? cleanObject(source.sourceManifest.policy || {}) : {},
@@ -202,7 +277,7 @@ function compileCourseSource(source, courseId = source && source.course && sourc
   const joined = {
     course: packageCourse,
     content: { modules: joinedModules },
-    assessments: source.assessments,
+    assessments,
     sources: packageCourse.sourceCatalog,
     ...(source.assessmentMap ? { assessmentMap: cleanObject(source.assessmentMap) } : {}),
     ...(source.sourceManifest ? { sourceManifest: cleanObject(source.sourceManifest) } : {}),
@@ -327,4 +402,4 @@ function validateCanonical(root, courseId) {
   if (errors.length) throw new Error(`Canonical authored math contract failed for ${courseId}:\n- ${errors.slice(0, 10).map(error => `${error.location} [${error.label}: ${error.token}]`).join("\n- ")}`);
 }
 
-module.exports = { compileAll, compileCourse, compileCourseSource, loadCourseSource, stableStringify, hash, validateCanonical, writeCourseArtifacts, normalizeLesson };
+module.exports = { compileAll, compileCourse, compileCourseSource, loadCourseSource, stableStringify, hash, validateCanonical, writeCourseArtifacts, normalizeLesson, normalizeAssessment, assessmentWeightTotal };

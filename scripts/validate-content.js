@@ -5,7 +5,7 @@
  */
 const fs = require("fs");
 const path = require("path");
-const { loadCourseSource } = require("../tools/content-compiler");
+const { loadCourseSource, normalizeAssessment, assessmentWeightTotal } = require("../tools/content-compiler");
 
 const ROOT = path.resolve(__dirname, "..");
 const NUS_FILES = [
@@ -64,7 +64,7 @@ function loadCanonicalState(root = ROOT) {
         }))
       }))
     };
-    state.assessments.push(...source.assessments);
+    state.assessments.push(...source.assessments.map(normalizeAssessment));
     Object.assign(state.labs, source.labs);
     Object.assign(state.visuals, source.visuals);
   }
@@ -125,8 +125,21 @@ function validateContentState(state) {
     assessmentIds.add(assessment.id);
     if (!courseIds.has(assessment.courseCode)) errors.push(`assessment references unknown course: ${assessment.id}`);
     if (!assessment.title || !assessment.kind) errors.push(`assessment missing title/kind: ${assessment.id}`);
+    if (assessment.schemaVersion !== "nus.assessment.v2") errors.push(`assessment has invalid schema version: ${assessment.id}`);
+    if (!assessment.officialFacts || !assessment.studentGuidance) errors.push(`assessment must separate official facts and guidance: ${assessment.id}`);
     if (!Array.isArray(assessment.checklist) || !assessment.checklist.length) errors.push(`assessment missing checklist: ${assessment.id}`);
     if (assessment.source) checkSourceRef(assessment.source, sourceTypes, errors, `assessment ${assessment.id}`);
+    const facts = assessment.officialFacts || {};
+    for (const [field, fact] of Object.entries(facts)) {
+      if (!fact || typeof fact !== "object") continue;
+      if (!Array.isArray(fact.sourceRefs) || !fact.sourceRefs.length) errors.push(`official assessment fact needs source refs: ${assessment.id}/${field}`);
+      for (const ref of fact.sourceRefs || []) checkSourceRef(ref, sourceTypes, errors, `assessment ${assessment.id}/${field}`);
+      for (const exclusion of fact.explicitExclusions || []) for (const ref of exclusion.sourceRefs || []) checkSourceRef(ref, sourceTypes, errors, `assessment ${assessment.id}/${field}/exclusion`);
+    }
+  }
+  for (const course of courses) {
+    const weightTotal = assessmentWeightTotal(assessments.filter(assessment => assessment.courseCode === course.code));
+    if (weightTotal !== 100) errors.push(`${course.code} assessment weights sum to ${weightTotal}, expected 100`);
   }
 
   for (const [labId, lab] of Object.entries(labs)) {
