@@ -589,7 +589,10 @@
     esc,
     button,
     typeset: typesetNus,
-    answerKey: examFeature && examFeature.answerKey
+    answerKey: examFeature && examFeature.answerKey,
+    gradeShortAnswer: window.ATLAS_RETRIEVAL_GRADER && window.ATLAS_RETRIEVAL_GRADER.grade
+      ? payload => window.ATLAS_RETRIEVAL_GRADER.grade(payload)
+      : null
   }) : null;
   async function renderRetrieval(code, context) {
     const loading = ensurePracticeLoaded(code, context);

@@ -306,7 +306,7 @@
       courseCode: item.courseCode || previous.courseCode,
       lessonId: item.lessonId,
       xp: correct ? 5 : 0,
-      meta: { questionId: item.questionId, correct, confidence, intervalBefore: before, intervalAfter: nextInterval, reps: previous.reps }
+      meta: { questionId: item.questionId, correct, confidence, gradingMode: item.gradingMode || "heuristic", gradeScore: item.gradeScore == null ? null : Number(item.gradeScore), intervalBefore: before, intervalAfter: nextInterval, reps: previous.reps }
     });
     save();
     return { ...previous, event, duplicate: false };

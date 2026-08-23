@@ -151,6 +151,7 @@ The Pages workflow runs `node prerender.js` in CI, creates the static `dist/` ar
 - `src/features/nus/sql.js` / `src/features/nus/simulations.js` — isolated interactive labs.
 - `src/features/nus/planner.js` / `src/features/nus/exam.js` — isolated planner and Exam Mode features.
 - `src/features/nus/retrieval.js` — adaptive 1–2 question spaced-retrieval session.
+- `src/features/nus/retrieval-grader.js` / `api/grade.js` — optional external Gemini grader for textbox answers; the API key stays server-side.
 - `src/ui/labs/registry.js` — visual-learning lab plugin registry.
 - `js/nus.js` — NUS views using the repository boundary.
 - `js/nus-store.js` — local study progress and attempts.
@@ -163,6 +164,10 @@ The Pages workflow runs `node prerender.js` in CI, creates the static `dist/` ar
 - `scripts/latex-utils.js` — shared authored-content normalization and field rules.
 - `scripts/normalize-latex.js` — one-time migration helper for JSON content packages.
 - `nus-gate.js` — NUS data, privacy, and provenance gate.
+
+### External textbox grader
+
+The optional `api/grade.js` endpoint is designed for a Vercel deployment. Set `GEMINI_API_KEY` (or `GOOGLE_KEY_API`) only in the service's production environment; never put the key in this repository or the GitHub Pages bundle. The frontend falls back to the existing heuristic check if the external service is unavailable.
 - `prerender.js` — CI static-page and sitemap build.
 - `VERSION` / `CHANGELOG.md` — canonical release version and dated release history.
 - `scripts/version.js` — version check, semantic bump, changelog entry, and cache-busting helper.
