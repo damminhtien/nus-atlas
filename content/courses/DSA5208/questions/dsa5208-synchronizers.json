@@ -1,0 +1,50 @@
+[
+  {
+    "id": "dsa5208-synchronizers-q1",
+    "type": "short",
+    "prompt": "What does a synchronizer tell a process?",
+    "accepted": ["when it is safe to proceed to the next round", "safe to advance simulated synchronous execution", "round barrier"],
+    "solution": "It indicates when the process has enough evidence that it is safe to proceed to the next simulated synchronous round.",
+    "explanation": "A synchronizer provides logical coordination, not a physical global clock.",
+    "difficulty": "easy",
+    "skill": "recall",
+    "cognitiveLevel": "understand",
+    "estimatedSeconds": 60,
+    "misconception": "A synchronizer is a protocol mechanism, not clock synchronization.",
+    "visualHook": "Open the round-barrier timeline.",
+    "sourceRefs": [{ "sourceId": "DSA5208/Lec2.pdf", "page": 42, "sourceType": "lecture", "role": "synchronizer definition", "status": "current" }],
+    "schemaVersion": "nus.question.v1"
+  },
+  {
+    "id": "dsa5208-synchronizers-q2",
+    "type": "mcq",
+    "prompt": "What assumption makes the simple synchronizer easier to implement?",
+    "choices": ["Each process sends exactly one message to every neighbor per round", "All processes share memory", "Messages have zero latency", "Every process has the same physical clock"],
+    "answer": 0,
+    "explanation": "The simple synchronizer uses the one-message-per-neighbor assumption and can send a dummy message when there is no payload.",
+    "difficulty": "medium",
+    "skill": "classify",
+    "cognitiveLevel": "understand",
+    "estimatedSeconds": 60,
+    "misconception": "The assumption is about message count per round, not wall-clock equality.",
+    "visualHook": "Fill an empty round with a dummy message.",
+    "sourceRefs": [{ "sourceId": "DSA5208/Lec2.pdf", "page": 45, "sourceType": "lecture", "role": "simple synchronizer assumption", "status": "current" }],
+    "schemaVersion": "nus.question.v1"
+  },
+  {
+    "id": "dsa5208-synchronizers-q3",
+    "type": "short",
+    "prompt": "What changes when moving from the simple synchronizer to the α synchronizer?",
+    "accepted": ["remove fixed number of messages per round and detect safe completion", "no one-message-per-neighbor assumption", "track when all current-round messages are accounted for"],
+    "solution": "The α synchronizer removes the fixed-message assumption, so a process must determine when its current-round communication is complete before advancing.",
+    "explanation": "The general case requires a stronger safe-to-proceed condition.",
+    "difficulty": "hard",
+    "skill": "compare",
+    "cognitiveLevel": "analyze",
+    "estimatedSeconds": 100,
+    "misconception": "Removing the assumption increases the coordination problem; it does not remove the need for a barrier.",
+    "visualHook": "Compare the simple and α protocols side by side.",
+    "sourceRefs": [{ "sourceId": "DSA5208/Lec2.pdf", "page": 47, "sourceType": "lecture", "role": "alpha synchronizer", "status": "current" }, { "sourceId": "DSA5208/Lec2.pdf", "page": 49, "sourceType": "lecture", "role": "safe-to-proceed condition", "status": "current" }],
+    "schemaVersion": "nus.question.v1"
+  }
+]

@@ -1,0 +1,50 @@
+[
+  {
+    "id": "dsa5208-broadcast-q1",
+    "type": "short",
+    "prompt": "Why does Lecture 2 distinguish receiving a broadcast message from delivering it?",
+    "accepted": ["delivery enforces ordering and may buffer", "receive can precede safe delivery", "buffer before delivery"],
+    "solution": "The protocol may receive a message but hold it until the selected FIFO, causal, or total-order condition is satisfied.",
+    "explanation": "Network arrival order is not automatically application delivery order.",
+    "difficulty": "medium",
+    "skill": "explain",
+    "cognitiveLevel": "understand",
+    "estimatedSeconds": 75,
+    "misconception": "A received message is not necessarily safe to deliver.",
+    "visualHook": "Move a message from the network buffer to application delivery.",
+    "sourceRefs": [{ "sourceId": "DSA5208/Lec2.pdf", "page": 4, "sourceType": "lecture", "role": "receiving versus delivering", "status": "current" }],
+    "schemaVersion": "nus.question.v1"
+  },
+  {
+    "id": "dsa5208-broadcast-q2",
+    "type": "mcq",
+    "prompt": "Which guarantee makes all processes deliver messages in the same order?",
+    "choices": ["FIFO broadcast", "Causal broadcast", "Total order broadcast", "Non-FIFO broadcast"],
+    "answer": 2,
+    "explanation": "Total order broadcast imposes one common delivery sequence at every process.",
+    "difficulty": "easy",
+    "skill": "classify",
+    "cognitiveLevel": "understand",
+    "estimatedSeconds": 45,
+    "misconception": "Causal order leaves concurrent messages unconstrained.",
+    "visualHook": "Compare the four broadcast lanes.",
+    "sourceRefs": [{ "sourceId": "DSA5208/Lec2.pdf", "page": 16, "sourceType": "lecture", "role": "total order broadcast", "status": "current" }],
+    "schemaVersion": "nus.question.v1"
+  },
+  {
+    "id": "dsa5208-broadcast-q3",
+    "type": "short",
+    "prompt": "What additional property does FIFO-total order have beyond total order?",
+    "accepted": ["same global order plus per-sender FIFO", "sender FIFO", "preserves each process broadcast order"],
+    "solution": "It gives all processes the same delivery order and preserves FIFO order for messages broadcast by the same process.",
+    "explanation": "The name combines a global order with a per-sender order constraint.",
+    "difficulty": "medium",
+    "skill": "distinguish",
+    "cognitiveLevel": "analyze",
+    "estimatedSeconds": 75,
+    "misconception": "FIFO alone is channel-local; FIFO-total combines both scopes.",
+    "visualHook": "Layer sender-local and global guarantees.",
+    "sourceRefs": [{ "sourceId": "DSA5208/Lec2.pdf", "page": 17, "sourceType": "lecture", "role": "FIFO-total order broadcast", "status": "current" }],
+    "schemaVersion": "nus.question.v1"
+  }
+]

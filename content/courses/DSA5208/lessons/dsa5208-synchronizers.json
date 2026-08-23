@@ -1,0 +1,384 @@
+{
+  "id": "dsa5208-synchronizers",
+  "title": "Synchronizers for asynchronous rounds",
+  "week": 5,
+  "minutes": 55,
+  "contentStatus": "CURRENT LECTURE",
+  "summary": "Understand how a synchronizer makes an asynchronous system safe to run a synchronous round-based algorithm.",
+  "objectives": [
+    "Define the safe-to-proceed condition",
+    "Trace the simple synchronizer",
+    "Explain what the α synchronizer removes and adds"
+  ],
+  "sourceRefs": [
+    {
+      "sourceId": "DSA5208/Lec2.pdf",
+      "page": 42,
+      "sourceType": "lecture",
+      "role": "synchronizer definition",
+      "status": "current"
+    },
+    {
+      "sourceId": "DSA5208/Lec2.pdf",
+      "page": 45,
+      "sourceType": "lecture",
+      "role": "simple synchronizer",
+      "status": "current"
+    },
+    {
+      "sourceId": "DSA5208/Lec2.pdf",
+      "page": 46,
+      "sourceType": "lecture",
+      "role": "simple synchronizer algorithm",
+      "status": "current"
+    },
+    {
+      "sourceId": "DSA5208/Lec2.pdf",
+      "page": 47,
+      "sourceType": "lecture",
+      "role": "alpha synchronizer",
+      "status": "current"
+    },
+    {
+      "sourceId": "DSA5208/Lec2.pdf",
+      "page": 49,
+      "sourceType": "lecture",
+      "role": "safe-to-proceed condition",
+      "status": "current"
+    }
+  ],
+  "visualIds": [
+    "dsa5208-synchronizers"
+  ],
+  "sourceLens": {
+    "status": "core DSA5208 Lecture 2",
+    "whyExaminable": "A synchronizer is the bridge between asynchronous message passing and a synchronous round algorithm. The key question is when a process is safe to advance.",
+    "lecture": [
+      {
+        "sourceId": "DSA5208/Lec2.pdf",
+        "page": 42,
+        "sourceType": "lecture",
+        "role": "definition",
+        "status": "current"
+      },
+      {
+        "sourceId": "DSA5208/Lec2.pdf",
+        "page": 49,
+        "sourceType": "lecture",
+        "role": "safe-to-proceed condition",
+        "status": "current"
+      }
+    ],
+    "officialExercise": [],
+    "textbook": [],
+    "reference": []
+  },
+  "sections": [
+    {
+      "title": "Safe to proceed",
+      "sourceType": "lecture",
+      "body": "In an asynchronous system, a synchronizer tells a process when it is safe to move to the next simulated synchronous round. Safety means that the messages and acknowledgements required by the current round have been accounted for.",
+      "sourceRefs": [
+        {
+          "sourceId": "DSA5208/Lec2.pdf",
+          "page": 42,
+          "sourceType": "lecture",
+          "role": "synchronizer definition",
+          "status": "current"
+        }
+      ]
+    },
+    {
+      "title": "Simple and α synchronizers",
+      "sourceType": "lecture",
+      "body": "The simple synchronizer assumes every process sends exactly one message to every neighbor per round, using a dummy message when necessary. The α synchronizer removes that fixed-message assumption and must therefore reason about when all current-round communication is complete.",
+      "sourceRefs": [
+        {
+          "sourceId": "DSA5208/Lec2.pdf",
+          "page": 45,
+          "sourceType": "lecture",
+          "role": "simple synchronizer",
+          "status": "current"
+        },
+        {
+          "sourceId": "DSA5208/Lec2.pdf",
+          "page": 47,
+          "sourceType": "lecture",
+          "role": "alpha synchronizer",
+          "status": "current"
+        }
+      ]
+    }
+  ],
+  "math": [
+    {
+      "name": "Safe-to-proceed condition",
+      "purpose": "State the condition that allows a process to advance to the next simulated round.",
+      "latex": "\\operatorname{safe}(p_i,r) \\Longrightarrow \\operatorname{advance}(p_i,r+1)",
+      "explanation": "A process advances only after the synchronizer has evidence that the current-round communication required by its protocol is complete.",
+      "symbols": [
+        {
+          "latex": "p_i",
+          "meaning": "the process considering advancement"
+        },
+        {
+          "latex": "r",
+          "meaning": "the current simulated round"
+        },
+        {
+          "latex": "\\operatorname{safe}",
+          "meaning": "the synchronizer's completion condition"
+        }
+      ],
+      "sourceType": "lecture",
+      "sourceRefs": [
+        {
+          "sourceId": "DSA5208/Lec2.pdf",
+          "page": 49,
+          "sourceType": "lecture",
+          "role": "safe-to-proceed condition",
+          "status": "current"
+        }
+      ]
+    }
+  ],
+  "examples": [
+    {
+      "title": "Round barrier reasoning",
+      "sourceType": "lecture",
+      "steps": [
+        "Identify the current simulated round.",
+        "Track messages sent for that round.",
+        "Track acknowledgements or safe notifications from neighbors.",
+        "Advance only when the protocol's safety condition holds."
+      ],
+      "answer": "A synchronizer is a correctness mechanism: it creates a round barrier without assuming that the underlying network is synchronous.",
+      "sourceRefs": [
+        {
+          "sourceId": "DSA5208/Lec2.pdf",
+          "page": 49,
+          "sourceType": "lecture",
+          "role": "safe-to-proceed condition",
+          "status": "current"
+        }
+      ]
+    }
+  ],
+  "contrastDrills": [
+    {
+      "id": "dsa5208-sync-contrast-rounds",
+      "type": "contrast",
+      "kind": "concept-contrast",
+      "pair": "Asynchronous execution vs synchronizer",
+      "prompt": "What does a synchronizer add to an asynchronous system?",
+      "choices": [
+        "A physical global clock",
+        "A safe-to-proceed rule for simulated rounds",
+        "Zero network latency",
+        "A shared memory address space"
+      ],
+      "answer": 1,
+      "explanation": "A synchronizer supplies the protocol condition for advancing a simulated synchronous round; it does not make the physical system synchronous.",
+      "estimatedSeconds": 45,
+      "difficulty": "medium",
+      "skill": "concept-contrast",
+      "cognitiveLevel": "distinguish",
+      "misconception": "Logical round coordination is not the same as synchronized wall clocks.",
+      "sourceRefs": [
+        {
+          "sourceId": "DSA5208/Lec2.pdf",
+          "page": 42,
+          "sourceType": "lecture",
+          "role": "synchronizer definition",
+          "status": "current"
+        }
+      ]
+    }
+  ],
+  "criticalQuestions": [
+    {
+      "prompt": "Why can a dummy message be useful in the simple synchronizer?",
+      "angle": "Consider how the protocol knows that a process has finished its current round.",
+      "modelAnswer": "The dummy message preserves the one-message-per-neighbor assumption, so receipt of a message still signals completion of that neighbor's current-round communication even when there is no payload.",
+      "focus": "protocol assumption",
+      "sourceRefs": [
+        {
+          "sourceId": "DSA5208/Lec2.pdf",
+          "page": 45,
+          "sourceType": "lecture",
+          "role": "simple synchronizer assumption",
+          "status": "current"
+        }
+      ]
+    },
+    {
+      "prompt": "What assumption does the $\\alpha$ synchronizer remove, and what new evidence must it track?",
+      "angle": "Compare fixed message counts with protocol evidence about completion of current-round communication.",
+      "modelAnswer": "The $\\alpha$ synchronizer removes the assumption that every process sends exactly one message to every neighbor per round. It must instead track enough acknowledgements or safe notifications to establish that current-round communication is complete before advancing.",
+      "focus": "assumption and evidence",
+      "sourceRefs": [
+        {
+          "sourceId": "DSA5208/Lec2.pdf",
+          "page": 47,
+          "sourceType": "lecture",
+          "role": "alpha synchronizer",
+          "status": "current"
+        },
+        {
+          "sourceId": "DSA5208/Lec2.pdf",
+          "page": 49,
+          "sourceType": "lecture",
+          "role": "safe-to-proceed condition",
+          "status": "current"
+        }
+      ]
+    }
+  ],
+  "schemaVersion": "nus.lesson.v1",
+  "courseId": "DSA5208",
+  "moduleId": "dsa5208-broadcast",
+  "blocks": [
+    {
+      "id": "dsa5208-synchronizers-section-1",
+      "type": "teaching-note",
+      "title": "Safe to proceed",
+      "body": "In an asynchronous system, a synchronizer tells a process when it is safe to move to the next simulated synchronous round. Safety means that the messages and acknowledgements required by the current round have been accounted for.",
+      "sourceType": "lecture",
+      "sourceRefs": [
+        {
+          "sourceId": "DSA5208/Lec2.pdf",
+          "page": 42,
+          "sourceType": "lecture",
+          "role": "synchronizer definition",
+          "status": "current"
+        }
+      ]
+    },
+    {
+      "id": "dsa5208-synchronizers-section-2",
+      "type": "teaching-note",
+      "title": "Simple and α synchronizers",
+      "body": "The simple synchronizer assumes every process sends exactly one message to every neighbor per round, using a dummy message when necessary. The α synchronizer removes that fixed-message assumption and must therefore reason about when all current-round communication is complete.",
+      "sourceType": "lecture",
+      "sourceRefs": [
+        {
+          "sourceId": "DSA5208/Lec2.pdf",
+          "page": 45,
+          "sourceType": "lecture",
+          "role": "simple synchronizer",
+          "status": "current"
+        },
+        {
+          "sourceId": "DSA5208/Lec2.pdf",
+          "page": 47,
+          "sourceType": "lecture",
+          "role": "alpha synchronizer",
+          "status": "current"
+        }
+      ]
+    },
+    {
+      "id": "dsa5208-synchronizers-formula-1",
+      "type": "formula",
+      "name": "Safe-to-proceed condition",
+      "purpose": "State the condition that allows a process to advance to the next simulated round.",
+      "latex": "\\operatorname{safe}(p_i,r) \\Longrightarrow \\operatorname{advance}(p_i,r+1)",
+      "explanation": "A process advances only after the synchronizer has evidence that the current-round communication required by its protocol is complete.",
+      "symbols": [
+        {
+          "latex": "p_i",
+          "meaning": "the process considering advancement"
+        },
+        {
+          "latex": "r",
+          "meaning": "the current simulated round"
+        },
+        {
+          "latex": "\\operatorname{safe}",
+          "meaning": "the synchronizer's completion condition"
+        }
+      ],
+      "sourceType": "lecture",
+      "sourceRefs": [
+        {
+          "sourceId": "DSA5208/Lec2.pdf",
+          "page": 49,
+          "sourceType": "lecture",
+          "role": "safe-to-proceed condition",
+          "status": "current"
+        }
+      ]
+    },
+    {
+      "id": "dsa5208-synchronizers-example-1",
+      "type": "worked-example",
+      "title": "Round barrier reasoning",
+      "sourceType": "lecture",
+      "steps": [
+        "Identify the current simulated round.",
+        "Track messages sent for that round.",
+        "Track acknowledgements or safe notifications from neighbors.",
+        "Advance only when the protocol's safety condition holds."
+      ],
+      "answer": "A synchronizer is a correctness mechanism: it creates a round barrier without assuming that the underlying network is synchronous.",
+      "sourceRefs": [
+        {
+          "sourceId": "DSA5208/Lec2.pdf",
+          "page": 49,
+          "sourceType": "lecture",
+          "role": "safe-to-proceed condition",
+          "status": "current"
+        }
+      ]
+    },
+    {
+      "id": "dsa5208-synchronizers-critical-1",
+      "type": "critical-question",
+      "prompt": "Why can a dummy message be useful in the simple synchronizer?",
+      "angle": "Consider how the protocol knows that a process has finished its current round.",
+      "modelAnswer": "The dummy message preserves the one-message-per-neighbor assumption, so receipt of a message still signals completion of that neighbor's current-round communication even when there is no payload.",
+      "focus": "protocol assumption",
+      "sourceRefs": [
+        {
+          "sourceId": "DSA5208/Lec2.pdf",
+          "page": 45,
+          "sourceType": "lecture",
+          "role": "simple synchronizer assumption",
+          "status": "current"
+        }
+      ]
+    },
+    {
+      "id": "dsa5208-synchronizers-critical-2",
+      "type": "critical-question",
+      "prompt": "What assumption does the $\\alpha$ synchronizer remove, and what new evidence must it track?",
+      "angle": "Compare fixed message counts with protocol evidence about completion of current-round communication.",
+      "modelAnswer": "The $\\alpha$ synchronizer removes the assumption that every process sends exactly one message to every neighbor per round. It must instead track enough acknowledgements or safe notifications to establish that current-round communication is complete before advancing.",
+      "focus": "assumption and evidence",
+      "sourceRefs": [
+        {
+          "sourceId": "DSA5208/Lec2.pdf",
+          "page": 47,
+          "sourceType": "lecture",
+          "role": "alpha synchronizer",
+          "status": "current"
+        },
+        {
+          "sourceId": "DSA5208/Lec2.pdf",
+          "page": 49,
+          "sourceType": "lecture",
+          "role": "safe-to-proceed condition",
+          "status": "current"
+        }
+      ]
+    }
+  ],
+  "questionIds": [
+    "dsa5208-synchronizers-q1",
+    "dsa5208-synchronizers-q2",
+    "dsa5208-synchronizers-q3"
+  ],
+  "labIds": [
+    "dsa5208-synchronizers"
+  ]
+}

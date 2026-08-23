@@ -784,5 +784,271 @@
     },
     "reducedMotion": true,
     "explanation": "The builder makes source fidelity part of the learning experience: a roadmap is useful, but it is not a fabricated derivation."
+  },
+  "dsa5208-broadcast": {
+    "courseCode": "DSA5208",
+    "lessonId": "dsa5208-broadcast",
+    "type": "compare",
+    "title": "Broadcast guarantee selector",
+    "learningGoal": "Choose the weakest broadcast guarantee that preserves the application's ordering invariant.",
+    "sourceRefs": [
+      {
+        "sourceId": "DSA5208/Lec2.pdf",
+        "page": 11,
+        "sourceType": "lecture",
+        "role": "FIFO broadcast",
+        "status": "current"
+      },
+      {
+        "sourceId": "DSA5208/Lec2.pdf",
+        "page": 13,
+        "sourceType": "lecture",
+        "role": "causal broadcast",
+        "status": "current"
+      },
+      {
+        "sourceId": "DSA5208/Lec2.pdf",
+        "page": 16,
+        "sourceType": "lecture",
+        "role": "total order broadcast",
+        "status": "current"
+      }
+    ],
+    "sourceLens": {
+      "status": "core DSA5208",
+      "whyExaminable": "Lecture 2 makes the scope boundary examinable: FIFO is sender-channel local, causal order follows happens-before, and total order is global.",
+      "lecture": [
+        {
+          "sourceId": "DSA5208/Lec2.pdf",
+          "page": 11,
+          "sourceType": "lecture",
+          "role": "FIFO broadcast",
+          "status": "current"
+        },
+        {
+          "sourceId": "DSA5208/Lec2.pdf",
+          "page": 13,
+          "sourceType": "lecture",
+          "role": "causal broadcast",
+          "status": "current"
+        },
+        {
+          "sourceId": "DSA5208/Lec2.pdf",
+          "page": 16,
+          "sourceType": "lecture",
+          "role": "total order broadcast",
+          "status": "current"
+        }
+      ],
+      "officialExercise": [],
+      "textbook": [],
+      "reference": []
+    },
+    "splits": [
+      {
+        "id": "fifo",
+        "label": "One sender channel",
+        "impurity": 20,
+        "detail": "Preserve the sender's broadcast sequence."
+      },
+      {
+        "id": "causal",
+        "label": "Cross-process dependency",
+        "impurity": 28,
+        "detail": "Preserve happens-before between broadcasts."
+      },
+      {
+        "id": "total",
+        "label": "One global sequence",
+        "impurity": 25,
+        "detail": "Make every process deliver all messages in the same order."
+      },
+      {
+        "id": "buffer",
+        "label": "Receive before deliver",
+        "impurity": 60,
+        "detail": "Hold a message until its delivery condition is safe."
+      }
+    ],
+    "requiredChoice": "causal",
+    "initialState": {
+      "choice": null
+    },
+    "reducedMotion": true,
+    "explanation": "The selector forces the learner to name the dependency scope before choosing a delivery protocol."
+  },
+  "dsa5208-shortest-path": {
+    "courseCode": "DSA5208",
+    "lessonId": "dsa5208-shortest-path",
+    "type": "algorithm-trace",
+    "title": "Distributed Bellman–Ford trace",
+    "learningGoal": "Trace one distance relaxation and decide whether the execution is round-based or event-driven.",
+    "sourceRefs": [
+      {
+        "sourceId": "DSA5208/Lec2.pdf",
+        "page": 26,
+        "sourceType": "lecture",
+        "role": "synchronous Bellman-Ford",
+        "status": "current"
+      },
+      {
+        "sourceId": "DSA5208/Lec2.pdf",
+        "page": 39,
+        "sourceType": "lecture",
+        "role": "asynchronous Bellman-Ford",
+        "status": "current"
+      },
+      {
+        "sourceId": "DSA5208/Lec2.pdf",
+        "page": 40,
+        "sourceType": "lecture",
+        "role": "algorithm comparison",
+        "status": "current"
+      }
+    ],
+    "sourceLens": {
+      "status": "core DSA5208",
+      "whyExaminable": "The lab turns the lecture's main distinction into a decision: fixed rounds and a global barrier versus improvement-triggered messages and explicit termination.",
+      "lecture": [
+        {
+          "sourceId": "DSA5208/Lec2.pdf",
+          "page": 26,
+          "sourceType": "lecture",
+          "role": "synchronous Bellman-Ford",
+          "status": "current"
+        },
+        {
+          "sourceId": "DSA5208/Lec2.pdf",
+          "page": 39,
+          "sourceType": "lecture",
+          "role": "asynchronous Bellman-Ford",
+          "status": "current"
+        },
+        {
+          "sourceId": "DSA5208/Lec2.pdf",
+          "page": 40,
+          "sourceType": "lecture",
+          "role": "algorithm comparison",
+          "status": "current"
+        }
+      ],
+      "officialExercise": [],
+      "textbook": [],
+      "reference": []
+    },
+    "steps": [
+      [
+        "Initialize",
+        "$d(s)=0$; $d(v)=\\infty$",
+        "Set the source distance and leave unknown paths infinite."
+      ],
+      [
+        "Relax",
+        "$\\ell_i \\leftarrow \\min_j(\\ell_j+w_{j,i})$",
+        "Use a neighbor's known path plus edge latency."
+      ],
+      [
+        "Schedule",
+        "round or update message",
+        "Synchronous execution waits for a round; asynchronous execution reacts to an improvement."
+      ],
+      [
+        "Stop",
+        "$n-1$ rounds or no update in flight",
+        "Termination is part of the distributed algorithm, not an afterthought."
+      ]
+    ],
+    "initialState": {
+      "step": 0
+    },
+    "reducedMotion": true,
+    "explanation": "The trace keeps the shortest-path recurrence separate from the execution model that transports it."
+  },
+  "dsa5208-synchronizers": {
+    "courseCode": "DSA5208",
+    "lessonId": "dsa5208-synchronizers",
+    "type": "event-timeline",
+    "title": "Synchronizer round barrier",
+    "learningGoal": "Decide when a process is safe to advance a simulated synchronous round.",
+    "sourceRefs": [
+      {
+        "sourceId": "DSA5208/Lec2.pdf",
+        "page": 42,
+        "sourceType": "lecture",
+        "role": "synchronizer definition",
+        "status": "current"
+      },
+      {
+        "sourceId": "DSA5208/Lec2.pdf",
+        "page": 45,
+        "sourceType": "lecture",
+        "role": "simple synchronizer",
+        "status": "current"
+      },
+      {
+        "sourceId": "DSA5208/Lec2.pdf",
+        "page": 49,
+        "sourceType": "lecture",
+        "role": "alpha synchronizer safety",
+        "status": "current"
+      }
+    ],
+    "sourceLens": {
+      "status": "core DSA5208",
+      "whyExaminable": "A synchronizer is the correctness bridge between asynchronous execution and a synchronous algorithm; safe progress is the key invariant.",
+      "lecture": [
+        {
+          "sourceId": "DSA5208/Lec2.pdf",
+          "page": 42,
+          "sourceType": "lecture",
+          "role": "synchronizer definition",
+          "status": "current"
+        },
+        {
+          "sourceId": "DSA5208/Lec2.pdf",
+          "page": 45,
+          "sourceType": "lecture",
+          "role": "simple synchronizer",
+          "status": "current"
+        },
+        {
+          "sourceId": "DSA5208/Lec2.pdf",
+          "page": 49,
+          "sourceType": "lecture",
+          "role": "alpha synchronizer safety",
+          "status": "current"
+        }
+      ],
+      "officialExercise": [],
+      "textbook": [],
+      "reference": []
+    },
+    "steps": [
+      [
+        "Round",
+        "current simulated round",
+        "Name the round whose messages are being processed."
+      ],
+      [
+        "Messages",
+        "current-round traffic",
+        "Track messages from neighbors for this round."
+      ],
+      [
+        "Acknowledge",
+        "safe notification",
+        "Wait for the protocol's evidence that the round is complete."
+      ],
+      [
+        "Advance",
+        "next round",
+        "Only then run the next synchronous step safely."
+      ]
+    ],
+    "initialState": {
+      "step": 0
+    },
+    "reducedMotion": true,
+    "explanation": "The timeline makes a logical barrier visible without pretending the physical network has a global clock."
   }
 }

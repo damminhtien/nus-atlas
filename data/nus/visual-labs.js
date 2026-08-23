@@ -32,8 +32,8 @@
     "dsa5101-minhash-lsh": {
       courseCode: "DSA5101", lessonId: "dsa5101-minhash-lsh", type: "derivation-trace", title: "MinHash-to-LSH trace",
       learningGoal: "Follow the chain from set similarity to compact signatures and then to candidate generation.",
-      sourceRefs: [bigDataExercise("DSA5101/Assignments/DSA5101_Assignment_1.pdf", 3, "MinHash"), bigDataExercise("DSA5101/Assignments/DSA5101_Assignment_1.pdf", 4, "LSH banding"), bigDataTextbook(95, "MinHash and LSH depth")],
-      sourceLens: bigDataLens("The assignment requires the probability calculation; MMDS supplies the derivation and parameter trade-off as textbook depth.", [], [bigDataExercise("DSA5101/Assignments/DSA5101_Assignment_1.pdf", 3, "MinHash"), bigDataExercise("DSA5101/Assignments/DSA5101_Assignment_1.pdf", 4, "LSH banding")], [bigDataTextbook(95, "MinHash and LSH depth")]),
+      sourceRefs: [bigDataLecture("DSA5101/Lec 2 - Finding Similar items, LSH.pdf", 19, "official similarity pipeline"), bigDataLecture("DSA5101/Lec 2 - Finding Similar items, LSH.pdf", 62, "LSH candidate probability"), bigDataExercise("DSA5101/Assignments/DSA5101_Assignment_1.pdf", 3, "MinHash"), bigDataExercise("DSA5101/Assignments/DSA5101_Assignment_1.pdf", 4, "LSH banding"), bigDataTextbook(95, "MinHash and LSH depth")],
+      sourceLens: bigDataLens("Lecture 2 supplies the lecture core; Assignment 1 tests the probability calculation; MMDS supplies labeled derivation depth.", [bigDataLecture("DSA5101/Lec 2 - Finding Similar items, LSH.pdf", 19, "official similarity pipeline"), bigDataLecture("DSA5101/Lec 2 - Finding Similar items, LSH.pdf", 62, "LSH candidate probability")], [bigDataExercise("DSA5101/Assignments/DSA5101_Assignment_1.pdf", 3, "MinHash"), bigDataExercise("DSA5101/Assignments/DSA5101_Assignment_1.pdf", 4, "LSH banding")], [bigDataTextbook(95, "MinHash and LSH depth")]),
       steps: [["Set geometry", String.raw`J(A,B)=\frac{|A\cap B|}{|A\cup B|}`, "Define similarity before choosing a sketch."], ["One permutation", String.raw`\Pr[h(A)=h(B)]=J(A,B)`, "A collision is an unbiased similarity signal under a random permutation."], ["Banding", String.raw`P_{\mathrm{candidate}}=1-(1-s^r)^b`, "At least one matching band is enough to pass the candidate filter."], ["Verify", String.raw`\text{candidate}\to\text{exact similarity}`, "LSH generates candidates; it does not certify every candidate as a true neighbor."]],
       initialState: { step: 0 }, check: state => state.step >= 3, reducedMotion: true, explanation: "The trace keeps exact similarity, compact estimation, and approximate candidate retrieval as three different operations."
     },
@@ -293,6 +293,33 @@
     sourceLens: lens("This lab turns a complexity statement into a design trade-off: preserve causal knowledge while reducing repeated metadata.", [lecture("DSA5208/Lec1.pdf", 24, "compressed timestamp idea"), lecture("DSA5208/Lec1.pdf", 27, "storage overhead"), lecture("DSA5208/Lec1.pdf", 29, "differential technique")], [textbook(70, "metadata compression")]),
     initialState: { value: 55 }, check: state => state.value >= 35 && state.value <= 80, reducedMotion: true,
     explanation: "More compression can reduce communication and storage, but it requires carefully maintained receiver-specific state."
+  });
+  add("dsa5208-broadcast", {
+    courseCode: "DSA5208", lessonId: "dsa5208-broadcast", type: "compare", title: "Broadcast guarantee selector",
+    learningGoal: "Choose the weakest broadcast guarantee that preserves the application's ordering invariant.",
+    sourceRefs: [lecture("DSA5208/Lec2.pdf", 11, "FIFO broadcast"), lecture("DSA5208/Lec2.pdf", 13, "causal broadcast"), lecture("DSA5208/Lec2.pdf", 16, "total order broadcast")],
+    sourceLens: lens("Lecture 2 makes the scope boundary examinable: FIFO is sender-channel local, causal order follows happens-before, and total order is global.", [lecture("DSA5208/Lec2.pdf", 11, "FIFO broadcast"), lecture("DSA5208/Lec2.pdf", 13, "causal broadcast"), lecture("DSA5208/Lec2.pdf", 16, "total order broadcast")]),
+    splits: [{ id: "fifo", label: "One sender channel", impurity: 20, detail: "Preserve the sender's broadcast sequence." }, { id: "causal", label: "Cross-process dependency", impurity: 28, detail: "Preserve happens-before between broadcasts." }, { id: "total", label: "One global sequence", impurity: 25, detail: "Make every process deliver all messages in the same order." }, { id: "buffer", label: "Receive before deliver", impurity: 60, detail: "Hold a message until its delivery condition is safe." }],
+    requiredChoice: "causal", initialState: { choice: null }, check: state => ["fifo", "causal", "total", "buffer"].includes(state.choice), reducedMotion: true,
+    explanation: "The selector forces the learner to name the dependency scope before choosing a delivery protocol."
+  });
+  add("dsa5208-shortest-path", {
+    courseCode: "DSA5208", lessonId: "dsa5208-shortest-path", type: "algorithm-trace", title: "Distributed Bellman–Ford trace",
+    learningGoal: "Trace one distance relaxation and decide whether the execution is round-based or event-driven.",
+    sourceRefs: [lecture("DSA5208/Lec2.pdf", 26, "synchronous Bellman-Ford"), lecture("DSA5208/Lec2.pdf", 39, "asynchronous Bellman-Ford"), lecture("DSA5208/Lec2.pdf", 40, "algorithm comparison")],
+    sourceLens: lens("The lab turns the lecture's main distinction into a decision: fixed rounds and a global barrier versus improvement-triggered messages and explicit termination.", [lecture("DSA5208/Lec2.pdf", 26, "synchronous Bellman-Ford"), lecture("DSA5208/Lec2.pdf", 39, "asynchronous Bellman-Ford"), lecture("DSA5208/Lec2.pdf", 40, "algorithm comparison")]),
+    steps: [["Initialize", "$d(s)=0$; $d(v)=\\infty$", "Set the source distance and leave unknown paths infinite."], ["Relax", "$\\ell_i \\leftarrow \\min_j(\\ell_j+w_{j,i})$", "Use a neighbor's known path plus edge latency."], ["Schedule", "round or update message", "Synchronous execution waits for a round; asynchronous execution reacts to an improvement."], ["Stop", "$n-1$ rounds or no update in flight", "Termination is part of the distributed algorithm, not an afterthought."]],
+    initialState: { step: 0 }, check: state => state.step >= 3, reducedMotion: true,
+    explanation: "The trace keeps the shortest-path recurrence separate from the execution model that transports it."
+  });
+  add("dsa5208-synchronizers", {
+    courseCode: "DSA5208", lessonId: "dsa5208-synchronizers", type: "event-timeline", title: "Synchronizer round barrier",
+    learningGoal: "Decide when a process is safe to advance a simulated synchronous round.",
+    sourceRefs: [lecture("DSA5208/Lec2.pdf", 42, "synchronizer definition"), lecture("DSA5208/Lec2.pdf", 45, "simple synchronizer"), lecture("DSA5208/Lec2.pdf", 49, "alpha synchronizer safety")],
+    sourceLens: lens("A synchronizer is the correctness bridge between asynchronous execution and a synchronous algorithm; safe progress is the key invariant.", [lecture("DSA5208/Lec2.pdf", 42, "synchronizer definition"), lecture("DSA5208/Lec2.pdf", 45, "simple synchronizer"), lecture("DSA5208/Lec2.pdf", 49, "alpha synchronizer safety")]),
+    steps: [["Round", "current simulated round", "Name the round whose messages are being processed."], ["Messages", "current-round traffic", "Track messages from neighbors for this round."], ["Acknowledge", "safe notification", "Wait for the protocol's evidence that the round is complete."], ["Advance", "next round", "Only then run the next synchronous step safely."]],
+    initialState: { step: 0 }, check: state => state.step >= 3, reducedMotion: true,
+    explanation: "The timeline makes a logical barrier visible without pretending the physical network has a global clock."
   });
   add("dsa5208-consistency-spark", {
     courseCode: "DSA5208", lessonId: "dsa5208-consistency-spark", type: "pipeline-builder", title: "Roadmap-to-measurement builder",

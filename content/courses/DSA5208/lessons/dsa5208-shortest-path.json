@@ -1,0 +1,395 @@
+{
+  "id": "dsa5208-shortest-path",
+  "title": "Distributed single-source shortest paths",
+  "week": 5,
+  "minutes": 60,
+  "contentStatus": "CURRENT LECTURE",
+  "summary": "Use network latency as edge weight and compare synchronous versus asynchronous Bellman–Ford in a message-passing system.",
+  "objectives": [
+    "State the single-source shortest-path objective",
+    "Trace synchronous relaxation rounds",
+    "Explain the termination and message-complexity trade-off"
+  ],
+  "sourceRefs": [
+    {
+      "sourceId": "DSA5208/Lec2.pdf",
+      "page": 21,
+      "sourceType": "lecture",
+      "role": "broadcast on a tree",
+      "status": "current"
+    },
+    {
+      "sourceId": "DSA5208/Lec2.pdf",
+      "page": 22,
+      "sourceType": "lecture",
+      "role": "single-source shortest path problem",
+      "status": "current"
+    },
+    {
+      "sourceId": "DSA5208/Lec2.pdf",
+      "page": 26,
+      "sourceType": "lecture",
+      "role": "synchronous Bellman-Ford",
+      "status": "current"
+    },
+    {
+      "sourceId": "DSA5208/Lec2.pdf",
+      "page": 30,
+      "sourceType": "lecture",
+      "role": "synchronous algorithm",
+      "status": "current"
+    },
+    {
+      "sourceId": "DSA5208/Lec2.pdf",
+      "page": 39,
+      "sourceType": "lecture",
+      "role": "asynchronous algorithm",
+      "status": "current"
+    },
+    {
+      "sourceId": "DSA5208/Lec2.pdf",
+      "page": 40,
+      "sourceType": "lecture",
+      "role": "algorithm comparison",
+      "status": "current"
+    }
+  ],
+  "visualIds": [
+    "dsa5208-shortest-path"
+  ],
+  "sourceLens": {
+    "status": "core DSA5208 Lecture 2",
+    "whyExaminable": "The lecture contrasts a round-based synchronous relaxation with an event-driven asynchronous relaxation; the algorithm and termination boundary are the examinable distinction.",
+    "lecture": [
+      {
+        "sourceId": "DSA5208/Lec2.pdf",
+        "page": 26,
+        "sourceType": "lecture",
+        "role": "synchronous relaxation",
+        "status": "current"
+      },
+      {
+        "sourceId": "DSA5208/Lec2.pdf",
+        "page": 40,
+        "sourceType": "lecture",
+        "role": "comparison",
+        "status": "current"
+      }
+    ],
+    "officialExercise": [],
+    "textbook": [],
+    "reference": []
+  },
+  "sections": [
+    {
+      "title": "The objective",
+      "sourceType": "lecture",
+      "body": "The sender is the source node. Each process must learn the shortest path from that sender, where an edge weight represents network latency. A broadcast tree is therefore an optimization problem: find a low-latency path to every process.",
+      "sourceRefs": [
+        {
+          "sourceId": "DSA5208/Lec2.pdf",
+          "page": 22,
+          "sourceType": "lecture",
+          "role": "shortest-path objective",
+          "status": "current"
+        }
+      ]
+    },
+    {
+      "title": "Relaxation and rounds",
+      "sourceType": "lecture",
+      "body": "In synchronous Bellman–Ford, each round propagates the best known distance through neighbors. After $n-1$ rounds, shortest paths are found under the lecture's assumptions. The asynchronous version sends an update when a process improves its local estimate and has no fixed round count.",
+      "sourceRefs": [
+        {
+          "sourceId": "DSA5208/Lec2.pdf",
+          "page": 26,
+          "sourceType": "lecture",
+          "role": "synchronous Bellman-Ford",
+          "status": "current"
+        },
+        {
+          "sourceId": "DSA5208/Lec2.pdf",
+          "page": 39,
+          "sourceType": "lecture",
+          "role": "asynchronous Bellman-Ford",
+          "status": "current"
+        }
+      ]
+    }
+  ],
+  "math": [
+    {
+      "name": "Bellman–Ford relaxation",
+      "purpose": "Update the shortest known distance to process $p_i$ from neighbor estimates.",
+      "latex": "\\ell_i \\leftarrow \\min_{j \\in N_i} \\{\\ell_j + w_{j,i}\\}",
+      "explanation": "The candidate path through neighbor $p_j$ has length $\\ell_j+w_{j,i}$; keep the smallest candidate.",
+      "symbols": [
+        {
+          "latex": "\\ell_i",
+          "meaning": "current distance estimate at $p_i$"
+        },
+        {
+          "latex": "w_{j,i}",
+          "meaning": "latency of edge $p_j\\to p_i$"
+        }
+      ],
+      "sourceType": "lecture"
+    }
+  ],
+  "examples": [
+    {
+      "title": "Synchronous versus asynchronous",
+      "sourceType": "lecture",
+      "steps": [
+        "Synchronous: all processes advance together by rounds.",
+        "Asynchronous: an improved estimate triggers a message.",
+        "Synchronous termination is fixed at $n-1$ rounds.",
+        "Asynchronous termination requires detecting that no further update is in flight."
+      ],
+      "answer": "Synchronous execution is easier to reason about but waits at round boundaries; asynchronous execution can exploit early improvements but needs a termination condition.",
+      "sourceRefs": [
+        {
+          "sourceId": "DSA5208/Lec2.pdf",
+          "page": 40,
+          "sourceType": "lecture",
+          "role": "algorithm comparison",
+          "status": "current"
+        }
+      ]
+    }
+  ],
+  "contrastDrills": [
+    {
+      "id": "dsa5208-shortest-contrast-sync-async",
+      "type": "contrast",
+      "kind": "concept-contrast",
+      "pair": "Synchronous vs asynchronous Bellman–Ford",
+      "prompt": "Which version has a fixed $n-1$ round bound in the lecture?",
+      "choices": [
+        "Synchronous",
+        "Asynchronous",
+        "Both for the same execution",
+        "Neither"
+      ],
+      "answer": 0,
+      "explanation": "The synchronous algorithm terminates after $n-1$ rounds; the asynchronous version has no fixed round termination condition.",
+      "estimatedSeconds": 45,
+      "difficulty": "easy",
+      "skill": "concept-contrast",
+      "cognitiveLevel": "distinguish",
+      "misconception": "Message-triggered progress is not the same as a global round.",
+      "sourceRefs": [
+        {
+          "sourceId": "DSA5208/Lec2.pdf",
+          "page": 40,
+          "sourceType": "lecture",
+          "role": "algorithm comparison",
+          "status": "current"
+        }
+      ]
+    }
+  ],
+  "criticalQuestions": [
+    {
+      "prompt": "Why is a shortest-path broadcast more than simply sending the message to everyone?",
+      "angle": "Separate reachability from the latency of the path used to reach each process.",
+      "modelAnswer": "Broadcast guarantees reach all processes, but the shortest-path problem asks every process to learn the minimum-latency route from the source. The communication tree must therefore be optimized.",
+      "focus": "objective boundary",
+      "sourceRefs": [
+        {
+          "sourceId": "DSA5208/Lec2.pdf",
+          "page": 22,
+          "sourceType": "lecture",
+          "role": "single-source shortest path problem",
+          "status": "current"
+        }
+      ]
+    },
+    {
+      "prompt": "Why does asynchronous Bellman–Ford need a different termination argument from the synchronous version?",
+      "angle": "Separate a fixed round bound from the possibility of delayed messages or updates still in flight.",
+      "modelAnswer": "Synchronous Bellman–Ford has a global round structure and terminates after the stated $n-1$ rounds. Asynchronous Bellman–Ford is event-driven, so it must establish that no improving update remains in flight and no process can improve its estimate.",
+      "focus": "termination boundary",
+      "sourceRefs": [
+        {
+          "sourceId": "DSA5208/Lec2.pdf",
+          "page": 40,
+          "sourceType": "lecture",
+          "role": "algorithm comparison",
+          "status": "current"
+        }
+      ]
+    }
+  ],
+  "schemaVersion": "nus.lesson.v1",
+  "courseId": "DSA5208",
+  "moduleId": "dsa5208-broadcast",
+  "blocks": [
+    {
+      "id": "dsa5208-shortest-path-section-1",
+      "type": "teaching-note",
+      "title": "The objective",
+      "body": "The sender is the source node. Each process must learn the shortest path from that sender, where an edge weight represents network latency. A broadcast tree is therefore an optimization problem: find a low-latency path to every process.",
+      "sourceType": "lecture",
+      "sourceRefs": [
+        {
+          "sourceId": "DSA5208/Lec2.pdf",
+          "page": 22,
+          "sourceType": "lecture",
+          "role": "shortest-path objective",
+          "status": "current"
+        }
+      ]
+    },
+    {
+      "id": "dsa5208-shortest-path-section-2",
+      "type": "teaching-note",
+      "title": "Relaxation and rounds",
+      "body": "In synchronous Bellman–Ford, each round propagates the best known distance through neighbors. After $n-1$ rounds, shortest paths are found under the lecture's assumptions. The asynchronous version sends an update when a process improves its local estimate and has no fixed round count.",
+      "sourceType": "lecture",
+      "sourceRefs": [
+        {
+          "sourceId": "DSA5208/Lec2.pdf",
+          "page": 26,
+          "sourceType": "lecture",
+          "role": "synchronous Bellman-Ford",
+          "status": "current"
+        },
+        {
+          "sourceId": "DSA5208/Lec2.pdf",
+          "page": 39,
+          "sourceType": "lecture",
+          "role": "asynchronous Bellman-Ford",
+          "status": "current"
+        }
+      ]
+    },
+    {
+      "id": "dsa5208-shortest-path-formula-1",
+      "type": "formula",
+      "name": "Bellman–Ford relaxation",
+      "purpose": "Update the shortest known distance to process $p_i$ from neighbor estimates.",
+      "latex": "\\ell_i \\leftarrow \\min_{j \\in N_i} \\{\\ell_j + w_{j,i}\\}",
+      "explanation": "The candidate path through neighbor $p_j$ has length $\\ell_j+w_{j,i}$; keep the smallest candidate.",
+      "symbols": [
+        {
+          "latex": "\\ell_i",
+          "meaning": "current distance estimate at $p_i$"
+        },
+        {
+          "latex": "w_{j,i}",
+          "meaning": "latency of edge $p_j\\to p_i$"
+        }
+      ],
+      "sourceType": "lecture",
+      "sourceRefs": [
+        {
+          "sourceId": "DSA5208/Lec2.pdf",
+          "page": 21,
+          "sourceType": "lecture",
+          "role": "broadcast on a tree",
+          "status": "current"
+        },
+        {
+          "sourceId": "DSA5208/Lec2.pdf",
+          "page": 22,
+          "sourceType": "lecture",
+          "role": "single-source shortest path problem",
+          "status": "current"
+        },
+        {
+          "sourceId": "DSA5208/Lec2.pdf",
+          "page": 26,
+          "sourceType": "lecture",
+          "role": "synchronous Bellman-Ford",
+          "status": "current"
+        },
+        {
+          "sourceId": "DSA5208/Lec2.pdf",
+          "page": 30,
+          "sourceType": "lecture",
+          "role": "synchronous algorithm",
+          "status": "current"
+        },
+        {
+          "sourceId": "DSA5208/Lec2.pdf",
+          "page": 39,
+          "sourceType": "lecture",
+          "role": "asynchronous algorithm",
+          "status": "current"
+        },
+        {
+          "sourceId": "DSA5208/Lec2.pdf",
+          "page": 40,
+          "sourceType": "lecture",
+          "role": "algorithm comparison",
+          "status": "current"
+        }
+      ]
+    },
+    {
+      "id": "dsa5208-shortest-path-example-1",
+      "type": "worked-example",
+      "title": "Synchronous versus asynchronous",
+      "sourceType": "lecture",
+      "steps": [
+        "Synchronous: all processes advance together by rounds.",
+        "Asynchronous: an improved estimate triggers a message.",
+        "Synchronous termination is fixed at $n-1$ rounds.",
+        "Asynchronous termination requires detecting that no further update is in flight."
+      ],
+      "answer": "Synchronous execution is easier to reason about but waits at round boundaries; asynchronous execution can exploit early improvements but needs a termination condition.",
+      "sourceRefs": [
+        {
+          "sourceId": "DSA5208/Lec2.pdf",
+          "page": 40,
+          "sourceType": "lecture",
+          "role": "algorithm comparison",
+          "status": "current"
+        }
+      ]
+    },
+    {
+      "id": "dsa5208-shortest-path-critical-1",
+      "type": "critical-question",
+      "prompt": "Why is a shortest-path broadcast more than simply sending the message to everyone?",
+      "angle": "Separate reachability from the latency of the path used to reach each process.",
+      "modelAnswer": "Broadcast guarantees reach all processes, but the shortest-path problem asks every process to learn the minimum-latency route from the source. The communication tree must therefore be optimized.",
+      "focus": "objective boundary",
+      "sourceRefs": [
+        {
+          "sourceId": "DSA5208/Lec2.pdf",
+          "page": 22,
+          "sourceType": "lecture",
+          "role": "single-source shortest path problem",
+          "status": "current"
+        }
+      ]
+    },
+    {
+      "id": "dsa5208-shortest-path-critical-2",
+      "type": "critical-question",
+      "prompt": "Why does asynchronous Bellman–Ford need a different termination argument from the synchronous version?",
+      "angle": "Separate a fixed round bound from the possibility of delayed messages or updates still in flight.",
+      "modelAnswer": "Synchronous Bellman–Ford has a global round structure and terminates after the stated $n-1$ rounds. Asynchronous Bellman–Ford is event-driven, so it must establish that no improving update remains in flight and no process can improve its estimate.",
+      "focus": "termination boundary",
+      "sourceRefs": [
+        {
+          "sourceId": "DSA5208/Lec2.pdf",
+          "page": 40,
+          "sourceType": "lecture",
+          "role": "algorithm comparison",
+          "status": "current"
+        }
+      ]
+    }
+  ],
+  "questionIds": [
+    "dsa5208-shortest-path-q1",
+    "dsa5208-shortest-path-q2",
+    "dsa5208-shortest-path-q3"
+  ],
+  "labIds": [
+    "dsa5208-shortest-path"
+  ]
+}

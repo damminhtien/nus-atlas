@@ -1,0 +1,64 @@
+{
+  "lessonId": "dsa5208-shortest-path",
+  "schemaVersion": "nus.study-kit.v1",
+  "flashcards": [
+    {
+      "front": "What is the Bellman–Ford relaxation update?",
+      "back": "For process $p_i$, keep the smallest candidate distance $\\ell_j+w_{j,i}$ over its neighbors $p_j$.",
+      "source": {
+        "sourceId": "DSA5208/Lec2.pdf",
+        "page": 26,
+        "sourceType": "lecture",
+        "role": "synchronous Bellman-Ford",
+        "status": "current"
+      }
+    },
+    {
+      "front": "Which Bellman–Ford version has a fixed $n-1$ round bound in the lecture?",
+      "back": "The synchronous version. The asynchronous version is event-driven and needs a termination argument rather than a fixed round count.",
+      "source": {
+        "sourceId": "DSA5208/Lec2.pdf",
+        "page": 40,
+        "sourceType": "lecture",
+        "role": "algorithm comparison",
+        "status": "current"
+      }
+    },
+    {
+      "front": "What does an edge weight represent in this lecture's shortest-path problem?",
+      "back": "It represents communication latency, so the objective is the minimum-latency route from the source to each process.",
+      "source": {
+        "sourceId": "DSA5208/Lec2.pdf",
+        "page": 22,
+        "sourceType": "lecture",
+        "role": "single-source shortest path problem",
+        "status": "current"
+      }
+    }
+  ],
+  "homework": [
+    {
+      "prompt": "Trace two synchronous relaxation rounds on a weighted graph and record each process's distance estimate.",
+      "rubric": "Initialize the source at zero, use infinity for unreached processes, apply neighbor relaxation round by round, and state the stopping bound.",
+      "source": {
+        "sourceId": "DSA5208/Lec2.pdf",
+        "page": 30,
+        "sourceType": "lecture",
+        "role": "synchronous algorithm",
+        "status": "current"
+      }
+    },
+    {
+      "prompt": "Compare synchronous and asynchronous Bellman–Ford for a network in which one improved estimate arrives early.",
+      "rubric": "Explain round barriers, event-triggered updates, and why asynchronous termination must account for messages still in flight.",
+      "source": {
+        "sourceId": "DSA5208/Lec2.pdf",
+        "page": 40,
+        "sourceType": "lecture",
+        "role": "algorithm comparison",
+        "status": "current"
+      }
+    }
+  ],
+  "codeExercises": []
+}

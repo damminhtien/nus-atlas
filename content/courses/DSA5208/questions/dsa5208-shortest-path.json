@@ -1,0 +1,50 @@
+[
+  {
+    "id": "dsa5208-shortest-path-q1",
+    "type": "calculation",
+    "prompt": "In Bellman–Ford, if a neighbor has estimate $5$ and the edge latency is $3$, what candidate distance does it offer?",
+    "accepted": ["8"],
+    "solution": "The candidate is $5+3=8$. The process keeps the minimum candidate across neighbors.",
+    "explanation": "Relaxation adds the neighbor distance and the edge weight.",
+    "difficulty": "easy",
+    "skill": "calculate",
+    "cognitiveLevel": "apply",
+    "estimatedSeconds": 45,
+    "misconception": "Do not compare edge latency alone; include the path already taken.",
+    "visualHook": "Animate one relaxation message.",
+    "sourceRefs": [{ "sourceId": "DSA5208/Lec2.pdf", "page": 26, "sourceType": "lecture", "role": "synchronous Bellman-Ford", "status": "current" }],
+    "schemaVersion": "nus.question.v1"
+  },
+  {
+    "id": "dsa5208-shortest-path-q2",
+    "type": "mcq",
+    "prompt": "Which statement matches the lecture comparison?",
+    "choices": ["Synchronous Bellman–Ford has a fixed $n-1$ round bound", "Asynchronous Bellman–Ford always has zero messages", "Both require a global physical clock", "Synchronous execution has no termination condition"],
+    "answer": 0,
+    "explanation": "The synchronous algorithm terminates after $n-1$ rounds; asynchronous execution needs an explicit termination condition.",
+    "difficulty": "medium",
+    "skill": "distinguish",
+    "cognitiveLevel": "understand",
+    "estimatedSeconds": 60,
+    "misconception": "Round-based termination and message-triggered termination are different.",
+    "visualHook": "Switch between round and event-driven execution.",
+    "sourceRefs": [{ "sourceId": "DSA5208/Lec2.pdf", "page": 40, "sourceType": "lecture", "role": "algorithm comparison", "status": "current" }],
+    "schemaVersion": "nus.question.v1"
+  },
+  {
+    "id": "dsa5208-shortest-path-q3",
+    "type": "short",
+    "prompt": "Why is the asynchronous shortest-path algorithm event-driven?",
+    "accepted": ["an improved estimate sends an update", "messages are triggered by distance improvements", "no global rounds"],
+    "solution": "A process sends updates when its local shortest-distance estimate improves; there is no global round barrier.",
+    "explanation": "Asynchrony changes the schedule of relaxation, not the shortest-path objective.",
+    "difficulty": "medium",
+    "skill": "explain",
+    "cognitiveLevel": "analyze",
+    "estimatedSeconds": 75,
+    "misconception": "Asynchronous does not mean that the recurrence disappears.",
+    "visualHook": "Follow an improving estimate through the graph.",
+    "sourceRefs": [{ "sourceId": "DSA5208/Lec2.pdf", "page": 39, "sourceType": "lecture", "role": "asynchronous Bellman-Ford", "status": "current" }],
+    "schemaVersion": "nus.question.v1"
+  }
+]

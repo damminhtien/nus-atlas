@@ -1,0 +1,64 @@
+{
+  "lessonId": "dsa5208-synchronizers",
+  "schemaVersion": "nus.study-kit.v1",
+  "flashcards": [
+    {
+      "front": "What condition makes a process safe to advance to the next simulated round?",
+      "back": "It must have the evidence required by the synchronizer that current-round communication and acknowledgements are complete.",
+      "source": {
+        "sourceId": "DSA5208/Lec2.pdf",
+        "page": 42,
+        "sourceType": "lecture",
+        "role": "synchronizer definition",
+        "status": "current"
+      }
+    },
+    {
+      "front": "Why does the simple synchronizer use dummy messages?",
+      "back": "A dummy message preserves the one-message-per-neighbor assumption, so its arrival can signal completion even when there is no payload.",
+      "source": {
+        "sourceId": "DSA5208/Lec2.pdf",
+        "page": 45,
+        "sourceType": "lecture",
+        "role": "simple synchronizer",
+        "status": "current"
+      }
+    },
+    {
+      "front": "What assumption does the $\\alpha$ synchronizer remove?",
+      "back": "It removes the fixed one-message-per-neighbor assumption and instead tracks when the current-round communication is complete.",
+      "source": {
+        "sourceId": "DSA5208/Lec2.pdf",
+        "page": 47,
+        "sourceType": "lecture",
+        "role": "alpha synchronizer",
+        "status": "current"
+      }
+    }
+  ],
+  "homework": [
+    {
+      "prompt": "Trace a simple synchronizer round on a three-process graph where one process has no payload to send to a neighbor.",
+      "rubric": "Insert the dummy message, show which messages or acknowledgements are observed, and identify the safe-to-proceed point.",
+      "source": {
+        "sourceId": "DSA5208/Lec2.pdf",
+        "page": 45,
+        "sourceType": "lecture",
+        "role": "simple synchronizer",
+        "status": "current"
+      }
+    },
+    {
+      "prompt": "Explain why the $\\alpha$ synchronizer needs a different completion argument from the simple synchronizer.",
+      "rubric": "State the removed fixed-message assumption and describe the evidence needed before a process advances.",
+      "source": {
+        "sourceId": "DSA5208/Lec2.pdf",
+        "page": 47,
+        "sourceType": "lecture",
+        "role": "alpha synchronizer",
+        "status": "current"
+      }
+    }
+  ],
+  "codeExercises": []
+}

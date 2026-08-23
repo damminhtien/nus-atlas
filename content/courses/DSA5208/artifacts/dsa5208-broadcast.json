@@ -1,0 +1,64 @@
+{
+  "lessonId": "dsa5208-broadcast",
+  "schemaVersion": "nus.study-kit.v1",
+  "flashcards": [
+    {
+      "front": "What does FIFO broadcast preserve?",
+      "back": "It preserves the order in which one sender broadcasts messages; it does not order concurrent messages from different senders.",
+      "source": {
+        "sourceId": "DSA5208/Lec2.pdf",
+        "page": 11,
+        "sourceType": "lecture",
+        "role": "FIFO broadcast",
+        "status": "current"
+      }
+    },
+    {
+      "front": "Why can receiving differ from delivering?",
+      "back": "A protocol may buffer a received message until the selected FIFO, causal, or total-order condition is safe.",
+      "source": {
+        "sourceId": "DSA5208/Lec2.pdf",
+        "page": 4,
+        "sourceType": "lecture",
+        "role": "receiving versus delivering",
+        "status": "current"
+      }
+    },
+    {
+      "front": "What does total-order broadcast add?",
+      "back": "Every process delivers all broadcasts in one identical global sequence; causal order alone does not constrain concurrent messages globally.",
+      "source": {
+        "sourceId": "DSA5208/Lec2.pdf",
+        "page": 16,
+        "sourceType": "lecture",
+        "role": "total-order broadcast",
+        "status": "current"
+      }
+    }
+  ],
+  "homework": [
+    {
+      "prompt": "Two senders broadcast concurrent messages. Choose FIFO, causal, or total order for an application that requires every replica to show one identical history.",
+      "rubric": "Choose total order, explain why FIFO is sender-local, and explain why causal order leaves concurrent messages unconstrained.",
+      "source": {
+        "sourceId": "DSA5208/Lec2.pdf",
+        "page": 16,
+        "sourceType": "lecture",
+        "role": "total-order broadcast",
+        "status": "current"
+      }
+    },
+    {
+      "prompt": "Explain why a broadcast implementation may receive a message but delay its delivery.",
+      "rubric": "Distinguish network arrival from application delivery and identify the missing ordering evidence that buffering waits for.",
+      "source": {
+        "sourceId": "DSA5208/Lec2.pdf",
+        "page": 4,
+        "sourceType": "lecture",
+        "role": "receiving versus delivering",
+        "status": "current"
+      }
+    }
+  ],
+  "codeExercises": []
+}

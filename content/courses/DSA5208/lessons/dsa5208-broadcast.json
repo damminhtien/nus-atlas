@@ -1,0 +1,417 @@
+{
+  "id": "dsa5208-broadcast",
+  "title": "Broadcast guarantees and delivery order",
+  "week": 5,
+  "minutes": 60,
+  "contentStatus": "CURRENT LECTURE",
+  "summary": "Separate receiving from delivering, then compare FIFO, causal, total, and FIFO-total broadcast guarantees.",
+  "objectives": [
+    "Distinguish a received message from a delivered message",
+    "State the guarantee and scope of four broadcast models",
+    "Explain why buffering is needed for stronger ordering"
+  ],
+  "sourceRefs": [
+    {
+      "sourceId": "DSA5208/Lec2.pdf",
+      "page": 3,
+      "sourceType": "lecture",
+      "role": "broadcast definition",
+      "status": "current"
+    },
+    {
+      "sourceId": "DSA5208/Lec2.pdf",
+      "page": 4,
+      "sourceType": "lecture",
+      "role": "receiving versus delivering",
+      "status": "current"
+    },
+    {
+      "sourceId": "DSA5208/Lec2.pdf",
+      "page": 11,
+      "sourceType": "lecture",
+      "role": "FIFO broadcast",
+      "status": "current"
+    },
+    {
+      "sourceId": "DSA5208/Lec2.pdf",
+      "page": 13,
+      "sourceType": "lecture",
+      "role": "causal broadcast",
+      "status": "current"
+    },
+    {
+      "sourceId": "DSA5208/Lec2.pdf",
+      "page": 16,
+      "sourceType": "lecture",
+      "role": "total order broadcast",
+      "status": "current"
+    },
+    {
+      "sourceId": "DSA5208/Lec2.pdf",
+      "page": 17,
+      "sourceType": "lecture",
+      "role": "FIFO-total order broadcast",
+      "status": "current"
+    }
+  ],
+  "visualIds": [
+    "dsa5208-broadcast"
+  ],
+  "sourceLens": {
+    "status": "core DSA5208 Lecture 2",
+    "whyExaminable": "The lecture asks which delivery guarantee preserves which dependency. The common trap is treating FIFO, causal, and total order as interchangeable.",
+    "lecture": [
+      {
+        "sourceId": "DSA5208/Lec2.pdf",
+        "page": 11,
+        "sourceType": "lecture",
+        "role": "FIFO guarantee",
+        "status": "current"
+      },
+      {
+        "sourceId": "DSA5208/Lec2.pdf",
+        "page": 13,
+        "sourceType": "lecture",
+        "role": "causal guarantee",
+        "status": "current"
+      },
+      {
+        "sourceId": "DSA5208/Lec2.pdf",
+        "page": 16,
+        "sourceType": "lecture",
+        "role": "total order guarantee",
+        "status": "current"
+      }
+    ],
+    "officialExercise": [],
+    "textbook": [],
+    "reference": []
+  },
+  "sections": [
+    {
+      "title": "Receive is not deliver",
+      "sourceType": "lecture",
+      "body": "A broadcast algorithm may receive a message from the network and hold it in a buffer before delivering it to the application. The delivery step is where the chosen ordering guarantee is enforced.",
+      "sourceRefs": [
+        {
+          "sourceId": "DSA5208/Lec2.pdf",
+          "page": 4,
+          "sourceType": "lecture",
+          "role": "receiving versus delivering",
+          "status": "current"
+        }
+      ]
+    },
+    {
+      "title": "Four guarantees, four scopes",
+      "sourceType": "lecture",
+      "body": "FIFO preserves the order of messages broadcast by one process. Causal broadcast preserves happens-before between broadcasts. Total order makes every process deliver all messages in the same order. FIFO-total order adds per-sender FIFO to a common global order.",
+      "sourceRefs": [
+        {
+          "sourceId": "DSA5208/Lec2.pdf",
+          "page": 17,
+          "sourceType": "lecture",
+          "role": "broadcast guarantee comparison",
+          "status": "current"
+        }
+      ]
+    }
+  ],
+  "math": [
+    {
+      "name": "Causal broadcast guarantee",
+      "purpose": "Check whether delivery respects a causal dependency between broadcasts.",
+      "latex": "m_1 \\to m_2 \\Longrightarrow \\operatorname{deliver}(m_1) \\to \\operatorname{deliver}(m_2)",
+      "explanation": "If the broadcast of $m_1$ happens before the broadcast of $m_2$, every process must deliver $m_1$ first.",
+      "symbols": [
+        {
+          "latex": "m_1,m_2",
+          "meaning": "broadcast messages"
+        },
+        {
+          "latex": "\\operatorname{deliver}",
+          "meaning": "application delivery event"
+        }
+      ],
+      "sourceType": "lecture"
+    }
+  ],
+  "examples": [
+    {
+      "title": "Choose the weakest sufficient guarantee",
+      "sourceType": "lecture",
+      "steps": [
+        "If only one sender's channel order matters, FIFO is sufficient.",
+        "If a dependency crosses processes, use causal ordering.",
+        "If every process must see one identical sequence, use total order.",
+        "Expect buffering and metadata when the guarantee is stronger."
+      ],
+      "answer": "The correct guarantee is determined by the invariant the application must preserve, not by choosing the strongest label automatically.",
+      "sourceRefs": [
+        {
+          "sourceId": "DSA5208/Lec2.pdf",
+          "page": 16,
+          "sourceType": "lecture",
+          "role": "ordering scope",
+          "status": "current"
+        }
+      ]
+    }
+  ],
+  "contrastDrills": [
+    {
+      "id": "dsa5208-broadcast-contrast-fifo-causal",
+      "type": "contrast",
+      "kind": "concept-contrast",
+      "pair": "FIFO vs causal broadcast",
+      "prompt": "Messages from different senders are causally related. Which guarantee captures that dependency?",
+      "choices": [
+        "FIFO",
+        "Causal broadcast",
+        "Random delivery",
+        "Physical clock order"
+      ],
+      "answer": 1,
+      "explanation": "FIFO is channel-local; causal broadcast follows happens-before across processes.",
+      "estimatedSeconds": 45,
+      "difficulty": "medium",
+      "skill": "concept-contrast",
+      "cognitiveLevel": "distinguish",
+      "misconception": "Identify whether the dependency crosses a sender channel.",
+      "sourceRefs": [
+        {
+          "sourceId": "DSA5208/Lec2.pdf",
+          "page": 13,
+          "sourceType": "lecture",
+          "role": "causal broadcast",
+          "status": "current"
+        }
+      ]
+    },
+    {
+      "id": "dsa5208-broadcast-contrast-total-causal",
+      "type": "contrast",
+      "kind": "concept-contrast",
+      "pair": "Causal vs total order",
+      "prompt": "Which guarantee requires all processes to deliver messages in exactly the same order?",
+      "choices": [
+        "Causal order",
+        "Total order",
+        "FIFO",
+        "Non-FIFO"
+      ],
+      "answer": 1,
+      "explanation": "Total order imposes one common delivery sequence; causal order only constrains causally related messages.",
+      "estimatedSeconds": 45,
+      "difficulty": "medium",
+      "skill": "concept-contrast",
+      "cognitiveLevel": "distinguish",
+      "misconception": "Causal order does not order concurrent messages globally.",
+      "sourceRefs": [
+        {
+          "sourceId": "DSA5208/Lec2.pdf",
+          "page": 16,
+          "sourceType": "lecture",
+          "role": "total order",
+          "status": "current"
+        }
+      ]
+    }
+  ],
+  "criticalQuestions": [
+    {
+      "prompt": "Why can a received message be unsafe to deliver immediately?",
+      "angle": "Ask which earlier message or ordering condition may still be missing.",
+      "modelAnswer": "A later message may arrive before a causally earlier dependency. Buffering lets the implementation wait until the selected delivery guarantee is safe.",
+      "focus": "buffering",
+      "sourceRefs": [
+        {
+          "sourceId": "DSA5208/Lec2.pdf",
+          "page": 4,
+          "sourceType": "lecture",
+          "role": "receive versus deliver",
+          "status": "current"
+        }
+      ]
+    },
+    {
+      "prompt": "What distinction separates causal order from total order when two broadcasts are concurrent?",
+      "angle": "Check whether the guarantee constrains only happens-before or imposes one common sequence for every process.",
+      "modelAnswer": "Causal order constrains messages related by happens-before but may leave concurrent broadcasts in different orders. Total order requires every process to deliver all broadcasts in the same order, including concurrent ones.",
+      "focus": "causal versus total order",
+      "sourceRefs": [
+        {
+          "sourceId": "DSA5208/Lec2.pdf",
+          "page": 16,
+          "sourceType": "lecture",
+          "role": "total-order broadcast",
+          "status": "current"
+        }
+      ]
+    }
+  ],
+  "schemaVersion": "nus.lesson.v1",
+  "courseId": "DSA5208",
+  "moduleId": "dsa5208-broadcast",
+  "blocks": [
+    {
+      "id": "dsa5208-broadcast-section-1",
+      "type": "teaching-note",
+      "title": "Receive is not deliver",
+      "body": "A broadcast algorithm may receive a message from the network and hold it in a buffer before delivering it to the application. The delivery step is where the chosen ordering guarantee is enforced.",
+      "sourceType": "lecture",
+      "sourceRefs": [
+        {
+          "sourceId": "DSA5208/Lec2.pdf",
+          "page": 4,
+          "sourceType": "lecture",
+          "role": "receiving versus delivering",
+          "status": "current"
+        }
+      ]
+    },
+    {
+      "id": "dsa5208-broadcast-section-2",
+      "type": "teaching-note",
+      "title": "Four guarantees, four scopes",
+      "body": "FIFO preserves the order of messages broadcast by one process. Causal broadcast preserves happens-before between broadcasts. Total order makes every process deliver all messages in the same order. FIFO-total order adds per-sender FIFO to a common global order.",
+      "sourceType": "lecture",
+      "sourceRefs": [
+        {
+          "sourceId": "DSA5208/Lec2.pdf",
+          "page": 17,
+          "sourceType": "lecture",
+          "role": "broadcast guarantee comparison",
+          "status": "current"
+        }
+      ]
+    },
+    {
+      "id": "dsa5208-broadcast-formula-1",
+      "type": "formula",
+      "name": "Causal broadcast guarantee",
+      "purpose": "Check whether delivery respects a causal dependency between broadcasts.",
+      "latex": "m_1 \\to m_2 \\Longrightarrow \\operatorname{deliver}(m_1) \\to \\operatorname{deliver}(m_2)",
+      "explanation": "If the broadcast of $m_1$ happens before the broadcast of $m_2$, every process must deliver $m_1$ first.",
+      "symbols": [
+        {
+          "latex": "m_1,m_2",
+          "meaning": "broadcast messages"
+        },
+        {
+          "latex": "\\operatorname{deliver}",
+          "meaning": "application delivery event"
+        }
+      ],
+      "sourceType": "lecture",
+      "sourceRefs": [
+        {
+          "sourceId": "DSA5208/Lec2.pdf",
+          "page": 3,
+          "sourceType": "lecture",
+          "role": "broadcast definition",
+          "status": "current"
+        },
+        {
+          "sourceId": "DSA5208/Lec2.pdf",
+          "page": 4,
+          "sourceType": "lecture",
+          "role": "receiving versus delivering",
+          "status": "current"
+        },
+        {
+          "sourceId": "DSA5208/Lec2.pdf",
+          "page": 11,
+          "sourceType": "lecture",
+          "role": "FIFO broadcast",
+          "status": "current"
+        },
+        {
+          "sourceId": "DSA5208/Lec2.pdf",
+          "page": 13,
+          "sourceType": "lecture",
+          "role": "causal broadcast",
+          "status": "current"
+        },
+        {
+          "sourceId": "DSA5208/Lec2.pdf",
+          "page": 16,
+          "sourceType": "lecture",
+          "role": "total order broadcast",
+          "status": "current"
+        },
+        {
+          "sourceId": "DSA5208/Lec2.pdf",
+          "page": 17,
+          "sourceType": "lecture",
+          "role": "FIFO-total order broadcast",
+          "status": "current"
+        }
+      ]
+    },
+    {
+      "id": "dsa5208-broadcast-example-1",
+      "type": "worked-example",
+      "title": "Choose the weakest sufficient guarantee",
+      "sourceType": "lecture",
+      "steps": [
+        "If only one sender's channel order matters, FIFO is sufficient.",
+        "If a dependency crosses processes, use causal ordering.",
+        "If every process must see one identical sequence, use total order.",
+        "Expect buffering and metadata when the guarantee is stronger."
+      ],
+      "answer": "The correct guarantee is determined by the invariant the application must preserve, not by choosing the strongest label automatically.",
+      "sourceRefs": [
+        {
+          "sourceId": "DSA5208/Lec2.pdf",
+          "page": 16,
+          "sourceType": "lecture",
+          "role": "ordering scope",
+          "status": "current"
+        }
+      ]
+    },
+    {
+      "id": "dsa5208-broadcast-critical-1",
+      "type": "critical-question",
+      "prompt": "Why can a received message be unsafe to deliver immediately?",
+      "angle": "Ask which earlier message or ordering condition may still be missing.",
+      "modelAnswer": "A later message may arrive before a causally earlier dependency. Buffering lets the implementation wait until the selected delivery guarantee is safe.",
+      "focus": "buffering",
+      "sourceRefs": [
+        {
+          "sourceId": "DSA5208/Lec2.pdf",
+          "page": 4,
+          "sourceType": "lecture",
+          "role": "receive versus deliver",
+          "status": "current"
+        }
+      ]
+    },
+    {
+      "id": "dsa5208-broadcast-critical-2",
+      "type": "critical-question",
+      "prompt": "What distinction separates causal order from total order when two broadcasts are concurrent?",
+      "angle": "Check whether the guarantee constrains only happens-before or imposes one common sequence for every process.",
+      "modelAnswer": "Causal order constrains messages related by happens-before but may leave concurrent broadcasts in different orders. Total order requires every process to deliver all broadcasts in the same order, including concurrent ones.",
+      "focus": "causal versus total order",
+      "sourceRefs": [
+        {
+          "sourceId": "DSA5208/Lec2.pdf",
+          "page": 16,
+          "sourceType": "lecture",
+          "role": "total-order broadcast",
+          "status": "current"
+        }
+      ]
+    }
+  ],
+  "questionIds": [
+    "dsa5208-broadcast-q1",
+    "dsa5208-broadcast-q2",
+    "dsa5208-broadcast-q3"
+  ],
+  "labIds": [
+    "dsa5208-broadcast"
+  ]
+}
