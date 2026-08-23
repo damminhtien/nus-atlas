@@ -30,8 +30,11 @@ const MALFORMED_MATH_PATTERNS = [
   { pattern: /(?<!\\)\b[A-Za-z]+imes[A-Z]\b/g, label: 'missing times command' },
   { pattern: /(?<!\\)\b(?:mathcal|mathbb|mathrm|mathbf|operatorname|langle|rangle)\b/g, label: 'missing TeX command' },
   { pattern: /(?<!\\)\b(?:hat|tilde|widehat|bar)\s+[A-Za-z]\b/g, label: 'missing accent command' },
+  { pattern: /(?<!\\)\binmathbb\b/g, label: 'missing in/mathbb commands' },
+  { pattern: /(?<!\\)\bsqrt\s*\{/g, label: 'missing sqrt command' },
   { pattern: /\b(?:remains|giving|classify)\b/g, label: 'prose inside math' },
 ];
+const PROSE_IN_MATH_START = /^(?:(?:A|An|The)\s+[A-Za-z]+|Each|Derive|Solve|Compose|Expand|Points|Treating|Check|In|What|Why|How|Which|Using|If|With|When|Where|Use|Look|Relate|Replace|Multiply|Write|Give|State)\b/;
 const DOUBLE_ESCAPED_TEX_COMMAND = /(?<!\\)\\{2}(?=(?:alpha|beta|begin|mathbf|dagger|delta|ell|end|frac|ge|hat|in|infty|lambda|le|langle|mathbb|mathrm|mu|operatorname|partial|Phi|psi|rho|sim|sqrt|sum|text|theta|tilde|top|widehat)\b)/g;
 
 const RAW_MATH_PATTERNS = [
@@ -134,6 +137,9 @@ function findMalformedMath(value) {
     const body = span[0]
       .replace(/^\$\$?|\$\$?$|^\\\[|\\\]$|^\\\(|\\\)$/g, '')
       .replace(/\\(?:text|mathrm|operatorname)\{[^{}]*\}/g, ' ');
+    if (PROSE_IN_MATH_START.test(body.trim())) {
+      issues.push({ label: 'prose inside math', token: body.trim().split(/\s+/)[0], index: span.index });
+    }
     for (const match of body.matchAll(DOUBLE_ESCAPED_TEX_COMMAND)) {
       issues.push({ label: 'double-escaped TeX command', token: match[0], index: span.index + match.index });
     }

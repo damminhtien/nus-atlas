@@ -19,6 +19,7 @@ test('rejects malformed delimiters and leaked normalizer markers', () => {
   assert.ok(findDelimiterIssues('dL/$dw = $z = wx$.').length > 0);
   assert.ok(findDelimiterIssues('unclosed \\\\(x').length > 0);
   assert.ok(findMalformedMath('$Phiinmathbb{R}^{N\\\\times M}$').length > 0);
+  assert.ok(findMalformedMath('$Write the weighted least-squares solution using A=\\operatorname{diag}(a_i).$').some(match => match.label === 'prose inside math'));
   assert.ok(findMalformedMath('$s=z_1-z_2 remains$').some(match => match.label === 'prose inside math'));
   assert.ok(findMalformedMath('\u0001FORMULA0\u0001').some(match => match.label === 'normalizer placeholder'));
 });

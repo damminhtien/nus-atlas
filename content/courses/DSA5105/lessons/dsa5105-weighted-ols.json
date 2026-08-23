@@ -106,11 +106,11 @@
     },
     {
       "title": "Textbook depth · Weighted empirical risk",
-      "body": "Give example $i$ a positive weight $a_i$ and define $A=\\operatorname{diag}(a_1,\\ldots,a_N)$. The weighted objective is $\\frac{1}{2}(\\Phi w-y)^\\top A(\\Phi w-y)$. Its normal equations become $\\Phi^\\top A\\Phi\\hat w=\\Phi^\\top Ay$. Positive weights preserve strict convexity when $\\Phi$ already has full column rank because $A^{\\frac{1}{2}}\\Phi$ has the same null-space test.",
+      "body": "Give example $i$ a positive weight $a_i$ and define $A=\\operatorname{diag}(a_1,\\ldots,a_N)$. The weighted objective is $\\frac{1}{2}(\\Phi w-y)^\\top A(\\Phi w-y)$. Its normal equations become $\\Phi^\\top A\\Phi\\widehat{w}=\\Phi^\\top A y$. Positive weights preserve strict convexity when $\\Phi$ already has full column rank because $A^{1/2}\\Phi$ has the same null-space test.",
       "sourceType": "textbook",
       "math": {
-        "latex": "\\hat w_A=(\\Phi^\\top A\\Phi)^{-1}\\Phi^\\top Ay",
-        "explanation": "Weighted least squares is ordinary least squares after scaling row $i$ by $sqrt{a_i}$. This interpretation is the cleanest way to reason about existence and uniqueness.",
+        "latex": "\\widehat{w}_A=(\\Phi^\\top A\\Phi)^{-1}\\Phi^\\top A y",
+        "explanation": "Weighted least squares is ordinary least squares after scaling row $i$ by $\\sqrt{a_i}$. This interpretation is the cleanest way to reason about existence and uniqueness.",
         "symbols": [
           {
             "latex": "A",
@@ -161,9 +161,9 @@
       "steps": [
         "Start from $J(w)=\\frac12(\\Phi w-y)^\\top A(\\Phi w-y)$ with symmetric diagonal $A$.",
         "Differentiate: $\\nabla J=\\Phi^\\top A(\\Phi w-y)$, then set it to zero.",
-        "Solve $\\Phi^\\top A\\Phi w=\\Phi^\\top Ay$. If $A$ is positive definite and $\\Phi$ has full column rank, the weighted normal matrix is positive definite and invertible."
+        "Solve $\\Phi^\\top A\\Phi w=\\Phi^\\top A y$. If $A$ is positive definite and $\\Phi$ has full column rank, the weighted normal matrix is positive definite and invertible."
       ],
-      "answer": "The weighted solution is $w_A=(\\Phi^\\top A\\Phi)^{-1}\\Phi^\\top Ay$.",
+      "answer": "The weighted solution is $\\widehat{w}_A=(\\Phi^\\top A\\Phi)^{-1}\\Phi^\\top A y$.",
       "sourceType": "textbook",
       "sourceRefs": []
     }
@@ -377,7 +377,7 @@
       "id": "dsa5105-weighted-ols-section-3",
       "type": "teaching-note",
       "title": "Textbook depth · Weighted empirical risk",
-      "body": "Give example $i$ a positive weight $a_i$ and define $A=\\operatorname{diag}(a_1,\\ldots,a_N)$. The weighted objective is $\\frac{1}{2}(\\Phi w-y)^\\top A(\\Phi w-y)$. Its normal equations become $\\Phi^\\top A\\Phi\\hat w=\\Phi^\\top Ay$. Positive weights preserve strict convexity when $\\Phi$ already has full column rank because $A^{\\frac{1}{2}}\\Phi$ has the same null-space test.",
+      "body": "Give example $i$ a positive weight $a_i$ and define $A=\\operatorname{diag}(a_1,\\ldots,a_N)$. The weighted objective is $\\frac{1}{2}(\\Phi w-y)^\\top A(\\Phi w-y)$. Its normal equations become $\\Phi^\\top A\\Phi\\widehat{w}=\\Phi^\\top A y$. Positive weights preserve strict convexity when $\\Phi$ already has full column rank because $A^{1/2}\\Phi$ has the same null-space test.",
       "sourceType": "textbook",
       "sourceRefs": [
         {
@@ -415,8 +415,8 @@
       "type": "formula",
       "name": "Weighted empirical-risk estimator",
       "purpose": "Use it when observations have unequal importance and verify that the weighted normal matrix is invertible.",
-      "latex": "\\hat w_A=(\\Phi^\\top A\\Phi)^{-1}\\Phi^\\top Ay",
-      "explanation": "Weighted least squares is ordinary least squares after scaling row $i$ by $sqrt{a_i}$. This interpretation is the cleanest way to reason about existence and uniqueness.",
+      "latex": "\\widehat{w}_A=(\\Phi^\\top A\\Phi)^{-1}\\Phi^\\top A y",
+      "explanation": "Weighted least squares is ordinary least squares after scaling row $i$ by $\\sqrt{a_i}$. This interpretation is the cleanest way to reason about existence and uniqueness.",
       "symbols": [
         {
           "latex": "A",
@@ -586,9 +586,9 @@
       "steps": [
         "Start from $J(w)=\\frac12(\\Phi w-y)^\\top A(\\Phi w-y)$ with symmetric diagonal $A$.",
         "Differentiate: $\\nabla J=\\Phi^\\top A(\\Phi w-y)$, then set it to zero.",
-        "Solve $\\Phi^\\top A\\Phi w=\\Phi^\\top Ay$. If $A$ is positive definite and $\\Phi$ has full column rank, the weighted normal matrix is positive definite and invertible."
+        "Solve $\\Phi^\\top A\\Phi w=\\Phi^\\top A y$. If $A$ is positive definite and $\\Phi$ has full column rank, the weighted normal matrix is positive definite and invertible."
       ],
-      "answer": "The weighted solution is $w_A=(\\Phi^\\top A\\Phi)^{-1}\\Phi^\\top Ay$.",
+      "answer": "The weighted solution is $\\widehat{w}_A=(\\Phi^\\top A\\Phi)^{-1}\\Phi^\\top A y$.",
       "sourceType": "textbook",
       "sourceRefs": [
         {

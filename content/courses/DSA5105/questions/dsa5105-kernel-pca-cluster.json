@@ -75,8 +75,8 @@
       "PSD Gram matrix",
       "valid Mercer kernel"
     ],
-    "solution": "For every finite sample, the Gram matrix $K_ij = k(x_i$,$x_{j}$) must be positive semidefinite.",
-    "hint": "$Check the quadratic form a^\\top K a.$",
+    "solution": "For every finite sample, the Gram matrix $K_{ij}=k(x_i,x_j)$ must be positive semidefinite.",
+    "hint": "Check the quadratic form $a^\\top K a$.",
     "explanation": "Positive semidefiniteness is what makes the implicit feature-space inner product consistent.",
     "misconception": "Assuming symmetry alone is sufficient.",
     "visualHook": "Build a Gram matrix and inspect its eigenvalues.",
@@ -113,7 +113,7 @@
       "H K H with H=I-11^T/N",
       "double centering"
     ],
-    "solution": "Use $H = I - (1/N)11^\\top$ and replace K by $K_c = H K H so the implicit feature vectors have zero mean$.",
+    "solution": "Use $H=I-\\frac{1}{N}\\mathbf{1}\\mathbf{1}^\\top$ and replace $K$ by $K_c=HKH$ so the implicit feature vectors have zero mean.",
     "hint": "Centering in feature space has a matrix analogue.",
     "explanation": "The centered Gram matrix yields covariance directions around the feature-space mean rather than the origin.",
     "misconception": "Subtracting the scalar mean of all kernel entries only.",

@@ -40,7 +40,7 @@
       "phi transpose phi invertible",
       "Phi^T Phi invertible"
     ],
-    "solution": "The design matrix must have full column rank, equivalently $\\Phi^{\\top}$ Phi must be invertible.",
+    "solution": "The design matrix must have full column rank; equivalently, $\\Phi^{\\top}\\Phi$ must be invertible.",
     "explanation": "State the condition rather than merely quoting the inverse formula.",
     "sourceRefs": [
       {
@@ -64,13 +64,13 @@
   {
     "id": "dsa5105-wols-q3",
     "type": "derivation",
-    "prompt": "$Write the weighted least-squares solution using A = diag(a_i).$",
+    "prompt": "Write the weighted least-squares solution using $A=\\operatorname{diag}(a_i)$.",
     "accepted": [
       "(Phi^T A Phi)^-1 Phi^T A y",
       "Phi transpose A Phi inverse Phi transpose A y",
       "weighted normal equation solution"
     ],
-    "solution": "$\\hat w_A=(\\Phi^\\top A\\Phi)^{-1}\\Phi^\\top Ay$, assuming the weighted normal matrix is invertible.",
+    "solution": "Assuming the weighted normal matrix is invertible, $\\widehat{w}_A=(\\Phi^\\top A\\Phi)^{-1}\\Phi^\\top A y$.",
     "explanation": "The weights appear on both sides of the residual in the quadratic objective.",
     "sourceRefs": [
       {
@@ -130,7 +130,7 @@
       "ordinary least squares on sqrt A Phi",
       "row scaling"
     ],
-    "solution": "It is ordinary least squares on $\\mathrm{A}^{\\frac{1}{2}}$ Phi and $\\mathrm{A}^{\\frac{1}{2}}$ y.",
+    "solution": "It is ordinary least squares on $A^{1/2}\\Phi$ and $A^{1/2}y$.",
     "explanation": "This makes the weighted uniqueness argument immediate.",
     "sourceRefs": [
       {
@@ -159,13 +159,13 @@
     "skill": "weighted-risk",
     "cognitiveLevel": "apply",
     "estimatedSeconds": 120,
-    "prompt": "$In weighted least squares, what does a larger weight w_i do to example i?$",
+    "prompt": "In weighted least squares, what does a larger weight $a_i$ do to example $i$?",
     "accepted": [
       "gives its squared error more influence",
       "weights its loss more heavily",
       "increases contribution to objective"
     ],
-    "solution": "The objective contains $\\sum_{i}$ $w_{i}$ ($y_{i}$ - $x_{i}$^T $\\beta$)^2, so a larger $w_{i}$ makes fitting example i more important.",
+    "solution": "The objective contains $\\sum_{i=1}^{N} a_i\\bigl(y_i-\\phi(x_i)^\\top w\\bigr)^2$, so a larger $a_i$ makes fitting example $i$ more important.",
     "hint": "Look at the coefficient multiplying its residual squared.",
     "explanation": "Weights change the empirical measure being optimized; they are not automatically class probabilities.",
     "misconception": "Thinking a larger weight changes the feature value.",
