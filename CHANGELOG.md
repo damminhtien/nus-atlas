@@ -6,6 +6,10 @@ and refresh first-party asset URLs so browsers and the service worker pick up th
 
 ## [Unreleased]
 
+## [0.2.58] - 2026-08-23
+
+- Add external AI answer grading
+
 ## [0.2.57] - 2026-08-23
 
 - Theme free-response inputs
