@@ -50,6 +50,17 @@ test("DSA5105 Week 1 formula cards are named and actionable", () => {
   assert.ok(cards.every(card => card.name && card.latex && card.purpose && card.purpose.length >= 30));
 });
 
+test("DSA5105 Week 1 includes a recall-ready matrix calculus table", () => {
+  const lesson = loadCanonicalState().content.DSA5105.modules
+    .flatMap(module => module.lessons)
+    .find(item => item.id === "dsa5105-linear-week1");
+  const section = lesson.sections.find(item => item.title === "Reference aid · Matrix-calculus gradient table");
+  assert.ok(section);
+  assert.deepEqual(section.math.tableHeaders, ["Function $f(w)$", "Gradient / Jacobian $\\nabla_w f$"]);
+  assert.equal(section.math.symbols.length, 9);
+  assert.ok(section.math.symbols.every(row => row.latex && row.meaning.includes("$")));
+});
+
 test("DSA5208 slide notes teach the page instead of repeating extraction metadata", () => {
   const files = ["content/courses/DSA5208/slides/dsa5208-lec0.json", "content/courses/DSA5208/slides/dsa5208-lec1.json"];
   const slides = files.flatMap(file => JSON.parse(fs.readFileSync(file, "utf8")).slides);

@@ -27,6 +27,7 @@ export type FormulaBlock = BlockBase & {
   latex: string;
   explanation?: string;
   symbols?: FormulaSymbol[];
+  tableHeaders?: [string, string];
 };
 export type WorkedExampleBlock = BlockBase & { type: "worked-example"; title: string; steps: string[]; answer?: string };
 export type CriticalQuestionBlock = BlockBase & { type: "critical-question"; prompt: string; answer?: string };
@@ -79,7 +80,7 @@ export type Lesson = {
   summary?: string;
   objectives?: string[];
   sections?: Array<{ title: string; body: string; teaching?: TeachingNoteBlock["teaching"]; sourceRefs?: SourceRef[] }>;
-  math?: Array<{ name: string; purpose: string; latex: string; explanation?: string; symbols?: FormulaSymbol[]; sourceRefs?: SourceRef[] }>;
+  math?: Array<{ name: string; purpose: string; latex: string; explanation?: string; symbols?: FormulaSymbol[]; tableHeaders?: [string, string]; sourceRefs?: SourceRef[] }>;
   examples?: Array<{ title: string; steps: string[]; answer?: string; sourceRefs?: SourceRef[] }>;
   blocks: LessonBlock[];
   sourceRefs: SourceRef[];

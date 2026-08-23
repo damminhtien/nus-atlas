@@ -208,6 +208,60 @@
       }
     },
     {
+      "title": "Reference aid · Matrix-calculus gradient table",
+      "body": "Use this speed sheet to derive OLS and ridge without re-deriving the same quadratic identities. Assume column vectors and treat $A$, $a$, $b$, and $\\lambda$ as constants with respect to $w$.",
+      "sourceType": "ref",
+      "teaching": {
+        "concept": "Most Week 1 closed forms come from a small set of vector and matrix gradient identities.",
+        "useWhen": "Use it before differentiating a squared-loss or ridge objective; match the objective to one row, then set the gradient to zero.",
+        "examMove": "Name the function, state whether the output is scalar or vector-valued, apply the matching row, and only then solve the normal equation.",
+        "trap": "For $f(w)=Aw$, $A$ is a Jacobian. Do not treat a vector-valued map as if its derivative were an ordinary same-shaped gradient."
+      },
+      "math": {
+        "name": "Matrix-calculus gradient table",
+        "purpose": "Use these identities to recall the gradients behind OLS, ridge, and quadratic optimization in seconds.",
+        "latex": "\\nabla_w\\left(\\frac{1}{2}\\lVert Aw-b\\rVert_2^2+\\frac{\\lambda}{2}\\lVert w\\rVert_2^2\\right)=A^\\top(Aw-b)+\\lambda w",
+        "explanation": "Assume column-vector convention. For the vector-valued map $f(w)=Aw$, the derivative is the Jacobian $A$; the other rows are scalar gradients. The final two rows combine directly to produce the ridge stationarity equation.",
+        "tableHeaders": ["Function $f(w)$", "Gradient / Jacobian $\\nabla_w f$"],
+        "symbols": [
+          { "latex": "a^\\top w", "meaning": "$a$" },
+          { "latex": "Aw", "meaning": "Jacobian: $A$" },
+          { "latex": "w^\\top w", "meaning": "$2w$" },
+          { "latex": "\\frac{1}{2}w^\\top w", "meaning": "$w$" },
+          { "latex": "w^\\top Aw", "meaning": "$(A+A^\\top)w$" },
+          { "latex": "\\frac{1}{2}w^\\top Aw,\\quad A=A^\\top", "meaning": "$Aw$" },
+          { "latex": "\\lVert Aw-b\\rVert_2^2", "meaning": "$2A^\\top(Aw-b)$" },
+          { "latex": "\\frac{1}{2}\\lVert Aw-b\\rVert_2^2", "meaning": "$A^\\top(Aw-b)$" },
+          { "latex": "\\frac{\\lambda}{2}\\lVert w\\rVert_2^2", "meaning": "$\\lambda w$" }
+        ],
+        "caveat": "These identities assume the displayed quantities are real and differentiable with respect to the column vector $w$; if $A$ is not symmetric, keep $(A+A^\\top)$ rather than replacing it with $2A$.",
+        "sourceType": "ref"
+      },
+      "sourceRefs": [
+        {
+          "sourceId": "DSA5105/Lec1_annotated.pdf",
+          "page": 46,
+          "sourceType": "lecture",
+          "role": "matrix OLS derivation context",
+          "status": "current"
+        },
+        {
+          "sourceId": "DSA5105/Lec1_annotated.pdf",
+          "page": 48,
+          "sourceType": "lecture",
+          "role": "regularized objective context",
+          "status": "current"
+        },
+        {
+          "sourceId": "DSA5105/Lec1_exercises-solutions.pdf",
+          "page": 2,
+          "sourceType": "exercise",
+          "role": "closed-form ridge derivation context",
+          "status": "current-context"
+        }
+      ]
+    },
+    {
       "title": "Lecture core · Capacity and loss",
       "body": "A line can underfit when the hypothesis space is too small. A high-degree polynomial can overfit even without observation noise by following sample-specific wiggles. Mean-square loss is sensitive to outliers; Huber loss is quadratic near zero and linear for large residuals.",
       "sourceType": "lecture",
@@ -1185,6 +1239,87 @@
           "sourceType": "ref",
           "role": "optional Week 1 practice",
           "status": "optional"
+        }
+      ]
+    },
+    {
+      "id": "dsa5105-linear-week1-matrix-calculus",
+      "type": "teaching-note",
+      "title": "Reference aid · Matrix-calculus gradient table",
+      "body": "Use this speed sheet to derive OLS and ridge without re-deriving the same quadratic identities. Assume column vectors and treat $A$, $a$, $b$, and $\\lambda$ as constants with respect to $w$.",
+      "sourceType": "ref",
+      "teaching": {
+        "concept": "Most Week 1 closed forms come from a small set of vector and matrix gradient identities.",
+        "useWhen": "Use it before differentiating a squared-loss or ridge objective; match the objective to one row, then set the gradient to zero.",
+        "examMove": "Name the function, state whether the output is scalar or vector-valued, apply the matching row, and only then solve the normal equation.",
+        "trap": "For $f(w)=Aw$, $A$ is a Jacobian. Do not treat a vector-valued map as if its derivative were an ordinary same-shaped gradient."
+      },
+      "sourceRefs": [
+        {
+          "sourceId": "DSA5105/Lec1_annotated.pdf",
+          "page": 46,
+          "sourceType": "lecture",
+          "role": "matrix OLS derivation context",
+          "status": "current"
+        },
+        {
+          "sourceId": "DSA5105/Lec1_annotated.pdf",
+          "page": 48,
+          "sourceType": "lecture",
+          "role": "regularized objective context",
+          "status": "current"
+        },
+        {
+          "sourceId": "DSA5105/Lec1_exercises-solutions.pdf",
+          "page": 2,
+          "sourceType": "exercise",
+          "role": "closed-form ridge derivation context",
+          "status": "current-context"
+        }
+      ]
+    },
+    {
+      "id": "dsa5105-linear-week1-matrix-calculus-formula",
+      "type": "formula",
+      "name": "Matrix-calculus gradient table",
+      "purpose": "Use these identities to recall the gradients behind OLS, ridge, and quadratic optimization in seconds.",
+      "latex": "\\nabla_w\\left(\\frac{1}{2}\\lVert Aw-b\\rVert_2^2+\\frac{\\lambda}{2}\\lVert w\\rVert_2^2\\right)=A^\\top(Aw-b)+\\lambda w",
+      "explanation": "Assume column-vector convention. For the vector-valued map $f(w)=Aw$, the derivative is the Jacobian $A$; the other rows are scalar gradients. The final two rows combine directly to produce the ridge stationarity equation.",
+      "tableHeaders": ["Function $f(w)$", "Gradient / Jacobian $\\nabla_w f$"],
+      "symbols": [
+        { "latex": "a^\\top w", "meaning": "$a$" },
+        { "latex": "Aw", "meaning": "Jacobian: $A$" },
+        { "latex": "w^\\top w", "meaning": "$2w$" },
+        { "latex": "\\frac{1}{2}w^\\top w", "meaning": "$w$" },
+        { "latex": "w^\\top Aw", "meaning": "$(A+A^\\top)w$" },
+        { "latex": "\\frac{1}{2}w^\\top Aw,\\quad A=A^\\top", "meaning": "$Aw$" },
+        { "latex": "\\lVert Aw-b\\rVert_2^2", "meaning": "$2A^\\top(Aw-b)$" },
+        { "latex": "\\frac{1}{2}\\lVert Aw-b\\rVert_2^2", "meaning": "$A^\\top(Aw-b)$" },
+        { "latex": "\\frac{\\lambda}{2}\\lVert w\\rVert_2^2", "meaning": "$\\lambda w$" }
+      ],
+      "caveat": "These identities assume the displayed quantities are real and differentiable with respect to the column vector $w$; if $A$ is not symmetric, keep $(A+A^\\top)$ rather than replacing it with $2A$.",
+      "sourceType": "ref",
+      "sourceRefs": [
+        {
+          "sourceId": "DSA5105/Lec1_annotated.pdf",
+          "page": 46,
+          "sourceType": "lecture",
+          "role": "matrix OLS derivation context",
+          "status": "current"
+        },
+        {
+          "sourceId": "DSA5105/Lec1_annotated.pdf",
+          "page": 48,
+          "sourceType": "lecture",
+          "role": "regularized objective context",
+          "status": "current"
+        },
+        {
+          "sourceId": "DSA5105/Lec1_exercises-solutions.pdf",
+          "page": 2,
+          "sourceType": "exercise",
+          "role": "closed-form ridge derivation context",
+          "status": "current-context"
         }
       ]
     },

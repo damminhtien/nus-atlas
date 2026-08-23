@@ -117,7 +117,9 @@
   function paragraphs(value) { return String(value || "").split(/\n\s*\n/).filter(Boolean).map(paragraph => `<p>${text(paragraph)}</p>`).join(""); }
   function mathBlock(math) {
     const symbols = (math.symbols || []).map(item => `<tr><td>$${esc(item.latex)}$</td><td>${text(item.meaning)}</td></tr>`).join("");
-    return `<div class="nus-math-block"><div class="nus-math-label"><span>Named formula</span>${math.sourceType ? sourceBadge({ sourceType: math.sourceType, status: math.status }) : ""}</div><h4 class="nus-formula-name">${esc(math.name || "Formula name missing")}</h4><div class="nus-latex-display">$$${esc(math.latex)}$$</div>${math.purpose ? `<p class="nus-formula-purpose"><b>Use it when:</b> ${text(math.purpose)}</p>` : ""}<p><b>How to read it:</b> ${text(math.explanation)}</p>${symbols ? `<table class="nus-symbol-table"><thead><tr><th>Symbol</th><th>Meaning</th></tr></thead><tbody>${symbols}</tbody></table>` : ""}${math.caveat ? `<p class="nus-formula-caveat"><b>Limitation:</b> ${text(math.caveat)}</p>` : ""}</div>`;
+    const headers = Array.isArray(math.tableHeaders) && math.tableHeaders.length === 2 ? math.tableHeaders : ["Symbol", "Meaning"];
+    const table = symbols ? `<table class="nus-symbol-table"><thead><tr><th>${text(headers[0])}</th><th>${text(headers[1])}</th></tr></thead><tbody>${symbols}</tbody></table>` : "";
+    return `<div class="nus-math-block"><div class="nus-math-label"><span>Named formula</span>${math.sourceType ? sourceBadge({ sourceType: math.sourceType, status: math.status }) : ""}</div><h4 class="nus-formula-name">${esc(math.name || "Formula name missing")}</h4><div class="nus-latex-display">$$${esc(math.latex)}$$</div>${math.purpose ? `<p class="nus-formula-purpose"><b>Use it when:</b> ${text(math.purpose)}</p>` : ""}<p><b>How to read it:</b> ${text(math.explanation)}</p>${table}${math.caveat ? `<p class="nus-formula-caveat"><b>Limitation:</b> ${text(math.caveat)}</p>` : ""}</div>`;
   }
   function lessonSection(section) {
     const badge = section.sourceType ? sourceBadge({ sourceType: section.sourceType, status: section.status }) : "";
