@@ -6,6 +6,10 @@ and refresh first-party asset URLs so browsers and the service worker pick up th
 
 ## [Unreleased]
 
+## [0.2.49] - 2026-08-23
+
+- Add matrix calculus recall table
+
 ## [0.2.48] - 2026-08-23
 
 - Constrain hat notation normalization
