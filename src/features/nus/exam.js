@@ -223,7 +223,7 @@
     const answersSoFar = state.answers.length;
     const input = question.type === "mcq"
       ? `<div class="nus-choices">${question.choices.map((choice, index) => `<label><input type="radio" name="nus-answer" value="${index}"><span>${esc(choice)}</span></label>`).join("")}</div>`
-      : `<textarea id="nus-answer" rows="5" placeholder="Write your answer here…"></textarea>`;
+      : `<textarea class="nus-answer-input" id="nus-answer" rows="5" placeholder="Write your answer here…"></textarea>`;
     const rubricHint = question.type === "derivation" && Array.isArray(question.rubric) && question.rubric.length
       ? `<p class="nus-muted nus-rubric-hint"><b>Self-review rubric:</b> ${question.rubric.map(item => esc(item.label)).join(" · ")}. Matching all components is heuristic feedback, not a deterministic proof of correctness.</p>`
       : "";

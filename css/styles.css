@@ -1424,7 +1424,7 @@ a.gloss-item:hover .gloss-go, a.gloss-item:focus-visible .gloss-go { opacity: 1;
 .nus-assessment-meta span { color:var(--ink-mute); font-size:12px; }
 .nus-assessment-controls { display:flex; align-items:center; justify-content:space-between; gap:12px; padding:14px 0; margin-top:12px; border-top:1px solid var(--line); border-bottom:1px solid var(--line); color:var(--ink-soft); font-size:13px; }
 .nus-assessment-controls label, .nus-exam-setup label, .nus-sim label { display:grid; gap:6px; }
-.nus-assessment-controls select, .nus-exam-setup select, .nus-sim select, .nus-sql-editor textarea, .nus-exam-question textarea { min-width:170px; padding:8px 10px; border:1px solid var(--line); border-radius:8px; background:var(--bg); color:var(--ink); font:inherit; }
+.nus-assessment-controls select, .nus-exam-setup select, .nus-sim select, .nus-sql-editor textarea, .nus-answer-input { min-width:170px; padding:8px 10px; border:1px solid var(--line); border-radius:8px; background:var(--bg); color:var(--ink); font:inherit; }
 .nus-focus-course { display:flex; align-items:center; gap:10px; margin:0 0 14px; color:var(--ink-soft); font-size:13px; }
 .nus-focus-course span { font-weight:700; color:var(--ink); }
 .nus-focus-course select { min-width:180px; padding:7px 10px; border:1px solid var(--line); border-radius:8px; background:var(--bg); color:var(--ink); font:inherit; }
@@ -1489,7 +1489,9 @@ a.gloss-item:hover .gloss-go, a.gloss-item:focus-visible .gloss-go { opacity: 1;
 .nus-choices { display:grid; gap:11px; margin:24px 0; }
 .nus-choices label { padding:13px; border:1px solid var(--line); border-radius:10px; }
 .nus-choices label:has(input:checked) { border-color:var(--gold); background:color-mix(in srgb, var(--gold) 10%, transparent); }
-.nus-exam-question textarea { width:100%; box-sizing:border-box; margin:15px 0 20px; resize:vertical; }
+.nus-answer-input { width:100%; box-sizing:border-box; min-height:128px; margin:15px 0 20px; resize:vertical; line-height:1.6; }
+.nus-answer-input::placeholder { color:var(--ink-mute); opacity:1; }
+.nus-answer-input:focus { outline:0; border-color:var(--gold); box-shadow:0 0 0 3px color-mix(in srgb, var(--gold) 16%, transparent); }
 .nus-exam-footer { display:flex; justify-content:space-between; align-items:center; gap:15px; padding-top:15px; border-top:1px solid var(--line); }
 .nus-exam-footer-actions { display:flex; flex-wrap:wrap; align-items:center; justify-content:flex-end; gap:8px; }
 .nus-exam-footer-actions .btn { margin:0; }

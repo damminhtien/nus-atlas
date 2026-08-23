@@ -62,7 +62,7 @@
     const isChoice = question.type === "mcq";
     const input = isChoice
       ? `<div class="nus-choices">${(question.choices || []).map((choice, index) => `<label><input type="radio" name="nus-retrieval-answer" value="${index}"><span>${esc(choice)}</span></label>`).join("")}</div>`
-      : `<textarea id="nus-retrieval-answer" rows="5" placeholder="Answer from memory…"></textarea>`;
+      : `<textarea class="nus-answer-input" id="nus-retrieval-answer" rows="5" placeholder="Answer from memory…"></textarea>`;
     root.innerHTML = pageHead("NUS · Spaced retrieval", `Retrieval ${state.index + 1}/${state.items.length}`, `${esc(item.lesson.courseId || item.lesson.courseCode || "NUS")} · ${esc(item.lesson.title)}`) + `<section class="nus-card nus-retrieval-card reveal"><div class="nus-retrieval-rule"><span>Due now</span><span>Do not reopen the lesson</span></div><div class="nus-question-source">${(question.sourceRefs || []).slice(0, 2).map(sourceItem).join(" ")}</div><h3>${text(question.prompt)}</h3>${input}<div id="nus-retrieval-feedback" aria-live="polite"></div><div class="nus-card-actions"><button class="btn primary" id="nus-retrieval-submit">Check answer</button>${button("Pause", "#/", "ghost")}</div></section>`;
     typeset();
     const submit = root.querySelector("#nus-retrieval-submit");
