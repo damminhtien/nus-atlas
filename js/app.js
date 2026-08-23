@@ -3217,6 +3217,7 @@
     window.addEventListener("keydown", studyKeys);
     const sb = document.getElementById("search-btn"); if (sb) sb.addEventListener("click", openPalette);
     const tsb = document.getElementById("topbar-search"); if (tsb) tsb.addEventListener("click", openPalette);   // one-tap search in the mobile topbar
+    if (window.ATLAS_SYNC_UI && window.ATLAS_SYNC_CLIENT) window.ATLAS_SYNC_UI({ document }).mount(window.ATLAS_SYNC_CLIENT);
     const scb = document.getElementById("shortcuts-btn"); if (scb) scb.addEventListener("click", showShortcuts);
     const skip = document.getElementById("skip-link"); if (skip) skip.addEventListener("click", () => { app.focus(); app.scrollIntoView(); });
     const guide = document.getElementById("guide-btn"); if (guide) guide.addEventListener("click", () => showIntro(true));

@@ -773,6 +773,11 @@ html, body, .sidebar, .palette-list { scrollbar-width: thin; scrollbar-color: co
 .topbar-search { display:flex; align-items:center; gap:8px; margin-left:auto; padding:7px 10px; border:1px solid var(--line); border-radius:999px; background:transparent; color:var(--ink-soft); cursor:pointer; font:12px var(--font-ui); }
 .topbar-search span { color:var(--ink-mute); font:10px var(--font-mono); }
 .topbar-search:hover, .topbar-search:focus-visible { border-color:var(--gold); color:var(--ink); }
+.topbar-sync { display:flex; align-items:center; gap:7px; margin-left:0; padding:7px 11px; border:1px solid var(--line); border-radius:999px; background:color-mix(in srgb, var(--panel) 72%, transparent); color:var(--ink-soft); cursor:pointer; font:600 11px var(--font-ui); white-space:nowrap; }
+.topbar-sync:hover, .topbar-sync:focus-visible { border-color:var(--sage); color:var(--ink); }
+.topbar-sync[data-sync-status="synced"]::before { content:"✓"; color:var(--sage); }
+.topbar-sync[data-sync-status="syncing"] { cursor:wait; }
+.topbar-sync[data-sync-status="error"] { border-color:var(--rust); color:var(--rust); }
 .mobile-primary-nav { display:none; }
 body.atlas-nus-surface .level-badge,
 body.atlas-nus-surface .xp-wrap,
@@ -798,6 +803,7 @@ body.atlas-nus-surface .topbar { min-height:62px; }
   .menu-btn, .topbar-search { display: grid; place-items: center; width: 42px; height: 42px; border-radius: 10px; border: 1px solid var(--line); background: var(--panel); color: var(--ink); cursor: pointer; font-size: 20px; }
   .topbar-search { font-size:18px; }
   .topbar-search span { display:none; }
+  .topbar-sync { margin-left:auto; min-height:42px; padding:8px 12px; }
   .topbar { padding: 12px 18px; gap: 12px; flex-wrap: wrap; }
   .xp-wrap { order: 5; max-width: 100%; flex-basis: 100%; }
   /* the streak pill must never clip off the right edge on narrow screens: drop the auto-margin
@@ -809,6 +815,22 @@ body.atlas-nus-surface .topbar { min-height:62px; }
   .stat-strip { grid-template-columns: repeat(2,1fr); }
   .scrim { position: fixed; inset: 0; background: rgba(0,0,0,.5); z-index: 55; }
 }
+
+/* ---------- account sync dialog ---------- */
+.atlas-sync-overlay { position:fixed; inset:0; z-index:250; display:grid; place-items:center; padding:20px; background:rgba(1,10,22,.72); backdrop-filter:blur(8px); animation:fade .18s ease both; }
+.atlas-sync-card { position:relative; width:min(480px, 100%); max-height:calc(100vh - 40px); overflow:auto; padding:30px; border:1px solid var(--gold-deep); border-radius:20px; background:linear-gradient(160deg, var(--panel), var(--panel-2)); box-shadow:0 30px 90px -30px var(--shadow); animation:rise .24s ease both; }
+.atlas-sync-card .eyebrow { display:block; color:var(--gold); font:700 11px var(--font-ui); letter-spacing:2.5px; text-transform:uppercase; }
+.atlas-sync-card h2 { margin:8px 34px 10px 0; color:var(--ink); font:600 clamp(27px, 5vw, 36px)/1.08 var(--font-disp); letter-spacing:-.4px; }
+.atlas-sync-copy { margin:0 0 22px; color:var(--ink-soft); font-size:14px; line-height:1.6; }
+.atlas-sync-card form { display:grid; gap:14px; }
+.atlas-sync-card label { display:grid; gap:7px; color:var(--ink-soft); font:600 12px var(--font-ui); letter-spacing:.3px; }
+.atlas-sync-card input { width:100%; box-sizing:border-box; padding:12px 13px; border:1px solid var(--line); border-radius:10px; outline:none; background:var(--bg-2); color:var(--ink); font:16px var(--font-body); }
+.atlas-sync-card input:focus { border-color:var(--gold); box-shadow:0 0 0 3px color-mix(in srgb, var(--gold) 18%, transparent); }
+.atlas-sync-close { position:absolute; top:16px; right:16px; width:34px; height:34px; border:1px solid var(--line); border-radius:50%; background:transparent; color:var(--ink-soft); cursor:pointer; font-size:22px; line-height:1; }
+.atlas-sync-close:hover, .atlas-sync-close:focus-visible { border-color:var(--gold); color:var(--ink); }
+.atlas-sync-actions { display:flex; justify-content:flex-end; gap:10px; margin-top:4px; }
+.atlas-sync-error { margin:0; padding:10px 12px; border:1px solid color-mix(in srgb, var(--rust) 60%, var(--line)); border-radius:9px; background:color-mix(in srgb, var(--rust) 10%, transparent); color:var(--rust); font-size:13px; line-height:1.45; }
+@media (max-width:520px) { .atlas-sync-overlay { padding:12px; align-items:end; } .atlas-sync-card { padding:25px 20px 20px; border-radius:18px 18px 12px 12px; } .atlas-sync-actions { display:grid; grid-template-columns:1fr 1.4fr; } .atlas-sync-actions .btn { justify-content:center; } }
 @media (min-width: 901px) { .scrim { display: none; } }
 
 /* ============================================================

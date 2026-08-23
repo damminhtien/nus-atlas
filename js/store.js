@@ -196,7 +196,10 @@
     return base;
   }
   function num(v) { v = Number(v); return Number.isFinite(v) ? v : 0; }
-  function save() { try { localStorage.setItem(KEY, JSON.stringify(state)); } catch (e) {} }
+  function save() {
+    try { localStorage.setItem(KEY, JSON.stringify(state)); } catch (e) {}
+    if (typeof window === "object" && window.ATLAS_SYNC_CLIENT && typeof window.ATLAS_SYNC_CLIENT.schedule === "function") window.ATLAS_SYNC_CLIENT.schedule();
+  }
 
   // ---- streak ----------------------------------------------------------
   let _freezeJustUsed = false, _streakJustUp = false, _streakRecord = false, _freezeEarned = false;

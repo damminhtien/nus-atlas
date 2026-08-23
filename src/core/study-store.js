@@ -74,6 +74,7 @@
 
   function save() {
     if (storage && typeof storage.setItem === "function") storage.setItem(KEY, JSON.stringify(state));
+    if (typeof globalThis === "object" && globalThis.ATLAS_SYNC_CLIENT && typeof globalThis.ATLAS_SYNC_CLIENT.schedule === "function") globalThis.ATLAS_SYNC_CLIENT.schedule();
   }
 
   function timestamp() { return clock().toISOString(); }
@@ -410,6 +411,17 @@
     recordReading,
     readingList,
     gamification,
+    importData(value) {
+      try {
+        const parsed = typeof value === "string" ? JSON.parse(value) : value;
+        if (!parsed || typeof parsed !== "object" || Array.isArray(parsed)) return false;
+        state = migrate(parsed);
+        save();
+        return true;
+      } catch (_) {
+        return false;
+      }
+    },
     reset() { state = blank(); save(); }
   };
 
