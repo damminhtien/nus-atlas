@@ -39,6 +39,34 @@ test("transport loads a small catalog, then course and lesson shards", async () 
   assert.ok(lesson.studyKit.flashcards.length > 0);
 });
 
+test("transport refreshes a stale manifest after a fingerprinted shard returns 404", async () => {
+  const staleManifest = JSON.parse(JSON.stringify(manifest));
+  const staleEntry = staleManifest.courses.find(course => course.code === "DSA5105");
+  staleEntry.courseAsset = "DSA5105/course.stale.json";
+  let manifestRequests = 0;
+  const calls = [];
+  const transport = createTransport({
+    roots: ["test-content/"],
+    fetcher: async url => {
+      calls.push(url);
+      if (url.replace(/^test-content\//, "").startsWith("manifest.json")) {
+        manifestRequests += 1;
+        const value = manifestRequests === 1 ? staleManifest : manifest;
+        return { ok: true, status: 200, json: async () => value };
+      }
+      if (url.endsWith("DSA5105/course.stale.json")) return { ok: false, status: 404, json: async () => ({}) };
+      return fakeFetch(url);
+    }
+  });
+
+  const course = await transport.loadCourse("DSA5105");
+
+  assert.equal(course.course.code, "DSA5105");
+  assert.equal(manifestRequests, 2);
+  assert.ok(calls.some(url => /manifest\.json\?refresh=/.test(url)));
+  assert.ok(calls.some(url => url.includes(manifest.courses.find(item => item.code === "DSA5105").courseAsset)));
+});
+
 test("repository keeps dashboard metadata cold and lazy-loads lesson payloads", async () => {
   const { calls, repository } = makeRepository();
   assert.equal(repository.listCourses().length, 4);
