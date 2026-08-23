@@ -39,7 +39,9 @@
   }
   function dayCount(value) {
     if (!value) return null;
-    return Math.ceil((new Date(value).getTime() - Date.now()) / 86400000);
+    const raw = String(value);
+    const timestamp = raw.length === 10 ? Date.parse(`${raw}T23:59:59+08:00`) : Date.parse(raw);
+    return Number.isFinite(timestamp) ? Math.ceil((timestamp - Date.now()) / 86400000) : null;
   }
   const examScheduleFeature = window.ATLAS_EXAM_SCHEDULE_FEATURE ? window.ATLAS_EXAM_SCHEDULE_FEATURE({
     getCourses: courses,
@@ -126,7 +128,26 @@
     }));
     syncVisualCueProgress();
   }
-  function allUpcoming() { return assessments().filter(a => a.date).sort((a, b) => new Date(a.date) - new Date(b.date)); }
+  function singaporeDateKey(value = Date.now()) {
+    const parts = new Intl.DateTimeFormat("en-SG", { timeZone: "Asia/Singapore", year: "numeric", month: "2-digit", day: "2-digit" }).formatToParts(new Date(value));
+    const fields = Object.fromEntries(parts.filter(part => part.type !== "literal").map(part => [part.type, part.value]));
+    return `${fields.year}-${fields.month}-${fields.day}`;
+  }
+  function assessmentState(assessment, now = Date.now()) {
+    if (!assessment || !assessment.date) return "pending";
+    const date = String(assessment.date);
+    const dateKey = date.slice(0, 10);
+    if (dateKey === singaporeDateKey(now)) return "today";
+    const timestamp = date.length === 10 ? Date.parse(`${date}T23:59:59+08:00`) : Date.parse(date);
+    return Number.isFinite(timestamp) && timestamp < now ? "past" : "future";
+  }
+  function allUpcoming() {
+    return assessments().filter(a => ["today", "future"].includes(assessmentState(a))).sort((a, b) => {
+      const aDate = String(a.date).length === 10 ? `${a.date}T23:59:59+08:00` : a.date;
+      const bDate = String(b.date).length === 10 ? `${b.date}T23:59:59+08:00` : b.date;
+      return Date.parse(aDate) - Date.parse(bDate);
+    });
+  }
   function firstOpenLesson() { for (const c of courses()) { const l = lessons(c.code).find(x => !window.ATLAS_STUDY_STORE.lessonDone(x.id)); if (l) return { course: c, lesson: l }; } return null; }
   function syncRetrievalSchedules() {
     if (!window.ATLAS_STUDY_STORE || typeof window.ATLAS_STUDY_STORE.ensureRetrievalSchedules !== "function") return;
@@ -184,8 +205,9 @@
   }
 
   function assessmentRow(a) {
-    const days = dayCount(a.date), reminder = days != null && [7, 3, 1].includes(days) ? ` · reminder ${days}d` : "";
-    return `<a class="nus-list-row" href="#/nus/planner" data-route><div><b>${esc(a.title)}</b><span>${esc(courseName(a.courseCode))} · ${esc(a.kind)} · ${esc(assessmentWeightLabel(a))}</span></div><div class="nus-date">${esc(fmtAssessmentDate(a))}<small>${days < 0 ? "overdue" : `${Math.max(0, days)}d left`}${reminder}</small></div></a>`;
+    const state = assessmentState(a), days = dayCount(a.date), reminder = state === "future" && days != null && [7, 3, 1].includes(days) ? ` · reminder ${days}d` : "";
+    const status = state === "today" ? "today" : `${days}d left`;
+    return `<a class="nus-list-row" href="#/nus/planner" data-route><div><b>${esc(a.title)}</b><span>${esc(courseName(a.courseCode))} · ${esc(a.kind)} · ${esc(assessmentWeightLabel(a))}</span></div><div class="nus-date">${esc(fmtAssessmentDate(a))}<small>${esc(status)}${reminder}</small></div></a>`;
   }
 
   const plannerFeature = window.ATLAS_PLANNER_FEATURE ? window.ATLAS_PLANNER_FEATURE({
