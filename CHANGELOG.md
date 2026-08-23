@@ -6,6 +6,10 @@ and refresh first-party asset URLs so browsers and the service worker pick up th
 
 ## [Unreleased]
 
+## [0.2.51] - 2026-08-23
+
+- Fix canonical lecture ordering and study collections
+
 ## [0.2.50] - 2026-08-23
 
 - Harden runtime lifecycle, cache isolation, and study-state integrity
