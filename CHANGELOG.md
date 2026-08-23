@@ -6,6 +6,10 @@ and refresh first-party asset URLs so browsers and the service worker pick up th
 
 ## [Unreleased]
 
+## [0.2.53] - 2026-08-23
+
+- Suppress workflow-only Git and deploy action warnings
+
 ## [0.2.52] - 2026-08-23
 
 - Remove deprecated GitHub Actions runtime warnings
