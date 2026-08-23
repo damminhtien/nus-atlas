@@ -9,6 +9,8 @@ const serviceWorker = fs.readFileSync(path.join(root, "sw.js"), "utf8");
 
 test("service worker activates new versions without a manual prompt", () => {
   assert.match(serviceWorker, /self\.skipWaiting\(\)/);
+  assert.match(serviceWorker, /const CACHE_PREFIX = "nus-atlas:"/);
+  assert.match(serviceWorker, /k\.startsWith\(CACHE_PREFIX\)/);
   assert.match(index, /reg\.update\(\)\.catch/);
   assert.match(index, /worker\.postMessage\(\{ type: "SKIP_WAITING" \}\)/);
   assert.match(index, /location\.reload\(\)/);
@@ -35,5 +37,8 @@ test("content manifest is fetched network-first so new content is not hidden", (
 
 test("service worker installs only eager shell assets", () => {
   assert.match(serviceWorker, /manifest\.eager \|\| manifest\.assets/);
-  assert.match(fs.readFileSync(path.join(root, "prerender.js"), "utf8"), /const lazy = assets\.filter\(file => file\.startsWith\("content\//);
+  const prerender = fs.readFileSync(path.join(root, "prerender.js"), "utf8");
+  assert.match(prerender, /const shellAssets = new Set\(\["index\.html", "manifest\.webmanifest", "icon\.svg", "css\/styles\.css"\]\)/);
+  assert.match(prerender, /const eager = assets\.filter\(file => shellAssets\.has\(file\)\)/);
+  assert.match(prerender, /const lazy = assets\.filter\(file => file\.startsWith\("content\//);
 });

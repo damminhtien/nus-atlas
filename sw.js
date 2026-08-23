@@ -2,6 +2,7 @@
    `prerender.js` replaces the placeholder cache name and writes asset-manifest.json.
    The source file remains usable during zero-build local development. */
 const CACHE = "__ATLAS_CACHE__";
+const CACHE_PREFIX = "nus-atlas:";
 const CORE = ["./", "./index.html", "./manifest.webmanifest", "./icon.svg"];
 const MANIFEST = "./asset-manifest.json";
 
@@ -22,7 +23,11 @@ self.addEventListener("install", e => {
 self.addEventListener("message", e => { if (e.data && e.data.type === "SKIP_WAITING") self.skipWaiting(); });
 
 self.addEventListener("activate", e => {
-  e.waitUntil(caches.keys().then(ks => Promise.all(ks.filter(k => k !== CACHE).map(k => caches.delete(k)))).then(() => self.clients.claim()));
+  // CacheStorage is shared by every GitHub Pages app on this origin. Only
+  // remove caches owned by NUS Atlas; never sweep another app's namespace.
+  e.waitUntil(caches.keys().then(ks => Promise.all(
+    ks.filter(k => k.startsWith(CACHE_PREFIX) && k !== CACHE).map(k => caches.delete(k))
+  )).then(() => self.clients.claim()));
 });
 
 self.addEventListener("fetch", e => {
