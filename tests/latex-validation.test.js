@@ -42,6 +42,7 @@ test('normalizes informal hat suffixes into widehat notation', () => {
   assert.equal(normalizeText('$w_hat=(X^\\top X)^-1X^\\top y$'), '$\\widehat{w}=(X^\\top X)^-1X^\\top y$');
   assert.equal(normalizeText('$y_hat_i=Hy$'), '$\\widehat{y}_{i}=Hy$');
   assert.equal(normalizeText('$what=(X^\\top X)^-1X^\\top y$'), '$\\widehat{w}=(X^\\top X)^-1X^\\top y$');
+  assert.equal(normalizeText('$that$'), '$that$');
   assert.equal(normalizeText('$R_hat(w)=1/N$'), normalizeText(normalizeText('$R_hat(w)=1/N$')));
 });
 

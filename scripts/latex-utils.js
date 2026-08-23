@@ -206,7 +206,7 @@ function normalizeFormula(formula) {
     .replace(/\|\|([^|]+)\|\|/g, '\\lVert $1 \\rVert')
     .replace(/\b(\d+)\/(\d+)\b/g, '\\frac{$1}{$2}')
     .replace(/\b([A-Za-z])_hat(?:_([A-Za-z0-9]+))?\b/g, (_, base, subscript) => `\\widehat{${base}}${subscript ? `_{${subscript}}` : ''}`)
-    .replace(/\b([A-Za-z])hat(?:_([A-Za-z0-9]+))?\b/g, (_, base, subscript) => `\\widehat{${base}}${subscript ? `_{${subscript}}` : ''}`)
+    .replace(/\b([Rwyfm])hat(?:_([A-Za-z0-9]+))?\b/g, (_, base, subscript) => `\\widehat{${base}}${subscript ? `_{${subscript}}` : ''}`)
     .replace(/\b([A-Za-z])-hat\b/g, '\\hat{$1}')
     .replace(/\b([A-Za-z])-bar\b/g, '\\bar{$1}')
     .replace(/\b([A-Za-z])\*/g, '$1^*')
