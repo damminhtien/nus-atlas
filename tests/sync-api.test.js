@@ -1,7 +1,7 @@
 const test = require("node:test");
 const assert = require("node:assert/strict");
 const crypto = require("node:crypto");
-const { originFor, passwordHashParts, verifyPassword } = require("../api/sync");
+const { originFor, passwordHashParts, syncBlobOptions, verifyPassword } = require("../api/sync");
 
 test("sync CORS keeps the deployed origin and permits loopback development", () => {
   const previous = process.env.ATLAS_SYNC_ORIGIN;
@@ -16,6 +16,16 @@ test("sync CORS keeps the deployed origin and permits loopback development", () 
     if (previous === undefined) delete process.env.ATLAS_SYNC_ORIGIN;
     else process.env.ATLAS_SYNC_ORIGIN = previous;
   }
+});
+
+test("sync writes one private snapshot per account with an explicit overwrite policy", () => {
+  assert.deepEqual(syncBlobOptions, {
+    access: "private",
+    addRandomSuffix: false,
+    allowOverwrite: true,
+    contentType: "application/json",
+    cacheControlMaxAge: 60
+  });
 });
 
 test("sync password verifier accepts the configured scrypt format", () => {

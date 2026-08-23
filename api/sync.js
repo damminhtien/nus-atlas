@@ -3,6 +3,13 @@ const crypto = require("node:crypto");
 
 const MAX_BODY_BYTES = 1500000;
 const TOKEN_TTL_SECONDS = 60 * 60 * 24 * 30;
+const SYNC_BLOB_OPTIONS = Object.freeze({
+  access: "private",
+  addRandomSuffix: false,
+  allowOverwrite: true,
+  contentType: "application/json",
+  cacheControlMaxAge: 60
+});
 const DEFAULT_ORIGINS = new Set([
   "https://damminhtien.github.io",
   "http://localhost:5173",
@@ -179,12 +186,7 @@ async function writeRemote(username, state, revision) {
     updatedAt: new Date().toISOString(),
     state
   };
-  await put(statePath(username), JSON.stringify(document), {
-    access: "private",
-    addRandomSuffix: false,
-    contentType: "application/json",
-    cacheControlMaxAge: 0
-  });
+  await put(statePath(username), JSON.stringify(document), SYNC_BLOB_OPTIONS);
   return document;
 }
 
@@ -245,4 +247,5 @@ async function handler(request, response) {
 module.exports = handler;
 module.exports.originFor = originFor;
 module.exports.passwordHashParts = passwordHashParts;
+module.exports.syncBlobOptions = SYNC_BLOB_OPTIONS;
 module.exports.verifyPassword = verifyPassword;

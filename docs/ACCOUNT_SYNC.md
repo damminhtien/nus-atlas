@@ -17,6 +17,8 @@ Chrome cookies, browsing history, saved passwords, and unrelated browser-profile
 
 The bearer session is kept in `sessionStorage`, so the password is not stored in the browser. The app-owned snapshot remains in local storage as an offline cache for the current browser. The client binds that mirror to the authenticated username and will not merge one account's mirror into another account.
 
+Each account has one private Blob snapshot. Atlas explicitly overwrites that snapshot after its revision check; it never creates public or randomly named progress files.
+
 The six-digit unlock screen is a convenience gate, not a security boundary: the default code is present in the public client so the default account can auto-sync. Do not use that default account for sensitive data. A private account must use a separate password configured only on the server.
 
 ## Vercel configuration
