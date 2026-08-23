@@ -25,6 +25,15 @@
     if (!value) return pendingLabel || "Date pending";
     return new Intl.DateTimeFormat("en-SG", { timeZone: "Asia/Singapore", dateStyle: "medium", timeStyle: "short" }).format(new Date(value));
   }
+  function fmtDateOnly(value) {
+    return new Intl.DateTimeFormat("en-SG", { timeZone: "Asia/Singapore", dateStyle: "medium" }).format(new Date(`${String(value).slice(0, 10)}T12:00:00+08:00`));
+  }
+  function fmtAssessmentDate(assessment) {
+    if (!assessment || !assessment.date) return "Date pending";
+    const timing = assessment.timing || {};
+    if (timing.timeStatus === "confirmed" && timing.time) return `${fmtDateOnly(assessment.date)} · ${timing.time}`;
+    return fmtDate(assessment.date);
+  }
   function dayCount(value) {
     if (!value) return null;
     return Math.ceil((new Date(value).getTime() - Date.now()) / 86400000);
@@ -157,7 +166,7 @@
 
   function assessmentRow(a) {
     const days = dayCount(a.date), reminder = days != null && [7, 3, 1].includes(days) ? ` · reminder ${days}d` : "";
-    return `<a class="nus-list-row" href="#/nus/planner" data-route><div><b>${esc(a.title)}</b><span>${esc(courseName(a.courseCode))} · ${esc(a.kind)} · ${a.weight}%</span></div><div class="nus-date">${esc(fmtDate(a.date))}<small>${days < 0 ? "overdue" : `${Math.max(0, days)}d left`}${reminder}</small></div></a>`;
+    return `<a class="nus-list-row" href="#/nus/planner" data-route><div><b>${esc(a.title)}</b><span>${esc(courseName(a.courseCode))} · ${esc(a.kind)} · ${a.weight}%</span></div><div class="nus-date">${esc(fmtAssessmentDate(a))}<small>${days < 0 ? "overdue" : `${Math.max(0, days)}d left`}${reminder}</small></div></a>`;
   }
 
   const plannerFeature = window.ATLAS_PLANNER_FEATURE ? window.ATLAS_PLANNER_FEATURE({
@@ -168,6 +177,7 @@
     button,
     dayCount,
     fmtDate,
+    formatAssessmentDate: fmtAssessmentDate,
     statusPill,
     sourceLabel,
     esc

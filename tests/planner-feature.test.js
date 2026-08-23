@@ -67,3 +67,32 @@ test("planner renders confirmed week timing without inventing an exact date", ()
   assert.match(root.innerHTML, /Exact session\/time pending/);
   assert.doesNotMatch(root.innerHTML, /2026-/);
 });
+
+test("planner renders the confirmed assessment time from timing metadata", () => {
+  const root = { innerHTML: "", querySelectorAll: () => [] };
+  const feature = createPlannerFeature({
+    root,
+    getAssessments: () => [{
+      id: "midterm",
+      courseCode: "DSA5105",
+      title: "Midterm",
+      kind: "exam",
+      weight: 20,
+      date: "2026-09-29",
+      timing: { date: "2026-09-29", time: "14:00–17:00", timeStatus: "confirmed", granularity: "exact" },
+      checklist: ["Review"]
+    }],
+    getStore: () => ({ task: () => ({ status: "todo", checks: [] }) }),
+    pageHead: (_kicker, title) => `<h1>${title}</h1>`,
+    dayCount: () => 37,
+    fmtDate: value => value,
+    formatAssessmentDate: assessment => `${assessment.date} · ${assessment.timing.time}`,
+    statusPill: status => `<b>${status}</b>`,
+    sourceLabel: () => "",
+    esc: value => String(value)
+  });
+
+  feature.render();
+
+  assert.match(root.innerHTML, /2026-09-29 · 14:00–17:00/);
+});
