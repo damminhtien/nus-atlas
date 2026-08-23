@@ -1425,9 +1425,6 @@ a.gloss-item:hover .gloss-go, a.gloss-item:focus-visible .gloss-go { opacity: 1;
 .nus-assessment-controls { display:flex; align-items:center; justify-content:space-between; gap:12px; padding:14px 0; margin-top:12px; border-top:1px solid var(--line); border-bottom:1px solid var(--line); color:var(--ink-soft); font-size:13px; }
 .nus-assessment-controls label, .nus-exam-setup label, .nus-sim label { display:grid; gap:6px; }
 .nus-assessment-controls select, .nus-exam-setup select, .nus-sim select, .nus-sql-editor textarea, .nus-answer-input { min-width:170px; padding:8px 10px; border:1px solid var(--line); border-radius:8px; background:var(--bg); color:var(--ink); font:inherit; }
-.nus-focus-course { display:flex; align-items:center; gap:10px; margin:0 0 14px; color:var(--ink-soft); font-size:13px; }
-.nus-focus-course span { font-weight:700; color:var(--ink); }
-.nus-focus-course select { min-width:180px; padding:7px 10px; border:1px solid var(--line); border-radius:8px; background:var(--bg); color:var(--ink); font:inherit; }
 .nus-source { color:var(--ink-mute); font-size:12px; text-align:right; }
 .nus-checklist { display:grid; grid-template-columns:repeat(auto-fit, minmax(190px, 1fr)); gap:9px 16px; padding-top:14px; }
 .nus-checklist label, .nus-choices label { display:flex; gap:9px; align-items:flex-start; color:var(--ink-soft); font-size:14px; cursor:pointer; }
@@ -1824,36 +1821,26 @@ body.nus-reading-mode #app.nus-root .nus-lesson-grid > aside { display:none; }
 body.nus-reading-mode .nus-study-compass { position:sticky; top:16px; z-index:20; backdrop-filter:blur(12px); }
 @media (max-width: 1050px) { #app.nus-root .nus-grid-4 { grid-template-columns:repeat(2, minmax(0, 1fr)); } #app.nus-root .nus-course-layout, #app.nus-root .nus-lesson-grid, #app.nus-root .nus-sql-layout { grid-template-columns:1fr; } #app.nus-root .nus-lesson-grid > aside { position:static; grid-template-columns:repeat(2, minmax(0, 1fr)); } }
 @media (max-width: 760px) { .topbar-context, .level-meta, .xp-wrap { display:none; } .topbar { justify-content:space-between; } #app.nus-root { padding:28px 18px 98px; } .nus-reader-toggle { margin-left:0; } .nus-study-compass { grid-template-columns:repeat(2, minmax(0, 1fr)); } #app.nus-root .nus-lesson-grid > aside { grid-template-columns:1fr; } body.atlas-nus-surface .mobile-primary-nav { position:fixed; right:12px; bottom:12px; left:12px; z-index:70; display:grid; grid-template-columns:repeat(4, minmax(0, 1fr)); padding:5px; border:1px solid var(--line); border-radius:14px; background:color-mix(in srgb, var(--panel) 93%, transparent); box-shadow:0 18px 42px -22px var(--shadow); backdrop-filter:blur(12px); } body.atlas-nus-surface .mobile-primary-nav a { padding:9px 5px; border-radius:10px; color:var(--ink-mute); font:600 11px var(--font-ui); text-align:center; text-decoration:none; } body.atlas-nus-surface .mobile-primary-nav a.active { background:color-mix(in srgb, var(--gold) 13%, var(--panel)); color:var(--gold); } }
-@media (max-width: 700px) { .nus-hero, .nus-two-col, .nus-sim-grid { grid-template-columns:1fr; display:grid; } .nus-grid-4 { grid-template-columns:1fr; } .nus-teach-card, .nus-example { padding:18px; } .nus-assessment-controls, .nus-exam-footer { align-items:flex-start; flex-direction:column; } .nus-source { text-align:left; } .nus-assessment-head { align-items:flex-start; flex-direction:column; } .nus-assessment-meta { text-align:left; } .nus-course-meta .btn { margin-left:0; } .nus-date { white-space:normal; } .nus-pipeline i { display:none; } .nus-exam-counts { grid-template-columns:1fr; } .nus-lesson-nav { align-items:stretch; flex-direction:column; } .nus-section-heading, .nus-review-priority { align-items:flex-start; flex-direction:column; } .nus-course-directory-row { grid-template-columns:5px minmax(0, 1fr) auto; } .nus-course-directory-row > div:nth-of-type(2) { display:none; } .nus-today-list a { grid-template-columns:24px minmax(0, 1fr); gap:4px 10px; } .nus-lesson-more { margin-left:0; } .nus-lesson-primary-actions .btn.primary { flex:1; text-align:center; } }
+@media (max-width: 700px) { .nus-hero, .nus-two-col, .nus-sim-grid { grid-template-columns:1fr; display:grid; } .nus-grid-4 { grid-template-columns:1fr; } .nus-teach-card, .nus-example { padding:18px; } .nus-assessment-controls, .nus-exam-footer { align-items:flex-start; flex-direction:column; } .nus-source { text-align:left; } .nus-assessment-head { align-items:flex-start; flex-direction:column; } .nus-assessment-meta { text-align:left; } .nus-course-meta .btn { margin-left:0; } .nus-date { white-space:normal; } .nus-pipeline i { display:none; } .nus-exam-counts { grid-template-columns:1fr; } .nus-lesson-nav { align-items:stretch; flex-direction:column; } .nus-section-heading, .nus-review-priority { align-items:flex-start; flex-direction:column; } .nus-gamification-surface { grid-template-columns:1fr 1fr; gap:12px; } .nus-gamification-mastery { grid-column:1 / -1; padding:10px 0 0; border-top:1px solid var(--line); border-left:0; } .nus-gamification-detail { justify-self:end; } .nus-course-directory-row { grid-template-columns:5px minmax(0, 1fr) auto auto; gap:10px; } .nus-course-directory-row > div:nth-of-type(2) i { display:none; } .nus-course-directory-row > div:nth-of-type(2) strong { font-size:11px; white-space:nowrap; } .nus-today-list a { grid-template-columns:24px minmax(0, 1fr); gap:4px 10px; } .nus-lesson-more { margin-left:0; } .nus-lesson-primary-actions .btn.primary { flex:1; text-align:center; } }
 @media (max-width: 560px) { .nus-exam-schedule-row { align-items:flex-start; flex-direction:column; } .nus-exam-schedule-count { min-width:0; text-align:left; } .nus-exam-schedule-actions { justify-content:stretch; } .nus-exam-schedule-actions .btn { flex:1; text-align:center; } }
 
 /* Evidence-based study loop and reusable visual-learning labs. */
-.nus-learning-signals { align-items:start; margin-top:20px; }
-.nus-quest-summary { display:flex; justify-content:space-between; gap:12px; margin-bottom:14px; color:var(--ink-soft); }
-.nus-quest-summary b { color:var(--ink); }
-.nus-quest-summary span, .nus-quest span, .nus-badge small, .nus-mastery-row small { display:block; color:var(--ink-mute); font-size:12px; }
-.nus-quest-list, .nus-mastery-list, .nus-badge-list { display:grid; gap:10px; }
-.nus-quest { display:grid; grid-template-columns:minmax(0, 1fr) auto; gap:4px 12px; padding:11px 0; border-bottom:1px solid var(--line); }
-.nus-quest:last-child { border-bottom:0; }
-.nus-quest strong { color:var(--gold); font:600 12px var(--font-mono); }
-.nus-quest-progress { grid-column:1 / -1; height:5px; overflow:hidden; border-radius:99px; background:var(--line); }
-.nus-quest-progress i, .nus-mini-progress i { display:block; height:100%; border-radius:inherit; background:linear-gradient(90deg, var(--sage), var(--gold)); transition:width .3s ease; }
-.nus-mastery-row { display:grid; grid-template-columns:minmax(0, 1fr) 76px auto; align-items:center; gap:10px; padding:9px 0; border-bottom:1px solid var(--line); color:var(--ink); text-decoration:none; }
-.nus-mastery-row:last-child { border-bottom:0; }
-.nus-mastery-row b { display:block; font-size:13px; }
-.nus-mastery-row strong { color:var(--gold); font:600 11px var(--font-mono); }
-.nus-mini-progress { display:block; height:5px; overflow:hidden; border-radius:99px; background:var(--line); }
-.nus-readiness { display:grid; gap:12px; }
-.nus-readiness-row { display:grid; grid-template-columns:minmax(0, 1fr) auto; gap:5px 12px; align-items:center; color:var(--ink-soft); font-size:13px; }
-.nus-readiness-row strong { color:var(--gold); font:600 12px var(--font-mono); }
-.nus-readiness-row i { grid-column:1 / -1; display:block; height:7px; overflow:hidden; border-radius:99px; background:var(--line); }
-.nus-readiness-row i b { display:block; height:100%; border-radius:inherit; background:linear-gradient(90deg, var(--sage), var(--gold)); }
-.nus-badge { display:grid; grid-template-columns:30px minmax(0, 1fr) auto; align-items:center; gap:9px; padding:9px; border:1px solid var(--line); border-radius:10px; background:color-mix(in srgb, var(--panel) 65%, transparent); }
-.nus-badge > span { display:grid; place-items:center; width:28px; height:28px; border-radius:50%; background:color-mix(in srgb, var(--gold) 17%, transparent); color:var(--gold); font-size:16px; }
-.nus-badge b { display:block; font-size:13px; }
-.nus-badge strong { color:var(--gold); font:600 11px var(--font-mono); }
-.nus-badge.locked { opacity:.62; }
-.nus-badge.unlocked { border-color:color-mix(in srgb, var(--sage) 55%, var(--line)); }
+.nus-gamification-surface { display:grid; grid-template-columns:auto minmax(150px, .75fr) minmax(180px, 1fr) auto; align-items:center; gap:16px; margin:20px 0 34px; padding:13px 16px; border:1px solid color-mix(in srgb, var(--gold) 30%, var(--line)); border-radius:13px; background:color-mix(in srgb, var(--panel) 72%, transparent); }
+.nus-gamification-streak, .nus-gamification-goal > div { display:flex; align-items:center; gap:8px; }
+.nus-gamification-streak > span { font-size:18px; }
+.nus-gamification-surface b { color:var(--ink); font:600 13px var(--font-ui); }
+.nus-gamification-surface small, .nus-gamification-goal span, .nus-gamification-mastery span { display:block; color:var(--ink-mute); font:11px/1.35 var(--font-ui); }
+.nus-gamification-goal > div { justify-content:space-between; color:var(--ink-soft); font:11px var(--font-mono); }
+.nus-gamification-goal > i { display:block; height:5px; margin-top:7px; overflow:hidden; border-radius:99px; background:var(--line); }
+.nus-gamification-goal em { display:block; height:100%; border-radius:inherit; background:linear-gradient(90deg, var(--sage), var(--gold)); }
+.nus-gamification-mastery { min-width:0; padding-left:16px; border-left:1px solid var(--line); color:var(--ink); text-decoration:none; }
+.nus-gamification-mastery b { display:block; overflow:hidden; margin:2px 0; text-overflow:ellipsis; white-space:nowrap; }
+.nus-gamification-mastery small { color:var(--gold); }
+.nus-gamification-detail { color:var(--ink-mute); font:600 11px var(--font-ui); text-decoration:none; white-space:nowrap; }
+.nus-gamification-detail:hover, .nus-gamification-detail:focus-visible, .nus-gamification-mastery:hover b, .nus-gamification-mastery:focus-visible b { color:var(--gold); }
+.nus-completion-surface { display:flex; flex-wrap:wrap; align-items:center; gap:8px 18px; margin:16px 0 20px; padding:12px 15px; border-left:3px solid var(--sage); background:color-mix(in srgb, var(--sage) 7%, var(--panel)); color:var(--ink-soft); font:12px var(--font-ui); }
+.nus-completion-surface b { color:var(--sage); }
+.nus-completion-surface span + span { color:var(--ink-mute); }
 .nus-lab { position:relative; overflow:hidden; margin:20px 0 26px; padding:clamp(20px, 3vw, 30px); border:1px solid color-mix(in srgb, var(--gold) 36%, var(--line)); border-radius:var(--radius); background:linear-gradient(145deg, color-mix(in srgb, var(--nus-blue) 9%, var(--panel)), color-mix(in srgb, var(--violet) 8%, var(--panel))); box-shadow:0 20px 42px -36px var(--shadow); }
 .nus-lab::before { position:absolute; inset:0 0 auto; height:3px; content:""; background:linear-gradient(90deg, var(--gold), var(--violet), var(--sage)); }
 .nus-concept-map { display:grid; grid-template-columns:repeat(auto-fit, minmax(140px, 1fr)); gap:10px; margin:16px 0; }

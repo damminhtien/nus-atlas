@@ -27,7 +27,7 @@ Gamification in NUS Atlas is a private feedback loop for studying, not a public 
 }
 ```
 
-The NUS ledger owns deduplication and mastery. The existing global store receives only the resulting XP and streak signal through `Store.recordNusEvidence`, so the top-bar level and consistency UI remain coherent.
+The NUS ledger owns deduplication and mastery. The existing global store receives only the resulting XP and streak signal through `Store.recordNusEvidence`, so the shared gamification engine remains coherent. NUS deliberately keeps level and XP out of the primary top bar and exposes only a compact study-momentum surface on Home.
 
 | Evidence | Default XP | Mastery signal |
 | --- | ---: | --- |
@@ -43,15 +43,16 @@ Question-level practice is deliberately separate from rewarded recall. Every sub
 
 The DSA5105 bank lives at `content/courses/DSA5105/questions/bank.json`; DSA5208 has the same contract at `content/courses/DSA5208/questions/bank.json`. These are the editable source of truth for course-specific extension questions; generated per-lesson JSON and browser packages are reader/build outputs. Each item carries difficulty, skill, cognitive level, misconception, visual hook, and typed `sourceRefs`. Lecture refs define the exam boundary; textbook and `ref` entries deepen or contextualize it.
 
-## Daily quests and recognition
+## NUS surface and progressive disclosure
 
-The dashboard selects three small daily quests:
+The NUS experience reduces the engine to feedback that helps the learner decide what to do next:
 
-1. Complete one lesson.
-2. Retrieve twice in Exam Mode.
-3. Make one proof move by submitting an exam, completing a lab, or redeeming a mistake.
+- Home shows a compact streak, weekly study goal, and the current concept's mastery label.
+- A completed lesson shows the evidence gained, concepts strengthened, and whether retrieval has been scheduled.
+- Detailed progress, level history, and achievements remain available under `Progress & achievements` rather than competing with the study action.
+- Review and Practice are the primary destinations for retrieval, mistakes, contrast drills, and exam preparation. Daily review and custom tests are contextual actions, not duplicate top-level products.
 
-Recognition cards show progress toward durable study behaviors such as Retrieval builder, Lab apprentice, DSA5105 explorer, Mastery builder, and Exam ready. Recognition is private and descriptive; it never gates course content.
+The engine still records XP, levels, streaks, and recognition internally. The interface uses progressive disclosure so gamification supports the learning loop without becoming the lesson's subject.
 
 ## Reusable visual-learning contract
 
@@ -86,7 +87,7 @@ All 4 DSA5101, 7 DSA5104, 23 DSA5105, and 9 DSA5208 package lessons now resolve 
 ### Phase 1 — shipped package foundation
 
 - Add the event ledger and idempotent rewards.
-- Show daily quests, selectable DSA5101/DSA5104/DSA5105/DSA5208 mastery, and recognition on the dashboard.
+- Show a compact study-momentum surface with streak, weekly goal, current-concept mastery, and lesson-completion feedback.
 - Ship source-backed visual labs and source lenses for all four normalized course packages.
 - Log a visual lab only after the learner reaches the final reasoning step or explicitly commits a comparison.
 

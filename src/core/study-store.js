@@ -363,6 +363,19 @@
       .map(item => ({ ...item }));
   }
 
+  function gamification() {
+    const legacy = atlasStore && typeof atlasStore.stats === "function" ? atlasStore.stats() : {};
+    const legacyState = atlasStore && atlasStore.raw && typeof atlasStore.raw === "object" ? atlasStore.raw : {};
+    return {
+      xp: Number(legacyState.xp) || 0,
+      streak: Number(legacy.streak) || 0,
+      todayXp: atlasStore && typeof atlasStore.todayXP === "function" ? Number(atlasStore.todayXP()) || 0 : 0,
+      goalXp: Number(legacyState.goalXp) || 50,
+      activeDays: objectOrEmpty(legacyState.activeDays),
+      level: atlasStore && typeof atlasStore.levelInfo === "function" ? { ...atlasStore.levelInfo() } : null
+    };
+  }
+
   const api = {
     get raw() { return state; },
     get schemaVersion() { return SCHEMA_VERSION; },
@@ -396,6 +409,7 @@
     readingFor,
     recordReading,
     readingList,
+    gamification,
     reset() { state = blank(); save(); }
   };
 

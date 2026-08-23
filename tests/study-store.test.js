@@ -87,6 +87,26 @@ test("study store remembers the last lesson without awarding learning evidence",
   assert.equal(storage.read().lastLesson.lessonId, "basis-functions");
 });
 
+test("study store exposes a compact gamification snapshot through its boundary", () => {
+  const store = createStudyStore({
+    storage: memoryStorage(),
+    atlasStore: {
+      raw: { xp: 240, goalXp: 50, activeDays: { "2026-08-15": 1 } },
+      stats: () => ({ streak: 12 }),
+      todayXP: () => 30,
+      levelInfo: () => ({ level: 2, name: "Apprentice" })
+    }
+  });
+  assert.deepEqual(store.gamification(), {
+    xp: 240,
+    streak: 12,
+    todayXp: 30,
+    goalXp: 50,
+    activeDays: { "2026-08-15": 1 },
+    level: { level: 2, name: "Apprentice" }
+  });
+});
+
 test("study store keeps evidence idempotent and updates mastery", () => {
   const store = createStudyStore({ storage: memoryStorage(), now: () => new Date("2026-08-15T10:00:00.000Z") });
   const first = store.recordEvidence({ eventId: "recall:q1", type: "recall_correct", lessonId: "lesson1", xp: 5 });

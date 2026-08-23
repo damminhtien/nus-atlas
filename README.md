@@ -13,7 +13,7 @@ NUS Atlas is a focused study workspace for AY2026/27 Semester 1. It turns normal
 | DSA5105 | Machine learning foundations, OLS, SVM/KKT, trees, neural nets, PCA, clustering, RL, DP, graph methods | 23 |
 | DSA5208 | Distributed systems, ordering, consistency, Spark | 9 |
 
-The normalized packages currently contain 43 lessons across four courses. DSA5208 is the current dashboard focus; assessment dates remain explicitly pending when they have not been confirmed.
+The normalized packages currently contain 43 lessons across four courses. The dashboard chooses a recommended course from the learner's last activity, unfinished current-week work, retrieval due items, and assessment urgency; it does not hardcode a focus course. Assessment dates remain explicitly pending when they have not been confirmed.
 
 ## Study tools
 
@@ -27,7 +27,7 @@ The normalized packages currently contain 43 lessons across four courses. DSA520
 - Critical-thinking prompts that challenge assumptions and include strong-answer comparisons.
 - Reading-first lesson pages with editorial typography, a four-step Read/Work/Reason/Recall compass, and Focus Reading mode.
 - Derived visual study cues that explain what a referenced diagram, table, chart, or screenshot is meant to teach without publishing raw course slides.
-- Evidence-based daily quests, a selectable focus-course mastery map (DSA5208 by default), and recognition for retrieval and reasoning habits. Page views never award XP.
+- A quiet study-momentum surface on NUS Home: streak, weekly goal, current-concept mastery, and concise lesson-completion feedback. Detailed progress and achievements stay under Progress & achievements; page views never award XP.
 - Automatic spaced retrieval that schedules mastered concepts for `+1`, `+3`, `+7`, `+14`, and later intervals; each review asks only 1–2 questions and adapts to correctness and confidence.
 - Reusable visual-learning labs for ERM comparison, SVM geometry, derivation traces, PCA, GMM/EM, Bellman backups, DP tables, graph kernels, spectral clustering, and GNN message passing.
 - General Atlas remains available at `#/atlas`.

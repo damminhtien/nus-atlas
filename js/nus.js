@@ -64,9 +64,6 @@
     const recommended = recommendedNext();
     return recommended ? recommended.course.code : (courses()[0] || {}).code;
   }
-  function focusCourseSelector(code) {
-    return `<label class="nus-focus-course"><span>Focus course</span><select id="nus-focus-course">${courses().map(item => `<option value="${esc(item.code)}" ${item.code === code ? "selected" : ""}>${esc(item.code)}</option>`).join("")}</select></label>`;
-  }
   function readinessFor(code) {
     const questionIds = lessons(code).flatMap(item => Array.isArray(item.questionIds) ? item.questionIds : (item.questions || []).map(question => question.id));
     const stats = questionIds.filter(Boolean).map(questionId => window.ATLAS_STUDY_STORE.questionStats(questionId));
@@ -75,15 +72,28 @@
     const attempts = stats.reduce((sum, item) => sum + item.attempts, 0);
     return { coverage: questionIds.length ? Math.round(attempted / questionIds.length * 100) : 0, accuracy: attempts ? Math.round(correct / attempts * 100) : 0, unresolved: window.ATLAS_STUDY_STORE.mistakes(code).length, total: questionIds.length };
   }
-  function learningSignals(code) {
-    const focusCode = code || focusCourseCode();
-    const quests = window.ATLAS_STUDY_STORE.questState(), recognition = window.ATLAS_STUDY_STORE.recognition();
-    const readiness = readinessFor(focusCode);
-    const questBody = quests.quests.map(q => `<div class="nus-quest"><div><b>${esc(q.label)}</b><span>${esc(q.hint)}</span></div><strong>${q.progress}/${q.target}</strong><div class="nus-quest-progress"><i style="width:${Math.round(q.progress / q.target * 100)}%"></i></div></div>`).join("");
-    const labItems = (repository() ? repository().listLabs(focusCode) : []).map(l => { const m = window.ATLAS_STUDY_STORE.masteryFor(l.lessonId), pct = Math.round(m.score * 100); return `<a class="nus-mastery-row" href="#/nus/lesson/${esc(focusCode)}/${esc(l.lessonId)}" data-route><span><b>${esc(l.title || l.lessonId)}</b><small>${m.attempts ? `${m.attempts} evidence moves` : "Not started"}</small></span><span class="nus-mini-progress"><i style="width:${pct}%"></i></span><strong>${pct}%</strong></a>`; }).join("");
-    const badgeItems = recognition.slice(0, 6).map(item => `<div class="nus-badge ${item.unlocked ? "unlocked" : "locked"}"><span>${esc(item.icon)}</span><div><b>${esc(item.name)}</b><small>${esc(item.desc)}</small></div><strong>${item.unlocked ? "✓" : `${item.progress}%`}</strong></div>`).join("");
-    const readinessBody = `<div class="nus-readiness"><div class="nus-readiness-row"><span>Question coverage</span><strong>${readiness.coverage}%</strong><i><b style="width:${readiness.coverage}%"></b></i></div><div class="nus-readiness-row"><span>Answer accuracy</span><strong>${readiness.accuracy}%</strong><i><b style="width:${readiness.accuracy}%"></b></i></div><p class="nus-muted">${readiness.unresolved ? `${readiness.unresolved} unresolved mistake${readiness.unresolved === 1 ? "" : "s"}.` : "No unresolved mistakes yet."} ${readiness.total} question prompts are available.</p><div class="nus-card-actions">${button("Practice smart mix", `#/nus/exam/${focusCode}`, "primary")}${button("Open Mistake Clinic", `#/nus/mistakes/${focusCode}`, "ghost")}</div></div>`;
-    return `<div class="nus-two-col nus-learning-signals"><div>${card("Today’s quests", `<div class="nus-quest-summary"><b>${quests.complete ? "Daily loop complete" : "Evidence over streaks"}</b><span>${quests.quests.filter(q => q.progress >= q.target).length}/${quests.quests.length} quests · ${quests.completedDays} completed days</span></div><div class="nus-quest-list">${questBody}</div><p class="nus-muted">Opening a page never awards XP. Only a completed study move enters the ledger.</p>`, "reveal")}</div><div>${card(`${esc(focusCode)} mastery map`, `${focusCourseSelector(focusCode)}<div class="nus-mastery-list">${labItems || `<p class="nus-muted">Visual labs are being prepared for this course.</p>`}</div><p class="nus-muted">Mastery rises through lesson completion, retrieval, and lab reasoning—not page views.</p>`, "reveal")}</div></div><div class="nus-two-col"><div>${card(`${esc(focusCode)} readiness`, readinessBody, "reveal")}</div><div>${card("Recognition", `<div class="nus-badge-list">${badgeItems}</div>`, "reveal")}</div></div>`;
+  function masteryLabel(score) {
+    if (score >= 0.8) return "Strong";
+    if (score >= 0.35) return "Developing";
+    return score > 0 ? "Learning" : "New";
+  }
+  function recentStudyDays(activeDays, now = Date.now()) {
+    const active = activeDays && typeof activeDays === "object" ? activeDays : {};
+    return Array.from({ length: 7 }, (_, offset) => {
+      const date = new Date(now - offset * 86400000);
+      return active[singaporeDateKey(date)] ? 1 : 0;
+    }).reduce((sum, value) => sum + value, 0);
+  }
+  function gamificationSurface(recommended) {
+    const store = window.ATLAS_STUDY_STORE;
+    const signal = store && typeof store.gamification === "function" ? store.gamification() : {};
+    const weeklyGoal = 4, weeklyCount = Math.min(weeklyGoal, recentStudyDays(signal.activeDays));
+    const streak = Number(signal.streak) || 0;
+    const mastery = recommended && store && typeof store.masteryFor === "function" ? store.masteryFor(recommended.lesson.id) : { score: 0 };
+    const concept = recommended ? recommended.lesson.title : "Your next concept";
+    const label = masteryLabel(Number(mastery.score) || 0);
+    const masteryPath = label === "Strong" ? label : `${label} → Strong`;
+    return `<section class="nus-gamification-surface reveal" aria-label="Study momentum"><div class="nus-gamification-streak"><span aria-hidden="true">🔥</span><div><b>${streak}-day streak</b><small>Personal consistency</small></div></div><div class="nus-gamification-goal"><div><span>Weekly goal</span><b>${weeklyCount}/${weeklyGoal}</b></div><i><em style="width:${Math.round(weeklyCount / weeklyGoal * 100)}%"></em></i></div>${recommended ? `<a class="nus-gamification-mastery" href="#/nus/lesson/${esc(recommended.course.code)}/${esc(recommended.lesson.id)}" data-route><span>Current concept</span><b>${esc(concept)}</b><small>${esc(masteryPath)} · ${Math.round((Number(mastery.score) || 0) * 100)}% evidence mastery</small></a>` : ""}<a class="nus-gamification-detail" href="#/stats" data-route>Progress details →</a></section>`;
   }
   function courseProgressBar(code) { const p = progress(code); return `<div class="nus-progress"><span style="width:${p.pct}%;background:${esc(course(code).color)}"></span></div><div class="nus-muted">${p.done}/${p.total} lessons complete · ${p.pct}%</div>`; }
   function courseTimeline(code) {
@@ -252,10 +262,6 @@
   function examCountdownCards() { return examScheduleFeature ? examScheduleFeature.renderCards() : ""; }
   function bindDashboard() {
     root.querySelectorAll("[data-nus-focus]").forEach(b => b.addEventListener("click", () => startFocus(Number(b.dataset.nusFocus))));
-    root.querySelector("#nus-focus-course")?.addEventListener("change", event => {
-      try { localStorage.setItem("nus.focus-course", event.target.value); } catch (_) { /* private preference is optional */ }
-      renderDashboard();
-    });
   }
   function startFocus(minutes) {
     if (focusTimer) clearInterval(focusTimer);
@@ -296,6 +302,7 @@
     ].filter(Boolean);
     let body = pageHead("NUS Atlas · AY2026/27 Semester 1", `${greeting()}.`, "One clear study loop: learn the next idea, practise it, then review what needs attention.");
     body += `<section class="nus-hero nus-home-continue reveal"><div><div class="eyebrow">Continue</div><h3>${recommended ? esc(recommended.lesson.title) : "Your seeded lessons are complete"}</h3><p>${recommended ? `${esc(recommended.course.code)} · Week ${esc(recommended.lesson.week)} · ${esc(recommended.lesson.summary)}` : "Use Review to keep previously learned material active."}</p>${recommended ? `<small class="nus-home-why">Why this? ${esc(recommended.reason)} · about ${esc(recommended.lesson.minutes)} min.</small>` : ""}</div><div class="nus-hero-actions">${recommended ? button("Continue learning →", `#/nus/lesson/${recommended.course.code}/${recommended.lesson.id}`, "primary") : button("Open Review", "#/nus/review", "primary")}</div></section>`;
+    body += gamificationSurface(recommended);
     body += `<section class="nus-home-section reveal"><div class="nus-section-heading"><div><div class="eyebrow">Today</div><h3>Make the next useful move</h3></div></div><div class="nus-today-list">${today.length ? today.join("") : `<p class="nus-muted">No confirmed deadline or due review right now. Choose a course to continue.</p>`}</div></section>`;
     body += `<section class="nus-home-section reveal"><div class="nus-section-heading"><div><div class="eyebrow">Your courses</div><h3>Follow the semester, week by week</h3></div>${button("View all courses", "#/nus/courses", "ghost")}</div><div class="nus-course-directory">${courseDirectoryRows()}</div></section>`;
     body += `<section class="nus-home-section reveal"><div class="nus-section-heading"><div><div class="eyebrow">Upcoming</div><h3>What is coming next?</h3></div>${button("Open Plan", "#/nus/planner", "ghost")}</div>${upcoming.length ? `<div class="nus-list">${upcoming.map(assessmentRow).join("")}</div>` : `<p class="nus-muted">No confirmed dates yet. Atlas will not invent a deadline.</p>`}</section>`;
@@ -488,6 +495,28 @@
     }));
     bindVisualCueProgress();
   }
+  function lessonPracticeComplete(lessonRecord) {
+    const store = window.ATLAS_STUDY_STORE;
+    return !!(store && lessonRecord.questions && lessonRecord.questions.length && typeof store.questionStats === "function" && lessonRecord.questions.every(question => store.questionStats(question.id).attempts > 0));
+  }
+  function lessonPrimaryAction(code, lessonRecord, done, next) {
+    if (done && lessonPracticeComplete(lessonRecord)) return button(next ? "Next lesson →" : "Back to course →", next ? `#/nus/lesson/${code}/${next.id}` : `#/nus/course/${code}`, "primary");
+    if (done) return button(`Practice ${lessonRecord.questions.length} questions`, `#/nus/exam/${code}/${lessonRecord.id}`, "primary");
+    const last = window.ATLAS_STUDY_STORE && typeof window.ATLAS_STUDY_STORE.lastLesson === "function" ? window.ATLAS_STUDY_STORE.lastLesson() : null;
+    const returning = !!(last && last.courseCode === code && last.lessonId === lessonRecord.id);
+    const label = returning ? "Continue lesson" : "Start learning";
+    return `<a class="btn primary" href="#nus-lesson-read" data-nus-jump="nus-lesson-read">${esc(label)} →</a>`;
+  }
+  function lessonCompletionSurface(code, lessonRecord, done) {
+    if (!done) return "";
+    const store = window.ATLAS_STUDY_STORE;
+    const strengthened = (lessonRecord.objectives || []).length || (lessonRecord.sections || []).length || 1;
+    const scheduled = store && typeof store.upcomingRetrievals === "function"
+      ? store.upcomingRetrievals(code, 120).filter(item => item.lessonId === lessonRecord.id).length
+      : 0;
+    const review = scheduled ? `${scheduled} concept${scheduled === 1 ? "" : "s"} scheduled for review` : "Review will be scheduled as mastery builds";
+    return `<section class="nus-completion-surface reveal" aria-label="Lesson completion"><b>✓ Week ${esc(lessonRecord.week)} lesson complete</b><span>${strengthened} concept${strengthened === 1 ? "" : "s"} strengthened</span><span>${esc(review)}</span></section>`;
+  }
   async function renderLesson(code, id, context) {
     const courseLoading = ensureCourseLoaded(code, context);
     if (courseLoading) {
@@ -509,10 +538,8 @@
     let body = pageHead(`${c.code} · Week ${l.week}`, l.title, l.summary);
     const slideSet = slideSets(code).find(item => (item.lessonIds || []).includes(l.id)) || ((l.slideSetIds || [])[0] ? { id: l.slideSetIds[0] } : null);
     const slideResumeState = slideResume(code, slideSet);
-    const primaryHref = slideSet ? `#/nus/slides/${c.code}/${slideSet.id}/${slideResumeState.number}` : `#/nus/exam/${c.code}/${l.id}`;
-    const primaryLabel = slideSet ? slideResumeState.label : `Practice ${l.questions.length} questions`;
-    const resources = `<details class="nus-lesson-more"><summary>More</summary><div class="nus-lesson-more-actions"><button class="btn ghost" id="nus-mark-lesson" type="button">${done ? "✓ Completed" : "Mark complete"}</button>${(courseTextbook && courseTextbook.reader) || (repository() && repository().hasTextbook && repository().hasTextbook(c.code)) ? button("Open textbook PDF", `#/nus/textbook/${c.code}/1`, "ghost") : ""}${l.contrastDrills && l.contrastDrills.length ? button("Clarify similar concepts", `#/nus/contrast/${c.code}/${l.id}`, "ghost") : ""}${button("Review mistakes", `#/nus/review/mistakes`, "ghost")}${readerButton()}</div></details>`;
-    body += `<div class="nus-lesson-actions nus-lesson-primary-actions">${button(`← Week ${l.week}`, `#/nus/course/${c.code}`, "ghost")}${button(primaryLabel, primaryHref, "primary")}${resources}</div>`;
+    const resources = `<details class="nus-lesson-more"><summary>More</summary><div class="nus-lesson-more-actions"><button class="btn ghost" id="nus-mark-lesson" type="button">${done ? "✓ Completed" : "Mark complete"}</button>${slideSet ? button(slideResumeState.label, `#/nus/slides/${c.code}/${slideSet.id}/${slideResumeState.number}`, "ghost") : ""}${(courseTextbook && courseTextbook.reader) || (repository() && repository().hasTextbook && repository().hasTextbook(c.code)) ? button("Open textbook PDF", `#/nus/textbook/${c.code}/1`, "ghost") : ""}${l.contrastDrills && l.contrastDrills.length ? button("Clarify similar concepts", `#/nus/contrast/${c.code}/${l.id}`, "ghost") : ""}${button("Review mistakes", `#/nus/review/mistakes`, "ghost")}${readerButton()}</div></details>`;
+    body += `<div class="nus-lesson-actions nus-lesson-primary-actions">${button(`← Week ${l.week}`, `#/nus/course/${c.code}`, "ghost")}${lessonPrimaryAction(c.code, l, done, next)}${resources}</div>${lessonCompletionSurface(c.code, l, done)}`;
     body += studyCompass(l);
     const lab = repository() ? repository().getLab(l.id) : null;
     const visualCueIds = Array.isArray(l.visualIds) ? l.visualIds : [];
