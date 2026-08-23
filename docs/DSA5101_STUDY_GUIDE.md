@@ -4,7 +4,7 @@ DSA5101 is now a first-class normalized course package in NUS Atlas. Its four st
 
 ## Source boundary
 
-The current lecture and assignment PDFs define the course scope. The MMDS textbook is a separate `textbook` layer for explanation and depth; it is never shown as lecture authority. Every authored item keeps a typed `sourceRefs` record with `sourceId`, page, source type, role, and status.
+The current lecture and assignment PDFs define the course scope. Lecture 2, `Lec 2 - Finding Similar items, LSH.pdf`, is the official Week 2 source for the MinHash/LSH track; Assignment 1 remains exercise evidence, not lecture authority. The MMDS textbook is a separate `textbook` layer for explanation and depth; it is never shown as lecture authority. Every authored item keeps a typed `sourceRefs` record with `sourceId`, page, source type, role, and status.
 
 The raw PDFs remain outside the repository under `/Users/macbook/Desktop/NUS/DSA5101`. The committed package contains normalized notes and provenance only.
 

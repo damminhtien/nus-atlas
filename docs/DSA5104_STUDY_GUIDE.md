@@ -28,6 +28,8 @@ The normalized source manifest is `content/courses/DSA5104/sources/manifest.json
 
 The current final-exam map is also partial. The supplied lecture sources cover Chapters 1–3; Chapters 4, 5, 9, and the second-half materials (including XML, MongoDB, MapReduce, Spark SQL, and vector databases) remain explicit ingestion targets. Do not read the current lesson list as complete semester coverage until those official sources are added.
 
+Chapter 3's `chap3_mysql_code_in_slides.sql` is cataloged as an official source artifact. SQL Studio can download it for page-faithful MySQL comparison; the interactive runner remains a separate SQLite/WASM practice environment.
+
 ## A+ study loop
 
 1. Start at `#/nus/course/DSA5104` and choose one track.
