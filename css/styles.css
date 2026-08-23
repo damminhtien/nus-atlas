@@ -1789,6 +1789,11 @@ a.gloss-item:hover .gloss-go, a.gloss-item:focus-visible .gloss-go { opacity: 1;
 .nus-lesson-mini-map a:hover, .nus-lesson-mini-map a:focus-visible { color:var(--gold); }
 .nus-practice-next details { margin-top:14px; }
 .nus-practice-next > details > summary { color:var(--ink-soft); cursor:pointer; font:600 13px var(--font-ui); }
+.nus-loading-surface { display:grid; gap:13px; min-height:260px; margin-top:26px; padding:clamp(24px, 3vw, 34px); border:1px solid var(--line); border-radius:var(--radius); background:color-mix(in srgb, var(--panel) 92%, transparent); }
+.nus-loading-line { display:block; width:100%; height:18px; border-radius:99px; background:linear-gradient(90deg, color-mix(in srgb, var(--line) 84%, transparent), color-mix(in srgb, var(--panel-2) 84%, transparent), color-mix(in srgb, var(--line) 84%, transparent)); background-size:220% 100%; animation:nus-loading-shimmer 1.35s ease-in-out infinite; }
+.nus-loading-line.is-short { width:42%; height:26px; }
+@keyframes nus-loading-shimmer { to { background-position:-220% 0; } }
+@media (prefers-reduced-motion:reduce) { .nus-loading-line { animation:none; } }
 .nus-visual-copy small { color:var(--ink-mute); font:11px/1.45 var(--font-ui); }
 .nus-visual-status { justify-self:start; color:var(--ink-mute); font:10px var(--font-mono); letter-spacing:.4px; text-transform:uppercase; }
 .nus-visual.is-practiced { border-left:2px solid var(--sage); padding-left:12px; }

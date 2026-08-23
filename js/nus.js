@@ -359,11 +359,15 @@
     return (!context || typeof context.isCurrent !== "function" || context.isCurrent()) && location.hash === route;
   }
 
+  function renderLoadingSurface(kicker, title, description) {
+    root.innerHTML = `${pageHead(kicker, title, description)}<section class="nus-loading-surface" aria-live="polite"><span class="nus-loading-line is-short"></span><span class="nus-loading-line"></span><span class="nus-loading-line"></span></section>`;
+  }
+
   function ensureCourseLoaded(code, context) {
     const repo = repository();
     if (!repo || typeof repo.needsLoad !== "function" || !repo.needsLoad(code)) return null;
     const route = location.hash;
-    root.innerHTML = `<section class="nus-card reveal"><div class="eyebrow">Loading course package</div><h2>${esc(code)}</h2><p>Fetching the normalized lessons, questions, and study kit…</p></section>`;
+    renderLoadingSurface("Loading course", code, "Preparing its lecture timeline and learning materials…");
     return repo.loadCourse(code).then(packageData => {
       if (!routeIsCurrent(context, route)) return false;
       if (packageData) return true;
@@ -379,7 +383,7 @@
     const repo = repository();
     if (!repo || typeof repo.loadLesson !== "function" || (typeof repo.isLessonLoaded === "function" && repo.isLessonLoaded(code, id))) return null;
     const route = location.hash;
-    root.innerHTML = `<section class="nus-card reveal"><div class="eyebrow">Loading lesson payload</div><h2>${esc(id)}</h2><p>Fetching this lesson, its questions, and study kit…</p></section>`;
+    renderLoadingSurface("Loading lesson", id, "Preparing the explanation and practice for this lesson…");
     return repo.loadLesson(code, id).then(payload => {
       if (!routeIsCurrent(context, route)) return false;
       if (payload) return true;
@@ -395,7 +399,7 @@
     const repo = repository();
     if (!repo || typeof repo.loadSlides !== "function" || (repo.getSlideSets(code) || []).length) return null;
     const route = location.hash;
-    root.innerHTML = `<section class="nus-card reveal"><div class="eyebrow">Loading lecture slides</div><h2>${esc(code)}</h2><p>Fetching the slide shard for this lecture…</p></section>`;
+    renderLoadingSurface("Loading slides", code, "Preparing the lecture reader…");
     return repo.loadSlides(code).then(slides => {
       if (!routeIsCurrent(context, route)) return false;
       if (slides && slides.length) return true;
@@ -411,7 +415,7 @@
     const repo = repository();
     if (!repo || typeof repo.loadTextbook !== "function" || (repo.getTextbook && repo.getTextbook(code))) return null;
     const route = location.hash;
-    root.innerHTML = `<section class="nus-card reveal"><div class="eyebrow">Loading textbook reader</div><h2>${esc(code)}</h2><p>Fetching the textbook PDF reader metadata…</p></section>`;
+    renderLoadingSurface("Loading textbook", code, "Preparing the PDF reader and saved position…");
     return repo.loadTextbook(code).then(textbook => {
       if (!routeIsCurrent(context, route)) return false;
       if (textbook) return true;
@@ -433,7 +437,7 @@
     const needsCourse = codes.some(courseCode => typeof repo.needsLoad === "function" && repo.needsLoad(courseCode));
     if (!pending.length && !needsCourse) return null;
     const route = location.hash;
-    root.innerHTML = `<section class="nus-card reveal"><div class="eyebrow">Preparing practice surface</div><h2>${esc(code || "NUS courses")}</h2><p>Loading question and study-kit shards only for this practice run…</p></section>`;
+    renderLoadingSurface("Preparing practice", code || "NUS courses", "Loading only the questions needed for this practice run…");
     return Promise.all(codes.map(courseCode => repo.loadCourse(courseCode)))
       .then(() => Promise.all(pending.map(item => repo.loadLesson(item.courseCode, item.lessonId))))
       .then(() => {
