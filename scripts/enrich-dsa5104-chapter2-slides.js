@@ -17,6 +17,236 @@ const FILE = path.join(ROOT, 'content', 'courses', 'DSA5104', 'slides', 'dsa5104
 const SOURCE_ID = 'DSA5104/chapter2.pdf';
 const ASSET_ROOT = 'assets/nus/dsa5104/chapter2';
 
+const CORE_SLIDES = [
+  ...Array.from({ length: 39 }, (_, index) => index + 3),
+  43,
+  44
+];
+
+const TEXTBOOK_SOURCE = 'DSA5104/Database System Concepts, 7th edition';
+const TEXTBOOK_RELATIONAL_MODEL = {
+  sourceId: TEXTBOOK_SOURCE,
+  sourceType: 'textbook',
+  page: 2,
+  role: 'Chapter 2 pointer: relations, keys, and integrity',
+  status: 'course-depth'
+};
+const TEXTBOOK_DESIGN = {
+  sourceId: TEXTBOOK_SOURCE,
+  sourceType: 'textbook',
+  page: 4,
+  role: 'Chapter 7 pointer: relational design and decomposition',
+  status: 'course-depth'
+};
+
+const TEXTBOOK_SLIDES = new Map([
+  [4, TEXTBOOK_RELATIONAL_MODEL], [5, TEXTBOOK_RELATIONAL_MODEL], [7, TEXTBOOK_RELATIONAL_MODEL],
+  [8, TEXTBOOK_RELATIONAL_MODEL], [11, TEXTBOOK_RELATIONAL_MODEL], [12, TEXTBOOK_RELATIONAL_MODEL],
+  [14, TEXTBOOK_RELATIONAL_MODEL], [15, TEXTBOOK_RELATIONAL_MODEL], [17, TEXTBOOK_RELATIONAL_MODEL],
+  [20, TEXTBOOK_RELATIONAL_MODEL], [21, TEXTBOOK_RELATIONAL_MODEL], [24, TEXTBOOK_RELATIONAL_MODEL],
+  [27, TEXTBOOK_RELATIONAL_MODEL], [28, TEXTBOOK_RELATIONAL_MODEL], [30, TEXTBOOK_RELATIONAL_MODEL],
+  [31, TEXTBOOK_RELATIONAL_MODEL], [32, TEXTBOOK_RELATIONAL_MODEL], [34, TEXTBOOK_RELATIONAL_MODEL],
+  [37, TEXTBOOK_RELATIONAL_MODEL], [38, TEXTBOOK_RELATIONAL_MODEL], [39, TEXTBOOK_RELATIONAL_MODEL],
+  [43, TEXTBOOK_DESIGN], [44, TEXTBOOK_DESIGN], [46, TEXTBOOK_RELATIONAL_MODEL]
+]);
+
+const KEY_FORMULAS = {
+  4: { name: 'Relation schema', latex: 'R=(A_1,A_2,\\ldots,A_n)', purpose: 'Use it to name the attributes that define a relation; the instance supplies the current tuples.' },
+  8: { name: 'Candidate-key uniqueness', latex: '\\forall t_1,t_2\\in r:\\ t_1[K]=t_2[K]\\Rightarrow t_1=t_2', purpose: 'Use it to test whether the attributes in K uniquely identify every tuple.' },
+  14: { name: 'Relational-algebra closure', latex: 'E_1,E_2\\mapsto E', purpose: 'Every operation consumes relation-valued expressions and returns a relation, enabling composition.' },
+  15: { name: 'Selection', latex: '\\sigma_p(r)', purpose: 'Use selection to keep rows of r whose tuple values satisfy predicate p.' },
+  17: { name: 'Projection', latex: '\\pi_{A_1,\\ldots,A_k}(r)', purpose: 'Use projection to keep only the listed attributes; set semantics remove duplicate result tuples.' },
+  21: { name: 'Cartesian product cardinality', latex: '|r\\times s|=|r|\\cdot|s|', purpose: 'Use it to anticipate the size of the all-pairs intermediate relation before a join predicate filters it.' },
+  24: { name: 'Theta join', latex: 'r\\bowtie_\\theta s=\\sigma_\\theta(r\\times s)', purpose: 'Use it to explain a join as product followed by a predicate that keeps matching tuple pairs.' },
+  27: { name: 'Join equivalence', latex: 'r\\bowtie_\\theta s=\\sigma_\\theta(r\\times s)', purpose: 'Use it to translate between the compact join operator and its product-plus-selection expansion.' },
+  28: { name: 'Union compatibility', latex: 'r\\cup s\\text{ is valid only when arity and corresponding domains are compatible}', purpose: 'Use it before applying union; operands must describe compatible tuple shapes.' },
+  30: { name: 'Intersection', latex: 'r\\cap s', purpose: 'Use it to retain tuples that occur in both compatible input relations.' },
+  31: { name: 'Set difference', latex: 'r-s', purpose: 'Use it to retain tuples in r that are absent from s; reversing operands changes the answer.' },
+  32: { name: 'Assignment', latex: 'T\\leftarrow E', purpose: 'Use it to name an intermediate relation-valued expression without changing stored database data.' },
+  34: { name: 'Rename', latex: '\\rho_x(E)', purpose: 'Use it to name an expression or create a separately named copy for self-comparison.' },
+  37: { name: 'Query equivalence', latex: 'E_1\\equiv E_2\\Longleftrightarrow\\forall D:\\ E_1(D)=E_2(D)', purpose: 'Use it to distinguish same-result expressions from merely similar-looking expressions.' },
+  39: { name: 'Join rewrite', latex: 'r\\bowtie_\\theta s\\equiv\\sigma_\\theta(r\\times s)', purpose: 'Use it to recognize equivalent relational-algebra forms that an optimizer can transform.' }
+};
+
+const DEEP_OVERRIDES = {
+  4: {
+    explanation: {
+      whatYouSee: 'The slide gives the formal relation schema and instance notation, then ties each tuple to one table row.',
+      whyItMatters: 'Schema is the stable shape; instance is the changing state. Exam questions often ask which one changes after an insert.',
+      intuition: 'Think of the schema as a type and the instance as the current value of that type.',
+      technicalDetail: 'The schema is written as $R=(A_1,\\ldots,A_n)$; an instance $r(R)$ is a set of tuples over those attributes.',
+      pitfall: 'Do not call a current table snapshot the schema, and do not infer identity from row position.',
+      connection: 'Keys constrain tuples in an instance, while the schema tells you which attributes exist.'
+    },
+    socratic: { type: 'compare', prompt: 'If an INSERT adds one row, which object changes: the schema or the instance?', answer: 'The instance changes; the schema remains the same unless the table definition itself is altered.', hint: 'Separate structure from current contents.' }
+  },
+  8: {
+    explanation: {
+      whatYouSee: 'The slide layers four ideas: superkey, minimal candidate key, selected primary key, and foreign-key reference.',
+      whyItMatters: 'Key questions test both uniqueness and minimality, then ask which relation owns or references the identity.',
+      intuition: 'A superkey is sufficient; a candidate key is sufficient without extra attributes; the primary key is the chosen candidate.',
+      technicalDetail: 'The foreign-key example places instructor.dept_name in the child/referencing relation and points to department.dept_name in the referenced relation.',
+      pitfall: 'A superkey with redundant attributes is not a candidate key, and a foreign key identifies a link rather than a tuple in its own relation.',
+      connection: 'These constraints become DDL declarations and explain why some inserts or deletes are rejected.'
+    },
+    socratic: { type: 'apply', prompt: 'Is {ID, name} a candidate key if {ID} already uniquely identifies instructor tuples?', answer: 'No. It is a superkey, but it is not minimal because removing name leaves the superkey {ID}.', hint: 'Check minimality, not only uniqueness.' }
+  },
+  12: {
+    explanation: {
+      whatYouSee: 'The slide separates declarative query languages from procedural relational algebra and notes that equivalent languages can have different execution plans.',
+      whyItMatters: 'You must distinguish the result specification from the algorithm used to obtain it; this is the bridge from algebra to query optimization.',
+      intuition: 'Declarative says what relation you want. A plan decides how to compute it.',
+      technicalDetail: 'The lecture lists relational algebra, tuple relational calculus, and domain relational calculus as equivalent in expressive power, then focuses on relational algebra.',
+      pitfall: 'Do not confuse declarative SQL syntax with the physical algorithm chosen by the database system.',
+      connection: 'The algebra operators below give a formal intermediate language for reasoning about query meaning and rewrites.'
+    },
+    socratic: { type: 'compare', prompt: 'If two SQL queries return the same relation but use different join algorithms, what changed?', answer: 'The physical execution plan changed; the declarative query meaning and logical result did not.', hint: 'Separate what from how.' }
+  },
+  13: {
+    explanation: {
+      whatYouSee: 'The worked query filters instructors by department, joins them to teaches, and projects only the requested name and course columns.',
+      whyItMatters: 'This is the canonical exam workflow: translate English into row filters, relation links, and output attributes.',
+      intuition: 'Read the expression from the inside out: build matching tuples, keep the target department, then keep only requested columns.',
+      technicalDetail: 'The lecture expression is a composition of join, selection, and projection; tuple and domain calculus express the same result declaratively.',
+      pitfall: 'Do not project away the identifier before the join condition has used it.',
+      connection: 'The next slides name the operators and make each part of this query explicit.'
+    },
+    socratic: { type: 'derive', prompt: 'Why must the instructor identifier survive until after the join?', answer: 'The identifier is the attribute used to match instructor with teaches; projecting it away before the join removes the evidence needed to form the link.', hint: 'Check which attribute appears in the join predicate.' }
+  },
+  15: {
+    explanation: {
+      whatYouSee: 'Selection applies a predicate to tuples and keeps the rows that satisfy it; it does not choose output columns.',
+      whyItMatters: 'This is the row-filter operator. Confusing it with projection is one of the fastest ways to build the wrong relational-algebra expression.',
+      intuition: 'Selection changes the set of tuples while preserving the relation schema.',
+      technicalDetail: 'The notation is $\\sigma_p(r)$, where p is evaluated for each tuple of r.',
+      pitfall: 'Selection is not SQL SELECT; the relational-algebra operator σ filters rows.',
+      connection: 'Apply selection before projection when the predicate needs an attribute that will not appear in the final answer.'
+    },
+    socratic: { type: 'compare', prompt: 'Which operator should filter instructors with salary greater than 90,000: selection or projection?', answer: 'Selection, because the condition filters tuples; projection only chooses which attributes remain in the result.', hint: 'Rows versus columns.' }
+  },
+  17: {
+    explanation: {
+      whatYouSee: 'Projection keeps a chosen list of attributes and removes the others; the relation result still obeys set semantics.',
+      whyItMatters: 'Projection determines the output schema and may collapse distinct input tuples into one output tuple.',
+      intuition: 'Projecting is like looking at a table through fewer columns, then deduplicating the visible rows.',
+      technicalDetail: 'The notation is $\\pi_{A_1,\\ldots,A_k}(r)$; duplicate result tuples are removed because relations are sets.',
+      pitfall: 'Do not assume projection is row-preserving when two rows become identical after hidden attributes are removed.',
+      connection: 'Projection is usually the final step that turns an intermediate relation into exactly the requested answer columns.'
+    },
+    socratic: { type: 'apply', prompt: 'Why can projection reduce the number of rows even though it removes columns?', answer: 'Two distinct tuples can agree on the retained attributes, so set semantics keep only one copy of the resulting tuple.', hint: 'Removing columns can remove the evidence that made rows distinct.' }
+  },
+  20: {
+    explanation: {
+      whatYouSee: 'The slide nests selection inside projection to express a multi-step query as one relation-valued expression.',
+      whyItMatters: 'Closure is the reason relational algebra scales from simple operators to readable query pipelines.',
+      intuition: 'Each operator hands a relation to the next operator, like typed function composition.',
+      technicalDetail: 'For the Physics example, evaluate the selection on instructor first, then project name from the resulting relation.',
+      pitfall: 'Do not read the expression as a flat list; the parentheses determine which relation each operator receives.',
+      connection: 'Joins and set operators use the same closure principle, enabling larger expressions and equivalent rewrites.'
+    },
+    socratic: { type: 'trace', prompt: 'In a projection of a selection, which operation runs conceptually first?', answer: 'The inner selection produces a relation of qualifying tuples; the outer projection then keeps the requested attributes.', hint: 'Evaluate nested expressions from the inside out.' }
+  },
+  24: {
+    explanation: {
+      whatYouSee: 'The slide first shows the all-pairs product, then filters it by matching instructor.ID with teaches.ID.',
+      whyItMatters: 'A join is meaningful because its predicate removes unrelated tuple pairs; without that predicate, the product contains false associations.',
+      intuition: 'Product creates every candidate pair; the join condition acts as the identity gate.',
+      technicalDetail: 'The lecture construction is $r\\bowtie_\\theta s=\\sigma_\\theta(r\\times s)$, instantiated with equal identifiers.',
+      pitfall: 'Do not treat a Cartesian product as evidence that two tuples are related.',
+      connection: 'The SQL form on the next slide and the compact predicate-join form on page 27 express the same logical operation.'
+    },
+    socratic: { type: 'derive', prompt: 'What logical step converts the instructor Cartesian product with teaches into the rows representing actual teaching assignments?', answer: 'Apply selection with the predicate $instructor.ID = teaches.ID$; that filtered product is the join result.', hint: 'Product first, matching predicate second.' }
+  },
+  27: {
+    explanation: {
+      whatYouSee: 'The slide names theta join and states its equivalence to selection over a Cartesian product.',
+      whyItMatters: 'The identity lets you expand a join for derivation questions and recognize a join when it is written in primitive operations.',
+      intuition: 'Join is a compact notation for “pair, then keep only pairs satisfying θ.”',
+      technicalDetail: 'The predicate θ may compare attributes from the combined schemas of r and s; the output remains a relation.',
+      pitfall: 'Do not assume every join predicate is equality; theta join allows a general predicate.',
+      connection: 'This equivalence is also the basis for query rewrites and execution-plan alternatives later in the lecture.'
+    },
+    socratic: { type: 'compare', prompt: 'What is the difference between a Cartesian product and a theta join?', answer: 'The product keeps every tuple pair; a theta join keeps only pairs satisfying its predicate.', hint: 'Ask which operation enforces compatibility.' }
+  },
+  28: {
+    explanation: {
+      whatYouSee: 'Union combines tuple sets from two relations, but only when the tuple shapes and corresponding domains are compatible.',
+      whyItMatters: 'Union is a set operator, not a way to merge arbitrary tables with unrelated columns.',
+      intuition: 'Both inputs must speak the same tuple language before their tuples can be pooled.',
+      technicalDetail: 'The lecture requires equal arity and compatible attribute domains; duplicate tuples appear only once in the set result.',
+      pitfall: 'Matching column names alone is not enough if the arity or corresponding domains are incompatible.',
+      connection: 'Intersection and difference use the same compatibility idea but retain different portions of the two input sets.'
+    },
+    socratic: { type: 'classify', prompt: 'Can you union instructor(ID, name, salary) with department(dept_name, building, budget)?', answer: 'Not as shown: the relations have the same arity but their corresponding domains and meanings are not compatible.', hint: 'Check arity and corresponding domains, not just column count.' }
+  },
+  31: {
+    explanation: {
+      whatYouSee: 'Set difference keeps tuples in the left relation that are absent from the right relation.',
+      whyItMatters: 'Difference is directional, so reversing the operands changes the query from “in A not B” to “in B not A.”',
+      intuition: 'Read $r-s$ as “start with r and subtract the overlap with s.”',
+      technicalDetail: 'The operands must be compatible relations, just as for union and intersection.',
+      pitfall: 'Do not treat difference as commutative; in general, $r-s\\ne s-r$.',
+      connection: 'The Fall-not-Spring example is a direct set-based query over two projected section relations.'
+    },
+    socratic: { type: 'compare', prompt: 'What changes when a set-difference expression changes from Fall − Spring to Spring − Fall?', answer: 'The retained set changes direction: the first returns courses only in Fall, while the second returns courses only in Spring.', hint: 'Difference has a left operand and a right operand.' }
+  },
+  34: {
+    explanation: {
+      whatYouSee: 'Rename assigns a usable name to an unnamed expression result and can rename attributes as well.',
+      whyItMatters: 'Self-comparison requires two distinguishable references to the same base relation.',
+      intuition: 'Rename creates an alias, not a second independent database table.',
+      technicalDetail: 'The operator $\\rho_x(E)$ returns expression E under name x; this makes attribute qualification and repeated references explicit.',
+      pitfall: 'Do not confuse rename with assignment: rename changes the expression label, while assignment stores a temporary result name for a sequence of steps.',
+      connection: 'The following salary example uses rename to compare one instructor tuple with another tuple from the same relation.'
+    },
+    socratic: { type: 'compare', prompt: 'Why is rename needed for a self-join?', answer: 'Without two names, the query cannot distinguish the two roles played by the same relation when comparing its tuples.', hint: 'One base relation, two query roles.' }
+  },
+  38: {
+    explanation: {
+      whatYouSee: 'The slide shows two different operation orders that produce the same relation for every database instance.',
+      whyItMatters: 'Equivalence lets a DBMS search for a cheaper plan without changing the answer defined by the query.',
+      intuition: 'The syntax can move while the denotation stays fixed.',
+      technicalDetail: 'Query equivalence means $E_1\\equiv E_2$ when both expressions return the same relation for every database state.',
+      pitfall: 'Do not call two expressions equivalent merely because they look similar or happen to match on one sample database.',
+      connection: 'The next slide makes the product-plus-selection versus join equivalence explicit.'
+    },
+    socratic: { type: 'explain', prompt: 'Why can the optimizer reorder relational-algebra operations?', answer: 'It may choose an equivalent expression that preserves the logical result while reducing intermediate data or execution cost.', hint: 'Same result, cheaper path.' }
+  },
+  43: {
+    explanation: {
+      whatYouSee: 'The slide joins instructor with department into one wide relation and highlights repeated department facts across instructor rows.',
+      whyItMatters: 'Redundancy creates update, insertion, and deletion anomalies; a good relational design keeps facts at the right grain.',
+      intuition: 'If one department fact is copied into many instructor tuples, changing one copy is not enough.',
+      technicalDetail: 'This is explicitly a preview from Chapter 7, not a new Chapter 2 derivation; it motivates decomposition before normalization is taught.',
+      pitfall: 'Do not treat fewer tables as automatically simpler or better.',
+      connection: 'The next slide decomposes the wide relation back into instructor and department schemas.'
+    },
+    socratic: { type: 'diagnose', prompt: 'Which anomaly appears if a department building is copied into many instructor rows and only some copies are updated?', answer: 'An update anomaly: the database can contain contradictory building values for the same department.', hint: 'Look for repeated facts that must change together.' }
+  },
+  44: {
+    explanation: {
+      whatYouSee: 'The slide proposes decomposition into instructor and department relations to remove repeated department facts.',
+      whyItMatters: 'It connects the algebraic join view to schema design: decomposition trades one wide table for relations with clearer ownership of facts.',
+      intuition: 'Store each fact once, then reconstruct combined views with a join when needed.',
+      technicalDetail: 'The lecture labels this as a Chapter 7 preview; lossless reconstruction and dependency preservation belong to the deeper design treatment.',
+      pitfall: 'Do not assume every decomposition is safe without checking whether the original information can be recovered.',
+      connection: 'This design idea explains why keys, foreign keys, joins, and normalization belong to one conceptual chain.'
+    },
+    socratic: { type: 'evaluate', prompt: 'What must be checked before accepting a decomposition as a good design?', answer: 'Check that redundancy is reduced and that the required information and constraints can still be represented and recovered correctly.', hint: 'Less repetition is necessary, but not sufficient.' }
+  },
+  46: {
+    explanation: {
+      whatYouSee: 'The final slide separates runnable MySQL examples from optional, unmarked textbook questions 2.2, 2.6, 2.12, 2.13, and 2.15.',
+      whyItMatters: 'These exercises turn the lecture vocabulary into practice: integrity violations, relational-algebra translation, keys, schema diagrams, and query composition.',
+      intuition: 'Use the lecture slides to learn the operators, then use the homework questions to force complete derivations.',
+      technicalDetail: 'The supplied solutions provide worked answers for the five listed textbook questions; the solution files are exercise depth, not additional lecture scope.',
+      pitfall: 'Do not treat “optional and unmarked” as “irrelevant”; these are high-value retrieval prompts for the chapter core.',
+      connection: 'The homework closes the loop from source slide to independent derivation and exposes which concepts still need review.'
+    },
+    socratic: { type: 'plan', prompt: 'Which practice sequence best matches the Chapter 2 learning arc?', answer: 'Run the slide SQL examples, then attempt the five textbook questions without notes, and finally compare each derivation with the supplied solution.', hint: 'Practice should move from guided execution to independent reasoning.' }
+  }
+};
+
 // Compact per-slide study metadata: slideNumber -> [concept, why, pitfall, qType, qPrompt, qAnswer, qHint]
 const META = {
   1: ['chapter title: Introduction to the Relational Model', 'names the chapter and the textbook (Database System Concepts, 7th ed.) that defines the relational model scope', 'treating the title slide as technical evidence', 'orient', 'What does Chapter 2 set out to teach?', 'The structure of relational databases, schema, keys, schema diagrams, and relational query languages including the relational algebra.', 'Read the title as a scope statement.'],
@@ -68,7 +298,7 @@ const META = {
 };
 
 function buildExplanation(meta, title, page) {
-  return {
+  const explanation = {
     whatYouSee: `The slide introduces ${meta[0]}. Use the rendered slide for the exact source notation and examples.`,
     whyItMatters: meta[1],
     intuition: `This slide focuses on ${meta[0]}. Read it as part of the relational-model arc: structure, keys, then the algebra.`,
@@ -76,10 +306,12 @@ function buildExplanation(meta, title, page) {
     pitfall: `Do not fall into the trap of ${meta[2]}.`,
     connection: 'This slide connects to the surrounding slides in the relational-model narrative: relations and schema first, keys next, then the relational algebra.'
   };
+  return { ...explanation, ...(DEEP_OVERRIDES[page] && DEEP_OVERRIDES[page].explanation) };
 }
 
-function buildSocratic(meta) {
-  return [{ type: meta[3], prompt: meta[4], answer: meta[5], hint: meta[6] }];
+function buildSocratic(meta, page) {
+  const override = DEEP_OVERRIDES[page] && DEEP_OVERRIDES[page].socratic;
+  return override ? [override] : [{ type: meta[3], prompt: meta[4], answer: meta[5], hint: meta[6] }];
 }
 
 function titleFor(page, fallback) {
@@ -107,7 +339,8 @@ function main() {
   const data = JSON.parse(fs.readFileSync(FILE, 'utf8'));
   data.lessonIds = ['dsa5104-relational-model', 'dsa5104-database-design'];
   data.title = 'Chapter 2 · Introduction to the Relational Model';
-  data.summary = 'Relational database structure, schema and instance, keys, schema diagrams, and the relational algebra (select, project, set operations, join, rename, assignment).';
+  data.summary = 'All 46 supplied Chapter 2 lecture pages with source extraction, relational-model explanations, key formulas, textbook pointers, and Socratic checkpoints.';
+  data.coreSlideNumbers = CORE_SLIDES;
   data.source = {
     sourceId: SOURCE_ID, sourceType: 'lecture', fileName: 'chapter2.pdf', pageCount: data.slides.length,
     access: 'local-only', assetPolicy: 'page-renders-only', courseCodePrintedOnSlide: 'DSA5104', atlasCourseId: 'DSA5104'
@@ -130,16 +363,19 @@ function main() {
     slide.status = 'reviewed';
     slide.assetPath = `${ASSET_ROOT}/slide-${String(page).padStart(2, '0')}.jpg`;
     slide.sourceRef = { sourceId: SOURCE_ID, sourceType: 'lecture', page, role: 'Chapter 2 lecture slide', status: 'current' };
-    slide.lecturePriority = page === 46 ? 'exercise' : 'core';
+    slide.lecturePriority = page === 46 ? 'exercise' : CORE_SLIDES.includes(page) ? 'core' : 'context';
     slide.sourceNote = 'Extracted text is a reader layer; the rendered slide remains authoritative.';
+    slide.textbookRefs = TEXTBOOK_SLIDES.has(page) ? [TEXTBOOK_SLIDES.get(page)] : [];
+    slide.referenceRefs = [];
+    if (KEY_FORMULAS[page]) slide.keyFormula = KEY_FORMULAS[page];
+    else delete slide.keyFormula;
     if (slide.extraction && Array.isArray(slide.extraction.blocks)) {
       slide.extraction.sourceId = SOURCE_ID;
       slide.extraction.page = page;
     }
-    const text = (slide.extraction && slide.extraction.blocks || []).map(b => b.text || '').filter(Boolean).join(' ');
     if (meta) {
       slide.explanation = buildExplanation(meta, slide.title, page);
-      slide.socraticQuestions = buildSocratic(meta);
+      slide.socraticQuestions = buildSocratic(meta, page);
       updated++;
     } else {
       console.warn(`No study metadata for slide ${page}; keeping extractor defaults.`);

@@ -83,6 +83,8 @@
       links.push(["Lecture 1 slides", "#/nus/slides/DSA5101/dsa5101-lecture1/1"]);
     } else if (courseCode === "DSA5104") {
       links.push(["Chapter 1 slides", "#/nus/slides/DSA5104/dsa5104-chapter1/1"]);
+      links.push(["Chapter 2 slides", "#/nus/slides/DSA5104/dsa5104-chapter2/1"]);
+      links.push(["Chapter 3 slides", "#/nus/slides/DSA5104/dsa5104-chapter3/1"]);
     } else if (courseCode === "DSA5208") {
       links.push(["Lecture 0 overview", "#/nus/slides/DSA5208/dsa5208-lec0/1"]);
       links.push(["Lecture 1 times", "#/nus/slides/DSA5208/dsa5208-lec1/1"]);

@@ -6,7 +6,101 @@
     "dsa5104-sql-foundations",
     "dsa5104-query-processing"
   ],
-  "coreSlideNumbers": [],
+  "coreSlideNumbers": [
+    4,
+    5,
+    6,
+    7,
+    8,
+    9,
+    10,
+    11,
+    12,
+    13,
+    14,
+    15,
+    16,
+    17,
+    18,
+    19,
+    20,
+    21,
+    22,
+    23,
+    24,
+    25,
+    26,
+    27,
+    28,
+    29,
+    30,
+    31,
+    32,
+    33,
+    34,
+    35,
+    36,
+    37,
+    38,
+    39,
+    40,
+    41,
+    43,
+    44,
+    45,
+    46,
+    47,
+    48,
+    49,
+    50,
+    51,
+    52,
+    53,
+    54,
+    55,
+    56,
+    57,
+    58,
+    59,
+    60,
+    61,
+    62,
+    63,
+    64,
+    65,
+    66,
+    67,
+    68,
+    69,
+    70,
+    71,
+    72,
+    73,
+    74,
+    75,
+    76,
+    77,
+    78,
+    79,
+    80,
+    81,
+    82,
+    83,
+    84,
+    85,
+    86,
+    87,
+    88,
+    89,
+    90,
+    91,
+    92,
+    93,
+    94,
+    95,
+    96,
+    97
+  ],
   "source": {
     "sourceId": "DSA5104/chapter3.pdf",
     "sourceType": "lecture",
@@ -138,7 +232,7 @@
       "kind": "lecture-source",
       "status": "reviewed",
       "assetPath": "assets/nus/dsa5104/chapter3/slide-01.jpg",
-      "lecturePriority": "core",
+      "lecturePriority": "context",
       "sourceNote": "Extracted text is a reader layer; the rendered slide remains authoritative."
     },
     {
@@ -261,7 +355,7 @@
       "kind": "lecture-source",
       "status": "reviewed",
       "assetPath": "assets/nus/dsa5104/chapter3/slide-02.jpg",
-      "lecturePriority": "core",
+      "lecturePriority": "context",
       "sourceNote": "Extracted text is a reader layer; the rendered slide remains authoritative."
     },
     {
@@ -416,7 +510,7 @@
       "kind": "lecture-source",
       "status": "reviewed",
       "assetPath": "assets/nus/dsa5104/chapter3/slide-03.jpg",
-      "lecturePriority": "core",
+      "lecturePriority": "context",
       "sourceNote": "Extracted text is a reader layer; the rendered slide remains authoritative."
     },
     {
@@ -657,21 +751,29 @@
       },
       "sourceText": "Data Definition Language\nThe SQL data-definition language (DDL) allows the specification of\ninformation about relations, including:\n§\nThe schema for each relation.\n§\nThe type of values associated with each attribute.\n§\nThe Integrity constraints\n§\nThe set of indices to be maintained for each relation.\n§\nSecurity and authorization information for each relation.\n§\nThe physical storage structure of each relation on disk.\n©Silberschatz, Korth and Sudarshan\n3.5\nDatabase System Concepts - 7th Edition",
       "explanation": {
-        "whatYouSee": "The slide introduces data definition language (DDL). Use the rendered slide for the exact source notation and examples.",
-        "whyItMatters": "defines the DDL for specifying relation schemas, domains, integrity constraints, and security information",
-        "intuition": "This slide focuses on data definition language (DDL). Read it as part of the SQL arc: DDL and basic queries, then set operations, nulls, aggregation, nested subqueries, and updates.",
-        "technicalDetail": "The slide is part of the DSA5104 Chapter 3 source (DSA5104/chapter3.pdf), page 5. The extracted text is a reader layer; the rendered slide remains authoritative.",
-        "pitfall": "Do not fall into the trap of confusing DDL (structure) with DML (data manipulation).",
-        "connection": "This slide connects to the surrounding slides in the SQL narrative: how schema is defined, how queries are written (select-from-where), and how the database is modified."
+        "whatYouSee": "DDL declares relation structure, domains, constraints, indexes, storage, and authorization metadata.",
+        "whyItMatters": "DDL changes the schema and its legal states; it is distinct from querying or modifying existing tuples.",
+        "intuition": "DDL defines the database type and rules; DML operates on current data.",
+        "technicalDetail": "The lecture places schema, attribute types, integrity constraints, indexes, physical storage, and security information inside the DDL scope.",
+        "pitfall": "Do not classify INSERT, DELETE, or UPDATE as DDL merely because they change persistent data.",
+        "connection": "CREATE TABLE, ALTER TABLE, and constraint declarations instantiate DDL on the next slides."
       },
-      "textbookRefs": [],
+      "textbookRefs": [
+        {
+          "sourceId": "DSA5104/Database System Concepts, 7th edition",
+          "sourceType": "textbook",
+          "page": 3,
+          "role": "Chapter 3 pointer: SQL query language, aggregation, and subqueries",
+          "status": "course-depth"
+        }
+      ],
       "referenceRefs": [],
       "socraticQuestions": [
         {
-          "type": "define",
-          "prompt": "What does the SQL DDL specify?",
-          "answer": "The schema for each relation, attribute types and domains, integrity constraints, indexes, physical storage, and security/authorization information.",
-          "hint": "Structure, not data."
+          "type": "compare",
+          "prompt": "A new row is inserted without changing the table definition. Is this DDL or DML?",
+          "answer": "It is DML: the instance changes while the schema remains unchanged.",
+          "hint": "Structure versus current tuples."
         }
       ],
       "title": "Data Definition Language",
@@ -983,21 +1085,29 @@
       },
       "sourceText": "Create Table Construct\n§\nAn SQL relation is defined using the create table command:\ncreate table r\n(A1 D1, A2 D2, ..., An Dn,\n(integrity-constraint1),\n                 ...,\n                               (integrity-constraintk))\n•\nr is the name of the relation\n•\neach Ai is an attribute name in the schema of relation r\n•\nDi is the data type of values in the domain of attribute Ai\n§\nExample:\ncreate table instructor (\n                             ID                char(5),\n                             name           varchar(20),\n                             dept_name  varchar(20),\n                             salary           numeric(8,2))\n©Silberschatz, Korth and Sudarshan\n3.7\nDatabase System Concepts - 7th Edition",
       "explanation": {
-        "whatYouSee": "The slide introduces create table construct. Use the rendered slide for the exact source notation and examples.",
-        "whyItMatters": "shows the create table command that defines an SQL relation and its attributes",
-        "intuition": "This slide focuses on create table construct. Read it as part of the SQL arc: DDL and basic queries, then set operations, nulls, aggregation, nested subqueries, and updates.",
-        "technicalDetail": "The slide is part of the DSA5104 Chapter 3 source (DSA5104/chapter3.pdf), page 7. The extracted text is a reader layer; the rendered slide remains authoritative.",
-        "pitfall": "Do not fall into the trap of forgetting that create table only names the schema, not the data.",
-        "connection": "This slide connects to the surrounding slides in the SQL narrative: how schema is defined, how queries are written (select-from-where), and how the database is modified."
+        "whatYouSee": "CREATE TABLE combines a relation name, typed attributes, and integrity constraints into a schema declaration.",
+        "whyItMatters": "A correct DDL answer specifies domains and constraints; CREATE TABLE does not populate the relation.",
+        "intuition": "CREATE TABLE defines the container and rules. INSERT later supplies tuples that must obey them.",
+        "technicalDetail": "Each attribute is assigned a declared domain, with constraints such as primary key and foreign key alongside the attributes.",
+        "pitfall": "Do not confuse defining a relation with adding its first tuple.",
+        "connection": "The next slides instantiate key, foreign-key, and NOT NULL constraints."
       },
-      "textbookRefs": [],
+      "textbookRefs": [
+        {
+          "sourceId": "DSA5104/Database System Concepts, 7th edition",
+          "sourceType": "textbook",
+          "page": 3,
+          "role": "Chapter 3 pointer: SQL query language, aggregation, and subqueries",
+          "status": "course-depth"
+        }
+      ],
       "referenceRefs": [],
       "socraticQuestions": [
         {
-          "type": "define",
-          "prompt": "What does create table do?",
-          "answer": "It defines a new SQL relation by giving its name, attributes, and types.",
-          "hint": "Define a relation schema."
+          "type": "derive",
+          "prompt": "What three kinds of information must CREATE TABLE communicate before any tuple is inserted?",
+          "answer": "The relation name, each attribute and domain, and declared integrity constraints.",
+          "hint": "Name, type, rules."
         }
       ],
       "title": "Create Table Construct",
@@ -1005,7 +1115,22 @@
       "status": "reviewed",
       "assetPath": "assets/nus/dsa5104/chapter3/slide-07.jpg",
       "lecturePriority": "core",
-      "sourceNote": "Extracted text is a reader layer; the rendered slide remains authoritative."
+      "sourceNote": "Extracted text is a reader layer; the rendered slide remains authoritative.",
+      "keyFormula": {
+        "latex": "r=(A_1:D_1,\\\\ldots,A_n:D_n;\\\\mathcal C)",
+        "name": "SQL relation definition",
+        "purpose": "Read CREATE TABLE as attributes, domains, and constraints.",
+        "sourceType": "lecture",
+        "sourceRefs": [
+          {
+            "sourceId": "DSA5104/chapter3.pdf",
+            "sourceType": "lecture",
+            "page": 7,
+            "role": "Chapter 3 lecture slide",
+            "status": "current"
+          }
+        ]
+      }
     },
     {
       "slideId": "dsa5104-chapter3-8",
@@ -1177,7 +1302,15 @@
         "pitfall": "Do not fall into the trap of confusing key constraints with domain constraints.",
         "connection": "This slide connects to the surrounding slides in the SQL narrative: how schema is defined, how queries are written (select-from-where), and how the database is modified."
       },
-      "textbookRefs": [],
+      "textbookRefs": [
+        {
+          "sourceId": "DSA5104/Database System Concepts, 7th edition",
+          "sourceType": "textbook",
+          "page": 3,
+          "role": "Chapter 3 pointer: SQL query language, aggregation, and subqueries",
+          "status": "course-depth"
+        }
+      ],
       "referenceRefs": [],
       "socraticQuestions": [
         {
@@ -3148,7 +3281,15 @@
         "pitfall": "Do not fall into the trap of forgetting that alter changes the schema, not the data.",
         "connection": "This slide connects to the surrounding slides in the SQL narrative: how schema is defined, how queries are written (select-from-where), and how the database is modified."
       },
-      "textbookRefs": [],
+      "textbookRefs": [
+        {
+          "sourceId": "DSA5104/Database System Concepts, 7th edition",
+          "sourceType": "textbook",
+          "page": 3,
+          "role": "Chapter 3 pointer: SQL query language, aggregation, and subqueries",
+          "status": "course-depth"
+        }
+      ],
       "referenceRefs": [],
       "socraticQuestions": [
         {
@@ -3563,21 +3704,29 @@
       },
       "sourceText": "Basic Query Structure\n§\nA typical SQL query has the form:\nselect A1, A2, ..., An\nfrom r1, r2, ..., rm\nwhere P\n•\nAi represents an attribute.\n•\nri represents a relation.\n•\nP is a predicate.\n§\nThe result of an SQL query\nis a relation.\n©Silberschatz, Korth and Sudarshan\n3.19\nDatabase System Concepts - 7th Edition",
       "explanation": {
-        "whatYouSee": "The slide introduces basic query structure. Use the rendered slide for the exact source notation and examples.",
-        "whyItMatters": "states the canonical form: select A1..An from r1..rm where P",
-        "intuition": "This slide focuses on basic query structure. Read it as part of the SQL arc: DDL and basic queries, then set operations, nulls, aggregation, nested subqueries, and updates.",
-        "technicalDetail": "The slide is part of the DSA5104 Chapter 3 source (DSA5104/chapter3.pdf), page 19. The extracted text is a reader layer; the rendered slide remains authoritative.",
-        "pitfall": "Do not fall into the trap of forgetting the evaluation order of select/from/where.",
-        "connection": "This slide connects to the surrounding slides in the SQL narrative: how schema is defined, how queries are written (select-from-where), and how the database is modified."
+        "whatYouSee": "The slide gives the canonical SELECT-FROM-WHERE shape and states that the result is a relation.",
+        "whyItMatters": "It is the translation template for later queries: choose output attributes, identify sources, then filter candidate tuples.",
+        "intuition": "Start with the desired table, name its source relations, and write the predicate that keeps valid rows.",
+        "technicalDetail": "The abstract shape separates output attributes, input relations, and a row predicate; textual clause order is not every logical evaluation step.",
+        "pitfall": "Do not project away an attribute before a later predicate or join needs it.",
+        "connection": "The BIG 6 extends this template with grouping, aggregate filtering, and ordering."
       },
-      "textbookRefs": [],
+      "textbookRefs": [
+        {
+          "sourceId": "DSA5104/Database System Concepts, 7th edition",
+          "sourceType": "textbook",
+          "page": 3,
+          "role": "Chapter 3 pointer: SQL query language, aggregation, and subqueries",
+          "status": "course-depth"
+        }
+      ],
       "referenceRefs": [],
       "socraticQuestions": [
         {
-          "type": "define",
-          "prompt": "What is the basic structure of an SQL query?",
-          "answer": "select attributes, from relations, where predicate. The where filters rows before projection.",
-          "hint": "select-from-where."
+          "type": "trace",
+          "prompt": "For names of CS instructors earning above 70,000, what belongs in SELECT, FROM, and WHERE?",
+          "answer": "SELECT name; FROM instructor; WHERE the department is Computer Science and salary is above 70,000.",
+          "hint": "Output, source, predicate."
         }
       ],
       "title": "Basic Query Structure",
@@ -3585,7 +3734,22 @@
       "status": "reviewed",
       "assetPath": "assets/nus/dsa5104/chapter3/slide-19.jpg",
       "lecturePriority": "core",
-      "sourceNote": "Extracted text is a reader layer; the rendered slide remains authoritative."
+      "sourceNote": "Extracted text is a reader layer; the rendered slide remains authoritative.",
+      "keyFormula": {
+        "latex": "\\\\text{SELECT }A_1,\\\\ldots,A_n\\\\ \\\\text{FROM }r_1,\\\\ldots,r_m\\\\ \\\\text{WHERE }P",
+        "name": "Basic query shape",
+        "purpose": "Decompose an English request into output attributes, input relations, and a row predicate.",
+        "sourceType": "lecture",
+        "sourceRefs": [
+          {
+            "sourceId": "DSA5104/chapter3.pdf",
+            "sourceType": "lecture",
+            "page": 19,
+            "role": "Chapter 3 lecture slide",
+            "status": "current"
+          }
+        ]
+      }
     },
     {
       "slideId": "dsa5104-chapter3-20",
@@ -4514,21 +4678,29 @@
       },
       "sourceText": "The select Clause (Cont.)\n§\nSQL allows duplicates in relations as well as in query results.\n§\nTo force the elimination of duplicates, insert the keyword distinct after\nselect.\n§\nFind the department names of all instructors, and remove duplicates\nselect distinct dept_name\nfrom instructor\n§\nThe keyword all specifies that duplicates should not be removed.\nselect all dept_name\nfrom instructor\n©Silberschatz, Korth and Sudarshan\n3.24\nDatabase System Concepts - 7th Edition",
       "explanation": {
-        "whatYouSee": "The slide introduces duplicates in select results. Use the rendered slide for the exact source notation and examples.",
-        "whyItMatters": "states that SQL allows duplicates in relations and query results by default",
-        "intuition": "This slide focuses on duplicates in select results. Read it as part of the SQL arc: DDL and basic queries, then set operations, nulls, aggregation, nested subqueries, and updates.",
-        "technicalDetail": "The slide is part of the DSA5104 Chapter 3 source (DSA5104/chapter3.pdf), page 24. The extracted text is a reader layer; the rendered slide remains authoritative.",
-        "pitfall": "Do not fall into the trap of assuming SQL uses pure set semantics like the algebra.",
-        "connection": "This slide connects to the surrounding slides in the SQL narrative: how schema is defined, how queries are written (select-from-where), and how the database is modified."
+        "whatYouSee": "SQL preserves duplicate result rows by default; DISTINCT explicitly removes duplicates.",
+        "whyItMatters": "SQL is not automatically identical to relational-algebra set semantics, so duplicate handling can change counts and answers.",
+        "intuition": "SELECT ALL keeps every produced row; SELECT DISTINCT collapses equal output rows.",
+        "technicalDetail": "Removing projected attributes can make distinct source rows equal, so duplicate policy applies after the requested columns are formed.",
+        "pitfall": "Do not assume SELECT silently deduplicates.",
+        "connection": "COUNT and UNION ALL reuse this duplicate-preserving versus duplicate-eliminating distinction."
       },
-      "textbookRefs": [],
+      "textbookRefs": [
+        {
+          "sourceId": "DSA5104/Database System Concepts, 7th edition",
+          "sourceType": "textbook",
+          "page": 3,
+          "role": "Chapter 3 pointer: SQL query language, aggregation, and subqueries",
+          "status": "course-depth"
+        }
+      ],
       "referenceRefs": [],
       "socraticQuestions": [
         {
-          "type": "compare",
-          "prompt": "Does SQL remove duplicates by default?",
-          "answer": "No, SQL keeps duplicates by default (multiset semantics); distinct removes them.",
-          "hint": "Multiset by default."
+          "type": "contrast",
+          "prompt": "Two source rows have the same projected department name. What changes between SELECT dept_name and SELECT DISTINCT dept_name?",
+          "answer": "SELECT may return both copies; SELECT DISTINCT returns one copy.",
+          "hint": "Ask whether duplicates are preserved."
         }
       ],
       "title": "Duplicates in Select Results",
@@ -4536,7 +4708,22 @@
       "status": "reviewed",
       "assetPath": "assets/nus/dsa5104/chapter3/slide-24.jpg",
       "lecturePriority": "core",
-      "sourceNote": "Extracted text is a reader layer; the rendered slide remains authoritative."
+      "sourceNote": "Extracted text is a reader layer; the rendered slide remains authoritative.",
+      "keyFormula": {
+        "latex": "\\\\text{SELECT DISTINCT }Q\\\\subseteq\\\\text{SELECT ALL }Q",
+        "name": "SQL duplicate policy",
+        "purpose": "Remember that SQL preserves duplicates by default and DISTINCT removes them.",
+        "sourceType": "lecture",
+        "sourceRefs": [
+          {
+            "sourceId": "DSA5104/chapter3.pdf",
+            "sourceType": "lecture",
+            "page": 24,
+            "role": "Chapter 3 lecture slide",
+            "status": "current"
+          }
+        ]
+      }
     },
     {
       "slideId": "dsa5104-chapter3-25",
@@ -5477,7 +5664,15 @@
         "pitfall": "Do not fall into the trap of confusing where (filter) with select (project).",
         "connection": "This slide connects to the surrounding slides in the SQL narrative: how schema is defined, how queries are written (select-from-where), and how the database is modified."
       },
-      "textbookRefs": [],
+      "textbookRefs": [
+        {
+          "sourceId": "DSA5104/Database System Concepts, 7th edition",
+          "sourceType": "textbook",
+          "page": 3,
+          "role": "Chapter 3 pointer: SQL query language, aggregation, and subqueries",
+          "status": "course-depth"
+        }
+      ],
       "referenceRefs": [],
       "socraticQuestions": [
         {
@@ -5647,7 +5842,22 @@
       "status": "reviewed",
       "assetPath": "assets/nus/dsa5104/chapter3/slide-29.jpg",
       "lecturePriority": "core",
-      "sourceNote": "Extracted text is a reader layer; the rendered slide remains authoritative."
+      "sourceNote": "Extracted text is a reader layer; the rendered slide remains authoritative.",
+      "keyFormula": {
+        "latex": "|r_1\\\\times\\\\cdots\\\\times r_m|=\\\\prod_{i=1}^{m}|r_i|",
+        "name": "FROM-clause product",
+        "purpose": "Anticipate the all-pairs intermediate relation before WHERE filters it.",
+        "sourceType": "lecture",
+        "sourceRefs": [
+          {
+            "sourceId": "DSA5104/chapter3.pdf",
+            "sourceType": "lecture",
+            "page": 29,
+            "role": "Chapter 3 lecture slide",
+            "status": "current"
+          }
+        ]
+      }
     },
     {
       "slideId": "dsa5104-chapter3-30",
@@ -6063,21 +6273,29 @@
       },
       "sourceText": "Examples\n§\nFind the names of all instructors who have taught\nsome course and the course_id\n•\nselect name, course_id\nfrom instructor , teaches\nwhere instructor.ID = teaches.ID\n§\nFind the names of all instructors in the Physics\ndepartment who have taught some course and\nthe course_id\n•\nselect name, course_id\nfrom instructor , teaches\nwhere instructor.ID = teaches.ID\n          and  instructor. dept_name = ‘Physics'\n©Silberschatz, Korth and Sudarshan\n3.31\nDatabase System Concepts - 7th Edition",
       "explanation": {
-        "whatYouSee": "The slide introduces query examples with joins. Use the rendered slide for the exact source notation and examples.",
-        "whyItMatters": "finds instructors who taught a course, joining instructor and teaches on ID",
-        "intuition": "This slide focuses on query examples with joins. Read it as part of the SQL arc: DDL and basic queries, then set operations, nulls, aggregation, nested subqueries, and updates.",
-        "technicalDetail": "The slide is part of the DSA5104 Chapter 3 source (DSA5104/chapter3.pdf), page 31. The extracted text is a reader layer; the rendered slide remains authoritative.",
-        "pitfall": "Do not fall into the trap of forgetting to write the join condition in the where clause.",
-        "connection": "This slide connects to the surrounding slides in the SQL narrative: how schema is defined, how queries are written (select-from-where), and how the database is modified."
+        "whatYouSee": "The worked query joins instructor and teaches by matching their identifiers, then returns name and course_id.",
+        "whyItMatters": "This is the standard multi-table translation: join on keys, filter if needed, and project the requested columns.",
+        "intuition": "The key equality is the bridge; without it, FROM creates unrelated pairings.",
+        "technicalDetail": "The join predicate is $\\\\text{instructor.ID}=\\\\text{teaches.ID}$. The identifier is used for linkage, while name and course_id form the requested output.",
+        "pitfall": "Do not join tables by row position or omit the key predicate.",
+        "connection": "The same identity logic appears in Chapter 2 algebra and in the SQL homework exercises."
       },
-      "textbookRefs": [],
+      "textbookRefs": [
+        {
+          "sourceId": "DSA5104/Database System Concepts, 7th edition",
+          "sourceType": "textbook",
+          "page": 3,
+          "role": "Chapter 3 pointer: SQL query language, aggregation, and subqueries",
+          "status": "course-depth"
+        }
+      ],
       "referenceRefs": [],
       "socraticQuestions": [
         {
-          "type": "apply",
-          "prompt": "How do you find instructors who taught a course?",
-          "answer": "Join instructor and teaches by matching their identifier columns, then select and project the needed attributes.",
-          "hint": "Equate IDs."
+          "type": "diagnose",
+          "prompt": "Why does FROM instructor, teaches alone not mean an instructor teaches the listed course?",
+          "answer": "It creates every possible pair. The predicate $\\\\text{instructor.ID}=\\\\text{teaches.ID}$ keeps only related pairs.",
+          "hint": "FROM creates candidates; WHERE establishes the relationship."
         }
       ],
       "title": "Query Examples with Joins",
@@ -6085,7 +6303,22 @@
       "status": "reviewed",
       "assetPath": "assets/nus/dsa5104/chapter3/slide-31.jpg",
       "lecturePriority": "core",
-      "sourceNote": "Extracted text is a reader layer; the rendered slide remains authoritative."
+      "sourceNote": "Extracted text is a reader layer; the rendered slide remains authoritative.",
+      "keyFormula": {
+        "latex": "\\\\text{instructor.ID}=\\\\text{teaches.ID}",
+        "name": "Key-based SQL join",
+        "purpose": "Join rows by identity rather than physical row position.",
+        "sourceType": "lecture",
+        "sourceRefs": [
+          {
+            "sourceId": "DSA5104/chapter3.pdf",
+            "sourceType": "lecture",
+            "page": 31,
+            "role": "Chapter 3 lecture slide",
+            "status": "current"
+          }
+        ]
+      }
     },
     {
       "slideId": "dsa5104-chapter3-32",
@@ -7192,7 +7425,15 @@
         "pitfall": "Do not fall into the trap of confusing % (any substring) with _ (single character).",
         "connection": "This slide connects to the surrounding slides in the SQL narrative: how schema is defined, how queries are written (select-from-where), and how the database is modified."
       },
-      "textbookRefs": [],
+      "textbookRefs": [
+        {
+          "sourceId": "DSA5104/Database System Concepts, 7th edition",
+          "sourceType": "textbook",
+          "page": 3,
+          "role": "Chapter 3 pointer: SQL query language, aggregation, and subqueries",
+          "status": "course-depth"
+        }
+      ],
       "referenceRefs": [],
       "socraticQuestions": [
         {
@@ -8152,29 +8393,52 @@
       },
       "sourceText": "Set Operations\n§\nFind courses that ran in Fall 2017 or in Spring 2018\n(select course_id  from section where sem = 'Fall' and year = 2017)\n           union\n           (select course_id  from section where sem = 'Spring' and year = 2018)\n§\nFind courses that ran in Fall 2017 and in Spring 2018\n(select course_id  from section where sem = 'Fall' and year = 2017)\n           intersect\n           (select course_id  from section where sem = 'Spring' and year = 2018)\n§\nFind courses that ran in Fall 2017 but not in Spring 2018\n(select course_id  from section where sem = 'Fall' and year = 2017)\n           except\n           (select course_id  from section where sem = 'Spring' and year = 2018)\n©Silberschatz, Korth and Sudarshan\n3.42\nDatabase System Concepts - 7th Edition",
       "explanation": {
-        "whatYouSee": "The slide introduces set operations in SQL. Use the rendered slide for the exact source notation and examples.",
-        "whyItMatters": "shows union to combine Fall 2017 and Spring 2018 course results",
-        "intuition": "This slide focuses on set operations in SQL. Read it as part of the SQL arc: DDL and basic queries, then set operations, nulls, aggregation, nested subqueries, and updates.",
-        "technicalDetail": "The slide is part of the DSA5104 Chapter 3 source (DSA5104/chapter3.pdf), page 42. The extracted text is a reader layer; the rendered slide remains authoritative.",
-        "pitfall": "Do not fall into the trap of forgetting that union removes duplicates by default.",
-        "connection": "This slide connects to the surrounding slides in the SQL narrative: how schema is defined, how queries are written (select-from-where), and how the database is modified."
+        "whatYouSee": "UNION, INTERSECT, and EXCEPT combine compatible query results for courses offered in different semesters.",
+        "whyItMatters": "Set operators express either-or, both, and left-only requirements, but operand compatibility is mandatory.",
+        "intuition": "Build two same-shaped result sets, then choose how membership should combine.",
+        "technicalDetail": "The examples project course_id from Fall 2017 and Spring 2018 before applying each set operator.",
+        "pitfall": "Do not use UNION for unrelated schemas or forget that EXCEPT is directional.",
+        "connection": "NOT EXISTS later reuses the set-difference idea to express universal requirements."
       },
-      "textbookRefs": [],
+      "textbookRefs": [
+        {
+          "sourceId": "DSA5104/Database System Concepts, 7th edition",
+          "sourceType": "textbook",
+          "page": 3,
+          "role": "Chapter 3 pointer: SQL query language, aggregation, and subqueries",
+          "status": "course-depth"
+        }
+      ],
       "referenceRefs": [],
       "socraticQuestions": [
         {
-          "type": "define",
-          "prompt": "What does union do?",
-          "answer": "It combines the results of two queries, removing duplicate tuples by default.",
-          "hint": "Combine, dedupe."
+          "type": "contrast",
+          "prompt": "Which operator returns courses offered in Fall 2017 but not Spring 2018?",
+          "answer": "EXCEPT, with the Fall result on the left and the Spring result on the right.",
+          "hint": "Left-only membership."
         }
       ],
       "title": "Set Operations in SQL",
       "kind": "lecture-source",
       "status": "reviewed",
       "assetPath": "assets/nus/dsa5104/chapter3/slide-42.jpg",
-      "lecturePriority": "core",
-      "sourceNote": "Extracted text is a reader layer; the rendered slide remains authoritative."
+      "lecturePriority": "context",
+      "sourceNote": "Extracted text is a reader layer; the rendered slide remains authoritative.",
+      "keyFormula": {
+        "latex": "R\\\\cup S,\\\\quad R\\\\cap S,\\\\quad R\\\\setminus S",
+        "name": "SQL set operations",
+        "purpose": "Choose either-or, both, or left-only membership between compatible results.",
+        "sourceType": "lecture",
+        "sourceRefs": [
+          {
+            "sourceId": "DSA5104/chapter3.pdf",
+            "sourceType": "lecture",
+            "page": 42,
+            "role": "Chapter 3 lecture slide",
+            "status": "current"
+          }
+        ]
+      }
     },
     {
       "slideId": "dsa5104-chapter3-43",
@@ -8468,7 +8732,22 @@
       "status": "reviewed",
       "assetPath": "assets/nus/dsa5104/chapter3/slide-44.jpg",
       "lecturePriority": "core",
-      "sourceNote": "Extracted text is a reader layer; the rendered slide remains authoritative."
+      "sourceNote": "Extracted text is a reader layer; the rendered slide remains authoritative.",
+      "keyFormula": {
+        "latex": "\\\\operatorname{arity}(R)=\\\\operatorname{arity}(S),\\\\quad \\\\operatorname{dom}(R_i)\\\\text{ compatible with }\\\\operatorname{dom}(S_i)",
+        "name": "Set compatibility",
+        "purpose": "Check tuple shape before UNION, INTERSECT, or EXCEPT.",
+        "sourceType": "lecture",
+        "sourceRefs": [
+          {
+            "sourceId": "DSA5104/chapter3.pdf",
+            "sourceType": "lecture",
+            "page": 44,
+            "role": "Chapter 3 lecture slide",
+            "status": "current"
+          }
+        ]
+      }
     },
     {
       "slideId": "dsa5104-chapter3-45",
@@ -8681,21 +8960,29 @@
       },
       "sourceText": "Null Values\n§\nIt is possible for tuples to have a null value, denoted by null, for some of\ntheir attributes\n§\nnull signifies an unknown value or that a value does not exist.\n§\nThe result of any arithmetic expression involving null is null\n•\nExample:  5 + null  returns null\n§\nThe predicate  is null can be used to check for null values.\n•\nExample: Find all instructors whose salary is null.\nselect name\nfrom instructor\nwhere salary is null\n§\nThe predicate is not null succeeds\nif the value on which it is applied is not null.\n©Silberschatz, Korth and Sudarshan\n3.45\nDatabase System Concepts - 7th Edition",
       "explanation": {
-        "whatYouSee": "The slide introduces null values. Use the rendered slide for the exact source notation and examples.",
-        "whyItMatters": "states that tuples may have null, meaning an unknown or missing value",
-        "intuition": "This slide focuses on null values. Read it as part of the SQL arc: DDL and basic queries, then set operations, nulls, aggregation, nested subqueries, and updates.",
-        "technicalDetail": "The slide is part of the DSA5104 Chapter 3 source (DSA5104/chapter3.pdf), page 45. The extracted text is a reader layer; the rendered slide remains authoritative.",
-        "pitfall": "Do not fall into the trap of forgetting that null is not zero and not empty string.",
-        "connection": "This slide connects to the surrounding slides in the SQL narrative: how schema is defined, how queries are written (select-from-where), and how the database is modified."
+        "whatYouSee": "NULL means unknown or non-existent; arithmetic with NULL remains NULL, while IS NULL tests it explicitly.",
+        "whyItMatters": "NULL changes comparison, arithmetic, filtering, and aggregate behavior. It is not zero or an empty string.",
+        "intuition": "NULL is missing knowledge, not an ordinary value.",
+        "technicalDetail": "An ordinary comparison with NULL is not a valid NULL test because it yields UNKNOWN; use IS NULL.",
+        "pitfall": "Use IS NULL when you mean to find missing salaries.",
+        "connection": "The next slides explain three-valued logic and why WHERE discards UNKNOWN rows."
       },
-      "textbookRefs": [],
+      "textbookRefs": [
+        {
+          "sourceId": "DSA5104/Database System Concepts, 7th edition",
+          "sourceType": "textbook",
+          "page": 3,
+          "role": "Chapter 3 pointer: SQL query language, aggregation, and subqueries",
+          "status": "course-depth"
+        }
+      ],
       "referenceRefs": [],
       "socraticQuestions": [
         {
-          "type": "define",
-          "prompt": "What does a null value represent?",
-          "answer": "An unknown or missing value for an attribute of a tuple.",
-          "hint": "Unknown value."
+          "type": "diagnose",
+          "prompt": "Why does an ordinary salary comparison fail to find missing salaries?",
+          "answer": "The comparison evaluates to UNKNOWN, not TRUE. Use IS NULL for the explicit NULL test.",
+          "hint": "NULL is not an ordinary value."
         }
       ],
       "title": "Null Values",
@@ -8703,7 +8990,22 @@
       "status": "reviewed",
       "assetPath": "assets/nus/dsa5104/chapter3/slide-45.jpg",
       "lecturePriority": "core",
-      "sourceNote": "Extracted text is a reader layer; the rendered slide remains authoritative."
+      "sourceNote": "Extracted text is a reader layer; the rendered slide remains authoritative.",
+      "keyFormula": {
+        "latex": "x+\\\\mathrm{NULL}=\\\\mathrm{NULL}",
+        "name": "NULL arithmetic",
+        "purpose": "Predict why arithmetic involving an unknown value remains unknown.",
+        "sourceType": "lecture",
+        "sourceRefs": [
+          {
+            "sourceId": "DSA5104/chapter3.pdf",
+            "sourceType": "lecture",
+            "page": 45,
+            "role": "Chapter 3 lecture slide",
+            "status": "current"
+          }
+        ]
+      }
     },
     {
       "slideId": "dsa5104-chapter3-46",
@@ -9200,7 +9502,22 @@
       "status": "reviewed",
       "assetPath": "assets/nus/dsa5104/chapter3/slide-48.jpg",
       "lecturePriority": "core",
-      "sourceNote": "Extracted text is a reader layer; the rendered slide remains authoritative."
+      "sourceNote": "Extracted text is a reader layer; the rendered slide remains authoritative.",
+      "keyFormula": {
+        "latex": "\\\\mathrm{UNKNOWN}\\\\not\\\\equiv\\\\mathrm{TRUE}",
+        "name": "WHERE truth rule",
+        "purpose": "Explain why WHERE does not keep an UNKNOWN predicate result.",
+        "sourceType": "lecture",
+        "sourceRefs": [
+          {
+            "sourceId": "DSA5104/chapter3.pdf",
+            "sourceType": "lecture",
+            "page": 48,
+            "role": "Chapter 3 lecture slide",
+            "status": "current"
+          }
+        ]
+      }
     },
     {
       "slideId": "dsa5104-chapter3-49",
@@ -9324,7 +9641,15 @@
         "pitfall": "Do not fall into the trap of confusing count(*) with count(distinct attribute).",
         "connection": "This slide connects to the surrounding slides in the SQL narrative: how schema is defined, how queries are written (select-from-where), and how the database is modified."
       },
-      "textbookRefs": [],
+      "textbookRefs": [
+        {
+          "sourceId": "DSA5104/Database System Concepts, 7th edition",
+          "sourceType": "textbook",
+          "page": 3,
+          "role": "Chapter 3 pointer: SQL query language, aggregation, and subqueries",
+          "status": "course-depth"
+        }
+      ],
       "referenceRefs": [],
       "socraticQuestions": [
         {
@@ -9339,7 +9664,22 @@
       "status": "reviewed",
       "assetPath": "assets/nus/dsa5104/chapter3/slide-49.jpg",
       "lecturePriority": "core",
-      "sourceNote": "Extracted text is a reader layer; the rendered slide remains authoritative."
+      "sourceNote": "Extracted text is a reader layer; the rendered slide remains authoritative.",
+      "keyFormula": {
+        "latex": "\\\\{\\\\operatorname{AVG},\\\\operatorname{MIN},\\\\operatorname{MAX},\\\\operatorname{SUM},\\\\operatorname{COUNT}\\\\}",
+        "name": "Aggregate family",
+        "purpose": "Identify the aggregate operation and the values it summarizes.",
+        "sourceType": "lecture",
+        "sourceRefs": [
+          {
+            "sourceId": "DSA5104/chapter3.pdf",
+            "sourceType": "lecture",
+            "page": 49,
+            "role": "Chapter 3 lecture slide",
+            "status": "current"
+          }
+        ]
+      }
     },
     {
       "slideId": "dsa5104-chapter3-50",
@@ -9810,7 +10150,15 @@
         "pitfall": "Do not fall into the trap of forgetting that group by partitions rows before aggregation.",
         "connection": "This slide connects to the surrounding slides in the SQL narrative: how schema is defined, how queries are written (select-from-where), and how the database is modified."
       },
-      "textbookRefs": [],
+      "textbookRefs": [
+        {
+          "sourceId": "DSA5104/Database System Concepts, 7th edition",
+          "sourceType": "textbook",
+          "page": 3,
+          "role": "Chapter 3 pointer: SQL query language, aggregation, and subqueries",
+          "status": "course-depth"
+        }
+      ],
       "referenceRefs": [],
       "socraticQuestions": [
         {
@@ -9825,7 +10173,22 @@
       "status": "reviewed",
       "assetPath": "assets/nus/dsa5104/chapter3/slide-51.jpg",
       "lecturePriority": "core",
-      "sourceNote": "Extracted text is a reader layer; the rendered slide remains authoritative."
+      "sourceNote": "Extracted text is a reader layer; the rendered slide remains authoritative.",
+      "keyFormula": {
+        "latex": "\\\\text{GROUP BY }G\\\\Rightarrow\\\\text{one group per distinct }G",
+        "name": "Grouping",
+        "purpose": "Reason about which rows share an aggregate computation.",
+        "sourceType": "lecture",
+        "sourceRefs": [
+          {
+            "sourceId": "DSA5104/chapter3.pdf",
+            "sourceType": "lecture",
+            "page": 51,
+            "role": "Chapter 3 lecture slide",
+            "status": "current"
+          }
+        ]
+      }
     },
     {
       "slideId": "dsa5104-chapter3-52",
@@ -10428,21 +10791,29 @@
       },
       "sourceText": "The BIG 6\n§\nFor each course section offered in 2017, find the average total credits (tot\ncred) of all students enrolled in the section, if the section has at least 2\nstudents.”\n©Silberschatz, Korth and Sudarshan\n3.54\nDatabase System Concepts - 7th Edition",
       "explanation": {
-        "whatYouSee": "The slide introduces the BIG 6. Use the rendered slide for the exact source notation and examples.",
-        "whyItMatters": "introduces the canonical six-clause structure: select, from, where, group by, having, order by",
-        "intuition": "This slide focuses on the BIG 6. Read it as part of the SQL arc: DDL and basic queries, then set operations, nulls, aggregation, nested subqueries, and updates.",
-        "technicalDetail": "The slide is part of the DSA5104 Chapter 3 source (DSA5104/chapter3.pdf), page 54. The extracted text is a reader layer; the rendered slide remains authoritative.",
-        "pitfall": "Do not fall into the trap of forgetting the evaluation order of the six clauses.",
-        "connection": "This slide connects to the surrounding slides in the SQL narrative: how schema is defined, how queries are written (select-from-where), and how the database is modified."
+        "whatYouSee": "The BIG 6 places SELECT, FROM, WHERE, GROUP BY, HAVING, and ORDER BY into one aggregate-query pipeline.",
+        "whyItMatters": "It is a compact checklist for constructing and debugging SQL answers involving groups.",
+        "intuition": "Build rows, filter rows, form groups, filter groups, choose output columns, then sort.",
+        "technicalDetail": "The reasoning order is FROM, WHERE, GROUP BY, HAVING, SELECT, ORDER BY; physical optimizers may use another plan.",
+        "pitfall": "Do not put an aggregate predicate in WHERE or treat ORDER BY as relation content.",
+        "connection": "The worked example shows the role of each clause."
       },
-      "textbookRefs": [],
+      "textbookRefs": [
+        {
+          "sourceId": "DSA5104/Database System Concepts, 7th edition",
+          "sourceType": "textbook",
+          "page": 3,
+          "role": "Chapter 3 pointer: SQL query language, aggregation, and subqueries",
+          "status": "course-depth"
+        }
+      ],
       "referenceRefs": [],
       "socraticQuestions": [
         {
-          "type": "orient",
-          "prompt": "What are the six main clauses of an SQL query?",
-          "answer": "select, from, where, group by, having, order by.",
-          "hint": "The BIG 6."
+          "type": "trace",
+          "prompt": "Where do row and group predicates go in a query for average credits per section with at least two students?",
+          "answer": "Use WHERE for row-level conditions, GROUP BY for section identity, HAVING for the count threshold, and ORDER BY for display.",
+          "hint": "Rows first, groups second, display last."
         }
       ],
       "title": "The BIG 6",
@@ -10450,7 +10821,22 @@
       "status": "reviewed",
       "assetPath": "assets/nus/dsa5104/chapter3/slide-54.jpg",
       "lecturePriority": "core",
-      "sourceNote": "Extracted text is a reader layer; the rendered slide remains authoritative."
+      "sourceNote": "Extracted text is a reader layer; the rendered slide remains authoritative.",
+      "keyFormula": {
+        "latex": "\\\\text{FROM}\\\\to\\\\text{WHERE}\\\\to\\\\text{GROUP BY}\\\\to\\\\text{HAVING}\\\\to\\\\text{SELECT}\\\\to\\\\text{ORDER BY}",
+        "name": "SQL logical query order",
+        "purpose": "Place row predicates, group predicates, projection, and sorting at the correct semantic stage.",
+        "sourceType": "lecture",
+        "sourceRefs": [
+          {
+            "sourceId": "DSA5104/chapter3.pdf",
+            "sourceType": "lecture",
+            "page": 54,
+            "role": "Chapter 3 lecture slide",
+            "status": "current"
+          }
+        ]
+      }
     },
     {
       "slideId": "dsa5104-chapter3-55",
@@ -10834,21 +11220,29 @@
       },
       "sourceText": "Nested Subqueries\n§\nSQL provides a mechanism for the nesting of subqueries. A subquery is a\nselect-from-where expression that is nested within another query.\n§\nThe nesting can be done in the following SQL query\nselect A1, A2, ..., An\nfrom r1, r2, ..., rm\nwhere P\nas follows:\n•\nFrom clause: ri can be replaced by any valid subquery\n•\nWhere clause: P can be replaced with an expression of the form:\nB <operation> (subquery)\nB is an attribute and <operation> to be defined later.\n•\nSelect clause:\nAi   can be replaced be a subquery that generates a single value.\n©Silberschatz, Korth and Sudarshan\n3.56\nDatabase System Concepts - 7th Edition",
       "explanation": {
-        "whatYouSee": "The slide introduces nested subqueries. Use the rendered slide for the exact source notation and examples.",
-        "whyItMatters": "introduces subqueries as select-from-where expressions nested within a larger query",
-        "intuition": "This slide focuses on nested subqueries. Read it as part of the SQL arc: DDL and basic queries, then set operations, nulls, aggregation, nested subqueries, and updates.",
-        "technicalDetail": "The slide is part of the DSA5104 Chapter 3 source (DSA5104/chapter3.pdf), page 56. The extracted text is a reader layer; the rendered slide remains authoritative.",
-        "pitfall": "Do not fall into the trap of forgetting that subqueries can appear in where, from, and select.",
-        "connection": "This slide connects to the surrounding slides in the SQL narrative: how schema is defined, how queries are written (select-from-where), and how the database is modified."
+        "whatYouSee": "A subquery is a complete SELECT-FROM-WHERE expression nested inside an outer query.",
+        "whyItMatters": "Subqueries create relation-valued or scalar intermediate results for larger conditions.",
+        "intuition": "Treat the inner query as a typed result: relation-valued in FROM or WHERE, scalar-valued in a scalar expression.",
+        "technicalDetail": "A SELECT subquery must produce one value per outer row; a FROM subquery is a derived table and needs a name.",
+        "pitfall": "Do not assume every subquery returns one value or that a FROM subquery can remain unnamed.",
+        "connection": "IN, SOME, ALL, EXISTS, CTEs, and scalar subqueries specialize this mechanism."
       },
-      "textbookRefs": [],
+      "textbookRefs": [
+        {
+          "sourceId": "DSA5104/Database System Concepts, 7th edition",
+          "sourceType": "textbook",
+          "page": 3,
+          "role": "Chapter 3 pointer: SQL query language, aggregation, and subqueries",
+          "status": "course-depth"
+        }
+      ],
       "referenceRefs": [],
       "socraticQuestions": [
         {
-          "type": "define",
-          "prompt": "What is a nested subquery?",
-          "answer": "A complete select-from-where expression embedded inside another query.",
-          "hint": "Query in a query."
+          "type": "classify",
+          "prompt": "What must you check before placing a subquery directly in a SELECT expression?",
+          "answer": "It must return one value for each outer row, normally one row and one column.",
+          "hint": "Scalar context has a shape contract."
         }
       ],
       "title": "Nested Subqueries",
@@ -11247,7 +11641,15 @@
         "pitfall": "Do not fall into the trap of confusing in (set membership) with equality.",
         "connection": "This slide connects to the surrounding slides in the SQL narrative: how schema is defined, how queries are written (select-from-where), and how the database is modified."
       },
-      "textbookRefs": [],
+      "textbookRefs": [
+        {
+          "sourceId": "DSA5104/Database System Concepts, 7th edition",
+          "sourceType": "textbook",
+          "page": 3,
+          "role": "Chapter 3 pointer: SQL query language, aggregation, and subqueries",
+          "status": "course-depth"
+        }
+      ],
       "referenceRefs": [],
       "socraticQuestions": [
         {
@@ -11262,7 +11664,22 @@
       "status": "reviewed",
       "assetPath": "assets/nus/dsa5104/chapter3/slide-58.jpg",
       "lecturePriority": "core",
-      "sourceNote": "Extracted text is a reader layer; the rendered slide remains authoritative."
+      "sourceNote": "Extracted text is a reader layer; the rendered slide remains authoritative.",
+      "keyFormula": {
+        "latex": "x\\\\in Q",
+        "name": "IN membership",
+        "purpose": "Test whether a scalar belongs to a subquery result.",
+        "sourceType": "lecture",
+        "sourceRefs": [
+          {
+            "sourceId": "DSA5104/chapter3.pdf",
+            "sourceType": "lecture",
+            "page": 58,
+            "role": "Chapter 3 lecture slide",
+            "status": "current"
+          }
+        ]
+      }
     },
     {
       "slideId": "dsa5104-chapter3-59",
@@ -11931,7 +12348,15 @@
         "pitfall": "Do not fall into the trap of forgetting that set comparisons require some/all quantification.",
         "connection": "This slide connects to the surrounding slides in the SQL narrative: how schema is defined, how queries are written (select-from-where), and how the database is modified."
       },
-      "textbookRefs": [],
+      "textbookRefs": [
+        {
+          "sourceId": "DSA5104/Database System Concepts, 7th edition",
+          "sourceType": "textbook",
+          "page": 3,
+          "role": "Chapter 3 pointer: SQL query language, aggregation, and subqueries",
+          "status": "course-depth"
+        }
+      ],
       "referenceRefs": [],
       "socraticQuestions": [
         {
@@ -12303,21 +12728,29 @@
       },
       "sourceText": "“\n”\nSet Comparison\n–\nsome\nClause\n§\nFind names of instructors with salary greater than that of some (at least\none) instructor in the Biology department.\nselect distinct T.name\nfrom instructor as T, instructor as S\nwhere T.salary > S.salary and S.dept_name = 'Biology';\n§\nSame query using > some clause\nselect name\nfrom instructor\nwhere salary > some (select salary\n                                     from instructor\n                                     where dept_name = 'Biology');\n©Silberschatz, Korth and Sudarshan\n3.63\nDatabase System Concepts - 7th Edition",
       "explanation": {
-        "whatYouSee": "The slide introduces the some clause. Use the rendered slide for the exact source notation and examples.",
-        "whyItMatters": "finds instructors with salary greater than that of some (at least one) instructor",
-        "intuition": "This slide focuses on the some clause. Read it as part of the SQL arc: DDL and basic queries, then set operations, nulls, aggregation, nested subqueries, and updates.",
-        "technicalDetail": "The slide is part of the DSA5104 Chapter 3 source (DSA5104/chapter3.pdf), page 63. The extracted text is a reader layer; the rendered slide remains authoritative.",
-        "pitfall": "Do not fall into the trap of confusing some with all.",
-        "connection": "This slide connects to the surrounding slides in the SQL narrative: how schema is defined, how queries are written (select-from-where), and how the database is modified."
+        "whatYouSee": "SOME makes a comparison true when at least one value from the subquery satisfies it.",
+        "whyItMatters": "SOME is existential quantification; confusing it with ALL reverses the condition's strength.",
+        "intuition": "One witness is enough for SOME; one counterexample defeats ALL.",
+        "technicalDetail": "For comparison theta, x theta SOME(Q) means there exists q in Q such that x theta q.",
+        "pitfall": "Do not read SOME as a synonym for ALL.",
+        "connection": "EXISTS provides a related witness test; NOT EXISTS expresses absence of a counterexample."
       },
-      "textbookRefs": [],
+      "textbookRefs": [
+        {
+          "sourceId": "DSA5104/Database System Concepts, 7th edition",
+          "sourceType": "textbook",
+          "page": 3,
+          "role": "Chapter 3 pointer: SQL query language, aggregation, and subqueries",
+          "status": "course-depth"
+        }
+      ],
       "referenceRefs": [],
       "socraticQuestions": [
         {
-          "type": "define",
-          "prompt": "What does the SOME comparison mean?",
-          "answer": "The condition is true when at least one tuple in the comparison relation satisfies the chosen comparison.",
-          "hint": "At least one."
+          "type": "contrast",
+          "prompt": "If a salary is above one but not every salary in the subquery, does greater-than SOME or greater-than ALL succeed?",
+          "answer": "Greater-than SOME succeeds; greater-than ALL fails because one comparison is false.",
+          "hint": "Existential versus universal."
         }
       ],
       "title": "The Some Clause",
@@ -12325,7 +12758,22 @@
       "status": "reviewed",
       "assetPath": "assets/nus/dsa5104/chapter3/slide-63.jpg",
       "lecturePriority": "core",
-      "sourceNote": "Extracted text is a reader layer; the rendered slide remains authoritative."
+      "sourceNote": "Extracted text is a reader layer; the rendered slide remains authoritative.",
+      "keyFormula": {
+        "latex": "x\\\\mathbin{\\\\theta}\\\\operatorname{SOME}(Q)\\\\Longleftrightarrow\\\\exists q\\\\in Q:\\\\ x\\\\mathbin{\\\\theta}q",
+        "name": "SOME quantifier",
+        "purpose": "Use SOME when one witness is enough.",
+        "sourceType": "lecture",
+        "sourceRefs": [
+          {
+            "sourceId": "DSA5104/chapter3.pdf",
+            "sourceType": "lecture",
+            "page": 63,
+            "role": "Chapter 3 lecture slide",
+            "status": "current"
+          }
+        ]
+      }
     },
     {
       "slideId": "dsa5104-chapter3-64",
@@ -13440,21 +13888,29 @@
       },
       "sourceText": "“\n”\nSet Comparison\n–\nall\nClause\n§\nFind the names of all instructors whose salary is greater than the salary of\nall instructors in the Biology department.\nselect name\nfrom instructor\nwhere salary > all (select salary\n                                from instructor\n                                where dept name = 'Biology');\n©Silberschatz, Korth and Sudarshan\n3.66\nDatabase System Concepts - 7th Edition",
       "explanation": {
-        "whatYouSee": "The slide introduces the all clause. Use the rendered slide for the exact source notation and examples.",
-        "whyItMatters": "finds instructors with salary greater than the salary of every instructor",
-        "intuition": "This slide focuses on the all clause. Read it as part of the SQL arc: DDL and basic queries, then set operations, nulls, aggregation, nested subqueries, and updates.",
-        "technicalDetail": "The slide is part of the DSA5104 Chapter 3 source (DSA5104/chapter3.pdf), page 66. The extracted text is a reader layer; the rendered slide remains authoritative.",
-        "pitfall": "Do not fall into the trap of confusing all with some.",
-        "connection": "This slide connects to the surrounding slides in the SQL narrative: how schema is defined, how queries are written (select-from-where), and how the database is modified."
+        "whatYouSee": "ALL makes a comparison true only when every value returned by the subquery satisfies it.",
+        "whyItMatters": "ALL captures a universal requirement and is stronger than SOME.",
+        "intuition": "To disprove ALL, find one violating value.",
+        "technicalDetail": "For comparison theta, x theta ALL(Q) means every q in Q satisfies x theta q.",
+        "pitfall": "Do not check only one convenient value unless it proves the universal claim.",
+        "connection": "NOT EXISTS later rewrites all-required conditions as no-missing-item conditions."
       },
-      "textbookRefs": [],
+      "textbookRefs": [
+        {
+          "sourceId": "DSA5104/Database System Concepts, 7th edition",
+          "sourceType": "textbook",
+          "page": 3,
+          "role": "Chapter 3 pointer: SQL query language, aggregation, and subqueries",
+          "status": "course-depth"
+        }
+      ],
       "referenceRefs": [],
       "socraticQuestions": [
         {
-          "type": "define",
-          "prompt": "What does the ALL comparison mean?",
-          "answer": "The condition is true only when every tuple in the comparison relation satisfies the chosen comparison.",
-          "hint": "All tuples."
+          "type": "contrast",
+          "prompt": "What single observation disproves a predicate using ALL?",
+          "answer": "One subquery value for which the comparison is false disproves ALL.",
+          "hint": "Find a counterexample."
         }
       ],
       "title": "The All Clause",
@@ -13462,7 +13918,22 @@
       "status": "reviewed",
       "assetPath": "assets/nus/dsa5104/chapter3/slide-66.jpg",
       "lecturePriority": "core",
-      "sourceNote": "Extracted text is a reader layer; the rendered slide remains authoritative."
+      "sourceNote": "Extracted text is a reader layer; the rendered slide remains authoritative.",
+      "keyFormula": {
+        "latex": "x\\\\mathbin{\\\\theta}\\\\operatorname{ALL}(Q)\\\\Longleftrightarrow\\\\forall q\\\\in Q:\\\\ x\\\\mathbin{\\\\theta}q",
+        "name": "ALL quantifier",
+        "purpose": "Use ALL when every returned value must satisfy the comparison.",
+        "sourceType": "lecture",
+        "sourceRefs": [
+          {
+            "sourceId": "DSA5104/chapter3.pdf",
+            "sourceType": "lecture",
+            "page": 66,
+            "role": "Chapter 3 lecture slide",
+            "status": "current"
+          }
+        ]
+      }
     },
     {
       "slideId": "dsa5104-chapter3-67",
@@ -14328,7 +14799,15 @@
         "pitfall": "Do not fall into the trap of confusing exists with count checking.",
         "connection": "This slide connects to the surrounding slides in the SQL narrative: how schema is defined, how queries are written (select-from-where), and how the database is modified."
       },
-      "textbookRefs": [],
+      "textbookRefs": [
+        {
+          "sourceId": "DSA5104/Database System Concepts, 7th edition",
+          "sourceType": "textbook",
+          "page": 3,
+          "role": "Chapter 3 pointer: SQL query language, aggregation, and subqueries",
+          "status": "course-depth"
+        }
+      ],
       "referenceRefs": [],
       "socraticQuestions": [
         {
@@ -14343,7 +14822,22 @@
       "status": "reviewed",
       "assetPath": "assets/nus/dsa5104/chapter3/slide-69.jpg",
       "lecturePriority": "core",
-      "sourceNote": "Extracted text is a reader layer; the rendered slide remains authoritative."
+      "sourceNote": "Extracted text is a reader layer; the rendered slide remains authoritative.",
+      "keyFormula": {
+        "latex": "\\\\operatorname{EXISTS}(Q)\\\\Longleftrightarrow |Q|>0",
+        "name": "EXISTS test",
+        "purpose": "Test whether a correlated subquery has at least one witness.",
+        "sourceType": "lecture",
+        "sourceRefs": [
+          {
+            "sourceId": "DSA5104/chapter3.pdf",
+            "sourceType": "lecture",
+            "page": 69,
+            "role": "Chapter 3 lecture slide",
+            "status": "current"
+          }
+        ]
+      }
     },
     {
       "slideId": "dsa5104-chapter3-70",
@@ -15517,21 +16011,29 @@
       },
       "sourceText": "“\n”\nUse of\nnot exists\nClause\n§\nFind all students who have taken all courses offered in the Biology\ndepartment.\nselect distinct S.ID, S.name\nfrom student as S\nwhere not exists ( (select course_id\n                                 from course\n                                 where dept_name = 'Biology')\n                               except\n                                 (select T.course_id\n                                   from takes as T\n                                   where S.ID = T.ID));\n•\nFirst nested query lists all courses offered in Biology\n•\nSecond nested query lists all courses a particular student took\n§\nNote that X – Y = Ø   Û   X Í Y\n§\nNote: Cannot write this query using = all and its variants\n©Silberschatz, Korth and Sudarshan\n3.73\nDatabase System Concepts - 7th Edition",
       "explanation": {
-        "whatYouSee": "The slide introduces not exists. Use the rendered slide for the exact source notation and examples.",
-        "whyItMatters": "finds students who have taken all courses in the Biology department using not exists",
-        "intuition": "This slide focuses on not exists. Read it as part of the SQL arc: DDL and basic queries, then set operations, nulls, aggregation, nested subqueries, and updates.",
-        "technicalDetail": "The slide is part of the DSA5104 Chapter 3 source (DSA5104/chapter3.pdf), page 73. The extracted text is a reader layer; the rendered slide remains authoritative.",
-        "pitfall": "Do not fall into the trap of forgetting that not exists is the standard way to express division.",
-        "connection": "This slide connects to the surrounding slides in the SQL narrative: how schema is defined, how queries are written (select-from-where), and how the database is modified."
+        "whatYouSee": "The query keeps students for whom no required Biology course is missing from their taken-course set.",
+        "whyItMatters": "This is the reusable division pattern: universal requirements become absence-of-counterexample queries.",
+        "intuition": "Required courses minus courses taken must be empty for each retained student.",
+        "technicalDetail": "The correlated subquery builds the student-specific taken set; NOT EXISTS checks that the required-minus-taken difference has no tuple.",
+        "pitfall": "Do not use a scalar equality test for a set-containment requirement.",
+        "connection": "This links EXCEPT, NOT EXISTS, correlation, and homework 3.28."
       },
-      "textbookRefs": [],
+      "textbookRefs": [
+        {
+          "sourceId": "DSA5104/Database System Concepts, 7th edition",
+          "sourceType": "textbook",
+          "page": 3,
+          "role": "Chapter 3 pointer: SQL query language, aggregation, and subqueries",
+          "status": "course-depth"
+        }
+      ],
       "referenceRefs": [],
       "socraticQuestions": [
         {
-          "type": "define",
-          "prompt": "What is not exists used for?",
-          "answer": "To test that a subquery is empty, often for expressing division (all-quantified queries).",
-          "hint": "Division."
+          "type": "derive",
+          "prompt": "How does NOT EXISTS prove that a student took all required courses?",
+          "answer": "It searches for a required course the student did not take; if no counterexample exists, the universal condition holds.",
+          "hint": "No missing item."
         }
       ],
       "title": "Not Exists",
@@ -15539,7 +16041,22 @@
       "status": "reviewed",
       "assetPath": "assets/nus/dsa5104/chapter3/slide-73.jpg",
       "lecturePriority": "core",
-      "sourceNote": "Extracted text is a reader layer; the rendered slide remains authoritative."
+      "sourceNote": "Extracted text is a reader layer; the rendered slide remains authoritative.",
+      "keyFormula": {
+        "latex": "A\\\\setminus B=\\\\varnothing\\\\Longleftrightarrow A\\\\subseteq B",
+        "name": "NOT EXISTS division pattern",
+        "purpose": "Express every-required-item conditions by excluding counterexamples.",
+        "sourceType": "lecture",
+        "sourceRefs": [
+          {
+            "sourceId": "DSA5104/chapter3.pdf",
+            "sourceType": "lecture",
+            "page": 73,
+            "role": "Chapter 3 lecture slide",
+            "status": "current"
+          }
+        ]
+      }
     },
     {
       "slideId": "dsa5104-chapter3-74",
@@ -16304,7 +16821,15 @@
         "pitfall": "Do not fall into the trap of forgetting that a from-subquery must be named.",
         "connection": "This slide connects to the surrounding slides in the SQL narrative: how schema is defined, how queries are written (select-from-where), and how the database is modified."
       },
-      "textbookRefs": [],
+      "textbookRefs": [
+        {
+          "sourceId": "DSA5104/Database System Concepts, 7th edition",
+          "sourceType": "textbook",
+          "page": 3,
+          "role": "Chapter 3 pointer: SQL query language, aggregation, and subqueries",
+          "status": "course-depth"
+        }
+      ],
       "referenceRefs": [],
       "socraticQuestions": [
         {
@@ -16319,7 +16844,22 @@
       "status": "reviewed",
       "assetPath": "assets/nus/dsa5104/chapter3/slide-77.jpg",
       "lecturePriority": "core",
-      "sourceNote": "Extracted text is a reader layer; the rendered slide remains authoritative."
+      "sourceNote": "Extracted text is a reader layer; the rendered slide remains authoritative.",
+      "keyFormula": {
+        "latex": "\\\\text{FROM }Q\\\\text{ AS }T",
+        "name": "Derived table",
+        "purpose": "Name a FROM-subquery before using it as an intermediate relation.",
+        "sourceType": "lecture",
+        "sourceRefs": [
+          {
+            "sourceId": "DSA5104/chapter3.pdf",
+            "sourceType": "lecture",
+            "page": 77,
+            "role": "Chapter 3 lecture slide",
+            "status": "current"
+          }
+        ]
+      }
     },
     {
       "slideId": "dsa5104-chapter3-78",
@@ -16735,21 +17275,29 @@
       },
       "sourceText": "With Clause\n(Common Table Expressions)\n§\nThe with clause provides a way of defining a temporary relation whose\ndefinition is available only to the query in which the with clause occurs.\n§\nFind all departments with the maximum budget\nwith max_budget (value) as\n             (select max(budget)\n              from department)\n     select department.dept_name\n     from department, max_budget\n     where department.budget = max_budget.value;\n©Silberschatz, Korth and Sudarshan\n3.79\nDatabase System Concepts - 7th Edition",
       "explanation": {
-        "whatYouSee": "The slide introduces with clause (CTEs). Use the rendered slide for the exact source notation and examples.",
-        "whyItMatters": "introduces common table expressions with the with clause for naming temporary relations",
-        "intuition": "This slide focuses on with clause (CTEs). Read it as part of the SQL arc: DDL and basic queries, then set operations, nulls, aggregation, nested subqueries, and updates.",
-        "technicalDetail": "The slide is part of the DSA5104 Chapter 3 source (DSA5104/chapter3.pdf), page 79. The extracted text is a reader layer; the rendered slide remains authoritative.",
-        "pitfall": "Do not fall into the trap of treating with as optional when it improves readability.",
-        "connection": "This slide connects to the surrounding slides in the SQL narrative: how schema is defined, how queries are written (select-from-where), and how the database is modified."
+        "whatYouSee": "WITH names a temporary relation visible only to the surrounding query.",
+        "whyItMatters": "CTEs make nested aggregation and multi-step logic readable without changing stored data.",
+        "intuition": "Name an intermediate result once, then query it as a relation.",
+        "technicalDetail": "A CTE has the form WITH T AS (Q) and can expose explicit column names for the derived relation.",
+        "pitfall": "Do not mistake a CTE for a permanent table.",
+        "connection": "Homework uses WITH for maximum-per-group and repeated-course queries."
       },
-      "textbookRefs": [],
+      "textbookRefs": [
+        {
+          "sourceId": "DSA5104/Database System Concepts, 7th edition",
+          "sourceType": "textbook",
+          "page": 3,
+          "role": "Chapter 3 pointer: SQL query language, aggregation, and subqueries",
+          "status": "course-depth"
+        }
+      ],
       "referenceRefs": [],
       "socraticQuestions": [
         {
-          "type": "define",
-          "prompt": "What does the with clause do?",
-          "answer": "It defines named temporary relations usable within a single query (common table expressions).",
-          "hint": "Named CTEs."
+          "type": "compare",
+          "prompt": "What does a CTE change: the stored schema or the readability of one query?",
+          "answer": "It changes neither stored schema nor data; it names a temporary query result within one statement.",
+          "hint": "Temporary relation, statement scope."
         }
       ],
       "title": "With Clause (CTEs)",
@@ -16757,7 +17305,22 @@
       "status": "reviewed",
       "assetPath": "assets/nus/dsa5104/chapter3/slide-79.jpg",
       "lecturePriority": "core",
-      "sourceNote": "Extracted text is a reader layer; the rendered slide remains authoritative."
+      "sourceNote": "Extracted text is a reader layer; the rendered slide remains authoritative.",
+      "keyFormula": {
+        "latex": "\\\\text{WITH }T\\\\text{ AS }Q",
+        "name": "Common table expression",
+        "purpose": "Name a temporary relation to make multi-step SQL readable.",
+        "sourceType": "lecture",
+        "sourceRefs": [
+          {
+            "sourceId": "DSA5104/chapter3.pdf",
+            "sourceType": "lecture",
+            "page": 79,
+            "role": "Chapter 3 lecture slide",
+            "status": "current"
+          }
+        ]
+      }
     },
     {
       "slideId": "dsa5104-chapter3-80",
@@ -17100,7 +17663,15 @@
         "pitfall": "Do not fall into the trap of forgetting that a scalar subquery must return exactly one value or null.",
         "connection": "This slide connects to the surrounding slides in the SQL narrative: how schema is defined, how queries are written (select-from-where), and how the database is modified."
       },
-      "textbookRefs": [],
+      "textbookRefs": [
+        {
+          "sourceId": "DSA5104/Database System Concepts, 7th edition",
+          "sourceType": "textbook",
+          "page": 3,
+          "role": "Chapter 3 pointer: SQL query language, aggregation, and subqueries",
+          "status": "course-depth"
+        }
+      ],
       "referenceRefs": [],
       "socraticQuestions": [
         {
@@ -17115,7 +17686,22 @@
       "status": "reviewed",
       "assetPath": "assets/nus/dsa5104/chapter3/slide-81.jpg",
       "lecturePriority": "core",
-      "sourceNote": "Extracted text is a reader layer; the rendered slide remains authoritative."
+      "sourceNote": "Extracted text is a reader layer; the rendered slide remains authoritative.",
+      "keyFormula": {
+        "latex": "Q\\\\to\\\\text{one row and one column}",
+        "name": "Scalar subquery contract",
+        "purpose": "Use a subquery in scalar context only when its shape is valid.",
+        "sourceType": "lecture",
+        "sourceRefs": [
+          {
+            "sourceId": "DSA5104/chapter3.pdf",
+            "sourceType": "lecture",
+            "page": 81,
+            "role": "Chapter 3 lecture slide",
+            "status": "current"
+          }
+        ]
+      }
     },
     {
       "slideId": "dsa5104-chapter3-82",
@@ -17410,7 +17996,15 @@
         "pitfall": "Do not fall into the trap of forgetting that delete without a where removes all tuples.",
         "connection": "This slide connects to the surrounding slides in the SQL narrative: how schema is defined, how queries are written (select-from-where), and how the database is modified."
       },
-      "textbookRefs": [],
+      "textbookRefs": [
+        {
+          "sourceId": "DSA5104/Database System Concepts, 7th edition",
+          "sourceType": "textbook",
+          "page": 3,
+          "role": "Chapter 3 pointer: SQL query language, aggregation, and subqueries",
+          "status": "course-depth"
+        }
+      ],
       "referenceRefs": [],
       "socraticQuestions": [
         {
@@ -17425,7 +18019,22 @@
       "status": "reviewed",
       "assetPath": "assets/nus/dsa5104/chapter3/slide-83.jpg",
       "lecturePriority": "core",
-      "sourceNote": "Extracted text is a reader layer; the rendered slide remains authoritative."
+      "sourceNote": "Extracted text is a reader layer; the rendered slide remains authoritative.",
+      "keyFormula": {
+        "latex": "\\\\text{DELETE FROM }R\\\\text{ WHERE }P",
+        "name": "DELETE statement",
+        "purpose": "Remove qualifying tuples while keeping the relation schema.",
+        "sourceType": "lecture",
+        "sourceRefs": [
+          {
+            "sourceId": "DSA5104/chapter3.pdf",
+            "sourceType": "lecture",
+            "page": 83,
+            "role": "Chapter 3 lecture slide",
+            "status": "current"
+          }
+        ]
+      }
     },
     {
       "slideId": "dsa5104-chapter3-84",
@@ -18883,21 +19492,29 @@
       },
       "sourceText": "Updates\n§\nGive  a  5% salary raise to all instructors\nupdate instructor\n               set salary = salary * 1.05\n§\nGive  a 5% salary raise to those instructors who earn less than 70000\n                update instructor\n                     set salary = salary * 1.05\n                    where salary < 70000;\n§\nGive  a 5% salary raise to instructors whose salary is less than average\nupdate instructor\n                     set salary = salary * 1.05\n                     where salary <  (select avg (salary)\n                                                 from instructor);\n§\nSQL standard, obeyed by PostgreSQL, first tests all tuples in the relation\nto see whether they should be updated, and it carries out the updates\nafterward. But MySQL won’t allow you to run the above update.\n©Silberschatz, Korth and Sudarshan\n3.91\nDatabase System Concepts - 7th Edition",
       "explanation": {
-        "whatYouSee": "The slide introduces updates. Use the rendered slide for the exact source notation and examples.",
-        "whyItMatters": "gives a 5% salary raise to all instructors",
-        "intuition": "This slide focuses on updates. Read it as part of the SQL arc: DDL and basic queries, then set operations, nulls, aggregation, nested subqueries, and updates.",
-        "technicalDetail": "The slide is part of the DSA5104 Chapter 3 source (DSA5104/chapter3.pdf), page 91. The extracted text is a reader layer; the rendered slide remains authoritative.",
-        "pitfall": "Do not fall into the trap of forgetting that update without where changes every row.",
-        "connection": "This slide connects to the surrounding slides in the SQL narrative: how schema is defined, how queries are written (select-from-where), and how the database is modified."
+        "whatYouSee": "UPDATE changes all rows, a salary-selected subset, or rows below a scalar average depending on its WHERE clause.",
+        "whyItMatters": "UPDATE is powerful and dangerous: WHERE determines the mutation set and SET determines the new values.",
+        "intuition": "Identify rows eligible for mutation before calculating the assignment.",
+        "technicalDetail": "The lecture contrasts PostgreSQL's same-table subquery behavior with MySQL restrictions; DBMS-specific behavior must be labeled.",
+        "pitfall": "Never omit WHERE accidentally when the intention is to update a subset.",
+        "connection": "DELETE and INSERT share the DML boundary; foreign-key and cascade rules constrain legal changes."
       },
-      "textbookRefs": [],
+      "textbookRefs": [
+        {
+          "sourceId": "DSA5104/Database System Concepts, 7th edition",
+          "sourceType": "textbook",
+          "page": 3,
+          "role": "Chapter 3 pointer: SQL query language, aggregation, and subqueries",
+          "status": "course-depth"
+        }
+      ],
       "referenceRefs": [],
       "socraticQuestions": [
         {
-          "type": "apply",
-          "prompt": "How do you give every instructor a 5% raise?",
-          "answer": "Update every instructor row by multiplying its salary by 1.05.",
-          "hint": "Scale all rows."
+          "type": "diagnose",
+          "prompt": "What happens when the WHERE clause is removed from an UPDATE that multiplies every salary by 1.05?",
+          "answer": "Every instructor tuple becomes eligible for the five-percent raise.",
+          "hint": "Mutation scope comes from WHERE."
         }
       ],
       "title": "Updates",
@@ -18905,7 +19522,22 @@
       "status": "reviewed",
       "assetPath": "assets/nus/dsa5104/chapter3/slide-91.jpg",
       "lecturePriority": "core",
-      "sourceNote": "Extracted text is a reader layer; the rendered slide remains authoritative."
+      "sourceNote": "Extracted text is a reader layer; the rendered slide remains authoritative.",
+      "keyFormula": {
+        "latex": "\\\\text{UPDATE }R\\\\text{ SET }a:=f(a)\\\\text{ WHERE }P",
+        "name": "UPDATE statement",
+        "purpose": "Change selected values; without WHERE every tuple is eligible.",
+        "sourceType": "lecture",
+        "sourceRefs": [
+          {
+            "sourceId": "DSA5104/chapter3.pdf",
+            "sourceType": "lecture",
+            "page": 91,
+            "role": "Chapter 3 lecture slide",
+            "status": "current"
+          }
+        ]
+      }
     },
     {
       "slideId": "dsa5104-chapter3-92",
@@ -19386,7 +20018,22 @@
       "status": "reviewed",
       "assetPath": "assets/nus/dsa5104/chapter3/slide-94.jpg",
       "lecturePriority": "core",
-      "sourceNote": "Extracted text is a reader layer; the rendered slide remains authoritative."
+      "sourceNote": "Extracted text is a reader layer; the rendered slide remains authoritative.",
+      "keyFormula": {
+        "latex": "\\\\operatorname{CASE}\\\\ \\\\text{WHEN }P\\\\ \\\\text{THEN }a_1\\\\ \\\\text{ELSE }a_2\\\\ \\\\text{END}",
+        "name": "Conditional update",
+        "purpose": "Apply different assignments to different row classes.",
+        "sourceType": "lecture",
+        "sourceRefs": [
+          {
+            "sourceId": "DSA5104/chapter3.pdf",
+            "sourceType": "lecture",
+            "page": 94,
+            "role": "Chapter 3 lecture slide",
+            "status": "current"
+          }
+        ]
+      }
     },
     {
       "slideId": "dsa5104-chapter3-95",
@@ -20021,7 +20668,7 @@
       "kind": "lecture-source",
       "status": "reviewed",
       "assetPath": "assets/nus/dsa5104/chapter3/slide-98.jpg",
-      "lecturePriority": "core",
+      "lecturePriority": "context",
       "sourceNote": "Extracted text is a reader layer; the rendered slide remains authoritative."
     },
     {
@@ -20171,21 +20818,29 @@
       },
       "sourceText": "Project 1 will be announced this Saturday afternoon around 2 p.m.\nSummary:\n•\nAggregation function and group by.\n•\nBig 6\n•\nSubqueries in from, where, select clauses.\n•\nCommon Table Expressions.\nHomework:\n•\nWrite and run those MySQL example codes in the slides.\n•\nOptional (won’t be collected and won’t be marked):\nIf you have more time, you may want to try some of the\nQuestions 3.1, 3.3, 3.6, 3.11, 3.27, 3.28 (or any questions that\nyou feel interesting) on Page 115 of the textbook.\nRead and run the solutions (on canvas) afterwards.\nThe solutions may use the Join operation which is\nsystematically presented in Chapter 4 (the next chapter).\nFor some of the questions, you may want to use the\nlargeRelationInsertFile.sql from db-book.com to enlarge your\ntable first before you run the solutions.\n©Silberschatz, Korth and Sudarshan\n3.99\nDatabase System Concepts - 7th Edition",
       "explanation": {
-        "whatYouSee": "The slide introduces project announcement and summary. Use the rendered slide for the exact source notation and examples.",
-        "whyItMatters": "announces Project 1 timing and summarizes the chapter; the homework lists textbook questions 3.1, 3.3, 3.6, 3.11, 3.27, 3.28 (page 115)",
-        "intuition": "This slide focuses on project announcement and summary. Read it as part of the SQL arc: DDL and basic queries, then set operations, nulls, aggregation, nested subqueries, and updates.",
-        "technicalDetail": "The slide is part of the DSA5104 Chapter 3 source (DSA5104/chapter3.pdf), page 99. The extracted text is a reader layer; the rendered slide remains authoritative.",
-        "pitfall": "Do not fall into the trap of treating logistics as examinable content.",
-        "connection": "This slide connects to the surrounding slides in the SQL narrative: how schema is defined, how queries are written (select-from-where), and how the database is modified."
+        "whatYouSee": "The closing slide separates the lecture summary from optional homework and identifies the final consolidation targets.",
+        "whyItMatters": "Aggregation, the BIG 6, subqueries, and CTEs are the Chapter 3 practice targets named by the lecture.",
+        "intuition": "Use this page as a retrieval checklist, not as a new technical derivation.",
+        "technicalDetail": "The optional textbook set is 3.1, 3.3, 3.6, 3.11, 3.27, and 3.28 on page 115; some solutions use joins introduced in Chapter 4.",
+        "pitfall": "Do not promote optional textbook depth to lecture scope or treat the project announcement as theory.",
+        "connection": "The question bank maps the practice targets to source-backed retrieval and contrast drills."
       },
-      "textbookRefs": [],
+      "textbookRefs": [
+        {
+          "sourceId": "DSA5104/Database System Concepts, 7th edition",
+          "sourceType": "textbook",
+          "page": 3,
+          "role": "Chapter 3 pointer: SQL query language, aggregation, and subqueries",
+          "status": "course-depth"
+        }
+      ],
       "referenceRefs": [],
       "socraticQuestions": [
         {
-          "type": "orient",
-          "prompt": "What does the homework ask you to practice?",
-          "answer": "Running the slide MySQL code and, optionally, textbook questions 3.1, 3.3, 3.6, 3.11, 3.27, and 3.28 on page 115.",
-          "hint": "Run code, then practice."
+          "type": "plan",
+          "prompt": "Which four targets should you retrieve before attempting the optional Chapter 3 homework?",
+          "answer": "Aggregation with GROUP BY and HAVING, the BIG 6 pipeline, nested subqueries, and common table expressions.",
+          "hint": "Use the summary bullets."
         }
       ],
       "title": "Project Announcement and Summary",
@@ -20197,7 +20852,7 @@
     }
   ],
   "title": "Chapter 3 · Introduction to SQL",
-  "summary": "SQL data definition, basic query structure, set operations, null values, aggregation, nested subqueries, and database modification (insert, delete, update).",
+  "summary": "All 99 supplied Chapter 3 lecture pages with source extraction, SQL explanations, named formulas, textbook pointers, and Socratic checkpoints.",
   "extraction": {
     "sourceJson": "data/extracted/DSA5104/chapter3.json",
     "parser": {

@@ -1,13 +1,15 @@
 {
   "id": "dsa5104-sql-foundations",
-  "title": "SQL foundations: select, join, and group",
+  "title": "SQL foundations: DDL, query semantics, and aggregation",
   "week": 4,
-  "minutes": 65,
-  "summary": "Write declarative SQL that makes row filtering, joins, grouping, NULL behavior, and aggregate filtering explicit.",
+  "minutes": 90,
+  "summary": "Build SQL from DDL and SELECT-FROM-WHERE through joins, duplicate policy, NULL logic, the BIG 6, subqueries, CTEs, and safe updates.",
   "objectives": [
     "Write single-table and multi-table queries",
     "Join through keys rather than row position",
-    "Explain WHERE, GROUP BY, HAVING, and NULL semantics"
+    "Explain WHERE, GROUP BY, HAVING, and NULL semantics",
+    "Distinguish SOME, ALL, IN, EXISTS, and NOT EXISTS",
+    "Use CTEs and mutation predicates to write safer multi-step SQL"
   ],
   "sourceRefs": [
     {
@@ -37,6 +39,55 @@
       "sourceType": "exercise",
       "role": "SQL exercise",
       "status": "current-context"
+    },
+    {
+      "sourceId": "DSA5104/chapter3.pdf",
+      "page": 7,
+      "sourceType": "lecture",
+      "role": "CREATE TABLE and DDL",
+      "status": "current"
+    },
+    {
+      "sourceId": "DSA5104/chapter3.pdf",
+      "page": 19,
+      "sourceType": "lecture",
+      "role": "basic query structure",
+      "status": "current"
+    },
+    {
+      "sourceId": "DSA5104/chapter3.pdf",
+      "page": 45,
+      "sourceType": "lecture",
+      "role": "NULL semantics",
+      "status": "current"
+    },
+    {
+      "sourceId": "DSA5104/chapter3.pdf",
+      "page": 54,
+      "sourceType": "lecture",
+      "role": "BIG 6 query pipeline",
+      "status": "current"
+    },
+    {
+      "sourceId": "DSA5104/chapter3.pdf",
+      "page": 73,
+      "sourceType": "lecture",
+      "role": "NOT EXISTS division pattern",
+      "status": "current"
+    },
+    {
+      "sourceId": "DSA5104/chapter3.pdf",
+      "page": 79,
+      "sourceType": "lecture",
+      "role": "common table expressions",
+      "status": "current"
+    },
+    {
+      "sourceId": "DSA5104/chapter3.pdf",
+      "page": 91,
+      "sourceType": "lecture",
+      "role": "UPDATE semantics",
+      "status": "current"
     }
   ],
   "visualIds": [
@@ -228,7 +279,288 @@
           "status": "current"
         }
       ]
-    }
+    },
+      {
+        "id": "dsa5104-contrast-create-alter",
+        "type": "contrast",
+        "kind": "concept-contrast",
+        "pair": "CREATE TABLE vs ALTER TABLE",
+        "prompt": "Which statement creates a new relation definition, and which changes an existing relation definition?",
+        "choices": [
+          "CREATE TABLE creates; ALTER TABLE changes",
+          "ALTER TABLE creates; CREATE TABLE changes",
+          "Both only modify tuples",
+          "Neither affects schema"
+        ],
+        "answer": 0,
+        "explanation": "CREATE TABLE declares a relation from scratch; ALTER TABLE changes the schema of an existing relation.",
+        "estimatedSeconds": 45,
+        "difficulty": "easy",
+        "skill": "concept-contrast",
+        "cognitiveLevel": "distinguish",
+        "misconception": "Schema creation and schema alteration are both DDL, but they are different operations.",
+        "sourceRefs": [
+          {
+            "sourceId": "DSA5104/chapter3.pdf",
+            "page": 7,
+            "sourceType": "lecture",
+            "role": "CREATE TABLE",
+            "status": "current"
+          },
+          {
+            "sourceId": "DSA5104/chapter3.pdf",
+            "page": 17,
+            "sourceType": "lecture",
+            "role": "ALTER TABLE",
+            "status": "current"
+          }
+        ]
+      },
+      {
+        "id": "dsa5104-contrast-delete-drop-table",
+        "type": "contrast",
+        "kind": "concept-contrast",
+        "pair": "DELETE vs DROP TABLE",
+        "prompt": "Which operation removes tuples while preserving the relation schema?",
+        "choices": [
+          "DELETE",
+          "DROP TABLE",
+          "ALTER TABLE DROP",
+          "CREATE TABLE"
+        ],
+        "answer": 0,
+        "explanation": "DELETE changes the current instance; DROP TABLE removes the relation and its schema.",
+        "estimatedSeconds": 40,
+        "difficulty": "easy",
+        "skill": "concept-contrast",
+        "cognitiveLevel": "distinguish",
+        "misconception": "Do not confuse deleting data with deleting the table definition.",
+        "sourceRefs": [
+          {
+            "sourceId": "DSA5104/chapter3.pdf",
+            "page": 14,
+            "sourceType": "lecture",
+            "role": "DELETE",
+            "status": "current"
+          },
+          {
+            "sourceId": "DSA5104/chapter3.pdf",
+            "page": 15,
+            "sourceType": "lecture",
+            "role": "DROP TABLE",
+            "status": "current"
+          }
+        ]
+      },
+      {
+        "id": "dsa5104-contrast-union-union-all",
+        "type": "contrast",
+        "kind": "concept-contrast",
+        "pair": "UNION vs UNION ALL",
+        "prompt": "Which operator preserves duplicate rows from both compatible query results?",
+        "choices": [
+          "UNION",
+          "UNION ALL",
+          "INTERSECT",
+          "EXCEPT"
+        ],
+        "answer": 1,
+        "explanation": "UNION removes duplicates; UNION ALL keeps duplicate result tuples.",
+        "estimatedSeconds": 40,
+        "difficulty": "easy",
+        "skill": "concept-contrast",
+        "cognitiveLevel": "distinguish",
+        "misconception": "SQL set-operation names do not all imply duplicate elimination.",
+        "sourceRefs": [
+          {
+            "sourceId": "DSA5104/chapter3.pdf",
+            "page": 42,
+            "sourceType": "lecture",
+            "role": "set operations",
+            "status": "current"
+          },
+          {
+            "sourceId": "DSA5104/chapter3.pdf",
+            "page": 44,
+            "sourceType": "lecture",
+            "role": "ALL variants",
+            "status": "current"
+          }
+        ]
+      },
+      {
+        "id": "dsa5104-contrast-null-false",
+        "type": "contrast",
+        "kind": "concept-contrast",
+        "pair": "NULL vs FALSE",
+        "prompt": "A comparison involving NULL evaluates to what in SQL's three-valued logic?",
+        "choices": [
+          "FALSE",
+          "UNKNOWN",
+          "TRUE",
+          "Zero"
+        ],
+        "answer": 1,
+        "explanation": "NULL comparisons normally produce UNKNOWN. WHERE keeps only TRUE, so UNKNOWN rows are excluded.",
+        "estimatedSeconds": 45,
+        "difficulty": "medium",
+        "skill": "concept-contrast",
+        "cognitiveLevel": "distinguish",
+        "misconception": "UNKNOWN is not identical to FALSE, even though WHERE treats it as non-qualifying.",
+        "sourceRefs": [
+          {
+            "sourceId": "DSA5104/chapter3.pdf",
+            "page": 46,
+            "sourceType": "lecture",
+            "role": "comparisons with NULL",
+            "status": "current"
+          },
+          {
+            "sourceId": "DSA5104/chapter3.pdf",
+            "page": 48,
+            "sourceType": "lecture",
+            "role": "WHERE and UNKNOWN",
+            "status": "current"
+          }
+        ]
+      },
+      {
+        "id": "dsa5104-contrast-count-star-column",
+        "type": "contrast",
+        "kind": "concept-contrast",
+        "pair": "COUNT(*) vs COUNT(column)",
+        "prompt": "Which count includes a row whose selected column is NULL?",
+        "choices": [
+          "COUNT(column) only",
+          "COUNT(*) only",
+          "Both never count it",
+          "Neither distinction exists"
+        ],
+        "answer": 1,
+        "explanation": "COUNT(*) counts rows; COUNT(column) ignores NULL values in that column.",
+        "estimatedSeconds": 45,
+        "difficulty": "medium",
+        "skill": "concept-contrast",
+        "cognitiveLevel": "distinguish",
+        "misconception": "The row exists even when the selected attribute is NULL.",
+        "sourceRefs": [
+          {
+            "sourceId": "DSA5104/chapter3.pdf",
+            "page": 49,
+            "sourceType": "lecture",
+            "role": "aggregate functions",
+            "status": "current"
+          }
+        ]
+      },
+      {
+        "id": "dsa5104-contrast-some-all",
+        "type": "contrast",
+        "kind": "concept-contrast",
+        "pair": "SOME vs ALL",
+        "prompt": "Which quantifier needs only one comparison witness to succeed?",
+        "choices": [
+          "SOME",
+          "ALL",
+          "EXISTS and ALL identically",
+          "Neither"
+        ],
+        "answer": 0,
+        "explanation": "SOME is existential; ALL requires the comparison to hold for every value in the subquery result.",
+        "estimatedSeconds": 45,
+        "difficulty": "medium",
+        "skill": "concept-contrast",
+        "cognitiveLevel": "distinguish",
+        "misconception": "One satisfying value is enough for SOME but not for ALL.",
+        "sourceRefs": [
+          {
+            "sourceId": "DSA5104/chapter3.pdf",
+            "page": 63,
+            "sourceType": "lecture",
+            "role": "SOME",
+            "status": "current"
+          },
+          {
+            "sourceId": "DSA5104/chapter3.pdf",
+            "page": 66,
+            "sourceType": "lecture",
+            "role": "ALL",
+            "status": "current"
+          }
+        ]
+      },
+      {
+        "id": "dsa5104-contrast-in-exists",
+        "type": "contrast",
+        "kind": "concept-contrast",
+        "pair": "IN vs EXISTS",
+        "prompt": "What does IN compare directly, while EXISTS tests only for?",
+        "choices": [
+          "IN compares a value with a returned set; EXISTS tests for a nonempty subquery",
+          "IN tests schema; EXISTS tests domains",
+          "IN updates rows; EXISTS deletes rows",
+          "They are DDL synonyms"
+        ],
+        "answer": 0,
+        "explanation": "IN is value membership; EXISTS is witness existence and is often correlated with the outer row.",
+        "estimatedSeconds": 50,
+        "difficulty": "hard",
+        "skill": "concept-contrast",
+        "cognitiveLevel": "distinguish",
+        "misconception": "EXISTS does not need to return the matching value as the outer expression's result.",
+        "sourceRefs": [
+          {
+            "sourceId": "DSA5104/chapter3.pdf",
+            "page": 58,
+            "sourceType": "lecture",
+            "role": "IN membership",
+            "status": "current"
+          },
+          {
+            "sourceId": "DSA5104/chapter3.pdf",
+            "page": 69,
+            "sourceType": "lecture",
+            "role": "EXISTS",
+            "status": "current"
+          }
+        ]
+      },
+      {
+        "id": "dsa5104-contrast-not-exists-all",
+        "type": "contrast",
+        "kind": "concept-contrast",
+        "pair": "NOT EXISTS vs ALL",
+        "prompt": "Which pattern is the lecture's robust way to express that no required item is missing?",
+        "choices": [
+          "NOT EXISTS a counterexample",
+          "ALL without a subquery",
+          "ORDER BY",
+          "COUNT without GROUP BY"
+        ],
+        "answer": 0,
+        "explanation": "NOT EXISTS checks that the set of missing required items is empty, directly expressing a universal requirement.",
+        "estimatedSeconds": 50,
+        "difficulty": "hard",
+        "skill": "concept-contrast",
+        "cognitiveLevel": "distinguish",
+        "misconception": "Universal set requirements are often clearer as absence of a counterexample.",
+        "sourceRefs": [
+          {
+            "sourceId": "DSA5104/chapter3.pdf",
+            "page": 73,
+            "sourceType": "lecture",
+            "role": "division pattern",
+            "status": "current"
+          },
+          {
+            "sourceId": "DSA5104/chapter3.pdf",
+            "page": 74,
+            "sourceType": "lecture",
+            "role": "correlated NOT EXISTS",
+            "status": "current"
+          }
+        ]
+      }
   ],
   "math": [
     {
@@ -261,7 +593,209 @@
       "purpose": "Use it to decide whether a predicate belongs before grouping or after an aggregate is formed.",
       "sourceType": "lecture",
       "caveat": "SQL optimizers may rewrite execution plans while preserving relational semantics."
-    }
+    },
+      {
+        "latex": "\\text{SELECT }A_1,\\ldots,A_n\\ \\text{FROM }r_1,\\ldots,r_m\\ \\text{WHERE }P",
+        "name": "Basic SQL query shape",
+        "purpose": "Use it to map output attributes, input relations, and row predicates.",
+        "explanation": "This separates what to return from where to find it and which rows qualify.",
+        "symbols": [
+          {
+            "latex": "A_1,\\ldots,A_n",
+            "meaning": "projected attributes"
+          },
+          {
+            "latex": "r_1,\\ldots,r_m",
+            "meaning": "input relations"
+          },
+          {
+            "latex": "P",
+            "meaning": "row predicate"
+          }
+        ],
+        "sourceType": "lecture",
+        "sourceRefs": [
+          {
+            "sourceId": "DSA5104/chapter3.pdf",
+            "page": 19,
+            "sourceType": "lecture",
+            "role": "basic query structure",
+            "status": "current"
+          }
+        ]
+      },
+      {
+        "latex": "\\text{FROM}\\to\\text{WHERE}\\to\\text{GROUP BY}\\to\\text{HAVING}\\to\\text{SELECT}\\to\\text{ORDER BY}",
+        "name": "BIG 6 reasoning order",
+        "purpose": "Use it to place row filters, group filters, projection, and sorting.",
+        "explanation": "This is semantic reasoning order, not a claim that every physical execution follows the same sequence.",
+        "symbols": [
+          {
+            "latex": "\\prec",
+            "meaning": "conceptually happens before"
+          }
+        ],
+        "sourceType": "lecture",
+        "sourceRefs": [
+          {
+            "sourceId": "DSA5104/chapter3.pdf",
+            "page": 54,
+            "sourceType": "lecture",
+            "role": "BIG 6",
+            "status": "current"
+          }
+        ]
+      },
+      {
+        "latex": "x\\mathbin{\\theta}\\operatorname{SOME}(Q)\\Longleftrightarrow\\exists q\\in Q:\\ x\\mathbin{\\theta}q",
+        "name": "SOME as existential comparison",
+        "purpose": "Use it when one satisfying value in a subquery is enough.",
+        "explanation": "SOME succeeds when at least one returned value satisfies the comparison.",
+        "symbols": [
+          {
+            "latex": "x",
+            "meaning": "outer scalar value"
+          },
+          {
+            "latex": "\\theta",
+            "meaning": "comparison operator"
+          },
+          {
+            "latex": "Q",
+            "meaning": "set of values returned by the subquery"
+          }
+        ],
+        "sourceType": "lecture",
+        "sourceRefs": [
+          {
+            "sourceId": "DSA5104/chapter3.pdf",
+            "page": 63,
+            "sourceType": "lecture",
+            "role": "SOME definition",
+            "status": "current"
+          }
+        ]
+      },
+      {
+        "latex": "x\\mathbin{\\theta}\\operatorname{ALL}(Q)\\Longleftrightarrow\\forall q\\in Q:\\ x\\mathbin{\\theta}q",
+        "name": "ALL as universal comparison",
+        "purpose": "Use it when every value in a subquery must satisfy the comparison.",
+        "explanation": "ALL fails as soon as one returned value is a counterexample.",
+        "symbols": [
+          {
+            "latex": "x",
+            "meaning": "outer scalar value"
+          },
+          {
+            "latex": "\\theta",
+            "meaning": "comparison operator"
+          },
+          {
+            "latex": "Q",
+            "meaning": "set of values returned by the subquery"
+          }
+        ],
+        "sourceType": "lecture",
+        "sourceRefs": [
+          {
+            "sourceId": "DSA5104/chapter3.pdf",
+            "page": 66,
+            "sourceType": "lecture",
+            "role": "ALL definition",
+            "status": "current"
+          }
+        ]
+      },
+      {
+        "latex": "A\\setminus B=\\varnothing\\Longleftrightarrow A\\subseteq B",
+        "name": "Universal requirement by empty difference",
+        "purpose": "Use NOT EXISTS to keep an outer row when no required item is missing.",
+        "explanation": "The NOT EXISTS division pattern checks that the required set minus the observed set is empty.",
+        "symbols": [
+          {
+            "latex": "A",
+            "meaning": "required set"
+          },
+          {
+            "latex": "B",
+            "meaning": "observed set"
+          },
+          {
+            "latex": "\\varnothing",
+            "meaning": "empty set"
+          }
+        ],
+        "sourceType": "lecture",
+        "sourceRefs": [
+          {
+            "sourceId": "DSA5104/chapter3.pdf",
+            "page": 73,
+            "sourceType": "lecture",
+            "role": "NOT EXISTS division",
+            "status": "current"
+          }
+        ]
+      },
+      {
+        "latex": "\\text{WITH }T\\text{ AS }Q",
+        "name": "Common table expression",
+        "purpose": "Use it to name a statement-scoped intermediate relation.",
+        "explanation": "A CTE exposes an intermediate query result without creating a permanent table.",
+        "symbols": [
+          {
+            "latex": "T",
+            "meaning": "temporary query name"
+          },
+          {
+            "latex": "Q",
+            "meaning": "query defining the intermediate relation"
+          }
+        ],
+        "sourceType": "lecture",
+        "sourceRefs": [
+          {
+            "sourceId": "DSA5104/chapter3.pdf",
+            "page": 79,
+            "sourceType": "lecture",
+            "role": "WITH clause",
+            "status": "current"
+          }
+        ]
+      },
+      {
+        "latex": "\\text{UPDATE }R\\text{ SET }a:=f(a)\\text{ WHERE }P",
+        "name": "Mutation scope",
+        "purpose": "Use WHERE to identify rows before applying an UPDATE assignment.",
+        "explanation": "The SET expression changes values; the WHERE predicate controls which tuples are eligible.",
+        "symbols": [
+          {
+            "latex": "R",
+            "meaning": "relation being updated"
+          },
+          {
+            "latex": "a",
+            "meaning": "attribute being assigned"
+          },
+          {
+            "latex": "f(a)",
+            "meaning": "new value expression"
+          },
+          {
+            "latex": "P",
+            "meaning": "row-selection predicate"
+          }
+        ],
+        "sourceType": "lecture",
+        "sourceRefs": [
+          {
+            "sourceId": "DSA5104/chapter3.pdf",
+            "page": 91,
+            "sourceType": "lecture",
+            "role": "UPDATE",
+            "status": "current"
+          }
+        ]
+      }
   ],
   "criticalQuestions": [
     {
