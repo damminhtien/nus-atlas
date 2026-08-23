@@ -6,6 +6,10 @@ and refresh first-party asset URLs so browsers and the service worker pick up th
 
 ## [Unreleased]
 
+## [0.2.68] - 2026-08-23
+
+- Fix private Blob snapshot writes for cross-device progress sync.
+
 ## [0.2.67] - 2026-08-23
 
 - Deploy the loopback sync CORS fix through the Vercel API build.
