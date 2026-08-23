@@ -6,6 +6,10 @@ and refresh first-party asset URLs so browsers and the service worker pick up th
 
 ## [Unreleased]
 
+## [0.2.54] - 2026-08-23
+
+- Publish assessment and study-content audit
+
 ## [0.2.53] - 2026-08-23
 
 - Suppress workflow-only Git and deploy action warnings
