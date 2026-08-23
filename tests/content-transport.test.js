@@ -31,7 +31,8 @@ test("transport loads a small catalog, then course and lesson shards", async () 
   assert.equal(loadedManifest.courses.length, 4);
   const course = await transport.loadCourse("DSA5105");
   assert.equal(course.course.code, "DSA5105");
-  assert.equal(course.content.modules.length, 5);
+  assert.equal(course.content.modules.length, 4);
+  assert.deepEqual(course.content.collections.map(collection => collection.id), ["dsa5105-exam-core"]);
   const lesson = await transport.loadLesson("DSA5105", "dsa5105-erm");
   assert.equal(lesson.lesson.id, "dsa5105-erm");
   assert.ok(lesson.questions.length > 0);
