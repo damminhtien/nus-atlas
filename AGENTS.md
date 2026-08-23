@@ -96,6 +96,7 @@ the focused workflow cannot answer the question or validate the change.
 - `npm run content:build` compiles canonical JSON into content-addressed `dist/content/**`; it must leave `content/**`, `src/**`, and `schemas/**` byte-for-byte unchanged.
 - Keep the small catalog/outline payload separate from lesson, question, and study-kit shards. Do not restore the old all-course bundle pattern.
 - Runtime feature registries are `ATLAS_*` composition symbols; do not introduce new `window.NUS_*` production globals.
+- Account sync may upload only an explicit whitelist of Atlas-owned study state. Never read or upload Chrome cookies, history, saved passwords, or unrelated browser-profile data. Store authentication secrets as server-side Vercel environment variables; never commit passwords, password hashes, tokens, or session secrets.
 - `npm run check:affected` computes changed course packages and runs the safe contract/test loop; `npm run check:full` is the full release gate.
 - `npm run schemas:validate` checks compiled discriminated payloads and namespaced entity keys. Run it after `npm run content:build`.
 - `npm run graphify:code` and `npm run graphify:content` are explicit scoped updates; `npm run graphify:full` is reserved for architecture review.

@@ -56,6 +56,7 @@ Useful routes:
 
 See [the DSA5101 study guide](docs/DSA5101_STUDY_GUIDE.md), [the DSA5104 study guide](docs/DSA5104_STUDY_GUIDE.md), and [the DSA5208 study guide](docs/DSA5208_STUDY_GUIDE.md) for course-specific source boundaries and A+ study loops. See [the gamification and visual-learning plan](docs/NUS_GAMIFICATION.md) for the event ledger, reward safeguards, component contract, and reusable course templates.
 See the [DSA5105 assessment map](docs/DSA5105_ASSESSMENT_MAP.md) for the exam/homework-to-lesson coverage index.
+See [cross-device account sync](docs/ACCOUNT_SYNC.md) for the private Vercel storage model, supported Atlas state, and deployment secrets.
 
 On a lesson route, use **Focus reading** to remove the sidebar, top bar, and source rail temporarily. The study compass jumps to the lecture notes, worked examples, assumption checks, or recall prompts without losing your reading position.
 
@@ -152,6 +153,7 @@ The Pages workflow runs `node prerender.js` in CI, creates the static `dist/` ar
 - `src/features/nus/planner.js` / `src/features/nus/exam.js` — isolated planner and Exam Mode features.
 - `src/features/nus/retrieval.js` — adaptive 1–2 question spaced-retrieval session.
 - `src/features/nus/retrieval-grader.js` / `api/grade.js` — optional external Gemini grader for textbox answers; the API key stays server-side.
+- `src/core/sync-client.js` / `api/sync.js` — authenticated cross-device sync for Atlas-owned study state; browser-profile data is out of scope.
 - `src/ui/labs/registry.js` — visual-learning lab plugin registry.
 - `js/nus.js` — NUS views using the repository boundary.
 - `js/nus-store.js` — local study progress and attempts.
