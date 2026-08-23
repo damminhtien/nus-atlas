@@ -84,11 +84,13 @@
   function updateMastery(event) {
     if (!event.lessonId) return;
     const current = state.mastery[event.lessonId] || { score: 0, attempts: 0, correct: 0, lastAt: null };
-    const delta = { lesson_complete: 0.35, recall_correct: 0.12, retrieval_failed: -0.08, exam_submitted: 0.15, simulation_completed: 0.18, worked_example: 0.12, mistake_redeemed: 0.18 }[event.type] || 0;
+    // Submitting an attempt is a behavioural/quest event, not evidence of
+    // knowing the lesson. Mastery must come from the scored evidence events.
+    const delta = { lesson_complete: 0.35, recall_correct: 0.12, retrieval_failed: -0.08, simulation_completed: 0.18, worked_example: 0.12, mistake_redeemed: 0.18 }[event.type] || 0;
     if (!delta) return;
     current.score = Math.max(0, Math.min(1, Number((current.score + delta).toFixed(3))));
     current.attempts += 1;
-    if (["recall_correct", "exam_submitted", "simulation_completed", "worked_example", "mistake_redeemed"].includes(event.type)) current.correct += 1;
+    if (["recall_correct", "simulation_completed", "worked_example", "mistake_redeemed"].includes(event.type)) current.correct += 1;
     current.lastAt = event.at;
     state.mastery[event.lessonId] = current;
     if (current.score >= 0.8) ensureRetrievalSchedule(event.lessonId, event.courseCode);

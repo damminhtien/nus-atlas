@@ -83,6 +83,17 @@ test("study store keeps evidence idempotent and updates mastery", () => {
   assert.equal(store.masteryFor("lesson1").score, 0.12);
 });
 
+test("submitting an exam never creates mastery evidence", () => {
+  const store = createStudyStore({ storage: memoryStorage(), now: () => new Date("2026-08-15T10:00:00.000Z") });
+
+  store.recordAttempt({ attemptId: "zero", mode: "exam", courseCode: "DSA5105", lessonId: "lesson1", score: 0, total: 5 });
+  assert.deepEqual(store.masteryFor("lesson1"), { score: 0, attempts: 0, correct: 0, lastAt: null });
+
+  store.recordAttempt({ attemptId: "perfect", mode: "exam", courseCode: "DSA5105", lessonId: "lesson1", score: 5, total: 5 });
+  assert.deepEqual(store.masteryFor("lesson1"), { score: 0, attempts: 0, correct: 0, lastAt: null });
+  assert.equal(store.events().filter(event => event.type === "exam_submitted").length, 2);
+});
+
 test("study store schedules mastered concepts and adapts retrieval intervals", () => {
   let now = new Date("2026-08-15T10:00:00.000Z");
   const store = createStudyStore({ storage: memoryStorage(), now: () => now });
