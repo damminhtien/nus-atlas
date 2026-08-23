@@ -6,6 +6,10 @@ and refresh first-party asset URLs so browsers and the service worker pick up th
 
 ## [Unreleased]
 
+## [0.2.67] - 2026-08-23
+
+- Deploy the loopback sync CORS fix through the Vercel API build.
+
 ## [0.2.66] - 2026-08-23
 
 - Allow local Atlas progress sync without replacing production CORS.
