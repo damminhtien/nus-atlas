@@ -32,6 +32,11 @@ test("lesson primary action is state-driven and slides stay in More", () => {
   assert.doesNotMatch(nusSource, /const primaryHref = slideSet/);
 });
 
+test("lesson in-page navigation never falls through to the SPA router", () => {
+  assert.match(nusSource, /\[data-nus-lab-anchor\], \[data-nus-jump\]/);
+  assert.match(nusSource, /event\.preventDefault\(\);[\s\S]*?const targetId = link\.dataset\.nusLabAnchor \|\| link\.dataset\.nusJump/);
+});
+
 test("mobile course rows retain a compact progress percentage", () => {
   assert.match(styles, /\.nus-course-directory-row > div:nth-of-type\(2\) strong/);
   assert.doesNotMatch(styles, /\.nus-course-directory-row > div:nth-of-type\(2\) \{ display:none; \}/);

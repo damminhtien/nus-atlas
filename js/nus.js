@@ -479,19 +479,21 @@
       setReaderMode(!readerModeOn());
       renderLesson(code, id);
     });
-    root.querySelectorAll("[data-nus-lab-anchor]").forEach(link => link.addEventListener("click", event => {
+    root.querySelectorAll("[data-nus-lab-anchor], [data-nus-jump]").forEach(link => link.addEventListener("click", event => {
+      // These are in-page reading controls, not SPA routes. Without preventing
+      // the default hash update, #nus-lesson-* is sent to the router and lands
+      // on the generic not-found screen after it has already scrolled here.
       event.preventDefault();
-      const target = document.getElementById(link.dataset.nusLabAnchor);
+      const targetId = link.dataset.nusLabAnchor || link.dataset.nusJump;
+      const target = document.getElementById(targetId);
       if (!target) return;
       target.scrollIntoView({ behavior: "smooth", block: "start" });
+      if (!link.dataset.nusLabAnchor) return;
       const heading = target.querySelector("h3");
       if (heading) {
         heading.setAttribute("tabindex", "-1");
         try { heading.focus({ preventScroll: true }); } catch (_) { heading.focus(); }
       }
-    }));
-    root.querySelectorAll("[data-nus-jump]").forEach(buttonEl => buttonEl.addEventListener("click", () => {
-      document.getElementById(buttonEl.dataset.nusJump)?.scrollIntoView({ behavior: "smooth", block: "start" });
     }));
     bindVisualCueProgress();
   }
