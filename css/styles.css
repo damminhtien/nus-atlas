@@ -1427,7 +1427,8 @@ a.gloss-item:hover .gloss-go, a.gloss-item:focus-visible .gloss-go { opacity: 1;
 .nus-course-meta { display:flex; flex-wrap:wrap; align-items:center; gap:12px 22px; padding:14px 0 24px; color:var(--ink-mute); font-size:13px; }
 .nus-course-meta .btn { margin-left:auto; }
 .nus-course-layout, .nus-lesson-grid, .nus-sql-layout { display:grid; grid-template-columns:minmax(0, 1.65fr) minmax(260px, .8fr); gap:22px; }
-.nus-course-progress { padding:16px 18px; margin-bottom:18px; border:1px solid var(--line); border-radius:var(--radius); background:var(--bg-2); }
+.nus-course-progress { display:grid; gap:8px; padding:16px 18px; margin-bottom:18px; border:1px solid var(--line); border-radius:var(--radius); background:var(--bg-2); }
+.nus-course-progress > .nus-muted { display:block; }
 .nus-module { margin:0 0 24px; }
 .nus-module .eyebrow { margin:0 0 8px; }
 .nus-lesson-row { padding:17px 10px; }
@@ -1585,6 +1586,22 @@ a.gloss-item:hover .gloss-go, a.gloss-item:focus-visible .gloss-go { opacity: 1;
 .nus-exam-count { display:grid; gap:4px; padding:10px; border:1px solid var(--line); border-radius:8px; font-size:12px; }
 .nus-exam-count b { color:var(--gold); font:11px var(--font-mono); }
 .nus-exam-count span, .nus-exam-count small { color:var(--ink-mute); }
+.nus-exam-schedule-overlay { position:fixed; inset:0; z-index:270; display:grid; place-items:center; padding:20px; background:color-mix(in srgb, #061a33 76%, transparent); backdrop-filter:blur(8px); animation:fade .2s; }
+.nus-exam-schedule-card { width:min(780px, 100%); max-height:min(820px, calc(100vh - 40px)); overflow:auto; padding:clamp(22px, 4vw, 34px); border:1px solid color-mix(in srgb, var(--gold) 52%, var(--line)); border-radius:20px; background:linear-gradient(160deg, var(--panel), var(--panel-2)); box-shadow:0 30px 90px -28px #061a33; animation:rise .35s both; }
+.nus-exam-schedule-head { display:flex; align-items:flex-start; justify-content:space-between; gap:18px; }
+.nus-exam-schedule-head h2 { margin:5px 0 0; color:var(--ink); font-family:var(--font-disp); font-size:clamp(28px, 4vw, 42px); line-height:1.05; }
+.nus-exam-schedule-close { width:34px; height:34px; border:1px solid var(--line); border-radius:50%; background:transparent; color:var(--ink-soft); font-size:24px; line-height:1; cursor:pointer; }
+.nus-exam-schedule-close:hover { border-color:var(--gold); color:var(--gold); }
+.nus-exam-schedule-lead { max-width:650px; margin:16px 0 20px; color:var(--ink-soft); line-height:1.65; }
+.nus-exam-schedule-list { display:grid; gap:10px; }
+.nus-exam-schedule-row { display:flex; align-items:center; justify-content:space-between; gap:18px; padding:15px 16px; border:1px solid var(--line); border-radius:13px; background:color-mix(in srgb, var(--bg-2) 72%, transparent); }
+.nus-exam-schedule-row h3 { margin:4px 0 4px; color:var(--ink); font-family:var(--font-disp); font-size:20px; }
+.nus-exam-schedule-row p { margin:0; color:var(--ink-mute); font-size:13px; }
+.nus-exam-schedule-count { min-width:166px; text-align:right; }
+.nus-exam-schedule-count b { display:block; color:var(--gold); font:18px var(--font-mono); letter-spacing:-.4px; }
+.nus-exam-schedule-count small { display:block; margin-top:5px; color:var(--ink-mute); font-size:12px; }
+.nus-exam-schedule-actions { display:flex; justify-content:flex-end; gap:10px; flex-wrap:wrap; margin-top:22px; }
+.nus-exam-schedule-note { margin:16px 0 0; font-size:12px; }
 .nus-delivery-trace { display:grid; gap:6px; margin-top:14px; }
 .nus-delivery-trace span { padding:7px 9px; border-left:2px solid var(--violet); background:var(--bg); color:var(--ink-soft); font:12px var(--font-mono); }
 .nus-kit-stats { display:flex; flex-wrap:wrap; gap:9px; margin:0 0 14px; }
@@ -1718,6 +1735,7 @@ body.nus-reading-mode .nus-study-compass { position:sticky; top:16px; z-index:20
 @media (max-width: 1050px) { #app.nus-root .nus-grid-4 { grid-template-columns:repeat(2, minmax(0, 1fr)); } #app.nus-root .nus-course-layout, #app.nus-root .nus-lesson-grid, #app.nus-root .nus-sql-layout { grid-template-columns:1fr; } #app.nus-root .nus-lesson-grid > aside { position:static; grid-template-columns:repeat(2, minmax(0, 1fr)); } }
 @media (max-width: 760px) { .topbar-context, .level-meta, .xp-wrap { display:none; } .topbar { justify-content:space-between; } #app.nus-root { padding:28px 18px 84px; } .nus-reader-toggle { margin-left:0; } .nus-study-compass { grid-template-columns:repeat(2, minmax(0, 1fr)); } #app.nus-root .nus-lesson-grid > aside { grid-template-columns:1fr; } }
 @media (max-width: 700px) { .nus-hero, .nus-two-col, .nus-sim-grid { grid-template-columns:1fr; display:grid; } .nus-grid-4 { grid-template-columns:1fr; } .nus-teach-card, .nus-example { padding:18px; } .nus-assessment-controls, .nus-exam-footer { align-items:flex-start; flex-direction:column; } .nus-source { text-align:left; } .nus-assessment-head { align-items:flex-start; flex-direction:column; } .nus-assessment-meta { text-align:left; } .nus-course-meta .btn { margin-left:0; } .nus-date { white-space:normal; } .nus-pipeline i { display:none; } .nus-exam-counts { grid-template-columns:1fr; } .nus-lesson-nav { align-items:stretch; flex-direction:column; } }
+@media (max-width: 560px) { .nus-exam-schedule-row { align-items:flex-start; flex-direction:column; } .nus-exam-schedule-count { min-width:0; text-align:left; } .nus-exam-schedule-actions { justify-content:stretch; } .nus-exam-schedule-actions .btn { flex:1; text-align:center; } }
 
 /* Evidence-based study loop and reusable visual-learning labs. */
 .nus-learning-signals { align-items:start; margin-top:20px; }

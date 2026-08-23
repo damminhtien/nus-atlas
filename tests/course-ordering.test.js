@@ -1,5 +1,6 @@
 const test = require("node:test");
 const assert = require("node:assert/strict");
+const fs = require("node:fs");
 const { compileCourse, loadCourseSource, compileCourseSource } = require("../tools/content-compiler");
 
 test("DSA5105 keeps topic modules separate from its chronological lecture timeline", () => {
@@ -40,4 +41,12 @@ test("compiler rejects a partial canonical timeline", () => {
     course: { ...source.course, timelineLessonIds: source.course.timelineLessonIds.slice(1) }
   };
   assert.throws(() => compileCourseSource(broken, "DSA5105"), /Canonical timeline is invalid/);
+});
+
+test("NUS course UI renders the canonical timeline and collection route", () => {
+  const source = fs.readFileSync("js/nus.js", "utf8");
+  assert.match(source, /function courseTimeline\(code\)/);
+  assert.match(source, /catalog\.timelineLessonIds/);
+  assert.match(source, /collection: \(parts, context\) => renderCollection/);
+  assert.doesNotMatch(source, /lessonsByWeek/);
 });
