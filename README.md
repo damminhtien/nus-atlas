@@ -120,6 +120,16 @@ node prerender.js
 git diff --check
 ```
 
+For local development, do not open `index.html` directly. The canonical content
+runtime needs HTTP fetches for the generated manifest and lazy shards:
+
+```bash
+npm run dev       # build content shards, then start Vite
+npm run build     # generate the deployable Pages artifact in dist/
+```
+
+Direct `file://` opening is intentionally not a supported runtime contract.
+
 `nus-gate.js` verifies that all 43 NUS lessons have a LaTeX formula model, formula explanations, source labels, and at least two critical-thinking questions. `data/nus/formula-depth.js` contains the shared formula and critique layer; lecture, textbook, and reference content remains visibly separated.
 
 ### Strict authored-math rule

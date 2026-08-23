@@ -3,6 +3,8 @@
   "private": true,
   "version": "0.2.49",
   "scripts": {
+    "dev": "npm run content:build && vite",
+    "build": "node prerender.js",
     "content:build": "node scripts/content-build.js --all",
     "content:validate": "node scripts/validate-content.js",
     "content:migrate:legacy": "node tools/migrations/legacy-nus/import.js",

@@ -76,7 +76,7 @@ function nusLessonPage(course, module, lesson) {
 
 // ---- per-lesson page template ----
 const FONTS = 'https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300..900;1,9..144,300..900&family=Spectral:ital,wght@0,300;0,400;0,500;0,600;1,400&family=JetBrains+Mono:wght@400;500;700&display=swap';
-const KATEX = '0.16.11';
+const KATEX = '0.16.21';
 
 const PAGE_CSS = `
 *{box-sizing:border-box}
