@@ -37,6 +37,13 @@ test('normalizing authored text is idempotent and fail-closed', () => {
   assert.equal(normalizeText(normalizeText(valid)), normalizeText(valid));
 });
 
+test('normalizes informal hat suffixes into widehat notation', () => {
+  assert.equal(normalizeText('$R_hat(w)=1/N$'), '$\\widehat{R}(w)=1/N$');
+  assert.equal(normalizeText('$w_hat=(X^\\top X)^-1X^\\top y$'), '$\\widehat{w}=(X^\\top X)^-1X^\\top y$');
+  assert.equal(normalizeText('$y_hat_i=Hy$'), '$\\widehat{y}_{i}=Hy$');
+  assert.equal(normalizeText('$R_hat(w)=1/N$'), normalizeText(normalizeText('$R_hat(w)=1/N$')));
+});
+
 test('covers Atlas explanations and lab derivation steps as authored text', () => {
   assert.ok(AUTHORED_TEXT_KEYS.has('whatYouSee'));
   assert.ok(AUTHORED_TEXT_KEYS.has('steps'));

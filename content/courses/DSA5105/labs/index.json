@@ -127,17 +127,17 @@
       ],
       [
         "Loss",
-        "$R_hat(w)=1/N \\sum_{i} l(f_w(x_i),y_i)$",
+        "$\\widehat{R}(w)=\\frac{1}{N}\\sum_{i=1}^{N}\\ell(f_w(x_i),y_i)$",
         "ERM averages the observed losses; it does not directly reveal population risk."
       ],
       [
         "OLS",
-        "$w_hat=(X^\\top X)^-1 X^\\top y$",
+        "$\\widehat{w}=(X^\\top X)^{-1}X^\\top y$",
         "Full column rank is the assumption behind uniqueness."
       ],
       [
         "Ridge",
-        "$w_hat=(X^\\top X+\\lambda I)^-1 X^\\top y$",
+        "$\\widehat{w}=(X^\\top X+\\lambda I)^{-1}X^\\top y$",
         "The penalty stabilizes directions that OLS cannot identify well."
       ]
     ],
@@ -1510,12 +1510,12 @@
       ],
       [
         "Hat matrix",
-        "$y_hat=Hy$",
+        "$\\widehat{y}=Hy$",
         "The diagonal $H_{ii}$ measures self-influence or leverage."
       ],
       [
         "LOO",
-        "$e_i^LOO=(y_i-y_hat_i)/(1-H_ii)$",
+        "$e_i^{\\mathrm{LOO}}=\\frac{y_i-\\widehat{y}_i}{1-H_{ii}}$",
         "Correct the in-sample residual without refitting N separate models."
       ]
     ],
