@@ -6,6 +6,10 @@ and refresh first-party asset URLs so browsers and the service worker pick up th
 
 ## [Unreleased]
 
+## [0.2.42] - 2026-08-23
+
+- Repair assessment v2 CI validation.
+
 ## [0.2.41] - 2026-08-23
 
 - Confirm DSA5105 midterm schedule.
