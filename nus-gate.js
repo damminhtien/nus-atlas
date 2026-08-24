@@ -82,7 +82,7 @@ for (const packageData of packages) {
   });
 }
 
-const labTypes = new Set(["compare", "geometry", "math-stepper", "algorithm-trace", "derivation-trace", "event-timeline", "pipeline-builder", "concept-map", "decision-tree", "deep-dive"]);
+const labTypes = new Set(["compare", "geometry", "math-stepper", "algorithm-trace", "derivation-trace", "event-timeline", "pipeline-builder", "concept-map", "decision-tree", "delivery-guarantee", "deep-dive"]);
 for (const packageData of packages) for (const [id, lab] of Object.entries(packageData.labs || {})) if (!labTypes.has(lab.type)) errors.push(`unknown visual lab type: ${id}`);
 const publicFiles = ["js/nus.js", "js/nus-store.js", "js/nus-components.js", "src/app/bootstrap.js", "src/core/content/transport.js", "src/core/content/repository.js"];
 const publicText = publicFiles.map(file => fs.readFileSync(path.join(ROOT, file), "utf8"));
