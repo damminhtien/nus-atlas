@@ -288,7 +288,7 @@
   "dsa5208-communication-ordering": {
     "courseCode": "DSA5208",
     "lessonId": "dsa5208-communication-ordering",
-    "type": "compare",
+    "type": "delivery-guarantee",
     "title": "Delivery-guarantee explorer",
     "learningGoal": "Choose the weakest delivery guarantee that preserves an application invariant.",
     "sourceRefs": [
@@ -352,6 +352,34 @@
       ],
       "reference": []
     },
+    "invariant": "A process broadcasts an update after observing a causally earlier update; every receiver must deliver the earlier update first.",
+    "splits": [
+      {
+        "id": "best-effort",
+        "label": "Best effort",
+        "scope": "No ordering",
+        "detail": "May deliver messages in arbitrary order; it cannot preserve the causal dependency."
+      },
+      {
+        "id": "fifo",
+        "label": "FIFO channel",
+        "scope": "One sender",
+        "detail": "Preserves one sender's broadcast sequence, but not a dependency crossing processes."
+      },
+      {
+        "id": "causal",
+        "label": "Causal delivery",
+        "scope": "Happens-before",
+        "detail": "Preserves the observed-before-broadcast dependency without forcing one order on concurrent messages."
+      },
+      {
+        "id": "total",
+        "label": "Total order",
+        "scope": "All processes",
+        "detail": "Also orders concurrent messages globally, which is stronger than this invariant requires."
+      }
+    ],
+    "requiredChoice": "causal",
     "initialState": {
       "value": 55
     },

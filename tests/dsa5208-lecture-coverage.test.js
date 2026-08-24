@@ -54,3 +54,14 @@ test("DSA5208 visual labs render configured Lecture 2 and 3 algorithms", () => {
   assert.match(consistency, /Digest read repair/);
   assert.doesNotMatch(consistency, /Roadmap-to-measurement|Week 1 derivation/);
 });
+
+test("DSA5208 delivery ordering uses a guarantee-specific lab", () => {
+  const packageData = coursePackage("DSA5208");
+  const lab = packageData.labs["dsa5208-communication-ordering"];
+  assert.equal(lab.type, "delivery-guarantee");
+  assert.equal(lab.requiredChoice, "causal");
+  const html = renderLab("dsa5208-communication-ordering");
+  assert.match(html, /Application invariant/);
+  assert.match(html, /FIFO channel|Causal delivery|Total order/);
+  assert.doesNotMatch(html, /Model complexity|Training risk|Validation risk/);
+});
