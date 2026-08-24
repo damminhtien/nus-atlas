@@ -1,6 +1,6 @@
 # DSA5208 study guide
 
-DSA5208 is the current NUS Atlas focus course. The package contains twelve source-backed lessons across foundations, event ordering, logical clocks, broadcast, shortest paths, and synchronizers, plus page-aware readers for the supplied Lecture 0 overview, Lecture 1 times lecture, and Lecture 2.
+DSA5208 is the current NUS Atlas focus course. The package contains twelve source-backed lessons across foundations, event ordering, logical clocks, broadcast, synchronizers, and consistency models, plus page-aware readers for the supplied Lecture 0 overview, Lecture 1 times lecture, Lecture 2, and Lecture 3.
 
 Assessment note: the course is 100% project-based with weights 30%, 35%, and 35%; it has no midterm or final exam. The Planner tracks the three projects, while Exam Mode remains practice-only for retrieval.
 
@@ -11,10 +11,11 @@ The local source folder currently supplies:
 - `DSA5208/Lec0.pdf` — 16 slides covering assessment/project context, distributed-system motivation, challenges, and the first six lecture themes.
 - `DSA5208/Lec1.pdf` — 36 slides covering event histories, happens-before, delivery ordering, physical clocks, Lamport clocks, vector clocks, and differential timestamp storage.
 - `DSA5208/Lec2.pdf` — 58 slides covering broadcast, the shortest-path problem, synchronizers, and the Lecture 2 summary.
+- `DSA5208/Lec3.pdf` — 61 slides covering linearizability, sequential consistency, causal consistency, eventual consistency, client-centric consistency guarantees, and database-system examples from MongoDB and ScyllaDB.
 
 The Atlas preserves each slide's `sourceId`, page, block type, bounding box, image ID, and parser reference in `data/extracted/DSA5208/`. The normalized JSON is the source of truth; the derived Markdown is only a reading view. Raw PDFs remain outside the repository.
 
-The Lec0 roadmap mentions consistency, Spark, MLlib, GPU, and cloud computing. Those topics are represented as explicitly labeled context/frontier notes, not as invented lecture derivations. Add the corresponding official lecture or exercise source before promoting them to core coverage. The textbook and Lamport paper entries are pointers for depth, not substitutes for missing official slides.
+Consistency is now backed by `DSA5208/Lec3.pdf`. The Lec0 roadmap still mentions Spark, MLlib, GPU, and cloud computing as later topics; those remain explicitly labeled context/frontier notes until their official lecture or exercise sources are supplied. The textbook and Lamport paper entries are pointers for depth, not substitutes for missing official slides.
 
 ## Learning package
 
@@ -27,9 +28,12 @@ Each lesson has lecture-first notes, a source lens, worked reasoning, Socratic q
 - Lamport scalar vs vector time;
 - comparable vs incomparable vectors;
 - full vs compressed timestamps and quadratic vs linear metadata storage;
+- linearizability vs sequential consistency;
+- causal consistency vs eventual consistency;
+- read-your-writes vs monotonic reads;
 - partition-local work vs shuffle, and roadmap context vs supplied derivation.
 
-Use **Focus reading** for the lesson, the three slide-reader routes for parallel source inspection, **Exam Mode** for 5–15 question runs, **Concept contrasts** for 30–60 second distinction drills, and **Spaced retrieval** for one or two due prompts without reopening the lesson.
+Use **Focus reading** for the lesson, the four slide-reader routes for parallel source inspection, **Exam Mode** for 5–15 question runs, **Concept contrasts** for 30–60 second distinction drills, and **Spaced retrieval** for one or two due prompts without reopening the lesson.
 
 ## Recommended order
 
@@ -40,7 +44,10 @@ Use **Focus reading** for the lesson, the three slide-reader routes for parallel
 5. Trace Lamport scalar updates and state the one-way guarantee.
 6. Trace vector updates and compare vectors componentwise, never lexicographically.
 7. Finish with compressed timestamps and their storage/correctness trade-off.
-8. Study broadcast, shortest paths, and synchronizers from Lec2; keep the Lec0 roadmap lesson as a scope checkpoint for later official sources.
+8. Study broadcast, shortest paths, and synchronizers from Lec2.
+9. Compare linearizability, sequential consistency, causal consistency, and eventual consistency from Lec3 before moving to client-centric guarantees.
+10. Use the MongoDB and ScyllaDB pages to separate concern levels, session guarantees, and repair mechanisms.
+11. Keep Spark, MLlib, GPU, and cloud as roadmap checkpoints until their official sources arrive.
 
 ## Validation
 
