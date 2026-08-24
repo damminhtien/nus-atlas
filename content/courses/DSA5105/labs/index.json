@@ -3,6 +3,7 @@
     "courseCode": "DSA5105",
     "lessonId": "dsa5105-erm",
     "type": "compare",
+    "mode": "model-risk",
     "title": "Train–validation gap lab",
     "learningGoal": "Use a held-out validation signal to choose a model complexity instead of celebrating training fit alone.",
     "sourceRefs": [
@@ -655,6 +656,7 @@
     "courseCode": "DSA5105",
     "lessonId": "dsa5105-learning-theory",
     "type": "decision-tree",
+    "mode": "evaluation",
     "title": "Generalization decision tree",
     "learningGoal": "Choose the next evaluation move when training fit and held-out evidence disagree.",
     "sourceRefs": [
@@ -711,6 +713,7 @@
     "courseCode": "DSA5105",
     "lessonId": "dsa5105-linear-regularization",
     "type": "compare",
+    "mode": "model-risk",
     "title": "Regularization trade-off explorer",
     "learningGoal": "Compare fit and complexity as a penalty changes the model's bias–variance trade-off.",
     "sourceRefs": [
@@ -869,6 +872,12 @@
     "type": "algorithm-trace",
     "title": "GMM / EM trace",
     "learningGoal": "Follow how soft assignments and parameter updates alternate until the likelihood stabilizes.",
+    "steps": [
+      ["Initialise", "Choose initial mixture weights, means, and covariances.", "Start with a parameter guess rather than a final cluster assignment."],
+      ["E-step", "Compute a soft responsibility for each component and observation.", "Measure how much each component currently explains each observation."],
+      ["M-step", "Re-estimate parameters using the current responsibilities.", "Update weights, means, and covariances from the soft assignments."],
+      ["Check", "Stop when the likelihood change is small; otherwise alternate again.", "The alternating trace is complete only when the objective stabilizes."]
+    ],
     "sourceRefs": [
       {
         "sourceId": "DSA5105/Lec1_annotated.pdf",
@@ -1601,6 +1610,12 @@
     "type": "event-timeline",
     "title": "Bellman backup timeline",
     "learningGoal": "Separate immediate reward from discounted continuation value in one decision step.",
+    "steps": [
+      ["State s", "Choose the current state and action.", "Name the decision point before computing its return."],
+      ["Reward r", "Observe the immediate reward from the transition.", "Keep the local outcome separate from future value."],
+      ["Next state s'", "Estimate the discounted continuation value.", "Use the next state to represent what may follow."],
+      ["Backup", "Combine immediate reward with discounted future value.", "The Bellman equation joins local evidence with the continuation estimate."]
+    ],
     "sourceRefs": [
       {
         "sourceId": "DSA5105/Lec1_annotated.pdf",

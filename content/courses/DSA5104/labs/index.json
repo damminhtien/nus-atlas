@@ -210,6 +210,7 @@
     "courseCode": "DSA5104",
     "lessonId": "dsa5104-database-design",
     "type": "decision-tree",
+    "mode": "generic",
     "title": "ER-to-relational design studio",
     "learningGoal": "Choose the relation structure that preserves multiplicity and constraints.",
     "sourceRefs": [
@@ -264,19 +265,19 @@
       {
         "id": "one-many",
         "label": "One-to-many",
-        "impurity": 15,
+        "scope": "Foreign key on many side",
         "detail": "Put the referenced key on the many-side relation."
       },
       {
         "id": "many-many",
         "label": "Many-to-many",
-        "impurity": 22,
+        "scope": "Relationship relation",
         "detail": "Create a relationship relation with both keys."
       },
       {
         "id": "physical",
         "label": "Storage choice",
-        "impurity": 70,
+        "scope": "Not the first design move",
         "detail": "Do not choose indexes before the logical meaning is clear."
       }
     ],
@@ -567,6 +568,7 @@
     "courseCode": "DSA5104",
     "lessonId": "dsa5104-semi-structured",
     "type": "compare",
+    "mode": "choice",
     "title": "Schema flexibility explorer",
     "learningGoal": "Choose a representation by weighing nesting, validation timing, and execution cost.",
     "sourceRefs": [
@@ -623,9 +625,27 @@
       ],
       "reference": []
     },
-    "initialState": {
-      "flexibility": 55
-    },
+    "options": [
+      {
+        "id": "relational",
+        "label": "Relational schema",
+        "scope": "Explicit structure",
+        "detail": "Validates shape and constraints before queries, but nested data needs deliberate decomposition."
+      },
+      {
+        "id": "document",
+        "label": "Document model",
+        "scope": "Nested records",
+        "detail": "Accepts flexible nested input, while validation and cross-record work move closer to query time."
+      },
+      {
+        "id": "hybrid",
+        "label": "Hybrid representation",
+        "scope": "Stable core + flexible edge",
+        "detail": "Keeps critical relationships explicit and leaves irregular attributes flexible where the workload needs it."
+      }
+    ],
+    "requiresChoice": true,
     "reducedMotion": true,
     "explanation": "More ingestion flexibility can be useful for nested data, but it shifts agreement and validation work toward query time."
   }

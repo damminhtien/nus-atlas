@@ -195,6 +195,7 @@
     "courseCode": "DSA5208",
     "lessonId": "dsa5208-happens-before",
     "type": "decision-tree",
+    "mode": "generic",
     "title": "Causal-edge checker",
     "learningGoal": "Choose the rule that justifies a proposed happens-before edge.",
     "sourceRefs": [
@@ -256,25 +257,25 @@
       {
         "id": "local",
         "label": "Same process",
-        "impurity": 12,
+        "scope": "Local order",
         "detail": "Use local event order."
       },
       {
         "id": "message",
         "label": "Send to receive",
-        "impurity": 18,
+        "scope": "Message edge",
         "detail": "Use message send-before-receive."
       },
       {
         "id": "chain",
         "label": "Causal chain",
-        "impurity": 22,
+        "scope": "Transitive closure",
         "detail": "Use transitive closure."
       },
       {
         "id": "none",
         "label": "No edge",
-        "impurity": 70,
+        "scope": "Concurrency check",
         "detail": "Check the reverse direction before calling events concurrent."
       }
     ],
@@ -380,8 +381,9 @@
       }
     ],
     "requiredChoice": "causal",
+    "incorrectChoiceMessage": "That guarantee does not preserve the stated invariant",
     "initialState": {
-      "value": 55
+      "choice": null
     },
     "reducedMotion": true,
     "explanation": "Move toward stronger guarantees only when the application invariant needs more than arbitrary or per-channel delivery order."
@@ -663,6 +665,7 @@
     "courseCode": "DSA5208",
     "lessonId": "dsa5208-compressed-timestamps",
     "type": "compare",
+    "mode": "choice",
     "title": "Timestamp-storage explorer",
     "learningGoal": "Compare full vectors, receiver-specific deltas, and differential metadata state.",
     "sourceRefs": [
@@ -726,9 +729,27 @@
       ],
       "reference": []
     },
-    "initialState": {
-      "value": 55
-    },
+    "options": [
+      {
+        "id": "full-vector",
+        "label": "Full vector",
+        "scope": "Exact causal state",
+        "detail": "Stores one counter per process, making comparison direct while metadata grows with the process count."
+      },
+      {
+        "id": "receiver-delta",
+        "label": "Receiver-specific delta",
+        "scope": "Known baseline + changes",
+        "detail": "Sends only counters changed since the receiver's baseline, but both sides must maintain compatible state."
+      },
+      {
+        "id": "differential",
+        "label": "Differential metadata",
+        "scope": "Sparse updates",
+        "detail": "Reuses a prior metadata state and transmits increments; decoding depends on a valid base state."
+      }
+    ],
+    "requiresChoice": true,
     "reducedMotion": true,
     "explanation": "More compression can reduce communication and storage, but it requires carefully maintained receiver-specific state."
   },
@@ -888,7 +909,7 @@
   "dsa5208-broadcast": {
     "courseCode": "DSA5208",
     "lessonId": "dsa5208-broadcast",
-    "type": "compare",
+    "type": "delivery-guarantee",
     "title": "Broadcast guarantee selector",
     "learningGoal": "Choose the weakest broadcast guarantee that preserves the application's ordering invariant.",
     "sourceRefs": [
@@ -944,33 +965,35 @@
       "textbook": [],
       "reference": []
     },
+    "invariant": "If a process broadcasts an update after observing an earlier update, every process must deliver the earlier update first; concurrent broadcasts need not share one global position.",
     "splits": [
       {
         "id": "fifo",
-        "label": "One sender channel",
-        "impurity": 20,
-        "detail": "Preserve the sender's broadcast sequence."
+        "label": "FIFO broadcast",
+        "scope": "One sender",
+        "detail": "Preserves the order of messages broadcast by one process, but not dependencies crossing processes."
       },
       {
         "id": "causal",
-        "label": "Cross-process dependency",
-        "impurity": 28,
-        "detail": "Preserve happens-before between broadcasts."
+        "label": "Causal broadcast",
+        "scope": "Happens-before",
+        "detail": "Preserves dependencies between broadcasts without imposing one order on concurrent messages."
       },
       {
         "id": "total",
-        "label": "One global sequence",
-        "impurity": 25,
-        "detail": "Make every process deliver all messages in the same order."
+        "label": "Total-order broadcast",
+        "scope": "All processes",
+        "detail": "Makes every process deliver all messages in one common order, including concurrent messages."
       },
       {
-        "id": "buffer",
-        "label": "Receive before deliver",
-        "impurity": 60,
-        "detail": "Hold a message until its delivery condition is safe."
+        "id": "fifo-total",
+        "label": "FIFO-total order",
+        "scope": "Global + sender order",
+        "detail": "Adds each sender's FIFO order to a common global order; it is stronger than the stated invariant."
       }
     ],
     "requiredChoice": "causal",
+    "incorrectChoiceMessage": "That guarantee does not preserve the stated invariant",
     "initialState": {
       "choice": null
     },
