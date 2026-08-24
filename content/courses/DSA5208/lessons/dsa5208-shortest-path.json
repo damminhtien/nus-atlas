@@ -156,6 +156,41 @@
           "status": "current"
         }
       ]
+    },
+    {
+      "title": "Distance-table trace",
+      "sourceType": "lecture",
+      "steps": [
+        "Initialize $d(s)=0$, $d(a)=\\infty$, and $d(b)=\\infty$.",
+        "Relax $s\\to a$ with weight $2$: the candidate is $0+2$, so set $d(a)=2$.",
+        "Relax $s\\to b$ with weight $7$: set the direct estimate $d(b)=7$.",
+        "When $a\\to b$ with weight $3$ is processed, compare $d(a)+3=5$ with $7$ and update $d(b)=5$.",
+        "A synchronous execution carries the improvement into the next round; an asynchronous execution can send it immediately."
+      ],
+      "answer": "The shortest estimate changes from $\\infty$ to $7$ and then to $5$; the recurrence is unchanged, but the schedule controls when the improvement propagates.",
+      "sourceRefs": [
+        {
+          "sourceId": "DSA5208/Lec2.pdf",
+          "page": 26,
+          "sourceType": "lecture",
+          "role": "synchronous Bellman-Ford",
+          "status": "current"
+        },
+        {
+          "sourceId": "DSA5208/Lec2.pdf",
+          "page": 30,
+          "sourceType": "lecture",
+          "role": "synchronous relaxation trace",
+          "status": "current"
+        },
+        {
+          "sourceId": "DSA5208/Lec2.pdf",
+          "page": 39,
+          "sourceType": "lecture",
+          "role": "asynchronous algorithm",
+          "status": "current"
+        }
+      ]
     }
   ],
   "contrastDrills": [
@@ -350,6 +385,25 @@
       ]
     },
     {
+      "id": "dsa5208-shortest-path-example-2",
+      "type": "worked-example",
+      "title": "Distance-table trace",
+      "sourceType": "lecture",
+      "steps": [
+        "Initialize $d(s)=0$, $d(a)=\\infty$, and $d(b)=\\infty$.",
+        "Relax $s\\to a$ with weight $2$: the candidate is $0+2$, so set $d(a)=2$.",
+        "Relax $s\\to b$ with weight $7$: set the direct estimate $d(b)=7$.",
+        "When $a\\to b$ with weight $3$ is processed, compare $d(a)+3=5$ with $7$ and update $d(b)=5$.",
+        "A synchronous execution carries the improvement into the next round; an asynchronous execution can send it immediately."
+      ],
+      "answer": "The shortest estimate changes from $\\infty$ to $7$ and then to $5$; the recurrence is unchanged, but the schedule controls when the improvement propagates.",
+      "sourceRefs": [
+        { "sourceId": "DSA5208/Lec2.pdf", "page": 26, "sourceType": "lecture", "role": "synchronous Bellman-Ford", "status": "current" },
+        { "sourceId": "DSA5208/Lec2.pdf", "page": 30, "sourceType": "lecture", "role": "synchronous relaxation trace", "status": "current" },
+        { "sourceId": "DSA5208/Lec2.pdf", "page": 39, "sourceType": "lecture", "role": "asynchronous algorithm", "status": "current" }
+      ]
+    },
+    {
       "id": "dsa5208-shortest-path-critical-1",
       "type": "critical-question",
       "prompt": "Why is a shortest-path broadcast more than simply sending the message to everyone?",
@@ -388,6 +442,8 @@
     "dsa5208-shortest-path-q1",
     "dsa5208-shortest-path-q2",
     "dsa5208-shortest-path-q3"
+    ,"dsa5208-shortest-path-q4"
+    ,"dsa5208-shortest-path-q5"
   ],
   "labIds": [
     "dsa5208-shortest-path"

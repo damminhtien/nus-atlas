@@ -46,5 +46,37 @@
     "visualHook": "Layer sender-local and global guarantees.",
     "sourceRefs": [{ "sourceId": "DSA5208/Lec2.pdf", "page": 17, "sourceType": "lecture", "role": "FIFO-total order broadcast", "status": "current" }],
     "schemaVersion": "nus.question.v1"
+  },
+  {
+    "id": "dsa5208-broadcast-q4",
+    "type": "mcq",
+    "prompt": "Process A broadcasts $m_1$ and then broadcasts $m_2$. Process B delivers $m_2$ before $m_1$. Which guarantee is violated?",
+    "choices": ["FIFO only", "Causal broadcast", "Eventual consistency", "No guarantee"],
+    "answer": 1,
+    "explanation": "The second broadcast depends on the first, so causal broadcast requires every process to deliver $m_1$ before $m_2$.",
+    "difficulty": "medium",
+    "skill": "classify",
+    "cognitiveLevel": "apply",
+    "estimatedSeconds": 60,
+    "misconception": "FIFO is sender-local; a causal dependency must still be identified even when the messages are delivered by another process.",
+    "visualHook": "Mark the causal arrow before inspecting the delivery lanes.",
+    "sourceRefs": [{ "sourceId": "DSA5208/Lec2.pdf", "page": 13, "sourceType": "lecture", "role": "causal broadcast", "status": "current" }],
+    "schemaVersion": "nus.question.v1"
+  },
+  {
+    "id": "dsa5208-broadcast-q5",
+    "type": "mcq",
+    "prompt": "Two processes broadcast concurrent updates, and every replica must display one identical sequence. Which guarantee is required?",
+    "choices": ["FIFO broadcast", "Causal broadcast", "Total order broadcast", "Best-effort broadcast"],
+    "answer": 2,
+    "explanation": "Concurrent messages are not ordered by causality, so a common sequence at every process requires total order broadcast.",
+    "difficulty": "medium",
+    "skill": "select-guarantee",
+    "cognitiveLevel": "apply",
+    "estimatedSeconds": 60,
+    "misconception": "Causal order can leave concurrent messages in different orders at different processes.",
+    "visualHook": "Compare the two possible concurrent delivery orders across replicas.",
+    "sourceRefs": [{ "sourceId": "DSA5208/Lec2.pdf", "page": 16, "sourceType": "lecture", "role": "total order broadcast", "status": "current" }],
+    "schemaVersion": "nus.question.v1"
   }
 ]

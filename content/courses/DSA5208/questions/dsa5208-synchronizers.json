@@ -46,5 +46,37 @@
     "visualHook": "Compare the simple and α protocols side by side.",
     "sourceRefs": [{ "sourceId": "DSA5208/Lec2.pdf", "page": 47, "sourceType": "lecture", "role": "alpha synchronizer", "status": "current" }, { "sourceId": "DSA5208/Lec2.pdf", "page": 49, "sourceType": "lecture", "role": "safe-to-proceed condition", "status": "current" }],
     "schemaVersion": "nus.question.v1"
+  },
+  {
+    "id": "dsa5208-synchronizers-q4",
+    "type": "mcq",
+    "prompt": "In the simple synchronizer, a process has no payload for neighbor $q$ in the current round. What should it send?",
+    "choices": ["Nothing and advance", "A dummy message", "A clock correction", "The previous round's payload"],
+    "answer": 1,
+    "explanation": "A dummy message preserves the one-message-per-neighbor-per-round assumption, so receipt still provides completion evidence.",
+    "difficulty": "easy",
+    "skill": "apply-protocol",
+    "cognitiveLevel": "apply",
+    "estimatedSeconds": 60,
+    "misconception": "Silence would be ambiguous: it would not distinguish no payload from a delayed message.",
+    "visualHook": "Fill the empty edge in the round timeline with a dummy message.",
+    "sourceRefs": [{ "sourceId": "DSA5208/Lec2.pdf", "page": 45, "sourceType": "lecture", "role": "simple synchronizer assumption", "status": "current" }],
+    "schemaVersion": "nus.question.v1"
+  },
+  {
+    "id": "dsa5208-synchronizers-q5",
+    "type": "short",
+    "prompt": "Why is receiving one message locally not enough for an $\\alpha$ synchronizer to advance?",
+    "accepted": ["alpha removes one-message-per-neighbor assumption", "need evidence all current-round communication is complete", "one receipt does not prove safe completion"],
+    "solution": "The $\\alpha$ synchronizer does not assume one message from every neighbor. It needs acknowledgements or safe notifications that establish completion of the current-round communication before advancing.",
+    "explanation": "The barrier is a protocol proof obligation, not a count of whichever message happened to arrive first.",
+    "difficulty": "hard",
+    "skill": "reason-about-safety",
+    "cognitiveLevel": "analyze",
+    "estimatedSeconds": 90,
+    "misconception": "Local arrival is evidence of one event, not evidence that the whole round is safe to leave.",
+    "visualHook": "Compare a first arrival with the full safe-to-proceed condition.",
+    "sourceRefs": [{ "sourceId": "DSA5208/Lec2.pdf", "page": 47, "sourceType": "lecture", "role": "alpha synchronizer", "status": "current" }, { "sourceId": "DSA5208/Lec2.pdf", "page": 49, "sourceType": "lecture", "role": "safe-to-proceed condition", "status": "current" }],
+    "schemaVersion": "nus.question.v1"
   }
 ]

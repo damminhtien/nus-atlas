@@ -162,6 +162,40 @@
           "status": "current"
         }
       ]
+    },
+    {
+      "title": "Dummy message versus alpha completion",
+      "sourceType": "lecture",
+      "steps": [
+        "In the simple synchronizer, process $p$ expects one current-round message from neighbors $q$ and $r$.",
+        "If $p$ has no payload for $q$, it sends a dummy message so the edge still has one completion signal.",
+        "After the expected messages or acknowledgements arrive, $p$ can satisfy the round-barrier condition.",
+        "In the $\\alpha$ synchronizer, the fixed count is removed, so $p$ needs safe notifications that all current-round communication is complete."
+      ],
+      "answer": "The dummy message makes the simple protocol's fixed-count assumption observable; $\\alpha$ replaces that shortcut with explicit completion evidence.",
+      "sourceRefs": [
+        {
+          "sourceId": "DSA5208/Lec2.pdf",
+          "page": 45,
+          "sourceType": "lecture",
+          "role": "simple synchronizer",
+          "status": "current"
+        },
+        {
+          "sourceId": "DSA5208/Lec2.pdf",
+          "page": 47,
+          "sourceType": "lecture",
+          "role": "alpha synchronizer",
+          "status": "current"
+        },
+        {
+          "sourceId": "DSA5208/Lec2.pdf",
+          "page": 49,
+          "sourceType": "lecture",
+          "role": "safe-to-proceed condition",
+          "status": "current"
+        }
+      ]
     }
   ],
   "contrastDrills": [
@@ -332,6 +366,24 @@
       ]
     },
     {
+      "id": "dsa5208-synchronizers-example-2",
+      "type": "worked-example",
+      "title": "Dummy message versus alpha completion",
+      "sourceType": "lecture",
+      "steps": [
+        "In the simple synchronizer, process $p$ expects one current-round message from neighbors $q$ and $r$.",
+        "If $p$ has no payload for $q$, it sends a dummy message so the edge still has one completion signal.",
+        "After the expected messages or acknowledgements arrive, $p$ can satisfy the round-barrier condition.",
+        "In the $\\alpha$ synchronizer, the fixed count is removed, so $p$ needs safe notifications that all current-round communication is complete."
+      ],
+      "answer": "The dummy message makes the simple protocol's fixed-count assumption observable; $\\alpha$ replaces that shortcut with explicit completion evidence.",
+      "sourceRefs": [
+        { "sourceId": "DSA5208/Lec2.pdf", "page": 45, "sourceType": "lecture", "role": "simple synchronizer", "status": "current" },
+        { "sourceId": "DSA5208/Lec2.pdf", "page": 47, "sourceType": "lecture", "role": "alpha synchronizer", "status": "current" },
+        { "sourceId": "DSA5208/Lec2.pdf", "page": 49, "sourceType": "lecture", "role": "safe-to-proceed condition", "status": "current" }
+      ]
+    },
+    {
       "id": "dsa5208-synchronizers-critical-1",
       "type": "critical-question",
       "prompt": "Why can a dummy message be useful in the simple synchronizer?",
@@ -377,6 +429,8 @@
     "dsa5208-synchronizers-q1",
     "dsa5208-synchronizers-q2",
     "dsa5208-synchronizers-q3"
+    ,"dsa5208-synchronizers-q4"
+    ,"dsa5208-synchronizers-q5"
   ],
   "labIds": [
     "dsa5208-synchronizers"

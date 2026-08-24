@@ -195,5 +195,37 @@
     "courseId": "DSA5208",
     "lessonId": "dsa5208-consistency-spark",
     "schemaVersion": "nus.question.v1"
+  },
+  {
+    "id": "dsa5208-consistency-q7",
+    "type": "mcq",
+    "prompt": "Process P writes $x=1$ and then writes $y=2$. Another process reads $y=2$ and then reads $x=0$. Which guarantee is violated?",
+    "choices": ["Linearizability only", "Causal consistency", "Eventual convergence only", "Monotonic writes"],
+    "answer": 1,
+    "explanation": "The write to $x$ causally precedes the write to $y$, so observing the effect $y=2$ without the cause $x=1$ violates causal consistency.",
+    "difficulty": "hard",
+    "skill": "classify-history",
+    "cognitiveLevel": "analyze",
+    "estimatedSeconds": 90,
+    "misconception": "Causal consistency does not require a total order for concurrent writes, but it does preserve a causal chain.",
+    "visualHook": "Draw the causal arrow before placing the two reads on the history.",
+    "sourceRefs": [{ "sourceId": "DSA5208/Lec3.pdf", "page": 22, "sourceType": "lecture", "role": "causal consistency", "status": "current" }],
+    "schemaVersion": "nus.question.v1"
+  },
+  {
+    "id": "dsa5208-consistency-q8",
+    "type": "short",
+    "prompt": "Two replica digests disagree during a read. What is the next action before choosing the value to return?",
+    "accepted": ["fetch full versions", "request full data", "read full values and reconcile"],
+    "solution": "The coordinator fetches the full versions, reconciles them, returns the newest version, and repairs stale replicas.",
+    "explanation": "Digest reads are a cheap agreement check; a mismatch opens the full-read and repair path.",
+    "difficulty": "medium",
+    "skill": "trace-repair",
+    "cognitiveLevel": "apply",
+    "estimatedSeconds": 75,
+    "misconception": "A digest mismatch is not itself the value to return; it is a signal to fetch the complete versions.",
+    "visualHook": "Follow the mismatch branch from digest comparison to read repair.",
+    "sourceRefs": [{ "sourceId": "DSA5208/Lec3.pdf", "page": 59, "sourceType": "lecture", "role": "digest reads and read repair", "status": "current" }],
+    "schemaVersion": "nus.question.v1"
   }
 ]

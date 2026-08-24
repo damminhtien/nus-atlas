@@ -46,5 +46,37 @@
     "visualHook": "Follow an improving estimate through the graph.",
     "sourceRefs": [{ "sourceId": "DSA5208/Lec2.pdf", "page": 39, "sourceType": "lecture", "role": "asynchronous Bellman-Ford", "status": "current" }],
     "schemaVersion": "nus.question.v1"
+  },
+  {
+    "id": "dsa5208-shortest-path-q4",
+    "type": "calculation",
+    "prompt": "For edges $s\\to a=2$, $s\\to b=7$, and $a\\to b=3$, what is $d(b)$ after relaxing through $s$ and then through $a$?",
+    "accepted": ["5", "$5$", "d(b)=5"],
+    "solution": "The route through $a$ offers $d(a)+w(a,b)=2+3=5$, which improves the direct estimate $7$. Therefore $d(b)=5$.",
+    "explanation": "Relaxation compares the new path candidate with the current estimate and keeps the smaller value.",
+    "difficulty": "medium",
+    "skill": "trace-relaxation",
+    "cognitiveLevel": "apply",
+    "estimatedSeconds": 75,
+    "misconception": "Do not stop at the direct edge $s\\to b$; a multi-hop path can be shorter.",
+    "visualHook": "Follow the distance label for $b$ as the $a\\to b$ update arrives.",
+    "sourceRefs": [{ "sourceId": "DSA5208/Lec2.pdf", "page": 30, "sourceType": "lecture", "role": "synchronous relaxation trace", "status": "current" }],
+    "schemaVersion": "nus.question.v1"
+  },
+  {
+    "id": "dsa5208-shortest-path-q5",
+    "type": "short",
+    "prompt": "Why can an improved estimate trigger an asynchronous update immediately, while a synchronous algorithm waits for the next round?",
+    "accepted": ["asynchronous is event-driven", "synchronous uses round boundaries", "improvement sends an update without a global round"],
+    "solution": "Asynchronous Bellman–Ford sends an update when a local estimate improves. Synchronous Bellman–Ford records the improvement in the current round and propagates it at the next global round boundary.",
+    "explanation": "The recurrence is the same idea, but the execution schedule and termination evidence differ.",
+    "difficulty": "medium",
+    "skill": "compare-schedules",
+    "cognitiveLevel": "analyze",
+    "estimatedSeconds": 90,
+    "misconception": "Asynchronous progress is not a hidden global round; it is message-triggered.",
+    "visualHook": "Switch the same relaxation trace between round and event-driven schedules.",
+    "sourceRefs": [{ "sourceId": "DSA5208/Lec2.pdf", "page": 39, "sourceType": "lecture", "role": "asynchronous algorithm", "status": "current" }, { "sourceId": "DSA5208/Lec2.pdf", "page": 40, "sourceType": "lecture", "role": "algorithm comparison", "status": "current" }],
+    "schemaVersion": "nus.question.v1"
   }
 ]

@@ -156,6 +156,33 @@
           "status": "current"
         }
       ]
+    },
+    {
+      "title": "Concurrent chat updates: causal or total?",
+      "sourceType": "lecture",
+      "steps": [
+        "Process A broadcasts $m_1$ and later broadcasts $m_2$; keep $m_1 \\to m_2$ as a causal dependency.",
+        "Process B broadcasts a concurrent update $n_1$, so neither $n_1 \\to m_1$ nor $m_2 \\to n_1$ is justified.",
+        "Causal order must place $m_1$ before $m_2$, but it may leave $n_1$ flexible.",
+        "Choose total order only when every process must display one identical sequence, including the concurrent update."
+      ],
+      "answer": "The dependency determines the guarantee: causal order protects $m_1 \\to m_2$; total order additionally fixes one common position for concurrent $n_1$.",
+      "sourceRefs": [
+        {
+          "sourceId": "DSA5208/Lec2.pdf",
+          "page": 13,
+          "sourceType": "lecture",
+          "role": "causal broadcast",
+          "status": "current"
+        },
+        {
+          "sourceId": "DSA5208/Lec2.pdf",
+          "page": 16,
+          "sourceType": "lecture",
+          "role": "total order broadcast",
+          "status": "current"
+        }
+      ]
     }
   ],
   "contrastDrills": [
@@ -372,6 +399,23 @@
       ]
     },
     {
+      "id": "dsa5208-broadcast-example-2",
+      "type": "worked-example",
+      "title": "Concurrent chat updates: causal or total?",
+      "sourceType": "lecture",
+      "steps": [
+        "Process A broadcasts $m_1$ and later broadcasts $m_2$; keep $m_1 \\to m_2$ as a causal dependency.",
+        "Process B broadcasts a concurrent update $n_1$, so neither $n_1 \\to m_1$ nor $m_2 \\to n_1$ is justified.",
+        "Causal order must place $m_1$ before $m_2$, but it may leave $n_1$ flexible.",
+        "Choose total order only when every process must display one identical sequence, including the concurrent update."
+      ],
+      "answer": "The dependency determines the guarantee: causal order protects $m_1 \\to m_2$; total order additionally fixes one common position for concurrent $n_1$.",
+      "sourceRefs": [
+        { "sourceId": "DSA5208/Lec2.pdf", "page": 13, "sourceType": "lecture", "role": "causal broadcast", "status": "current" },
+        { "sourceId": "DSA5208/Lec2.pdf", "page": 16, "sourceType": "lecture", "role": "total order broadcast", "status": "current" }
+      ]
+    },
+    {
       "id": "dsa5208-broadcast-critical-1",
       "type": "critical-question",
       "prompt": "Why can a received message be unsafe to deliver immediately?",
@@ -410,6 +454,8 @@
     "dsa5208-broadcast-q1",
     "dsa5208-broadcast-q2",
     "dsa5208-broadcast-q3"
+    ,"dsa5208-broadcast-q4"
+    ,"dsa5208-broadcast-q5"
   ],
   "labIds": [
     "dsa5208-broadcast"

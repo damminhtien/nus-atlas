@@ -118,7 +118,9 @@
     "textbook": [],
     "reference": []
   },
-  "visualIds": [],
+  "visualIds": [
+    "dsa5208-consistency-models"
+  ],
   "labIds": [],
   "sections": [
     {
@@ -237,6 +239,33 @@
           "page": 53,
           "sourceType": "lecture",
           "role": "MongoDB read-your-writes implementation with Lamport clocks",
+          "status": "current"
+        },
+        {
+          "sourceId": "DSA5208/Lec3.pdf",
+          "page": 59,
+          "sourceType": "lecture",
+          "role": "digest reads and read repair",
+          "status": "current"
+        }
+      ]
+    },
+    {
+      "title": "History classifier and digest repair",
+      "sourceType": "lecture",
+      "steps": [
+        "Draw the causal chain $W(x{=}1) \\to W(y{=}2)$ before judging what another process reads.",
+        "If the observer sees $y{=}2$ and then $x{=}0$, the effect appeared without its cause, so causal consistency is violated.",
+        "For a separate replica read, compare compact digests first; a mismatch means the coordinator must fetch full versions.",
+        "Reconcile the full values, return the newest version, and repair stale replicas so future reads converge faster."
+      ],
+      "answer": "Consistency diagnosis has two distinct traces: preserve causal order in a history, then follow the digest-mismatch branch through full read, reconciliation, and repair.",
+      "sourceRefs": [
+        {
+          "sourceId": "DSA5208/Lec3.pdf",
+          "page": 22,
+          "sourceType": "lecture",
+          "role": "causal consistency",
           "status": "current"
         },
         {
@@ -675,6 +704,23 @@
       ]
     },
     {
+      "id": "dsa5208-consistency-spark-example-2",
+      "type": "worked-example",
+      "title": "History classifier and digest repair",
+      "sourceType": "lecture",
+      "steps": [
+        "Draw the causal chain $W(x{=}1) \\to W(y{=}2)$ before judging what another process reads.",
+        "If the observer sees $y{=}2$ and then $x{=}0$, the effect appeared without its cause, so causal consistency is violated.",
+        "For a separate replica read, compare compact digests first; a mismatch means the coordinator must fetch full versions.",
+        "Reconcile the full values, return the newest version, and repair stale replicas so future reads converge faster."
+      ],
+      "answer": "Consistency diagnosis has two distinct traces: preserve causal order in a history, then follow the digest-mismatch branch through full read, reconciliation, and repair.",
+      "sourceRefs": [
+        { "sourceId": "DSA5208/Lec3.pdf", "page": 22, "sourceType": "lecture", "role": "causal consistency", "status": "current" },
+        { "sourceId": "DSA5208/Lec3.pdf", "page": 59, "sourceType": "lecture", "role": "digest reads and read repair", "status": "current" }
+      ]
+    },
+    {
       "id": "dsa5208-consistency-spark-critical-1",
       "type": "critical-question",
       "prompt": "Why are MongoDB read concern \"majority\" and write concern \"majority\" still not sufficient by themselves to guarantee read-your-writes consistency by definition?",
@@ -737,7 +783,9 @@
     "dsa5208-consistency-q3",
     "dsa5208-consistency-q4",
     "dsa5208-consistency-q5",
-    "dsa5208-consistency-q6"
+    "dsa5208-consistency-q6",
+    "dsa5208-consistency-q7",
+    "dsa5208-consistency-q8"
   ],
   "courseId": "DSA5208",
   "moduleId": "dsa5208-advanced",
