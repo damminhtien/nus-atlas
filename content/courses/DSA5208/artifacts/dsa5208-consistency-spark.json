@@ -3,50 +3,50 @@
   "schemaVersion": "nus.study-kit.v1",
   "flashcards": [
     {
-      "front": "What does the Lec0 roadmap establish?",
-      "back": "It establishes later themes and project direction, not the full detailed derivation of those lectures."
+      "front": "How does linearizability differ from sequential consistency?",
+      "back": "Both permit one legal global sequence, but linearizability also preserves real-time order for non-overlapping operations."
     },
     {
-      "front": "Likely shuffle operations?",
-      "back": "Grouping, joins, and global sorts often move records across partitions; map and filter can often remain local."
+      "front": "What does causal consistency preserve?",
+      "back": "Every observer must preserve the order of causally related writes; concurrent writes need not have one global order."
     },
     {
-      "front": "What should be measured?",
-      "back": "Partition sizes, shuffle bytes, task skew, stage time, stale reads, or recovery behavior depending on the claim."
+      "front": "What happens after a digest mismatch?",
+      "back": "The coordinator fetches full versions, reconciles them, returns the newest version, and repairs stale replicas."
     }
   ],
   "homework": [
     {
-      "prompt": "Turn a Spark shuffle hypothesis into an experiment plan.",
-      "rubric": "Name the logical operation, partitioning, metric, expected movement, and source still needed for detailed coverage.",
+      "prompt": "Classify one history under linearizability, sequential consistency, causal consistency, and eventual consistency.",
+      "rubric": "State the real-time, global-order, causal-order, and convergence condition separately; do not collapse them into one freshness label.",
       "source": {
-        "sourceId": "DSA5208/Lec0.pdf",
-        "page": 14,
+        "sourceId": "DSA5208/Lec3.pdf",
+        "page": 22,
         "sourceType": "lecture",
-        "role": "Spark and distributed algorithms",
+        "role": "data-centric consistency comparison",
         "status": "current"
       }
     },
     {
-      "prompt": "Explain why Atlas marks this lesson as a course frontier.",
-      "rubric": "Separate roadmap evidence from supplied derivation evidence and identify the missing lecture source.",
+      "prompt": "Diagnose a stale read after a majority write and propose the minimum mechanism needed for read-your-writes.",
+      "rubric": "Separate majority commitment from session visibility, then explain the role of Lamport-clock state or replica catch-up.",
       "source": {
-        "sourceId": "DSA5208/Lec0.pdf",
-        "page": 12,
+        "sourceId": "DSA5208/Lec3.pdf",
+        "page": 53,
         "sourceType": "lecture",
-        "role": "course topic map",
+        "role": "MongoDB read-your-writes implementation",
         "status": "current"
       }
     }
   ],
   "codeExercises": [
     {
-      "id": "dsa5208-evidence-code",
+      "id": "dsa5208-consistency-diagnosis",
       "language": "text",
-      "prompt": "Write a four-line distributed experiment plan.",
-      "starter": "claim:\noperation:\nmetric:\nsource-needed:",
-      "expected": "claim|operation|metric|source-needed",
-      "solution": "A good plan states the system claim, logical operation, measurable signal, and the source or instrumentation needed to validate it."
+      "prompt": "Write a four-line consistency diagnosis.",
+      "starter": "anomaly:\nviolated-guarantee:\nminimum-mechanism:\nresidual-risk:",
+      "expected": "anomaly|violated-guarantee|minimum-mechanism|residual-risk",
+      "solution": "A good diagnosis names the observed anomaly, the weakest guarantee that rules it out, the mechanism that carries that guarantee, and what weaker behavior remains possible."
     }
   ]
 }

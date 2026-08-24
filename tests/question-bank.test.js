@@ -1,5 +1,7 @@
 const test = require("node:test");
 const assert = require("node:assert/strict");
+const fs = require("node:fs");
+const path = require("node:path");
 const { readQuestionBank, validateQuestionBank } = require("../scripts/validate-question-bank");
 const { loadCanonicalState } = require("../scripts/validate-content");
 const { compileCourse } = require("../tools/content-compiler");
@@ -34,8 +36,20 @@ test("DSA5208 question bank covers every lesson with metadata", () => {
   const bank = readQuestionBank("DSA5208");
   const result = validateQuestionBank(bank, loadCanonicalState());
   assert.equal(result.ok, true, result.errors.join("\n"));
-  assert.equal(result.counts.questions, 18);
+  assert.equal(result.counts.questions, 17);
   assert.equal(result.counts.lessons, 9);
+});
+
+test("DSA5208 keeps extension questions only in the question bank", () => {
+  const questionDir = path.join(process.cwd(), "content", "courses", "DSA5208", "questions");
+  const bankIds = new Set(readQuestionBank("DSA5208").questions.map(question => question.id));
+  const duplicateIds = fs.readdirSync(questionDir)
+    .filter(file => /^dsa5208-.*\.json$/.test(file))
+    .flatMap(file => JSON.parse(fs.readFileSync(path.join(questionDir, file), "utf8")))
+    .map(question => question.id)
+    .filter(id => bankIds.has(id));
+
+  assert.deepEqual(duplicateIds, []);
 });
 
 test("content build exposes question bank metadata and merged questions", () => {

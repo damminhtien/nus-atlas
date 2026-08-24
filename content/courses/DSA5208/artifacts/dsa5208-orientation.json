@@ -3,38 +3,38 @@
   "schemaVersion": "nus.study-kit.v1",
   "flashcards": [
     {
-      "front": "What makes a distributed experiment reproducible?",
-      "back": "State workers, partitioning, communication, failure assumptions, metrics, and observed results."
+      "front": "What does Lec0 establish?",
+      "back": "It establishes motivation, project context, and a roadmap; Lec1-Lec3 provide the detailed lecture derivations."
     },
     {
-      "front": "Why can more workers hurt?",
-      "back": "Network movement, synchronization, serialization, or skew can grow faster than useful computation falls."
+      "front": "What must be fixed before comparing distributed runs?",
+      "back": "Keep the workload, algorithm, expected output, and correctness criterion fixed before interpreting system-cost changes."
     },
     {
-      "front": "What is the source boundary for later topics?",
-      "back": "Lec0 supplies the roadmap; detailed consistency, Spark, MLlib, GPU, and cloud derivations remain pending until their sources are supplied."
+      "front": "Which later topics are still roadmap-only?",
+      "back": "Spark, MLlib, GPU, and cloud derivations remain pending until their official lecture or exercise sources are supplied."
     }
   ],
   "homework": [
     {
-      "prompt": "Design a one-page experiment log for a distributed data task.",
-      "rubric": "Include claim, system setting, partitioning, failure assumption, metrics, and a reproducible result.",
+      "prompt": "Write a scope note that separates the Lec0 roadmap from the Lec1-Lec3 lecture evidence.",
+      "rubric": "Label orientation, current lecture derivations, and pending roadmap topics without treating a roadmap as algorithmic evidence.",
+      "source": {
+        "sourceId": "DSA5208/Lec0.pdf",
+        "page": 16,
+        "sourceType": "lecture",
+      "role": "project themes",
+        "status": "current"
+      }
+    },
+    {
+      "prompt": "Critique a distributed claim that reports only one average runtime.",
+      "rubric": "Name the missing workload, system, communication, coordination, skew, and failure conditions needed to interpret the number.",
       "source": {
         "sourceId": "DSA5208/Lec0.pdf",
         "page": 9,
         "sourceType": "lecture",
         "role": "distributed-system challenges",
-        "status": "current"
-      }
-    },
-    {
-      "prompt": "Explain why the project structure is evidence about course priorities but not a substitute for lecture derivations.",
-      "rubric": "Separate assessment signal, lecture scope, and missing source material.",
-      "source": {
-        "sourceId": "DSA5208/Lec0.pdf",
-        "page": 16,
-        "sourceType": "lecture",
-        "role": "project themes",
         "status": "current"
       }
     }

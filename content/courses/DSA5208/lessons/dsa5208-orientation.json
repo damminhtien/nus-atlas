@@ -1,13 +1,13 @@
 {
   "id": "dsa5208-orientation",
-  "title": "Distributed computing scope and evidence",
+  "title": "Course orientation · distributed computing scope",
   "week": 1,
   "minutes": 40,
-  "summary": "Build a systems-first study loop: scale, hardware limits, failure, coordination, and project evidence.",
+  "summary": "Use the Lec0 overview as a short scope boundary before the three numbered lecture weeks.",
   "objectives": [
-    "Name the first six lecture themes",
-    "Separate compute, communication, coordination, and failure questions",
-    "Design a reproducible distributed experiment record"
+    "Separate course orientation from lecture derivations",
+    "Identify the scale, communication, coordination, and failure dimensions",
+    "State what evidence a distributed-system claim requires"
   ],
   "sourceRefs": [
     {
@@ -39,9 +39,9 @@
   ],
   "sections": [
     {
-      "title": "Lecture core · why distributed systems",
+      "title": "Course boundary · why distributed systems",
       "sourceType": "lecture",
-      "body": "The course starts from a systems constraint: data grows faster than one machine can comfortably store, move, or process, while hardware and networks can fail. A useful experiment records scale, partitioning, communication, coordination, and failure assumptions instead of reporting one opaque runtime.",
+      "body": "Lec0 frames distributed computing as a response to scale and failure: data can outgrow one machine, and hardware or networks can fail. This is orientation for the three numbered lecture weeks; the detailed models and algorithms begin in Lec1.",
       "sourceRefs": [
         {
           "sourceId": "DSA5208/Lec0.pdf",
@@ -60,7 +60,7 @@
       ],
       "sourceLens": {
         "status": "core DSA5208",
-        "whyExaminable": "The overview is examinable because it supplies the vocabulary used to interpret every later algorithm and project result.",
+        "whyExaminable": "The overview sets the boundary for later claims without replacing the derivations in Lec1, Lec2, or Lec3.",
         "lecture": [
           {
             "sourceId": "DSA5208/Lec0.pdf",
@@ -91,9 +91,9 @@
       }
     },
     {
-      "title": "Project evidence, not project folklore",
+      "title": "Evidence standard · how to measure",
       "sourceType": "lecture",
-      "body": "The supplied overview lists three group projects and identifies the first two themes: consistency testing with a distributed database and machine learning with Apache Spark. Dates and later lecture details remain pending until their official sources are supplied.",
+      "body": "For a project claim, state the workload, workers, partitioning, communication, coordination, and failure assumptions. Lec0 names project directions, but later lecture derivations remain the source for consistency, ordering, and algorithmic guarantees.",
       "sourceRefs": [
         {
           "sourceId": "DSA5208/Lec0.pdf",
@@ -145,15 +145,15 @@
   ],
   "examples": [
     {
-      "title": "Distributed experiment record",
+      "title": "Compare two distributed runs",
       "sourceType": "lecture",
       "steps": [
-        "State the input size and worker count.",
-        "Record the partitioning and communication pattern.",
-        "Name the failure or consistency assumption.",
-        "Report throughput, latency, shuffle, coordination, and recovery evidence."
+        "Hold the workload and expected output fixed.",
+        "Record workers, partitioning, bytes moved, and coordination waits.",
+        "Compare throughput and tail latency under the same failure assumptions.",
+        "Attribute a regression to computation, communication, skew, or recovery before changing the design."
       ],
-      "answer": "A systems claim is credible only when the environment and observed costs are part of the result."
+      "answer": "A useful comparison explains the measured change using the system conditions, not only a single runtime number."
     }
   ],
   "contrastDrills": [
@@ -190,7 +190,7 @@
   "math": [
     {
       "latex": "T_{\\mathrm{job}} = T_{\\mathrm{compute}} + T_{\\mathrm{network}} + T_{\\mathrm{coordination}}",
-      "explanation": "A distributed experiment should report more than compute time. Network transfer and coordination barriers can dominate as the worker count grows, so record them separately whenever the system exposes them.",
+      "explanation": "Use this as a reporting model: separate useful computation from network movement and coordination waits before interpreting a distributed runtime.",
       "symbols": [
         {
           "latex": "T_{\\mathrm{network}}",
@@ -201,280 +201,30 @@
           "meaning": "barrier, scheduling, and coordination time"
         }
       ],
-      "name": "Distributed-job cost decomposition",
-      "purpose": "Use it to measure useful work separately from network movement and coordination overhead.",
+      "name": "Distributed cost dimensions",
+      "purpose": "Use it to report useful work separately from network movement and coordination overhead.",
       "sourceType": "lecture"
-    },
-    {
-      "latex": "T_{\\mathrm{total}} \\approx T_{\\mathrm{compute}} + T_{\\mathrm{network}} + T_{\\mathrm{coordination}}",
-      "explanation": "Use this as a diagnostic decomposition for a distributed experiment. It is a study model, not a universal runtime identity: storage, skew, failures, and serialization may add further terms.",
-      "symbols": [
-        {
-          "latex": "T_{\\mathrm{network}}",
-          "meaning": "time spent moving data or messages"
-        },
-        {
-          "latex": "T_{\\mathrm{coordination}}",
-          "meaning": "time spent waiting for synchronization or scheduling"
-        }
-      ],
-      "name": "Distributed-job cost decomposition",
-      "purpose": "Use it to diagnose whether compute, network movement, or coordination dominates a distributed workload.",
-      "sourceType": "lecture",
-      "caveat": "The lecture overview motivates these dimensions but does not present this exact equation."
     }
   ],
   "criticalQuestions": [
     {
-      "prompt": "Why is one average runtime insufficient evidence for a distributed-system claim?",
-      "angle": "Separate useful work from communication, coordination, partition skew, and failure recovery.",
-      "modelAnswer": "The average hides the conditions that produce the cost. Record worker count, partitioning, network movement, coordination, and failure behavior before comparing designs.",
-      "focus": "measurement"
+      "prompt": "Which conditions must stay fixed before comparing two distributed runs?",
+      "angle": "Separate the workload and expected result from the system variables being measured.",
+      "modelAnswer": "Keep the workload, algorithm, expected output, and correctness criterion fixed. Then record workers, partitioning, communication, coordination, and failure assumptions so the comparison is interpretable.",
+      "focus": "experimental control"
     },
     {
-      "prompt": "When could adding workers increase total runtime?",
-      "angle": "Look for communication and coordination terms that grow faster than useful computation falls.",
-      "modelAnswer": "If network, synchronization, serialization, or skew dominates, the added workers can increase overhead instead of improving throughput.",
-      "focus": "scalability"
+      "prompt": "What evidence separates communication overhead from computation time?",
+      "angle": "Look for bytes moved, network time, coordination waits, and useful-work measurements rather than one total runtime.",
+      "modelAnswer": "Report compute time alongside bytes moved, network time, serialization, coordination waits, and skew. A total runtime alone cannot identify which system cost changed.",
+      "focus": "measurement"
     }
   ],
   "courseId": "DSA5208",
   "moduleId": "dsa5208-foundations",
-  "blocks": [
-    {
-      "id": "dsa5208-orientation-section-1",
-      "type": "teaching-note",
-      "title": "Lecture core · why distributed systems",
-      "body": "The course starts from a systems constraint: data grows faster than one machine can comfortably store, move, or process, while hardware and networks can fail. A useful experiment records scale, partitioning, communication, coordination, and failure assumptions instead of reporting one opaque runtime.",
-      "sourceType": "lecture",
-      "sourceRefs": [
-        {
-          "sourceId": "DSA5208/Lec0.pdf",
-          "page": 4,
-          "sourceType": "lecture",
-          "role": "scale motivation",
-          "status": "current"
-        },
-        {
-          "sourceId": "DSA5208/Lec0.pdf",
-          "page": 9,
-          "sourceType": "lecture",
-          "role": "failure motivation",
-          "status": "current"
-        }
-      ]
-    },
-    {
-      "id": "dsa5208-orientation-section-2",
-      "type": "teaching-note",
-      "title": "Project evidence, not project folklore",
-      "body": "The supplied overview lists three group projects and identifies the first two themes: consistency testing with a distributed database and machine learning with Apache Spark. Dates and later lecture details remain pending until their official sources are supplied.",
-      "sourceType": "lecture",
-      "sourceRefs": [
-        {
-          "sourceId": "DSA5208/Lec0.pdf",
-          "page": 2,
-          "sourceType": "lecture",
-          "role": "assessment structure",
-          "status": "current"
-        },
-        {
-          "sourceId": "DSA5208/Lec0.pdf",
-          "page": 16,
-          "sourceType": "lecture",
-          "role": "project themes",
-          "status": "current"
-        }
-      ]
-    },
-    {
-      "id": "dsa5208-orientation-formula-1",
-      "type": "formula",
-      "name": "Distributed-job cost decomposition",
-      "purpose": "Use it to measure useful work separately from network movement and coordination overhead.",
-      "latex": "T_{\\mathrm{job}} = T_{\\mathrm{compute}} + T_{\\mathrm{network}} + T_{\\mathrm{coordination}}",
-      "explanation": "A distributed experiment should report more than compute time. Network transfer and coordination barriers can dominate as the worker count grows, so record them separately whenever the system exposes them.",
-      "symbols": [
-        {
-          "latex": "T_{\\mathrm{network}}",
-          "meaning": "communication time"
-        },
-        {
-          "latex": "T_{\\mathrm{coordination}}",
-          "meaning": "barrier, scheduling, and coordination time"
-        }
-      ],
-      "sourceType": "lecture",
-      "sourceRefs": [
-        {
-          "sourceId": "DSA5208/Lec0.pdf",
-          "page": 1,
-          "sourceType": "lecture",
-          "role": "course scope",
-          "status": "current"
-        },
-        {
-          "sourceId": "DSA5208/Lec0.pdf",
-          "page": 9,
-          "sourceType": "lecture",
-          "role": "distributed-system challenges",
-          "status": "current"
-        },
-        {
-          "sourceId": "DSA5208/Lec0.pdf",
-          "page": 16,
-          "sourceType": "lecture",
-          "role": "project structure",
-          "status": "current"
-        }
-      ]
-    },
-    {
-      "id": "dsa5208-orientation-formula-2",
-      "type": "formula",
-      "name": "Distributed-job cost decomposition",
-      "purpose": "Use it to diagnose whether compute, network movement, or coordination dominates a distributed workload.",
-      "latex": "T_{\\mathrm{total}} \\approx T_{\\mathrm{compute}} + T_{\\mathrm{network}} + T_{\\mathrm{coordination}}",
-      "explanation": "Use this as a diagnostic decomposition for a distributed experiment. It is a study model, not a universal runtime identity: storage, skew, failures, and serialization may add further terms.",
-      "symbols": [
-        {
-          "latex": "T_{\\mathrm{network}}",
-          "meaning": "time spent moving data or messages"
-        },
-        {
-          "latex": "T_{\\mathrm{coordination}}",
-          "meaning": "time spent waiting for synchronization or scheduling"
-        }
-      ],
-      "sourceType": "lecture",
-      "sourceRefs": [
-        {
-          "sourceId": "DSA5208/Lec0.pdf",
-          "page": 1,
-          "sourceType": "lecture",
-          "role": "course scope",
-          "status": "current"
-        },
-        {
-          "sourceId": "DSA5208/Lec0.pdf",
-          "page": 9,
-          "sourceType": "lecture",
-          "role": "distributed-system challenges",
-          "status": "current"
-        },
-        {
-          "sourceId": "DSA5208/Lec0.pdf",
-          "page": 16,
-          "sourceType": "lecture",
-          "role": "project structure",
-          "status": "current"
-        }
-      ]
-    },
-    {
-      "id": "dsa5208-orientation-example-1",
-      "type": "worked-example",
-      "title": "Distributed experiment record",
-      "sourceType": "lecture",
-      "steps": [
-        "State the input size and worker count.",
-        "Record the partitioning and communication pattern.",
-        "Name the failure or consistency assumption.",
-        "Report throughput, latency, shuffle, coordination, and recovery evidence."
-      ],
-      "answer": "A systems claim is credible only when the environment and observed costs are part of the result.",
-      "sourceRefs": [
-        {
-          "sourceId": "DSA5208/Lec0.pdf",
-          "page": 1,
-          "sourceType": "lecture",
-          "role": "course scope",
-          "status": "current"
-        },
-        {
-          "sourceId": "DSA5208/Lec0.pdf",
-          "page": 9,
-          "sourceType": "lecture",
-          "role": "distributed-system challenges",
-          "status": "current"
-        },
-        {
-          "sourceId": "DSA5208/Lec0.pdf",
-          "page": 16,
-          "sourceType": "lecture",
-          "role": "project structure",
-          "status": "current"
-        }
-      ]
-    },
-    {
-      "id": "dsa5208-orientation-critical-1",
-      "type": "critical-question",
-      "prompt": "Why is one average runtime insufficient evidence for a distributed-system claim?",
-      "angle": "Separate useful work from communication, coordination, partition skew, and failure recovery.",
-      "modelAnswer": "The average hides the conditions that produce the cost. Record worker count, partitioning, network movement, coordination, and failure behavior before comparing designs.",
-      "focus": "measurement",
-      "sourceRefs": [
-        {
-          "sourceId": "DSA5208/Lec0.pdf",
-          "page": 1,
-          "sourceType": "lecture",
-          "role": "course scope",
-          "status": "current"
-        },
-        {
-          "sourceId": "DSA5208/Lec0.pdf",
-          "page": 9,
-          "sourceType": "lecture",
-          "role": "distributed-system challenges",
-          "status": "current"
-        },
-        {
-          "sourceId": "DSA5208/Lec0.pdf",
-          "page": 16,
-          "sourceType": "lecture",
-          "role": "project structure",
-          "status": "current"
-        }
-      ]
-    },
-    {
-      "id": "dsa5208-orientation-critical-2",
-      "type": "critical-question",
-      "prompt": "When could adding workers increase total runtime?",
-      "angle": "Look for communication and coordination terms that grow faster than useful computation falls.",
-      "modelAnswer": "If network, synchronization, serialization, or skew dominates, the added workers can increase overhead instead of improving throughput.",
-      "focus": "scalability",
-      "sourceRefs": [
-        {
-          "sourceId": "DSA5208/Lec0.pdf",
-          "page": 1,
-          "sourceType": "lecture",
-          "role": "course scope",
-          "status": "current"
-        },
-        {
-          "sourceId": "DSA5208/Lec0.pdf",
-          "page": 9,
-          "sourceType": "lecture",
-          "role": "distributed-system challenges",
-          "status": "current"
-        },
-        {
-          "sourceId": "DSA5208/Lec0.pdf",
-          "page": 16,
-          "sourceType": "lecture",
-          "role": "project structure",
-          "status": "current"
-        }
-      ]
-    }
-  ],
   "questionIds": [
     "dsa5208-o-q1",
-    "dsa5208-o-q2",
-    "dsa5208-bank-001",
-    "dsa5208-bank-002"
+    "dsa5208-o-q2"
   ],
   "labIds": [
     "dsa5208-data-never-sleeps",

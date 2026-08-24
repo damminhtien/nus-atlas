@@ -206,7 +206,10 @@ function validatePackageDirectory(root = ROOT) {
       if (lesson.courseId !== entry.name || lesson.schemaVersion !== "nus.lesson.v1") errors.push(`invalid lesson identity/schema: ${lesson.id || file}`);
       if (lessonIds.has(lesson.id)) errors.push(`duplicate package lesson id: ${lesson.id}`);
       lessonIds.add(lesson.id);
-      if (!Array.isArray(lesson.blocks) || !lesson.blocks.length) errors.push(`package lesson has no blocks: ${lesson.id}`);
+      const hasCanonicalBlocks = Array.isArray(lesson.blocks) && lesson.blocks.length;
+      const hasStructuredContent = [lesson.sections, lesson.math, lesson.examples, lesson.criticalQuestions]
+        .some(value => Array.isArray(value) && value.length);
+      if (!hasCanonicalBlocks && !hasStructuredContent) errors.push(`package lesson has no source blocks: ${lesson.id}`);
       if (!Array.isArray(lesson.sourceRefs) || !lesson.sourceRefs.length) errors.push(`package lesson has no source refs: ${lesson.id}`);
       (lesson.sourceRefs || []).forEach(ref => checkSourceRef(ref, { lecture: {}, exercise: {}, textbook: {}, ref: {}, "assessment-derived": {} }, errors, `package lesson ${lesson.id}`));
       const questionFile = path.join(dir, "questions", file);
