@@ -47,14 +47,19 @@
     const input = root.querySelector("input[type=range]"), steps = [...root.querySelectorAll("[data-step]")];
     const selected = root.querySelector("[data-lab-choice].is-selected");
     const state = { complexity: input && input.id.includes("complexity") ? Number(input.value) : null, margin: input && input.id.includes("margin") ? Number(input.value) : null, choice: selected ? selected.dataset.labChoice : null, step: Math.max(0, steps.findIndex(step => step.classList.contains("active"))) };
-   if (typeof lab.check === "function" && !lab.check(state)) {
-     const status = root.querySelector("[data-lab-status]");
-     if (status) status.textContent = "Complete the reasoning step first";
-     return;
-   }
+    if (typeof lab.check === "function" && !lab.check(state)) {
+      const status = root.querySelector("[data-lab-status]");
+      if (status) status.textContent = "Complete the reasoning step first";
+      return;
+    }
+    if (lab.requiresChoice && !state.choice) {
+      const status = root.querySelector("[data-lab-status]");
+      if (status) status.textContent = "Select an option before committing";
+      return;
+    }
     if (lab.requiredChoice && state.choice !== lab.requiredChoice) {
       const status = root.querySelector("[data-lab-status]");
-      if (status) status.textContent = "That guarantee does not preserve the stated invariant";
+      if (status) status.textContent = lab.incorrectChoiceMessage || "That choice does not satisfy the stated learning goal";
       return;
     }
    const result = studyStore() && studyStore().recordSimulation(`${lab.courseCode || "nus"}:${lab.lessonId}`, lab.courseCode, lab.lessonId);
@@ -62,7 +67,12 @@
     if (status) status.textContent = result && result.duplicate ? "Already logged · repeat to reason" : "Evidence logged · +10 XP";
     root.classList.add("is-complete");
   }
+  function choiceComparison(lab) {
+    const options = lab.options || [];
+    return shell(lab, `<div class="nus-lab-controls"><span class="nus-lab-step-count">Compare the candidate representations</span><button class="btn primary" type="button" data-lab-complete>Commit comparison</button></div><div class="nus-decision-tree" role="list" aria-label="Comparison options">${options.map(option => `<button class="nus-decision-branch" type="button" role="listitem" data-lab-choice="${esc(option.id)}" aria-pressed="false"><span><b>${esc(option.label)}</b><small>${esc(option.detail)}</small></span><em>${esc(option.scope || "Trade-off")}</em></button>`).join("")}</div><p class="nus-lab-status-text" data-decision-summary aria-live="polite">Select a representation and inspect the trade-off it makes.</p>`);
+  }
   function compare(lab) {
+    if (lab.mode === "choice") return choiceComparison(lab);
     const id = `nus-lab-${lab.lessonId}`;
     return shell(lab, `<div class="nus-lab-controls"><label class="nus-lab-control" for="${id}-complexity">Model complexity <output id="${id}-complexity-value">42</output><input id="${id}-complexity" type="range" min="0" max="100" value="42" aria-describedby="${id}-summary"></label><button class="btn primary" type="button" data-lab-complete>Commit comparison</button></div><div class="nus-lab-stage nus-lab-bars" id="${id}-stage"><div class="nus-lab-bar-row"><span>Training risk</span><div class="nus-lab-track"><i data-train-bar></i></div><b data-train-value>29</b></div><div class="nus-lab-bar-row"><span>Validation risk</span><div class="nus-lab-track"><i data-valid-bar></i></div><b data-valid-value>28</b></div><p id="${id}-summary" class="nus-lab-status-text" aria-live="polite">Moderate complexity: compare both risks before choosing.</p></div>`);
   }
@@ -123,11 +133,16 @@
   }
   function decisionTree(lab) {
     const splits = lab.splits || [];
-    return shell(lab, `<div class="nus-lab-controls"><span class="nus-lab-step-count">Choose the evidence-respecting branch</span><button class="btn primary" type="button" data-lab-complete>Commit branch</button></div><div class="nus-decision-tree" role="list" aria-label="Evaluation decision branches">${splits.map(split => `<button class="nus-decision-branch" type="button" role="listitem" data-lab-choice="${esc(split.id)}" aria-pressed="false"><span><b>${esc(split.label)}</b><small>${esc(split.detail)}</small></span><i><b style="width:${Math.max(0, Math.min(100, split.impurity))}%"></b></i><em>risk ${esc(split.impurity)}</em></button>`).join("")}</div><p class="nus-lab-status-text" data-decision-summary aria-live="polite">Lower impurity is useful only when the split respects the train/validation/test protocol.</p>`);
+    const evaluation = lab.mode === "evaluation";
+    const branches = splits.map(split => `<button class="nus-decision-branch" type="button" role="listitem" data-lab-choice="${esc(split.id)}" aria-pressed="false"><span><b>${esc(split.label)}</b><small>${esc(split.detail)}</small></span>${evaluation ? `<i><b style="width:${Math.max(0, Math.min(100, split.impurity))}%"></b></i><em>risk ${esc(split.impurity)}</em>` : `<em>${esc(split.scope || "Candidate rule")}</em>`}</button>`).join("");
+    const label = evaluation ? "Choose the evidence-respecting branch" : (lab.branchPrompt || "Choose the branch that matches the question");
+    const ariaLabel = evaluation ? "Evaluation decision branches" : "Decision branches";
+    const status = evaluation ? "Lower impurity is useful only when the split respects the train/validation/test protocol." : "Select a branch and explain the rule that justifies it.";
+    return shell(lab, `<div class="nus-lab-controls"><span class="nus-lab-step-count">${label}</span><button class="btn primary" type="button" data-lab-complete>Commit branch</button></div><div class="nus-decision-tree" role="list" aria-label="${ariaLabel}">${branches}</div><p class="nus-lab-status-text" data-decision-summary aria-live="polite">${status}</p>`);
   }
   function deliveryGuarantee(lab) {
     const splits = lab.splits || [];
-    return shell(lab, `<div class="nus-lab-controls"><span class="nus-lab-step-count">Choose the weakest sufficient guarantee</span><button class="btn primary" type="button" data-lab-complete>Commit guarantee</button></div><p class="nus-lab-invariant"><b>Application invariant</b> ${esc(lab.invariant || "State the ordering relationship the receiver must preserve.")}</p><div class="nus-decision-tree" role="list" aria-label="Delivery guarantee branches">${splits.map(split => `<button class="nus-decision-branch" type="button" role="listitem" data-lab-choice="${esc(split.id)}" aria-pressed="false"><span><b>${esc(split.label)}</b><small>${esc(split.detail)}</small></span><em>${esc(split.scope || "")}</em></button>`).join("")}</div><p class="nus-lab-status-text" data-decision-summary aria-live="polite">Mark the dependency first, then choose the weakest guarantee that preserves it.</p>`);
+    return shell(lab, `<div class="nus-lab-controls"><span class="nus-lab-step-count">Choose the weakest sufficient guarantee</span><button class="btn primary" type="button" data-lab-complete>Commit guarantee</button></div><p class="nus-lab-invariant"><b>Application invariant</b> ${esc(lab.invariant || "State the ordering relationship the receiver must preserve.")}</p><div class="nus-decision-tree" role="list" aria-label="Delivery guarantee branches">${splits.map(split => `<button class="nus-decision-branch" type="button" role="listitem" data-lab-choice="${esc(split.id)}" aria-pressed="false"><span><b>${esc(split.label)}</b><small>${esc(split.detail)}</small></span><em>${esc(split.scope || "Guarantee scope")}</em></button>`).join("")}</div><p class="nus-lab-status-text" data-decision-summary aria-live="polite">Mark the dependency first, then choose the weakest guarantee that preserves it.</p>`);
   }
   function deepDive(lab) {
     const exercises = lab.exercises || [], id = "nus-lab-" + lab.lessonId;

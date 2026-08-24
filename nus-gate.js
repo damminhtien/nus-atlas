@@ -20,6 +20,34 @@ function checkSourceRef(ref, owner) {
   if (!ref || !ref.sourceId || !Number.isInteger(ref.page) || ref.page < 1) errors.push(`bad source ref: ${owner}`);
   if (ref && ref.sourceType && !sourceTypes.has(ref.sourceType)) errors.push(`unknown source type: ${owner}`);
 }
+function checkLabContract(lab, id) {
+  const owner = `${lab.courseCode}/${id}`;
+  if (lab.type === "compare") {
+    if (!["choice", "model-risk"].includes(lab.mode)) errors.push(`compare lab needs an explicit renderer mode: ${owner}`);
+    if (lab.mode === "choice") {
+      if (!lab.requiresChoice || !Array.isArray(lab.options) || !lab.options.length) errors.push(`choice comparison needs options and requiresChoice: ${owner}`);
+      (lab.options || []).forEach(option => {
+        if (!option || !option.id || !option.label || !option.detail || !option.scope) errors.push(`incomplete comparison option: ${owner}`);
+      });
+    }
+    if (lab.mode === "model-risk" && (!lab.initialState || typeof lab.initialState.complexity !== "number")) errors.push(`model-risk comparison needs complexity state: ${owner}`);
+  }
+  if (lab.type === "decision-tree") {
+    if (!["generic", "evaluation"].includes(lab.mode) || !Array.isArray(lab.splits) || !lab.splits.length) errors.push(`decision tree needs an explicit mode and branches: ${owner}`);
+    (lab.splits || []).forEach(split => {
+      if (!split || !split.id || !split.label || !split.detail || (lab.mode === "generic" ? !split.scope : typeof split.impurity !== "number")) errors.push(`incomplete decision branch: ${owner}`);
+    });
+  }
+  if (lab.type === "delivery-guarantee") {
+    if (!lab.invariant || !lab.requiredChoice || !Array.isArray(lab.splits) || !lab.splits.length || !lab.splits.some(split => split.id === lab.requiredChoice)) errors.push(`delivery guarantee needs invariant, branches, and a valid requiredChoice: ${owner}`);
+    (lab.splits || []).forEach(split => {
+      if (!split || !split.id || !split.label || !split.detail || !split.scope) errors.push(`incomplete delivery guarantee branch: ${owner}`);
+    });
+  }
+  if (["algorithm-trace", "derivation-trace", "event-timeline"].includes(lab.type) && (!Array.isArray(lab.steps) || !lab.steps.length)) errors.push(`step-based lab needs configured steps: ${owner}`);
+  if (lab.type === "concept-map" && (!Array.isArray(lab.nodes) || !lab.nodes.length || !Array.isArray(lab.edges))) errors.push(`concept map needs configured nodes and edges: ${owner}`);
+  if (lab.type === "deep-dive" && (!Array.isArray(lab.exercises) || !lab.exercises.length || lab.exercises.some(exercise => !Array.isArray(exercise.steps) || !exercise.steps.length))) errors.push(`deep-dive needs configured exercises and steps: ${owner}`);
+}
 
 if (!courses.length || new Set(courses.map(course => course.code)).size !== courses.length) errors.push("must define at least one unique NUS course");
 for (const packageData of packages) {
@@ -79,6 +107,7 @@ for (const packageData of packages) {
   Object.entries(packageData.labs || {}).forEach(([id, lab]) => {
     if (!lab || lab.courseCode !== course.code || !lab.lessonId || !lab.type || !lab.learningGoal || lab.reducedMotion !== true || !Array.isArray(lab.sourceRefs) || !lab.sourceRefs.length) errors.push(`incomplete visual lab: ${id}`);
     (lab.sourceRefs || []).forEach(ref => checkSourceRef(ref, id));
+    if (lab) checkLabContract(lab, id);
   });
 }
 
