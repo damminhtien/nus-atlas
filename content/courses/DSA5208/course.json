@@ -24,7 +24,8 @@
   "localSources": [
     "DSA5208/Lec0.pdf",
     "DSA5208/Lec1.pdf",
-    "DSA5208/Lec2.pdf"
+    "DSA5208/Lec2.pdf",
+    "DSA5208/Lec3.pdf"
   ],
   "lectureSources": [
     {
@@ -42,14 +43,20 @@
     {
       "sourceId": "DSA5208/Lec2.pdf",
       "sourceType": "lecture",
-      "role": "current Lecture 2 on broadcast, shortest paths, and synchronizers",
+      "role": "broadcast, shortest paths, and synchronizers",
       "status": "current"
     },
     {
-      "sourceId": "DSA5208/Lec2.pdf",
+      "sourceId": "DSA5208/Lec3.pdf",
       "sourceType": "lecture",
-      "role": "current Lecture 2 on broadcast, shortest paths, and synchronizers",
-      "status": "current"
+      "role": "consistency models",
+      "status": "current",
+      "access": "local-only",
+      "fileName": "Lec3.pdf",
+      "pageCount": 61,
+      "renderDirectory": "assets/nus/dsa5208/lec3",
+      "slideSetId": "dsa5208-lec3",
+      "sha256": "ff01a8bc249bbc5a1424f486cdb0e0dc2c6fcc6575f8628c93af6b55393658cd"
     }
   ],
   "exerciseSources": [],
@@ -69,7 +76,7 @@
       "status": "optional"
     }
   ],
-  "sourceNote": "Lec0, Lec1, and Lec2 define the currently supplied lecture scope through broadcast, shortest paths, and synchronizers. The textbook and Lamport paper are depth pointers only; later consistency, Spark, MLlib, GPU, and cloud derivations remain pending until their official sources are supplied.",
+  "sourceNote": "Lec0, Lec1, Lec2, and Lec3 define the current DSA5208 lecture scope through consistency models. Spark, MLlib, GPU, and cloud derivations remain pending until their official sources are supplied.",
   "schemaVersion": "nus.course.v1",
   "moduleIds": [
     "dsa5208-foundations",
@@ -95,6 +102,30 @@
       "sourceType": "lecture",
       "role": "physical and logical times",
       "status": "current"
+    },
+    {
+      "sourceId": "DSA5208/Lec2.pdf",
+      "sourceType": "lecture",
+      "role": "broadcast, shortest paths, and synchronizers",
+      "status": "current",
+      "access": "local-only",
+      "fileName": "Lec2.pdf",
+      "pageCount": 58,
+      "renderDirectory": "assets/nus/dsa5208/lec2",
+      "slideSetId": "dsa5208-lec2",
+      "sha256": "ed4188c94bf84f72f4465e46ebecb80fd2356e79ce0d977796e783b06491d6bc"
+    },
+    {
+      "sourceId": "DSA5208/Lec3.pdf",
+      "sourceType": "lecture",
+      "role": "consistency models",
+      "status": "current",
+      "access": "local-only",
+      "fileName": "Lec3.pdf",
+      "pageCount": 61,
+      "renderDirectory": "assets/nus/dsa5208/lec3",
+      "slideSetId": "dsa5208-lec3",
+      "sha256": "ff01a8bc249bbc5a1424f486cdb0e0dc2c6fcc6575f8628c93af6b55393658cd"
     },
     {
       "sourceId": "DSA5208/Distributed Systems textbook pointer",
@@ -296,6 +327,83 @@
       "sourceType": "lecture",
       "role": "MLlib and cloud",
       "status": "current"
+    },
+    {
+      "sourceId": "DSA5208/Lec3.pdf",
+      "page": 10,
+      "sourceType": "lecture",
+      "role": "strict consistency (linearizability)",
+      "status": "current"
+    },
+    {
+      "sourceId": "DSA5208/Lec3.pdf",
+      "page": 15,
+      "sourceType": "lecture",
+      "role": "sequential consistency",
+      "status": "current"
+    },
+    {
+      "sourceId": "DSA5208/Lec3.pdf",
+      "page": 22,
+      "sourceType": "lecture",
+      "role": "causal consistency",
+      "status": "current"
+    },
+    {
+      "sourceId": "DSA5208/Lec3.pdf",
+      "page": 29,
+      "sourceType": "lecture",
+      "role": "eventual consistency",
+      "status": "current"
+    },
+    {
+      "sourceId": "DSA5208/Lec3.pdf",
+      "page": 36,
+      "sourceType": "lecture",
+      "role": "read-your-writes consistency",
+      "status": "current"
+    },
+    {
+      "sourceId": "DSA5208/Lec3.pdf",
+      "page": 38,
+      "sourceType": "lecture",
+      "role": "writes-follow-reads consistency",
+      "status": "current"
+    },
+    {
+      "sourceId": "DSA5208/Lec3.pdf",
+      "page": 40,
+      "sourceType": "lecture",
+      "role": "monotonic reads consistency",
+      "status": "current"
+    },
+    {
+      "sourceId": "DSA5208/Lec3.pdf",
+      "page": 42,
+      "sourceType": "lecture",
+      "role": "monotonic writes consistency",
+      "status": "current"
+    },
+    {
+      "sourceId": "DSA5208/Lec3.pdf",
+      "page": 48,
+      "sourceType": "lecture",
+      "role": "read and write concerns",
+      "status": "current"
+    },
+    {
+      "sourceId": "DSA5208/Lec3.pdf",
+      "page": 53,
+      "sourceType": "lecture",
+      "role": "MongoDB read-your-writes implementation with Lamport clocks",
+      "status": "current"
+    },
+    {
+      "sourceId": "DSA5208/Lec3.pdf",
+      "page": 59,
+      "sourceType": "lecture",
+      "role": "digest reads and read repair",
+      "status": "current"
     }
   ],
   "questionBank": {
@@ -321,7 +429,7 @@
       "optimization": [
         "compressed timestamps",
         "storage overhead",
-        "Spark shuffle scope"
+        "consistency guarantees"
       ]
     },
     "questionIds": [
@@ -349,7 +457,8 @@
   "slideSetIds": [
     "dsa5208-lec0",
     "dsa5208-lec1",
-    "dsa5208-lec2"
+    "dsa5208-lec2",
+    "dsa5208-lec3"
   ],
   "timelineLessonIds": [
     "dsa5208-orientation",
@@ -366,7 +475,7 @@
     "dsa5208-consistency-spark"
   ],
   "sourcePolicy": {
-    "lecture": "The supplied Lec0, Lec1, and Lec2 PDFs define the current DSA5208 scope and source-backed explanations through broadcast, shortest paths, and synchronizers.",
+    "lecture": "The supplied Lec0, Lec1, Lec2, and Lec3 PDFs define the current DSA5208 scope through consistency models. Spark, MLlib, GPU, and cloud derivations remain pending until their official sources are supplied.",
     "exercise": "No official exercise sheet is currently supplied; exercise depth remains pending rather than inferred.",
     "textbook": "The textbook is represented as a pointer index only; raw textbook pages are not copied into the public bundle.",
     "reference": "The Lamport paper is optional context and cannot upgrade a topic into lecture scope.",
@@ -392,7 +501,6 @@
     "dsa5208-physical-clocks",
     "dsa5208-lamport-scalar",
     "dsa5208-vector-clocks",
-    "dsa5208-compressed-timestamps",
-    "dsa5208-consistency-spark"
+    "dsa5208-compressed-timestamps"
   ]
 }

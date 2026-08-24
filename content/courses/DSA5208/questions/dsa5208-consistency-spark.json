@@ -1,22 +1,59 @@
 [
   {
-    "id": "dsa5208-sp-q1",
+    "id": "dsa5208-consistency-q1",
     "type": "mcq",
-    "prompt": "Which operation is most likely to require a shuffle?",
+    "prompt": "Which model additionally preserves real-time order between non-overlapping operations?",
     "choices": [
-      "map",
-      "filter",
-      "groupByKey",
-      "partition-local projection"
+      "Linearizability",
+      "Sequential consistency",
+      "Eventual consistency",
+      "Monotonic writes"
     ],
-    "answer": 2,
-    "explanation": "Grouping by key brings records with the same key together and typically requires movement across partitions.",
+    "answer": 0,
+    "explanation": "Linearizability preserves a legal sequence and also respects real-time non-overlap. Sequential consistency keeps one common sequence but does not require the same real-time alignment.",
     "sourceRefs": [
       {
-        "sourceId": "DSA5208/Lec0.pdf",
-        "page": 14,
+        "sourceId": "DSA5208/Lec3.pdf",
+        "page": 10,
         "sourceType": "lecture",
-        "role": "Spark topic map",
+        "role": "strict consistency (linearizability)",
+        "status": "current"
+      },
+      {
+        "sourceId": "DSA5208/Lec3.pdf",
+        "page": 15,
+        "sourceType": "lecture",
+        "role": "sequential consistency",
+        "status": "current"
+      }
+    ],
+    "difficulty": "medium",
+    "skill": "distinguish",
+    "cognitiveLevel": "understand",
+    "estimatedSeconds": 60,
+    "misconception": "One global order is not automatically the same as preserving real-time order.",
+    "visualHook": "Compare the linearizable and sequential examples side by side.",
+    "courseId": "DSA5208",
+    "lessonId": "dsa5208-consistency-spark",
+    "schemaVersion": "nus.question.v1"
+  },
+  {
+    "id": "dsa5208-consistency-q2",
+    "type": "short",
+    "prompt": "What does eventual consistency guarantee if no new updates are made?",
+    "accepted": [
+      "replicas eventually have the same value",
+      "eventually converge",
+      "all replicas eventually agree"
+    ],
+    "solution": "If updates stop, eventual consistency guarantees that replicas eventually converge to the same value.",
+    "explanation": "The model guarantees convergence after quiescence, not immediate freshness after every write.",
+    "sourceRefs": [
+      {
+        "sourceId": "DSA5208/Lec3.pdf",
+        "page": 29,
+        "sourceType": "lecture",
+        "role": "eventual consistency",
         "status": "current"
       }
     ],
@@ -24,101 +61,139 @@
     "skill": "recall",
     "cognitiveLevel": "understand",
     "estimatedSeconds": 60,
-    "misconception": "Check the assumption behind your answer.",
-    "visualHook": "Explain the idea with a small diagram or example.",
+    "misconception": "Eventual consistency does not promise that the next read is already the newest one.",
+    "visualHook": "Inspect the eventual-consistency definition slide before answering.",
     "courseId": "DSA5208",
     "lessonId": "dsa5208-consistency-spark",
     "schemaVersion": "nus.question.v1"
   },
   {
-    "id": "dsa5208-sp-q2",
-    "type": "short",
-    "prompt": "How should Atlas label detailed topics that are named in Lec0 but lack supplied later lecture slides?",
-    "accepted": [
-      "roadmap context pending source",
-      "context pointer not full lecture coverage",
-      "pending until source supplied"
+    "id": "dsa5208-consistency-q3",
+    "type": "mcq",
+    "prompt": "A client writes $x=7$ and later reads $x$. Which client-centric guarantee is the minimum requirement to ensure that client sees its own write?",
+    "choices": [
+      "Read-your-writes",
+      "Monotonic reads",
+      "Monotonic writes",
+      "Eventual consistency"
     ],
-    "solution": "Keep them as roadmap/context pointers and mark detailed coverage pending until the corresponding lecture or official exercise source is available.",
-    "explanation": "Source fidelity matters more than filling gaps with generic distributed-systems material.",
+    "answer": 0,
+    "explanation": "Read-your-writes guarantees visibility of the client's own completed write. Monotonic reads compares one read with a later read, not a write with a later read.",
     "sourceRefs": [
       {
-        "sourceId": "DSA5208/Lec0.pdf",
-        "page": 12,
+        "sourceId": "DSA5208/Lec3.pdf",
+        "page": 36,
         "sourceType": "lecture",
-        "role": "course topic map",
+        "role": "read-your-writes consistency",
+        "status": "current"
+      }
+    ],
+    "difficulty": "medium",
+    "skill": "classify",
+    "cognitiveLevel": "understand",
+    "estimatedSeconds": 60,
+    "misconception": "Monotonic reads prevents moving backward after a prior read; it is not the same promise as seeing your own write.",
+    "visualHook": "Use the hold-versus-violation read-your-writes diagrams.",
+    "courseId": "DSA5208",
+    "lessonId": "dsa5208-consistency-spark",
+    "schemaVersion": "nus.question.v1"
+  },
+  {
+    "id": "dsa5208-consistency-q4",
+    "type": "short",
+    "prompt": "Why are MongoDB read concern \"majority\" and write concern \"majority\" still not enough by themselves to guarantee read-your-writes consistency by definition?",
+    "accepted": [
+      "majority snapshot can lag the client write",
+      "need session or lamport clock state",
+      "read may hit node not caught up to that client"
+    ],
+    "solution": "A read served from a majority-committed snapshot can still miss the client's latest write on that serving node. MongoDB therefore adds session or Lamport-clock state so the read waits until the node has caught up to that client's write.",
+    "explanation": "Majority visibility and one client's session guarantee are related but not identical.",
+    "sourceRefs": [
+      {
+        "sourceId": "DSA5208/Lec3.pdf",
+        "page": 48,
+        "sourceType": "lecture",
+        "role": "read and write concerns",
+        "status": "current"
+      },
+      {
+        "sourceId": "DSA5208/Lec3.pdf",
+        "page": 53,
+        "sourceType": "lecture",
+        "role": "MongoDB read-your-writes implementation with Lamport clocks",
+        "status": "current"
+      }
+    ],
+    "difficulty": "hard",
+    "skill": "explain",
+    "cognitiveLevel": "analyze",
+    "estimatedSeconds": 120,
+    "misconception": "A write acknowledged by a majority does not automatically mean every possible reader has the session guarantee the client expects.",
+    "visualHook": "Trace the majority snapshot and Lamport-clock slides together.",
+    "courseId": "DSA5208",
+    "lessonId": "dsa5208-consistency-spark",
+    "schemaVersion": "nus.question.v1"
+  },
+  {
+    "id": "dsa5208-consistency-q5",
+    "type": "mcq",
+    "prompt": "Which data-centric model only requires causally related writes to be seen in the same order by all processes?",
+    "choices": [
+      "Sequential consistency",
+      "Causal consistency",
+      "Strict consistency",
+      "Monotonic writes"
+    ],
+    "answer": 1,
+    "explanation": "Causal consistency preserves the order of causally related writes, while allowing concurrent writes to remain unordered globally.",
+    "sourceRefs": [
+      {
+        "sourceId": "DSA5208/Lec3.pdf",
+        "page": 22,
+        "sourceType": "lecture",
+        "role": "causal consistency",
+        "status": "current"
+      }
+    ],
+    "difficulty": "medium",
+    "skill": "classify",
+    "cognitiveLevel": "understand",
+    "estimatedSeconds": 60,
+    "misconception": "Causal consistency is weaker than models that enforce one global order for all writes.",
+    "visualHook": "Use the causal-consistency examples to separate related from concurrent writes.",
+    "courseId": "DSA5208",
+    "lessonId": "dsa5208-consistency-spark",
+    "schemaVersion": "nus.question.v1"
+  },
+  {
+    "id": "dsa5208-consistency-q6",
+    "type": "short",
+    "prompt": "What does the coordinator do when digest reads disagree during read repair?",
+    "accepted": [
+      "fetch full versions and reconcile",
+      "request full data and repair stale replicas",
+      "return newest version and repair"
+    ],
+    "solution": "If digests disagree, the coordinator fetches the full versions, reconciles them, returns the newest version to the client, and repairs stale replicas.",
+    "explanation": "The digest mismatch is a cheap inconsistency test; the full read and repair happen only when the compact hashes disagree.",
+    "sourceRefs": [
+      {
+        "sourceId": "DSA5208/Lec3.pdf",
+        "page": 59,
+        "sourceType": "lecture",
+        "role": "digest reads and read repair",
         "status": "current"
       }
     ],
     "difficulty": "medium",
     "skill": "explain",
-    "cognitiveLevel": "understand",
+    "cognitiveLevel": "apply",
     "estimatedSeconds": 90,
-    "misconception": "Check the assumption behind your answer.",
-    "visualHook": "Explain the idea with a small diagram or example.",
+    "misconception": "Digest reads do not avoid reconciliation forever; they avoid full-row traffic only when replicas already agree.",
+    "visualHook": "Follow the digest mismatch arrow on the read-repair slide.",
     "courseId": "DSA5208",
     "lessonId": "dsa5208-consistency-spark",
-    "schemaVersion": "nus.question.v1"
-  },
-  {
-    "id": "dsa5208-bank-017",
-    "lessonId": "dsa5208-consistency-spark",
-    "type": "mcq",
-    "prompt": "Which operation is most likely to require a Spark shuffle?",
-    "choices": [
-      "map",
-      "filter",
-      "groupByKey",
-      "partition-local projection"
-    ],
-    "answer": 2,
-    "explanation": "Grouping by key brings matching records together across partitions.",
-    "difficulty": "easy",
-    "skill": "classify",
-    "cognitiveLevel": "understand",
-    "estimatedSeconds": 45,
-    "misconception": "Short SQL or Spark code can still cause large data movement.",
-    "visualHook": "Use the Spark pipeline preview.",
-    "sourceRefs": [
-      {
-        "sourceId": "DSA5208/Lec0.pdf",
-        "page": 14,
-        "sourceType": "lecture",
-        "role": "Spark topic map",
-        "status": "current"
-      }
-    ],
-    "courseId": "DSA5208",
-    "schemaVersion": "nus.question.v1"
-  },
-  {
-    "id": "dsa5208-bank-018",
-    "lessonId": "dsa5208-consistency-spark",
-    "type": "short",
-    "prompt": "How should Atlas label a later topic named in Lec0 when its detailed lecture is not supplied?",
-    "accepted": [
-      "roadmap context pending source",
-      "context pointer",
-      "pending detailed coverage"
-    ],
-    "solution": "Keep it as a roadmap/context pointer and mark detailed coverage pending until the corresponding official source is supplied.",
-    "explanation": "Source fidelity is more useful than filling an evidence gap with generic material.",
-    "difficulty": "medium",
-    "skill": "provenance",
-    "cognitiveLevel": "evaluate",
-    "estimatedSeconds": 75,
-    "misconception": "A roadmap mention is not a complete lecture derivation.",
-    "visualHook": "Open the source lens and inspect the coverage status.",
-    "sourceRefs": [
-      {
-        "sourceId": "DSA5208/Lec0.pdf",
-        "page": 12,
-        "sourceType": "lecture",
-        "role": "course topic map",
-        "status": "current"
-      }
-    ],
-    "courseId": "DSA5208",
     "schemaVersion": "nus.question.v1"
   }
 ]

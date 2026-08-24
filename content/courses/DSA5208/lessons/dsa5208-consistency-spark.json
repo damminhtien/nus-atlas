@@ -1,160 +1,327 @@
 {
   "id": "dsa5208-consistency-spark",
-  "title": "Course frontier: consistency and Spark preview",
+  "title": "Consistency models",
   "week": 5,
-  "minutes": 45,
-  "summary": "Use the overview's later-course map to connect consistency testing, Spark data movement, MLlib, and cloud workflows without pretending missing lectures were supplied.",
+  "minutes": 60,
+  "summary": "Compare linearizability, sequential consistency, causal consistency, eventual consistency, and four client-centric guarantees from Lecture 3, then connect them to MongoDB and ScyllaDB design choices.",
   "objectives": [
-    "Separate the supplied overview from later lecture detail",
-    "Map a project question to consistency or shuffle evidence",
-    "Identify what source must be added before claiming full lecture coverage"
+    "Distinguish what linearizability, sequential consistency, causal consistency, and eventual consistency each promise",
+    "Explain the difference between read-your-writes, writes-follow-reads, monotonic reads, and monotonic writes",
+    "Relate read or write concerns, Lamport-clock session tracking, and digest read repair to concrete database behavior"
   ],
   "sourceRefs": [
     {
-      "sourceId": "DSA5208/Lec0.pdf",
-      "page": 12,
+      "sourceId": "DSA5208/Lec3.pdf",
+      "page": 10,
       "sourceType": "lecture",
-      "role": "course topic map",
+      "role": "strict consistency (linearizability)",
       "status": "current"
     },
     {
-      "sourceId": "DSA5208/Lec0.pdf",
-      "page": 14,
-      "sourceType": "lecture",
-      "role": "Spark and distributed algorithms",
-      "status": "current"
-    },
-    {
-      "sourceId": "DSA5208/Lec0.pdf",
+      "sourceId": "DSA5208/Lec3.pdf",
       "page": 15,
       "sourceType": "lecture",
-      "role": "MLlib and cloud",
+      "role": "sequential consistency",
+      "status": "current"
+    },
+    {
+      "sourceId": "DSA5208/Lec3.pdf",
+      "page": 22,
+      "sourceType": "lecture",
+      "role": "causal consistency",
+      "status": "current"
+    },
+    {
+      "sourceId": "DSA5208/Lec3.pdf",
+      "page": 29,
+      "sourceType": "lecture",
+      "role": "eventual consistency",
+      "status": "current"
+    },
+    {
+      "sourceId": "DSA5208/Lec3.pdf",
+      "page": 36,
+      "sourceType": "lecture",
+      "role": "read-your-writes consistency",
+      "status": "current"
+    },
+    {
+      "sourceId": "DSA5208/Lec3.pdf",
+      "page": 48,
+      "sourceType": "lecture",
+      "role": "read and write concerns",
+      "status": "current"
+    },
+    {
+      "sourceId": "DSA5208/Lec3.pdf",
+      "page": 53,
+      "sourceType": "lecture",
+      "role": "MongoDB read-your-writes implementation with Lamport clocks",
+      "status": "current"
+    },
+    {
+      "sourceId": "DSA5208/Lec3.pdf",
+      "page": 59,
+      "sourceType": "lecture",
+      "role": "digest reads and read repair",
       "status": "current"
     }
   ],
-  "visualIds": [
-    "dsa5208-spark-pipeline"
-  ],
+  "sourceLens": {
+    "status": "core DSA5208 Lecture 3",
+    "whyExaminable": "Lecture 3 is where Atlas must keep four different boundaries straight: real-time order, causal order, eventual convergence, and one client's own session guarantees. The common failure mode is treating a weaker model as if it implied a stronger one.",
+    "lecture": [
+      {
+        "sourceId": "DSA5208/Lec3.pdf",
+        "page": 10,
+        "sourceType": "lecture",
+        "role": "strict consistency",
+        "status": "current"
+      },
+      {
+        "sourceId": "DSA5208/Lec3.pdf",
+        "page": 22,
+        "sourceType": "lecture",
+        "role": "causal consistency",
+        "status": "current"
+      },
+      {
+        "sourceId": "DSA5208/Lec3.pdf",
+        "page": 36,
+        "sourceType": "lecture",
+        "role": "read-your-writes consistency",
+        "status": "current"
+      },
+      {
+        "sourceId": "DSA5208/Lec3.pdf",
+        "page": 48,
+        "sourceType": "lecture",
+        "role": "read and write concerns",
+        "status": "current"
+      },
+      {
+        "sourceId": "DSA5208/Lec3.pdf",
+        "page": 53,
+        "sourceType": "lecture",
+        "role": "Lamport-clock session enforcement",
+        "status": "current"
+      },
+      {
+        "sourceId": "DSA5208/Lec3.pdf",
+        "page": 59,
+        "sourceType": "lecture",
+        "role": "digest reads and read repair",
+        "status": "current"
+      }
+    ],
+    "officialExercise": [],
+    "textbook": [],
+    "reference": []
+  },
+  "visualIds": [],
+  "labIds": [],
   "sections": [
     {
-      "title": "Scope boundary",
+      "title": "Data-centric guarantees",
       "sourceType": "lecture",
-      "body": "The supplied Lec0 overview names consistency models, Apache Spark, distributed algorithms, MLlib, and cloud computing as later topics. It is safe to use this page as a course map; detailed derivations require the corresponding lecture sources when they are available.",
+      "body": "Linearizability preserves real-time order and the most recent write, sequential consistency keeps one common order without the same real-time constraint, causal consistency preserves only causally related writes, and eventual consistency promises convergence only after updates stop.",
       "sourceRefs": [
         {
-          "sourceId": "DSA5208/Lec0.pdf",
-          "page": 12,
+          "sourceId": "DSA5208/Lec3.pdf",
+          "page": 10,
           "sourceType": "lecture",
-          "role": "course topic map",
+          "role": "strict consistency (linearizability)",
           "status": "current"
         },
         {
-          "sourceId": "DSA5208/Lec0.pdf",
-          "page": 14,
-          "sourceType": "lecture",
-          "role": "Spark topic",
-          "status": "current"
-        }
-      ],
-      "sourceLens": {
-        "status": "core DSA5208",
-        "whyExaminable": "The examinability signal here is the official course roadmap, not an invented replacement for missing later slides.",
-        "lecture": [
-          {
-            "sourceId": "DSA5208/Lec0.pdf",
-            "page": 12,
-            "sourceType": "lecture",
-            "role": "course topic map",
-            "status": "current"
-          },
-          {
-            "sourceId": "DSA5208/Lec0.pdf",
-            "page": 14,
-            "sourceType": "lecture",
-            "role": "Spark topic",
-            "status": "current"
-          }
-        ],
-        "officialExercise": [],
-        "textbook": [
-          {
-            "sourceId": "DSA5208/Distributed Systems textbook pointer",
-            "page": 90,
-            "sourceType": "textbook",
-            "role": "distributed data processing",
-            "status": "course-depth"
-          }
-        ],
-        "reference": []
-      }
-    },
-    {
-      "title": "Preview a shuffle boundary",
-      "sourceType": "lecture",
-      "body": "A map or filter can often remain partition-local, while grouping, joins, and global sorts usually require data movement. Treat this as a study hypothesis to test against the Spark lecture and project implementation, not as a complete Spark derivation.",
-      "sourceRefs": [
-        {
-          "sourceId": "DSA5208/Lec0.pdf",
-          "page": 14,
-          "sourceType": "lecture",
-          "role": "Spark and distributed algorithms",
-          "status": "current"
-        },
-        {
-          "sourceId": "DSA5208/Lec0.pdf",
+          "sourceId": "DSA5208/Lec3.pdf",
           "page": 15,
           "sourceType": "lecture",
-          "role": "MLlib and cloud",
+          "role": "sequential consistency",
+          "status": "current"
+        },
+        {
+          "sourceId": "DSA5208/Lec3.pdf",
+          "page": 22,
+          "sourceType": "lecture",
+          "role": "causal consistency",
+          "status": "current"
+        },
+        {
+          "sourceId": "DSA5208/Lec3.pdf",
+          "page": 29,
+          "sourceType": "lecture",
+          "role": "eventual consistency",
           "status": "current"
         }
-      ],
-      "sourceLens": {
-        "status": "core DSA5208",
-        "whyExaminable": "The preview bridges the clock-and-ordering foundations to future Spark work while preserving the source boundary.",
-        "lecture": [
-          {
-            "sourceId": "DSA5208/Lec0.pdf",
-            "page": 14,
-            "sourceType": "lecture",
-            "role": "Spark and distributed algorithms",
-            "status": "current"
-          },
-          {
-            "sourceId": "DSA5208/Lec0.pdf",
-            "page": 15,
-            "sourceType": "lecture",
-            "role": "MLlib and cloud",
-            "status": "current"
-          }
-        ],
-        "officialExercise": [],
-        "textbook": [
-          {
-            "sourceId": "DSA5208/Distributed Systems textbook pointer",
-            "page": 98,
-            "sourceType": "textbook",
-            "role": "shuffle and data movement",
-            "status": "course-depth"
-          }
-        ],
-        "reference": []
-      }
+      ]
+    },
+    {
+      "title": "Client-centric guarantees and deployed systems",
+      "sourceType": "lecture",
+      "body": "Read-your-writes, writes-follow-reads, monotonic reads, and monotonic writes describe what one client can safely observe across replicas. MongoDB and ScyllaDB expose these trade-offs through read/write concerns, coordinator logic, Lamport-clock session state, digest reads, and read repair.",
+      "sourceRefs": [
+        {
+          "sourceId": "DSA5208/Lec3.pdf",
+          "page": 36,
+          "sourceType": "lecture",
+          "role": "read-your-writes consistency",
+          "status": "current"
+        },
+        {
+          "sourceId": "DSA5208/Lec3.pdf",
+          "page": 38,
+          "sourceType": "lecture",
+          "role": "writes-follow-reads consistency",
+          "status": "current"
+        },
+        {
+          "sourceId": "DSA5208/Lec3.pdf",
+          "page": 40,
+          "sourceType": "lecture",
+          "role": "monotonic reads consistency",
+          "status": "current"
+        },
+        {
+          "sourceId": "DSA5208/Lec3.pdf",
+          "page": 42,
+          "sourceType": "lecture",
+          "role": "monotonic writes consistency",
+          "status": "current"
+        },
+        {
+          "sourceId": "DSA5208/Lec3.pdf",
+          "page": 48,
+          "sourceType": "lecture",
+          "role": "read and write concerns",
+          "status": "current"
+        },
+        {
+          "sourceId": "DSA5208/Lec3.pdf",
+          "page": 53,
+          "sourceType": "lecture",
+          "role": "MongoDB read-your-writes implementation with Lamport clocks",
+          "status": "current"
+        },
+        {
+          "sourceId": "DSA5208/Lec3.pdf",
+          "page": 59,
+          "sourceType": "lecture",
+          "role": "digest reads and read repair",
+          "status": "current"
+        }
+      ]
     }
   ],
   "examples": [
     {
-      "title": "Evidence request for the next module",
+      "title": "Diagnose a stale-read path",
       "sourceType": "lecture",
       "steps": [
-        "State the claimed consistency or performance property.",
-        "Identify the missing lecture or implementation source.",
-        "Choose a metric such as stale-read rate, shuffle bytes, or stage time.",
-        "Do not mark the claim lecture-complete until the source is supplied."
+        "Classify the failure first: real-time order, causal dependency, eventual convergence, or one client's session view.",
+        "If the system uses MongoDB majority read/write concerns, ask whether the client still needs session or Lamport-clock state to preserve read-your-writes.",
+        "If the system uses tunable consistency, state the replication factor, chosen consistency level, and what stale or divergent read the coordinator may still permit.",
+        "Choose the weakest guarantee that rules out the observed anomaly instead of jumping immediately to the strongest global model."
       ],
-      "answer": "The Atlas should distinguish a roadmap pointer from a fully taught derivation."
+      "answer": "A useful consistency diagnosis names the violated observation, the minimal guarantee that would prevent it, and the implementation mechanism that must carry that guarantee into the running database.",
+      "sourceRefs": [
+        {
+          "sourceId": "DSA5208/Lec3.pdf",
+          "page": 48,
+          "sourceType": "lecture",
+          "role": "read and write concerns",
+          "status": "current"
+        },
+        {
+          "sourceId": "DSA5208/Lec3.pdf",
+          "page": 53,
+          "sourceType": "lecture",
+          "role": "MongoDB read-your-writes implementation with Lamport clocks",
+          "status": "current"
+        },
+        {
+          "sourceId": "DSA5208/Lec3.pdf",
+          "page": 59,
+          "sourceType": "lecture",
+          "role": "digest reads and read repair",
+          "status": "current"
+        }
+      ]
     }
   ],
   "contrastDrills": [
+    {
+      "id": "dsa5208-consistency-contrast-linearizable-sequential",
+      "type": "contrast",
+      "kind": "concept-contrast",
+      "pair": "Linearizability vs sequential consistency",
+      "prompt": "Which model additionally preserves real-time order between non-overlapping operations?",
+      "choices": [
+        "Linearizability",
+        "Sequential consistency",
+        "Eventual consistency",
+        "Monotonic writes"
+      ],
+      "answer": 0,
+      "explanation": "Linearizability keeps the real-time order of non-overlapping operations; sequential consistency keeps one legal sequence but does not require the same real-time alignment.",
+      "estimatedSeconds": 45,
+      "difficulty": "medium",
+      "skill": "concept-contrast",
+      "cognitiveLevel": "distinguish",
+      "misconception": "One common order is not automatically the same as preserving wall-clock non-overlap.",
+      "sourceRefs": [
+        {
+          "sourceId": "DSA5208/Lec3.pdf",
+          "page": 10,
+          "sourceType": "lecture",
+          "role": "strict consistency (linearizability)",
+          "status": "current"
+        },
+        {
+          "sourceId": "DSA5208/Lec3.pdf",
+          "page": 15,
+          "sourceType": "lecture",
+          "role": "sequential consistency",
+          "status": "current"
+        }
+      ]
+    },
+    {
+      "id": "dsa5208-consistency-contrast-ryw-monotonic-reads",
+      "type": "contrast",
+      "kind": "concept-contrast",
+      "pair": "Read-your-writes vs monotonic reads",
+      "prompt": "A client writes $x=7$ and later reads $x$. Which client-centric guarantee is the minimum requirement to ensure that client sees the write?",
+      "choices": [
+        "Read-your-writes",
+        "Monotonic reads",
+        "Monotonic writes",
+        "Eventual consistency"
+      ],
+      "answer": 0,
+      "explanation": "Read-your-writes guarantees that the same client sees its own completed write. Monotonic reads only prevents that client from moving backward after a prior read.",
+      "estimatedSeconds": 45,
+      "difficulty": "medium",
+      "skill": "concept-contrast",
+      "cognitiveLevel": "distinguish",
+      "misconception": "Monotonic reads compares two reads; it does not by itself guarantee visibility of the client's own write.",
+      "sourceRefs": [
+        {
+          "sourceId": "DSA5208/Lec3.pdf",
+          "page": 36,
+          "sourceType": "lecture",
+          "role": "read-your-writes consistency",
+          "status": "current"
+        },
+        {
+          "sourceId": "DSA5208/Lec3.pdf",
+          "page": 40,
+          "sourceType": "lecture",
+          "role": "monotonic reads consistency",
+          "status": "current"
+        }
+      ]
+    },
     {
       "id": "dsa5208-contrast-local-shuffle",
       "type": "contrast",
@@ -173,13 +340,13 @@
       "difficulty": "medium",
       "skill": "concept-contrast",
       "cognitiveLevel": "distinguish",
-      "misconception": "Name the ordering, time, or communication boundary before choosing.",
+      "misconception": "Roadmap topics still need a stated system boundary before they become measured claims.",
       "sourceRefs": [
         {
           "sourceId": "DSA5208/Lec0.pdf",
           "page": 14,
           "sourceType": "lecture",
-          "role": "Spark topic map",
+          "role": "Spark and distributed algorithms",
           "status": "current"
         }
       ]
@@ -202,7 +369,7 @@
       "difficulty": "medium",
       "skill": "concept-contrast",
       "cognitiveLevel": "distinguish",
-      "misconception": "Name the ordering, time, or communication boundary before choosing.",
+      "misconception": "A roadmap mention is not the same thing as a source-backed derivation.",
       "sourceRefs": [
         {
           "sourceId": "DSA5208/Lec0.pdf",
@@ -216,73 +383,135 @@
   ],
   "math": [
     {
-      "latex": "T_{\\mathrm{pipeline}} \\approx T_{\\mathrm{local}} + T_{\\mathrm{shuffle}} + T_{\\mathrm{barrier}}",
-      "explanation": "Map-like operations can often stay partition-local, while joins, group-bys, and global sorts may require a shuffle. The equation forces the experiment to name the data movement and synchronization costs instead of treating the pipeline as one opaque step.",
+      "name": "Linearizability real-time constraint",
+      "purpose": "Use it to separate linearizability from weaker models that keep a legal sequence but not the same real-time ordering between non-overlapping operations.",
+      "latex": "\\operatorname{resp}(op_1) < \\operatorname{inv}(op_2) \\Longrightarrow op_1 \\prec op_2",
+      "explanation": "If operation $op_1$ finishes before $op_2$ begins, a linearizable history must place $op_1$ before $op_2$ in the global sequence.",
       "symbols": [
         {
-          "latex": "T_{\\mathrm{local}}",
-          "meaning": "work within existing partitions"
+          "latex": "op_1,op_2",
+          "meaning": "two read or write operations"
         },
         {
-          "latex": "T_{\\mathrm{barrier}}",
-          "meaning": "waiting for stage coordination"
+          "latex": "\\operatorname{resp},\\operatorname{inv}",
+          "meaning": "response and invocation times"
+        },
+        {
+          "latex": "\\prec",
+          "meaning": "order in the legal global sequence"
         }
       ],
-      "name": "Distributed-pipeline cost model",
-      "purpose": "Use it to separate partition-local work, shuffle, and barrier waiting when comparing implementations.",
       "sourceType": "lecture"
     },
     {
-      "latex": "T_{\\mathrm{job}}\\approx T_{\\mathrm{compute}}+T_{\\mathrm{shuffle}}+T_{\\mathrm{coordination}}",
-      "explanation": "Use this as a bridge from the course overview to Spark experiments: local computation, data movement, and coordination should be measured separately.",
+      "name": "Causal-write visibility constraint",
+      "purpose": "Use it to express that causally related writes must be observed in the same order, while concurrent writes may still be seen differently under weaker models.",
+      "latex": "w_1 \\to w_2 \\Longrightarrow \\operatorname{see}_p(w_1) \\le \\operatorname{see}_p(w_2)",
+      "explanation": "If write $w_1$ causally precedes write $w_2$, any process $p$ that observes both must not observe $w_2$ before $w_1$.",
       "symbols": [
         {
-          "latex": "T_{\\mathrm{shuffle}}",
-          "meaning": "time moving records between partitions"
+          "latex": "w_1,w_2",
+          "meaning": "write operations"
+        },
+        {
+          "latex": "\\to",
+          "meaning": "causal precedence"
+        },
+        {
+          "latex": "\\operatorname{see}_p",
+          "meaning": "the observation order at process $p$"
         }
       ],
-      "name": "Distributed-job cost decomposition",
-      "purpose": "Use it to measure compute, shuffle, and coordination as separate contributors to job time.",
-      "sourceType": "lecture",
-      "caveat": "This is a derived study model; the supplied overview names Spark but does not provide the later lecture derivation."
+      "sourceType": "lecture"
     }
   ],
   "criticalQuestions": [
     {
-      "prompt": "Why should this lesson be labeled a course frontier rather than full Spark coverage?",
-      "angle": "Check which source pages are actually supplied.",
-      "modelAnswer": "Lec0 gives the roadmap and project direction, but the detailed Spark, consistency, and MLlib lectures are not in the current local source set.",
-      "focus": "provenance"
+      "prompt": "Why are MongoDB read concern \"majority\" and write concern \"majority\" still not sufficient by themselves to guarantee read-your-writes consistency by definition?",
+      "angle": "Separate majority-committed visibility from one client's session-level guarantee.",
+      "modelAnswer": "A majority-committed snapshot can still lag the client's latest write on the node that serves the read. MongoDB therefore needs additional session or Lamport-clock state to block until the serving node has caught up to that client's write.",
+      "focus": "session visibility",
+      "sourceRefs": [
+        {
+          "sourceId": "DSA5208/Lec3.pdf",
+          "page": 48,
+          "sourceType": "lecture",
+          "role": "read and write concerns",
+          "status": "current"
+        },
+        {
+          "sourceId": "DSA5208/Lec3.pdf",
+          "page": 53,
+          "sourceType": "lecture",
+          "role": "MongoDB read-your-writes implementation with Lamport clocks",
+          "status": "current"
+        }
+      ]
     },
     {
-      "prompt": "What evidence would turn a shuffle hypothesis into a measured claim?",
-      "angle": "Move from a conceptual operation to an instrumented stage-level observation.",
-      "modelAnswer": "Record partition sizes, shuffle bytes, task skew, stage time, and the logical operation that caused the exchange.",
-      "focus": "experimental design"
+      "prompt": "When is a total global order stronger than the application actually needs?",
+      "angle": "Compare a workload that only cares about one client or one causal dependency with a workload that truly needs one identical order for every process.",
+      "modelAnswer": "If the application only needs the same client to see its own writes or only needs causally related updates preserved, forcing one total order can add latency and coordination cost without buying a required guarantee.",
+      "focus": "over-serialization",
+      "sourceRefs": [
+        {
+          "sourceId": "DSA5208/Lec3.pdf",
+          "page": 10,
+          "sourceType": "lecture",
+          "role": "strict consistency (linearizability)",
+          "status": "current"
+        },
+        {
+          "sourceId": "DSA5208/Lec3.pdf",
+          "page": 22,
+          "sourceType": "lecture",
+          "role": "causal consistency",
+          "status": "current"
+        },
+        {
+          "sourceId": "DSA5208/Lec3.pdf",
+          "page": 36,
+          "sourceType": "lecture",
+          "role": "client-centric consistency models",
+          "status": "current"
+        }
+      ]
     }
   ],
-  "courseId": "DSA5208",
-  "moduleId": "dsa5208-advanced",
   "blocks": [
     {
       "id": "dsa5208-consistency-spark-section-1",
       "type": "teaching-note",
-      "title": "Scope boundary",
-      "body": "The supplied Lec0 overview names consistency models, Apache Spark, distributed algorithms, MLlib, and cloud computing as later topics. It is safe to use this page as a course map; detailed derivations require the corresponding lecture sources when they are available.",
+      "title": "Data-centric guarantees",
+      "body": "Linearizability preserves real-time order and the most recent write, sequential consistency keeps one common order without the same real-time constraint, causal consistency preserves only causally related writes, and eventual consistency promises convergence only after updates stop.",
       "sourceType": "lecture",
       "sourceRefs": [
         {
-          "sourceId": "DSA5208/Lec0.pdf",
-          "page": 12,
+          "sourceId": "DSA5208/Lec3.pdf",
+          "page": 10,
           "sourceType": "lecture",
-          "role": "course topic map",
+          "role": "strict consistency (linearizability)",
           "status": "current"
         },
         {
-          "sourceId": "DSA5208/Lec0.pdf",
-          "page": 14,
+          "sourceId": "DSA5208/Lec3.pdf",
+          "page": 15,
           "sourceType": "lecture",
-          "role": "Spark topic",
+          "role": "sequential consistency",
+          "status": "current"
+        },
+        {
+          "sourceId": "DSA5208/Lec3.pdf",
+          "page": 22,
+          "sourceType": "lecture",
+          "role": "causal consistency",
+          "status": "current"
+        },
+        {
+          "sourceId": "DSA5208/Lec3.pdf",
+          "page": 29,
+          "sourceType": "lecture",
+          "role": "eventual consistency",
           "status": "current"
         }
       ]
@@ -290,22 +519,57 @@
     {
       "id": "dsa5208-consistency-spark-section-2",
       "type": "teaching-note",
-      "title": "Preview a shuffle boundary",
-      "body": "A map or filter can often remain partition-local, while grouping, joins, and global sorts usually require data movement. Treat this as a study hypothesis to test against the Spark lecture and project implementation, not as a complete Spark derivation.",
+      "title": "Client-centric guarantees and deployed systems",
+      "body": "Read-your-writes, writes-follow-reads, monotonic reads, and monotonic writes describe what one client can safely observe across replicas. MongoDB and ScyllaDB expose these trade-offs through read/write concerns, coordinator logic, Lamport-clock session state, digest reads, and read repair.",
       "sourceType": "lecture",
       "sourceRefs": [
         {
-          "sourceId": "DSA5208/Lec0.pdf",
-          "page": 14,
+          "sourceId": "DSA5208/Lec3.pdf",
+          "page": 36,
           "sourceType": "lecture",
-          "role": "Spark and distributed algorithms",
+          "role": "read-your-writes consistency",
           "status": "current"
         },
         {
-          "sourceId": "DSA5208/Lec0.pdf",
-          "page": 15,
+          "sourceId": "DSA5208/Lec3.pdf",
+          "page": 38,
           "sourceType": "lecture",
-          "role": "MLlib and cloud",
+          "role": "writes-follow-reads consistency",
+          "status": "current"
+        },
+        {
+          "sourceId": "DSA5208/Lec3.pdf",
+          "page": 40,
+          "sourceType": "lecture",
+          "role": "monotonic reads consistency",
+          "status": "current"
+        },
+        {
+          "sourceId": "DSA5208/Lec3.pdf",
+          "page": 42,
+          "sourceType": "lecture",
+          "role": "monotonic writes consistency",
+          "status": "current"
+        },
+        {
+          "sourceId": "DSA5208/Lec3.pdf",
+          "page": 48,
+          "sourceType": "lecture",
+          "role": "read and write concerns",
+          "status": "current"
+        },
+        {
+          "sourceId": "DSA5208/Lec3.pdf",
+          "page": 53,
+          "sourceType": "lecture",
+          "role": "MongoDB read-your-writes implementation with Lamport clocks",
+          "status": "current"
+        },
+        {
+          "sourceId": "DSA5208/Lec3.pdf",
+          "page": 59,
+          "sourceType": "lecture",
+          "role": "digest reads and read repair",
           "status": "current"
         }
       ]
@@ -313,41 +577,31 @@
     {
       "id": "dsa5208-consistency-spark-formula-1",
       "type": "formula",
-      "name": "Distributed-pipeline cost model",
-      "purpose": "Use it to separate partition-local work, shuffle, and barrier waiting when comparing implementations.",
-      "latex": "T_{\\mathrm{pipeline}} \\approx T_{\\mathrm{local}} + T_{\\mathrm{shuffle}} + T_{\\mathrm{barrier}}",
-      "explanation": "Map-like operations can often stay partition-local, while joins, group-bys, and global sorts may require a shuffle. The equation forces the experiment to name the data movement and synchronization costs instead of treating the pipeline as one opaque step.",
+      "name": "Linearizability real-time constraint",
+      "purpose": "Use it to separate linearizability from weaker models that keep a legal sequence but not the same real-time ordering between non-overlapping operations.",
+      "latex": "\\operatorname{resp}(op_1) < \\operatorname{inv}(op_2) \\Longrightarrow op_1 \\prec op_2",
+      "explanation": "If operation $op_1$ finishes before $op_2$ begins, a linearizable history must place $op_1$ before $op_2$ in the global sequence.",
       "symbols": [
         {
-          "latex": "T_{\\mathrm{local}}",
-          "meaning": "work within existing partitions"
+          "latex": "op_1,op_2",
+          "meaning": "two read or write operations"
         },
         {
-          "latex": "T_{\\mathrm{barrier}}",
-          "meaning": "waiting for stage coordination"
+          "latex": "\\operatorname{resp},\\operatorname{inv}",
+          "meaning": "response and invocation times"
+        },
+        {
+          "latex": "\\prec",
+          "meaning": "order in the legal global sequence"
         }
       ],
       "sourceType": "lecture",
       "sourceRefs": [
         {
-          "sourceId": "DSA5208/Lec0.pdf",
-          "page": 12,
+          "sourceId": "DSA5208/Lec3.pdf",
+          "page": 10,
           "sourceType": "lecture",
-          "role": "course topic map",
-          "status": "current"
-        },
-        {
-          "sourceId": "DSA5208/Lec0.pdf",
-          "page": 14,
-          "sourceType": "lecture",
-          "role": "Spark and distributed algorithms",
-          "status": "current"
-        },
-        {
-          "sourceId": "DSA5208/Lec0.pdf",
-          "page": 15,
-          "sourceType": "lecture",
-          "role": "MLlib and cloud",
+          "role": "linearizability definition",
           "status": "current"
         }
       ]
@@ -355,37 +609,31 @@
     {
       "id": "dsa5208-consistency-spark-formula-2",
       "type": "formula",
-      "name": "Distributed-job cost decomposition",
-      "purpose": "Use it to measure compute, shuffle, and coordination as separate contributors to job time.",
-      "latex": "T_{\\mathrm{job}}\\approx T_{\\mathrm{compute}}+T_{\\mathrm{shuffle}}+T_{\\mathrm{coordination}}",
-      "explanation": "Use this as a bridge from the course overview to Spark experiments: local computation, data movement, and coordination should be measured separately.",
+      "name": "Causal-write visibility constraint",
+      "purpose": "Use it to express that causally related writes must be observed in the same order, while concurrent writes may still be seen differently under weaker models.",
+      "latex": "w_1 \\to w_2 \\Longrightarrow \\operatorname{see}_p(w_1) \\le \\operatorname{see}_p(w_2)",
+      "explanation": "If write $w_1$ causally precedes write $w_2$, any process $p$ that observes both must not observe $w_2$ before $w_1$.",
       "symbols": [
         {
-          "latex": "T_{\\mathrm{shuffle}}",
-          "meaning": "time moving records between partitions"
+          "latex": "w_1,w_2",
+          "meaning": "write operations"
+        },
+        {
+          "latex": "\\to",
+          "meaning": "causal precedence"
+        },
+        {
+          "latex": "\\operatorname{see}_p",
+          "meaning": "the observation order at process $p$"
         }
       ],
       "sourceType": "lecture",
       "sourceRefs": [
         {
-          "sourceId": "DSA5208/Lec0.pdf",
-          "page": 12,
+          "sourceId": "DSA5208/Lec3.pdf",
+          "page": 22,
           "sourceType": "lecture",
-          "role": "course topic map",
-          "status": "current"
-        },
-        {
-          "sourceId": "DSA5208/Lec0.pdf",
-          "page": 14,
-          "sourceType": "lecture",
-          "role": "Spark and distributed algorithms",
-          "status": "current"
-        },
-        {
-          "sourceId": "DSA5208/Lec0.pdf",
-          "page": 15,
-          "sourceType": "lecture",
-          "role": "MLlib and cloud",
+          "role": "causal consistency",
           "status": "current"
         }
       ]
@@ -393,35 +641,35 @@
     {
       "id": "dsa5208-consistency-spark-example-1",
       "type": "worked-example",
-      "title": "Evidence request for the next module",
+      "title": "Diagnose a stale-read path",
       "sourceType": "lecture",
       "steps": [
-        "State the claimed consistency or performance property.",
-        "Identify the missing lecture or implementation source.",
-        "Choose a metric such as stale-read rate, shuffle bytes, or stage time.",
-        "Do not mark the claim lecture-complete until the source is supplied."
+        "Classify the failure first: real-time order, causal dependency, eventual convergence, or one client's session view.",
+        "If the system uses MongoDB majority read/write concerns, ask whether the client still needs session or Lamport-clock state to preserve read-your-writes.",
+        "If the system uses tunable consistency, state the replication factor, chosen consistency level, and what stale or divergent read the coordinator may still permit.",
+        "Choose the weakest guarantee that rules out the observed anomaly instead of jumping immediately to the strongest global model."
       ],
-      "answer": "The Atlas should distinguish a roadmap pointer from a fully taught derivation.",
+      "answer": "A useful consistency diagnosis names the violated observation, the minimal guarantee that would prevent it, and the implementation mechanism that must carry that guarantee into the running database.",
       "sourceRefs": [
         {
-          "sourceId": "DSA5208/Lec0.pdf",
-          "page": 12,
+          "sourceId": "DSA5208/Lec3.pdf",
+          "page": 48,
           "sourceType": "lecture",
-          "role": "course topic map",
+          "role": "read and write concerns",
           "status": "current"
         },
         {
-          "sourceId": "DSA5208/Lec0.pdf",
-          "page": 14,
+          "sourceId": "DSA5208/Lec3.pdf",
+          "page": 53,
           "sourceType": "lecture",
-          "role": "Spark and distributed algorithms",
+          "role": "MongoDB read-your-writes implementation with Lamport clocks",
           "status": "current"
         },
         {
-          "sourceId": "DSA5208/Lec0.pdf",
-          "page": 15,
+          "sourceId": "DSA5208/Lec3.pdf",
+          "page": 59,
           "sourceType": "lecture",
-          "role": "MLlib and cloud",
+          "role": "digest reads and read repair",
           "status": "current"
         }
       ]
@@ -429,30 +677,23 @@
     {
       "id": "dsa5208-consistency-spark-critical-1",
       "type": "critical-question",
-      "prompt": "Why should this lesson be labeled a course frontier rather than full Spark coverage?",
-      "angle": "Check which source pages are actually supplied.",
-      "modelAnswer": "Lec0 gives the roadmap and project direction, but the detailed Spark, consistency, and MLlib lectures are not in the current local source set.",
-      "focus": "provenance",
+      "prompt": "Why are MongoDB read concern \"majority\" and write concern \"majority\" still not sufficient by themselves to guarantee read-your-writes consistency by definition?",
+      "angle": "Separate majority-committed visibility from one client's session-level guarantee.",
+      "modelAnswer": "A majority-committed snapshot can still lag the client's latest write on the node that serves the read. MongoDB therefore needs additional session or Lamport-clock state to block until the serving node has caught up to that client's write.",
+      "focus": "session visibility",
       "sourceRefs": [
         {
-          "sourceId": "DSA5208/Lec0.pdf",
-          "page": 12,
+          "sourceId": "DSA5208/Lec3.pdf",
+          "page": 48,
           "sourceType": "lecture",
-          "role": "course topic map",
+          "role": "read and write concerns",
           "status": "current"
         },
         {
-          "sourceId": "DSA5208/Lec0.pdf",
-          "page": 14,
+          "sourceId": "DSA5208/Lec3.pdf",
+          "page": 53,
           "sourceType": "lecture",
-          "role": "Spark and distributed algorithms",
-          "status": "current"
-        },
-        {
-          "sourceId": "DSA5208/Lec0.pdf",
-          "page": 15,
-          "sourceType": "lecture",
-          "role": "MLlib and cloud",
+          "role": "MongoDB read-your-writes implementation with Lamport clocks",
           "status": "current"
         }
       ]
@@ -460,44 +701,45 @@
     {
       "id": "dsa5208-consistency-spark-critical-2",
       "type": "critical-question",
-      "prompt": "What evidence would turn a shuffle hypothesis into a measured claim?",
-      "angle": "Move from a conceptual operation to an instrumented stage-level observation.",
-      "modelAnswer": "Record partition sizes, shuffle bytes, task skew, stage time, and the logical operation that caused the exchange.",
-      "focus": "experimental design",
+      "prompt": "When is a total global order stronger than the application actually needs?",
+      "angle": "Compare a workload that only cares about one client or one causal dependency with a workload that truly needs one identical order for every process.",
+      "modelAnswer": "If the application only needs the same client to see its own writes or only needs causally related updates preserved, forcing one total order can add latency and coordination cost without buying a required guarantee.",
+      "focus": "over-serialization",
       "sourceRefs": [
         {
-          "sourceId": "DSA5208/Lec0.pdf",
-          "page": 12,
+          "sourceId": "DSA5208/Lec3.pdf",
+          "page": 10,
           "sourceType": "lecture",
-          "role": "course topic map",
+          "role": "strict consistency (linearizability)",
           "status": "current"
         },
         {
-          "sourceId": "DSA5208/Lec0.pdf",
-          "page": 14,
+          "sourceId": "DSA5208/Lec3.pdf",
+          "page": 22,
           "sourceType": "lecture",
-          "role": "Spark and distributed algorithms",
+          "role": "causal consistency",
           "status": "current"
         },
         {
-          "sourceId": "DSA5208/Lec0.pdf",
-          "page": 15,
+          "sourceId": "DSA5208/Lec3.pdf",
+          "page": 36,
           "sourceType": "lecture",
-          "role": "MLlib and cloud",
+          "role": "client-centric consistency models",
           "status": "current"
         }
       ]
     }
   ],
+  "contentStatus": "CURRENT LECTURE",
   "questionIds": [
-    "dsa5208-sp-q1",
-    "dsa5208-sp-q2",
-    "dsa5208-bank-017",
-    "dsa5208-bank-018"
+    "dsa5208-consistency-q1",
+    "dsa5208-consistency-q2",
+    "dsa5208-consistency-q3",
+    "dsa5208-consistency-q4",
+    "dsa5208-consistency-q5",
+    "dsa5208-consistency-q6"
   ],
-  "labIds": [
-    "dsa5208-spark-pipeline"
-  ],
-  "schemaVersion": "nus.lesson.v1",
-  "contentStatus": "PREVIEW / SYLLABUS"
+  "courseId": "DSA5208",
+  "moduleId": "dsa5208-advanced",
+  "schemaVersion": "nus.lesson.v1"
 }
