@@ -3,11 +3,11 @@ const assert = require("node:assert/strict");
 const fs = require("node:fs");
 const { validateAll } = require("../scripts/validate-slides");
 
-test("DSA5105 slide packages preserve page, block, explanation, question, and asset provenance", () => {
+test("all slide packages preserve page, block, explanation, question, and asset provenance", () => {
   const result = validateAll();
   assert.equal(result.ok, true, result.errors.join("\n"));
-  assert.equal(result.counts.slideSets, 11);
-  assert.equal(result.counts.slides, 663);
+  assert.equal(result.counts.slideSets, 12);
+  assert.equal(result.counts.slides, 724);
 });
 
 test("DSA5104 Chapter 1 reader keeps 52 pages and source-layer assets", () => {
