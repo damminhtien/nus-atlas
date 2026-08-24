@@ -13,6 +13,16 @@
     return source;
   }
   const mathMarkup = value => `$${esc(mathSource(value))}$`;
+  function inlineMathMarkup(value) {
+    const source = String(value == null ? "" : value);
+    const pattern = /(\$\$[\s\S]*?\$\$|\$[^$]+\$|\\\([\s\S]*?\\\)|\\\[[\s\S]*?\\\])/g;
+    let cursor = 0;
+    return source.replace(pattern, (match, offset) => {
+      const before = esc(source.slice(cursor, offset));
+      cursor = offset + match.length;
+      return `<span class="nus-lab-formula">${mathMarkup(match)}</span>`;
+    }) + esc(source.slice(cursor));
+  }
   const sourceLabel = ref => `${ref.sourceId}${ref.page ? ` · p.${ref.page}` : ""}`;
   const routeLink = (label, href, cls = "ghost") => `<a class="btn ${cls}" href="${esc(href)}" data-route>${esc(label)}</a>`;
   const sourceRefs = lab => (lab.sourceRefs || []).map(ref => `<span class="nus-lab-source-ref"><b>${esc((sourceTypes()[ref.sourceType] || {}).shortLabel || ref.sourceType)}</b> ${esc(sourceLabel(ref))}</span>`).join("");
@@ -65,26 +75,34 @@
     return shell(lab, `<div class="nus-lab-controls"><span class="nus-lab-step-count" data-step-count>Step 1 of ${steps.length}</span><button class="btn primary" type="button" data-lab-next>Next derivation step</button></div><div class="nus-lab-stage nus-stepper-stage" id="${id}-stage">${steps.map((step, i) => `<article class="nus-lab-step ${i === 0 ? "active" : ""}" data-step="${i}" aria-hidden="${i === 0 ? "false" : "true"}"><span class="eyebrow">${step[0]}</span><div class="nus-lab-formula">${mathMarkup(step[1])}</div><p>${step[2]}</p></article>`).join("")}<p class="nus-lab-status-text" data-step-summary aria-live="polite">Start by separating the mean from the directions.</p></div>`);
   }
   function algorithmTrace(lab) {
-    const steps = [
+    const fallback = [
       ["Initialise", "Choose initial mixture weights, means, and covariances."],
       ["E-step", "Compute a soft responsibility for each component and observation."],
       ["M-step", "Re-estimate parameters using the current responsibilities."],
       ["Check", "Stop when the likelihood change is small; otherwise alternate again."]
     ];
-    return shell(lab, `<div class="nus-lab-controls"><span class="nus-lab-step-count" data-step-count>Trace 1 of ${steps.length}</span><button class="btn primary" type="button" data-lab-next>Advance EM trace</button></div><ol class="nus-lab-stage nus-trace" data-trace>${steps.map((step, i) => `<li class="nus-lab-step ${i === 0 ? "active" : ""}" data-step="${i}" aria-current="${i === 0 ? "step" : "false"}"><b>${step[0]}</b><span>${step[1]}</span></li>`).join("")}</ol><p class="nus-lab-status-text" data-step-summary aria-live="polite">The trace begins with an initial guess, not a final cluster assignment.</p>`);
+    const configured = Array.isArray(lab.steps) && lab.steps.length > 0;
+    const steps = configured ? lab.steps : fallback;
+    const action = configured ? "Advance algorithm trace" : "Advance EM trace";
+    const status = configured ? "Start with the initial state, then explain each distance improvement." : "The trace begins with an initial guess, not a final cluster assignment.";
+    return shell(lab, `<div class="nus-lab-controls"><span class="nus-lab-step-count" data-step-count>Trace 1 of ${steps.length}</span><button class="btn primary" type="button" data-lab-next>${action}</button></div><ol class="nus-lab-stage nus-trace" data-trace>${steps.map((step, i) => `<li class="nus-lab-step ${i === 0 ? "active" : ""}" data-step="${i}" aria-current="${i === 0 ? "step" : "false"}"><b>${esc(step[0])}</b><span>${inlineMathMarkup(step[1])}</span>${step[2] ? `<small>${esc(step[2])}</small>` : ""}</li>`).join("")}</ol><p class="nus-lab-status-text" data-step-summary aria-live="polite">${status}</p>`);
   }
   function derivationTrace(lab) {
     const steps = lab.steps || [];
     return shell(lab, `<div class="nus-lab-controls"><span class="nus-lab-step-count" data-step-count>Step 1 of ${steps.length}</span><button class="btn primary" type="button" data-lab-next>Reveal next step</button></div><ol class="nus-lab-stage nus-trace nus-derivation-trace">${steps.map((step, i) => `<li class="nus-lab-step ${i === 0 ? "active" : ""}" data-step="${i}" aria-current="${i === 0 ? "step" : "false"}"><b>${esc(step[0])}</b><div class="nus-lab-formula">${mathMarkup(step[1])}</div><span>${esc(step[2])}</span></li>`).join("")}</ol><p class="nus-lab-status-text" data-step-summary aria-live="polite">Reveal each transformation, then explain what assumption makes it valid.</p>`);
   }
   function eventTimeline(lab) {
-    const steps = [
+    const fallback = [
       ["State s", "Choose the current state and action."],
       ["Reward r", "Observe the immediate reward from the transition."],
       ["Next state s′", "Estimate the discounted continuation value."],
       ["Backup", "Combine immediate reward with discounted future value."]
     ];
-    return shell(lab, `<div class="nus-lab-controls"><span class="nus-lab-step-count" data-step-count>Event 1 of ${steps.length}</span><button class="btn primary" type="button" data-lab-next>Advance Bellman step</button></div><div class="nus-lab-stage nus-timeline" data-timeline>${steps.map((step, i) => `<article class="nus-lab-step ${i === 0 ? "active" : ""}" data-step="${i}"><span>${i + 1}</span><div><b>${step[0]}</b><p>${step[1]}</p></div></article>`).join("")}</div><p class="nus-lab-status-text" data-step-summary aria-live="polite">A Bellman backup is easier to audit when each event is named.</p>`);
+    const configured = Array.isArray(lab.steps) && lab.steps.length > 0;
+    const steps = configured ? lab.steps : fallback;
+    const action = configured ? "Advance event timeline" : "Advance Bellman step";
+    const status = configured ? "Start by naming the current simulated round." : "A Bellman backup is easier to audit when each event is named.";
+    return shell(lab, `<div class="nus-lab-controls"><span class="nus-lab-step-count" data-step-count>Event 1 of ${steps.length}</span><button class="btn primary" type="button" data-lab-next>${action}</button></div><div class="nus-lab-stage nus-timeline" data-timeline>${steps.map((step, i) => `<article class="nus-lab-step ${i === 0 ? "active" : ""}" data-step="${i}"><span>${i + 1}</span><div><b>${esc(step[0])}</b><p>${inlineMathMarkup(step[1])}</p>${step[2] ? `<small>${esc(step[2])}</small>` : ""}</div></article>`).join("")}</div><p class="nus-lab-status-text" data-step-summary aria-live="polite">${status}</p>`);
   }
   function pipeline(lab) {
     const steps = [
@@ -106,7 +124,7 @@
     const exercises = lab.exercises || [], id = "nus-lab-" + lab.lessonId;
     const tabs = exercises.map((exercise, index) => "<button class=\"nus-deep-tab " + (index === 0 ? "is-selected" : "") + "\" type=\"button\" role=\"tab\" data-deep-tab=\"" + esc(exercise.id) + "\" aria-selected=\"" + (index === 0 ? "true" : "false") + "\">" + esc(exercise.label) + "</button>").join("");
     const panels = exercises.map((exercise, index) => "<article class=\"nus-deep-panel " + (index === 0 ? "is-selected" : "") + "\" id=\"" + id + "-" + esc(exercise.id) + "\" data-deep-panel=\"" + esc(exercise.id) + "\" role=\"tabpanel\" aria-hidden=\"" + (index === 0 ? "false" : "true") + "\"><div class=\"nus-deep-panel-head\"><span class=\"eyebrow\">" + esc(exercise.label) + "</span><p>" + esc(exercise.prompt) + "</p></div>" + sourceLensMarkup(exercise.sourceLens) + "<ol class=\"nus-deep-steps\">" + (exercise.steps || []).map((step, stepIndex) => "<li class=\"nus-deep-step " + (stepIndex === 0 ? "active" : "") + "\" data-deep-step=\"" + stepIndex + "\" aria-current=\"" + (stepIndex === 0 ? "step" : "false") + "\"><b>" + esc(step[0]) + "</b><div class=\"nus-lab-formula\">" + mathMarkup(step[1]) + "</div><span>" + esc(step[2]) + "</span></li>").join("") + "</ol><p class=\"nus-deep-takeaway\"><b>Interpretation</b> " + esc(exercise.takeaway || "") + "</p></article>").join("");
-    return shell(lab, "<div class=\"nus-lab-deep-tabs\" role=\"tablist\" aria-label=\"Week 1 derivation exercises\">" + tabs + "</div><div class=\"nus-lab-stage nus-deep-dive-stage\">" + panels + "</div><div class=\"nus-lab-controls\"><span class=\"nus-lab-step-count\" data-deep-count>Risk gap · step 1</span><button class=\"btn primary\" type=\"button\" data-deep-next>Reveal next step</button><button class=\"btn ghost\" type=\"button\" data-deep-complete>Commit current proof</button></div><p class=\"nus-lab-status-text\" data-deep-status aria-live=\"polite\">Reveal each transformation, then explain the assumption behind it.</p>");
+    return shell(lab, "<div class=\"nus-lab-deep-tabs\" role=\"tablist\" aria-label=\"" + esc(lab.title || "Learning-lab exercises") + "\">" + tabs + "</div><div class=\"nus-lab-stage nus-deep-dive-stage\">" + panels + "</div><div class=\"nus-lab-controls\"><span class=\"nus-lab-step-count\" data-deep-count>Step 1</span><button class=\"btn primary\" type=\"button\" data-deep-next>Reveal next step</button><button class=\"btn ghost\" type=\"button\" data-deep-complete>Commit current proof</button></div><p class=\"nus-lab-status-text\" data-deep-status aria-live=\"polite\">Reveal each transformation, then explain the assumption behind it.</p>");
   }
   function selectDeepDive(root, exerciseId) {
     const panels = [...root.querySelectorAll("[data-deep-panel]")], tabs = [...root.querySelectorAll("[data-deep-tab]")];

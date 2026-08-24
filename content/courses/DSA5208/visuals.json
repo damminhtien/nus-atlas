@@ -119,7 +119,13 @@
       "page": 11,
       "access": "local source; not copied to public bundle"
     },
-    "observation": "Select FIFO, causal, total, or FIFO-total order by the dependency the application must preserve."
+    "observation": "Select FIFO, causal, total, or FIFO-total order by the dependency the application must preserve.",
+    "learningGoal": "Separate sender-local order, causal dependency, and one common global sequence.",
+    "lookFor": ["Mark whether the messages share a sender", "Draw any happens-before edge", "Check whether concurrent messages must agree globally"],
+    "prompt": "A later broadcast depends on an earlier one, while a third update is concurrent. Which order is mandatory and which order is optional?",
+    "nextMove": "Write the dependency before choosing the guarantee label.",
+    "check": "Causal order must preserve related messages; total order is only needed when every process must agree on concurrent messages too.",
+    "labId": "dsa5208-broadcast"
   },
   "dsa5208-shortest-path": {
     "courseCode": "DSA5208",
@@ -130,7 +136,13 @@
       "page": 26,
       "access": "local source; not copied to public bundle"
     },
-    "observation": "Trace distance relaxation separately from the synchronous or asynchronous execution schedule."
+    "observation": "Trace distance relaxation separately from the synchronous or asynchronous execution schedule.",
+    "learningGoal": "Compute one improving distance label and distinguish round-based from event-driven propagation.",
+    "lookFor": ["Compare the current label with the candidate path", "Record the first improvement", "Mark whether propagation waits for a round"],
+    "prompt": "When a shorter path to $b$ is found through $a$, what changes in the label and in the message schedule?",
+    "nextMove": "Relax the edge first; classify the schedule second.",
+    "check": "The minimum operation is the same in both versions; only the propagation and termination evidence differ.",
+    "labId": "dsa5208-shortest-path"
   },
   "dsa5208-synchronizers": {
     "courseCode": "DSA5208",
@@ -141,6 +153,29 @@
       "page": 42,
       "access": "local source; not copied to public bundle"
     },
-    "observation": "Identify the evidence that makes advancing a simulated round safe."
+    "observation": "Identify the evidence that makes advancing a simulated round safe.",
+    "learningGoal": "Explain why a dummy message works for the simple synchronizer and why $\\alpha$ needs completion evidence.",
+    "lookFor": ["Count expected current-round messages", "Fill missing payloads with dummy messages", "Replace fixed counts with safe notifications for $\\alpha$"],
+    "prompt": "What evidence lets process $p$ cross the round barrier without assuming a physical global clock?",
+    "nextMove": "List the messages or acknowledgements that are still unaccounted for.",
+    "check": "A local arrival is not enough for $\\alpha$; the protocol must justify that current-round communication is complete.",
+    "labId": "dsa5208-synchronizers"
+  },
+  "dsa5208-consistency-models": {
+    "courseCode": "DSA5208",
+    "title": "Consistency guarantees map",
+    "kind": "comparison+flow",
+    "source": {
+      "sourceId": "DSA5208/Lec3.pdf",
+      "page": 22,
+      "access": "local source; not copied to public bundle"
+    },
+    "observation": "Classify the history first, then connect a client-centric guarantee to the database mechanism that enforces it.",
+    "learningGoal": "Separate real-time order, causal order, convergence, and one client's session visibility.",
+    "lookFor": ["Draw causal arrows before judging a read", "Separate majority commitment from read-your-writes", "Follow digest mismatch through full read and repair"],
+    "prompt": "A later read returns a value older than the client's completed write. Which guarantee and mechanism should you inspect first?",
+    "nextMove": "Mark the observation, violated guarantee, and enforcement mechanism as three separate labels.",
+    "check": "Do not call every stale read a linearizability failure; first classify whether the claim is real-time, causal, convergence, or session visibility.",
+    "labId": "dsa5208-consistency-spark"
   }
 }

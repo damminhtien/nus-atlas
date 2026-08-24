@@ -707,83 +707,155 @@
   "dsa5208-consistency-spark": {
     "courseCode": "DSA5208",
     "lessonId": "dsa5208-consistency-spark",
-    "type": "pipeline-builder",
-    "title": "Roadmap-to-measurement builder",
-    "learningGoal": "Connect a later-course topic to a concrete distributed measurement without overstating source coverage.",
+    "type": "deep-dive",
+    "title": "Consistency diagnosis studio",
+    "learningGoal": "Classify a consistency history, separate a session guarantee from majority commitment, and trace digest read repair.",
     "sourceRefs": [
       {
-        "sourceId": "DSA5208/Lec0.pdf",
-        "page": 12,
+        "sourceId": "DSA5208/Lec3.pdf",
+        "page": 10,
         "sourceType": "lecture",
-        "role": "course topic map",
+        "role": "linearizability",
         "status": "current"
       },
       {
-        "sourceId": "DSA5208/Lec0.pdf",
-        "page": 14,
+        "sourceId": "DSA5208/Lec3.pdf",
+        "page": 22,
         "sourceType": "lecture",
-        "role": "Spark and distributed algorithms",
+        "role": "causal consistency",
+        "status": "current"
+      },
+      {
+        "sourceId": "DSA5208/Lec3.pdf",
+        "page": 48,
+        "sourceType": "lecture",
+        "role": "read and write concerns",
+        "status": "current"
+      },
+      {
+        "sourceId": "DSA5208/Lec3.pdf",
+        "page": 53,
+        "sourceType": "lecture",
+        "role": "Lamport-clock session enforcement",
+        "status": "current"
+      },
+      {
+        "sourceId": "DSA5208/Lec3.pdf",
+        "page": 59,
+        "sourceType": "lecture",
+        "role": "digest reads and read repair",
         "status": "current"
       }
     ],
     "sourceLens": {
       "status": "core DSA5208",
-      "whyExaminable": "The supplied overview gives a roadmap; the lab turns that roadmap into a request for evidence while keeping later lecture depth marked pending.",
+      "whyExaminable": "Lecture 3 is easiest to confuse when a history, a client session, and a replica repair path are treated as the same guarantee. Each panel isolates one proof obligation.",
       "lecture": [
         {
-          "sourceId": "DSA5208/Lec0.pdf",
-          "page": 12,
+          "sourceId": "DSA5208/Lec3.pdf",
+          "page": 10,
           "sourceType": "lecture",
-          "role": "course topic map",
+          "role": "linearizability",
           "status": "current"
         },
         {
-          "sourceId": "DSA5208/Lec0.pdf",
-          "page": 14,
+          "sourceId": "DSA5208/Lec3.pdf",
+          "page": 22,
           "sourceType": "lecture",
-          "role": "Spark and distributed algorithms",
+          "role": "causal consistency",
+          "status": "current"
+        },
+        {
+          "sourceId": "DSA5208/Lec3.pdf",
+          "page": 48,
+          "sourceType": "lecture",
+          "role": "read and write concerns",
+          "status": "current"
+        },
+        {
+          "sourceId": "DSA5208/Lec3.pdf",
+          "page": 53,
+          "sourceType": "lecture",
+          "role": "Lamport-clock session enforcement",
+          "status": "current"
+        },
+        {
+          "sourceId": "DSA5208/Lec3.pdf",
+          "page": 59,
+          "sourceType": "lecture",
+          "role": "digest reads and read repair",
           "status": "current"
         }
       ],
       "officialExercise": [],
-      "textbook": [
-        {
-          "sourceId": "DSA5208/Distributed Systems textbook pointer",
-          "page": 90,
-          "sourceType": "textbook",
-          "role": "distributed data processing",
-          "status": "course-depth"
-        }
-      ],
+      "textbook": [],
       "reference": []
     },
-    "steps": [
-      [
-        "Topic",
-        "Consistency or Spark",
-        "Choose the later-course question."
-      ],
-      [
-        "Operation",
-        "Join or group",
-        "Name the logical operation that may move data."
-      ],
-      [
-        "Metric",
-        "Shuffle or stale-read evidence",
-        "Choose a measurable signal."
-      ],
-      [
-        "Boundary",
-        "Pending source",
-        "Keep the claim provisional until the detailed lecture is supplied."
-      ]
+    "exercises": [
+      {
+        "id": "history-classifier",
+        "label": "Data-centric history",
+        "prompt": "Which guarantee does this history require?",
+        "steps": [
+          ["Observe", "$W(x{=}1) \\to W(y{=}2)$", "Mark the causal edge before judging the read order."],
+          ["Read", "$\\operatorname{see}(y{=}2) \\prec \\operatorname{see}(x{=}1)$", "The observer saw the effect before its cause."],
+          ["Rule out", "causal order", "This observation violates causal consistency and any stronger model."],
+          ["Interpret", "$concurrent \\ne causal$", "Do not impose a total order on writes that are truly concurrent."]
+        ],
+        "sourceLens": {
+          "status": "core DSA5208 Lecture 3",
+          "whyExaminable": "Causal consistency preserves related writes without requiring one global order for concurrent writes.",
+          "lecture": [{ "sourceId": "DSA5208/Lec3.pdf", "page": 22, "sourceType": "lecture", "role": "causal consistency", "status": "current" }],
+          "officialExercise": [],
+          "textbook": [],
+          "reference": []
+        },
+        "takeaway": "A history must be judged against its causal edges before a stronger real-time or global-order claim is made."
+      },
+      {
+        "id": "session-visibility",
+        "label": "Read-your-writes",
+        "prompt": "Why can majority acknowledgement still need session state?",
+        "steps": [
+          ["Write", "majority acknowledged", "The write is committed by the configured write concern."],
+          ["Read", "majority snapshot", "A serving node may still lag this client's latest write."],
+          ["Session", "Lamport-clock state", "The session carries the required ordering point until the node catches up."],
+          ["Guarantee", "read-your-writes", "Separate majority commitment from client-visible session ordering."]
+        ],
+        "sourceLens": {
+          "status": "core DSA5208 Lecture 3",
+          "whyExaminable": "The lecture separates a replica's majority state from the guarantee that one client sees its own completed write.",
+          "lecture": [{ "sourceId": "DSA5208/Lec3.pdf", "page": 53, "sourceType": "lecture", "role": "Lamport-clock session enforcement", "status": "current" }],
+          "officialExercise": [],
+          "textbook": [],
+          "reference": []
+        },
+        "takeaway": "A write concern describes commitment; a session guarantee describes what this client's later read must observe."
+      },
+      {
+        "id": "digest-repair",
+        "label": "Digest read repair",
+        "prompt": "What happens after two replica digests disagree?",
+        "steps": [
+          ["Compare", "$h_1 \\ne h_2$", "A compact digest mismatch signals divergent replica versions."],
+          ["Fetch", "full versions", "The coordinator requests complete values only after the mismatch."],
+          ["Reconcile", "newest version", "Resolve the version to return to the client."],
+          ["Repair", "update stale replicas", "Read repair reduces future divergence after the response."]
+        ],
+        "sourceLens": {
+          "status": "core DSA5208 Lecture 3",
+          "whyExaminable": "Digest reads save traffic when replicas agree, while mismatch activates reconciliation and repair.",
+          "lecture": [{ "sourceId": "DSA5208/Lec3.pdf", "page": 59, "sourceType": "lecture", "role": "digest reads and read repair", "status": "current" }],
+          "officialExercise": [],
+          "textbook": [],
+          "reference": []
+        },
+        "takeaway": "A digest is an agreement test, not the final value; disagreement opens the full-read and repair path."
+      }
     ],
-    "initialState": {
-      "step": 0
-    },
+    "initialState": { "exercise": "history-classifier", "step": 0 },
     "reducedMotion": true,
-    "explanation": "The builder makes source fidelity part of the learning experience: a roadmap is useful, but it is not a fabricated derivation."
+    "explanation": "Use one panel for each reasoning boundary: classify the history, enforce the client's session view, and repair divergent replicas."
   },
   "dsa5208-broadcast": {
     "courseCode": "DSA5208",
