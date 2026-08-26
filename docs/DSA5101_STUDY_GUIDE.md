@@ -64,6 +64,7 @@ Before committing DSA5101 content, run:
 node scripts/validate-question-bank.js
 node scripts/validate-contrast-drills.js
 node scripts/validate-algorithm-notes.js
+node scripts/validate-dsa5101-formulas.js
 node scripts/validate-latex.js
 node scripts/validate-latex-render.js --course DSA5101
 node scripts/validate-extracted.js

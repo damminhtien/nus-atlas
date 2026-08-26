@@ -243,19 +243,19 @@
     {
       "name": "BFR sufficient statistics",
       "purpose": "Summarize a cluster for later assignment without retaining every point.",
-      "latex": "N,\\;SUM=\\sum_i x_i,\\;SUMSQ=\\sum_i x_i^2",
-      "explanation": "BFR stores a count $N$, coordinate sums $SUM$, and coordinate-wise squared sums $SUMSQ$ so means and variances can be recovered for a compact cluster summary.",
+      "latex": "N,\\;\\mathrm{SUM}=\\sum_i x_i,\\;\\mathrm{SUMSQ}=\\sum_i x_i^2",
+      "explanation": "BFR stores a count $N$, coordinate sums $\\mathrm{SUM}$, and coordinate-wise squared sums $\\mathrm{SUMSQ}$ so means and variances can be recovered for a compact cluster summary.",
       "symbols": [
         {
           "latex": "N",
           "meaning": "number of points in the summary"
         },
         {
-          "latex": "SUM",
+          "latex": "\\mathrm{SUM}",
           "meaning": "coordinate-wise sum"
         },
         {
-          "latex": "SUMSQ",
+          "latex": "\\mathrm{SUMSQ}",
           "meaning": "coordinate-wise squared sum"
         }
       ],
@@ -356,7 +356,7 @@
       "problemDefinition": "Cluster data that does not fit in memory by retaining compact summaries instead of every point.",
       "assumptions": "A confident cluster can be summarized by sufficient statistics, uncertain groups can be compressed, and isolated points may need to remain explicit.",
       "coreInvariant": "BFR separates confident discard-set points (DS), uncertain compression-set groups (CS), and retained outliers (RS), without silently forcing uncertainty into DS.",
-      "formulaAlgorithm": "Maintain $N$, $SUM$, and $SUMSQ$ for compact clusters, test new points against the summary, and delay or retain assignments when confidence is insufficient.",
+      "formulaAlgorithm": "Maintain $N$, $\\mathrm{SUM}$, and $\\mathrm{SUMSQ}$ for compact clusters, test new points against the summary, and delay or retain assignments when confidence is insufficient.",
       "failureModes": "Common mistakes: putting every uncertain point in DS, losing RS outliers, or assuming summary statistics preserve arbitrary cluster shapes and boundaries.",
       "sourceRefs": [
         {
