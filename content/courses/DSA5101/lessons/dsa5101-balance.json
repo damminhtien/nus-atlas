@@ -1,0 +1,170 @@
+{
+  "id": "dsa5101-balance",
+  "courseId": "DSA5101",
+  "moduleId": "dsa5101-application-tracks",
+  "title": "Assignment 2 · BALANCE",
+  "week": 5,
+  "contentStatus": "OFFICIAL EXERCISE TRACK",
+  "minutes": 35,
+  "summary": "Simulate the two-advertiser BALANCE algorithm and separate a sequence that is optimal from one that is not guaranteed optimal.",
+  "objectives": [
+    "Track remaining budgets after each query",
+    "Resolve eligible-advertiser choices consistently",
+    "Explain why an adversarial sequence breaks a guarantee"
+  ],
+  "sourceRefs": [
+    {
+      "sourceId": "DSA5101/Assignments/DSA5101_Assignment_2.pdf",
+      "page": 7,
+      "sourceType": "exercise",
+      "role": "BALANCE sequences",
+      "status": "current-context"
+    }
+  ],
+  "sourceLens": {
+    "status": "core DSA5101 study boundary",
+    "whyExaminable": "Assignment 2 is the authoritative source for the bid graph, budgets, sequences, and optimality guarantee. No separate project or lecture rubric is inferred from this exercise.",
+    "lecture": [],
+    "officialExercise": [
+      {
+        "sourceId": "DSA5101/Assignments/DSA5101_Assignment_2.pdf",
+        "page": 7,
+        "sourceType": "exercise",
+        "role": "BALANCE optimality",
+        "status": "current-context"
+      }
+    ],
+    "textbook": [],
+    "reference": []
+  },
+  "visualIds": [
+    "dsa5101-balance-allocation"
+  ],
+  "slideSetIds": [],
+  "schemaVersion": "nus.lesson.v1",
+  "sections": [
+    {
+      "title": "State before intuition",
+      "body": "For every query, list the advertisers who bid and their remaining budgets. BALANCE assigns the query to the eligible advertiser with the larger remaining budget; a tie must be treated consistently when testing whether a guarantee holds.",
+      "sourceType": "exercise",
+      "sourceRefs": [
+        {
+          "sourceId": "DSA5101/Assignments/DSA5101_Assignment_2.pdf",
+          "page": 7,
+          "sourceType": "exercise",
+          "role": "BALANCE rule",
+          "status": "current-context"
+        }
+      ]
+    },
+    {
+      "title": "Guarantee versus one favourable run",
+      "body": "A sequence is guaranteed optimal only when every allowed tie resolution and the resulting allocation match the offline optimum. A single tie-sensitive run is evidence of a possible outcome, not a guarantee.",
+      "sourceType": "exercise",
+      "sourceRefs": [
+        {
+          "sourceId": "DSA5101/Assignments/DSA5101_Assignment_2.pdf",
+          "page": 7,
+          "sourceType": "exercise",
+          "role": "BALANCE guarantee",
+          "status": "current-context"
+        }
+      ]
+    }
+  ],
+  "math": [
+    {
+      "name": "BALANCE budget update",
+      "purpose": "Track the remaining budget after serving a query.",
+      "latex": "B_t(a)=B_{t-1}(a)-1",
+      "explanation": "When advertiser $a$ receives a query at time $t$, its remaining budget changes from $B_{t-1}(a)$ to $B_t(a)=B_{t-1}(a)-1$.",
+      "symbols": [
+        {
+          "latex": "B_t(a)",
+          "meaning": "remaining budget of advertiser a after step t"
+        },
+        {
+          "latex": "a",
+          "meaning": "eligible advertiser"
+        }
+      ],
+      "sourceType": "exercise",
+      "sourceRefs": [
+        {
+          "sourceId": "DSA5101/Assignments/DSA5101_Assignment_2.pdf",
+          "page": 7,
+          "sourceType": "exercise",
+          "role": "BALANCE budget trace",
+          "status": "current-context"
+        }
+      ]
+    }
+  ],
+  "contrastDrills": [
+    {
+      "id": "dsa5101-c20",
+      "type": "contrast",
+      "kind": "concept-contrast",
+      "pair": "Tie-aware vs tie-blind BALANCE",
+      "prompt": "Two eligible advertisers have equal remaining budgets in BALANCE. What must happen before claiming a unique allocation or a guarantee?",
+      "choices": [
+        "State and apply a deterministic tie-breaking rule, then test the resulting allocation",
+        "Pick either advertiser and ignore the tie because the budgets are equal",
+        "Give the query to both advertisers without updating budgets",
+        "Assume the offline optimum uses the same tie choice"
+      ],
+      "answer": 0,
+      "explanation": "A tie can change later budgets and assignments. The tie rule must be explicit and consistently traced before the run can support a unique result or a guarantee claim.",
+      "misconception": "Treating equal current budgets as evidence that every tie outcome has the same future effect.",
+      "repair": "Write the tie rule, branch over allowed outcomes when testing a guarantee, and update both budgets after every query.",
+      "estimatedSeconds": 45,
+      "sourceRefs": [
+        {
+          "sourceId": "DSA5101/Assignments/DSA5101_Assignment_2.pdf",
+          "page": 7,
+          "sourceType": "exercise",
+          "role": "BALANCE sequences",
+          "status": "current-context"
+        }
+      ]
+    }
+  ],
+  "criticalQuestions": [
+    {
+      "prompt": "What assumption would falsify the Assignment 2 · BALANCE answer?",
+      "angle": "Name the representation or boundary condition that the calculation relies on.",
+      "modelAnswer": "A changed input representation, violated invariant, or unhandled boundary case can invalidate a result even when the arithmetic is correct.",
+      "focus": "assumption audit",
+      "sourceRefs": [
+        {
+          "sourceId": "DSA5101/Assignments/DSA5101_Assignment_2.pdf",
+          "page": 7,
+          "sourceType": "exercise",
+          "role": "BALANCE sequences",
+          "status": "current-context"
+        }
+      ]
+    },
+    {
+      "prompt": "How would you explain the Assignment 2 · BALANCE result to an examiner in one minute?",
+      "angle": "State the target quantity, the update rule, and the limitation.",
+      "modelAnswer": "Define the target, show one update, and close with the exactness, approximation, or guarantee condition.",
+      "focus": "exam communication",
+      "sourceRefs": [
+        {
+          "sourceId": "DSA5101/Assignments/DSA5101_Assignment_2.pdf",
+          "page": 7,
+          "sourceType": "exercise",
+          "role": "BALANCE sequences",
+          "status": "current-context"
+        }
+      ]
+    }
+  ],
+  "questionIds": [
+    "dsa5101-balance-q1",
+    "dsa5101-balance-q2",
+    "dsa5101-balance-q3",
+    "dsa5101-balance-q4"
+  ]
+}

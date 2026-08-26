@@ -1,0 +1,830 @@
+{
+  "schemaVersion": "nus.assessment-map.v1",
+  "courseCode": "DSA5101",
+  "title": "DSA5101 lecture → assignment → textbook exam map",
+  "summary": "A source-labeled revision map. Lecture and assignment files define the current course boundary; MMDS is attached as textbook depth and never silently upgraded to lecture scope.",
+  "disclaimer": "This is a study-priority map, not an official exam specification. Canvas project brief and rubric remain pending direct retrieval and are not inferred.",
+  "studyOrder": [
+    {
+      "id": "core-patterns",
+      "label": "Patterns and similarity",
+      "topicIds": [
+        "frequent-itemsets",
+        "similarity"
+      ]
+    },
+    {
+      "id": "clustering",
+      "label": "Clustering and scalable summaries",
+      "topicIds": [
+        "clustering"
+      ]
+    },
+    {
+      "id": "assignment2-tracks",
+      "label": "Assignment 2 four tracks",
+      "topicIds": [
+        "recommenders",
+        "pagerank",
+        "streams",
+        "balance"
+      ]
+    },
+    {
+      "id": "mixed-exam",
+      "label": "Timed mixed exam and mistake clinic",
+      "topicIds": [
+        "frequent-itemsets",
+        "similarity",
+        "clustering",
+        "recommenders",
+        "pagerank",
+        "streams",
+        "balance"
+      ]
+    }
+  ],
+  "evidence": [
+    {
+      "id": "dsa5101-lectures",
+      "label": "Local Lectures 1–3",
+      "kind": "lecture",
+      "evidenceLevel": "official-lecture",
+      "description": "The local lecture PDFs define the current study scope for frequent itemsets, MinHash/LSH, and clustering.",
+      "sourceRefs": [
+        {
+          "sourceId": "DSA5101/Lec1 - Assoc Rules, Frequent itemsets.pdf",
+          "page": 24,
+          "sourceType": "lecture",
+          "role": "frequent itemsets",
+          "status": "current"
+        },
+        {
+          "sourceId": "DSA5101/Lec 2 - Finding Similar items, LSH.pdf",
+          "page": 37,
+          "sourceType": "lecture",
+          "role": "MinHash",
+          "status": "current"
+        },
+        {
+          "sourceId": "DSA5101/Lec3 - Clustering.pdf",
+          "page": 37,
+          "sourceType": "lecture",
+          "role": "K-means",
+          "status": "current"
+        }
+      ]
+    },
+    {
+      "id": "dsa5101-assignment-1",
+      "label": "Official Assignment 1",
+      "kind": "assignment",
+      "evidenceLevel": "official-exercise",
+      "description": "Assignment 1 provides the itemset, MinHash/LSH, and hierarchical-clustering practice calculations.",
+      "sourceRefs": [
+        {
+          "sourceId": "DSA5101/Assignments/DSA5101_Assignment_1.pdf",
+          "page": 1,
+          "sourceType": "exercise",
+          "role": "itemsets",
+          "status": "current-context"
+        },
+        {
+          "sourceId": "DSA5101/Assignments/DSA5101_Assignment_1.pdf",
+          "page": 4,
+          "sourceType": "exercise",
+          "role": "LSH",
+          "status": "current-context"
+        },
+        {
+          "sourceId": "DSA5101/Assignments/DSA5101_Assignment_1.pdf",
+          "page": 6,
+          "sourceType": "exercise",
+          "role": "hierarchical clustering",
+          "status": "current-context"
+        }
+      ]
+    },
+    {
+      "id": "dsa5101-assignment-2",
+      "label": "Official Assignment 2",
+      "kind": "assignment",
+      "evidenceLevel": "official-exercise",
+      "description": "Assignment 2 provides the recommender, PageRank, DGIM, Flajolet–Martin/AMS, and BALANCE calculations.",
+      "sourceRefs": [
+        {
+          "sourceId": "DSA5101/Assignments/DSA5101_Assignment_2.pdf",
+          "page": 2,
+          "sourceType": "exercise",
+          "role": "recommenders",
+          "status": "current-context"
+        },
+        {
+          "sourceId": "DSA5101/Assignments/DSA5101_Assignment_2.pdf",
+          "page": 4,
+          "sourceType": "exercise",
+          "role": "PageRank",
+          "status": "current-context"
+        },
+        {
+          "sourceId": "DSA5101/Assignments/DSA5101_Assignment_2.pdf",
+          "page": 6,
+          "sourceType": "exercise",
+          "role": "stream moments",
+          "status": "current-context"
+        },
+        {
+          "sourceId": "DSA5101/Assignments/DSA5101_Assignment_2.pdf",
+          "page": 7,
+          "sourceType": "exercise",
+          "role": "BALANCE",
+          "status": "current-context"
+        }
+      ]
+    }
+  ],
+  "topics": [
+    {
+      "id": "frequent-itemsets",
+      "title": "Frequent itemsets",
+      "signal": "Lecture + Assignment 1",
+      "priority": "Core",
+      "practice": "Count, prune, and interpret the denominator.",
+      "lectureScope": "Lecture 1 support, confidence, lift, and downward closure.",
+      "examMove": "Count baskets, prune by monotonicity, then distinguish confidence from lift.",
+      "lectureRefs": [
+        {
+          "sourceId": "DSA5101/Lec1 - Assoc Rules, Frequent itemsets.pdf",
+          "page": 24,
+          "sourceType": "lecture",
+          "role": "support definition",
+          "status": "current"
+        },
+        {
+          "sourceId": "DSA5101/Lec1 - Assoc Rules, Frequent itemsets.pdf",
+          "page": 36,
+          "sourceType": "lecture",
+          "role": "downward closure",
+          "status": "current"
+        }
+      ],
+      "assignmentRefs": [
+        {
+          "sourceId": "DSA5101/Assignments/DSA5101_Assignment_1.pdf",
+          "page": 1,
+          "sourceType": "exercise",
+          "role": "itemset calculation",
+          "status": "current-context"
+        }
+      ],
+      "textbookRefs": [
+        {
+          "sourceId": "DSA5101/Reference textbook MMDS 3rd Edition.pdf",
+          "page": 214,
+          "sourceType": "textbook",
+          "role": "market-basket model",
+          "status": "course-depth"
+        },
+        {
+          "sourceId": "DSA5101/Reference textbook MMDS 3rd Edition.pdf",
+          "page": 225,
+          "sourceType": "textbook",
+          "role": "A-Priori",
+          "status": "course-depth"
+        }
+      ],
+      "evidenceIds": [
+        "dsa5101-lectures",
+        "dsa5101-assignment-1"
+      ],
+      "lessonIds": [
+        "dsa5101-frequent-itemsets"
+      ]
+    },
+    {
+      "id": "similarity",
+      "title": "MinHash and LSH",
+      "signal": "Lecture + Assignment 1",
+      "priority": "Core",
+      "practice": "Compute the probability, then verify the candidate.",
+      "lectureScope": "Lecture 2 set similarity, signatures, banding, and candidate verification.",
+      "examMove": "Compute Jaccard/MinHash/LSH probabilities and state the false-positive verification boundary.",
+      "lectureRefs": [
+        {
+          "sourceId": "DSA5101/Lec 2 - Finding Similar items, LSH.pdf",
+          "page": 37,
+          "sourceType": "lecture",
+          "role": "MinHash collision",
+          "status": "current"
+        },
+        {
+          "sourceId": "DSA5101/Lec 2 - Finding Similar items, LSH.pdf",
+          "page": 62,
+          "sourceType": "lecture",
+          "role": "LSH banding",
+          "status": "current"
+        }
+      ],
+      "assignmentRefs": [
+        {
+          "sourceId": "DSA5101/Assignments/DSA5101_Assignment_1.pdf",
+          "page": 3,
+          "sourceType": "exercise",
+          "role": "MinHash",
+          "status": "current-context"
+        },
+        {
+          "sourceId": "DSA5101/Assignments/DSA5101_Assignment_1.pdf",
+          "page": 4,
+          "sourceType": "exercise",
+          "role": "LSH banding",
+          "status": "current-context"
+        }
+      ],
+      "textbookRefs": [
+        {
+          "sourceId": "DSA5101/Reference textbook MMDS 3rd Edition.pdf",
+          "page": 95,
+          "sourceType": "textbook",
+          "role": "MinHash",
+          "status": "course-depth"
+        },
+        {
+          "sourceId": "DSA5101/Reference textbook MMDS 3rd Edition.pdf",
+          "page": 100,
+          "sourceType": "textbook",
+          "role": "LSH",
+          "status": "course-depth"
+        }
+      ],
+      "evidenceIds": [
+        "dsa5101-lectures",
+        "dsa5101-assignment-1"
+      ],
+      "lessonIds": [
+        "dsa5101-minhash-lsh"
+      ]
+    },
+    {
+      "id": "clustering",
+      "title": "Clustering at scale",
+      "signal": "Lecture 3 + Assignment 1",
+      "priority": "Core",
+      "practice": "Name the geometry, update the state, and critique the metric.",
+      "lectureScope": "Lecture 3 hierarchical clustering, K-means, BFR, CURE, and evaluation.",
+      "examMove": "Name the geometry, perform the update, state the memory summary, and critique the metric.",
+      "lectureRefs": [
+        {
+          "sourceId": "DSA5101/Lec3 - Clustering.pdf",
+          "page": 15,
+          "sourceType": "lecture",
+          "role": "clustering methods",
+          "status": "current"
+        },
+        {
+          "sourceId": "DSA5101/Lec3 - Clustering.pdf",
+          "page": 21,
+          "sourceType": "lecture",
+          "role": "hierarchical linkage",
+          "status": "current"
+        },
+        {
+          "sourceId": "DSA5101/Lec3 - Clustering.pdf",
+          "page": 37,
+          "sourceType": "lecture",
+          "role": "K-means objective",
+          "status": "current"
+        },
+        {
+          "sourceId": "DSA5101/Lec3 - Clustering.pdf",
+          "page": 59,
+          "sourceType": "lecture",
+          "role": "BFR overview",
+          "status": "current"
+        },
+        {
+          "sourceId": "DSA5101/Lec3 - Clustering.pdf",
+          "page": 78,
+          "sourceType": "lecture",
+          "role": "CURE representatives",
+          "status": "current"
+        },
+        {
+          "sourceId": "DSA5101/Lec3 - Clustering.pdf",
+          "page": 86,
+          "sourceType": "lecture",
+          "role": "cluster evaluation",
+          "status": "current"
+        }
+      ],
+      "assignmentRefs": [
+        {
+          "sourceId": "DSA5101/Assignments/DSA5101_Assignment_1.pdf",
+          "page": 6,
+          "sourceType": "exercise",
+          "role": "hierarchical clustering",
+          "status": "current-context"
+        }
+      ],
+      "textbookRefs": [],
+      "evidenceIds": [
+        "dsa5101-lectures",
+        "dsa5101-assignment-1"
+      ],
+      "lessonIds": [
+        "dsa5101-clustering"
+      ],
+      "gap": "The local MMDS index has no dedicated clustering chapter; this is an explicit textbook-depth gap, not missing lecture evidence."
+    },
+    {
+      "id": "recommenders",
+      "title": "Recommender track",
+      "signal": "Assignment 2 · Q1",
+      "priority": "Targeted",
+      "practice": "Center ratings and keep latent factors separate.",
+      "lectureScope": "Lecture 3 application motivation only; detailed calculations are in Assignment 2.",
+      "examMove": "Mean-center for user-based cosine, then keep latent-factor dot products separate.",
+      "lectureRefs": [
+        {
+          "sourceId": "DSA5101/Lec3 - Clustering.pdf",
+          "page": 3,
+          "sourceType": "lecture",
+          "role": "recommender motivation",
+          "status": "current"
+        }
+      ],
+      "assignmentRefs": [
+        {
+          "sourceId": "DSA5101/Assignments/DSA5101_Assignment_2.pdf",
+          "page": 2,
+          "sourceType": "exercise",
+          "role": "user-based filtering",
+          "status": "current-context"
+        },
+        {
+          "sourceId": "DSA5101/Assignments/DSA5101_Assignment_2.pdf",
+          "page": 3,
+          "sourceType": "exercise",
+          "role": "latent factors",
+          "status": "current-context"
+        }
+      ],
+      "textbookRefs": [
+        {
+          "sourceId": "DSA5101/Reference textbook MMDS 3rd Edition.pdf",
+          "page": 84,
+          "sourceType": "textbook",
+          "role": "collaborative filtering",
+          "status": "course-depth"
+        }
+      ],
+      "evidenceIds": [
+        "dsa5101-lectures",
+        "dsa5101-assignment-2"
+      ],
+      "lessonIds": [
+        "dsa5101-recommenders"
+      ]
+    },
+    {
+      "id": "pagerank",
+      "title": "PageRank track",
+      "signal": "Assignment 2 · Q2",
+      "priority": "Targeted",
+      "practice": "Fix matrix orientation before multiplying.",
+      "lectureScope": "No dedicated PageRank lecture slide set has been verified in DSA5101; treat the assignment as the current exercise source.",
+      "examMove": "Fix matrix orientation, run two power iterations, and handle damping and dangling nodes explicitly.",
+      "lectureRefs": [],
+      "assignmentRefs": [
+        {
+          "sourceId": "DSA5101/Assignments/DSA5101_Assignment_2.pdf",
+          "page": 4,
+          "sourceType": "exercise",
+          "role": "transition matrix and power iteration",
+          "status": "current-context"
+        }
+      ],
+      "textbookRefs": [
+        {
+          "sourceId": "DSA5101/Reference textbook MMDS 3rd Edition.pdf",
+          "page": 175,
+          "sourceType": "textbook",
+          "role": "PageRank definition",
+          "status": "course-depth"
+        },
+        {
+          "sourceId": "DSA5101/Reference textbook MMDS 3rd Edition.pdf",
+          "page": 191,
+          "sourceType": "textbook",
+          "role": "MapReduce iteration",
+          "status": "course-depth"
+        }
+      ],
+      "evidenceIds": [
+        "dsa5101-assignment-2"
+      ],
+      "lessonIds": [
+        "dsa5101-pagerank"
+      ]
+    },
+    {
+      "id": "streams",
+      "title": "Streaming sketches track",
+      "signal": "Assignment 2 · Q3–Q4",
+      "priority": "Targeted",
+      "practice": "Identify the target statistic before choosing a sketch.",
+      "lectureScope": "No dedicated DGIM/FM/AMS lecture slide set has been verified in DSA5101; Assignment 2 is the exercise boundary.",
+      "examMove": "Identify the target statistic, maintain the sketch invariant, and state the approximation/error source.",
+      "lectureRefs": [],
+      "assignmentRefs": [
+        {
+          "sourceId": "DSA5101/Assignments/DSA5101_Assignment_2.pdf",
+          "page": 5,
+          "sourceType": "exercise",
+          "role": "DGIM",
+          "status": "current-context"
+        },
+        {
+          "sourceId": "DSA5101/Assignments/DSA5101_Assignment_2.pdf",
+          "page": 6,
+          "sourceType": "exercise",
+          "role": "Flajolet-Martin and AMS",
+          "status": "current-context"
+        }
+      ],
+      "textbookRefs": [
+        {
+          "sourceId": "DSA5101/Reference textbook MMDS 3rd Edition.pdf",
+          "page": 154,
+          "sourceType": "textbook",
+          "role": "stream queries",
+          "status": "course-depth"
+        },
+        {
+          "sourceId": "DSA5101/Reference textbook MMDS 3rd Edition.pdf",
+          "page": 155,
+          "sourceType": "textbook",
+          "role": "Flajolet-Martin",
+          "status": "course-depth"
+        },
+        {
+          "sourceId": "DSA5101/Reference textbook MMDS 3rd Edition.pdf",
+          "page": 167,
+          "sourceType": "textbook",
+          "role": "DGIM",
+          "status": "course-depth"
+        }
+      ],
+      "evidenceIds": [
+        "dsa5101-assignment-2"
+      ],
+      "lessonIds": [
+        "dsa5101-streams"
+      ]
+    },
+    {
+      "id": "balance",
+      "title": "BALANCE track",
+      "signal": "Assignment 2 · Q5",
+      "priority": "Targeted",
+      "practice": "Trace every tie before claiming a guarantee.",
+      "lectureScope": "No dedicated BALANCE lecture slide set has been verified; Assignment 2 is the authoritative sequence and guarantee task.",
+      "examMove": "Trace remaining budgets, test ties, and distinguish one successful run from a guarantee.",
+      "lectureRefs": [],
+      "assignmentRefs": [
+        {
+          "sourceId": "DSA5101/Assignments/DSA5101_Assignment_2.pdf",
+          "page": 7,
+          "sourceType": "exercise",
+          "role": "BALANCE sequences",
+          "status": "current-context"
+        }
+      ],
+      "textbookRefs": [],
+      "evidenceIds": [
+        "dsa5101-assignment-2"
+      ],
+      "lessonIds": [
+        "dsa5101-balance"
+      ]
+    }
+  ],
+  "algorithmFocus": [
+    {
+      "rank": 1,
+      "id": "apriori-downward-closure",
+      "title": "A-Priori and downward closure",
+      "tier": "Must master",
+      "assessmentSignal": "Lecture 1 + Assignment 1",
+      "lessonId": "dsa5101-frequent-itemsets",
+      "visualLabId": "dsa5101-frequent-itemsets",
+      "why": "Direct lecture and Assignment 1 counting/pruning signal; it is a foundation for every basket question.",
+      "examMove": "Count baskets, prune supersets, then keep confidence and lift denominators separate.",
+      "kidAnalogy": "A basket detective crosses out impossible snack combinations before checking every shelf.",
+      "sourceRefs": [
+        {
+          "sourceId": "DSA5101/Lec1 - Assoc Rules, Frequent itemsets.pdf",
+          "page": 24,
+          "sourceType": "lecture",
+          "role": "support definition",
+          "status": "current"
+        },
+        {
+          "sourceId": "DSA5101/Assignments/DSA5101_Assignment_1.pdf",
+          "page": 1,
+          "sourceType": "exercise",
+          "role": "itemset calculation",
+          "status": "current-context"
+        }
+      ]
+    },
+    {
+      "rank": 2,
+      "id": "minhash-lsh",
+      "title": "MinHash and LSH",
+      "tier": "Must master",
+      "assessmentSignal": "Lecture 2 + Assignment 1",
+      "lessonId": "dsa5101-minhash-lsh",
+      "visualLabId": "dsa5101-minhash-lsh",
+      "why": "The assignment explicitly tests signatures, bands, candidate probability, and verification boundaries.",
+      "examMove": "Compute Jaccard/MinHash/LSH probabilities and say why a candidate is not yet a verified neighbor.",
+      "kidAnalogy": "Compare two sticker albums with a tiny signature before opening every page.",
+      "sourceRefs": [
+        {
+          "sourceId": "DSA5101/Lec 2 - Finding Similar items, LSH.pdf",
+          "page": 37,
+          "sourceType": "lecture",
+          "role": "MinHash collision",
+          "status": "current"
+        },
+        {
+          "sourceId": "DSA5101/Assignments/DSA5101_Assignment_1.pdf",
+          "page": 4,
+          "sourceType": "exercise",
+          "role": "LSH banding",
+          "status": "current-context"
+        }
+      ]
+    },
+    {
+      "rank": 3,
+      "id": "hierarchical-kmeans",
+      "title": "Hierarchical linkage and K-means",
+      "tier": "Must master",
+      "assessmentSignal": "Lecture 3 + Assignment 1",
+      "lessonId": "dsa5101-clustering",
+      "visualLabId": "dsa5101-clustering",
+      "why": "Lecture 3 gives the core geometry, objective, update, convergence, and evaluation reasoning; Assignment 1 supplies a calculation task.",
+      "examMove": "Name the geometry, perform one update, state the local-optimum caveat, and critique the metric.",
+      "kidAnalogy": "Organize toys into boxes, move the box labels, then ask whether the boxes still make sense.",
+      "sourceRefs": [
+        {
+          "sourceId": "DSA5101/Lec3 - Clustering.pdf",
+          "page": 21,
+          "sourceType": "lecture",
+          "role": "linkage comparison",
+          "status": "current"
+        },
+        {
+          "sourceId": "DSA5101/Lec3 - Clustering.pdf",
+          "page": 37,
+          "sourceType": "lecture",
+          "role": "K-means objective",
+          "status": "current"
+        },
+        {
+          "sourceId": "DSA5101/Assignments/DSA5101_Assignment_1.pdf",
+          "page": 6,
+          "sourceType": "exercise",
+          "role": "hierarchical clustering",
+          "status": "current-context"
+        }
+      ]
+    },
+    {
+      "rank": 4,
+      "id": "bfr-cure",
+      "title": "BFR and CURE summaries",
+      "tier": "Must master conceptually",
+      "assessmentSignal": "Lecture 3",
+      "lessonId": "dsa5101-clustering",
+      "visualLabId": "dsa5101-clustering",
+      "why": "These are the scalable-summary choices that turn clustering into a memory and representation question.",
+      "examMove": "Classify DS/CS/RS and explain why dispersed CURE representatives preserve shape.",
+      "kidAnalogy": "Keep confident toys in a short list, uncertain groups in a box, and boundary toys as reminders of the shape.",
+      "sourceRefs": [
+        {
+          "sourceId": "DSA5101/Lec3 - Clustering.pdf",
+          "page": 59,
+          "sourceType": "lecture",
+          "role": "BFR overview",
+          "status": "current"
+        },
+        {
+          "sourceId": "DSA5101/Lec3 - Clustering.pdf",
+          "page": 78,
+          "sourceType": "lecture",
+          "role": "CURE representatives",
+          "status": "current"
+        }
+      ]
+    },
+    {
+      "rank": 5,
+      "id": "recommender-models",
+      "title": "Recommender models",
+      "tier": "Must master",
+      "assessmentSignal": "Assignment 2 · Q1",
+      "lessonId": "dsa5101-recommenders",
+      "visualLabId": "dsa5101-recommenders",
+      "why": "Assignment 2 directly separates mean-centered neighborhood prediction from latent-factor prediction.",
+      "examMove": "Center ratings, compute similarity-weighted evidence, and keep the latent dot product as a separate model.",
+      "kidAnalogy": "Ask taste-buddies for a vote, then compare that with a tiny hidden taste profile.",
+      "sourceRefs": [
+        {
+          "sourceId": "DSA5101/Assignments/DSA5101_Assignment_2.pdf",
+          "page": 2,
+          "sourceType": "exercise",
+          "role": "user-based filtering",
+          "status": "current-context"
+        },
+        {
+          "sourceId": "DSA5101/Assignments/DSA5101_Assignment_2.pdf",
+          "page": 3,
+          "sourceType": "exercise",
+          "role": "latent factors",
+          "status": "current-context"
+        }
+      ]
+    },
+    {
+      "rank": 6,
+      "id": "pagerank-power-iteration",
+      "title": "PageRank and power iteration",
+      "tier": "Must master",
+      "assessmentSignal": "Assignment 2 · Q2",
+      "lessonId": "dsa5101-pagerank",
+      "visualLabId": "dsa5101-pagerank",
+      "why": "Assignment 2 explicitly tests matrix orientation, iterations, damping, and dangling-node handling.",
+      "examMove": "Fix orientation, move probability mass, handle dangling mass, and repeat the update.",
+      "kidAnalogy": "A ball bounces through web pages and sometimes teleports to a chosen page.",
+      "sourceRefs": [
+        {
+          "sourceId": "DSA5101/Assignments/DSA5101_Assignment_2.pdf",
+          "page": 4,
+          "sourceType": "exercise",
+          "role": "power iteration",
+          "status": "current-context"
+        }
+      ]
+    },
+    {
+      "rank": 7,
+      "id": "streaming-sketches",
+      "title": "DGIM, Flajolet–Martin, and AMS",
+      "tier": "Must master",
+      "assessmentSignal": "Assignment 2 · Q3–Q4",
+      "lessonId": "dsa5101-streams",
+      "visualLabId": "dsa5101-streams",
+      "why": "Assignment 2 tests three bounded-memory sketches with different target statistics and error contracts.",
+      "examMove": "Name the target quantity first, maintain the invariant, and state the approximation source.",
+      "kidAnalogy": "A tiny notebook summarizes a never-ending parade without writing down every visitor.",
+      "sourceRefs": [
+        {
+          "sourceId": "DSA5101/Assignments/DSA5101_Assignment_2.pdf",
+          "page": 5,
+          "sourceType": "exercise",
+          "role": "DGIM",
+          "status": "current-context"
+        },
+        {
+          "sourceId": "DSA5101/Assignments/DSA5101_Assignment_2.pdf",
+          "page": 6,
+          "sourceType": "exercise",
+          "role": "Flajolet-Martin and AMS",
+          "status": "current-context"
+        }
+      ]
+    },
+    {
+      "rank": 8,
+      "id": "balance-budget-trace",
+      "title": "BALANCE budget allocation",
+      "tier": "Must master",
+      "assessmentSignal": "Assignment 2 · Q5",
+      "lessonId": "dsa5101-balance",
+      "visualLabId": "dsa5101-balance",
+      "why": "Assignment 2 directly tests state tracing, ties, adversarial order, and guarantee strength.",
+      "examMove": "Track remaining budgets after every query and distinguish a local success from a global guarantee.",
+      "kidAnalogy": "Two toy shops spend limited coins; the next request can expose whether a greedy choice is safe.",
+      "sourceRefs": [
+        {
+          "sourceId": "DSA5101/Assignments/DSA5101_Assignment_2.pdf",
+          "page": 7,
+          "sourceType": "exercise",
+          "role": "BALANCE sequences",
+          "status": "current-context"
+        }
+      ]
+    }
+  ],
+  "projectStatus": {
+    "status": "pending-canvas",
+    "evidence": "The project brief and rubric were not encoded in local canonical content and the authenticated Canvas Assignments page did not return a stable DOM during this audit.",
+    "nextAction": "Provide a direct Canvas project assignment link or export so the official brief, rubric, deliverables, and grading constraints can be transcribed with page-level provenance."
+  },
+  "practicePlan": {
+    "schemaVersion": "nus.practice-plan.v1",
+    "courseCode": "DSA5101",
+    "title": "DSA5101 timed mixed exam and mistake clinic",
+    "durationMinutes": 90,
+    "questionCount": 12,
+    "selectionPolicy": "One deterministic mixed set: two core lecture questions, two clustering questions, two recommender/PageRank questions, four stream/BALANCE questions, and two cross-track critiques.",
+    "questionIds": [
+      "dsa5101-bank-002",
+      "dsa5101-mh-q2",
+      "dsa5101-cluster-q2",
+      "dsa5101-cluster-q4",
+      "dsa5101-recommender-q2",
+      "dsa5101-pagerank-q2",
+      "dsa5101-stream-q3",
+      "dsa5101-stream-q4",
+      "dsa5101-balance-q2",
+      "dsa5101-balance-q3",
+      "dsa5101-bank-010",
+      "dsa5101-bank-012"
+    ],
+    "timing": [
+      "0–10 min: recall and representation checks",
+      "10–45 min: calculations and updates",
+      "45–75 min: derivations and guarantees",
+      "75–90 min: audit assumptions and sources"
+    ],
+    "mistakeClinic": [
+      {
+        "step": 1,
+        "action": "Tag the miss",
+        "tags": [
+          "representation",
+          "formula",
+          "arithmetic",
+          "invariant",
+          "guarantee",
+          "source boundary"
+        ]
+      },
+      {
+        "step": 2,
+        "action": "Repair from the nearest canonical source",
+        "rule": "Write the correct state transition and cite the lecture or assignment page before looking at textbook depth."
+      },
+      {
+        "step": 3,
+        "action": "Redrill with a perturbed instance",
+        "rule": "Change one number, edge, budget, or tie and recompute without copying the old answer."
+      },
+      {
+        "step": 4,
+        "action": "Redeem the mistake",
+        "rule": "Record the corrected explanation and the condition under which it would fail."
+      }
+    ],
+    "sourceRefs": [
+      {
+        "sourceId": "DSA5101/Lec3 - Clustering.pdf",
+        "page": 37,
+        "sourceType": "lecture",
+        "role": "K-means objective",
+        "status": "current"
+      },
+      {
+        "sourceId": "DSA5101/Assignments/DSA5101_Assignment_1.pdf",
+        "page": 4,
+        "sourceType": "exercise",
+        "role": "LSH banding",
+        "status": "current-context"
+      },
+      {
+        "sourceId": "DSA5101/Assignments/DSA5101_Assignment_2.pdf",
+        "page": 4,
+        "sourceType": "exercise",
+        "role": "PageRank",
+        "status": "current-context"
+      },
+      {
+        "sourceId": "DSA5101/Assignments/DSA5101_Assignment_2.pdf",
+        "page": 6,
+        "sourceType": "exercise",
+        "role": "AMS",
+        "status": "current-context"
+      },
+      {
+        "sourceId": "DSA5101/Assignments/DSA5101_Assignment_2.pdf",
+        "page": 7,
+        "sourceType": "exercise",
+        "role": "BALANCE",
+        "status": "current-context"
+      }
+    ]
+  }
+}

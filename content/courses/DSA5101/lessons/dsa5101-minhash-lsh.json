@@ -188,6 +188,100 @@
           "status": "current-context"
         }
       ]
+    },
+    {
+      "id": "dsa5101-c12",
+      "type": "contrast",
+      "kind": "concept-contrast",
+      "pair": "Shingle set vs multiset",
+      "prompt": "If a document contains the same shingle twice, what does the basic set-shingling representation keep?",
+      "choices": [
+        "One copy of the shingle",
+        "Two copies with multiplicity",
+        "Only the shingle's position"
+      ],
+      "answer": 0,
+      "explanation": "A set records membership, so duplicate occurrences collapse to one element. A multiset would retain multiplicity and requires a different similarity treatment.",
+      "misconception": "Counting repeated shingle occurrences while silently using set Jaccard or basic MinHash.",
+      "repair": "Write down the representation first: set means membership only; multiset means membership plus count.",
+      "estimatedSeconds": 45,
+      "sourceRefs": [
+        {
+          "sourceId": "DSA5101/Lec 2 - Finding Similar items, LSH.pdf",
+          "page": 25,
+          "sourceType": "lecture",
+          "role": "Jaccard similarity for shingles",
+          "status": "current"
+        }
+      ]
+    },
+    {
+      "id": "dsa5101-c13",
+      "type": "contrast",
+      "kind": "concept-contrast",
+      "pair": "Row vs band vs whole LSH collision",
+      "prompt": "Two signatures have similarity s, with r rows per band and b bands. Which expression is the probability that they become an LSH candidate?",
+      "choices": [
+        "$s$ for one row",
+        "$s^r$ for one band",
+        "$1-(1-s^r)^b$ for at least one matching band",
+        "$1-s^{r+b}$ for the whole signature"
+      ],
+      "answer": 2,
+      "explanation": "One row agrees with probability s, every row in one band agrees with probability $s^r$, and at least one of b bands agrees with probability $1-(1-s^r)^b$.",
+      "misconception": "Using the one-row collision probability as if it were the whole LSH candidate probability, or forgetting the complement across bands.",
+      "repair": "Name the event before calculating: row = s, one band = $s^r$, whole filter = at least one band = $1-(1-s^r)^b$.",
+      "estimatedSeconds": 60,
+      "sourceRefs": [
+        {
+          "sourceId": "DSA5101/Lec 2 - Finding Similar items, LSH.pdf",
+          "page": 62,
+          "sourceType": "lecture",
+          "role": "LSH banding candidate probability",
+          "status": "current"
+        },
+        {
+          "sourceId": "DSA5101/Assignments/DSA5101_Assignment_1.pdf",
+          "page": 4,
+          "sourceType": "exercise",
+          "role": "LSH banding",
+          "status": "current-context"
+        }
+      ]
+    },
+    {
+      "id": "dsa5101-c14",
+      "type": "contrast",
+      "kind": "concept-contrast",
+      "pair": "More LSH bands vs precision",
+      "prompt": "Keeping the total number of signature rows fixed, what usually happens when we use more LSH bands with fewer rows per band?",
+      "choices": [
+        "Candidate precision increases because fewer pairs can match a band",
+        "Candidate precision decreases because more pairs can pass at least one band",
+        "Precision and recall are both unchanged",
+        "The filter becomes exact and needs no verification"
+      ],
+      "answer": 1,
+      "explanation": "Fewer rows per band make a full-band match easier, and more bands create more chances for a match. This usually increases recall but also admits more false positives, lowering candidate precision.",
+      "misconception": "Assuming more bands means a stricter filter without accounting for the easier per-band match.",
+      "repair": "With total rows fixed, more bands means smaller r: easier band collisions, higher candidate recall, and usually lower precision.",
+      "estimatedSeconds": 45,
+      "sourceRefs": [
+        {
+          "sourceId": "DSA5101/Lec 2 - Finding Similar items, LSH.pdf",
+          "page": 62,
+          "sourceType": "lecture",
+          "role": "LSH banding candidate probability",
+          "status": "current"
+        },
+        {
+          "sourceId": "DSA5101/Assignments/DSA5101_Assignment_1.pdf",
+          "page": 4,
+          "sourceType": "exercise",
+          "role": "LSH banding",
+          "status": "current-context"
+        }
+      ]
     }
   ],
   "math": [

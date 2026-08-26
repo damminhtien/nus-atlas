@@ -1,0 +1,172 @@
+[
+  {
+    "id": "dsa5101-stream-q1",
+    "type": "mcq",
+    "prompt": "Which sketch is designed to estimate the number of 1s in a recent sliding window?",
+    "explanation": "DGIM stores compressed timestamped buckets for a recent-window count; Flajolet–Martin targets distinct elements.",
+    "sourceRefs": [
+      {
+        "sourceId": "DSA5101/Assignments/DSA5101_Assignment_2.pdf",
+        "page": 5,
+        "sourceType": "exercise",
+        "role": "DGIM window count",
+        "status": "current-context"
+      }
+    ],
+    "difficulty": "medium",
+    "skill": "select-sketch",
+    "cognitiveLevel": "apply",
+    "estimatedSeconds": 60,
+    "misconception": "Check the representation, objective, and scale assumption before committing to an answer.",
+    "visualHook": "Draw the state transition or data summary before calculating.",
+    "courseId": "DSA5101",
+    "lessonId": "dsa5101-streams",
+    "schemaVersion": "nus.question.v1",
+    "choices": [
+      "DGIM",
+      "Flajolet–Martin",
+      "AMS only",
+      "PageRank"
+    ],
+    "answer": 0
+  },
+  {
+    "id": "dsa5101-stream-q2",
+    "type": "short",
+    "prompt": "Why does DGIM count the oldest partially covered bucket as a source of approximation error?",
+    "explanation": "The algorithm knows the bucket size but not the exact locations of its 1s relative to the query boundary, so it can include at most half of that oldest bucket as a controlled approximation.",
+    "sourceRefs": [
+      {
+        "sourceId": "DSA5101/Assignments/DSA5101_Assignment_2.pdf",
+        "page": 5,
+        "sourceType": "exercise",
+        "role": "DGIM error bound",
+        "status": "current-context"
+      },
+      {
+        "sourceId": "DSA5101/Reference textbook MMDS 3rd Edition.pdf",
+        "page": 167,
+        "sourceType": "textbook",
+        "role": "DGIM query answering",
+        "status": "course-depth"
+      }
+    ],
+    "difficulty": "medium",
+    "skill": "explain-dgim-error",
+    "cognitiveLevel": "analyze",
+    "estimatedSeconds": 120,
+    "misconception": "Check the representation, objective, and scale assumption before committing to an answer.",
+    "visualHook": "Draw the state transition or data summary before calculating.",
+    "courseId": "DSA5101",
+    "lessonId": "dsa5101-streams",
+    "schemaVersion": "nus.question.v1",
+    "accepted": [
+      "unknown positions at boundary",
+      "oldest bucket is only partially in the window"
+    ],
+    "solution": "The bucket summary loses the internal timestamps, so the boundary bucket cannot be counted exactly."
+  },
+  {
+    "id": "dsa5101-stream-q3",
+    "type": "calculation",
+    "prompt": "In the one-register Flajolet–Martin teaching approximation, the maximum zero-prefix length is $R=5$. What estimate does the register produce?",
+    "explanation": "The one-register estimate is $2^R=2^5=32$.",
+    "sourceRefs": [
+      {
+        "sourceId": "DSA5101/Assignments/DSA5101_Assignment_2.pdf",
+        "page": 6,
+        "sourceType": "exercise",
+        "role": "Flajolet–Martin estimate",
+        "status": "current-context"
+      },
+      {
+        "sourceId": "DSA5101/Reference textbook MMDS 3rd Edition.pdf",
+        "page": 155,
+        "sourceType": "textbook",
+        "role": "Flajolet–Martin",
+        "status": "course-depth"
+      }
+    ],
+    "difficulty": "medium",
+    "skill": "compute-fm-estimate",
+    "cognitiveLevel": "apply",
+    "estimatedSeconds": 90,
+    "misconception": "Check the representation, objective, and scale assumption before committing to an answer.",
+    "visualHook": "Draw the state transition or data summary before calculating.",
+    "courseId": "DSA5101",
+    "lessonId": "dsa5101-streams",
+    "schemaVersion": "nus.question.v1",
+    "accepted": [
+      "32",
+      "2^5=32"
+    ],
+    "solution": "$\\widehat n\\approx2^5=32$.",
+    "hint": "Raise two to the observed maximum zero-prefix length."
+  },
+  {
+    "id": "dsa5101-stream-q4",
+    "type": "calculation",
+    "prompt": "A stream contains one 1, two 2s, three 3s, and so on up to ten 10s. What is its second frequency moment?",
+    "explanation": "The frequency of value i is i, so $F_2=1^2+2^2+\\cdots+10^2=385$.",
+    "sourceRefs": [
+      {
+        "sourceId": "DSA5101/Assignments/DSA5101_Assignment_2.pdf",
+        "page": 6,
+        "sourceType": "exercise",
+        "role": "AMS second moment",
+        "status": "current-context"
+      }
+    ],
+    "difficulty": "hard",
+    "skill": "compute-second-moment",
+    "cognitiveLevel": "apply",
+    "estimatedSeconds": 120,
+    "misconception": "Check the representation, objective, and scale assumption before committing to an answer.",
+    "visualHook": "Draw the state transition or data summary before calculating.",
+    "courseId": "DSA5101",
+    "lessonId": "dsa5101-streams",
+    "schemaVersion": "nus.question.v1",
+    "accepted": [
+      "385",
+      "1^2+...+10^2=385"
+    ],
+    "solution": "$F_2=\\sum_{i=1}^{10}i^2=385$.",
+    "hint": "Square each frequency, not each distinct value only."
+  },
+  {
+    "id": "dsa5101-stream-q5",
+    "type": "derivation",
+    "prompt": "Why does AMS average estimates from variables sampled at different stream positions?",
+    "explanation": "Each position-based variable is an unbiased but noisy estimator of the same moment. Averaging independent or suitably varied estimates reduces variance while retaining bounded memory.",
+    "sourceRefs": [
+      {
+        "sourceId": "DSA5101/Assignments/DSA5101_Assignment_2.pdf",
+        "page": 6,
+        "sourceType": "exercise",
+        "role": "AMS averaging",
+        "status": "current-context"
+      },
+      {
+        "sourceId": "DSA5101/Reference textbook MMDS 3rd Edition.pdf",
+        "page": 161,
+        "sourceType": "textbook",
+        "role": "frequency moments",
+        "status": "course-depth"
+      }
+    ],
+    "difficulty": "hard",
+    "skill": "explain-ams-averaging",
+    "cognitiveLevel": "analyze",
+    "estimatedSeconds": 150,
+    "misconception": "Check the representation, objective, and scale assumption before committing to an answer.",
+    "visualHook": "Draw the state transition or data summary before calculating.",
+    "courseId": "DSA5101",
+    "lessonId": "dsa5101-streams",
+    "schemaVersion": "nus.question.v1",
+    "accepted": [
+      "each estimate is noisy and averaging reduces variance",
+      "unbiased samples plus averaging lower variance"
+    ],
+    "solution": "The estimator family shares the same target but different random positions, so aggregation stabilizes the result."
+  }
+]

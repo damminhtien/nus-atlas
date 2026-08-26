@@ -1,0 +1,290 @@
+{
+  "id": "dsa5101-streams",
+  "courseId": "DSA5101",
+  "moduleId": "dsa5101-application-tracks",
+  "title": "Assignment 2 · Streaming sketches",
+  "week": 5,
+  "contentStatus": "OFFICIAL EXERCISE TRACK",
+  "minutes": 50,
+  "summary": "Work the DGIM, Flajolet–Martin, and AMS questions as distinct stream queries with explicit memory and error contracts.",
+  "objectives": [
+    "Maintain DGIM bucket-size invariants",
+    "Compute the Flajolet–Martin estimate from a hash observation",
+    "Derive and average AMS second-moment estimates"
+  ],
+  "sourceRefs": [
+    {
+      "sourceId": "DSA5101/Assignments/DSA5101_Assignment_2.pdf",
+      "page": 5,
+      "sourceType": "exercise",
+      "role": "DGIM window and error",
+      "status": "current-context"
+    },
+    {
+      "sourceId": "DSA5101/Assignments/DSA5101_Assignment_2.pdf",
+      "page": 6,
+      "sourceType": "exercise",
+      "role": "Flajolet–Martin and AMS",
+      "status": "current-context"
+    },
+    {
+      "sourceId": "DSA5101/Reference textbook MMDS 3rd Edition.pdf",
+      "page": 154,
+      "sourceType": "textbook",
+      "role": "stream query model",
+      "status": "course-depth"
+    },
+    {
+      "sourceId": "DSA5101/Reference textbook MMDS 3rd Edition.pdf",
+      "page": 155,
+      "sourceType": "textbook",
+      "role": "Flajolet–Martin",
+      "status": "course-depth"
+    }
+  ],
+  "sourceLens": {
+    "status": "core DSA5101 study boundary",
+    "whyExaminable": "Assignment 2 supplies the exact window, repeated-value stream, and estimator calculations; MMDS supplies the stream-query and sketch invariants as labeled depth.",
+    "lecture": [],
+    "officialExercise": [
+      {
+        "sourceId": "DSA5101/Assignments/DSA5101_Assignment_2.pdf",
+        "page": 5,
+        "sourceType": "exercise",
+        "role": "DGIM",
+        "status": "current-context"
+      },
+      {
+        "sourceId": "DSA5101/Assignments/DSA5101_Assignment_2.pdf",
+        "page": 6,
+        "sourceType": "exercise",
+        "role": "Flajolet–Martin and AMS",
+        "status": "current-context"
+      }
+    ],
+    "textbook": [
+      {
+        "sourceId": "DSA5101/Reference textbook MMDS 3rd Edition.pdf",
+        "page": 154,
+        "sourceType": "textbook",
+        "role": "stream queries",
+        "status": "course-depth"
+      },
+      {
+        "sourceId": "DSA5101/Reference textbook MMDS 3rd Edition.pdf",
+        "page": 155,
+        "sourceType": "textbook",
+        "role": "Flajolet–Martin",
+        "status": "course-depth"
+      }
+    ],
+    "reference": []
+  },
+  "visualIds": [
+    "dsa5101-stream-sketches"
+  ],
+  "slideSetIds": [],
+  "schemaVersion": "nus.lesson.v1",
+  "sections": [
+    {
+      "title": "DGIM is a recent-window count",
+      "body": "DGIM stores timestamped buckets of 1s with at most two buckets of each size. When a query cuts through the oldest bucket, count it fractionally to expose the approximation error instead of pretending the boundary is exact.",
+      "sourceType": "exercise",
+      "sourceRefs": [
+        {
+          "sourceId": "DSA5101/Assignments/DSA5101_Assignment_2.pdf",
+          "page": 5,
+          "sourceType": "exercise",
+          "role": "DGIM bucket invariant",
+          "status": "current-context"
+        }
+      ]
+    },
+    {
+      "title": "Different sketch, different target",
+      "body": "Flajolet–Martin estimates distinct elements from the longest zero-prefix in hashed values. AMS estimates a frequency moment such as $F_2=\\sum_i f_i^2$ from position samples. They are not interchangeable just because both use bounded memory.",
+      "sourceType": "exercise",
+      "sourceRefs": [
+        {
+          "sourceId": "DSA5101/Assignments/DSA5101_Assignment_2.pdf",
+          "page": 6,
+          "sourceType": "exercise",
+          "role": "FM and AMS moments",
+          "status": "current-context"
+        }
+      ]
+    }
+  ],
+  "math": [
+    {
+      "name": "Second frequency moment",
+      "purpose": "State the target estimated by AMS.",
+      "latex": "F_2=\\sum_i f_i^2",
+      "explanation": "The second moment $F_2=\\sum_i f_i^2$ weights repeated values quadratically, so a stream with one 1, two 2s, and three 3s already has a different target from its distinct count.",
+      "symbols": [
+        {
+          "latex": "F_2",
+          "meaning": "second frequency moment"
+        },
+        {
+          "latex": "f_i",
+          "meaning": "frequency of value i"
+        }
+      ],
+      "sourceType": "exercise",
+      "sourceRefs": [
+        {
+          "sourceId": "DSA5101/Assignments/DSA5101_Assignment_2.pdf",
+          "page": 6,
+          "sourceType": "exercise",
+          "role": "second moment",
+          "status": "current-context"
+        }
+      ]
+    }
+  ],
+  "contrastDrills": [
+    {
+      "id": "dsa5101-c18",
+      "type": "contrast",
+      "kind": "concept-contrast",
+      "pair": "Newest vs oldest DGIM bucket",
+      "prompt": "A DGIM query window cuts through one bucket. Which bucket is the boundary bucket that may need fractional counting?",
+      "choices": [
+        "The oldest bucket that overlaps the window boundary",
+        "The newest bucket, because it was created last",
+        "Any bucket with size 1, regardless of timestamp",
+        "No bucket; DGIM counts every bucket exactly"
+      ],
+      "answer": 0,
+      "explanation": "Buckets are timestamped. The oldest bucket that is only partly inside the queried window is the uncertain boundary; DGIM counts it fractionally to expose approximation error.",
+      "misconception": "Choosing the newest bucket because it is visually prominent, or treating the oldest partially covered bucket as fully inside.",
+      "repair": "Mark the time-window boundary first, then identify the oldest bucket crossing it and apply the stated fractional rule.",
+      "estimatedSeconds": 45,
+      "sourceRefs": [
+        {
+          "sourceId": "DSA5101/Assignments/DSA5101_Assignment_2.pdf",
+          "page": 5,
+          "sourceType": "exercise",
+          "role": "DGIM window and error",
+          "status": "current-context"
+        }
+      ]
+    },
+    {
+      "id": "dsa5101-c19",
+      "type": "contrast",
+      "kind": "concept-contrast",
+      "pair": "Zeroth moment vs total count",
+      "prompt": "A stream contains values with frequencies 3, 2, and 1. What are the zeroth moment and the total number of stream elements?",
+      "choices": [
+        "$F_0=3$ distinct values and $F_1=6$ total occurrences",
+        "$F_0=6$ total occurrences and $F_1=3$ distinct values",
+        "$F_0=6^2$ and $F_1=3^2$",
+        "Both moments equal 3 because there are three values"
+      ],
+      "answer": 0,
+      "explanation": "The zeroth moment $F_0$ counts distinct values, so it is 3. The first moment $F_1=\\sum_i f_i$ counts all occurrences, so it is $3+2+1=6$.",
+      "misconception": "Calling the number of distinct keys the total stream length, or treating every frequency moment as a square-sum.",
+      "repair": "Ask whether the target counts distinct identities ($F_0$) or sums their frequencies ($F_1$) before selecting a sketch.",
+      "estimatedSeconds": 45,
+      "sourceRefs": [
+        {
+          "sourceId": "DSA5101/Assignments/DSA5101_Assignment_2.pdf",
+          "page": 6,
+          "sourceType": "exercise",
+          "role": "Flajolet–Martin and AMS moments",
+          "status": "current-context"
+        },
+        {
+          "sourceId": "DSA5101/Reference textbook MMDS 3rd Edition.pdf",
+          "page": 154,
+          "sourceType": "textbook",
+          "role": "stream query model",
+          "status": "course-depth"
+        }
+      ]
+    }
+  ],
+  "criticalQuestions": [
+    {
+      "prompt": "What assumption would falsify the Assignment 2 · Streaming sketches answer?",
+      "angle": "Name the representation or boundary condition that the calculation relies on.",
+      "modelAnswer": "A changed input representation, violated invariant, or unhandled boundary case can invalidate a result even when the arithmetic is correct.",
+      "focus": "assumption audit",
+      "sourceRefs": [
+        {
+          "sourceId": "DSA5101/Assignments/DSA5101_Assignment_2.pdf",
+          "page": 5,
+          "sourceType": "exercise",
+          "role": "DGIM window and error",
+          "status": "current-context"
+        },
+        {
+          "sourceId": "DSA5101/Assignments/DSA5101_Assignment_2.pdf",
+          "page": 6,
+          "sourceType": "exercise",
+          "role": "Flajolet–Martin and AMS",
+          "status": "current-context"
+        },
+        {
+          "sourceId": "DSA5101/Reference textbook MMDS 3rd Edition.pdf",
+          "page": 154,
+          "sourceType": "textbook",
+          "role": "stream query model",
+          "status": "course-depth"
+        },
+        {
+          "sourceId": "DSA5101/Reference textbook MMDS 3rd Edition.pdf",
+          "page": 155,
+          "sourceType": "textbook",
+          "role": "Flajolet–Martin",
+          "status": "course-depth"
+        }
+      ]
+    },
+    {
+      "prompt": "How would you explain the Assignment 2 · Streaming sketches result to an examiner in one minute?",
+      "angle": "State the target quantity, the update rule, and the limitation.",
+      "modelAnswer": "Define the target, show one update, and close with the exactness, approximation, or guarantee condition.",
+      "focus": "exam communication",
+      "sourceRefs": [
+        {
+          "sourceId": "DSA5101/Assignments/DSA5101_Assignment_2.pdf",
+          "page": 5,
+          "sourceType": "exercise",
+          "role": "DGIM window and error",
+          "status": "current-context"
+        },
+        {
+          "sourceId": "DSA5101/Assignments/DSA5101_Assignment_2.pdf",
+          "page": 6,
+          "sourceType": "exercise",
+          "role": "Flajolet–Martin and AMS",
+          "status": "current-context"
+        },
+        {
+          "sourceId": "DSA5101/Reference textbook MMDS 3rd Edition.pdf",
+          "page": 154,
+          "sourceType": "textbook",
+          "role": "stream query model",
+          "status": "course-depth"
+        },
+        {
+          "sourceId": "DSA5101/Reference textbook MMDS 3rd Edition.pdf",
+          "page": 155,
+          "sourceType": "textbook",
+          "role": "Flajolet–Martin",
+          "status": "course-depth"
+        }
+      ]
+    }
+  ],
+  "questionIds": [
+    "dsa5101-stream-q1",
+    "dsa5101-stream-q2",
+    "dsa5101-stream-q3",
+    "dsa5101-stream-q4",
+    "dsa5101-stream-q5"
+  ]
+}

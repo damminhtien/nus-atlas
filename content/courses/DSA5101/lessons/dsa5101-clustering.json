@@ -1,0 +1,388 @@
+{
+  "id": "dsa5101-clustering",
+  "courseId": "DSA5101",
+  "moduleId": "dsa5101-clustering",
+  "title": "Clustering at scale: hierarchy, K-means, BFR, and CURE",
+  "week": 3,
+  "contentStatus": "CURRENT LECTURE",
+  "minutes": 90,
+  "summary": "Use Lecture 3 as the canonical clustering source: choose a cluster geometry, calculate K-means updates, then scale the representation with BFR or CURE and evaluate it honestly.",
+  "objectives": [
+    "Compare hierarchical linkage assumptions",
+    "Derive and calculate the K-means objective and updates",
+    "Explain BFR DS/CS/RS summaries and CURE representatives",
+    "Match evaluation metrics to labels and decisions"
+  ],
+  "sourceRefs": [
+    {
+      "sourceId": "DSA5101/Lec3 - Clustering.pdf",
+      "page": 15,
+      "sourceType": "lecture",
+      "role": "clustering methods",
+      "status": "current"
+    },
+    {
+      "sourceId": "DSA5101/Lec3 - Clustering.pdf",
+      "page": 21,
+      "sourceType": "lecture",
+      "role": "hierarchical linkage",
+      "status": "current"
+    },
+    {
+      "sourceId": "DSA5101/Lec3 - Clustering.pdf",
+      "page": 37,
+      "sourceType": "lecture",
+      "role": "K-means objective",
+      "status": "current"
+    },
+    {
+      "sourceId": "DSA5101/Lec3 - Clustering.pdf",
+      "page": 59,
+      "sourceType": "lecture",
+      "role": "BFR overview",
+      "status": "current"
+    },
+    {
+      "sourceId": "DSA5101/Lec3 - Clustering.pdf",
+      "page": 78,
+      "sourceType": "lecture",
+      "role": "CURE representatives",
+      "status": "current"
+    },
+    {
+      "sourceId": "DSA5101/Lec3 - Clustering.pdf",
+      "page": 86,
+      "sourceType": "lecture",
+      "role": "cluster evaluation",
+      "status": "current"
+    },
+    {
+      "sourceId": "DSA5101/Assignments/DSA5101_Assignment_1.pdf",
+      "page": 6,
+      "sourceType": "exercise",
+      "role": "hierarchical clustering practice",
+      "status": "current-context"
+    }
+  ],
+  "sourceLens": {
+    "status": "core DSA5101 study boundary",
+    "whyExaminable": "Lecture 3 defines the official clustering scope; Assignment 1 supplies the required hierarchical-clustering calculation. The provided MMDS package has no dedicated clustering chapter, so that textbook gap remains explicit.",
+    "lecture": [
+      {
+        "sourceId": "DSA5101/Lec3 - Clustering.pdf",
+        "page": 15,
+        "sourceType": "lecture",
+        "role": "clustering methods",
+        "status": "current"
+      },
+      {
+        "sourceId": "DSA5101/Lec3 - Clustering.pdf",
+        "page": 21,
+        "sourceType": "lecture",
+        "role": "hierarchical linkage",
+        "status": "current"
+      },
+      {
+        "sourceId": "DSA5101/Lec3 - Clustering.pdf",
+        "page": 37,
+        "sourceType": "lecture",
+        "role": "K-means objective",
+        "status": "current"
+      },
+      {
+        "sourceId": "DSA5101/Lec3 - Clustering.pdf",
+        "page": 59,
+        "sourceType": "lecture",
+        "role": "BFR overview",
+        "status": "current"
+      },
+      {
+        "sourceId": "DSA5101/Lec3 - Clustering.pdf",
+        "page": 78,
+        "sourceType": "lecture",
+        "role": "CURE representatives",
+        "status": "current"
+      },
+      {
+        "sourceId": "DSA5101/Lec3 - Clustering.pdf",
+        "page": 86,
+        "sourceType": "lecture",
+        "role": "cluster evaluation",
+        "status": "current"
+      }
+    ],
+    "officialExercise": [
+      {
+        "sourceId": "DSA5101/Assignments/DSA5101_Assignment_1.pdf",
+        "page": 6,
+        "sourceType": "exercise",
+        "role": "hierarchical clustering practice",
+        "status": "current-context"
+      }
+    ],
+    "textbook": [],
+    "reference": []
+  },
+  "visualIds": [
+    "dsa5101-clustering-pipeline"
+  ],
+  "slideSetIds": [
+    "dsa5101-lecture3"
+  ],
+  "schemaVersion": "nus.lesson.v1",
+  "sections": [
+    {
+      "title": "Choose geometry before algorithm",
+      "body": "Clustering is a partitioning decision over a representation and a similarity rule. Hierarchical methods make merge and stopping choices explicit; the result depends on whether closeness means a nearest pair, farthest pair, average distance, or a representative.",
+      "sourceType": "lecture",
+      "sourceRefs": [
+        {
+          "sourceId": "DSA5101/Lec3 - Clustering.pdf",
+          "page": 15,
+          "sourceType": "lecture",
+          "role": "clustering methods",
+          "status": "current"
+        },
+        {
+          "sourceId": "DSA5101/Lec3 - Clustering.pdf",
+          "page": 21,
+          "sourceType": "lecture",
+          "role": "hierarchical linkage",
+          "status": "current"
+        }
+      ]
+    },
+    {
+      "title": "K-means is an alternating objective",
+      "body": "K-means assigns each point to a representative and recomputes the representative. The two updates reduce the within-cluster squared-error objective, but initialization, the choice of $K$, and the metric can leave a locally optimal answer that is not the useful answer.",
+      "sourceType": "lecture",
+      "sourceRefs": [
+        {
+          "sourceId": "DSA5101/Lec3 - Clustering.pdf",
+          "page": 37,
+          "sourceType": "lecture",
+          "role": "K-means loss",
+          "status": "current"
+        },
+        {
+          "sourceId": "DSA5101/Lec3 - Clustering.pdf",
+          "page": 53,
+          "sourceType": "lecture",
+          "role": "initialization and choosing K",
+          "status": "current"
+        }
+      ]
+    },
+    {
+      "title": "Scale the summary, not the raw data",
+      "body": "BFR keeps sufficient statistics for confident discard-set clusters, compression-set summaries for uncertain groups, and a retained set for outliers. CURE keeps a few dispersed representatives and shrinks them toward the mean so a scalable summary preserves more shape than one centroid.",
+      "sourceType": "lecture",
+      "sourceRefs": [
+        {
+          "sourceId": "DSA5101/Lec3 - Clustering.pdf",
+          "page": 62,
+          "sourceType": "lecture",
+          "role": "BFR state",
+          "status": "current"
+        },
+        {
+          "sourceId": "DSA5101/Lec3 - Clustering.pdf",
+          "page": 78,
+          "sourceType": "lecture",
+          "role": "CURE representatives",
+          "status": "current"
+        }
+      ]
+    },
+    {
+      "title": "Evaluate the decision you actually need",
+      "body": "Without labels, inspect cohesion, separation, and stability relative to the chosen geometry. With labels, purity is an external signal, not proof of utility; report its cluster-count sensitivity and connect the metric to the downstream decision.",
+      "sourceType": "lecture",
+      "sourceRefs": [
+        {
+          "sourceId": "DSA5101/Lec3 - Clustering.pdf",
+          "page": 86,
+          "sourceType": "lecture",
+          "role": "cluster evaluation",
+          "status": "current"
+        }
+      ]
+    }
+  ],
+  "math": [
+    {
+      "name": "K-means distortion",
+      "purpose": "Measure the within-cluster squared-error objective.",
+      "latex": "J(R,Z)=\\sum_i\\lVert x_i-z_{r(i)}\\rVert^2",
+      "explanation": "The distortion $J(R,Z)$ adds the squared distance from each point $x_i$ to the representative $z_{r(i)}$ of its assigned cluster.",
+      "symbols": [
+        {
+          "latex": "J(R,Z)",
+          "meaning": "within-cluster squared-error loss"
+        },
+        {
+          "latex": "x_i",
+          "meaning": "data point i"
+        },
+        {
+          "latex": "z_{r(i)}",
+          "meaning": "representative assigned to point i"
+        }
+      ],
+      "sourceType": "lecture",
+      "sourceRefs": [
+        {
+          "sourceId": "DSA5101/Lec3 - Clustering.pdf",
+          "page": 37,
+          "sourceType": "lecture",
+          "role": "K-means loss",
+          "status": "current"
+        }
+      ]
+    },
+    {
+      "name": "BFR sufficient statistics",
+      "purpose": "Summarize a cluster for later assignment without retaining every point.",
+      "latex": "N,\\;SUM=\\sum_i x_i,\\;SUMSQ=\\sum_i x_i^2",
+      "explanation": "BFR stores a count $N$, coordinate sums $SUM$, and coordinate-wise squared sums $SUMSQ$ so means and variances can be recovered for a compact cluster summary.",
+      "symbols": [
+        {
+          "latex": "N",
+          "meaning": "number of points in the summary"
+        },
+        {
+          "latex": "SUM",
+          "meaning": "coordinate-wise sum"
+        },
+        {
+          "latex": "SUMSQ",
+          "meaning": "coordinate-wise squared sum"
+        }
+      ],
+      "sourceType": "lecture",
+      "sourceRefs": [
+        {
+          "sourceId": "DSA5101/Lec3 - Clustering.pdf",
+          "page": 71,
+          "sourceType": "lecture",
+          "role": "BFR summary statistics",
+          "status": "current"
+        }
+      ]
+    }
+  ],
+  "examples": [
+    {
+      "title": "K-means arithmetic checkpoint",
+      "steps": [
+        [
+          "Assign",
+          "$x_i\\to\\operatorname*{argmin}_k\\lVert x_i-z_k\\rVert^2$",
+          "Choose the closest representative for every point."
+        ],
+        [
+          "Update",
+          "$z_k=\\frac{1}{|C_k|}\\sum_{x_i\\in C_k}x_i$",
+          "Replace each representative with the mean of its assigned points."
+        ],
+        [
+          "Audit",
+          "$J(R,Z)$",
+          "Recompute the objective and record whether the loss decreased."
+        ]
+      ],
+      "sourceRefs": [
+        {
+          "sourceId": "DSA5101/Lec3 - Clustering.pdf",
+          "page": 44,
+          "sourceType": "lecture",
+          "role": "K-means steps",
+          "status": "current"
+        }
+      ]
+    }
+  ],
+  "contrastDrills": [
+    {
+      "id": "dsa5101-c15",
+      "type": "contrast",
+      "kind": "concept-contrast",
+      "pair": "Single vs complete vs average linkage",
+      "prompt": "Which statement correctly distinguishes the three hierarchical linkage rules?",
+      "choices": [
+        "Single uses the closest pair, complete the farthest pair, and average the mean pairwise distance",
+        "Single uses the mean, complete the closest pair, and average the farthest pair",
+        "All three use the same pair but stop at different cluster counts",
+        "Single is K-means, complete is BFR, and average is CURE"
+      ],
+      "answer": 0,
+      "explanation": "Single-link uses the minimum cross-cluster distance, complete-link uses the maximum, and average-link uses the average of cross-cluster pair distances.",
+      "misconception": "Remembering the names without tying each rule to its aggregation over cross-cluster distances.",
+      "repair": "For every linkage, say min, max, or mean before judging which clusters merge.",
+      "estimatedSeconds": 45,
+      "sourceRefs": [
+        {
+          "sourceId": "DSA5101/Lec3 - Clustering.pdf",
+          "page": 21,
+          "sourceType": "lecture",
+          "role": "hierarchical linkage",
+          "status": "current"
+        },
+        {
+          "sourceId": "DSA5101/Assignments/DSA5101_Assignment_1.pdf",
+          "page": 6,
+          "sourceType": "exercise",
+          "role": "hierarchical clustering practice",
+          "status": "current-context"
+        }
+      ]
+    }
+  ],
+  "criticalQuestions": [
+    {
+      "prompt": "When would you prefer CURE or BFR over plain K-means?",
+      "angle": "Compare shape preservation and memory constraints, then state the cost of the richer summary.",
+      "modelAnswer": "Use CURE when dispersed or non-spherical shape matters, BFR when the data is too large for memory and compact sufficient statistics are available, and K-means when the centroid geometry and objective are appropriate.",
+      "focus": "method selection",
+      "sourceRefs": [
+        {
+          "sourceId": "DSA5101/Lec3 - Clustering.pdf",
+          "page": 59,
+          "sourceType": "lecture",
+          "role": "BFR overview",
+          "status": "current"
+        },
+        {
+          "sourceId": "DSA5101/Lec3 - Clustering.pdf",
+          "page": 78,
+          "sourceType": "lecture",
+          "role": "CURE representatives",
+          "status": "current"
+        }
+      ]
+    },
+    {
+      "prompt": "What evidence would make a high-purity clustering result unconvincing?",
+      "angle": "Test the metric against cluster count, geometry, and the downstream decision.",
+      "modelAnswer": "Many tiny clusters, a mismatch between the similarity metric and the task, or no stability and downstream usefulness would weaken the purity claim.",
+      "focus": "evaluation boundary",
+      "sourceRefs": [
+        {
+          "sourceId": "DSA5101/Lec3 - Clustering.pdf",
+          "page": 86,
+          "sourceType": "lecture",
+          "role": "cluster evaluation",
+          "status": "current"
+        }
+      ]
+    }
+  ],
+  "questionIds": [
+    "dsa5101-cluster-q1",
+    "dsa5101-cluster-q2",
+    "dsa5101-cluster-q3",
+    "dsa5101-cluster-q4",
+    "dsa5101-cluster-q5",
+    "dsa5101-cluster-q6"
+  ]
+}

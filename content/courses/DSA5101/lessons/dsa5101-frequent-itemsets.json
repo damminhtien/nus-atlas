@@ -180,6 +180,39 @@
           "status": "current"
         }
       ]
+    },
+    {
+      "id": "dsa5101-c11",
+      "type": "contrast",
+      "kind": "concept-contrast",
+      "pair": "Subset vs superset in Apriori",
+      "prompt": "The itemset {milk, bread} is infrequent. Which candidate can Apriori discard immediately?",
+      "choices": [
+        "The subset {milk}",
+        "The superset {milk, bread, eggs}",
+        "Every subset and every superset"
+      ],
+      "answer": 1,
+      "explanation": "Downward closure says a superset cannot have greater support than an infrequent subset, so {milk, bread, eggs} is safe to prune. The subset {milk} may still be frequent.",
+      "misconception": "Treating the word 'subset' as the thing to prune, instead of checking which direction support can only decrease.",
+      "repair": "An infrequent set prunes its supersets; a frequent set can help generate supersets but does not prune its subsets.",
+      "estimatedSeconds": 45,
+      "sourceRefs": [
+        {
+          "sourceId": "DSA5101/Lec1 - Assoc Rules, Frequent itemsets.pdf",
+          "page": 36,
+          "sourceType": "lecture",
+          "role": "downward closure",
+          "status": "current"
+        },
+        {
+          "sourceId": "DSA5101/Assignments/DSA5101_Assignment_1.pdf",
+          "page": 1,
+          "sourceType": "exercise",
+          "role": "itemset calculation",
+          "status": "current-context"
+        }
+      ]
     }
   ],
   "math": [

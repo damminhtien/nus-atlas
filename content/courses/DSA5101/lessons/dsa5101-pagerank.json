@@ -1,0 +1,203 @@
+{
+  "id": "dsa5101-pagerank",
+  "courseId": "DSA5101",
+  "moduleId": "dsa5101-application-tracks",
+  "title": "Assignment 2 · PageRank",
+  "week": 5,
+  "contentStatus": "OFFICIAL EXERCISE TRACK",
+  "minutes": 45,
+  "summary": "Construct the transition matrix, run power iterations, and reason about teleportation using the exact Assignment 2 network task.",
+  "objectives": [
+    "Build a row or column transition matrix consistently",
+    "Compute one and two power iterations",
+    "Explain damping and a non-uniform teleport set"
+  ],
+  "sourceRefs": [
+    {
+      "sourceId": "DSA5101/Assignments/DSA5101_Assignment_2.pdf",
+      "page": 4,
+      "sourceType": "exercise",
+      "role": "transition matrix and power iteration",
+      "status": "current-context"
+    },
+    {
+      "sourceId": "DSA5101/Reference textbook MMDS 3rd Edition.pdf",
+      "page": 175,
+      "sourceType": "textbook",
+      "role": "PageRank definition",
+      "status": "course-depth"
+    }
+  ],
+  "sourceLens": {
+    "status": "core DSA5101 study boundary",
+    "whyExaminable": "Assignment 2 is the authoritative practice boundary for matrix construction and iterations; MMDS supplies the formal PageRank and efficient-computation depth.",
+    "lecture": [],
+    "officialExercise": [
+      {
+        "sourceId": "DSA5101/Assignments/DSA5101_Assignment_2.pdf",
+        "page": 4,
+        "sourceType": "exercise",
+        "role": "transition matrix and iterations",
+        "status": "current-context"
+      }
+    ],
+    "textbook": [
+      {
+        "sourceId": "DSA5101/Reference textbook MMDS 3rd Edition.pdf",
+        "page": 175,
+        "sourceType": "textbook",
+        "role": "PageRank definition",
+        "status": "course-depth"
+      }
+    ],
+    "reference": []
+  },
+  "visualIds": [
+    "dsa5101-pagerank-iteration"
+  ],
+  "slideSetIds": [],
+  "schemaVersion": "nus.lesson.v1",
+  "sections": [
+    {
+      "title": "Transition matrix first",
+      "body": "Fix the orientation before multiplying: decide whether each row distributes a node’s mass to out-neighbours or each column does. Then handle dangling nodes and retain the same convention through every iteration.",
+      "sourceType": "exercise",
+      "sourceRefs": [
+        {
+          "sourceId": "DSA5101/Assignments/DSA5101_Assignment_2.pdf",
+          "page": 4,
+          "sourceType": "exercise",
+          "role": "transition matrix",
+          "status": "current-context"
+        }
+      ]
+    },
+    {
+      "title": "Power iteration and teleportation",
+      "body": "Power iteration repeatedly applies the transition operator. With a teleport set, the injected mass is not necessarily uniform over all nodes, so compare the resulting increase against the initial vector rather than relying on indegree alone.",
+      "sourceType": "exercise",
+      "sourceRefs": [
+        {
+          "sourceId": "DSA5101/Assignments/DSA5101_Assignment_2.pdf",
+          "page": 4,
+          "sourceType": "exercise",
+          "role": "power iteration and teleport set",
+          "status": "current-context"
+        }
+      ]
+    }
+  ],
+  "math": [
+    {
+      "name": "PageRank update",
+      "purpose": "Combine link-following mass with teleportation.",
+      "latex": "\\operatorname{PR}(i)=\\frac{1-\\beta}{|T|}\\mathbf{1}_{i\\in T}+\\beta\\sum_{j\\to i}\\frac{\\operatorname{PR}(j)}{\\operatorname{outdeg}(j)}",
+      "explanation": "The update adds teleport mass to the selected set $T$ and transfers the remaining mass through incoming links. The assignment’s $\\beta=1$ case removes teleportation for the requested iterations.",
+      "symbols": [
+        {
+          "latex": "\\beta",
+          "meaning": "link-following probability"
+        },
+        {
+          "latex": "T",
+          "meaning": "teleport set"
+        },
+        {
+          "latex": "\\operatorname{PR}(i)",
+          "meaning": "rank of node i"
+        }
+      ],
+      "sourceType": "exercise",
+      "sourceRefs": [
+        {
+          "sourceId": "DSA5101/Assignments/DSA5101_Assignment_2.pdf",
+          "page": 4,
+          "sourceType": "exercise",
+          "role": "PageRank iteration",
+          "status": "current-context"
+        }
+      ]
+    }
+  ],
+  "contrastDrills": [
+    {
+      "id": "dsa5101-c16",
+      "type": "contrast",
+      "kind": "concept-contrast",
+      "pair": "Row-stochastic vs column-stochastic",
+      "prompt": "If P[i,j] is the probability of moving from source node i to destination node j, which convention is correct?",
+      "choices": [
+        "Each row sums to 1; a row probability vector advances as p'P",
+        "Each column sums to 1; a row probability vector advances as p'P",
+        "Each row sums to 0; a column probability vector advances as pP",
+        "Rows and columns both sum to 1 for every directed graph"
+      ],
+      "answer": 0,
+      "explanation": "With source in the row and destination in the column, P is row-stochastic: each source row distributes mass across its outgoing edges. A column-vector convention uses the transpose consistently.",
+      "misconception": "Mixing the matrix orientation with the vector orientation, so the iteration silently moves mass in the wrong direction.",
+      "repair": "Write one edge as P[source, destination] and check whether the chosen vector multiplication preserves total mass.",
+      "estimatedSeconds": 45,
+      "sourceRefs": [
+        {
+          "sourceId": "DSA5101/Assignments/DSA5101_Assignment_2.pdf",
+          "page": 4,
+          "sourceType": "exercise",
+          "role": "transition matrix and power iteration",
+          "status": "current-context"
+        }
+      ]
+    }
+  ],
+  "criticalQuestions": [
+    {
+      "prompt": "What assumption would falsify the Assignment 2 · PageRank answer?",
+      "angle": "Name the representation or boundary condition that the calculation relies on.",
+      "modelAnswer": "A changed input representation, violated invariant, or unhandled boundary case can invalidate a result even when the arithmetic is correct.",
+      "focus": "assumption audit",
+      "sourceRefs": [
+        {
+          "sourceId": "DSA5101/Assignments/DSA5101_Assignment_2.pdf",
+          "page": 4,
+          "sourceType": "exercise",
+          "role": "transition matrix and power iteration",
+          "status": "current-context"
+        },
+        {
+          "sourceId": "DSA5101/Reference textbook MMDS 3rd Edition.pdf",
+          "page": 175,
+          "sourceType": "textbook",
+          "role": "PageRank definition",
+          "status": "course-depth"
+        }
+      ]
+    },
+    {
+      "prompt": "How would you explain the Assignment 2 · PageRank result to an examiner in one minute?",
+      "angle": "State the target quantity, the update rule, and the limitation.",
+      "modelAnswer": "Define the target, show one update, and close with the exactness, approximation, or guarantee condition.",
+      "focus": "exam communication",
+      "sourceRefs": [
+        {
+          "sourceId": "DSA5101/Assignments/DSA5101_Assignment_2.pdf",
+          "page": 4,
+          "sourceType": "exercise",
+          "role": "transition matrix and power iteration",
+          "status": "current-context"
+        },
+        {
+          "sourceId": "DSA5101/Reference textbook MMDS 3rd Edition.pdf",
+          "page": 175,
+          "sourceType": "textbook",
+          "role": "PageRank definition",
+          "status": "course-depth"
+        }
+      ]
+    }
+  ],
+  "questionIds": [
+    "dsa5101-pagerank-q1",
+    "dsa5101-pagerank-q2",
+    "dsa5101-pagerank-q3",
+    "dsa5101-pagerank-q4"
+  ]
+}

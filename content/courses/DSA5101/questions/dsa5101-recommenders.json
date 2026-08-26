@@ -1,0 +1,135 @@
+[
+  {
+    "id": "dsa5101-recommender-q1",
+    "type": "mcq",
+    "prompt": "Why subtract each user’s row mean before cosine similarity in the user-based method?",
+    "explanation": "Centering removes each user’s rating baseline so cosine similarity compares deviations and preference pattern.",
+    "sourceRefs": [
+      {
+        "sourceId": "DSA5101/Assignments/DSA5101_Assignment_2.pdf",
+        "page": 2,
+        "sourceType": "exercise",
+        "role": "mean-centered cosine similarity",
+        "status": "current-context"
+      }
+    ],
+    "difficulty": "medium",
+    "skill": "normalize-ratings",
+    "cognitiveLevel": "apply",
+    "estimatedSeconds": 90,
+    "misconception": "Check the representation, objective, and scale assumption before committing to an answer.",
+    "visualHook": "Draw the state transition or data summary before calculating.",
+    "courseId": "DSA5101",
+    "lessonId": "dsa5101-recommenders",
+    "schemaVersion": "nus.question.v1",
+    "choices": [
+      "To compare deviations rather than generosity",
+      "To create more movies",
+      "To make every rating positive",
+      "To replace the latent-factor model"
+    ],
+    "answer": 0
+  },
+  {
+    "id": "dsa5101-recommender-q2",
+    "type": "calculation",
+    "prompt": "If a user vector is $q=(2,-1)$ and an item vector is $p=(3,4)$, what rating does the dot-product predictor return?",
+    "explanation": "Compute $2\\cdot3+(-1)\\cdot4=2$.",
+    "sourceRefs": [
+      {
+        "sourceId": "DSA5101/Assignments/DSA5101_Assignment_2.pdf",
+        "page": 3,
+        "sourceType": "exercise",
+        "role": "latent-factor prediction",
+        "status": "current-context"
+      }
+    ],
+    "difficulty": "medium",
+    "skill": "compute-dot-product",
+    "cognitiveLevel": "apply",
+    "estimatedSeconds": 90,
+    "misconception": "Check the representation, objective, and scale assumption before committing to an answer.",
+    "visualHook": "Draw the state transition or data summary before calculating.",
+    "courseId": "DSA5101",
+    "lessonId": "dsa5101-recommenders",
+    "schemaVersion": "nus.question.v1",
+    "accepted": [
+      "2",
+      "2.0"
+    ],
+    "solution": "$\\hat r=q\\cdot p=6-4=2$.",
+    "hint": "Multiply matching coordinates and add them."
+  },
+  {
+    "id": "dsa5101-recommender-q3",
+    "type": "short",
+    "prompt": "State one conceptual difference between user-based collaborative filtering and the latent-factor method in Assignment 2.",
+    "explanation": "User-based filtering derives a prediction from similar users and their centered ratings; latent factors learn low-dimensional user and item vectors whose dot product reconstructs known ratings.",
+    "sourceRefs": [
+      {
+        "sourceId": "DSA5101/Assignments/DSA5101_Assignment_2.pdf",
+        "page": 2,
+        "sourceType": "exercise",
+        "role": "user-based method",
+        "status": "current-context"
+      },
+      {
+        "sourceId": "DSA5101/Assignments/DSA5101_Assignment_2.pdf",
+        "page": 3,
+        "sourceType": "exercise",
+        "role": "latent factors",
+        "status": "current-context"
+      }
+    ],
+    "difficulty": "hard",
+    "skill": "separate-models",
+    "cognitiveLevel": "analyze",
+    "estimatedSeconds": 120,
+    "misconception": "Check the representation, objective, and scale assumption before committing to an answer.",
+    "visualHook": "Draw the state transition or data summary before calculating.",
+    "courseId": "DSA5101",
+    "lessonId": "dsa5101-recommenders",
+    "schemaVersion": "nus.question.v1",
+    "accepted": [
+      "similar users versus learned vectors",
+      "neighbourhood weighted ratings versus dot product of learned factors"
+    ],
+    "solution": "They use different representations and prediction mechanisms even when both estimate the same missing entry."
+  },
+  {
+    "id": "dsa5101-recommender-q4",
+    "type": "short",
+    "prompt": "A new user has no known ratings. Which part of the user-based workflow becomes undefined, and why?",
+    "explanation": "There is no row mean or similarity evidence for the new user, so a neighbourhood prediction needs a fallback such as a prior, onboarding signal, or item popularity.",
+    "sourceRefs": [
+      {
+        "sourceId": "DSA5101/Assignments/DSA5101_Assignment_2.pdf",
+        "page": 2,
+        "sourceType": "exercise",
+        "role": "utility matrix",
+        "status": "current-context"
+      },
+      {
+        "sourceId": "DSA5101/Reference textbook MMDS 3rd Edition.pdf",
+        "page": 84,
+        "sourceType": "textbook",
+        "role": "collaborative filtering depth",
+        "status": "course-depth"
+      }
+    ],
+    "difficulty": "hard",
+    "skill": "diagnose-cold-start",
+    "cognitiveLevel": "evaluate",
+    "estimatedSeconds": 120,
+    "misconception": "Check the representation, objective, and scale assumption before committing to an answer.",
+    "visualHook": "Draw the state transition or data summary before calculating.",
+    "courseId": "DSA5101",
+    "lessonId": "dsa5101-recommenders",
+    "schemaVersion": "nus.question.v1",
+    "accepted": [
+      "row mean and similarity are unavailable",
+      "cold start has no ratings for centering or neighbours"
+    ],
+    "solution": "The missing evidence is the user profile itself, not merely one missing matrix cell."
+  }
+]

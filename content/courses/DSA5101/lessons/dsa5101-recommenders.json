@@ -1,0 +1,256 @@
+{
+  "id": "dsa5101-recommenders",
+  "courseId": "DSA5101",
+  "moduleId": "dsa5101-application-tracks",
+  "title": "Assignment 2 · Recommenders",
+  "week": 5,
+  "contentStatus": "OFFICIAL EXERCISE TRACK",
+  "minutes": 45,
+  "summary": "Solve the two missing ratings with user-based collaborative filtering and a latent-factor model, keeping normalization and dot-product prediction separate.",
+  "objectives": [
+    "Mean-center known ratings before cosine similarity",
+    "Use neighbourhood similarity to estimate a missing rating",
+    "Complete latent factors and compute a dot-product prediction"
+  ],
+  "sourceRefs": [
+    {
+      "sourceId": "DSA5101/Lec3 - Clustering.pdf",
+      "page": 3,
+      "sourceType": "lecture",
+      "role": "high-dimensional and recommender motivation",
+      "status": "current"
+    },
+    {
+      "sourceId": "DSA5101/Assignments/DSA5101_Assignment_2.pdf",
+      "page": 2,
+      "sourceType": "exercise",
+      "role": "user-based collaborative filtering",
+      "status": "current-context"
+    },
+    {
+      "sourceId": "DSA5101/Assignments/DSA5101_Assignment_2.pdf",
+      "page": 3,
+      "sourceType": "exercise",
+      "role": "latent-factor method",
+      "status": "current-context"
+    },
+    {
+      "sourceId": "DSA5101/Reference textbook MMDS 3rd Edition.pdf",
+      "page": 84,
+      "sourceType": "textbook",
+      "role": "collaborative filtering as a similar-sets problem",
+      "status": "course-depth"
+    }
+  ],
+  "sourceLens": {
+    "status": "core DSA5101 study boundary",
+    "whyExaminable": "Assignment 2 supplies the exact matrix and latent-factor tasks; Lecture 3 motivates the representation and MMDS labels collaborative filtering depth.",
+    "lecture": [
+      {
+        "sourceId": "DSA5101/Lec3 - Clustering.pdf",
+        "page": 3,
+        "sourceType": "lecture",
+        "role": "recommender motivation",
+        "status": "current"
+      }
+    ],
+    "officialExercise": [
+      {
+        "sourceId": "DSA5101/Assignments/DSA5101_Assignment_2.pdf",
+        "page": 2,
+        "sourceType": "exercise",
+        "role": "user-based collaborative filtering",
+        "status": "current-context"
+      },
+      {
+        "sourceId": "DSA5101/Assignments/DSA5101_Assignment_2.pdf",
+        "page": 3,
+        "sourceType": "exercise",
+        "role": "latent-factor method",
+        "status": "current-context"
+      }
+    ],
+    "textbook": [
+      {
+        "sourceId": "DSA5101/Reference textbook MMDS 3rd Edition.pdf",
+        "page": 84,
+        "sourceType": "textbook",
+        "role": "collaborative filtering depth",
+        "status": "course-depth"
+      }
+    ],
+    "reference": []
+  },
+  "visualIds": [
+    "dsa5101-recommender-matrix"
+  ],
+  "slideSetIds": [],
+  "schemaVersion": "nus.lesson.v1",
+  "sections": [
+    {
+      "title": "User-based collaborative filtering",
+      "body": "Subtract each user’s row mean from known ratings before calculating cosine similarity. The centering step makes the comparison focus on rating pattern rather than absolute generosity.",
+      "sourceType": "exercise",
+      "sourceRefs": [
+        {
+          "sourceId": "DSA5101/Assignments/DSA5101_Assignment_2.pdf",
+          "page": 2,
+          "sourceType": "exercise",
+          "role": "mean-centered cosine similarity",
+          "status": "current-context"
+        }
+      ]
+    },
+    {
+      "title": "Latent-factor prediction",
+      "body": "The latent-factor task uses a reconstructed rating $\\hat r_{xi}=q_x\\cdot p_i$ and chooses missing entries in $Q$ and $P^T$ so known ratings have zero reconstruction error. Do not reuse the neighbourhood estimates as latent factors.",
+      "sourceType": "exercise",
+      "sourceRefs": [
+        {
+          "sourceId": "DSA5101/Assignments/DSA5101_Assignment_2.pdf",
+          "page": 3,
+          "sourceType": "exercise",
+          "role": "latent-factor objective",
+          "status": "current-context"
+        }
+      ]
+    }
+  ],
+  "math": [
+    {
+      "name": "Latent-factor rating",
+      "purpose": "Predict a user–item rating from the learned user and item vectors.",
+      "latex": "\\hat r_{xi}=q_x\\cdot p_i",
+      "explanation": "The dot product $\\hat r_{xi}=q_x\\cdot p_i$ is a model prediction; it is different from a neighbourhood-weighted average.",
+      "symbols": [
+        {
+          "latex": "q_x",
+          "meaning": "latent vector for user x"
+        },
+        {
+          "latex": "p_i",
+          "meaning": "latent vector for item i"
+        }
+      ],
+      "sourceType": "exercise",
+      "sourceRefs": [
+        {
+          "sourceId": "DSA5101/Assignments/DSA5101_Assignment_2.pdf",
+          "page": 3,
+          "sourceType": "exercise",
+          "role": "latent-factor prediction",
+          "status": "current-context"
+        }
+      ]
+    }
+  ],
+  "contrastDrills": [
+    {
+      "id": "dsa5101-c17",
+      "type": "contrast",
+      "kind": "concept-contrast",
+      "pair": "Raw vs mean-centered ratings",
+      "prompt": "Two users rate the same items with the same relative pattern, but one user gives every item two extra stars. Why center ratings before cosine similarity?",
+      "choices": [
+        "To compare preference deviations rather than different rating baselines",
+        "To make every rating equal to zero",
+        "To turn user-based filtering into a latent-factor model",
+        "To remove all missing entries from the matrix"
+      ],
+      "answer": 0,
+      "explanation": "Subtracting each user's row mean removes the generosity or harshness baseline, so cosine similarity focuses on how ratings deviate from each user's own average.",
+      "misconception": "Using raw ratings and mistaking an absolute rating scale for a preference pattern.",
+      "repair": "Compute each user's mean first, subtract it from known ratings, then compare the centered vectors.",
+      "estimatedSeconds": 45,
+      "sourceRefs": [
+        {
+          "sourceId": "DSA5101/Assignments/DSA5101_Assignment_2.pdf",
+          "page": 2,
+          "sourceType": "exercise",
+          "role": "mean-centered cosine similarity",
+          "status": "current-context"
+        }
+      ]
+    }
+  ],
+  "criticalQuestions": [
+    {
+      "prompt": "What assumption would falsify the Assignment 2 · Recommenders answer?",
+      "angle": "Name the representation or boundary condition that the calculation relies on.",
+      "modelAnswer": "A changed input representation, violated invariant, or unhandled boundary case can invalidate a result even when the arithmetic is correct.",
+      "focus": "assumption audit",
+      "sourceRefs": [
+        {
+          "sourceId": "DSA5101/Lec3 - Clustering.pdf",
+          "page": 3,
+          "sourceType": "lecture",
+          "role": "high-dimensional and recommender motivation",
+          "status": "current"
+        },
+        {
+          "sourceId": "DSA5101/Assignments/DSA5101_Assignment_2.pdf",
+          "page": 2,
+          "sourceType": "exercise",
+          "role": "user-based collaborative filtering",
+          "status": "current-context"
+        },
+        {
+          "sourceId": "DSA5101/Assignments/DSA5101_Assignment_2.pdf",
+          "page": 3,
+          "sourceType": "exercise",
+          "role": "latent-factor method",
+          "status": "current-context"
+        },
+        {
+          "sourceId": "DSA5101/Reference textbook MMDS 3rd Edition.pdf",
+          "page": 84,
+          "sourceType": "textbook",
+          "role": "collaborative filtering as a similar-sets problem",
+          "status": "course-depth"
+        }
+      ]
+    },
+    {
+      "prompt": "How would you explain the Assignment 2 · Recommenders result to an examiner in one minute?",
+      "angle": "State the target quantity, the update rule, and the limitation.",
+      "modelAnswer": "Define the target, show one update, and close with the exactness, approximation, or guarantee condition.",
+      "focus": "exam communication",
+      "sourceRefs": [
+        {
+          "sourceId": "DSA5101/Lec3 - Clustering.pdf",
+          "page": 3,
+          "sourceType": "lecture",
+          "role": "high-dimensional and recommender motivation",
+          "status": "current"
+        },
+        {
+          "sourceId": "DSA5101/Assignments/DSA5101_Assignment_2.pdf",
+          "page": 2,
+          "sourceType": "exercise",
+          "role": "user-based collaborative filtering",
+          "status": "current-context"
+        },
+        {
+          "sourceId": "DSA5101/Assignments/DSA5101_Assignment_2.pdf",
+          "page": 3,
+          "sourceType": "exercise",
+          "role": "latent-factor method",
+          "status": "current-context"
+        },
+        {
+          "sourceId": "DSA5101/Reference textbook MMDS 3rd Edition.pdf",
+          "page": 84,
+          "sourceType": "textbook",
+          "role": "collaborative filtering as a similar-sets problem",
+          "status": "course-depth"
+        }
+      ]
+    }
+  ],
+  "questionIds": [
+    "dsa5101-recommender-q1",
+    "dsa5101-recommender-q2",
+    "dsa5101-recommender-q3",
+    "dsa5101-recommender-q4"
+  ]
+}

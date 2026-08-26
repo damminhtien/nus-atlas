@@ -1,0 +1,123 @@
+[
+  {
+    "id": "dsa5101-balance-q1",
+    "type": "mcq",
+    "prompt": "When both advertisers bid on a query, what does BALANCE compare?",
+    "explanation": "BALANCE compares the remaining budgets of eligible advertisers and assigns to the one with more remaining budget, subject to the tie rule.",
+    "sourceRefs": [
+      {
+        "sourceId": "DSA5101/Assignments/DSA5101_Assignment_2.pdf",
+        "page": 7,
+        "sourceType": "exercise",
+        "role": "BALANCE rule",
+        "status": "current-context"
+      }
+    ],
+    "difficulty": "easy",
+    "skill": "recall-balance-rule",
+    "cognitiveLevel": "understand",
+    "estimatedSeconds": 60,
+    "misconception": "Check the representation, objective, and scale assumption before committing to an answer.",
+    "visualHook": "Draw the state transition or data summary before calculating.",
+    "courseId": "DSA5101",
+    "lessonId": "dsa5101-balance",
+    "schemaVersion": "nus.question.v1",
+    "choices": [
+      "Remaining budget",
+      "Number of previous queries only",
+      "PageRank",
+      "Cosine similarity"
+    ],
+    "answer": 0
+  },
+  {
+    "id": "dsa5101-balance-q2",
+    "type": "short",
+    "prompt": "Under the Assignment 2 bids and budgets, is $xyxz$ guaranteed optimal for BALANCE? Explain in one sentence.",
+    "explanation": "Yes. Whichever advertiser receives the first tied x, the later y and z eligibility keeps both budgets available for the remaining x and serves all four queries.",
+    "sourceRefs": [
+      {
+        "sourceId": "DSA5101/Assignments/DSA5101_Assignment_2.pdf",
+        "page": 7,
+        "sourceType": "exercise",
+        "role": "sequence xyxz",
+        "status": "current-context"
+      }
+    ],
+    "difficulty": "medium",
+    "skill": "simulate-balance",
+    "cognitiveLevel": "apply",
+    "estimatedSeconds": 120,
+    "misconception": "Check the representation, objective, and scale assumption before committing to an answer.",
+    "visualHook": "Draw the state transition or data summary before calculating.",
+    "courseId": "DSA5101",
+    "lessonId": "dsa5101-balance",
+    "schemaVersion": "nus.question.v1",
+    "accepted": [
+      "yes",
+      "yes, all four can be served",
+      "yes because either first x tie leaves an optimal allocation"
+    ],
+    "solution": "Yes; both tie outcomes serve all four queries, which is the offline optimum."
+  },
+  {
+    "id": "dsa5101-balance-q3",
+    "type": "calculation",
+    "prompt": "Why is $xyyy$ not guaranteed optimal when A bids on x,y, B bids on x,z, and both budgets start at 2?",
+    "explanation": "The first x is a tie. If BALANCE gives it to A, A then receives the first y and exhausts its budget after one more y, while B cannot serve y; an offline allocation could give x to B and two y queries to A, serving three.",
+    "sourceRefs": [
+      {
+        "sourceId": "DSA5101/Assignments/DSA5101_Assignment_2.pdf",
+        "page": 7,
+        "sourceType": "exercise",
+        "role": "sequence xyyy",
+        "status": "current-context"
+      }
+    ],
+    "difficulty": "hard",
+    "skill": "find-counterexample",
+    "cognitiveLevel": "evaluate",
+    "estimatedSeconds": 120,
+    "misconception": "Check the representation, objective, and scale assumption before committing to an answer.",
+    "visualHook": "Draw the state transition or data summary before calculating.",
+    "courseId": "DSA5101",
+    "lessonId": "dsa5101-balance",
+    "schemaVersion": "nus.question.v1",
+    "accepted": [
+      "not guaranteed; tie can give x to A and waste A budget on x",
+      "no",
+      "no because the first tie can hurt y-only demand"
+    ],
+    "solution": "No. A bad tie resolution makes BALANCE serve only two queries while OPT serves three.",
+    "hint": "Check both outcomes of the first x tie."
+  },
+  {
+    "id": "dsa5101-balance-q4",
+    "type": "short",
+    "prompt": "What is the difference between “BALANCE serves all queries in this simulation” and “BALANCE is guaranteed optimal for this sequence”?",
+    "explanation": "The first claim describes one tie resolution or one execution. The guarantee quantifies over the allowed choices and must equal the offline optimum for the sequence.",
+    "sourceRefs": [
+      {
+        "sourceId": "DSA5101/Assignments/DSA5101_Assignment_2.pdf",
+        "page": 7,
+        "sourceType": "exercise",
+        "role": "BALANCE guarantee",
+        "status": "current-context"
+      }
+    ],
+    "difficulty": "hard",
+    "skill": "reason-about-guarantees",
+    "cognitiveLevel": "evaluate",
+    "estimatedSeconds": 120,
+    "misconception": "Check the representation, objective, and scale assumption before committing to an answer.",
+    "visualHook": "Draw the state transition or data summary before calculating.",
+    "courseId": "DSA5101",
+    "lessonId": "dsa5101-balance",
+    "schemaVersion": "nus.question.v1",
+    "accepted": [
+      "one run versus every tie resolution and offline optimum",
+      "simulation outcome is weaker than guarantee"
+    ],
+    "solution": "Guarantee requires checking the worst allowed tie path, not merely displaying a successful path."
+  }
+]

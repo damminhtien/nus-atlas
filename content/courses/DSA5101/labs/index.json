@@ -240,7 +240,31 @@
       "step": 0
     },
     "reducedMotion": true,
-    "explanation": "Each tab isolates a different denominator or interpretation so support, confidence, and lift do not blur together."
+    "explanation": "Each tab isolates a different denominator or interpretation so support, confidence, and lift do not blur together.",
+    "animation": {
+      "title": "The basket detective",
+      "audience": "kid-friendly intuition",
+      "status": "intuition-only",
+      "analogy": "Imagine checking lunch baskets to find snacks that often travel together.",
+      "frames": [
+        {
+          "label": "1 · Look",
+          "scene": "Mark every basket that contains both snacks.",
+          "takeaway": "Support is a count of baskets, not a feeling about popularity."
+        },
+        {
+          "label": "2 · Prune",
+          "scene": "If a smaller snack pair is already rare, cross out every larger basket pattern that contains it.",
+          "takeaway": "Downward closure saves work before the big search."
+        },
+        {
+          "label": "3 · Ask",
+          "scene": "Now ask whether the second snack appears more often after the first snack.",
+          "takeaway": "Confidence is conditional; lift compares with the background rate."
+        }
+      ],
+      "frameDurationMs": 1400
+    }
   },
   "dsa5101-minhash-lsh": {
     "courseCode": "DSA5101",
@@ -328,7 +352,31 @@
       "step": 0
     },
     "reducedMotion": true,
-    "explanation": "The trace keeps exact similarity, compact estimation, and approximate candidate retrieval as three different operations."
+    "explanation": "The trace keeps exact similarity, compact estimation, and approximate candidate retrieval as three different operations.",
+    "animation": {
+      "title": "The sticker-album shortcut",
+      "audience": "kid-friendly intuition",
+      "status": "intuition-only",
+      "analogy": "Two sticker albums can be compared quickly without laying every sticker on the floor.",
+      "frames": [
+        {
+          "label": "1 · Albums",
+          "scene": "Treat each document as an album of stickers called shingles.",
+          "takeaway": "Jaccard similarity asks how much the albums overlap."
+        },
+        {
+          "label": "2 · Tiny signature",
+          "scene": "Shuffle the sticker rows and keep the first sticker seen for each shuffle.",
+          "takeaway": "Matching MinHash entries estimate the overlap."
+        },
+        {
+          "label": "3 · Candidate bell",
+          "scene": "Put signature rows into bands; a matching band rings a bell for a possible neighbor.",
+          "takeaway": "LSH proposes candidates; exact verification still checks the real sets."
+        }
+      ],
+      "frameDurationMs": 1400
+    }
   },
   "dsa5101-ranking-streams": {
     "courseCode": "DSA5101",
@@ -417,5 +465,848 @@
     },
     "reducedMotion": true,
     "explanation": "The right method follows the target quantity: node importance, a recent-window count, or distinct-cardinality estimation."
+  },
+  "dsa5101-clustering": {
+    "courseCode": "DSA5101",
+    "lessonId": "dsa5101-clustering",
+    "type": "derivation-trace",
+    "title": "Clustering method and scale trace",
+    "learningGoal": "Choose a geometry, update a compact cluster state, and audit the evaluation claim.",
+    "sourceRefs": [
+      {
+        "sourceId": "DSA5101/Lec3 - Clustering.pdf",
+        "page": 15,
+        "sourceType": "lecture",
+        "role": "clustering methods",
+        "status": "current"
+      },
+      {
+        "sourceId": "DSA5101/Lec3 - Clustering.pdf",
+        "page": 21,
+        "sourceType": "lecture",
+        "role": "hierarchical linkage",
+        "status": "current"
+      },
+      {
+        "sourceId": "DSA5101/Lec3 - Clustering.pdf",
+        "page": 37,
+        "sourceType": "lecture",
+        "role": "K-means objective",
+        "status": "current"
+      },
+      {
+        "sourceId": "DSA5101/Lec3 - Clustering.pdf",
+        "page": 59,
+        "sourceType": "lecture",
+        "role": "BFR overview",
+        "status": "current"
+      },
+      {
+        "sourceId": "DSA5101/Lec3 - Clustering.pdf",
+        "page": 78,
+        "sourceType": "lecture",
+        "role": "CURE representatives",
+        "status": "current"
+      },
+      {
+        "sourceId": "DSA5101/Lec3 - Clustering.pdf",
+        "page": 86,
+        "sourceType": "lecture",
+        "role": "cluster evaluation",
+        "status": "current"
+      },
+      {
+        "sourceId": "DSA5101/Assignments/DSA5101_Assignment_1.pdf",
+        "page": 6,
+        "sourceType": "exercise",
+        "role": "hierarchical clustering practice",
+        "status": "current-context"
+      }
+    ],
+    "sourceLens": {
+      "status": "core DSA5101 study boundary",
+      "whyExaminable": "The lab is derived from the same canonical lecture or official-exercise refs as its lesson and exposes the calculation state needed for exam practice.",
+      "lecture": [
+        {
+          "sourceId": "DSA5101/Lec3 - Clustering.pdf",
+          "page": 15,
+          "sourceType": "lecture",
+          "role": "clustering methods",
+          "status": "current"
+        },
+        {
+          "sourceId": "DSA5101/Lec3 - Clustering.pdf",
+          "page": 21,
+          "sourceType": "lecture",
+          "role": "hierarchical linkage",
+          "status": "current"
+        },
+        {
+          "sourceId": "DSA5101/Lec3 - Clustering.pdf",
+          "page": 37,
+          "sourceType": "lecture",
+          "role": "K-means objective",
+          "status": "current"
+        },
+        {
+          "sourceId": "DSA5101/Lec3 - Clustering.pdf",
+          "page": 59,
+          "sourceType": "lecture",
+          "role": "BFR overview",
+          "status": "current"
+        },
+        {
+          "sourceId": "DSA5101/Lec3 - Clustering.pdf",
+          "page": 78,
+          "sourceType": "lecture",
+          "role": "CURE representatives",
+          "status": "current"
+        },
+        {
+          "sourceId": "DSA5101/Lec3 - Clustering.pdf",
+          "page": 86,
+          "sourceType": "lecture",
+          "role": "cluster evaluation",
+          "status": "current"
+        }
+      ],
+      "officialExercise": [
+        {
+          "sourceId": "DSA5101/Assignments/DSA5101_Assignment_1.pdf",
+          "page": 6,
+          "sourceType": "exercise",
+          "role": "hierarchical clustering practice",
+          "status": "current-context"
+        }
+      ],
+      "textbook": [],
+      "reference": []
+    },
+    "exercises": [
+      {
+        "id": "geometry",
+        "label": "Geometry",
+        "prompt": "Which cluster shape and merge rule does the method assume?",
+        "takeaway": "State the representation and distance before comparing algorithms.",
+        "steps": [
+          [
+            "Represent",
+            "points + distance",
+            "Name the feature space and similarity."
+          ],
+          [
+            "Choose",
+            "linkage or centroid",
+            "Tie the method to its geometry."
+          ],
+          [
+            "Evaluate",
+            "cohesion + purpose",
+            "Avoid treating one score as universal."
+          ]
+        ]
+      },
+      {
+        "id": "scale",
+        "label": "Scale",
+        "prompt": "What can be summarized safely when data no longer fits in memory?",
+        "takeaway": "Use DS/CS/RS or dispersed representatives according to the uncertainty and shape you must preserve.",
+        "steps": [
+          [
+            "Confident",
+            "DS",
+            "Store sufficient statistics."
+          ],
+          [
+            "Uncertain",
+            "CS or RS",
+            "Delay irreversible assignment."
+          ],
+          [
+            "Shape",
+            "CURE representatives",
+            "Retain dispersed boundary evidence."
+          ]
+        ]
+      }
+    ],
+    "steps": [
+      [
+        "Represent",
+        "points + distance",
+        "Name the feature space and similarity."
+      ],
+      [
+        "Choose",
+        "linkage or centroid",
+        "Tie the method to its geometry."
+      ],
+      [
+        "Evaluate",
+        "cohesion + purpose",
+        "Avoid treating one score as universal."
+      ],
+      [
+        "Confident",
+        "DS",
+        "Store sufficient statistics."
+      ],
+      [
+        "Uncertain",
+        "CS or RS",
+        "Delay irreversible assignment."
+      ],
+      [
+        "Shape",
+        "CURE representatives",
+        "Retain dispersed boundary evidence."
+      ]
+    ],
+    "reducedMotion": true,
+    "animation": {
+      "title": "The toy-box organizer",
+      "audience": "kid-friendly intuition",
+      "status": "intuition-only",
+      "analogy": "Put similar toys together, then check whether the boxes still tell the truth when the toy room grows huge.",
+      "frames": [
+        {
+          "label": "1 · Nearby toys",
+          "scene": "Give each toy to the closest box or join boxes using a chosen linkage rule.",
+          "takeaway": "The distance and geometry decide what “similar” means."
+        },
+        {
+          "label": "2 · Move the label",
+          "scene": "For K-means, move each box label to the mean position of its toys and repeat.",
+          "takeaway": "Each update improves the local squared-error objective, but initialization can still matter."
+        },
+        {
+          "label": "3 · Tiny summary",
+          "scene": "Keep confident toys in DS, uncertain groups in CS, and lonely outliers in RS; CURE keeps several boundary representatives.",
+          "takeaway": "BFR and CURE trade exact detail for a compact, auditable summary."
+        },
+        {
+          "label": "4 · Check",
+          "scene": "Count how many toys land in the right labelled box, but also ask whether the boxes are useful and not just tiny.",
+          "takeaway": "Purity alone is not a complete quality claim."
+        }
+      ],
+      "frameDurationMs": 1400
+    }
+  },
+  "dsa5101-recommenders": {
+    "courseCode": "DSA5101",
+    "lessonId": "dsa5101-recommenders",
+    "type": "decision-tree",
+    "title": "Assignment 2 · Recommenders practice lab",
+    "learningGoal": "Trace the recommenders state without mixing it with the other Assignment 2 tracks.",
+    "sourceRefs": [
+      {
+        "sourceId": "DSA5101/Lec3 - Clustering.pdf",
+        "page": 3,
+        "sourceType": "lecture",
+        "role": "high-dimensional and recommender motivation",
+        "status": "current"
+      },
+      {
+        "sourceId": "DSA5101/Assignments/DSA5101_Assignment_2.pdf",
+        "page": 2,
+        "sourceType": "exercise",
+        "role": "user-based collaborative filtering",
+        "status": "current-context"
+      },
+      {
+        "sourceId": "DSA5101/Assignments/DSA5101_Assignment_2.pdf",
+        "page": 3,
+        "sourceType": "exercise",
+        "role": "latent-factor method",
+        "status": "current-context"
+      },
+      {
+        "sourceId": "DSA5101/Reference textbook MMDS 3rd Edition.pdf",
+        "page": 84,
+        "sourceType": "textbook",
+        "role": "collaborative filtering as a similar-sets problem",
+        "status": "course-depth"
+      }
+    ],
+    "sourceLens": {
+      "status": "core DSA5101 study boundary",
+      "whyExaminable": "The lab is derived from the same canonical lecture or official-exercise refs as its lesson and exposes the calculation state needed for exam practice.",
+      "lecture": [
+        {
+          "sourceId": "DSA5101/Lec3 - Clustering.pdf",
+          "page": 3,
+          "sourceType": "lecture",
+          "role": "high-dimensional and recommender motivation",
+          "status": "current"
+        }
+      ],
+      "officialExercise": [
+        {
+          "sourceId": "DSA5101/Assignments/DSA5101_Assignment_2.pdf",
+          "page": 2,
+          "sourceType": "exercise",
+          "role": "user-based collaborative filtering",
+          "status": "current-context"
+        },
+        {
+          "sourceId": "DSA5101/Assignments/DSA5101_Assignment_2.pdf",
+          "page": 3,
+          "sourceType": "exercise",
+          "role": "latent-factor method",
+          "status": "current-context"
+        }
+      ],
+      "textbook": [
+        {
+          "sourceId": "DSA5101/Reference textbook MMDS 3rd Edition.pdf",
+          "page": 84,
+          "sourceType": "textbook",
+          "role": "collaborative filtering as a similar-sets problem",
+          "status": "course-depth"
+        }
+      ],
+      "reference": []
+    },
+    "exercises": [
+      {
+        "id": "setup",
+        "label": "Setup",
+        "prompt": "What is the input and target for Assignment 2 · Recommenders?",
+        "takeaway": "Write the representation, objective, and boundary before calculating.",
+        "steps": [
+          [
+            "Input",
+            "canonical source",
+            "Copy only the variables the assignment gives."
+          ],
+          [
+            "State",
+            "invariant",
+            "Record budgets, probabilities, ratings, or counters."
+          ],
+          [
+            "Update",
+            "one step",
+            "Apply the algorithm once and audit the result."
+          ]
+        ]
+      },
+      {
+        "id": "edge",
+        "label": "Edge case",
+        "prompt": "What edge case can make a superficial Assignment 2 · Recommenders answer wrong?",
+        "takeaway": "Use a boundary case to test the guarantee, not just the happy path.",
+        "steps": [
+          [
+            "Find",
+            "tie or boundary",
+            "Identify the decision point."
+          ],
+          [
+            "Trace",
+            "alternative",
+            "Run the other allowed outcome."
+          ],
+          [
+            "Explain",
+            "claim strength",
+            "Say whether the result is exact, approximate, or merely possible."
+          ]
+        ]
+      }
+    ],
+    "mode": "generic",
+    "splits": [
+      {
+        "id": "target",
+        "label": "Target quantity",
+        "detail": "Name exactly what the algorithm is estimating or allocating.",
+        "scope": "representation and objective"
+      },
+      {
+        "id": "boundary",
+        "label": "Boundary case",
+        "detail": "Trace a tie, missing value, dangling mass, or sketch boundary before claiming success.",
+        "scope": "invariant and guarantee"
+      }
+    ],
+    "reducedMotion": true,
+    "animation": {
+      "title": "The movie-buddy club",
+      "audience": "kid-friendly intuition",
+      "status": "intuition-only",
+      "analogy": "Find friends with similar taste, but also learn a compact taste profile so the two methods do not get mixed up.",
+      "frames": [
+        {
+          "label": "1 · Center",
+          "scene": "Subtract each friend’s usual star level so “generous rater” does not look like “same taste.”",
+          "takeaway": "Mean-centering compares patterns of likes and dislikes."
+        },
+        {
+          "label": "2 · Borrow",
+          "scene": "Let nearby taste-buddies vote on the missing movie rating.",
+          "takeaway": "User-based filtering is a neighborhood calculation."
+        },
+        {
+          "label": "3 · Learn",
+          "scene": "Give each friend and movie a tiny hidden taste vector, then combine matching coordinates.",
+          "takeaway": "Latent factors predict with a dot product, a different model path."
+        }
+      ],
+      "frameDurationMs": 1400
+    }
+  },
+  "dsa5101-pagerank": {
+    "courseCode": "DSA5101",
+    "lessonId": "dsa5101-pagerank",
+    "type": "derivation-trace",
+    "title": "Assignment 2 · PageRank practice lab",
+    "learningGoal": "Trace the pagerank state without mixing it with the other Assignment 2 tracks.",
+    "sourceRefs": [
+      {
+        "sourceId": "DSA5101/Assignments/DSA5101_Assignment_2.pdf",
+        "page": 4,
+        "sourceType": "exercise",
+        "role": "transition matrix and power iteration",
+        "status": "current-context"
+      },
+      {
+        "sourceId": "DSA5101/Reference textbook MMDS 3rd Edition.pdf",
+        "page": 175,
+        "sourceType": "textbook",
+        "role": "PageRank definition",
+        "status": "course-depth"
+      }
+    ],
+    "sourceLens": {
+      "status": "core DSA5101 study boundary",
+      "whyExaminable": "The lab is derived from the same canonical lecture or official-exercise refs as its lesson and exposes the calculation state needed for exam practice.",
+      "lecture": [],
+      "officialExercise": [
+        {
+          "sourceId": "DSA5101/Assignments/DSA5101_Assignment_2.pdf",
+          "page": 4,
+          "sourceType": "exercise",
+          "role": "transition matrix and power iteration",
+          "status": "current-context"
+        }
+      ],
+      "textbook": [
+        {
+          "sourceId": "DSA5101/Reference textbook MMDS 3rd Edition.pdf",
+          "page": 175,
+          "sourceType": "textbook",
+          "role": "PageRank definition",
+          "status": "course-depth"
+        }
+      ],
+      "reference": []
+    },
+    "exercises": [
+      {
+        "id": "setup",
+        "label": "Setup",
+        "prompt": "What is the input and target for Assignment 2 · PageRank?",
+        "takeaway": "Write the representation, objective, and boundary before calculating.",
+        "steps": [
+          [
+            "Input",
+            "canonical source",
+            "Copy only the variables the assignment gives."
+          ],
+          [
+            "State",
+            "invariant",
+            "Record budgets, probabilities, ratings, or counters."
+          ],
+          [
+            "Update",
+            "one step",
+            "Apply the algorithm once and audit the result."
+          ]
+        ]
+      },
+      {
+        "id": "edge",
+        "label": "Edge case",
+        "prompt": "What edge case can make a superficial Assignment 2 · PageRank answer wrong?",
+        "takeaway": "Use a boundary case to test the guarantee, not just the happy path.",
+        "steps": [
+          [
+            "Find",
+            "tie or boundary",
+            "Identify the decision point."
+          ],
+          [
+            "Trace",
+            "alternative",
+            "Run the other allowed outcome."
+          ],
+          [
+            "Explain",
+            "claim strength",
+            "Say whether the result is exact, approximate, or merely possible."
+          ]
+        ]
+      }
+    ],
+    "steps": [
+      [
+        "Input",
+        "canonical source",
+        "Copy only the variables the assignment gives."
+      ],
+      [
+        "State",
+        "invariant",
+        "Record budgets, probabilities, ratings, or counters."
+      ],
+      [
+        "Update",
+        "one step",
+        "Apply the algorithm once and audit the result."
+      ],
+      [
+        "Find",
+        "tie or boundary",
+        "Identify the decision point."
+      ],
+      [
+        "Trace",
+        "alternative",
+        "Run the other allowed outcome."
+      ],
+      [
+        "Explain",
+        "claim strength",
+        "Say whether the result is exact, approximate, or merely possible."
+      ]
+    ],
+    "reducedMotion": true,
+    "animation": {
+      "title": "The bouncing web ball",
+      "audience": "kid-friendly intuition",
+      "status": "intuition-only",
+      "analogy": "A ball visits web pages, shares its weight along links, and sometimes jumps to a chosen page.",
+      "frames": [
+        {
+          "label": "1 · Share",
+          "scene": "A page with two outgoing links splits its ball weight between the two destinations.",
+          "takeaway": "Fix row-versus-column orientation before multiplying."
+        },
+        {
+          "label": "2 · Jump",
+          "scene": "A small teleport jump prevents the ball from getting trapped in a corner of the web.",
+          "takeaway": "Damping mixes link-following with teleportation."
+        },
+        {
+          "label": "3 · Repeat",
+          "scene": "Repeat the sharing until the page weights settle into a stable pattern.",
+          "takeaway": "Power iteration is a repeated state update; dangling pages need a convention."
+        }
+      ],
+      "frameDurationMs": 1400
+    }
+  },
+  "dsa5101-streams": {
+    "courseCode": "DSA5101",
+    "lessonId": "dsa5101-streams",
+    "type": "derivation-trace",
+    "title": "Assignment 2 · Streaming sketches practice lab",
+    "learningGoal": "Trace the streams state without mixing it with the other Assignment 2 tracks.",
+    "sourceRefs": [
+      {
+        "sourceId": "DSA5101/Assignments/DSA5101_Assignment_2.pdf",
+        "page": 5,
+        "sourceType": "exercise",
+        "role": "DGIM window and error",
+        "status": "current-context"
+      },
+      {
+        "sourceId": "DSA5101/Assignments/DSA5101_Assignment_2.pdf",
+        "page": 6,
+        "sourceType": "exercise",
+        "role": "Flajolet–Martin and AMS",
+        "status": "current-context"
+      },
+      {
+        "sourceId": "DSA5101/Reference textbook MMDS 3rd Edition.pdf",
+        "page": 154,
+        "sourceType": "textbook",
+        "role": "stream query model",
+        "status": "course-depth"
+      },
+      {
+        "sourceId": "DSA5101/Reference textbook MMDS 3rd Edition.pdf",
+        "page": 155,
+        "sourceType": "textbook",
+        "role": "Flajolet–Martin",
+        "status": "course-depth"
+      }
+    ],
+    "sourceLens": {
+      "status": "core DSA5101 study boundary",
+      "whyExaminable": "The lab is derived from the same canonical lecture or official-exercise refs as its lesson and exposes the calculation state needed for exam practice.",
+      "lecture": [],
+      "officialExercise": [
+        {
+          "sourceId": "DSA5101/Assignments/DSA5101_Assignment_2.pdf",
+          "page": 5,
+          "sourceType": "exercise",
+          "role": "DGIM window and error",
+          "status": "current-context"
+        },
+        {
+          "sourceId": "DSA5101/Assignments/DSA5101_Assignment_2.pdf",
+          "page": 6,
+          "sourceType": "exercise",
+          "role": "Flajolet–Martin and AMS",
+          "status": "current-context"
+        }
+      ],
+      "textbook": [
+        {
+          "sourceId": "DSA5101/Reference textbook MMDS 3rd Edition.pdf",
+          "page": 154,
+          "sourceType": "textbook",
+          "role": "stream query model",
+          "status": "course-depth"
+        },
+        {
+          "sourceId": "DSA5101/Reference textbook MMDS 3rd Edition.pdf",
+          "page": 155,
+          "sourceType": "textbook",
+          "role": "Flajolet–Martin",
+          "status": "course-depth"
+        }
+      ],
+      "reference": []
+    },
+    "exercises": [
+      {
+        "id": "setup",
+        "label": "Setup",
+        "prompt": "What is the input and target for Assignment 2 · Streaming sketches?",
+        "takeaway": "Write the representation, objective, and boundary before calculating.",
+        "steps": [
+          [
+            "Input",
+            "canonical source",
+            "Copy only the variables the assignment gives."
+          ],
+          [
+            "State",
+            "invariant",
+            "Record budgets, probabilities, ratings, or counters."
+          ],
+          [
+            "Update",
+            "one step",
+            "Apply the algorithm once and audit the result."
+          ]
+        ]
+      },
+      {
+        "id": "edge",
+        "label": "Edge case",
+        "prompt": "What edge case can make a superficial Assignment 2 · Streaming sketches answer wrong?",
+        "takeaway": "Use a boundary case to test the guarantee, not just the happy path.",
+        "steps": [
+          [
+            "Find",
+            "tie or boundary",
+            "Identify the decision point."
+          ],
+          [
+            "Trace",
+            "alternative",
+            "Run the other allowed outcome."
+          ],
+          [
+            "Explain",
+            "claim strength",
+            "Say whether the result is exact, approximate, or merely possible."
+          ]
+        ]
+      }
+    ],
+    "steps": [
+      [
+        "Input",
+        "canonical source",
+        "Copy only the variables the assignment gives."
+      ],
+      [
+        "State",
+        "invariant",
+        "Record budgets, probabilities, ratings, or counters."
+      ],
+      [
+        "Update",
+        "one step",
+        "Apply the algorithm once and audit the result."
+      ],
+      [
+        "Find",
+        "tie or boundary",
+        "Identify the decision point."
+      ],
+      [
+        "Trace",
+        "alternative",
+        "Run the other allowed outcome."
+      ],
+      [
+        "Explain",
+        "claim strength",
+        "Say whether the result is exact, approximate, or merely possible."
+      ]
+    ],
+    "reducedMotion": true,
+    "animation": {
+      "title": "The tiny notebook",
+      "audience": "kid-friendly intuition",
+      "status": "intuition-only",
+      "analogy": "A stream is a never-ending parade, so the notebook keeps only a clever summary instead of every visitor.",
+      "frames": [
+        {
+          "label": "1 · Recent window",
+          "scene": "DGIM groups recent 1s into timestamped buckets and keeps at most two buckets of each size.",
+          "takeaway": "The oldest partly covered bucket explains the count error."
+        },
+        {
+          "label": "2 · New names",
+          "scene": "Flajolet–Martin watches the longest run of zeroes in hashed names.",
+          "takeaway": "It estimates distinct items, not a recent-window count."
+        },
+        {
+          "label": "3 · Repeated visits",
+          "scene": "AMS samples positions to estimate how strongly repeated values dominate the parade.",
+          "takeaway": "The second moment squares frequencies, so it is a different target."
+        }
+      ],
+      "frameDurationMs": 1400
+    }
+  },
+  "dsa5101-balance": {
+    "courseCode": "DSA5101",
+    "lessonId": "dsa5101-balance",
+    "type": "decision-tree",
+    "title": "Assignment 2 · BALANCE practice lab",
+    "learningGoal": "Trace the balance state without mixing it with the other Assignment 2 tracks.",
+    "sourceRefs": [
+      {
+        "sourceId": "DSA5101/Assignments/DSA5101_Assignment_2.pdf",
+        "page": 7,
+        "sourceType": "exercise",
+        "role": "BALANCE sequences",
+        "status": "current-context"
+      }
+    ],
+    "sourceLens": {
+      "status": "core DSA5101 study boundary",
+      "whyExaminable": "The lab is derived from the same canonical lecture or official-exercise refs as its lesson and exposes the calculation state needed for exam practice.",
+      "lecture": [],
+      "officialExercise": [
+        {
+          "sourceId": "DSA5101/Assignments/DSA5101_Assignment_2.pdf",
+          "page": 7,
+          "sourceType": "exercise",
+          "role": "BALANCE sequences",
+          "status": "current-context"
+        }
+      ],
+      "textbook": [],
+      "reference": []
+    },
+    "exercises": [
+      {
+        "id": "setup",
+        "label": "Setup",
+        "prompt": "What is the input and target for Assignment 2 · BALANCE?",
+        "takeaway": "Write the representation, objective, and boundary before calculating.",
+        "steps": [
+          [
+            "Input",
+            "canonical source",
+            "Copy only the variables the assignment gives."
+          ],
+          [
+            "State",
+            "invariant",
+            "Record budgets, probabilities, ratings, or counters."
+          ],
+          [
+            "Update",
+            "one step",
+            "Apply the algorithm once and audit the result."
+          ]
+        ]
+      },
+      {
+        "id": "edge",
+        "label": "Edge case",
+        "prompt": "What edge case can make a superficial Assignment 2 · BALANCE answer wrong?",
+        "takeaway": "Use a boundary case to test the guarantee, not just the happy path.",
+        "steps": [
+          [
+            "Find",
+            "tie or boundary",
+            "Identify the decision point."
+          ],
+          [
+            "Trace",
+            "alternative",
+            "Run the other allowed outcome."
+          ],
+          [
+            "Explain",
+            "claim strength",
+            "Say whether the result is exact, approximate, or merely possible."
+          ]
+        ]
+      }
+    ],
+    "mode": "generic",
+    "splits": [
+      {
+        "id": "target",
+        "label": "Target quantity",
+        "detail": "Name exactly what the algorithm is estimating or allocating.",
+        "scope": "representation and objective"
+      },
+      {
+        "id": "boundary",
+        "label": "Boundary case",
+        "detail": "Trace a tie, missing value, dangling mass, or sketch boundary before claiming success.",
+        "scope": "invariant and guarantee"
+      }
+    ],
+    "reducedMotion": true,
+    "animation": {
+      "title": "The two toy shops",
+      "audience": "kid-friendly intuition",
+      "status": "intuition-only",
+      "analogy": "Two shops have limited coins; each new toy request must be sent to an eligible shop.",
+      "frames": [
+        {
+          "label": "1 · Check",
+          "scene": "Write down which shops bid for this toy and how many coins each shop has left.",
+          "takeaway": "The state is the remaining budget, not just the current request."
+        },
+        {
+          "label": "2 · Choose",
+          "scene": "Give the toy to the eligible shop with more coins left; make the tie rule explicit.",
+          "takeaway": "BALANCE is a local choice that must be traced step by step."
+        },
+        {
+          "label": "3 · Challenge",
+          "scene": "Try a different request order and see whether a lucky run still proves a guarantee.",
+          "takeaway": "One successful sequence is not a proof of optimality."
+        }
+      ],
+      "frameDurationMs": 1400
+    }
   }
 }

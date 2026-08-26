@@ -1,0 +1,245 @@
+[
+  {
+    "id": "dsa5101-cluster-q1",
+    "type": "mcq",
+    "prompt": "A chaining-shaped dataset contains two dense groups joined by a few nearby points. Which hierarchical linkage is most vulnerable to merging the groups through that bridge?",
+    "explanation": "Single-link uses the closest pair across two clusters, so a short bridge can cause an early merge. Complete-link is more sensitive to the farthest pair.",
+    "sourceRefs": [
+      {
+        "sourceId": "DSA5101/Assignments/DSA5101_Assignment_1.pdf",
+        "page": 6,
+        "sourceType": "exercise",
+        "role": "hierarchical clustering practice",
+        "status": "current-context"
+      },
+      {
+        "sourceId": "DSA5101/Lec3 - Clustering.pdf",
+        "page": 21,
+        "sourceType": "lecture",
+        "role": "linkage comparison",
+        "status": "current"
+      }
+    ],
+    "difficulty": "medium",
+    "skill": "distinguish-linkages",
+    "cognitiveLevel": "analyze",
+    "estimatedSeconds": 90,
+    "misconception": "Check the representation, objective, and scale assumption before committing to an answer.",
+    "visualHook": "Draw the state transition or data summary before calculating.",
+    "courseId": "DSA5101",
+    "lessonId": "dsa5101-clustering",
+    "schemaVersion": "nus.question.v1",
+    "choices": [
+      "Single-link",
+      "Complete-link",
+      "Average-link",
+      "A fixed K-means centroid update"
+    ],
+    "answer": 0
+  },
+  {
+    "id": "dsa5101-cluster-q2",
+    "type": "calculation",
+    "prompt": "For one-dimensional points 1, 3, and 5 assigned to one K-means cluster, what is the minimum squared-error loss and its representative?",
+    "explanation": "The representative is the mean 3. The loss is $(1-3)^2+(3-3)^2+(5-3)^2=8$.",
+    "sourceRefs": [
+      {
+        "sourceId": "DSA5101/Lec3 - Clustering.pdf",
+        "page": 37,
+        "sourceType": "lecture",
+        "role": "K-means loss",
+        "status": "current"
+      },
+      {
+        "sourceId": "DSA5101/Lec3 - Clustering.pdf",
+        "page": 44,
+        "sourceType": "lecture",
+        "role": "representative update",
+        "status": "current"
+      }
+    ],
+    "difficulty": "medium",
+    "skill": "calculate-distortion",
+    "cognitiveLevel": "apply",
+    "estimatedSeconds": 120,
+    "misconception": "Check the representation, objective, and scale assumption before committing to an answer.",
+    "visualHook": "Draw the state transition or data summary before calculating.",
+    "courseId": "DSA5101",
+    "lessonId": "dsa5101-clustering",
+    "schemaVersion": "nus.question.v1",
+    "accepted": [
+      "8; representative 3",
+      "8 and mean 3",
+      "loss 8, centroid 3"
+    ],
+    "solution": "The representative is $3$. The loss is $4+0+4=8$.",
+    "hint": "For squared error, minimize at the arithmetic mean."
+  },
+  {
+    "id": "dsa5101-cluster-q3",
+    "type": "derivation",
+    "prompt": "Explain why an assignment step followed by a mean-update step cannot increase the K-means squared-error objective, yet still may return a suboptimal clustering.",
+    "explanation": "With representatives fixed, assigning each point to its closest representative minimizes its contribution. With assignments fixed, each cluster mean minimizes squared error. The alternating process can stop at a local optimum because different initial representatives can lead to different partitions.",
+    "sourceRefs": [
+      {
+        "sourceId": "DSA5101/Lec3 - Clustering.pdf",
+        "page": 37,
+        "sourceType": "lecture",
+        "role": "K-means objective",
+        "status": "current"
+      },
+      {
+        "sourceId": "DSA5101/Lec3 - Clustering.pdf",
+        "page": 49,
+        "sourceType": "lecture",
+        "role": "convergence",
+        "status": "current"
+      },
+      {
+        "sourceId": "DSA5101/Lec3 - Clustering.pdf",
+        "page": 53,
+        "sourceType": "lecture",
+        "role": "initialization",
+        "status": "current"
+      }
+    ],
+    "difficulty": "hard",
+    "skill": "reason-about-local-optima",
+    "cognitiveLevel": "analyze",
+    "estimatedSeconds": 150,
+    "misconception": "Check the representation, objective, and scale assumption before committing to an answer.",
+    "visualHook": "Draw the state transition or data summary before calculating.",
+    "courseId": "DSA5101",
+    "lessonId": "dsa5101-clustering",
+    "schemaVersion": "nus.question.v1",
+    "accepted": [
+      "assignment minimizes; mean minimizes; initialization can trap local optimum",
+      "each step decreases loss but initialization determines local optimum"
+    ],
+    "rubric": [
+      {
+        "label": "Monotonic update",
+        "required": [
+          "closest assignment",
+          "mean minimizes squared error"
+        ]
+      },
+      {
+        "label": "Caveat",
+        "required": [
+          "local optimum",
+          "initialization"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "dsa5101-cluster-q4",
+    "type": "short",
+    "prompt": "In BFR, what should happen to a point that is not confidently assigned to a discard-set cluster but appears close to other uncertain points?",
+    "explanation": "Keep it in a compression set with a compact summary of the uncertain subcluster; retain isolated outliers in the retained set until later evidence arrives.",
+    "sourceRefs": [
+      {
+        "sourceId": "DSA5101/Lec3 - Clustering.pdf",
+        "page": 62,
+        "sourceType": "lecture",
+        "role": "BFR DS/CS/RS states",
+        "status": "current"
+      },
+      {
+        "sourceId": "DSA5101/Lec3 - Clustering.pdf",
+        "page": 71,
+        "sourceType": "lecture",
+        "role": "BFR summary statistics",
+        "status": "current"
+      }
+    ],
+    "difficulty": "medium",
+    "skill": "classify-bfr-state",
+    "cognitiveLevel": "understand",
+    "estimatedSeconds": 120,
+    "misconception": "Check the representation, objective, and scale assumption before committing to an answer.",
+    "visualHook": "Draw the state transition or data summary before calculating.",
+    "courseId": "DSA5101",
+    "lessonId": "dsa5101-clustering",
+    "schemaVersion": "nus.question.v1",
+    "accepted": [
+      "compression set",
+      "CS",
+      "keep it in CS until merge evidence"
+    ],
+    "solution": "Put it in CS when it belongs to an uncertain but compressible group; use RS for isolated retained points."
+  },
+  {
+    "id": "dsa5101-cluster-q5",
+    "type": "short",
+    "prompt": "Why does CURE keep several dispersed representative points and shrink them toward the mean?",
+    "explanation": "Several representatives preserve non-spherical cluster shape; shrinking reduces noise and makes the representation more stable for scalable assignment.",
+    "sourceRefs": [
+      {
+        "sourceId": "DSA5101/Lec3 - Clustering.pdf",
+        "page": 78,
+        "sourceType": "lecture",
+        "role": "CURE representative points",
+        "status": "current"
+      },
+      {
+        "sourceId": "DSA5101/Lec3 - Clustering.pdf",
+        "page": 83,
+        "sourceType": "lecture",
+        "role": "CURE shrinkage",
+        "status": "current"
+      }
+    ],
+    "difficulty": "medium",
+    "skill": "compare-cluster-representations",
+    "cognitiveLevel": "analyze",
+    "estimatedSeconds": 120,
+    "misconception": "Check the representation, objective, and scale assumption before committing to an answer.",
+    "visualHook": "Draw the state transition or data summary before calculating.",
+    "courseId": "DSA5101",
+    "lessonId": "dsa5101-clustering",
+    "schemaVersion": "nus.question.v1",
+    "accepted": [
+      "preserve shape and reduce noise",
+      "multiple representatives preserve non-spherical shape; shrinkage reduces noise"
+    ],
+    "solution": "CURE trades one centroid for a few shrunk representatives so shape is retained without retaining every point."
+  },
+  {
+    "id": "dsa5101-cluster-q6",
+    "type": "short",
+    "prompt": "Why is purity alone unsafe as a clustering-quality claim?",
+    "explanation": "Purity uses external labels and can increase by creating many small clusters. It does not measure whether the similarity geometry or downstream decision is useful, so cluster count and the evaluation purpose must be stated.",
+    "sourceRefs": [
+      {
+        "sourceId": "DSA5101/Lec3 - Clustering.pdf",
+        "page": 86,
+        "sourceType": "lecture",
+        "role": "purity and evaluation",
+        "status": "current"
+      },
+      {
+        "sourceId": "DSA5101/Lec3 - Clustering.pdf",
+        "page": 90,
+        "sourceType": "lecture",
+        "role": "clustering summary",
+        "status": "current"
+      }
+    ],
+    "difficulty": "hard",
+    "skill": "evaluate-clusters",
+    "cognitiveLevel": "evaluate",
+    "estimatedSeconds": 120,
+    "misconception": "Check the representation, objective, and scale assumption before committing to an answer.",
+    "visualHook": "Draw the state transition or data summary before calculating.",
+    "courseId": "DSA5101",
+    "lessonId": "dsa5101-clustering",
+    "schemaVersion": "nus.question.v1",
+    "accepted": [
+      "purity rewards many small clusters and needs labels",
+      "external labels; many tiny clusters; does not prove utility"
+    ],
+    "solution": "Report purity with cluster-count and label context, and pair it with intrinsic or task-specific evidence."
+  }
+]
