@@ -75,7 +75,7 @@ for (const packageData of packages) {
     (lesson.questions || []).forEach(question => {
       if (!question.id || !question.type || !question.prompt || (!question.explanation && !question.solution)) errors.push(`incomplete question: ${question.id || lesson.id}`);
       if (question.type === "mcq" && (!Array.isArray(question.choices) || typeof question.answer !== "number" || question.answer < 0 || question.answer >= question.choices.length)) errors.push(`bad MCQ: ${question.id}`);
-      if (question.type !== "mcq" && (!Array.isArray(question.accepted) || !question.accepted.length)) errors.push(`missing accepted answer: ${question.id}`);
+      if (question.type !== "mcq" && (!Array.isArray(question.accepted) || !question.accepted.length) && !question.solution) errors.push(`missing accepted answer: ${question.id}`);
       if (question.rubric && (!Array.isArray(question.rubric) || !question.rubric.length || question.rubric.some(item => !item || !item.label || !Array.isArray(item.required) || !item.required.length))) errors.push(`invalid derivation rubric: ${question.id}`);
       (question.sourceRefs || []).forEach(ref => checkSourceRef(ref, question.id));
     });

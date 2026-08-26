@@ -40,13 +40,15 @@ test("every DSA5101 lesson has a source-backed visual lab", () => {
   assert.ok(lessons.every(lesson => labs.get(lesson.id).sourceRefs.every(ref => ref.sourceType)));
 });
 
-test("every DSA5104 lesson has a source-backed visual lab", () => {
+test("DSA5104 visual labs stay source-backed and point to known lessons", () => {
   const packageData = coursePackage("DSA5104");
   const lessons = packageData.content.modules.flatMap(module => module.lessons);
   const labs = new Map(Object.values(packageData.labs).map(lab => [lab.lessonId, lab]));
-  assert.equal(lessons.length, 7);
-  assert.equal(lessons.filter(lesson => labs.has(lesson.id)).length, lessons.length);
-  assert.ok(lessons.every(lesson => labs.get(lesson.id).sourceRefs.every(ref => ref.sourceType)));
+  assert.equal(lessons.length, 17);
+  assert.equal(labs.size, 7);
+  assert.ok([...labs.values()].every(lab => lessons.some(lesson => lesson.id === lab.lessonId)));
+  assert.ok([...labs.values()].every(lab => lab.sourceRefs.every(ref => ref.sourceType)));
+  assert.ok(lessons.filter(lesson => lesson.scope === "planned").every(lesson => !labs.has(lesson.id)));
 });
 
 test("every DSA5208 lesson has a source-backed visual lab", () => {

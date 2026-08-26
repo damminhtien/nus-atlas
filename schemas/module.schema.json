@@ -8,6 +8,9 @@
     "id": { "type": "string", "minLength": 1 },
     "entityKey": { "type": "string", "pattern": "^[^:]+:[^/]+/.+$" },
     "title": { "type": "string", "minLength": 1 },
+    "description": { "type": "string" },
+    "scope": { "type": "string", "enum": ["core", "supplementary", "planned"] },
+    "examEligible": { "type": "boolean" },
     "lessonIds": { "type": "array", "items": { "type": "string", "minLength": 1 } },
     "schemaVersion": { "const": "nus.module.v1" }
   },

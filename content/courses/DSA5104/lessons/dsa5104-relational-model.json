@@ -81,6 +81,20 @@
       "sourceType": "lecture",
       "role": "equivalent queries",
       "status": "current"
+    },
+    {
+      "sourceId": "DSA5104/chapter2.pdf",
+      "page": 43,
+      "sourceType": "lecture",
+      "role": "features of good relational designs",
+      "status": "current"
+    },
+    {
+      "sourceId": "DSA5104/chapter2.pdf",
+      "page": 44,
+      "sourceType": "lecture",
+      "role": "decomposition preview for Chapter 7",
+      "status": "current"
     }
   ],
   "visualIds": [
@@ -286,6 +300,78 @@
           }
         ],
         "reference": []
+      }
+    },
+    {
+      "title": "Bridge to Chapter 7: redundancy and decomposition",
+      "sourceType": "lecture",
+      "body": "Pages 43–44 preview why a good relational design avoids repeated facts and update anomalies. In the `in_dep` example, repeating department attributes with every instructor tuple creates information repetition; decomposing it into `instructor` and `department` keeps each fact in one appropriate relation and creates a bridge to functional dependencies and Chapter 7.",
+      "sourceRefs": [
+        {
+          "sourceId": "DSA5104/chapter2.pdf",
+          "page": 43,
+          "sourceType": "lecture",
+          "role": "features of good relational designs",
+          "status": "current"
+        },
+        {
+          "sourceId": "DSA5104/chapter2.pdf",
+          "page": 44,
+          "sourceType": "lecture",
+          "role": "decomposition preview",
+          "status": "current"
+        }
+      ],
+      "sourceLens": {
+        "status": "core DSA5104 bridge",
+        "whyExaminable": "The supplied Chapter 2 deck explicitly previews decomposition, so this bridge prepares the reasoning without promoting the unsupplied Chapter 7 lecture into current scope.",
+        "lecture": [
+          {
+            "sourceId": "DSA5104/chapter2.pdf",
+            "page": 43,
+            "sourceType": "lecture",
+            "role": "good relational design",
+            "status": "current"
+          },
+          {
+            "sourceId": "DSA5104/chapter2.pdf",
+            "page": 44,
+            "sourceType": "lecture",
+            "role": "decomposition preview",
+            "status": "current"
+          }
+        ],
+        "officialExercise": [],
+        "textbook": [
+          {
+            "sourceId": "DSA5104/Database System Concepts, 7th edition",
+            "page": 4,
+            "sourceType": "textbook",
+            "role": "Chapter 7 pointer",
+            "status": "course-depth"
+          }
+        ],
+        "reference": []
+      },
+      "math": {
+        "name": "Decomposition bridge",
+        "purpose": "Use it to connect repeated facts in one relation to smaller relations that preserve the intended meaning.",
+        "latex": "\\mathrm{in\\_dep}\\;\\longrightarrow\\;\\mathrm{instructor},\\;\\mathrm{department}",
+        "explanation": "The arrow is a design move: separate instructor facts from department facts so one department fact is not repeated in every instructor row.",
+      "symbols": [
+        { "latex": "\\mathrm{in\\_dep}", "meaning": "relation containing repeated instructor and department facts" },
+        { "latex": "\\mathrm{instructor},\\mathrm{department}", "meaning": "decomposed relations" }
+      ],
+      "sourceType": "lecture",
+      "sourceRefs": [
+          {
+            "sourceId": "DSA5104/chapter2.pdf",
+            "page": 44,
+            "sourceType": "lecture",
+            "role": "decomposition preview",
+            "status": "current"
+          }
+        ]
       }
     }
   ],

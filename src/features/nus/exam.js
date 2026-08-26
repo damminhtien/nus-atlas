@@ -28,7 +28,7 @@
   }
 
   function questionsFor(code, scope, focus = "smart", limit = Infinity) {
-    let questions = getLessons(code).flatMap(lesson => (lesson.questions || []).map(question => ({
+    let questions = getLessons(code).filter(lesson => scope || lesson.examEligible !== false).flatMap(lesson => (lesson.questions || []).map(question => ({
       ...question,
       lessonId: lesson.id,
       lessonTitle: lesson.title,
@@ -60,7 +60,8 @@
   }
 
   function questionLabel(question) {
-    return `${question.difficulty || "medium"} · ${question.skill || "explain"} · ${question.estimatedSeconds || 90}s`;
+    const layer = question.assessmentLayer || (question.origin === "synthetic" ? "synthetic" : "");
+    return `${layer ? `${layer} · ` : ""}${question.difficulty || "medium"} · ${question.skill || "explain"} · ${question.estimatedSeconds || 90}s`;
   }
 
   function normalizeAnswer(raw) {
@@ -107,7 +108,7 @@
 
   function questionsForPracticePlan(code, plan) {
     if (!plan) return [];
-    const byId = new Map(getLessons(code).flatMap(lesson => (lesson.questions || []).map(question => ({
+    const byId = new Map(getLessons(code).filter(lesson => lesson.examEligible !== false).flatMap(lesson => (lesson.questions || []).map(question => ({
       ...question,
       lessonId: lesson.id,
       lessonTitle: lesson.title,
@@ -214,7 +215,7 @@
       const optionsHtml = getCourses().map(course => `<option value="${esc(course.code)}" ${code === course.code ? "selected" : ""}>${esc(course.code)} · ${esc(course.title)}</option>`).join("");
       const selected = code || "DSA5208";
       const practicePlan = practicePlanFor(selected, scope);
-      const scopeOptions = `${practicePlan ? `<option value="mixed-exam" selected>Canonical timed mixed exam · ${esc(practicePlan.durationMinutes)} min</option>` : ""}<option value="">All seeded lessons</option>${getLessons(selected).map(lesson => `<option value="${esc(lesson.id)}" ${scope === lesson.id ? "selected" : ""}>${esc(lesson.title)}</option>`).join("")}`;
+      const scopeOptions = `${practicePlan ? `<option value="mixed-exam" selected>Canonical timed mixed exam · ${esc(practicePlan.durationMinutes)} min</option>` : ""}<option value="">All core lessons</option>${getLessons(selected).map(lesson => `<option value="${esc(lesson.id)}" ${scope === lesson.id ? "selected" : ""}>${esc(lesson.title)}${lesson.examEligible === false ? " · supplementary" : ""}</option>`).join("")}`;
       const countOptions = `<option value="5" ${practicePlan ? "" : ""}>5 questions</option><option value="10" ${practicePlan ? "" : "selected"}>10 questions</option><option value="12" ${practicePlan ? "selected" : ""}>12 questions · canonical mixed set</option><option value="15">15 questions</option>`;
       const timeOptions = `<option value="15">15 minutes</option><option value="30" ${practicePlan ? "" : "selected"}>30 minutes</option><option value="45">45 minutes</option><option value="90" ${practicePlan ? "selected" : ""}>90 minutes · canonical mixed set</option>`;
       const planCopy = practicePlan ? `<div class="nus-callout nus-practice-plan"><b>Canonical timed mixed set</b><span>${esc(practicePlan.questionCount || practicePlan.questionIds.length)} questions · ${esc(practicePlan.durationMinutes)} minutes. Follow the four-step Mistake Clinic after submission.</span></div>` : `<div class="nus-callout"><b>Practice loop</b><span>Answer first, review the explanation, then repair misses in Mistake Clinic. Lecture refs are primary; textbook/ref refs are labeled as support.</span></div>`;

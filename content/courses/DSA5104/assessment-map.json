@@ -1,0 +1,93 @@
+{
+  "schemaVersion": "nus.assessment-map.v1",
+  "courseCode": "DSA5104",
+  "title": "DSA5104 lecture → teacher homework → exam-practice map",
+  "summary": "The complete supplied teacher homework set is available for practice. The timed paper below is synthetic and covers only the currently verified Ch1–Ch3 lecture scope.",
+  "disclaimer": "No real DSA5104 past-year paper was found in the supplied local DSA5104 source folder on 2026-08-26. Synthetic questions are labeled synthetic-final and must not be treated as historical exam evidence. Future Ch4, Ch5, Ch7, Ch9, XML, MongoDB, MapReduce, Spark SQL, and VectorDB scope remains source-pending until the relevant course material is supplied.",
+  "pastPaperStatus": {
+    "status": "not-found-in-supplied-local-sources",
+    "searchedSourceRoot": "DSA5104",
+    "checkedOn": "2026-08-26",
+    "policy": "Never represent synthetic questions as past-year questions."
+  },
+  "evidenceLegend": [
+    { "key": "official-lecture", "label": "Verified lecture", "description": "The supplied Ch1–Ch3 lecture PDFs define the current lecture boundary." },
+    { "key": "teacher-assigned", "label": "Teacher homework", "description": "All 190 supplied Ch01–Ch07 homework solution files are ingested as practice questions; exercise depth does not silently become lecture scope." },
+    { "key": "synthetic", "label": "Synthetic exam practice", "description": "Atlas-authored timed practice for current verified scope; not past-year evidence." }
+  ],
+  "evidence": [
+    {
+      "id": "dsa5104-current-lectures",
+      "label": "Supplied lecture PDFs: Ch1–Ch3",
+      "kind": "lecture",
+      "evidenceLevel": "official-lecture",
+      "description": "Chapter 1, Chapter 2, and Chapter 3 are the currently verified lecture sources.",
+      "sourceRefs": [
+        { "sourceId": "DSA5104/chapter1.pdf", "page": 1, "sourceType": "lecture", "role": "current lecture scope", "status": "current" },
+        { "sourceId": "DSA5104/chapter2.pdf", "page": 1, "sourceType": "lecture", "role": "current lecture scope", "status": "current" },
+        { "sourceId": "DSA5104/chapter3.pdf", "page": 1, "sourceType": "lecture", "role": "current lecture scope", "status": "current" }
+      ]
+    },
+    {
+      "id": "dsa5104-teacher-homework",
+      "label": "Complete supplied teacher homework bank",
+      "kind": "homework",
+      "evidenceLevel": "teacher-assigned",
+      "description": "190 questions, one per supplied solution file, covering Ch01–Ch07. Ch04, Ch05, and Ch07 remain exercise-only until lecture sources are verified; Ch06 is supplementary.",
+      "sourceRefs": [
+        { "sourceId": "DSA5104/Homework Solutions", "page": 1, "sourceType": "exercise", "role": "complete supplied homework root", "status": "current-context" }
+      ]
+    },
+    {
+      "id": "dsa5104-synthetic-final",
+      "label": "Synthetic current-scope final checkpoint",
+      "kind": "synthetic-exam",
+      "evidenceLevel": "synthetic",
+      "description": "Twelve Atlas-authored questions for timed retrieval across Ch1–Ch3. This is not a past-year paper.",
+      "topicIds": ["abstraction", "keys-integrity", "decomposition", "ddl", "query-shape", "joins", "null", "aggregation", "nested-queries", "cte"],
+      "sourceRefs": [
+        { "sourceId": "DSA5104/chapter1.pdf", "page": 1, "sourceType": "assessment-derived", "role": "synthetic practice scope anchor", "status": "assessment-derived" }
+      ]
+    }
+  ],
+  "topics": [
+    { "id": "abstraction", "title": "DBMS abstraction and schema state", "priority": "Core", "lessonIds": ["dsa5104-orientation"] },
+    { "id": "keys-integrity", "title": "Relational keys and referential integrity", "priority": "Core", "lessonIds": ["dsa5104-relational-model"] },
+    { "id": "decomposition", "title": "Ch2 redundancy/decomposition bridge", "priority": "Core bridge", "lessonIds": ["dsa5104-relational-model"] },
+    { "id": "ddl", "title": "DDL and schema changes", "priority": "Core", "lessonIds": ["dsa5104-sql-ddl"] },
+    { "id": "query-shape", "title": "SELECT-FROM-WHERE and duplicates", "priority": "Core", "lessonIds": ["dsa5104-sql-query-shape"] },
+    { "id": "joins", "title": "Joins and set operations", "priority": "Core", "lessonIds": ["dsa5104-sql-joins"] },
+    { "id": "null", "title": "NULL and three-valued logic", "priority": "Core", "lessonIds": ["dsa5104-sql-null"] },
+    { "id": "aggregation", "title": "Aggregation, GROUP BY, HAVING", "priority": "Core", "lessonIds": ["dsa5104-sql-aggregation"] },
+    { "id": "nested-queries", "title": "Nested queries and quantifiers", "priority": "Core", "lessonIds": ["dsa5104-sql-nested"] },
+    { "id": "cte", "title": "Common table expressions", "priority": "Core", "lessonIds": ["dsa5104-sql-cte"] }
+  ],
+  "studyOrder": [
+    { "id": "current-lecture-core", "label": "Verified Ch1–Ch3 core", "topicIds": ["abstraction", "keys-integrity", "decomposition", "ddl", "query-shape", "joins", "null", "aggregation", "nested-queries", "cte"] },
+    { "id": "teacher-homework", "label": "All supplied teacher homework", "topicIds": ["decomposition", "ddl", "query-shape", "joins", "aggregation", "nested-queries", "cte"] },
+    { "id": "synthetic-final", "label": "Synthetic timed checkpoint", "topicIds": ["abstraction", "keys-integrity", "decomposition", "ddl", "query-shape", "joins", "null", "aggregation", "nested-queries", "cte"] },
+    { "id": "source-pending", "label": "Future source-pending coverage", "topicIds": [] }
+  ],
+  "practicePlan": {
+    "id": "dsa5104-synthetic-final",
+    "title": "Synthetic current-scope final checkpoint · not past-year",
+    "origin": "synthetic",
+    "durationMinutes": 40,
+    "questionCount": 12,
+    "questionIds": [
+      "dsa5104-synthetic-final-001",
+      "dsa5104-synthetic-final-002",
+      "dsa5104-synthetic-final-003",
+      "dsa5104-synthetic-final-004",
+      "dsa5104-synthetic-final-005",
+      "dsa5104-synthetic-final-006",
+      "dsa5104-synthetic-final-007",
+      "dsa5104-synthetic-final-008",
+      "dsa5104-synthetic-final-009",
+      "dsa5104-synthetic-final-010",
+      "dsa5104-synthetic-final-011",
+      "dsa5104-synthetic-final-012"
+    ],
+    "mistakeClinic": ["tag the missed skill", "rewrite the answer", "link the source page", "retry under time"]
+  }
+}

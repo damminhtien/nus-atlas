@@ -177,7 +177,11 @@ function titleFor(page, fallback) {
 
 function main() {
   const data = JSON.parse(fs.readFileSync(FILE, 'utf8'));
-  data.lessonIds = ['dsa5104-sql-foundations', 'dsa5104-query-processing'];
+  data.lessonIds = [
+    'dsa5104-sql-ddl', 'dsa5104-sql-query-shape', 'dsa5104-sql-joins',
+    'dsa5104-sql-null', 'dsa5104-sql-aggregation', 'dsa5104-sql-nested',
+    'dsa5104-sql-cte', 'dsa5104-sql-mutations', 'dsa5104-query-processing'
+  ];
   data.title = 'Chapter 3 · Introduction to SQL';
   data.summary = 'SQL data definition, basic query structure, set operations, null values, aggregation, nested subqueries, and database modification (insert, delete, update).';
   data.source = {

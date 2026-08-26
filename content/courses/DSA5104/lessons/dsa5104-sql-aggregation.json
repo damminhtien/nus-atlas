@@ -1,0 +1,259 @@
+{
+  "id": "dsa5104-sql-aggregation",
+  "courseId": "DSA5104",
+  "title": "Ch3.5 · Aggregation, GROUP BY, HAVING, and BIG 6",
+  "moduleId": "dsa5104-sql",
+  "scope": "core",
+  "examEligible": true,
+  "contentStatus": "CURRENT LECTURE",
+  "week": 4,
+  "orderInWeek": 5,
+  "minutes": 45,
+  "summary": "Evaluate aggregate queries in logical order and keep row predicates separate from group predicates.",
+  "objectives": [
+    "Group by the attributes that identify a group",
+    "Place aggregate predicates in HAVING",
+    "Trace the BIG 6 query shape"
+  ],
+  "sourceRefs": [
+    {
+      "sourceId": "DSA5104/chapter3.pdf",
+      "page": 50,
+      "sourceType": "lecture",
+      "role": "Ch3.5 · Aggregation, GROUP BY, HAVING, and BIG 6",
+      "status": "current"
+    },
+    {
+      "sourceId": "DSA5104/chapter3.pdf",
+      "page": 54,
+      "sourceType": "lecture",
+      "role": "Ch3.5 · Aggregation, GROUP BY, HAVING, and BIG 6",
+      "status": "current"
+    },
+    {
+      "sourceId": "DSA5104/chapter3.pdf",
+      "page": 56,
+      "sourceType": "lecture",
+      "role": "Ch3.5 · Aggregation, GROUP BY, HAVING, and BIG 6",
+      "status": "current"
+    },
+    {
+      "sourceId": "DSA5104/chapter3.pdf",
+      "page": 57,
+      "sourceType": "lecture",
+      "role": "Ch3.5 · Aggregation, GROUP BY, HAVING, and BIG 6",
+      "status": "current"
+    }
+  ],
+  "visualIds": [],
+  "sections": [
+    {
+      "title": "Aggregation, GROUP BY, HAVING, and BIG 6",
+      "sourceType": "lecture",
+      "body": "WHERE filters rows before grouping. GROUP BY forms groups, aggregate functions summarize them, and HAVING filters completed groups. Keep this reasoning order separate from the SQL text order.",
+      "sourceRefs": [
+        {
+          "sourceId": "DSA5104/chapter3.pdf",
+          "page": 50,
+          "sourceType": "lecture",
+          "role": "Ch3.5 · Aggregation, GROUP BY, HAVING, and BIG 6",
+          "status": "current"
+        },
+        {
+          "sourceId": "DSA5104/chapter3.pdf",
+          "page": 54,
+          "sourceType": "lecture",
+          "role": "Ch3.5 · Aggregation, GROUP BY, HAVING, and BIG 6",
+          "status": "current"
+        },
+        {
+          "sourceId": "DSA5104/chapter3.pdf",
+          "page": 56,
+          "sourceType": "lecture",
+          "role": "Ch3.5 · Aggregation, GROUP BY, HAVING, and BIG 6",
+          "status": "current"
+        },
+        {
+          "sourceId": "DSA5104/chapter3.pdf",
+          "page": 57,
+          "sourceType": "lecture",
+          "role": "Ch3.5 · Aggregation, GROUP BY, HAVING, and BIG 6",
+          "status": "current"
+        }
+      ],
+      "sourceLens": {
+        "status": "core DSA5104",
+        "whyExaminable": "This unit is split directly from the supplied Chapter 3 lecture deck so retrieval and mistake repair stay topic-sized.",
+        "lecture": [
+          {
+            "sourceId": "DSA5104/chapter3.pdf",
+            "page": 50,
+            "sourceType": "lecture",
+            "role": "Ch3.5 · Aggregation, GROUP BY, HAVING, and BIG 6",
+            "status": "current"
+          },
+          {
+            "sourceId": "DSA5104/chapter3.pdf",
+            "page": 54,
+            "sourceType": "lecture",
+            "role": "Ch3.5 · Aggregation, GROUP BY, HAVING, and BIG 6",
+            "status": "current"
+          },
+          {
+            "sourceId": "DSA5104/chapter3.pdf",
+            "page": 56,
+            "sourceType": "lecture",
+            "role": "Ch3.5 · Aggregation, GROUP BY, HAVING, and BIG 6",
+            "status": "current"
+          },
+          {
+            "sourceId": "DSA5104/chapter3.pdf",
+            "page": 57,
+            "sourceType": "lecture",
+            "role": "Ch3.5 · Aggregation, GROUP BY, HAVING, and BIG 6",
+            "status": "current"
+          }
+        ],
+        "officialExercise": [],
+        "textbook": [
+          {
+            "sourceId": "DSA5104/Database System Concepts, 7th edition",
+            "page": 1,
+            "sourceType": "textbook",
+            "role": "textbook depth pointer",
+            "status": "course-depth"
+          }
+        ],
+        "reference": []
+      }
+    }
+  ],
+  "examples": [
+    {
+      "title": "Count students per department, then retain only groups meeting a threshold with HAVING.",
+      "sourceType": "lecture",
+      "steps": [
+        "WHERE filters rows before grouping. GROUP BY forms groups, aggregate functions summarize them, and HAVING filters completed groups. Keep this reasoning order separate from the SQL text order.",
+        "State the output, input relations, predicate, and one edge case before checking the solution."
+      ],
+      "answer": "A strong answer names the semantic boundary and cites the source page or exercise file."
+    }
+  ],
+  "criticalQuestions": [
+    {
+      "prompt": "What is the decisive semantic boundary in Ch3.5 · Aggregation, GROUP BY, HAVING, and BIG 6?",
+      "angle": "Name the operation, its input, its output, and the condition that would make the shortcut fail.",
+      "modelAnswer": "The answer should identify the operation's input/output boundary and one counterexample or edge case.",
+      "focus": "source and semantics"
+    },
+    {
+      "prompt": "Which tempting shortcut would produce a plausible but incorrect answer?",
+      "angle": "Separate what the source says from what a familiar SQL pattern seems to imply.",
+      "modelAnswer": "The shortcut is unsafe when it changes row scope, duplicate policy, NULL treatment, or constraint meaning.",
+      "focus": "common trap"
+    }
+  ],
+  "math": [
+    {
+      "name": "Logical aggregation order",
+      "purpose": "Use it to decide where a predicate belongs in an aggregate query.",
+      "latex": "\\mathrm{WHERE}\\prec\\mathrm{GROUP\\ BY}\\prec\\mathrm{HAVING}",
+      "explanation": "The optimizer may rewrite the physical plan, but it must preserve this relational meaning.",
+      "symbols": [
+        {
+          "latex": "\\prec",
+          "meaning": "the key object in this unit"
+        },
+        {
+          "latex": "conceptually happens before",
+          "meaning": "the associated semantic role"
+        }
+      ],
+      "sourceType": "lecture",
+      "sourceRefs": [
+        {
+          "sourceId": "DSA5104/chapter3.pdf",
+          "page": 50,
+          "sourceType": "lecture",
+          "role": "Ch3.5 · Aggregation, GROUP BY, HAVING, and BIG 6",
+          "status": "current"
+        }
+      ]
+    }
+  ],
+  "contrastDrills": [
+    {
+      "id": "dsa5104-contrast-where-having",
+      "type": "contrast",
+      "kind": "concept-contrast",
+      "pair": "WHERE vs HAVING",
+      "prompt": "Which clause belongs in a query that keeps departments with `AVG(salary) > 50000`?",
+      "choices": [
+        "WHERE",
+        "HAVING",
+        "FROM",
+        "SELECT"
+      ],
+      "answer": 1,
+      "explanation": "WHERE filters rows before grouping; HAVING filters completed groups using an aggregate such as `AVG(salary)`. ",
+      "estimatedSeconds": 45,
+      "difficulty": "easy",
+      "skill": "concept-contrast",
+      "cognitiveLevel": "distinguish",
+      "misconception": "An aggregate predicate belongs after grouping, not in the row-level WHERE stage.",
+      "repair": "Put row predicates in WHERE and aggregate predicates in HAVING.",
+      "sourceRefs": [
+        {
+          "sourceId": "DSA5104/chapter3.pdf",
+          "page": 53,
+          "sourceType": "lecture",
+          "role": "AVG and HAVING",
+          "status": "current"
+        }
+      ]
+    },
+    {
+      "id": "dsa5104-contrast-count-star-vs-column",
+      "type": "contrast",
+      "kind": "concept-contrast",
+      "pair": "COUNT(*) vs COUNT(column)",
+      "prompt": "A table has salary values 90000, NULL, and 60000. Which statement counts all three rows?",
+      "choices": [
+        "COUNT(*)",
+        "COUNT(salary)",
+        "AVG(salary)",
+        "COUNT(salary IS NULL)"
+      ],
+      "answer": 0,
+      "explanation": "`COUNT(*)` counts rows. `COUNT(salary)` counts only non-NULL salary values, so it returns 2 for this table. Other aggregates such as `AVG(salary)` also ignore NULL values.",
+      "estimatedSeconds": 45,
+      "difficulty": "medium",
+      "skill": "aggregate-semantics",
+      "cognitiveLevel": "distinguish",
+      "misconception": "Assuming COUNT(column) counts rows even when the selected column contains NULL.",
+      "repair": "Use COUNT(*) for row count; use COUNT(column) when you specifically want the number of non-NULL values.",
+      "sourceRefs": [
+        {
+          "sourceId": "DSA5104/chapter3.pdf",
+          "page": 45,
+          "sourceType": "lecture",
+          "role": "NULL values",
+          "status": "current"
+        },
+        {
+          "sourceId": "DSA5104/chapter3.pdf",
+          "page": 49,
+          "sourceType": "lecture",
+          "role": "aggregate functions",
+          "status": "current"
+        }
+      ]
+    }
+  ],
+  "schemaVersion": "nus.lesson.v1",
+  "questionIds": [
+    "dsa5104-sql-q1",
+    "dsa5104-bank-007",
+    "dsa5104-bank-008"
+  ]
+}

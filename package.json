@@ -7,6 +7,7 @@
     "build": "node prerender.js",
     "vercel-build": "node scripts/vercel-build.js",
     "content:build": "node scripts/content-build.js --all",
+    "content:ingest:dsa5104:homework": "node scripts/ingest-dsa5104-homework.js",
     "content:validate": "node scripts/validate-content.js",
     "content:migrate:legacy": "node tools/migrations/legacy-nus/import.js",
     "check:architecture": "node scripts/check-architecture.js --strict",
@@ -21,8 +22,10 @@
     "graphify:full": "node scripts/graphify-scope.js full",
     "smoke:production": "node scripts/production-smoke.js",
     "verify": "npm run version:check && npm run check:architecture && npm run typecheck && npm run content:validate && npm run content:build && npm run schemas:validate && npm run check:source-clean && npm run validate && npm test && git diff --check",
-    "validate": "node scripts/validate-content.js && node scripts/validate-question-bank.js && node scripts/validate-extracted.js && node scripts/validate-textbook.js && node scripts/validate-slides.js && node scripts/validate-latex.js && node scripts/validate-latex-render.js && node scripts/validate-contrast-drills.js && node scripts/validate-algorithm-notes.js && node nus-gate.js && node gate.js",
+    "validate": "node scripts/validate-content.js && node scripts/validate-question-bank.js && node scripts/validate-dsa5104-sources.js && node scripts/validate-dsa5104-exam.js && node scripts/validate-extracted.js && node scripts/validate-textbook.js && node scripts/validate-slides.js && node scripts/validate-latex.js && node scripts/validate-latex-render.js && node scripts/validate-contrast-drills.js && node scripts/validate-algorithm-notes.js && node nus-gate.js && node gate.js",
     "validate:latex:render": "node scripts/validate-latex-render.js",
+    "validate:dsa5104:sources": "node scripts/validate-dsa5104-sources.js",
+    "validate:dsa5104:exam": "node scripts/validate-dsa5104-exam.js",
     "test": "node --test tests/*.test.js",
     "typecheck": "tsc --noEmit",
     "build:vite": "vite build --outDir dist-vite",
@@ -36,6 +39,7 @@
     "vitest": "^4.1.9"
   },
   "dependencies": {
-    "@vercel/blob": "^2.8.0"
+    "@vercel/blob": "^2.8.0",
+    "mysql2": "^3.24.2"
   }
 }

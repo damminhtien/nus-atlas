@@ -38,6 +38,18 @@ test('normalizing authored text is idempotent and fail-closed', () => {
   assert.equal(normalizeText(normalizeText(valid)), normalizeText(valid));
 });
 
+test('keeps code fences outside the authored math contract', () => {
+  const code = '```sql\nUPDATE works SET salary = salary * 1.1\n```';
+  assert.deepEqual(findRawMath(code), []);
+  assert.equal(normalizeText(code), code);
+});
+
+test('keeps inline code outside the authored math contract', () => {
+  const code = "Use `salary = NULL` only as a contrast; test it with `IS NULL`.";
+  assert.deepEqual(findRawMath(code), []);
+  assert.equal(normalizeText(code), code);
+});
+
 test('normalizes informal hat suffixes into widehat notation', () => {
   assert.equal(normalizeText('$R_hat(w)=1/N$'), '$\\widehat{R}(w)=1/N$');
   assert.equal(normalizeText('$w_hat=(X^\\top X)^-1X^\\top y$'), '$\\widehat{w}=(X^\\top X)^-1X^\\top y$');

@@ -49,8 +49,9 @@ test("repository loads the canonical DSA5104 SQL practice package", async () => 
   assert.equal(repo.getCourse("DSA5104").sqlPractice, undefined);
   const packageData = await repo.loadCourse("DSA5104");
   assert.equal(packageData.course.sqlPractice.schemaVersion, "nus.sql-practice.v1");
-  assert.deepEqual(packageData.course.sqlPractice.schema.map(table => table.name), ["Department", "Student", "Enrollment"]);
-  assert.equal(packageData.course.sqlPractice.exercises.length, 4);
+  assert.deepEqual(Object.keys(packageData.course.sqlPractice.modes), ["concept", "mysql"]);
+  assert.deepEqual(packageData.course.sqlPractice.modes.concept.schema.map(table => table.name), ["Department", "Student", "Enrollment"]);
+  assert.equal(packageData.course.sqlPractice.modes.mysql.exercises.length, 7);
 });
 
 test("missing course and lesson are safe async lookups", async () => {

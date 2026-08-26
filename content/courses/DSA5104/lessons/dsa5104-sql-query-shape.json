@@ -1,0 +1,410 @@
+{
+  "id": "dsa5104-sql-query-shape",
+  "courseId": "DSA5104",
+  "title": "Ch3.2 · SELECT-FROM-WHERE and duplicates",
+  "moduleId": "dsa5104-sql",
+  "scope": "core",
+  "examEligible": true,
+  "contentStatus": "CURRENT LECTURE",
+  "week": 4,
+  "orderInWeek": 2,
+  "minutes": 35,
+  "summary": "Build a single-table query from its output, inputs, predicates, and duplicate policy.",
+  "objectives": [
+    "Map an English request to SELECT, FROM, and WHERE",
+    "Explain why projection can create duplicates",
+    "Choose DISTINCT only when the request requires it"
+  ],
+  "sourceRefs": [
+    {
+      "sourceId": "DSA5104/chapter3.pdf",
+      "page": 19,
+      "sourceType": "lecture",
+      "role": "Ch3.2 · SELECT-FROM-WHERE and duplicates",
+      "status": "current"
+    },
+    {
+      "sourceId": "DSA5104/chapter3.pdf",
+      "page": 24,
+      "sourceType": "lecture",
+      "role": "Ch3.2 · SELECT-FROM-WHERE and duplicates",
+      "status": "current"
+    },
+    {
+      "sourceId": "DSA5104/chapter3.pdf",
+      "page": 27,
+      "sourceType": "lecture",
+      "role": "Ch3.2 · SELECT-FROM-WHERE and duplicates",
+      "status": "current"
+    },
+    {
+      "sourceId": "DSA5104/chapter3.pdf",
+      "page": 31,
+      "sourceType": "lecture",
+      "role": "Ch3.2 · SELECT-FROM-WHERE and duplicates",
+      "status": "current"
+    }
+  ],
+  "visualIds": [],
+  "sections": [
+    {
+      "title": "SELECT-FROM-WHERE and duplicates",
+      "sourceType": "lecture",
+      "body": "Read a query from the requested output backwards: name the projected attributes, list the relations that supply them, and then state the row predicate. Projection does not automatically remove duplicates.",
+      "sourceRefs": [
+        {
+          "sourceId": "DSA5104/chapter3.pdf",
+          "page": 19,
+          "sourceType": "lecture",
+          "role": "Ch3.2 · SELECT-FROM-WHERE and duplicates",
+          "status": "current"
+        },
+        {
+          "sourceId": "DSA5104/chapter3.pdf",
+          "page": 24,
+          "sourceType": "lecture",
+          "role": "Ch3.2 · SELECT-FROM-WHERE and duplicates",
+          "status": "current"
+        },
+        {
+          "sourceId": "DSA5104/chapter3.pdf",
+          "page": 27,
+          "sourceType": "lecture",
+          "role": "Ch3.2 · SELECT-FROM-WHERE and duplicates",
+          "status": "current"
+        },
+        {
+          "sourceId": "DSA5104/chapter3.pdf",
+          "page": 31,
+          "sourceType": "lecture",
+          "role": "Ch3.2 · SELECT-FROM-WHERE and duplicates",
+          "status": "current"
+        }
+      ],
+      "sourceLens": {
+        "status": "core DSA5104",
+        "whyExaminable": "This unit is split directly from the supplied Chapter 3 lecture deck so retrieval and mistake repair stay topic-sized.",
+        "lecture": [
+          {
+            "sourceId": "DSA5104/chapter3.pdf",
+            "page": 19,
+            "sourceType": "lecture",
+            "role": "Ch3.2 · SELECT-FROM-WHERE and duplicates",
+            "status": "current"
+          },
+          {
+            "sourceId": "DSA5104/chapter3.pdf",
+            "page": 24,
+            "sourceType": "lecture",
+            "role": "Ch3.2 · SELECT-FROM-WHERE and duplicates",
+            "status": "current"
+          },
+          {
+            "sourceId": "DSA5104/chapter3.pdf",
+            "page": 27,
+            "sourceType": "lecture",
+            "role": "Ch3.2 · SELECT-FROM-WHERE and duplicates",
+            "status": "current"
+          },
+          {
+            "sourceId": "DSA5104/chapter3.pdf",
+            "page": 31,
+            "sourceType": "lecture",
+            "role": "Ch3.2 · SELECT-FROM-WHERE and duplicates",
+            "status": "current"
+          }
+        ],
+        "officialExercise": [],
+        "textbook": [
+          {
+            "sourceId": "DSA5104/Database System Concepts, 7th edition",
+            "page": 1,
+            "sourceType": "textbook",
+            "role": "textbook depth pointer",
+            "status": "course-depth"
+          }
+        ],
+        "reference": []
+      }
+    }
+  ],
+  "examples": [
+    {
+      "title": "Write a query for course titles in one department, then decide whether duplicate elimination is required by the wording.",
+      "sourceType": "lecture",
+      "steps": [
+        "Read a query from the requested output backwards: name the projected attributes, list the relations that supply them, and then state the row predicate. Projection does not automatically remove duplicates.",
+        "State the output, input relations, predicate, and one edge case before checking the solution."
+      ],
+      "answer": "A strong answer names the semantic boundary and cites the source page or exercise file."
+    }
+  ],
+  "criticalQuestions": [
+    {
+      "prompt": "What is the decisive semantic boundary in Ch3.2 · SELECT-FROM-WHERE and duplicates?",
+      "angle": "Name the operation, its input, its output, and the condition that would make the shortcut fail.",
+      "modelAnswer": "The answer should identify the operation's input/output boundary and one counterexample or edge case.",
+      "focus": "source and semantics"
+    },
+    {
+      "prompt": "Which tempting shortcut would produce a plausible but incorrect answer?",
+      "angle": "Separate what the source says from what a familiar SQL pattern seems to imply.",
+      "modelAnswer": "The shortcut is unsafe when it changes row scope, duplicate policy, NULL treatment, or constraint meaning.",
+      "focus": "common trap"
+    }
+  ],
+  "math": [
+    {
+      "name": "Basic query shape",
+      "purpose": "Use it to map output attributes, input relations, and row predicates.",
+      "latex": "\\operatorname{SELECT}\\;A\\;\\operatorname{FROM}\\;R\\;\\operatorname{WHERE}\\;P",
+      "explanation": "The output list, input relations, and row predicate have different jobs; do not hide a missing predicate in a later clause.",
+      "symbols": [
+        {
+          "latex": "A",
+          "meaning": "the key object in this unit"
+        },
+        {
+          "latex": "projected attributes",
+          "meaning": "the associated semantic role"
+        }
+      ],
+      "sourceType": "lecture",
+      "sourceRefs": [
+        {
+          "sourceId": "DSA5104/chapter3.pdf",
+          "page": 19,
+          "sourceType": "lecture",
+          "role": "Ch3.2 · SELECT-FROM-WHERE and duplicates",
+          "status": "current"
+        }
+      ]
+    }
+  ],
+  "contrastDrills": [
+    {
+      "id": "dsa5104-contrast-is-vs-equals-string",
+      "type": "contrast",
+      "kind": "concept-contrast",
+      "pair": "IS vs = for strings",
+      "prompt": "You need instructors whose name is exactly 'AAA'. Which predicate is the ordinary string comparison?",
+      "choices": [
+        "`name IS 'AAA'`",
+        "`name = 'AAA'`",
+        "`name IS NULL`",
+        "`name LIKE 'A%'`"
+      ],
+      "answer": 1,
+      "explanation": "Use `=` to compare an ordinary string value. `IS` is for predicates such as `IS NULL`, `IS TRUE`, and `IS FALSE`; it is not the normal operator for matching a string literal.",
+      "estimatedSeconds": 45,
+      "difficulty": "easy",
+      "skill": "concept-contrast",
+      "cognitiveLevel": "distinguish",
+      "misconception": "Treating IS as a general replacement for the equality operator.",
+      "repair": "Use `=` for ordinary values and `IS NULL` or `IS NOT NULL` for NULL tests.",
+      "sourceRefs": [
+        {
+          "sourceId": "DSA5104/chapter3.pdf",
+          "page": 28,
+          "sourceType": "lecture",
+          "role": "equality predicate",
+          "status": "current"
+        },
+        {
+          "sourceId": "DSA5104/chapter3.pdf",
+          "page": 46,
+          "sourceType": "lecture",
+          "role": "NULL predicate exceptions",
+          "status": "current"
+        }
+      ]
+    },
+    {
+      "id": "dsa5104-contrast-double-equals-equals",
+      "type": "contrast",
+      "kind": "concept-contrast",
+      "pair": "== vs =",
+      "prompt": "Which spelling should you use for an ordinary SQL equality predicate in the MySQL examples?",
+      "choices": [
+        "`name == 'AAA'`",
+        "`name = 'AAA'`",
+        "`name := 'AAA'`",
+        "`name IS 'AAA'`"
+      ],
+      "answer": 1,
+      "explanation": "The course SQL examples use `=` for equality. Do not import `==` from a programming language into an SQL predicate.",
+      "estimatedSeconds": 30,
+      "difficulty": "easy",
+      "skill": "syntax-contrast",
+      "cognitiveLevel": "distinguish",
+      "misconception": "Assuming an SQL predicate uses the same equality spelling as a programming language.",
+      "repair": "Write `column = value`, then reserve `IS NULL` and `IS NOT NULL` for NULL predicates.",
+      "sourceRefs": [
+        {
+          "sourceId": "DSA5104/chapter3.pdf",
+          "page": 28,
+          "sourceType": "lecture",
+          "role": "SQL equality predicate",
+          "status": "current"
+        },
+        {
+          "sourceId": "DSA5104/chapter3.pdf",
+          "page": 31,
+          "sourceType": "lecture",
+          "role": "multi-table WHERE predicate",
+          "status": "current"
+        }
+      ]
+    },
+    {
+      "id": "dsa5104-contrast-backticks-vs-string-quotes",
+      "type": "contrast",
+      "kind": "concept-contrast",
+      "pair": "Identifier quoting vs string literal quoting",
+      "prompt": "Which expression compares the column name with the string value AAA in MySQL?",
+      "choices": [
+        "`name` is the column identifier; compare it with 'AAA'",
+        "`AAA` is the string literal; compare it with name",
+        "'name' is the column identifier",
+        "Backticks and single quotes mean the same thing"
+      ],
+      "answer": 0,
+      "explanation": "Backticks quote an identifier such as a column name; single quotes quote a string value. Therefore the column identifier `name` should be compared with the string literal 'AAA'.",
+      "estimatedSeconds": 45,
+      "difficulty": "medium",
+      "skill": "syntax-contrast",
+      "cognitiveLevel": "distinguish",
+      "misconception": "Treating backticks and single quotes as interchangeable string delimiters.",
+      "repair": "Use backticks only when quoting MySQL identifiers and single quotes for string literals.",
+      "sourceRefs": [
+        {
+          "sourceId": "DSA5104/chapter3.pdf",
+          "page": 20,
+          "sourceType": "lecture",
+          "role": "SQL names",
+          "status": "current"
+        },
+        {
+          "sourceId": "DSA5104/chapter3.pdf",
+          "page": 26,
+          "sourceType": "lecture",
+          "role": "string literal",
+          "status": "current"
+        }
+      ]
+    },
+    {
+      "id": "dsa5104-contrast-equals-vs-like",
+      "type": "contrast",
+      "kind": "concept-contrast",
+      "pair": "= vs LIKE",
+      "prompt": "Which predicate finds names beginning with the characters Al?",
+      "choices": [
+        "`name = 'Al%'`",
+        "`name LIKE 'Al%'`",
+        "`name IS 'Al%'`",
+        "`name IN ('Al%')`"
+      ],
+      "answer": 1,
+      "explanation": "`LIKE` interprets `%` as a pattern wildcard matching zero or more characters. The equality operator `=` treats the percent sign as part of the literal value.",
+      "estimatedSeconds": 45,
+      "difficulty": "easy",
+      "skill": "query-predicate",
+      "cognitiveLevel": "distinguish",
+      "misconception": "Expecting % or _ to act as wildcards when the predicate uses =.",
+      "repair": "Use LIKE for patterns: % means zero or more characters and _ means exactly one character.",
+      "sourceRefs": [
+        {
+          "sourceId": "DSA5104/chapter3.pdf",
+          "page": 37,
+          "sourceType": "lecture",
+          "role": "LIKE patterns",
+          "status": "current"
+        },
+        {
+          "sourceId": "DSA5104/chapter3.pdf",
+          "page": 38,
+          "sourceType": "lecture",
+          "role": "pattern examples",
+          "status": "current"
+        }
+      ]
+    },
+    {
+      "id": "dsa5104-contrast-collation-sensitivity",
+      "type": "contrast",
+      "kind": "concept-contrast",
+      "pair": "Case-insensitive vs case-sensitive collation",
+      "prompt": "In MySQL, will `name = 'Alice'` always differ from `name = 'alice'`?",
+      "choices": [
+        "Yes, they are always unequal",
+        "No; the comparison depends on the column's character set and collation",
+        "No, they are always equal",
+        "The query is always a syntax error"
+      ],
+      "answer": 1,
+      "explanation": "Text comparison behavior is controlled by the character set and collation. A case-insensitive collation can treat Alice and alice as equal, while a case-sensitive collation can distinguish them.",
+      "estimatedSeconds": 45,
+      "difficulty": "medium",
+      "skill": "dbms-semantics",
+      "cognitiveLevel": "distinguish",
+      "misconception": "Assuming string case sensitivity is a universal SQL rule independent of DBMS configuration.",
+      "repair": "Check the MySQL collation before predicting the result of a case-sensitive text comparison.",
+      "sourceRefs": [
+        {
+          "sourceId": "DSA5104/chapter3.pdf",
+          "page": 22,
+          "sourceType": "lecture",
+          "role": "MySQL character set and collation",
+          "status": "current"
+        },
+        {
+          "sourceId": "DSA5104/chapter3.pdf",
+          "page": 39,
+          "sourceType": "lecture",
+          "role": "MySQL pattern sensitivity",
+          "status": "current"
+        }
+      ]
+    },
+    {
+      "id": "dsa5104-contrast-and-or-parentheses",
+      "type": "contrast",
+      "kind": "concept-contrast",
+      "pair": "AND/OR precedence vs explicit parentheses",
+      "prompt": "Which predicate means `(dept_name = 'Physics' OR dept_name = 'Music') AND salary > 50000`?",
+      "choices": [
+        "`dept_name = 'Physics' OR dept_name = 'Music' AND salary > 50000`",
+        "`(dept_name = 'Physics' OR dept_name = 'Music') AND salary > 50000`",
+        "`dept_name = 'Physics' AND dept_name = 'Music' OR salary > 50000`",
+        "`dept_name = 'Physics' OR (dept_name = 'Music' AND salary) > 50000`"
+      ],
+      "answer": 1,
+      "explanation": "AND has higher precedence than OR, so the unparenthesized first choice means `Physics OR (Music AND salary > 50000)`. Parentheses make the intended grouping explicit.",
+      "estimatedSeconds": 45,
+      "difficulty": "medium",
+      "skill": "query-predicate",
+      "cognitiveLevel": "distinguish",
+      "misconception": "Reading a mixed AND/OR predicate left to right as if all operators had equal precedence.",
+      "repair": "When a condition mixes AND and OR, parenthesize the intended groups before checking the result.",
+      "sourceRefs": [
+        {
+          "sourceId": "DSA5104/chapter3.pdf",
+          "page": 28,
+          "sourceType": "lecture",
+          "role": "Boolean WHERE predicates",
+          "status": "current"
+        },
+        {
+          "sourceId": "DSA5104/chapter3.pdf",
+          "page": 31,
+          "sourceType": "lecture",
+          "role": "combined query predicates",
+          "status": "current"
+        }
+      ]
+    }
+  ],
+  "schemaVersion": "nus.lesson.v1",
+  "questionIds": []
+}

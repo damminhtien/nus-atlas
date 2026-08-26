@@ -8,8 +8,24 @@ const DIFFICULTIES = new Set(["easy", "medium", "hard"]);
 const SOURCE_TYPES = new Set(["lecture", "exercise", "textbook", "ref", "assessment-derived"]);
 
 function readQuestionBank(courseId = "DSA5105", root = ROOT) {
-  const file = path.join(root, "content", "courses", courseId, "questions", "bank.json");
-  return JSON.parse(fs.readFileSync(file, "utf8"));
+  const questionsRoot = path.join(root, "content", "courses", courseId, "questions");
+  const bank = JSON.parse(fs.readFileSync(path.join(questionsRoot, "bank.json"), "utf8"));
+  const supplementalFile = path.join(questionsRoot, "exam-bank.json");
+  if (!fs.existsSync(supplementalFile)) return bank;
+  const supplemental = JSON.parse(fs.readFileSync(supplementalFile, "utf8"));
+  return {
+    ...bank,
+    questions: [...(bank.questions || []), ...(supplemental.questions || [])],
+    assessmentLayers: [
+      ...(bank.assessmentLayers || []),
+      ...(supplemental.assessmentLayer ? [{
+        id: supplemental.assessmentLayer,
+        origin: supplemental.origin || "unspecified",
+        status: supplemental.status || "unclassified",
+        questionIds: (supplemental.questions || []).map(question => question.id)
+      }] : [])
+    ]
+  };
 }
 
 function validateQuestionBank(bank, state = loadCanonicalState(ROOT)) {

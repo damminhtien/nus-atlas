@@ -28,8 +28,50 @@ test("DSA5104 question bank covers every lesson with metadata", () => {
   const bank = readQuestionBank("DSA5104");
   const result = validateQuestionBank(bank, loadCanonicalState());
   assert.equal(result.ok, true, result.errors.join("\n"));
-  assert.equal(result.counts.questions, 44);
-  assert.equal(result.counts.lessons, 7);
+  assert.equal(result.counts.questions, 250);
+  assert.equal(result.counts.lessons, 17);
+  assert.equal(bank.homeworkCoverage.questionCount, 190);
+  assert.deepEqual(bank.assessmentLayers.map(layer => [layer.id, layer.origin, layer.status]), [["synthetic-final", "synthetic", "not-past-year"]]);
+  const homeworkQuestions = bank.questions.filter(question => /^dsa5104-homework-ch\d+-/.test(question.id));
+  assert.equal(homeworkQuestions.length, 190);
+  const homeworkSourceIds = new Set(homeworkQuestions.flatMap(question => (question.sourceRefs || [])
+    .filter(ref => ref.sourceType === "exercise" && /Homework Solutions\//.test(ref.sourceId))
+    .map(ref => ref.sourceId)));
+  assert.equal(homeworkSourceIds.size, 190);
+  assert.deepEqual(
+    Object.fromEntries([...new Set(homeworkQuestions.map(question => question.id.match(/ch(\d+)/)[1]))]
+      .sort()
+      .map(chapter => [chapter, homeworkQuestions.filter(question => question.id.includes(`-ch${chapter}-`)).length])),
+    { "01": 15, "02": 18, "03": 35, "04": 26, "05": 24, "06": 28, "07": 44 }
+  );
+  const exerciseSources = new Set(
+    bank.questions.flatMap(question => (question.sourceRefs || [])
+      .filter(ref => ref.sourceType === "exercise")
+      .map(ref => ref.sourceId))
+  );
+  [
+    "Ch01_Introduction/1.3.md",
+    "Ch01_Introduction/1.7.md",
+    "Ch01_Introduction/1.10.md",
+    "Ch01_Introduction/1.15.md",
+    "Ch02_Introduction_to_the_Relational_Model/2.2.md",
+    "Ch02_Introduction_to_the_Relational_Model/2.6.md",
+    "Ch02_Introduction_to_the_Relational_Model/2.12.md",
+    "Ch02_Introduction_to_the_Relational_Model/2.13.md",
+    "Ch02_Introduction_to_the_Relational_Model/2.15.md",
+    "Ch03_Introduction_to_SQL/3.1.md",
+    "Ch03_Introduction_to_SQL/3.3.md",
+    "Ch03_Introduction_to_SQL/3.6.md",
+    "Ch03_Introduction_to_SQL/3.11.md",
+    "Ch03_Introduction_to_SQL/3.27.md",
+    "Ch03_Introduction_to_SQL/3.28.md"
+  ].forEach(relativeSource => {
+    assert.equal(
+      exerciseSources.has(`DSA5104/Homework Solutions/${relativeSource}`),
+      true,
+      `missing teacher-designated homework ${relativeSource}`
+    );
+  });
 });
 
 test("DSA5208 question bank covers every lesson with metadata", () => {

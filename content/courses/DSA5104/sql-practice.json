@@ -1,0 +1,72 @@
+{
+  "schemaVersion": "nus.sql-practice.v1",
+  "defaultMode": "concept",
+  "modes": {
+    "concept": {
+      "id": "concept",
+      "label": "SQL Concept Lab",
+      "engine": "SQLite/WASM",
+      "description": "A small browser-local database for fast SQL concept retrieval. It is intentionally independent from the course-faithful University database.",
+      "schema": [
+        { "name": "Department", "columns": ["id INTEGER PRIMARY KEY", "name TEXT NOT NULL"] },
+        { "name": "Student", "columns": ["id INTEGER PRIMARY KEY", "name TEXT NOT NULL", "department_id INTEGER", "FOREIGN KEY (department_id) REFERENCES Department(id)"] },
+        { "name": "Enrollment", "columns": ["student_id INTEGER", "course_code TEXT", "grade REAL", "PRIMARY KEY (student_id, course_code)"] }
+      ],
+      "seed": {
+        "Department": [[1, "Data Science"], [2, "Computer Science"], [3, "Statistics"]],
+        "Student": [[101, "An", 1], [102, "Binh", 1], [103, "Chi", 2], [104, "Duc", 3]],
+        "Enrollment": [[101, "DSA5104", 85], [102, "DSA5104", 78], [103, "DSA5104", 91], [101, "DSA5105", 88], [104, "DSA5105", 73]]
+      },
+      "exercises": [
+        { "id": "sql-1", "level": "Warm-up", "prompt": "List every student name in alphabetical order.", "starter": "SELECT name FROM Student ORDER BY name;", "expected": ["An", "Binh", "Chi", "Duc"], "explanation": "Select one column and make ordering explicit." },
+        { "id": "sql-2", "level": "Join", "prompt": "Return each student with the department name.", "starter": "SELECT s.name, d.name AS department\nFROM Student s\nJOIN Department d ON d.id = s.department_id\nORDER BY s.id;", "expected": ["An|Data Science", "Binh|Data Science", "Chi|Computer Science", "Duc|Statistics"], "explanation": "The join uses Student.department_id to Department.id." },
+        { "id": "sql-3", "level": "Aggregation", "prompt": "Find departments with at least two students.", "starter": "SELECT d.name, COUNT(*) AS n\nFROM Department d\nJOIN Student s ON s.department_id = d.id\nGROUP BY d.id, d.name\nHAVING COUNT(*) >= 2;", "expected": ["Data Science|2"], "explanation": "HAVING filters the aggregate result after GROUP BY." },
+        { "id": "sql-4", "level": "Constraint", "prompt": "Which key pair prevents duplicate enrollments for one student and course?", "starter": "-- Write the constraint in words or SQL", "expected": ["primary key (student_id, course_code)", "composite primary key", "student_id, course_code"], "explanation": "The composite key identifies one enrollment per student-course pair." }
+      ]
+    },
+    "mysql": {
+      "id": "mysql",
+      "label": "DSA5104 MySQL Lab",
+      "engine": "MySQL 8.x · University database",
+      "description": "The course-faithful practice mode uses the canonical University schema and MySQL-compatible query prompts. Atlas prefers the configured server-side MySQL runner; when it is unavailable, the same University data runs in SQLite/WASM as an explicitly labelled compatibility fallback.",
+      "execution": {
+        "preferred": "mysql-api",
+        "endpoint": "/api/dsa5104-sql",
+        "fallback": "SQLite/WASM compatibility fallback"
+      },
+      "bootstrap": {
+        "ddlAsset": "assets/nus/dsa5104/university/DDL.sql",
+        "smallDataAsset": "assets/nus/dsa5104/university/smallRelationsInsertFile.sql",
+        "largeDataAsset": "assets/nus/dsa5104/university/largeRelationsInsertFile.sql"
+      },
+      "schema": [
+        { "name": "classroom", "columns": ["building TEXT", "room_number TEXT", "capacity NUMERIC", "PRIMARY KEY (building, room_number)"] },
+        { "name": "department", "columns": ["dept_name TEXT PRIMARY KEY", "building TEXT", "budget NUMERIC"] },
+        { "name": "course", "columns": ["course_id TEXT PRIMARY KEY", "title TEXT", "dept_name TEXT", "credits NUMERIC"] },
+        { "name": "instructor", "columns": ["ID TEXT PRIMARY KEY", "name TEXT NOT NULL", "dept_name TEXT", "salary NUMERIC"] },
+        { "name": "section", "columns": ["course_id TEXT", "sec_id TEXT", "semester TEXT", "year NUMERIC", "building TEXT", "room_number TEXT", "time_slot_id TEXT", "PRIMARY KEY (course_id, sec_id, semester, year)"] },
+        { "name": "teaches", "columns": ["ID TEXT", "course_id TEXT", "sec_id TEXT", "semester TEXT", "year NUMERIC", "PRIMARY KEY (ID, course_id, sec_id, semester, year)"] },
+        { "name": "student", "columns": ["ID TEXT PRIMARY KEY", "name TEXT NOT NULL", "dept_name TEXT", "tot_cred NUMERIC"] },
+        { "name": "takes", "columns": ["ID TEXT", "course_id TEXT", "sec_id TEXT", "semester TEXT", "year NUMERIC", "grade TEXT", "PRIMARY KEY (ID, course_id, sec_id, semester, year)"] },
+        { "name": "advisor", "columns": ["s_ID TEXT PRIMARY KEY", "i_ID TEXT"] },
+        { "name": "time_slot", "columns": ["time_slot_id TEXT", "day TEXT", "start_hr NUMERIC", "start_min NUMERIC", "end_hr NUMERIC", "end_min NUMERIC", "PRIMARY KEY (time_slot_id, day, start_hr, start_min)"] },
+        { "name": "prereq", "columns": ["course_id TEXT", "prereq_id TEXT", "PRIMARY KEY (course_id, prereq_id)"] }
+      ],
+      "exercises": [
+        { "id": "mysql-1", "level": "University schema", "prompt": "List all department names in alphabetical order.", "starter": "SELECT dept_name\nFROM department\nORDER BY dept_name;", "expected": ["Biology", "Comp. Sci.", "Elec. Eng.", "Finance", "History", "Music", "Physics"], "explanation": "This is a real University relation, not the concept-lab toy schema." },
+        { "id": "mysql-2", "level": "Multi-table join", "prompt": "List every Computer Science course by course id.", "starter": "SELECT course_id, title\nFROM course\nWHERE dept_name = 'Comp. Sci.'\nORDER BY course_id;", "expected": ["CS-101|Intro. to Computer Science", "CS-190|Game Design", "CS-315|Robotics", "CS-319|Image Processing", "CS-347|Database System Concepts"], "explanation": "Use the University column names exactly: course.dept_name and course.course_id." },
+        { "id": "mysql-3", "level": "Outer join", "prompt": "Find instructors who teach no section, while keeping the unmatched instructor rows.", "starter": "SELECT i.ID, i.name\nFROM instructor AS i\nLEFT JOIN teaches AS t ON t.ID = i.ID\nWHERE t.ID IS NULL\nORDER BY i.ID;", "expected": ["33456|Gold", "58583|Califieri", "76543|Singh"], "explanation": "The LEFT JOIN preserves instructors before the NULL test removes matched teaching rows." },
+        { "id": "mysql-4", "level": "GROUP BY", "prompt": "Count courses offered by each department.", "starter": "SELECT dept_name, COUNT(*) AS course_count\nFROM course\nGROUP BY dept_name\nORDER BY dept_name;", "expected": ["Biology|3", "Comp. Sci.|5", "Elec. Eng.|1", "Finance|1", "History|1", "Music|1", "Physics|1"], "explanation": "Every non-aggregate selected column belongs in GROUP BY for portable MySQL semantics." },
+        { "id": "mysql-5", "level": "Nested query", "prompt": "Return the three highest-paid instructors using MySQL LIMIT.", "starter": "SELECT ID, name\nFROM instructor\nORDER BY salary DESC\nLIMIT 3;", "expected": ["22222|Einstein", "83821|Brandt", "12121|Wu"], "explanation": "LIMIT is a MySQL-compatible way to express a top-k result after ordering." },
+        { "id": "mysql-6", "level": "Advisor join", "prompt": "Show each advised student together with the advisor name.", "starter": "SELECT s.name AS student, i.name AS advisor\nFROM student AS s\nJOIN advisor AS a ON a.s_ID = s.ID\nJOIN instructor AS i ON i.ID = a.i_ID\nORDER BY s.ID;", "expected": ["Zhang|Katz", "Shankar|Srinivasan", "Chavez|Singh", "Peltier|Einstein", "Levy|Einstein", "Brown|Katz", "Aoi|Kim", "Bourikas|Kim", "Tanaka|Crick"], "explanation": "Follow the foreign-key path from student, then advisor, then instructor rather than joining on department names." },
+        { "id": "mysql-7", "level": "MySQL safety", "prompt": "Write a transaction that changes one row and then proves ROLLBACK restores it.", "starter": "START TRANSACTION;\nUPDATE instructor SET salary = salary + 1 WHERE ID = '10101';\nROLLBACK;", "inputMode": "text", "expected": ["start transaction", "rollback"], "explanation": "The MySQL lab teaches transaction syntax as a controlled server-side action; the browser fallback does not persist mutations." }
+      ],
+      "officialArtifacts": [
+        { "id": "dsa5104-university-ddl", "title": "University database DDL", "sourceId": "DSA5104/University DB/DDL.sql", "sourceType": "textbook", "status": "OFFICIAL TEXTBOOK ARTIFACT", "assetPath": "assets/nus/dsa5104/university/DDL.sql", "externalUrl": "https://www.db-book.com/university-lab-dir/sample_tables-dir/DDL.sql", "sha256": "1a2bd7f2668c3a69cbef47098b66d3ebe486ef48f1ebe48d7b14d08349f0e1dd", "sourceRefs": [{ "sourceId": "DSA5104/University DB/DDL.sql", "page": 1, "sourceType": "textbook", "role": "canonical University schema", "status": "course-depth" }] },
+        { "id": "dsa5104-university-small", "title": "University database small relations", "sourceId": "DSA5104/University DB/smallRelationsInsertFile.sql", "sourceType": "textbook", "status": "OFFICIAL TEXTBOOK ARTIFACT", "assetPath": "assets/nus/dsa5104/university/smallRelationsInsertFile.sql", "externalUrl": "https://www.db-book.com/university-lab-dir/sample_tables-dir/smallRelations/smallRelationsInsertFile.sql", "sha256": "e70e3b622dac6c1ee32e31d6c2e0c6b7781653b9c86f1d1d7f36b4bedc70a13a", "sourceRefs": [{ "sourceId": "DSA5104/University DB/smallRelationsInsertFile.sql", "page": 1, "sourceType": "textbook", "role": "Appendix A-sized University data", "status": "course-depth" }] },
+        { "id": "dsa5104-university-large", "title": "University database large relations", "sourceId": "DSA5104/University DB/largeRelationsInsertFile.sql", "sourceType": "textbook", "status": "OFFICIAL TEXTBOOK ARTIFACT", "assetPath": "assets/nus/dsa5104/university/largeRelationsInsertFile.sql", "externalUrl": "https://www.db-book.com/university-lab-dir/sample_tables-dir/largeRelations/largeRelationsInsertFile.sql", "sha256": "7ffd15e8e6ce7647b5e5f8c31de0b7946a05e88104839846f95e2c297cc133c0", "sourceRefs": [{ "sourceId": "DSA5104/University DB/largeRelationsInsertFile.sql", "page": 1, "sourceType": "textbook", "role": "large University practice data", "status": "course-depth" }] },
+        { "id": "dsa5104-chapter3-mysql-code", "title": "Chapter 3 MySQL code from the slides", "sourceId": "DSA5104/chap3_mysql_code_in_slides.sql", "sourceType": "exercise", "status": "OFFICIAL EXERCISE", "assetPath": "assets/nus/dsa5104/chap3_mysql_code_in_slides.sql", "sourceRefs": [{ "sourceId": "DSA5104/chapter3.pdf", "page": 11, "sourceType": "lecture", "role": "Chapter 3 code context", "status": "current" }, { "sourceId": "DSA5104/chap3_mysql_code_in_slides.sql", "page": 1, "sourceType": "exercise", "role": "official code companion", "status": "current-context" }] }
+      ]
+    }
+  }
+}

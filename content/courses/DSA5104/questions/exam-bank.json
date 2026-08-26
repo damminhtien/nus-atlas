@@ -1,0 +1,331 @@
+{
+  "schemaVersion": "nus.question-bank.v1",
+  "courseId": "DSA5104",
+  "purpose": "A clearly labeled synthetic final-practice layer for the currently verified Ch1–Ch3 lecture scope.",
+  "assessmentLayer": "synthetic-final",
+  "origin": "synthetic",
+  "status": "not-past-year",
+  "questions": [
+    {
+      "id": "dsa5104-synthetic-final-001",
+      "lessonId": "dsa5104-orientation",
+      "type": "mcq",
+      "difficulty": "easy",
+      "skill": "classify-abstraction",
+      "cognitiveLevel": "understand",
+      "estimatedSeconds": 60,
+      "timedSeconds": 60,
+      "topic": "data abstraction",
+      "commonTrap": "Confusing a user view with the physical storage level.",
+      "mistakeTags": ["abstraction-level", "schema-instance"],
+      "prompt": "Which statement best describes data abstraction in a DBMS?",
+      "choices": [
+        "It exposes storage blocks to every user.",
+        "It hides lower-level details while presenting an appropriate view of data.",
+        "It guarantees that every query uses an index.",
+        "It replaces the database schema with a single report."
+      ],
+      "answer": 1,
+      "explanation": "Data abstraction separates the view a user needs from conceptual and physical implementation details.",
+      "misconception": "A view is not the same thing as a physical storage description.",
+      "visualHook": "Trace one request from the user view down through the abstraction levels.",
+      "sourceRefs": [
+        { "sourceId": "DSA5104/chapter1.pdf", "page": 18, "sourceType": "lecture", "role": "levels of abstraction", "status": "current" }
+      ]
+    },
+    {
+      "id": "dsa5104-synthetic-final-002",
+      "lessonId": "dsa5104-orientation",
+      "type": "short",
+      "difficulty": "easy",
+      "skill": "distinguish-schema-instance",
+      "cognitiveLevel": "apply",
+      "estimatedSeconds": 75,
+      "timedSeconds": 75,
+      "topic": "schema versus instance",
+      "commonTrap": "Treating the current rows as the schema.",
+      "mistakeTags": ["schema-instance", "metadata"],
+      "prompt": "State the difference between a relation schema and a relation instance, and give one example of each.",
+      "accepted": [
+        "schema defines attributes and instance is the current set of tuples",
+        "schema is the structure and instance is the current rows",
+        "table definition versus current data"
+      ],
+      "solution": "A schema specifies the relation name, attributes, and constraints; an instance is the set of tuples stored at a particular time. For example, student(id, name, dept_name) is a schema, while the rows currently in student form an instance.",
+      "explanation": "The schema changes relatively infrequently; the instance changes as data is inserted, deleted, or updated.",
+      "misconception": "A populated table is an instance of a schema, not the schema itself.",
+      "visualHook": "Compare the CREATE TABLE definition with a snapshot of its rows.",
+      "sourceRefs": [
+        { "sourceId": "DSA5104/chapter1.pdf", "page": 22, "sourceType": "lecture", "role": "schema and instance", "status": "current" }
+      ]
+    },
+    {
+      "id": "dsa5104-synthetic-final-003",
+      "lessonId": "dsa5104-relational-model",
+      "type": "mcq",
+      "difficulty": "easy",
+      "skill": "identify-key",
+      "cognitiveLevel": "understand",
+      "estimatedSeconds": 60,
+      "timedSeconds": 60,
+      "topic": "keys and integrity",
+      "commonTrap": "Choosing a non-unique descriptive attribute as the primary key.",
+      "mistakeTags": ["candidate-key", "primary-key"],
+      "prompt": "What must be true of a candidate key for a relation?",
+      "choices": [
+        "It may identify several tuples.",
+        "It uniquely identifies tuples and is minimal.",
+        "It must always be a foreign key.",
+        "It can contain only numeric attributes."
+      ],
+      "answer": 1,
+      "explanation": "A candidate key is a minimal superkey: it uniquely identifies each tuple and no proper subset does so.",
+      "misconception": "Uniqueness alone is not enough; minimality is also required.",
+      "visualHook": "Remove one attribute at a time and test whether uniqueness survives.",
+      "sourceRefs": [
+        { "sourceId": "DSA5104/chapter2.pdf", "page": 8, "sourceType": "lecture", "role": "keys", "status": "current" }
+      ]
+    },
+    {
+      "id": "dsa5104-synthetic-final-004",
+      "lessonId": "dsa5104-relational-model",
+      "type": "derivation",
+      "difficulty": "medium",
+      "skill": "apply-foreign-key-integrity",
+      "cognitiveLevel": "analyze",
+      "estimatedSeconds": 120,
+      "timedSeconds": 120,
+      "topic": "foreign-key constraints",
+      "commonTrap": "Checking only the child row and ignoring the referenced parent key.",
+      "mistakeTags": ["foreign-key", "referential-integrity"],
+      "prompt": "Given instructor(ID, dept_name) and department(dept_name), explain which instructor insert violates referential integrity and why: (101, 'Physics') when no Physics department exists.",
+      "accepted": [
+        "violates because Physics is not a referenced department key",
+        "foreign key value must exist in department",
+        "referential integrity violation"
+      ],
+      "solution": "The insert violates the foreign-key constraint because instructor.dept_name references department.dept_name, and the value Physics has no matching parent tuple.",
+      "explanation": "A child foreign-key value must be null when allowed or match an existing referenced key.",
+      "misconception": "A syntactically valid string is not automatically a valid foreign-key value.",
+      "visualHook": "Follow the reference edge from the proposed instructor tuple to the department relation.",
+      "sourceRefs": [
+        { "sourceId": "DSA5104/chapter2.pdf", "page": 8, "sourceType": "lecture", "role": "foreign-key constraints", "status": "current" }
+      ]
+    },
+    {
+      "id": "dsa5104-synthetic-final-005",
+      "lessonId": "dsa5104-relational-model",
+      "type": "short",
+      "difficulty": "hard",
+      "skill": "explain-decomposition",
+      "cognitiveLevel": "analyze",
+      "estimatedSeconds": 120,
+      "timedSeconds": 120,
+      "topic": "redundancy and decomposition",
+      "commonTrap": "Calling any split a valid decomposition without checking information preservation.",
+      "mistakeTags": ["redundancy", "decomposition", "lossless-join"],
+      "prompt": "Why does decomposing a relation that repeats department attributes into instructor and department improve the design?",
+      "accepted": [
+        "removes repeated department data",
+        "reduces redundancy and update anomalies",
+        "separates instructor facts from department facts"
+      ],
+      "solution": "The combined in_dep relation repeats department attributes once for every instructor in that department. Decomposing it into instructor and department stores each fact once, reducing redundancy and insertion, deletion, and update anomalies; the decomposition must still preserve the intended join information.",
+      "explanation": "This is the Ch2 bridge to schema refinement: a bad design exposes repeated facts, while decomposition separates dependencies before the formal FD/BCNF treatment in Ch7.",
+      "misconception": "Decomposition is not merely splitting columns; it must preserve the information represented by the original relation.",
+      "visualHook": "Highlight the repeated department values before and after the split.",
+      "sourceRefs": [
+        { "sourceId": "DSA5104/chapter2.pdf", "page": 43, "sourceType": "lecture", "role": "features of good relational designs", "status": "current" },
+        { "sourceId": "DSA5104/chapter2.pdf", "page": 44, "sourceType": "lecture", "role": "decomposition bridge", "status": "current" }
+      ]
+    },
+    {
+      "id": "dsa5104-synthetic-final-006",
+      "lessonId": "dsa5104-sql-ddl",
+      "type": "mcq",
+      "difficulty": "easy",
+      "skill": "distinguish-ddl-dml",
+      "cognitiveLevel": "understand",
+      "estimatedSeconds": 60,
+      "timedSeconds": 60,
+      "topic": "DDL and integrity",
+      "commonTrap": "Treating ALTER TABLE as a row-level mutation.",
+      "mistakeTags": ["ddl", "schema-instance"],
+      "prompt": "Which statement changes the relation schema rather than only the current relation instance?",
+      "choices": [
+        "ALTER TABLE student ADD email VARCHAR(100)",
+        "INSERT INTO student VALUES (...) ",
+        "DELETE from student for the row whose ID is 1",
+        "UPDATE student to change the name for the row whose ID is 1"
+      ],
+      "answer": 0,
+      "explanation": "ALTER TABLE changes the schema definition; INSERT, DELETE, and UPDATE change the current instance.",
+      "misconception": "A schema operation and a data mutation have different effects even when both are issued as SQL statements.",
+      "visualHook": "Place each statement on the schema-versus-instance axis.",
+      "sourceRefs": [
+        { "sourceId": "DSA5104/chapter3.pdf", "page": 7, "sourceType": "lecture", "role": "DDL scope", "status": "current" }
+      ]
+    },
+    {
+      "id": "dsa5104-synthetic-final-007",
+      "lessonId": "dsa5104-sql-query-shape",
+      "type": "derivation",
+      "difficulty": "medium",
+      "skill": "construct-select-query",
+      "cognitiveLevel": "apply",
+      "estimatedSeconds": 120,
+      "timedSeconds": 120,
+      "topic": "SELECT-FROM-WHERE and duplicates",
+      "commonTrap": "Adding DISTINCT to hide an incorrect join or duplicate-producing source.",
+      "mistakeTags": ["select-from-where", "duplicates", "distinct"],
+      "prompt": "Write a query that returns the names of Computer Science instructors whose salary is above 70000, and state why DISTINCT may or may not be needed.",
+      "accepted": [
+        "select name from instructor where dept_name = 'Comp. Sci.' and salary > 70000",
+        "from instructor where department and salary condition"
+      ],
+      "solution": "A direct query is: SELECT name FROM instructor WHERE dept_name = 'Comp. Sci.' AND salary exceeds 70000. DISTINCT is unnecessary if instructor.ID is unique and the query reads only instructor. DISTINCT should not be used to conceal an unintended duplicate-producing join.",
+      "explanation": "WHERE filters rows from the FROM result; duplicate semantics should be understood before choosing DISTINCT.",
+      "misconception": "DISTINCT changes the result and is not a general repair for a bad join.",
+      "visualHook": "Trace FROM, then WHERE, then the projected name column.",
+      "sourceRefs": [
+        { "sourceId": "DSA5104/chapter3.pdf", "page": 19, "sourceType": "lecture", "role": "basic query structure", "status": "current" },
+        { "sourceId": "DSA5104/chapter3.pdf", "page": 24, "sourceType": "lecture", "role": "duplicate results", "status": "current" }
+      ]
+    },
+    {
+      "id": "dsa5104-synthetic-final-008",
+      "lessonId": "dsa5104-sql-joins",
+      "type": "short",
+      "difficulty": "medium",
+      "skill": "choose-join-condition",
+      "cognitiveLevel": "analyze",
+      "estimatedSeconds": 90,
+      "timedSeconds": 90,
+      "topic": "joins and set operations",
+      "commonTrap": "Assuming FROM A, B alone identifies matching tuples.",
+      "mistakeTags": ["join-predicate", "cartesian-product", "union"],
+      "prompt": "Why is FROM instructor, teaches alone insufficient to answer which instructor taught which course?",
+      "accepted": [
+        "it creates a cartesian product without matching instructor.id to teaches.id",
+        "need a join predicate",
+        "missing instructor id join condition"
+      ],
+      "solution": "Without a matching predicate, FROM instructor, teaches forms a Cartesian product and pairs unrelated tuples. The query must connect \\(instructor.ID = teaches.ID\\) before selecting the course or section keys.",
+      "explanation": "A multi-table FROM clause supplies inputs; the join condition supplies the relationship between those inputs.",
+      "misconception": "Listing tables is not equivalent to specifying their relational connection.",
+      "visualHook": "Contrast all possible tuple pairs with the pairs surviving the join predicate.",
+      "sourceRefs": [
+        { "sourceId": "DSA5104/chapter3.pdf", "page": 30, "sourceType": "lecture", "role": "Cartesian product", "status": "current" },
+        { "sourceId": "DSA5104/chapter3.pdf", "page": 31, "sourceType": "lecture", "role": "join example", "status": "current" }
+      ]
+    },
+    {
+      "id": "dsa5104-synthetic-final-009",
+      "lessonId": "dsa5104-sql-null",
+      "type": "mcq",
+      "difficulty": "easy",
+      "skill": "reason-three-valued-logic",
+      "cognitiveLevel": "apply",
+      "estimatedSeconds": 60,
+      "timedSeconds": 60,
+      "topic": "NULL and three-valued logic",
+      "commonTrap": "Using = NULL instead of IS NULL.",
+      "mistakeTags": ["null", "unknown", "is-null"],
+      "prompt": "Which predicate correctly finds instructors whose salary is missing?",
+      "choices": [
+        "salary is compared with NULL",
+        "salary is different from NULL",
+        "salary IS NULL",
+        "salary LIKE NULL"
+      ],
+      "answer": 2,
+      "explanation": "NULL represents an absent or unknown value; SQL tests it with IS NULL or IS NOT NULL rather than ordinary equality.",
+      "misconception": "Comparing an unknown value with ordinary equality does not produce TRUE.",
+      "visualHook": "Evaluate each predicate through TRUE, FALSE, and UNKNOWN.",
+      "sourceRefs": [
+        { "sourceId": "DSA5104/chapter3.pdf", "page": 48, "sourceType": "lecture", "role": "UNKNOWN in WHERE", "status": "current" }
+      ]
+    },
+    {
+      "id": "dsa5104-synthetic-final-010",
+      "lessonId": "dsa5104-sql-aggregation",
+      "type": "calculation",
+      "difficulty": "medium",
+      "skill": "apply-group-by-having",
+      "cognitiveLevel": "analyze",
+      "estimatedSeconds": 120,
+      "timedSeconds": 120,
+      "topic": "aggregation and BIG 6",
+      "commonTrap": "Applying an aggregate filter in WHERE.",
+      "mistakeTags": ["group-by", "having", "aggregate"],
+      "prompt": "A grouped query computes department counts 2, 1, and 3. Which groups remain after HAVING COUNT(*) >= 2, and at what stage is the condition evaluated?",
+      "accepted": [
+        "counts 2 and 3 after grouping",
+        "departments with counts 2 and 3; having filters groups",
+        "2 and 3, after aggregation"
+      ],
+      "solution": "The groups with counts 2 and 3 remain. HAVING is evaluated after grouping and aggregation, whereas WHERE filters individual rows before groups are formed.",
+      "explanation": "The logical distinction between row predicates and aggregate predicates prevents invalid or misleading query rewrites.",
+      "misconception": "COUNT(*) is not available at the pre-grouping WHERE stage.",
+      "visualHook": "Move the three groups through WHERE, GROUP BY, aggregate, then HAVING.",
+      "sourceRefs": [
+        { "sourceId": "DSA5104/chapter3.pdf", "page": 54, "sourceType": "lecture", "role": "BIG 6 worked query", "status": "current" },
+        { "sourceId": "DSA5104/chapter3.pdf", "page": 55, "sourceType": "lecture", "role": "BIG 6 clause roles", "status": "current" }
+      ]
+    },
+    {
+      "id": "dsa5104-synthetic-final-011",
+      "lessonId": "dsa5104-sql-nested",
+      "type": "derivation",
+      "difficulty": "hard",
+      "skill": "translate-universal-condition",
+      "cognitiveLevel": "analyze",
+      "estimatedSeconds": 150,
+      "timedSeconds": 150,
+      "topic": "nested queries and quantifiers",
+      "commonTrap": "Using EXISTS when the requirement is absence of a counterexample.",
+      "mistakeTags": ["not-exists", "universal-quantifier", "correlated-subquery"],
+      "prompt": "Explain how NOT EXISTS can express that a student took every course offered by the Biology department.",
+      "accepted": [
+        "not exists a biology course not taken by the student",
+        "absence of a counterexample",
+        "for each biology course, no missing take row"
+      ],
+      "solution": "Write the universal requirement as the absence of a counterexample: select a student for whom NOT EXISTS a Biology course c such that NOT EXISTS a matching takes row for that student and c. If no such missing course exists, the student took every Biology course.",
+      "explanation": "The NOT EXISTS nesting converts 'for every course' into 'there is no required course that was not taken'.",
+      "misconception": "Checking that one course exists proves only an existential condition, not a universal one.",
+      "visualHook": "Search for a missing required course; the outer NOT EXISTS succeeds only when the search finds none.",
+      "sourceRefs": [
+        { "sourceId": "DSA5104/chapter3.pdf", "page": 73, "sourceType": "lecture", "role": "NOT EXISTS division pattern", "status": "current" },
+        { "sourceId": "DSA5104/chapter3.pdf", "page": 74, "sourceType": "lecture", "role": "correlated universal query", "status": "current" }
+      ]
+    },
+    {
+      "id": "dsa5104-synthetic-final-012",
+      "lessonId": "dsa5104-sql-cte",
+      "type": "short",
+      "difficulty": "medium",
+      "skill": "structure-cte",
+      "cognitiveLevel": "apply",
+      "estimatedSeconds": 90,
+      "timedSeconds": 90,
+      "topic": "common table expressions",
+      "commonTrap": "Treating a CTE as durable storage rather than a named subquery for one statement.",
+      "mistakeTags": ["cte", "query-composition", "scope"],
+      "prompt": "Why is a common table expression useful for a multi-step SQL query?",
+      "accepted": [
+        "names an intermediate result for the following statement",
+        "improves readability and composes subqueries",
+        "makes a multi-step query easier to reason about"
+      ],
+      "solution": "A WITH clause gives an intermediate query result a name that later parts of the same statement can reference. This makes multi-step logic readable and lets each stage be tested or reasoned about separately without creating a permanent table.",
+      "explanation": "A CTE is a statement-scoped composition mechanism, not automatically a materialized table.",
+      "misconception": "Naming a CTE does not imply that it persists after the statement finishes.",
+      "visualHook": "Render each WITH binding as a named node feeding the final SELECT.",
+      "sourceRefs": [
+        { "sourceId": "DSA5104/chapter3.pdf", "page": 79, "sourceType": "lecture", "role": "WITH clause", "status": "current" },
+        { "sourceId": "DSA5104/chapter3.pdf", "page": 80, "sourceType": "lecture", "role": "complex CTE query", "status": "current" }
+      ]
+    }
+  ]
+}

@@ -115,6 +115,22 @@ const MATH_SPANS = [
   /\\\((?:\\.|[^)])*?\\\)/g,
   /\\\[[\s\S]*?\\\]/g,
 ];
+const CODE_BLOCKS = /```[\s\S]*?```|`[^`\n]+`/g;
+
+function protectCode(value) {
+  const blocks = [];
+  const protectedValue = value.replace(CODE_BLOCKS, (match) => {
+    const key = `\u0002CODE${blocks.length}\u0002`;
+    blocks.push(match);
+    return key;
+  });
+  return {
+    value: protectedValue,
+    restore(text) {
+      return text.replace(/\u0002CODE(\d+)\u0002/g, (_, index) => blocks[Number(index)]);
+    },
+  };
+}
 
 function protectMath(value) {
   const spans = [];
@@ -216,7 +232,7 @@ function normalizeFormula(formula) {
 function isFormulaOnly(value) {
   const text = value.trim();
   if (!text || text.length > 500 || /[.!?]\s+[A-Z][a-z]/.test(text)) return false;
-  if (/\b(?:The|This|Compute|Take|Suppose|Examples|Use|When|Small|Large|Differentiate|Only|Both|For|From|An)\b/.test(text)) return false;
+  if (/\b(?:The|This|Compute|Take|Suppose|Examples|Use|When|Small|Large|Differentiate|Only|Both|For|From|An|Show|Define|Create|Display|Find|Write|Give|State|Explain|Consider|How|Why|Under|Does|Can|Should)\b/.test(text)) return false;
   return /(?:\\[A-Za-z]+|[A-Za-z]+[_^][A-Za-z0-9{]|\|\||\b[A-Za-z]\s*=)/.test(text);
 }
 
@@ -253,11 +269,13 @@ function hasMalformedDelimiters(value) {
 
 function normalizeText(value) {
   if (!value || typeof value !== 'string') return value;
-  if (hasMalformedDelimiters(value) || /\u0001FORMULA\d+\u0001/.test(value)) return value;
-  if (!/\$\$[\s\S]*\$\$|\$(?:\\.|[^$])*\$|\\\(|\\\[/.test(value) && isFormulaOnly(value)) {
-    return `$${normalizeFormula(value.trim())}$`;
+  const protectedCode = protectCode(value);
+  const codeSafeValue = protectedCode.value;
+  if (hasMalformedDelimiters(codeSafeValue) || /\u0001FORMULA\d+\u0001/.test(codeSafeValue)) return value;
+  if (!/\$\$[\s\S]*\$\$|\$(?:\\.|[^$])*\$|\\\(|\\\[/.test(codeSafeValue) && isFormulaOnly(codeSafeValue)) {
+    return protectedCode.restore(`$${normalizeFormula(codeSafeValue.trim())}$`);
   }
-  const protectedText = protectMath(value);
+  const protectedText = protectMath(codeSafeValue);
   let text = protectedText.value;
   const generated = [];
   const mark = (formula) => {
@@ -287,7 +305,7 @@ function normalizeText(value) {
   text = text.replace(tokenPattern, (match) => mark(wrapToken(match)));
 
   const restoredGenerated = text.replace(/\u0001FORMULA(\d+)\u0001/g, (_, index) => generated[Number(index)]);
-  return protectedText.restore(restoredGenerated);
+  return protectedCode.restore(protectedText.restore(restoredGenerated));
 }
 
 function normalizeDocument(value, key = '', skipped = false) {

@@ -1,0 +1,219 @@
+{
+  "id": "dsa5104-sql-ddl",
+  "courseId": "DSA5104",
+  "title": "Ch3.1 · DDL, integrity, and schema changes",
+  "moduleId": "dsa5104-sql",
+  "scope": "core",
+  "examEligible": true,
+  "contentStatus": "CURRENT LECTURE",
+  "week": 4,
+  "orderInWeek": 1,
+  "minutes": 35,
+  "summary": "Define relations and constraints, then distinguish schema changes from tuple mutations.",
+  "objectives": [
+    "Write CREATE TABLE definitions with keys and constraints",
+    "Distinguish DDL from DML",
+    "Predict the effect of DROP and ALTER"
+  ],
+  "sourceRefs": [
+    {
+      "sourceId": "DSA5104/chapter3.pdf",
+      "page": 7,
+      "sourceType": "lecture",
+      "role": "Ch3.1 · DDL, integrity, and schema changes",
+      "status": "current"
+    },
+    {
+      "sourceId": "DSA5104/chapter3.pdf",
+      "page": 11,
+      "sourceType": "lecture",
+      "role": "Ch3.1 · DDL, integrity, and schema changes",
+      "status": "current"
+    },
+    {
+      "sourceId": "DSA5104/chapter3.pdf",
+      "page": 14,
+      "sourceType": "lecture",
+      "role": "Ch3.1 · DDL, integrity, and schema changes",
+      "status": "current"
+    },
+    {
+      "sourceId": "DSA5104/chapter3.pdf",
+      "page": 17,
+      "sourceType": "lecture",
+      "role": "Ch3.1 · DDL, integrity, and schema changes",
+      "status": "current"
+    }
+  ],
+  "visualIds": [
+    "dsa5104-sql-flow"
+  ],
+  "sections": [
+    {
+      "title": "DDL, integrity, and schema changes",
+      "sourceType": "lecture",
+      "body": "DDL defines the relation schema and its integrity constraints. Before writing a statement, identify whether the operation changes the schema or only the current tuples.",
+      "sourceRefs": [
+        {
+          "sourceId": "DSA5104/chapter3.pdf",
+          "page": 7,
+          "sourceType": "lecture",
+          "role": "Ch3.1 · DDL, integrity, and schema changes",
+          "status": "current"
+        },
+        {
+          "sourceId": "DSA5104/chapter3.pdf",
+          "page": 11,
+          "sourceType": "lecture",
+          "role": "Ch3.1 · DDL, integrity, and schema changes",
+          "status": "current"
+        },
+        {
+          "sourceId": "DSA5104/chapter3.pdf",
+          "page": 14,
+          "sourceType": "lecture",
+          "role": "Ch3.1 · DDL, integrity, and schema changes",
+          "status": "current"
+        },
+        {
+          "sourceId": "DSA5104/chapter3.pdf",
+          "page": 17,
+          "sourceType": "lecture",
+          "role": "Ch3.1 · DDL, integrity, and schema changes",
+          "status": "current"
+        }
+      ],
+      "sourceLens": {
+        "status": "core DSA5104",
+        "whyExaminable": "This unit is split directly from the supplied Chapter 3 lecture deck so retrieval and mistake repair stay topic-sized.",
+        "lecture": [
+          {
+            "sourceId": "DSA5104/chapter3.pdf",
+            "page": 7,
+            "sourceType": "lecture",
+            "role": "Ch3.1 · DDL, integrity, and schema changes",
+            "status": "current"
+          },
+          {
+            "sourceId": "DSA5104/chapter3.pdf",
+            "page": 11,
+            "sourceType": "lecture",
+            "role": "Ch3.1 · DDL, integrity, and schema changes",
+            "status": "current"
+          },
+          {
+            "sourceId": "DSA5104/chapter3.pdf",
+            "page": 14,
+            "sourceType": "lecture",
+            "role": "Ch3.1 · DDL, integrity, and schema changes",
+            "status": "current"
+          },
+          {
+            "sourceId": "DSA5104/chapter3.pdf",
+            "page": 17,
+            "sourceType": "lecture",
+            "role": "Ch3.1 · DDL, integrity, and schema changes",
+            "status": "current"
+          }
+        ],
+        "officialExercise": [],
+        "textbook": [
+          {
+            "sourceId": "DSA5104/Database System Concepts, 7th edition",
+            "page": 1,
+            "sourceType": "textbook",
+            "role": "textbook depth pointer",
+            "status": "course-depth"
+          }
+        ],
+        "reference": []
+      }
+    }
+  ],
+  "examples": [
+    {
+      "title": "Create a table with a primary key and foreign key, then explain which constraint rejects an invalid reference.",
+      "sourceType": "lecture",
+      "steps": [
+        "DDL defines the relation schema and its integrity constraints. Before writing a statement, identify whether the operation changes the schema or only the current tuples.",
+        "State the output, input relations, predicate, and one edge case before checking the solution."
+      ],
+      "answer": "A strong answer names the semantic boundary and cites the source page or exercise file."
+    }
+  ],
+  "criticalQuestions": [
+    {
+      "prompt": "What is the decisive semantic boundary in Ch3.1 · DDL, integrity, and schema changes?",
+      "angle": "Name the operation, its input, its output, and the condition that would make the shortcut fail.",
+      "modelAnswer": "The answer should identify the operation's input/output boundary and one counterexample or edge case.",
+      "focus": "source and semantics"
+    },
+    {
+      "prompt": "Which tempting shortcut would produce a plausible but incorrect answer?",
+      "angle": "Separate what the source says from what a familiar SQL pattern seems to imply.",
+      "modelAnswer": "The shortcut is unsafe when it changes row scope, duplicate policy, NULL treatment, or constraint meaning.",
+      "focus": "common trap"
+    }
+  ],
+  "math": [
+    {
+      "name": "Schema contract",
+      "purpose": "Use it to separate a relation definition from its current tuples.",
+      "latex": "\\mathrm{schema}\\;\\xrightarrow{\\mathrm{DDL}}\\;\\mathrm{relations}",
+      "explanation": "DDL creates or changes the schema; DML queries or changes data.",
+      "symbols": [
+        {
+          "latex": "\\mathrm{DDL}",
+          "meaning": "the key object in this unit"
+        },
+        {
+          "latex": "schema definition",
+          "meaning": "the associated semantic role"
+        }
+      ],
+      "sourceType": "lecture",
+      "sourceRefs": [
+        {
+          "sourceId": "DSA5104/chapter3.pdf",
+          "page": 7,
+          "sourceType": "lecture",
+          "role": "Ch3.1 · DDL, integrity, and schema changes",
+          "status": "current"
+        }
+      ]
+    }
+  ],
+  "contrastDrills": [
+    {
+      "id": "dsa5104-contrast-ddl-dml",
+      "type": "contrast",
+      "kind": "concept-contrast",
+      "pair": "DDL vs DML",
+      "prompt": "Which statement changes the relation definition rather than only its current rows?",
+      "choices": [
+        "ALTER TABLE",
+        "INSERT",
+        "UPDATE",
+        "DELETE"
+      ],
+      "answer": 0,
+      "explanation": "DDL changes schema metadata; INSERT, UPDATE, and DELETE change the current relation instance.",
+      "estimatedSeconds": 45,
+      "difficulty": "easy",
+      "skill": "concept-contrast",
+      "cognitiveLevel": "distinguish",
+      "misconception": "A SQL statement can mutate data or the schema; these are different layers.",
+      "sourceRefs": [
+        {
+          "sourceId": "DSA5104/chapter3.pdf",
+          "page": 7,
+          "sourceType": "lecture",
+          "role": "DDL scope",
+          "status": "current"
+        }
+      ]
+    }
+  ],
+  "schemaVersion": "nus.lesson.v1",
+  "questionIds": []
+}

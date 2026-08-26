@@ -4,69 +4,6 @@
   "semester": "AY2026/27 · Semester 1",
   "color": "#4f9b84",
   "description": "Database models, relational design, SQL, semi-structured data, data integration, Spark SQL, and retrieval-oriented data systems.",
-  "sqlPractice": {
-    "schemaVersion": "nus.sql-practice.v1",
-    "engine": "SQLite/WASM",
-    "officialArtifacts": [
-      {
-        "id": "dsa5104-chapter3-mysql-code",
-        "title": "Chapter 3 MySQL code from the slides",
-        "sourceId": "DSA5104/chap3_mysql_code_in_slides.sql",
-        "sourceType": "exercise",
-        "status": "OFFICIAL EXERCISE",
-        "assetPath": "assets/nus/dsa5104/chap3_mysql_code_in_slides.sql",
-        "sourceRefs": [
-          { "sourceId": "DSA5104/chapter3.pdf", "page": 11, "sourceType": "lecture", "role": "Chapter 3 code context", "status": "current" },
-          { "sourceId": "DSA5104/chap3_mysql_code_in_slides.sql", "page": 1, "sourceType": "exercise", "role": "official code companion", "status": "current-context" }
-        ],
-        "notes": "This is MySQL code from the supplied Chapter 3 companion file. SQL Studio remains SQLite/WASM, so use this artifact for source-faithful MySQL syntax and comparison, not as an automatically executable SQLite script."
-      }
-    ],
-    "schema": [
-      { "name": "Department", "columns": ["id INTEGER PRIMARY KEY", "name TEXT NOT NULL"] },
-      { "name": "Student", "columns": ["id INTEGER PRIMARY KEY", "name TEXT NOT NULL", "department_id INTEGER", "FOREIGN KEY (department_id) REFERENCES Department(id)"] },
-      { "name": "Enrollment", "columns": ["student_id INTEGER", "course_code TEXT", "grade REAL", "PRIMARY KEY (student_id, course_code)"] }
-    ],
-    "seed": {
-      "Department": [[1, "Data Science"], [2, "Computer Science"], [3, "Statistics"]],
-      "Student": [[101, "An", 1], [102, "Binh", 1], [103, "Chi", 2], [104, "Duc", 3]],
-      "Enrollment": [[101, "DSA5104", 85], [102, "DSA5104", 78], [103, "DSA5104", 91], [101, "DSA5105", 88], [104, "DSA5105", 73]]
-    },
-    "exercises": [
-      {
-        "id": "sql-1",
-        "level": "Warm-up",
-        "prompt": "List every student name in alphabetical order.",
-        "starter": "SELECT name FROM Student ORDER BY name;",
-        "expected": ["An", "Binh", "Chi", "Duc"],
-        "explanation": "Select one column and make ordering explicit."
-      },
-      {
-        "id": "sql-2",
-        "level": "Join",
-        "prompt": "Return each student with the department name.",
-        "starter": "SELECT s.name, d.name AS department\nFROM Student s\nJOIN Department d ON d.id = s.department_id\nORDER BY s.id;",
-        "expected": ["An|Data Science", "Binh|Data Science", "Chi|Computer Science", "Duc|Statistics"],
-        "explanation": "The join uses Student.department_id to Department.id."
-      },
-      {
-        "id": "sql-3",
-        "level": "Aggregation",
-        "prompt": "Find departments with at least two students.",
-        "starter": "SELECT d.name, COUNT(*) AS n\nFROM Department d\nJOIN Student s ON s.department_id = d.id\nGROUP BY d.id, d.name\nHAVING COUNT(*) >= 2;",
-        "expected": ["Data Science|2"],
-        "explanation": "HAVING filters the aggregate result after GROUP BY."
-      },
-      {
-        "id": "sql-4",
-        "level": "ER practice",
-        "prompt": "Which key pair prevents duplicate enrollments for one student and course?",
-        "starter": "-- Write the constraint in words or SQL",
-        "expected": ["primary key (student_id, course_code)", "composite primary key", "student_id, course_code"],
-        "explanation": "The composite key identifies one enrollment per student-course pair."
-      }
-    ]
-  },
   "prerequisites": [
     "DSA5101"
   ],
@@ -89,10 +26,17 @@
     "DSA5104/chapter2.pdf",
     "DSA5104/chapter3.pdf",
     "DSA5104/chap3_mysql_code_in_slides.sql",
+    "DSA5104/University DB/DDL.sql",
+    "DSA5104/University DB/smallRelationsInsertFile.sql",
+    "DSA5104/University DB/largeRelationsInsertFile.sql",
     "DSA5104/chapter1_appendix_codex.pdf",
+    "DSA5104/Homework Solutions/Ch01_Introduction",
     "DSA5104/Homework Solutions/Ch02_Introduction_to_the_Relational_Model",
     "DSA5104/Homework Solutions/Ch03_Introduction_to_SQL",
+    "DSA5104/Homework Solutions/Ch04_Intermediate_SQL",
+    "DSA5104/Homework Solutions/Ch05_Advanced_SQL",
     "DSA5104/Homework Solutions/Ch06_Database_Design_Using_the_ER_Model",
+    "DSA5104/Homework Solutions/Ch07_Relational_Database_Design",
     "DSA5104/chapter1_appendix_codex_data_analytics/reports/codex_data_analysis.pptx"
   ],
   "lectureSources": [
@@ -106,13 +50,15 @@
       "sourceId": "DSA5104/chapter2.pdf",
       "sourceType": "lecture",
       "role": "Introduction to the Relational Model lecture deck",
-      "status": "current"
+      "status": "current",
+      "slideSetId": "dsa5104-chapter2"
     },
     {
       "sourceId": "DSA5104/chapter3.pdf",
       "sourceType": "lecture",
       "role": "Introduction to SQL lecture deck",
-      "status": "current"
+      "status": "current",
+      "slideSetId": "dsa5104-chapter3"
     },
     {
       "sourceId": "DSA5104/chapter1_appendix_codex.pdf",
@@ -123,9 +69,15 @@
   ],
   "exerciseSources": [
     {
+      "sourceId": "DSA5104/Homework Solutions/Ch01_Introduction",
+      "sourceType": "exercise",
+      "role": "Introduction homework solutions",
+      "status": "current-context"
+    },
+    {
       "sourceId": "DSA5104/Homework Solutions/Ch02_Introduction_to_the_Relational_Model",
       "sourceType": "exercise",
-      "role": "relational-model homework solutions",
+      "role": "Relational model homework solutions",
       "status": "current-context"
     },
     {
@@ -135,15 +87,34 @@
       "status": "current-context"
     },
     {
+      "sourceId": "DSA5104/Homework Solutions/Ch04_Intermediate_SQL",
+      "sourceType": "exercise",
+      "role": "Intermediate SQL homework solutions",
+      "status": "current-context"
+    },
+    {
+      "sourceId": "DSA5104/Homework Solutions/Ch05_Advanced_SQL",
+      "sourceType": "exercise",
+      "role": "Advanced SQL homework solutions",
+      "status": "current-context"
+    },
+    {
       "sourceId": "DSA5104/chap3_mysql_code_in_slides.sql",
       "sourceType": "exercise",
-      "role": "official Chapter 3 MySQL code companion",
-      "status": "current-context"
+      "role": "official MySQL code companion for Chapter 3 slides",
+      "status": "current-context",
+      "assetPath": "assets/nus/dsa5104/chap3_mysql_code_in_slides.sql"
     },
     {
       "sourceId": "DSA5104/Homework Solutions/Ch06_Database_Design_Using_the_ER_Model",
       "sourceType": "exercise",
       "role": "ER design homework solutions",
+      "status": "current-context"
+    },
+    {
+      "sourceId": "DSA5104/Homework Solutions/Ch07_Relational_Database_Design",
+      "sourceType": "exercise",
+      "role": "Relational database design homework solutions",
       "status": "current-context"
     }
   ],
@@ -151,17 +122,66 @@
     {
       "sourceId": "DSA5104/Database System Concepts, 7th edition",
       "sourceType": "textbook",
-      "role": "course textbook for Chapters 1–5, 7–8",
+      "role": "course textbook pointer",
       "status": "course-depth"
+    },
+    {
+      "sourceId": "DSA5104/University DB/DDL.sql",
+      "sourceType": "textbook",
+      "role": "official University database DDL used by the course textbook",
+      "status": "course-depth",
+      "assetPath": "assets/nus/dsa5104/university/DDL.sql",
+      "externalUrl": "https://www.db-book.com/university-lab-dir/sample_tables-dir/DDL.sql",
+      "sha256": "1a2bd7f2668c3a69cbef47098b66d3ebe486ef48f1ebe48d7b14d08349f0e1dd"
+    },
+    {
+      "sourceId": "DSA5104/University DB/smallRelationsInsertFile.sql",
+      "sourceType": "textbook",
+      "role": "official small University relations data",
+      "status": "course-depth",
+      "assetPath": "assets/nus/dsa5104/university/smallRelationsInsertFile.sql",
+      "externalUrl": "https://www.db-book.com/university-lab-dir/sample_tables-dir/smallRelations/smallRelationsInsertFile.sql",
+      "sha256": "e70e3b622dac6c1ee32e31d6c2e0c6b7781653b9c86f1d1d7f36b4bedc70a13a"
+    },
+    {
+      "sourceId": "DSA5104/University DB/largeRelationsInsertFile.sql",
+      "sourceType": "textbook",
+      "role": "official large University relations data",
+      "status": "course-depth",
+      "assetPath": "assets/nus/dsa5104/university/largeRelationsInsertFile.sql",
+      "externalUrl": "https://www.db-book.com/university-lab-dir/sample_tables-dir/largeRelations/largeRelationsInsertFile.sql",
+      "sha256": "7ffd15e8e6ce7647b5e5f8c31de0b7946a05e88104839846f95e2c297cc133c0"
     }
   ],
-  "sourceNote": "The chapter1–chapter3 lecture decks define the current DSA5104 scope. Homework solutions provide exercise depth, while the Database System Concepts pointer index is labeled textbook depth and never presented as lecture authority.",
+  "sourceNote": "The chapter1–chapter3 lecture decks define the currently supplied DSA5104 lecture scope. Homework solutions and the University DB files provide exercise depth; future chapters and second-half topics remain unverified until their official lecture sources are supplied.",
+  "coverage": {
+    "status": "partial-current-scope",
+    "verifiedLecture": ["Ch1", "Ch2", "Ch3"],
+    "exerciseOnly": ["Ch4", "Ch5", "Ch6", "Ch7"],
+    "plannedOrUnverified": ["Ch9", "XML", "MongoDB", "MapReduce", "Spark SQL", "VectorDB"],
+    "targets": [
+      { "id": "Ch4", "status": "exercise-only", "lectureSourceStatus": "pending" },
+      { "id": "Ch5", "status": "exercise-only", "lectureSourceStatus": "pending" },
+      { "id": "Ch6", "status": "supplementary-only", "lectureSourceStatus": "not-in-current-syllabus" },
+      { "id": "Ch7", "status": "exercise-only", "lectureSourceStatus": "pending" },
+      { "id": "Ch9", "status": "source-pending", "lectureSourceStatus": "not-supplied" },
+      { "id": "XML", "status": "source-pending", "lectureSourceStatus": "not-supplied" },
+      { "id": "MongoDB", "status": "source-pending", "lectureSourceStatus": "not-supplied" },
+      { "id": "MapReduce", "status": "source-pending", "lectureSourceStatus": "not-supplied" },
+      { "id": "Spark SQL", "status": "source-pending", "lectureSourceStatus": "not-supplied" },
+      { "id": "VectorDB", "status": "source-pending", "lectureSourceStatus": "not-supplied" }
+    ],
+    "finalReadiness": "NOT READY FOR THE FULL FINAL: only Ch1–Ch3 lecture sources are currently verified.",
+    "policy": "Forecasts and textbook pointers are study planning signals, not current DSA5104 lecture authority."
+  },
   "schemaVersion": "nus.course.v1",
   "moduleIds": [
     "dsa5104-foundations",
     "dsa5104-models",
     "dsa5104-sql",
-    "dsa5104-modern"
+    "dsa5104-modern",
+    "dsa5104-supplementary",
+    "dsa5104-planned"
   ],
   "assessmentIds": [
     "dsa5104-project-1",
@@ -187,18 +207,26 @@
       "sourceId": "DSA5104/chapter2.pdf",
       "sourceType": "lecture",
       "role": "Introduction to the Relational Model lecture deck",
-      "status": "current"
+      "status": "current",
+      "slideSetId": "dsa5104-chapter2"
     },
     {
       "sourceId": "DSA5104/chapter3.pdf",
       "sourceType": "lecture",
       "role": "Introduction to SQL lecture deck",
-      "status": "current"
+      "status": "current",
+      "slideSetId": "dsa5104-chapter3"
+    },
+    {
+      "sourceId": "DSA5104/Homework Solutions/Ch01_Introduction",
+      "sourceType": "exercise",
+      "role": "Introduction homework solutions",
+      "status": "current-context"
     },
     {
       "sourceId": "DSA5104/Homework Solutions/Ch02_Introduction_to_the_Relational_Model",
       "sourceType": "exercise",
-      "role": "relational-model homework solutions",
+      "role": "Relational model homework solutions",
       "status": "current-context"
     },
     {
@@ -208,15 +236,67 @@
       "status": "current-context"
     },
     {
+      "sourceId": "DSA5104/Homework Solutions/Ch04_Intermediate_SQL",
+      "sourceType": "exercise",
+      "role": "Intermediate SQL homework solutions",
+      "status": "current-context"
+    },
+    {
+      "sourceId": "DSA5104/Homework Solutions/Ch05_Advanced_SQL",
+      "sourceType": "exercise",
+      "role": "Advanced SQL homework solutions",
+      "status": "current-context"
+    },
+    {
+      "sourceId": "DSA5104/chap3_mysql_code_in_slides.sql",
+      "sourceType": "exercise",
+      "role": "official MySQL code companion for Chapter 3 slides",
+      "status": "current-context",
+      "assetPath": "assets/nus/dsa5104/chap3_mysql_code_in_slides.sql"
+    },
+    {
       "sourceId": "DSA5104/Homework Solutions/Ch06_Database_Design_Using_the_ER_Model",
       "sourceType": "exercise",
       "role": "ER design homework solutions",
       "status": "current-context"
     },
     {
+      "sourceId": "DSA5104/Homework Solutions/Ch07_Relational_Database_Design",
+      "sourceType": "exercise",
+      "role": "Relational database design homework solutions",
+      "status": "current-context"
+    },
+    {
+      "sourceId": "DSA5104/University DB/DDL.sql",
+      "sourceType": "textbook",
+      "role": "official University database DDL used by the course textbook",
+      "status": "course-depth",
+      "assetPath": "assets/nus/dsa5104/university/DDL.sql",
+      "externalUrl": "https://www.db-book.com/university-lab-dir/sample_tables-dir/DDL.sql",
+      "sha256": "1a2bd7f2668c3a69cbef47098b66d3ebe486ef48f1ebe48d7b14d08349f0e1dd"
+    },
+    {
+      "sourceId": "DSA5104/University DB/smallRelationsInsertFile.sql",
+      "sourceType": "textbook",
+      "role": "official small University relations data",
+      "status": "course-depth",
+      "assetPath": "assets/nus/dsa5104/university/smallRelationsInsertFile.sql",
+      "externalUrl": "https://www.db-book.com/university-lab-dir/sample_tables-dir/smallRelations/smallRelationsInsertFile.sql",
+      "sha256": "e70e3b622dac6c1ee32e31d6c2e0c6b7781653b9c86f1d1d7f36b4bedc70a13a"
+    },
+    {
+      "sourceId": "DSA5104/University DB/largeRelationsInsertFile.sql",
+      "sourceType": "textbook",
+      "role": "official large University relations data",
+      "status": "course-depth",
+      "assetPath": "assets/nus/dsa5104/university/largeRelationsInsertFile.sql",
+      "externalUrl": "https://www.db-book.com/university-lab-dir/sample_tables-dir/largeRelations/largeRelationsInsertFile.sql",
+      "sha256": "7ffd15e8e6ce7647b5e5f8c31de0b7946a05e88104839846f95e2c297cc133c0"
+    },
+    {
       "sourceId": "DSA5104/Database System Concepts, 7th edition",
       "sourceType": "textbook",
-      "role": "course textbook for Chapters 1–5, 7–8",
+      "role": "course textbook pointer",
       "status": "course-depth"
     },
     {
@@ -522,7 +602,7 @@
     "dsa5104-orientation",
     "dsa5104-relational-model",
     "dsa5104-database-design",
-    "dsa5104-sql-foundations",
+    "dsa5104-sql-ddl",
     "dsa5104-query-processing",
     "dsa5104-transactions-architecture",
     "dsa5104-semi-structured"

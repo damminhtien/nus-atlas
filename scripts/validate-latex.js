@@ -21,6 +21,7 @@ const MATH_DELIMITERS = [
   /\\\((?:\\.|[^)])*?\\\)/g,
   /\\\[[\s\S]*?\\\]/g,
 ];
+const CODE_BLOCKS = /```[\s\S]*?```|`[^`\n]+`/g;
 const UNICODE_MATH = /[≈≤≥∑∫∂∇±×÷∞→←∈≠]/g;
 const CONTROL_CHARS = /[\u0000-\u0008\u000B\u000C\u000E-\u001F\u007F]/g;
 const MALFORMED_MATH_PATTERNS = [
@@ -61,7 +62,11 @@ function walkFiles(directory) {
 }
 
 function stripDelimitedMath(value) {
-  return MATH_DELIMITERS.reduce((result, delimiter) => result.replace(delimiter, ' '), value);
+  return MATH_DELIMITERS.reduce((result, delimiter) => result.replace(delimiter, ' '), stripCodeBlocks(value));
+}
+
+function stripCodeBlocks(value) {
+  return value.replace(CODE_BLOCKS, ' ');
 }
 
 function findRawMath(value) {
@@ -77,8 +82,9 @@ function findRawMath(value) {
 
 function findUnicodeMath(value) {
   const matches = [];
+  const content = stripCodeBlocks(value);
   for (const delimiter of MATH_DELIMITERS) {
-    for (const span of value.matchAll(delimiter)) {
+    for (const span of content.matchAll(delimiter)) {
       for (const symbol of span[0].matchAll(UNICODE_MATH)) {
         matches.push({ label: 'Unicode math symbol', token: symbol[0], index: span.index + symbol.index });
       }
@@ -89,6 +95,7 @@ function findUnicodeMath(value) {
 
 function findDelimiterIssues(value) {
   const issues = [];
+  value = stripCodeBlocks(value);
   let mode = null;
   for (let index = 0; index < value.length; index += 1) {
     if (value[index] === '\\' && value[index + 1] === '$') {
@@ -126,6 +133,7 @@ function findDelimiterIssues(value) {
 
 function findMalformedMath(value) {
   const issues = [];
+  value = stripCodeBlocks(value);
   for (const match of value.matchAll(CONTROL_CHARS)) {
     issues.push({ label: 'control character in authored math', token: 'U+' + match[0].charCodeAt(0).toString(16).padStart(4, '0'), index: match.index });
   }

@@ -1,0 +1,39 @@
+[
+  {
+    "id": "dsa5104-sql-q2",
+    "type": "short",
+    "prompt": "Why should a join use keys rather than row position?",
+    "accepted": [
+      "row order is not identity",
+      "keys preserve identity under reorder",
+      "join on primary and foreign keys"
+    ],
+    "solution": "Keys express identity and relationships; row order can change under filtering, sorting, partitioning, or storage changes.",
+    "explanation": "A key-based join preserves meaning across execution plans and data rearrangements.",
+    "sourceRefs": [
+      {
+        "sourceId": "DSA5104/chapter1.pdf",
+        "page": 25,
+        "sourceType": "lecture",
+        "role": "integrity constraints",
+        "status": "current"
+      },
+      {
+        "sourceId": "DSA5104/Homework Solutions/Ch03_Introduction_to_SQL/3.2.md",
+        "page": 1,
+        "sourceType": "exercise",
+        "role": "join practice",
+        "status": "current-context"
+      }
+    ],
+    "difficulty": "medium",
+    "skill": "explain",
+    "cognitiveLevel": "understand",
+    "estimatedSeconds": 90,
+    "misconception": "Check the assumption behind your answer.",
+    "visualHook": "Explain the idea with a small diagram or example.",
+    "courseId": "DSA5104",
+    "lessonId": "dsa5104-sql-joins",
+    "schemaVersion": "nus.question.v1"
+  }
+]

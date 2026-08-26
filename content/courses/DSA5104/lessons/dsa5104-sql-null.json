@@ -1,0 +1,262 @@
+{
+  "id": "dsa5104-sql-null",
+  "courseId": "DSA5104",
+  "title": "Ch3.4 · NULL and three-valued logic",
+  "moduleId": "dsa5104-sql",
+  "scope": "core",
+  "examEligible": true,
+  "contentStatus": "CURRENT LECTURE",
+  "week": 4,
+  "orderInWeek": 4,
+  "minutes": 30,
+  "summary": "Reason about UNKNOWN, NULL predicates, and aggregate behavior before evaluating a query.",
+  "objectives": [
+    "Explain why NULL is not an ordinary value",
+    "Use IS NULL instead of equality with NULL",
+    "Distinguish COUNT(*) from COUNT(column)"
+  ],
+  "sourceRefs": [
+    {
+      "sourceId": "DSA5104/chapter3.pdf",
+      "page": 45,
+      "sourceType": "lecture",
+      "role": "Ch3.4 · NULL and three-valued logic",
+      "status": "current"
+    },
+    {
+      "sourceId": "DSA5104/chapter3.pdf",
+      "page": 46,
+      "sourceType": "lecture",
+      "role": "Ch3.4 · NULL and three-valued logic",
+      "status": "current"
+    },
+    {
+      "sourceId": "DSA5104/chapter3.pdf",
+      "page": 48,
+      "sourceType": "lecture",
+      "role": "Ch3.4 · NULL and three-valued logic",
+      "status": "current"
+    },
+    {
+      "sourceId": "DSA5104/chapter3.pdf",
+      "page": 49,
+      "sourceType": "lecture",
+      "role": "Ch3.4 · NULL and three-valued logic",
+      "status": "current"
+    }
+  ],
+  "visualIds": [],
+  "sections": [
+    {
+      "title": "NULL and three-valued logic",
+      "sourceType": "lecture",
+      "body": "A comparison involving NULL normally yields UNKNOWN. WHERE keeps only TRUE, so an UNKNOWN row disappears even though UNKNOWN is not the same truth value as FALSE.",
+      "sourceRefs": [
+        {
+          "sourceId": "DSA5104/chapter3.pdf",
+          "page": 45,
+          "sourceType": "lecture",
+          "role": "Ch3.4 · NULL and three-valued logic",
+          "status": "current"
+        },
+        {
+          "sourceId": "DSA5104/chapter3.pdf",
+          "page": 46,
+          "sourceType": "lecture",
+          "role": "Ch3.4 · NULL and three-valued logic",
+          "status": "current"
+        },
+        {
+          "sourceId": "DSA5104/chapter3.pdf",
+          "page": 48,
+          "sourceType": "lecture",
+          "role": "Ch3.4 · NULL and three-valued logic",
+          "status": "current"
+        },
+        {
+          "sourceId": "DSA5104/chapter3.pdf",
+          "page": 49,
+          "sourceType": "lecture",
+          "role": "Ch3.4 · NULL and three-valued logic",
+          "status": "current"
+        }
+      ],
+      "sourceLens": {
+        "status": "core DSA5104",
+        "whyExaminable": "This unit is split directly from the supplied Chapter 3 lecture deck so retrieval and mistake repair stay topic-sized.",
+        "lecture": [
+          {
+            "sourceId": "DSA5104/chapter3.pdf",
+            "page": 45,
+            "sourceType": "lecture",
+            "role": "Ch3.4 · NULL and three-valued logic",
+            "status": "current"
+          },
+          {
+            "sourceId": "DSA5104/chapter3.pdf",
+            "page": 46,
+            "sourceType": "lecture",
+            "role": "Ch3.4 · NULL and three-valued logic",
+            "status": "current"
+          },
+          {
+            "sourceId": "DSA5104/chapter3.pdf",
+            "page": 48,
+            "sourceType": "lecture",
+            "role": "Ch3.4 · NULL and three-valued logic",
+            "status": "current"
+          },
+          {
+            "sourceId": "DSA5104/chapter3.pdf",
+            "page": 49,
+            "sourceType": "lecture",
+            "role": "Ch3.4 · NULL and three-valued logic",
+            "status": "current"
+          }
+        ],
+        "officialExercise": [],
+        "textbook": [
+          {
+            "sourceId": "DSA5104/Database System Concepts, 7th edition",
+            "page": 1,
+            "sourceType": "textbook",
+            "role": "textbook depth pointer",
+            "status": "course-depth"
+          }
+        ],
+        "reference": []
+      }
+    }
+  ],
+  "examples": [
+    {
+      "title": "Trace a LEFT JOIN row with a missing instructor and explain why `= NULL` fails while `IS NULL` succeeds.",
+      "sourceType": "lecture",
+      "steps": [
+        "A comparison involving NULL normally yields UNKNOWN. WHERE keeps only TRUE, so an UNKNOWN row disappears even though UNKNOWN is not the same truth value as FALSE.",
+        "State the output, input relations, predicate, and one edge case before checking the solution."
+      ],
+      "answer": "A strong answer names the semantic boundary and cites the source page or exercise file."
+    }
+  ],
+  "criticalQuestions": [
+    {
+      "prompt": "What is the decisive semantic boundary in Ch3.4 · NULL and three-valued logic?",
+      "angle": "Name the operation, its input, its output, and the condition that would make the shortcut fail.",
+      "modelAnswer": "The answer should identify the operation's input/output boundary and one counterexample or edge case.",
+      "focus": "source and semantics"
+    },
+    {
+      "prompt": "Which tempting shortcut would produce a plausible but incorrect answer?",
+      "angle": "Separate what the source says from what a familiar SQL pattern seems to imply.",
+      "modelAnswer": "The shortcut is unsafe when it changes row scope, duplicate policy, NULL treatment, or constraint meaning.",
+      "focus": "common trap"
+    }
+  ],
+  "math": [
+    {
+      "name": "Three-valued logic",
+      "purpose": "Use it to predict whether a NULL comparison survives WHERE.",
+      "latex": "\\{\\mathrm{TRUE},\\mathrm{FALSE},\\mathrm{UNKNOWN}\\}",
+      "explanation": "SQL predicates operate with three truth values; a WHERE filter retains only TRUE.",
+      "symbols": [
+        {
+          "latex": "\\mathrm{UNKNOWN}",
+          "meaning": "the key object in this unit"
+        },
+        {
+          "latex": "result of an indeterminate comparison",
+          "meaning": "the associated semantic role"
+        }
+      ],
+      "sourceType": "lecture",
+      "sourceRefs": [
+        {
+          "sourceId": "DSA5104/chapter3.pdf",
+          "page": 45,
+          "sourceType": "lecture",
+          "role": "Ch3.4 · NULL and three-valued logic",
+          "status": "current"
+        }
+      ]
+    }
+  ],
+  "contrastDrills": [
+    {
+      "id": "dsa5104-contrast-equals-null-vs-is-null",
+      "type": "contrast",
+      "kind": "concept-contrast",
+      "pair": "= NULL vs IS NULL",
+      "prompt": "Which predicate finds instructors whose salary is unknown?",
+      "choices": [
+        "`salary = NULL`",
+        "`salary IS NULL`",
+        "`salary == NULL`",
+        "`salary <> NULL`"
+      ],
+      "answer": 1,
+      "explanation": "NULL is not an ordinary value. A comparison such as `salary = NULL` evaluates to UNKNOWN, while `IS NULL` is the predicate that tests for a NULL value.",
+      "estimatedSeconds": 45,
+      "difficulty": "easy",
+      "skill": "three-valued-logic",
+      "cognitiveLevel": "distinguish",
+      "misconception": "Treating NULL as a value that can be matched with =.",
+      "repair": "Use IS NULL to test for missing or unknown values.",
+      "sourceRefs": [
+        {
+          "sourceId": "DSA5104/chapter3.pdf",
+          "page": 46,
+          "sourceType": "lecture",
+          "role": "NULL comparison",
+          "status": "current"
+        },
+        {
+          "sourceId": "DSA5104/chapter3.pdf",
+          "page": 48,
+          "sourceType": "lecture",
+          "role": "UNKNOWN in WHERE",
+          "status": "current"
+        }
+      ]
+    },
+    {
+      "id": "dsa5104-contrast-not-equals-null-vs-is-not-null",
+      "type": "contrast",
+      "kind": "concept-contrast",
+      "pair": "!= NULL vs IS NOT NULL",
+      "prompt": "Which predicate finds instructors whose salary is present?",
+      "choices": [
+        "`salary != NULL`",
+        "`salary IS NOT NULL`",
+        "`NOT salary = NULL`",
+        "`salary <> NULL`"
+      ],
+      "answer": 1,
+      "explanation": "salary != NULL and salary <> NULL compare with NULL and therefore evaluate to UNKNOWN, not TRUE. IS NOT NULL explicitly tests that a value is present.",
+      "estimatedSeconds": 45,
+      "difficulty": "easy",
+      "skill": "three-valued-logic",
+      "cognitiveLevel": "distinguish",
+      "misconception": "Assuming != NULL is the logical negation of IS NULL.",
+      "repair": "Use IS NOT NULL for presence; do not use != or <> to compare with NULL.",
+      "sourceRefs": [
+        {
+          "sourceId": "DSA5104/chapter3.pdf",
+          "page": 46,
+          "sourceType": "lecture",
+          "role": "NULL comparison",
+          "status": "current"
+        },
+        {
+          "sourceId": "DSA5104/chapter3.pdf",
+          "page": 48,
+          "sourceType": "lecture",
+          "role": "UNKNOWN in WHERE",
+          "status": "current"
+        }
+      ]
+    }
+  ],
+  "schemaVersion": "nus.lesson.v1",
+  "questionIds": []
+}

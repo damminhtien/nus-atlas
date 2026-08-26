@@ -1,0 +1,166 @@
+{
+  "id": "dsa5104-sql-cte",
+  "courseId": "DSA5104",
+  "title": "Ch3.7 · Common table expressions",
+  "moduleId": "dsa5104-sql",
+  "scope": "core",
+  "examEligible": true,
+  "contentStatus": "CURRENT LECTURE",
+  "week": 4,
+  "orderInWeek": 7,
+  "minutes": 30,
+  "summary": "Name a statement-scoped intermediate result and compose readable multi-step queries.",
+  "objectives": [
+    "Explain the scope of a CTE",
+    "Separate an intermediate relation from a stored view",
+    "Use a CTE to make a multi-stage query auditable"
+  ],
+  "sourceRefs": [
+    {
+      "sourceId": "DSA5104/chapter3.pdf",
+      "page": 79,
+      "sourceType": "lecture",
+      "role": "Ch3.7 · Common table expressions",
+      "status": "current"
+    },
+    {
+      "sourceId": "DSA5104/chapter3.pdf",
+      "page": 80,
+      "sourceType": "lecture",
+      "role": "Ch3.7 · Common table expressions",
+      "status": "current"
+    },
+    {
+      "sourceId": "DSA5104/chapter3.pdf",
+      "page": 82,
+      "sourceType": "lecture",
+      "role": "Ch3.7 · Common table expressions",
+      "status": "current"
+    }
+  ],
+  "visualIds": [],
+  "sections": [
+    {
+      "title": "Common table expressions",
+      "sourceType": "lecture",
+      "body": "A CTE names a temporary relation for one statement. It improves the reasoning surface of a query without changing the stored schema or creating persistent data.",
+      "sourceRefs": [
+        {
+          "sourceId": "DSA5104/chapter3.pdf",
+          "page": 79,
+          "sourceType": "lecture",
+          "role": "Ch3.7 · Common table expressions",
+          "status": "current"
+        },
+        {
+          "sourceId": "DSA5104/chapter3.pdf",
+          "page": 80,
+          "sourceType": "lecture",
+          "role": "Ch3.7 · Common table expressions",
+          "status": "current"
+        },
+        {
+          "sourceId": "DSA5104/chapter3.pdf",
+          "page": 82,
+          "sourceType": "lecture",
+          "role": "Ch3.7 · Common table expressions",
+          "status": "current"
+        }
+      ],
+      "sourceLens": {
+        "status": "core DSA5104",
+        "whyExaminable": "This unit is split directly from the supplied Chapter 3 lecture deck so retrieval and mistake repair stay topic-sized.",
+        "lecture": [
+          {
+            "sourceId": "DSA5104/chapter3.pdf",
+            "page": 79,
+            "sourceType": "lecture",
+            "role": "Ch3.7 · Common table expressions",
+            "status": "current"
+          },
+          {
+            "sourceId": "DSA5104/chapter3.pdf",
+            "page": 80,
+            "sourceType": "lecture",
+            "role": "Ch3.7 · Common table expressions",
+            "status": "current"
+          },
+          {
+            "sourceId": "DSA5104/chapter3.pdf",
+            "page": 82,
+            "sourceType": "lecture",
+            "role": "Ch3.7 · Common table expressions",
+            "status": "current"
+          }
+        ],
+        "officialExercise": [],
+        "textbook": [
+          {
+            "sourceId": "DSA5104/Database System Concepts, 7th edition",
+            "page": 1,
+            "sourceType": "textbook",
+            "role": "textbook depth pointer",
+            "status": "course-depth"
+          }
+        ],
+        "reference": []
+      }
+    }
+  ],
+  "examples": [
+    {
+      "title": "Compute department totals in one CTE, then compare each total with the average of those totals in a second query step.",
+      "sourceType": "lecture",
+      "steps": [
+        "A CTE names a temporary relation for one statement. It improves the reasoning surface of a query without changing the stored schema or creating persistent data.",
+        "State the output, input relations, predicate, and one edge case before checking the solution."
+      ],
+      "answer": "A strong answer names the semantic boundary and cites the source page or exercise file."
+    }
+  ],
+  "criticalQuestions": [
+    {
+      "prompt": "What is the decisive semantic boundary in Ch3.7 · Common table expressions?",
+      "angle": "Name the operation, its input, its output, and the condition that would make the shortcut fail.",
+      "modelAnswer": "The answer should identify the operation's input/output boundary and one counterexample or edge case.",
+      "focus": "source and semantics"
+    },
+    {
+      "prompt": "Which tempting shortcut would produce a plausible but incorrect answer?",
+      "angle": "Separate what the source says from what a familiar SQL pattern seems to imply.",
+      "modelAnswer": "The shortcut is unsafe when it changes row scope, duplicate policy, NULL treatment, or constraint meaning.",
+      "focus": "common trap"
+    }
+  ],
+  "math": [
+    {
+      "name": "CTE scope",
+      "purpose": "Use it to mark an intermediate relation that exists only for one statement.",
+      "latex": "\\mathrm{WITH}\\;T\\;\\mathrm{AS}\\;(Q)\\;\\mathrm{SELECT}\\;...",
+      "explanation": "The name T is available to the statement that follows WITH and is not a permanent relation.",
+      "symbols": [
+        {
+          "latex": "T",
+          "meaning": "the key object in this unit"
+        },
+        {
+          "latex": "statement-scoped relation",
+          "meaning": "the associated semantic role"
+        }
+      ],
+      "sourceType": "lecture",
+      "sourceRefs": [
+        {
+          "sourceId": "DSA5104/chapter3.pdf",
+          "page": 79,
+          "sourceType": "lecture",
+          "role": "Ch3.7 · Common table expressions",
+          "status": "current"
+        }
+      ]
+    }
+  ],
+  "contrastDrills": [],
+  "schemaVersion": "nus.lesson.v1",
+  "questionIds": []
+}

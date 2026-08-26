@@ -113,8 +113,17 @@
   }
   function lessonRow(code, lesson, metaLabel) {
     const done = window.ATLAS_STUDY_STORE.lessonDone(lesson.id);
-    const meta = metaLabel || `Week ${lesson.week} · ${lesson.minutes} min · ${(lesson.questionIds || []).length} practice prompts${lesson.hasVisualLab ? " · visual lab" : ""}`;
+    const scope = lesson.scope === "supplementary" ? " · supplementary · excluded from default Exam Mode" : lesson.scope === "planned" ? " · planned, source pending" : "";
+    const meta = (metaLabel || `Week ${lesson.week} · ${lesson.minutes} min · ${(lesson.questionIds || []).length} practice prompts${lesson.hasVisualLab ? " · visual lab" : ""}`) + scope;
     return `<a class="nus-lesson-row" href="#/nus/lesson/${esc(code)}/${esc(lesson.id)}" data-route><span class="nus-lesson-dot ${done ? "done" : ""}">${done ? "✓" : ""}</span><div><b>${esc(lesson.title)}</b><span>${esc(meta)}</span></div><span>→</span></a>`;
+  }
+  function coverageSurface(courseRecord) {
+    const coverage = courseRecord && courseRecord.coverage;
+    if (!coverage) return "";
+    const verified = (coverage.verifiedLecture || []).join(", ");
+    const pending = (coverage.plannedOrUnverified || []).join(", ");
+    const targetLedger = (coverage.targets || []).map(target => `${target.id}: ${target.status}`).join(" · ");
+    return `<section class="nus-callout nus-coverage-surface reveal"><div><span class="eyebrow">Source-controlled readiness</span><b>${esc(coverage.status || "scope status")}</b></div><p><strong>Verified lecture:</strong> ${esc(verified || "None")}. <strong>Planned or unverified:</strong> ${esc(pending || "None")}.</p>${targetLedger ? `<p><strong>Coverage ledger:</strong> ${esc(targetLedger)}</p>` : ""}<p>${esc(coverage.finalReadiness || coverage.policy || "Use only source-backed material for exam claims.")}</p></section>`;
   }
   function timelineSections(code) {
     const groups = [];
@@ -135,7 +144,7 @@
   }
   function topicSections(code) {
     const catalog = content(code);
-    return (catalog.modules || []).map(module => `<section class="nus-module nus-topic-section reveal"><div class="eyebrow">Topic</div><h3>${esc(module.title)}</h3>${module.description ? `<p class="nus-muted">${text(module.description)}</p>` : ""}${(module.lessons || []).map(item => lessonRow(code, item, `Week ${item.week} · ${item.minutes} min`)).join("")}</section>`).join("");
+    return (catalog.modules || []).map(module => `<section class="nus-module nus-topic-section reveal"><div class="eyebrow">${esc(module.scope === "supplementary" ? "Supplementary" : "Topic")}</div><h3>${esc(module.title)}</h3>${module.description ? `<p class="nus-muted">${text(module.description)}</p>` : ""}${(module.lessons || []).map(item => lessonRow(code, item, `Week ${item.week} · ${item.minutes} min`)).join("")}</section>`).join("");
   }
   async function renderCollection(code, collectionId, context) {
     const loading = ensureCourseLoaded(code, context);
@@ -468,7 +477,7 @@
     let body = pageHead(c.code, c.title, c.description);
     const catalog = content(c.code), collections = catalog.collections || [], next = firstOpenLessonInCourse(c.code);
     const assessmentMap = repository() && repository().getAssessmentMap ? repository().getAssessmentMap(c.code) : null;
-    body += `<div class="nus-course-meta"><span>${esc(c.department)} · ${esc(c.faculty)}</span><span>Workload ${esc(c.workload.join(" / "))}</span></div>`;
+    body += `<div class="nus-course-meta"><span>${esc(c.department)} · ${esc(c.faculty)}</span><span>Workload ${esc(c.workload.join(" / "))}</span></div>${coverageSurface(c)}`;
     body += `<nav class="nus-course-tabs" aria-label="${esc(c.code)} views"><a class="${selectedView === "timeline" ? "is-active" : ""}" href="#/nus/course/${esc(c.code)}" data-route>Timeline</a><a class="${selectedView === "topics" ? "is-active" : ""}" href="#/nus/course/${esc(c.code)}/topics" data-route>Topics</a></nav>`;
     body += `<div class="nus-course-layout"><main><section class="nus-course-progress reveal"><div><div class="eyebrow">${selectedView === "timeline" ? "Lecture timeline" : "Topic view"}</div><b>${selectedView === "timeline" ? "Follow the semester in chronological order" : "Revisit ideas without changing the course sequence"}</b><span class="nus-muted">${selectedView === "timeline" ? "Weeks remain the primary learning path; topics and collections are secondary lenses." : "Every topic item keeps its original lecture week."}</span></div>${courseProgressBar(c.code)}${next && selectedView === "timeline" ? button(`Continue Week ${next.lesson.week} →`, `#/nus/lesson/${c.code}/${next.lesson.id}`, "primary") : ""}</section>${selectedView === "timeline" ? timelineSections(c.code) : topicSections(c.code)}</main><aside>${card("Assessments", assessments().filter(a => a.courseCode === c.code).map(a => `<div class="nus-weight"><span>${esc(a.title)}</span><b>${esc(assessmentWeightLabel(a))}</b></div>`).join("") || `<p class="nus-muted">Assessment details are pending.</p>`, "reveal")}${collections.length ? card("Study collections", collections.map(collection => `<a class="nus-list-row" href="#/nus/collection/${c.code}/${collection.id}" data-route><div><b>${esc(collection.title)}</b><span>${collection.lessonIds.length} lessons · revision lens</span></div><span>→</span></a>`).join(""), "reveal") : ""}<details class="nus-course-resources"><summary>Resources and sources</summary>${repository() && repository().hasTextbook && repository().hasTextbook(c.code) ? `<p>${button("Open textbook PDF", `#/nus/textbook/${c.code}/1`, "ghost")}</p>` : ""}${assessmentMap ? `<p>${button("Assessment map", `#/nus/assessment-map/${c.code}`, "ghost")}</p>` : ""}<div class="nus-source-groups">${sourceGroups(c).map(g => `<div class="nus-source-group"><b>${esc(g.label)}</b><ul class="nus-source-list">${g.refs.map(r => `<li>${sourceItem(r)}</li>`).join("")}</ul></div>`).join("")}</div><a class="nus-external" href="${esc(c.nusmods.url)}" target="_blank" rel="noreferrer">NUSMods course page ↗</a></details></aside></div>`;
     root.innerHTML = body;

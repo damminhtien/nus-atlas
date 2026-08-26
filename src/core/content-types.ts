@@ -80,6 +80,12 @@ export type Question = {
   misconception: string;
   visualHook: string;
   sourceRefs: SourceRef[];
+  origin?: "synthetic" | "teacher-assigned" | string;
+  assessmentLayer?: string;
+  topic?: string;
+  commonTrap?: string;
+  mistakeTags?: string[];
+  timedSeconds?: number;
 };
 export type StudyKit = {
   lessonId: string;
@@ -93,6 +99,9 @@ export type Lesson = {
   entityKey: EntityKey;
   courseId: string;
   moduleId: string;
+  scope?: "core" | "supplementary" | "planned";
+  examEligible?: boolean;
+  contentStatus?: string;
   sequence?: number;
   orderInWeek?: number;
   collectionIds?: string[];
@@ -118,6 +127,9 @@ export type LessonOutline = {
   title: string;
   courseId: string;
   moduleId: string;
+  scope?: "core" | "supplementary" | "planned";
+  examEligible?: boolean;
+  contentStatus?: string;
   sequence?: number;
   orderInWeek?: number;
   collectionIds?: string[];
@@ -139,6 +151,7 @@ export type Course = {
   title: string;
   semester?: string;
   description?: string;
+  coverage?: { status?: string; verifiedLecture?: string[]; exerciseOnly?: string[]; plannedOrUnverified?: string[]; targets?: Array<{ id: string; status: string; lectureSourceStatus?: string }>; finalReadiness?: string; policy?: string };
   color?: string;
   department?: string;
   faculty?: string;
@@ -157,10 +170,12 @@ export type Course = {
 };
 export type SqlPractice = {
   schemaVersion: "nus.sql-practice.v1";
-  engine: string;
-  schema: Array<{ name: string; columns: string[] }>;
-  seed: Record<string, Array<Array<string | number | null>>>;
-  exercises: Array<{
+  defaultMode?: string;
+  modes?: Record<string, SqlPracticeMode>;
+  engine?: string;
+  schema?: Array<{ name: string; columns: string[] }>;
+  seed?: Record<string, Array<Array<string | number | null>>>;
+  exercises?: Array<{
     id: string;
     level: string;
     prompt: string;
@@ -170,13 +185,25 @@ export type SqlPractice = {
     solution?: string;
   }>;
 };
+export type SqlPracticeMode = {
+  id: string;
+  label: string;
+  engine: string;
+  description: string;
+  schema: Array<{ name: string; columns: string[] }>;
+  seed?: Record<string, Array<Array<string | number | null>>>;
+  bootstrap?: { ddlAsset?: string; smallDataAsset?: string; largeDataAsset?: string };
+  execution?: { preferred?: string; endpoint?: string; fallback?: string };
+  officialArtifacts?: Array<{ id: string; title: string; sourceId: string; sourceType: string; assetPath: string; status?: string; externalUrl?: string; sha256?: string }>;
+  exercises: Array<{ id: string; level: string; prompt: string; starter: string; expected: string[]; explanation: string; solution?: string }>;
+};
 export type CourseSummary = Pick<Course, "code" | "entityKey" | "title" | "semester" | "schemaVersion"> & { description?: string; lessonCount?: number; questionCount?: number };
 export type CourseCollection = { id: string; entityKey: EntityKey; title: string; description?: string; lessonIds: string[]; schemaVersion: "nus.collection.v1" };
 export type CourseOutline = {
   courseId: string;
   entityKey: EntityKey;
   course: CourseSummary;
-  modules: Array<{ id: string; entityKey: EntityKey; title: string; lessonIds: string[]; lessons: LessonOutline[] }>;
+  modules: Array<{ id: string; entityKey: EntityKey; title: string; description?: string; scope?: string; examEligible?: boolean; lessonIds: string[]; lessons: LessonOutline[] }>;
   collections?: CourseCollection[];
   timelineLessonIds?: string[];
   labs: LabSummary[];

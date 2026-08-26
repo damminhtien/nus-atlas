@@ -1,0 +1,225 @@
+{
+  "id": "dsa5104-sql-mutations",
+  "courseId": "DSA5104",
+  "title": "Ch3.8 · INSERT, DELETE, UPDATE safety",
+  "moduleId": "dsa5104-sql",
+  "scope": "core",
+  "examEligible": true,
+  "contentStatus": "CURRENT LECTURE",
+  "week": 4,
+  "orderInWeek": 8,
+  "minutes": 35,
+  "summary": "Treat mutation predicates as a safety boundary and reason about referential actions.",
+  "objectives": [
+    "Preview a mutation with a SELECT",
+    "Explain the scope supplied by WHERE",
+    "Predict cascade and constraint effects"
+  ],
+  "sourceRefs": [
+    {
+      "sourceId": "DSA5104/chapter3.pdf",
+      "page": 86,
+      "sourceType": "lecture",
+      "role": "Ch3.8 · INSERT, DELETE, UPDATE safety",
+      "status": "current"
+    },
+    {
+      "sourceId": "DSA5104/chapter3.pdf",
+      "page": 88,
+      "sourceType": "lecture",
+      "role": "Ch3.8 · INSERT, DELETE, UPDATE safety",
+      "status": "current"
+    },
+    {
+      "sourceId": "DSA5104/chapter3.pdf",
+      "page": 91,
+      "sourceType": "lecture",
+      "role": "Ch3.8 · INSERT, DELETE, UPDATE safety",
+      "status": "current"
+    },
+    {
+      "sourceId": "DSA5104/chapter3.pdf",
+      "page": 94,
+      "sourceType": "lecture",
+      "role": "Ch3.8 · INSERT, DELETE, UPDATE safety",
+      "status": "current"
+    }
+  ],
+  "visualIds": [],
+  "sections": [
+    {
+      "title": "INSERT, DELETE, UPDATE safety",
+      "sourceType": "lecture",
+      "body": "A mutation is safe only when its target set is explicit. Before executing INSERT, DELETE, or UPDATE, write a SELECT with the same predicate, check the affected keys, and then apply the change deliberately.",
+      "sourceRefs": [
+        {
+          "sourceId": "DSA5104/chapter3.pdf",
+          "page": 86,
+          "sourceType": "lecture",
+          "role": "Ch3.8 · INSERT, DELETE, UPDATE safety",
+          "status": "current"
+        },
+        {
+          "sourceId": "DSA5104/chapter3.pdf",
+          "page": 88,
+          "sourceType": "lecture",
+          "role": "Ch3.8 · INSERT, DELETE, UPDATE safety",
+          "status": "current"
+        },
+        {
+          "sourceId": "DSA5104/chapter3.pdf",
+          "page": 91,
+          "sourceType": "lecture",
+          "role": "Ch3.8 · INSERT, DELETE, UPDATE safety",
+          "status": "current"
+        },
+        {
+          "sourceId": "DSA5104/chapter3.pdf",
+          "page": 94,
+          "sourceType": "lecture",
+          "role": "Ch3.8 · INSERT, DELETE, UPDATE safety",
+          "status": "current"
+        }
+      ],
+      "sourceLens": {
+        "status": "core DSA5104",
+        "whyExaminable": "This unit is split directly from the supplied Chapter 3 lecture deck so retrieval and mistake repair stay topic-sized.",
+        "lecture": [
+          {
+            "sourceId": "DSA5104/chapter3.pdf",
+            "page": 86,
+            "sourceType": "lecture",
+            "role": "Ch3.8 · INSERT, DELETE, UPDATE safety",
+            "status": "current"
+          },
+          {
+            "sourceId": "DSA5104/chapter3.pdf",
+            "page": 88,
+            "sourceType": "lecture",
+            "role": "Ch3.8 · INSERT, DELETE, UPDATE safety",
+            "status": "current"
+          },
+          {
+            "sourceId": "DSA5104/chapter3.pdf",
+            "page": 91,
+            "sourceType": "lecture",
+            "role": "Ch3.8 · INSERT, DELETE, UPDATE safety",
+            "status": "current"
+          },
+          {
+            "sourceId": "DSA5104/chapter3.pdf",
+            "page": 94,
+            "sourceType": "lecture",
+            "role": "Ch3.8 · INSERT, DELETE, UPDATE safety",
+            "status": "current"
+          }
+        ],
+        "officialExercise": [],
+        "textbook": [
+          {
+            "sourceId": "DSA5104/Database System Concepts, 7th edition",
+            "page": 1,
+            "sourceType": "textbook",
+            "role": "textbook depth pointer",
+            "status": "course-depth"
+          }
+        ],
+        "reference": []
+      }
+    }
+  ],
+  "examples": [
+    {
+      "title": "Preview an UPDATE with the same WHERE clause, verify the target key set, and explain what a cascading delete would remove.",
+      "sourceType": "lecture",
+      "steps": [
+        "A mutation is safe only when its target set is explicit. Before executing INSERT, DELETE, or UPDATE, write a SELECT with the same predicate, check the affected keys, and then apply the change deliberately.",
+        "State the output, input relations, predicate, and one edge case before checking the solution."
+      ],
+      "answer": "A strong answer names the semantic boundary and cites the source page or exercise file."
+    }
+  ],
+  "criticalQuestions": [
+    {
+      "prompt": "What is the decisive semantic boundary in Ch3.8 · INSERT, DELETE, UPDATE safety?",
+      "angle": "Name the operation, its input, its output, and the condition that would make the shortcut fail.",
+      "modelAnswer": "The answer should identify the operation's input/output boundary and one counterexample or edge case.",
+      "focus": "source and semantics"
+    },
+    {
+      "prompt": "Which tempting shortcut would produce a plausible but incorrect answer?",
+      "angle": "Separate what the source says from what a familiar SQL pattern seems to imply.",
+      "modelAnswer": "The shortcut is unsafe when it changes row scope, duplicate policy, NULL treatment, or constraint meaning.",
+      "focus": "common trap"
+    }
+  ],
+  "math": [
+    {
+      "name": "Mutation scope",
+      "purpose": "Use it to inspect the exact rows eligible for an update or delete.",
+      "latex": "\\mathrm{UPDATE}\\;R\\;\\mathrm{SET}\\;A=f(A)\\;\\mathrm{WHERE}\\;P",
+      "explanation": "The predicate P defines the mutation target; omitting it can make every tuple eligible.",
+      "symbols": [
+        {
+          "latex": "P",
+          "meaning": "the key object in this unit"
+        },
+        {
+          "latex": "mutation predicate",
+          "meaning": "the associated semantic role"
+        }
+      ],
+      "sourceType": "lecture",
+      "sourceRefs": [
+        {
+          "sourceId": "DSA5104/chapter3.pdf",
+          "page": 86,
+          "sourceType": "lecture",
+          "role": "Ch3.8 · INSERT, DELETE, UPDATE safety",
+          "status": "current"
+        }
+      ]
+    }
+  ],
+  "contrastDrills": [
+    {
+      "id": "dsa5104-contrast-delete-vs-drop",
+      "type": "contrast",
+      "kind": "concept-contrast",
+      "pair": "DELETE vs DROP",
+      "prompt": "Which statement removes the rows from student while keeping the table definition?",
+      "choices": [
+        "`DELETE FROM student`",
+        "`DROP TABLE student`",
+        "`ALTER TABLE student DROP`",
+        "`TRUNCATE DATABASE student`"
+      ],
+      "answer": 0,
+      "explanation": "`DELETE` removes tuples from a relation. `DROP TABLE` removes the table definition itself, including the schema object.",
+      "estimatedSeconds": 45,
+      "difficulty": "easy",
+      "skill": "ddl-dml-boundary",
+      "cognitiveLevel": "distinguish",
+      "misconception": "Treating row deletion and schema deletion as the same operation.",
+      "repair": "Use DELETE for tuples and DROP TABLE only when the relation itself should no longer exist.",
+      "sourceRefs": [
+        {
+          "sourceId": "DSA5104/chapter3.pdf",
+          "page": 14,
+          "sourceType": "lecture",
+          "role": "DELETE tuples",
+          "status": "current"
+        },
+        {
+          "sourceId": "DSA5104/chapter3.pdf",
+          "page": 15,
+          "sourceType": "lecture",
+          "role": "DROP table",
+          "status": "current"
+        }
+      ]
+    }
+  ],
+  "schemaVersion": "nus.lesson.v1",
+  "questionIds": []
+}
