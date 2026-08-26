@@ -54,10 +54,17 @@
       '<section class="nus-card nus-empty-state"><h3>No matching evidence</h3><p>Choose another evidence filter to reopen the mapped topics.</p></section>';
   }
 
+  function renderAlgorithmFocus(map) {
+    const focus = Array.isArray(map.algorithmFocus) ? map.algorithmFocus : [];
+    if (!focus.length) return "";
+    return '<section class="nus-card nus-algorithm-focus"><div class="nus-teach-head"><div><span class="eyebrow">Priority consolidation</span><h3>Algorithms to master first</h3></div><span class="pill gold">Assessment-linked</span></div><p class="nus-muted">The order below follows verified lecture and assignment signals. It is a study priority, not an invented final-exam syllabus.</p><div class="nus-algorithm-focus-list">' + focus.map(item => '<article class="nus-algorithm-focus-item"><div class="nus-algorithm-focus-rank"><b>' + esc(item.rank) + '</b><span>' + esc(item.tier) + '</span></div><div><h4>' + esc(item.title) + '</h4><p><b>Signal:</b> ' + esc(item.assessmentSignal) + '</p><p><b>Exam move:</b> ' + esc(item.examMove) + '</p><p class="nus-kid-analogy"><b>Kid analogy:</b> ' + esc(item.kidAnalogy) + '</p><div class="nus-card-actions">' + button("Study lesson", '#/nus/lesson/' + map.courseCode + '/' + item.lessonId, "ghost") + button("Practice", '#/nus/exam/' + map.courseCode + '/' + item.lessonId, "primary") + '</div></div></article>').join('') + '</div></section>';
+  }
+
   function render(code) {
     const map = getAssessmentMap(code);
     if (!map) return notFound();
     const lessons = getLessons(code);
+    const practicePlan = map.practicePlan && Array.isArray(map.practicePlan.questionIds) ? map.practicePlan : null;
     const localExamCount = (map.evidence || []).filter(item => item.evidenceLevel === "local-exam").length;
     const homeworkCount = (map.evidence || []).filter(item => item.kind === "homework").length;
     const topicCount = (map.topics || []).length;
@@ -65,6 +72,8 @@
     root.innerHTML = body +
       '<section class="nus-card nus-assessment-map-intro"><div class="nus-assessment-map-intro-head"><div><span class="eyebrow">Revision control panel</span><h3>Study what has actually been tested</h3></div><span class="pill violet">Lecture ≠ assessment evidence</span></div><p>' +
       text(map.disclaimer) + '</p><div class="nus-assessment-map-rule"><b>Use the map in this order:</b><span>read the lecture core → do the mapped derivation or numerical move → practise the evidence-backed format → log the mistake.</span></div></section>' +
+      (practicePlan ? '<section class="nus-card nus-assessment-practice"><div><span class="eyebrow">Ready-to-run checkpoint</span><h3>' + esc(practicePlan.title || "Timed mixed exam") + '</h3><p>' + esc(practicePlan.questionCount || practicePlan.questionIds.length) + ' questions · ' + esc(practicePlan.durationMinutes) + ' minutes · ' + esc((practicePlan.mistakeClinic || []).length) + '-step Mistake Clinic.</p></div><div class="nus-card-actions">' + button("Start timed mixed exam", "#/nus/exam/" + map.courseCode + "/mixed-exam", "primary") + '</div></section>' : '') +
+      renderAlgorithmFocus(map) +
       '<div class="nus-assessment-map-stats"><div class="nus-card"><b>' + topicCount + '</b><span>mapped topic clusters</span></div><div class="nus-card"><b>' +
       localExamCount + '</b><span>local exam signals</span></div><div class="nus-card"><b>' + homeworkCount +
       '</b><span>homework signals</span></div><div class="nus-card"><b>' + (map.evidence || []).length +

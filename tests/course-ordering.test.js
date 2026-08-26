@@ -74,5 +74,6 @@ test("NUS course UI renders the canonical timeline and collection route", () => 
   assert.match(source, /function courseTimeline\(code\)/);
   assert.match(source, /catalog\.timelineLessonIds/);
   assert.match(source, /collection: \(parts, context\) => renderCollection/);
+  assert.match(source, /getAssessmentMap\(c\.code\)/);
   assert.doesNotMatch(source, /lessonsByWeek/);
 });

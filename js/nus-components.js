@@ -42,7 +42,14 @@
       .map(([label, refs]) => `<div class="nus-source-lens-group"><b>${esc(label)}</b><ul class="nus-source-list">${refs.map(ref => `<li><span class="pill">${esc((sourceTypes()[ref.sourceType] || {}).shortLabel || ref.sourceType)}</span> <span>${esc(sourceLabel(ref))}</span><small>${esc(ref.role || "")}</small></li>`).join("")}</ul></div>`).join("");
     return `<details class="nus-source-lens"><summary><span>Why is this examinable?</span><span class="pill gold">A+ · ${esc(lens.status || "scope mapped")}</span></summary>${lens.whyExaminable ? `<p class="nus-source-lens-why">${esc(lens.whyExaminable)}</p>` : ""}<div class="nus-source-lens-grid">${groups}</div></details>`;
   }
-  const shell = (lab, body) => `<section id="nus-lab-${esc(lab.lessonId)}" class="nus-lab nus-lab-${esc(lab.type)} reveal" data-nus-lab="${esc(lab.lessonId)}" data-reduced-motion="${lab.reducedMotion ? "true" : "false"}" aria-labelledby="nus-lab-title-${esc(lab.lessonId)}"><header class="nus-lab-head"><div><span class="pill violet">Visual learning lab</span><h3 id="nus-lab-title-${esc(lab.lessonId)}">${esc(lab.title)}</h3></div><span class="nus-lab-status" data-lab-status aria-live="polite">Not attempted</span></header><p class="nus-lab-goal"><b>Learning goal</b> ${esc(lab.learningGoal)}</p><div class="nus-lab-links">${routeLink("Course map", `#/nus/course/${lab.courseCode}`)}${routeLink("Practice this lesson", `#/nus/exam/${lab.courseCode}/${lab.lessonId}`, "primary")}</div>${body}${sourceLensMarkup(lab.sourceLens)}<footer class="nus-lab-foot"><details class="nus-lab-source-details"><summary><span>Sources</span><small>${esc(sourceSummary(lab))}</small></summary><p class="nus-lab-source-note">Lecture is the core; textbook and reference material are optional depth.</p><div class="nus-lab-sources">${sourceRefs(lab)}</div></details><details class="nus-lab-why"><summary>Why this interaction?</summary><p>${esc(lab.explanation || "Use the controls to make one explicit reasoning move, then explain the evidence.")}</p></details></footer></section>`;
+  function animationMarkup(lab) {
+    const animation = lab.animation;
+    if (!animation || !Array.isArray(animation.frames) || !animation.frames.length) return "";
+    const id = `nus-lab-animation-${lab.lessonId}`;
+    const frames = animation.frames.map((frame, index) => `<article class="nus-animation-frame ${index === 0 ? "is-active" : ""}" data-animation-frame="${index}" aria-hidden="${index === 0 ? "false" : "true"}"><span class="eyebrow">${esc(frame.label)}</span><p>${esc(frame.scene)}</p><small>${esc(frame.takeaway)}</small></article>`).join("");
+    return `<aside class="nus-lab-animation" data-lab-animation="${esc(lab.lessonId)}" aria-labelledby="${id}-title"><div class="nus-animation-head"><div><span class="pill gold">Kid-friendly intuition</span><h4 id="${id}-title">${esc(animation.title)}</h4></div><span class="nus-animation-note">Analogy only · verify with the source</span></div><p class="nus-animation-analogy">${esc(animation.analogy)}</p><div class="nus-animation-stage" aria-live="polite">${frames}</div><div class="nus-animation-controls"><button class="btn primary" type="button" data-animation-play>Play story</button><button class="btn ghost" type="button" data-animation-next>Next</button><button class="btn ghost" type="button" data-animation-reset>Reset</button><span class="nus-animation-count" data-animation-count>Frame 1 of ${animation.frames.length}</span></div></aside>`;
+  }
+  const shell = (lab, body) => `<section id="nus-lab-${esc(lab.lessonId)}" class="nus-lab nus-lab-${esc(lab.type)} reveal" data-nus-lab="${esc(lab.lessonId)}" data-reduced-motion="${lab.reducedMotion ? "true" : "false"}" aria-labelledby="nus-lab-title-${esc(lab.lessonId)}"><header class="nus-lab-head"><div><span class="pill violet">Visual learning lab</span><h3 id="nus-lab-title-${esc(lab.lessonId)}">${esc(lab.title)}</h3></div><span class="nus-lab-status" data-lab-status aria-live="polite">Not attempted</span></header><p class="nus-lab-goal"><b>Learning goal</b> ${esc(lab.learningGoal)}</p><div class="nus-lab-links">${routeLink("Course map", `#/nus/course/${lab.courseCode}`)}${routeLink("Practice this lesson", `#/nus/exam/${lab.courseCode}/${lab.lessonId}`, "primary")}</div>${animationMarkup(lab)}${body}${sourceLensMarkup(lab.sourceLens)}<footer class="nus-lab-foot"><details class="nus-lab-source-details"><summary><span>Sources</span><small>${esc(sourceSummary(lab))}</small></summary><p class="nus-lab-source-note">Lecture is the core; textbook and reference material are optional depth.</p><div class="nus-lab-sources">${sourceRefs(lab)}</div></details><details class="nus-lab-why"><summary>Why this interaction?</summary><p>${esc(lab.explanation || "Use the controls to make one explicit reasoning move, then explain the evidence.")}</p></details></footer></section>`;
   function complete(lab, root) {
     const input = root.querySelector("input[type=range]"), steps = [...root.querySelectorAll("[data-step]")];
     const selected = root.querySelector("[data-lab-choice].is-selected");
@@ -183,6 +190,42 @@
     if (status) status.textContent = result && result.duplicate ? "Already logged · repeat to reason" : "Proof logged · +10 XP";
     root.classList.add("is-complete");
   }
+  function bindAnimation(lab, root) {
+    const animation = lab.animation;
+    const frames = [...root.querySelectorAll("[data-animation-frame]")];
+    if (!animation || !frames.length) return;
+    let current = 0, timer = null;
+    const count = root.querySelector("[data-animation-count]");
+    const play = root.querySelector("[data-animation-play]");
+    const paint = () => {
+      frames.forEach((frame, index) => {
+        const active = index === current;
+        frame.classList.toggle("is-active", active);
+        frame.setAttribute("aria-hidden", active ? "false" : "true");
+      });
+      if (count) count.textContent = `Frame ${current + 1} of ${frames.length}`;
+    };
+    const stop = () => {
+      if (timer) clearInterval(timer);
+      timer = null;
+      if (play) play.textContent = "Play story";
+    };
+    const next = () => {
+      current = current >= frames.length - 1 ? 0 : current + 1;
+      paint();
+    };
+    root.querySelector("[data-animation-next]")?.addEventListener("click", () => { stop(); next(); });
+    root.querySelector("[data-animation-reset]")?.addEventListener("click", () => { stop(); current = 0; paint(); });
+    play?.addEventListener("click", () => {
+      if (timer) return stop();
+      play.textContent = "Pause story";
+      timer = setInterval(() => {
+        if (current >= frames.length - 1) return stop();
+        next();
+      }, Number(animation.frameDurationMs) || 1400);
+    });
+    paint();
+  }
   function updateCompare(lab, root) {
     const value = Number(root.querySelector("input[type=range]").value);
     const train = Math.round(12 + Math.abs(value - 76) * 0.22), valid = Math.round(18 + Math.abs(value - 55) * 0.2 + Math.max(0, value - 70) * 0.25);
@@ -229,6 +272,7 @@
     root.querySelectorAll("[data-nus-lab]").forEach(labRoot => {
       const lab = repository() && repository().getLab(labRoot.dataset.nusLab);
       if (!lab) return;
+      bindAnimation(lab, labRoot);
       if (lab.type === "deep-dive") {
         labRoot.querySelectorAll("[data-deep-tab]").forEach(tab => tab.addEventListener("click", () => selectDeepDive(labRoot, tab.dataset.deepTab)));
         labRoot.querySelector("[data-deep-next]")?.addEventListener("click", () => advanceDeepDive(labRoot));

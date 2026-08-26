@@ -56,3 +56,22 @@ test("fallback algorithm labs carry their steps in canonical content", () => {
     assert.ok(Array.isArray(lab.steps) && lab.steps.length >= 4, `${lessonId} needs canonical trace steps`);
   }
 });
+
+test("DSA5101 priority labs expose child-friendly story animations", () => {
+  for (const lessonId of [
+    "dsa5101-frequent-itemsets",
+    "dsa5101-minhash-lsh",
+    "dsa5101-clustering",
+    "dsa5101-recommenders",
+    "dsa5101-pagerank",
+    "dsa5101-streams",
+    "dsa5101-balance"
+  ]) {
+    const { lab, html } = renderLab("DSA5101", lessonId);
+    assert.ok(lab.animation && lab.animation.status === "intuition-only", `${lessonId} needs an intuition boundary`);
+    assert.ok(lab.animation.frames.length >= 3, `${lessonId} needs at least three visual frames`);
+    assert.match(html, /Kid-friendly intuition/);
+    assert.match(html, /Play story/);
+    assert.match(html, /data-animation-frame/);
+  }
+});

@@ -32,6 +32,38 @@ test("exam feature keeps question selection scoped to a lesson", () => {
   assert.match(root.innerHTML, /open responses use heuristic rubric\/phrase checks/);
 });
 
+test("exam feature runs the canonical DSA5101 timed mixed plan", () => {
+  const root = { innerHTML: "", querySelector: () => ({ addEventListener() {} }), querySelectorAll: () => [] };
+  const lessons = [{
+    id: "lesson-a",
+    title: "Clustering",
+    questions: [{ id: "q1", type: "mcq", prompt: "Which?", choices: ["A", "B"], answer: 1 }]
+  }, {
+    id: "lesson-b",
+    title: "Streams",
+    questions: [{ id: "q2", type: "short", prompt: "Why?", accepted: ["bounded"] }]
+  }];
+  const feature = createExamFeature({
+    root,
+    getCourses: () => [{ code: "DSA5101", title: "Big Data" }],
+    getLessons: () => lessons,
+    getAssessmentMap: () => ({ practicePlan: { durationMinutes: 90, questionCount: 2, questionIds: ["q1", "q2"] } }),
+    getStore: () => ({ recordEvidence() {}, recordAttempt() {} }),
+    pageHead: (_kicker, title) => `<h1>${title}</h1>`,
+    sourceItem: ref => ref.sourceId,
+    text: value => value,
+    esc: value => String(value),
+    button: label => label,
+    typeset() {}
+  });
+
+  const plan = feature.practicePlanFor("DSA5101", "mixed-exam");
+  assert.equal(feature.questionsForPracticePlan("DSA5101", plan).length, 2);
+  feature.render("DSA5101", "mixed-exam");
+  assert.match(root.innerHTML, /Canonical timed mixed set/);
+  assert.match(root.innerHTML, /90 minutes/);
+});
+
 test("derivation rubric requires every declared concept", () => {
   const feature = createExamFeature({
     root: { innerHTML: "" }, getCourses: () => [], getLessons: () => [], getStore: () => ({}),

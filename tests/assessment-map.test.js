@@ -56,3 +56,65 @@ test("assessment map feature renders lesson and evidence links", () => {
   filter.handler({ target: filter });
   assert.match(topics.innerHTML, /Homework/);
 });
+
+test("assessment map exposes a runnable timed mixed checkpoint when present", () => {
+  const map = {
+    schemaVersion: "nus.assessment-map.v1",
+    courseCode: "DSA5101",
+    title: "Map",
+    summary: "Summary",
+    disclaimer: "Disclaimer",
+    evidence: [],
+    topics: [],
+    studyOrder: [],
+    practicePlan: { title: "Timed mixed exam", durationMinutes: 90, questionCount: 12, questionIds: Array(12).fill("q"), mistakeClinic: [{ step: 1 }] }
+  };
+  const root = { innerHTML: "", querySelector: () => ({ addEventListener() {} }) };
+  const feature = createAssessmentMapFeature({
+    root,
+    getAssessmentMap: () => map,
+    getLessons: () => [],
+    pageHead: () => "<h1>Map</h1>",
+    sourceItem: () => "",
+    text: value => String(value || ""),
+    esc: value => String(value || ""),
+    button: label => `<a>${label}</a>`,
+    notFound() {}
+  });
+
+  feature.render("DSA5101");
+  assert.match(root.innerHTML, /Timed mixed exam/);
+  assert.match(root.innerHTML, /Start timed mixed exam/);
+  assert.match(root.innerHTML, /12 questions · 90 minutes · 1-step Mistake Clinic/);
+});
+
+test("assessment map renders the ranked algorithm consolidation path", () => {
+  const map = {
+    schemaVersion: "nus.assessment-map.v1",
+    courseCode: "DSA5101",
+    title: "Map",
+    summary: "Summary",
+    disclaimer: "Disclaimer",
+    evidence: [],
+    topics: [],
+    studyOrder: [],
+    algorithmFocus: [{ rank: 1, tier: "Must master", title: "PageRank", assessmentSignal: "Assignment 2 · Q2", examMove: "Fix orientation", kidAnalogy: "A bouncing ball", lessonId: "dsa5101-pagerank" }]
+  };
+  const root = { innerHTML: "", querySelector: () => ({ addEventListener() {} }) };
+  const feature = createAssessmentMapFeature({
+    root,
+    getAssessmentMap: () => map,
+    getLessons: () => [],
+    pageHead: () => "<h1>Map</h1>",
+    sourceItem: () => "",
+    text: value => String(value || ""),
+    esc: value => String(value || ""),
+    button: label => `<a>${label}</a>`,
+    notFound() {}
+  });
+
+  feature.render("DSA5101");
+  assert.match(root.innerHTML, /Algorithms to master first/);
+  assert.match(root.innerHTML, /PageRank/);
+  assert.match(root.innerHTML, /A bouncing ball/);
+});

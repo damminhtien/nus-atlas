@@ -8,6 +8,7 @@
     root,
     getCourses,
     getLessons,
+    getAssessmentMap,
     getStore,
     pageHead,
     sourceItem,
@@ -95,6 +96,25 @@
 
   function masteryEligible(question) {
     return gradingMode(question) === "exact";
+  }
+
+  function practicePlanFor(code, scope) {
+    if (scope !== "mixed-exam" || typeof getAssessmentMap !== "function") return null;
+    const map = getAssessmentMap(code);
+    const plan = map && map.practicePlan;
+    return plan && Array.isArray(plan.questionIds) ? plan : null;
+  }
+
+  function questionsForPracticePlan(code, plan) {
+    if (!plan) return [];
+    const byId = new Map(getLessons(code).flatMap(lesson => (lesson.questions || []).map(question => ({
+      ...question,
+      lessonId: lesson.id,
+      lessonTitle: lesson.title,
+      lessonSourceRefs: lesson.sourceRefs || []
+    }))).map(question => [question.id, question]));
+    const questions = plan.questionIds.map(id => byId.get(id)).filter(Boolean);
+    return questions.length === plan.questionIds.length ? questions : [];
   }
 
   function answerKey(question, raw) {
@@ -193,24 +213,33 @@
     if (!state) {
       const optionsHtml = getCourses().map(course => `<option value="${esc(course.code)}" ${code === course.code ? "selected" : ""}>${esc(course.code)} · ${esc(course.title)}</option>`).join("");
       const selected = code || "DSA5208";
-      root.innerHTML = pageHead("NUS practice", "Exam mode", "Choose a course, a focus, and a short attempt. MCQ answers are exact auto-grades; open responses use heuristic rubric/phrase checks for feedback and do not automatically become mastery evidence.") + `<section class="nus-card nus-exam-setup reveal"><div class="nus-exam-setup-grid"><label>Course<select id="nus-exam-course">${optionsHtml}</select></label><label>Scope<select id="nus-exam-scope"><option value="">All seeded lessons</option>${getLessons(selected).map(lesson => `<option value="${esc(lesson.id)}" ${scope === lesson.id ? "selected" : ""}>${esc(lesson.title)}</option>`).join("")}</select></label><label>Focus<select id="nus-exam-focus"><option value="smart">Smart mix</option><option value="weakness">Weak topics</option><option value="new">New concepts</option><option value="mixed">Mixed retrieval</option></select></label><label>Questions<select id="nus-exam-count"><option value="5">5 questions</option><option value="10" selected>10 questions</option><option value="15">15 questions</option></select></label><label>Time<select id="nus-exam-minutes"><option value="15">15 minutes</option><option value="30" selected>30 minutes</option><option value="45">45 minutes</option></select></label></div><div class="nus-callout"><b>Practice loop</b><span>Answer first, review the explanation, then repair misses in Mistake Clinic. Lecture refs are primary; textbook/ref refs are labeled as support.</span></div><div class="nus-card-actions"><button class="btn primary" id="nus-start-exam">Start attempt</button>${button("Course map", `#/nus/course/${esc(selected)}`, "ghost")}${button("Mistake Clinic", `#/nus/mistakes/${esc(selected)}`, "ghost")}</div></section>`;
+      const practicePlan = practicePlanFor(selected, scope);
+      const scopeOptions = `${practicePlan ? `<option value="mixed-exam" selected>Canonical timed mixed exam · ${esc(practicePlan.durationMinutes)} min</option>` : ""}<option value="">All seeded lessons</option>${getLessons(selected).map(lesson => `<option value="${esc(lesson.id)}" ${scope === lesson.id ? "selected" : ""}>${esc(lesson.title)}</option>`).join("")}`;
+      const countOptions = `<option value="5" ${practicePlan ? "" : ""}>5 questions</option><option value="10" ${practicePlan ? "" : "selected"}>10 questions</option><option value="12" ${practicePlan ? "selected" : ""}>12 questions · canonical mixed set</option><option value="15">15 questions</option>`;
+      const timeOptions = `<option value="15">15 minutes</option><option value="30" ${practicePlan ? "" : "selected"}>30 minutes</option><option value="45">45 minutes</option><option value="90" ${practicePlan ? "selected" : ""}>90 minutes · canonical mixed set</option>`;
+      const planCopy = practicePlan ? `<div class="nus-callout nus-practice-plan"><b>Canonical timed mixed set</b><span>${esc(practicePlan.questionCount || practicePlan.questionIds.length)} questions · ${esc(practicePlan.durationMinutes)} minutes. Follow the four-step Mistake Clinic after submission.</span></div>` : `<div class="nus-callout"><b>Practice loop</b><span>Answer first, review the explanation, then repair misses in Mistake Clinic. Lecture refs are primary; textbook/ref refs are labeled as support.</span></div>`;
+      root.innerHTML = pageHead("NUS practice", "Exam mode", "Choose a course, a focus, and a short attempt. MCQ answers are exact auto-grades; open responses use heuristic rubric/phrase checks for feedback and do not automatically become mastery evidence.") + `<section class="nus-card nus-exam-setup reveal"><div class="nus-exam-setup-grid"><label>Course<select id="nus-exam-course">${optionsHtml}</select></label><label>Scope<select id="nus-exam-scope">${scopeOptions}</select></label><label>Focus<select id="nus-exam-focus"><option value="smart">Smart mix</option><option value="weakness">Weak topics</option><option value="new">New concepts</option><option value="mixed">Mixed retrieval</option></select></label><label>Questions<select id="nus-exam-count">${countOptions}</select></label><label>Time<select id="nus-exam-minutes">${timeOptions}</select></label></div>${planCopy}<div class="nus-card-actions"><button class="btn primary" id="nus-start-exam">Start attempt</button>${button("Course map", `#/nus/course/${esc(selected)}`, "ghost")}${button("Mistake Clinic", `#/nus/mistakes/${esc(selected)}`, "ghost")}</div></section>`;
       typeset();
       const courseSelect = root.querySelector("#nus-exam-course");
       const scopeSelect = root.querySelector("#nus-exam-scope");
       courseSelect.addEventListener("change", () => { location.hash = `#/nus/exam/${courseSelect.value}`; });
       scopeSelect.addEventListener("change", () => { location.hash = `#/nus/exam/${courseSelect.value}/${scopeSelect.value}`; });
       root.querySelector("#nus-start-exam").addEventListener("click", () => {
+        const selectedPlan = practicePlanFor(selected, scope);
+        const planQuestions = questionsForPracticePlan(selected, selectedPlan);
+        const questions = selectedPlan ? planQuestions : questionsFor(selected, scope, root.querySelector("#nus-exam-focus").value, Number(root.querySelector("#nus-exam-count").value));
+        if (!questions.length) return;
         state = {
           attemptId: `nus-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`,
           code: selected,
-          scope: scope || "",
-          focus: root.querySelector("#nus-exam-focus").value,
-          limit: Number(root.querySelector("#nus-exam-count").value),
-          questions: questionsFor(selected, scope, root.querySelector("#nus-exam-focus").value, Number(root.querySelector("#nus-exam-count").value)),
+          scope: selectedPlan ? "mixed-exam" : scope || "",
+          focus: selectedPlan ? "canonical mixed" : root.querySelector("#nus-exam-focus").value,
+          limit: questions.length,
+          questions,
           index: 0,
           answers: [],
           startedAt: Date.now(),
-          limitMinutes: Number(root.querySelector("#nus-exam-minutes").value),
+          limitMinutes: selectedPlan ? Number(selectedPlan.durationMinutes) : Number(root.querySelector("#nus-exam-minutes").value),
           finished: false
         };
         render(null, null, true);
@@ -243,5 +272,5 @@
     startTimer();
   }
 
-  return Object.freeze({ render, renderMistakes, stopTimer, questionsFor, answerKey, gradingMode, masteryEligible });
+  return Object.freeze({ render, renderMistakes, stopTimer, questionsFor, questionsForPracticePlan, practicePlanFor, answerKey, gradingMode, masteryEligible });
 });
