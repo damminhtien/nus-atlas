@@ -4381,23 +4381,24 @@
       },
       "sourceText": "Essential Steps\n1. Shingling: Converts a document into a set representation\n(Boolean vector).\n2. Min-Hashing: Convert large sets to short signatures,\nwhile preserving similarity.\n3. Locality-Sensitive Hashing: Focus on pairs of signatures\nmost likely to be from similar documents (using a\nthreshold)\n•\nGives us candidate pairs.\n19",
       "explanation": {
-        "whatYouSee": "DSA5101 Lecture 2 · slide 19: Concept and worked notation. Read the source layer for the exact notation and diagram.",
-        "whyItMatters": "This is official lecture-core evidence for DSA5101 Lecture 2. Use it to anchor the concept before opening linked exercises or textbook depth.",
-        "intuition": "Read the page as one claim: identify the object, then its role in the algorithm or definition.",
-        "technicalDetail": "Use the exact notation and assumptions shown on this page before extending the result.",
-        "pitfall": "Do not infer a stronger guarantee than the page states; check the source layer and neighboring slides.",
-        "connection": "Connect this page to the next step in the lecture pipeline and to the linked lesson practice."
+        "whatYouSee": "Shingling turns each document into a set or Boolean vector of k-shingles; this is the first step of the similarity pipeline.",
+        "whyItMatters": "Core exam signal: the set representation controls the Jaccard denominator and every later MinHash/LSH calculation. Assignment 1 starts from this choice.",
+        "intuition": "A document becomes a membership map: a shingle is present or absent, rather than counted repeatedly.",
+        "technicalDetail": "Write the document as $S(D)$, preserve binary membership, and compare sets with intersection over union before building a signature.",
+        "pitfall": "Do not carry word or shingle multiplicities into a set-based Jaccard calculation, and do not call an LSH candidate a verified match.",
+        "connection": "This representation feeds the MinHash row agreement on slide 37 and the band candidate filter on slide 62."
       },
       "textbookRefs": [],
       "referenceRefs": [],
       "socraticQuestions": [
         {
           "type": "recall",
-          "prompt": "What is the main claim or object on this slide?",
-          "answer": "State the slide's main claim and name its symbols.",
-          "hint": "Name the object before explaining its consequence."
+          "prompt": "Why must the shingle representation be fixed before computing similarity?",
+          "answer": "Because set-based Jaccard treats each shingle as present or absent; changing to a multiset changes the intersection and union and invalidates the later MinHash interpretation.",
+          "hint": "Ask whether repeated occurrences create new members in the representation."
         }
       ],
+      "priority": "core",
       "kind": "lecture-source",
       "status": "reviewed"
     },
@@ -5761,23 +5762,24 @@
       },
       "sourceText": "Similarity Metric for Shingles\n• Represent a document 𝑫𝑫𝟏𝟏by a set of its 𝒌𝒌-shingles 𝑪𝑪𝟏𝟏=\n𝑺𝑺(𝑫𝑫𝟏𝟏)\n𝒔𝒔𝒔𝒔𝒔𝒔(𝑪𝑪𝟏𝟏, 𝑪𝑪𝟐𝟐) = |𝑪𝑪𝟏𝟏∩𝑪𝑪𝟐𝟐|/|𝑪𝑪𝟏𝟏∪𝑪𝑪𝟐𝟐|\n•\nThe Jaccard similarity of two sets is:\n𝒅𝒅(𝑪𝑪𝟏𝟏, 𝑪𝑪𝟐𝟐) = 𝟏𝟏−|𝑪𝑪𝟏𝟏∩𝑪𝑪𝟐𝟐|/|𝑪𝑪𝟏𝟏∪𝑪𝑪𝟐𝟐|\nJaccard distance:\n3 in intersection.\n8 in union.\nJaccard similarity\n= 3/8\n25",
       "explanation": {
-        "whatYouSee": "DSA5101 Lecture 2 · slide 25: Concept and worked notation. Read the source layer for the exact notation and diagram.",
-        "whyItMatters": "This is official lecture-core evidence for DSA5101 Lecture 2. Use it to anchor the concept before opening linked exercises or textbook depth.",
-        "intuition": "Read the page as one claim: identify the object, then its role in the algorithm or definition.",
-        "technicalDetail": "Use the exact notation and assumptions shown on this page before extending the result.",
-        "pitfall": "Do not infer a stronger guarantee than the page states; check the source layer and neighboring slides.",
-        "connection": "Connect this page to the next step in the lecture pipeline and to the linked lesson practice."
+        "whatYouSee": "The slide computes Jaccard similarity from the 3-shingle intersection and 8-shingle union.",
+        "whyItMatters": "Core calculation: the union is the denominator, so confusing a set with a multiset changes the answer before hashing even begins.",
+        "intuition": "The numerator counts shared members; the denominator counts every member that appears in either set.",
+        "technicalDetail": "Use $J(C_1,C_2)=|C_1\\cap C_2|/|C_1\\cup C_2|$ and keep Jaccard distance $1-J(C_1,C_2)$ separate from similarity.",
+        "pitfall": "Do not count repeated shingles twice, swap intersection with union, or report distance when the question asks for similarity.",
+        "connection": "The Jaccard value becomes the one-row MinHash collision probability on slide 37 and the similarity parameter $s$ in banding."
       },
       "textbookRefs": [],
       "referenceRefs": [],
       "socraticQuestions": [
         {
           "type": "recall",
-          "prompt": "What is the main claim or object on this slide?",
-          "answer": "State the slide's main claim and name its symbols.",
-          "hint": "Name the object before explaining its consequence."
+          "prompt": "What changes if the same shingle appears three times in one document?",
+          "answer": "Nothing in the set representation: it contributes one member. A multiset treatment would change the counts and is not the Jaccard model used here.",
+          "hint": "Look at whether the union counts occurrences or distinct members."
         }
       ],
+      "priority": "core",
       "kind": "lecture-source",
       "status": "reviewed"
     },
@@ -8889,23 +8891,24 @@
       },
       "sourceText": "0\n0\nThe Min-Hash Property:\nSimilarity preserving summary\n0\n0\nChoose a random permutation π.\nClaim: Pr[𝒉𝒉π(𝑪𝑪𝟏𝟏) = 𝒉𝒉π(𝑪𝑪𝟐𝟐)] = 𝒔𝒔𝒔𝒔𝒔𝒔(𝑪𝑪𝟏𝟏, 𝑪𝑪𝟐𝟐)\nProof: There are 3 types of rows for 𝑪𝑪𝟏𝟏and 𝑪𝑪𝟐𝟐.\n1. Type X rows have 1 in both columns, say there are 𝒙𝒙\nof these, i.e. 𝑪𝑪𝟏𝟏∩𝑪𝑪𝟐𝟐= 𝒙𝒙.\n2. Type Y rows have 1 in one column and 0 in the other,\nsay there are 𝒚𝒚of these, i.e. 𝑪𝑪𝟏𝟏∪𝑪𝑪𝟐𝟐= 𝒙𝒙+ 𝒚𝒚.\n3. Type Z rows have 0 in both columns, do not influence\neither LHS or RHS.\n1\n1\n0\n0\n1\n0\n0\n1\n• Then, 𝒔𝒔𝒔𝒔𝒔𝒔𝑪𝑪𝟏𝟏, 𝑪𝑪𝟐𝟐=\n𝑪𝑪𝟏𝟏∩𝑪𝑪𝟐𝟐\n𝑪𝑪𝟏𝟏∪𝑪𝑪𝟐𝟐=\n𝒙𝒙\n𝒙𝒙+𝒚𝒚.\n• 𝒉𝒉π(𝑪𝑪𝟏𝟏) = 𝒉𝒉π(𝑪𝑪𝟐𝟐) occurs when we meet a type X row before a\ntype Y row, after permutation.\n𝒙𝒙\n𝒙𝒙+𝒚𝒚of occurring.\n\nThis has probability\n37",
       "explanation": {
-        "whatYouSee": "DSA5101 Lecture 2 · slide 37: Concept and worked notation. Read the source layer for the exact notation and diagram.",
-        "whyItMatters": "This is official lecture-core evidence for DSA5101 Lecture 2. Use it to anchor the concept before opening linked exercises or textbook depth.",
-        "intuition": "Read the page as one claim: identify the object, then its role in the algorithm or definition.",
-        "technicalDetail": "Use the exact notation and assumptions shown on this page before extending the result.",
-        "pitfall": "Do not infer a stronger guarantee than the page states; check the source layer and neighboring slides.",
-        "connection": "Connect this page to the next step in the lecture pipeline and to the linked lesson practice."
+        "whatYouSee": "The MinHash proof groups rows into shared, exclusive, and irrelevant rows and derives the collision identity.",
+        "whyItMatters": "Core formula: one MinHash row is a randomized estimator of Jaccard similarity, not an exact document-equality test.",
+        "intuition": "After a random permutation, the first relevant row is equally likely to come from the intersection or the symmetric difference.",
+        "technicalDetail": "Under set representation and a uniformly random permutation, $\\Pr[h_\\pi(C_1)=h_\\pi(C_2)]=J(C_1,C_2)$; multiple rows estimate the fraction of agreements.",
+        "pitfall": "Do not interpret one collision as proof of a match, or use the identity after changing the representation or permutation assumption.",
+        "connection": "The row-agreement estimate is compressed into a signature and then screened by LSH bands on slides 49 and 62."
       },
       "textbookRefs": [],
       "referenceRefs": [],
       "socraticQuestions": [
         {
           "type": "recall",
-          "prompt": "What is the main claim or object on this slide?",
-          "answer": "State the slide's main claim and name its symbols.",
-          "hint": "Name the object before explaining its consequence."
+          "prompt": "What event does one MinHash collision estimate?",
+          "answer": "It estimates the Jaccard similarity of the two shingle sets, provided the sets and random-permutation model are the ones assumed by the proof.",
+          "hint": "Separate a probability estimate from an exact equality claim."
         }
       ],
+      "priority": "core",
       "kind": "lecture-source",
       "status": "reviewed"
     },
@@ -11649,23 +11652,24 @@
       },
       "sourceText": "1\n4\n1\n2\nLSH Overview\n2\n1\n2\n1\n• Main idea: Split the rows of matrix 𝑴𝑴\ninto multiple bands, and then each column can\nbe hashed to buckets multiple times\n1\n2\n1\n2\n• LSH algorithm can be tuned so that ONLY similar\ncolumns are likely to hash to the same bucket,\nwith high probability\n\nCandidate pairs are those that hash to the\nsame bucket\n49",
       "explanation": {
-        "whatYouSee": "DSA5101 Lecture 2 · slide 49: Concept and worked notation. Read the source layer for the exact notation and diagram.",
-        "whyItMatters": "This is official lecture-core evidence for DSA5101 Lecture 2. Use it to anchor the concept before opening linked exercises or textbook depth.",
-        "intuition": "Read the page as one claim: identify the object, then its role in the algorithm or definition.",
-        "technicalDetail": "Use the exact notation and assumptions shown on this page before extending the result.",
-        "pitfall": "Do not infer a stronger guarantee than the page states; check the source layer and neighboring slides.",
-        "connection": "Connect this page to the next step in the lecture pipeline and to the linked lesson practice."
+        "whatYouSee": "The signature matrix is split into bands; each complete band is hashed to a bucket to generate candidate pairs.",
+        "whyItMatters": "Core algorithm step: banding avoids comparing every signature pair, but it deliberately produces candidates rather than verified neighbors.",
+        "intuition": "A pair gets several chances to meet: all rows in one band must agree, and any one successful band is enough to nominate it.",
+        "technicalDetail": "Partition the signature into $b$ bands of $r$ rows, hash each band as a block, and mark a pair as a candidate when it shares a bucket in at least one band.",
+        "pitfall": "Do not confuse one-row agreement with all-$r$-row band agreement, or treat a bucket collision as proof of exact similarity.",
+        "connection": "The band parameters produce the candidate probability derived on slide 62 and the verification boundary summarized on slide 69."
       },
       "textbookRefs": [],
       "referenceRefs": [],
       "socraticQuestions": [
         {
           "type": "recall",
-          "prompt": "What is the main claim or object on this slide?",
-          "answer": "State the slide's main claim and name its symbols.",
-          "hint": "Name the object before explaining its consequence."
+          "prompt": "What event makes two signature columns an LSH candidate?",
+          "answer": "They hash to the same bucket for at least one complete band; exact similarity still needs a later verification step.",
+          "hint": "Use OR across bands, but AND across the rows inside one band."
         }
       ],
+      "priority": "core",
       "kind": "lecture-source",
       "status": "reviewed"
     },
@@ -14639,23 +14643,24 @@
       },
       "sourceText": "𝑏𝑏bands, 𝑟𝑟rows/band\n• Say columns C1 and C2 have similarity 𝒕𝒕\n• Pick any band (𝑟𝑟rows)\n\nProb. that all rows in band equal = 𝒕𝒕𝒓𝒓\n\nProb. that some row in band unequal = 𝟏𝟏−𝒕𝒕𝒓𝒓\n• Prob. that no band identical  = (𝟏𝟏−𝒕𝒕𝒓𝒓)𝒃𝒃\n• P(candidate)=Prob. that at least 1 band identical\n=\n𝟏𝟏−(𝟏𝟏−𝒕𝒕𝒓𝒓)𝒃𝒃\n62",
       "explanation": {
-        "whatYouSee": "DSA5101 Lecture 2 · slide 62: Concept and worked notation. Read the source layer for the exact notation and diagram.",
-        "whyItMatters": "This is official lecture-core evidence for DSA5101 Lecture 2. Use it to anchor the concept before opening linked exercises or textbook depth.",
-        "intuition": "Read the page as one claim: identify the object, then its role in the algorithm or definition.",
-        "technicalDetail": "Use the exact notation and assumptions shown on this page before extending the result.",
-        "pitfall": "Do not infer a stronger guarantee than the page states; check the source layer and neighboring slides.",
-        "connection": "Connect this page to the next step in the lecture pipeline and to the linked lesson practice."
+        "whatYouSee": "The slide derives the probability that at least one of $b$ bands matches when each band has $r$ rows.",
+        "whyItMatters": "Core probability trap: $s^r$ is one-band agreement, while the full LSH candidate event takes the OR over all bands.",
+        "intuition": "A pair fails only when every band fails; subtract that no-band event from one.",
+        "technicalDetail": "For signature similarity $s$, one band matches with probability $s^r$, no band matches with $(1-s^r)^b$, and $P(\\mathrm{candidate})=1-(1-s^r)^b$.",
+        "pitfall": "Do not report $s$, $s^r$, or $(1-s^r)^b$ as the full candidate probability; label row, band, and all-band events separately.",
+        "connection": "This formula explains why changing $b$ and $r$ moves the LSH threshold curve and controls candidate volume."
       },
       "textbookRefs": [],
       "referenceRefs": [],
       "socraticQuestions": [
         {
           "type": "recall",
-          "prompt": "What is the main claim or object on this slide?",
-          "answer": "State the slide's main claim and name its symbols.",
-          "hint": "Name the object before explaining its consequence."
+          "prompt": "For $s=0.8$, $b=2$, and $r=2$, which probability is $s^r$?",
+          "answer": "$s^r=0.8^2=0.64$ is the probability that one band matches. The full candidate probability is $1-(1-0.64)^2=0.8704$.",
+          "hint": "Compute the AND inside one band before applying the OR across bands."
         }
       ],
+      "priority": "core",
       "kind": "lecture-source",
       "status": "reviewed"
     },
@@ -16441,23 +16446,24 @@
       },
       "sourceText": "LSH Summary\n• Tune 𝑴𝑴, 𝒃𝒃, 𝒓𝒓to get almost most pairs with similar\nsignatures, but eliminate most pairs that do not have\nsimilar signatures\n\nLSH allows this to be done in 𝑂𝑂(𝑁𝑁× 𝑏𝑏)\n• Filter 1: Check in main memory that candidate pairs\nreally do have similar signatures\n• Optional filter 2: In another pass through data, check\nthat the remaining candidate pairs really represent\nsimilar documents\n69",
       "explanation": {
-        "whatYouSee": "DSA5101 Lecture 2 · slide 69: Concept and worked notation. Read the source layer for the exact notation and diagram.",
-        "whyItMatters": "This is official lecture-core evidence for DSA5101 Lecture 2. Use it to anchor the concept before opening linked exercises or textbook depth.",
-        "intuition": "Read the page as one claim: identify the object, then its role in the algorithm or definition.",
-        "technicalDetail": "Use the exact notation and assumptions shown on this page before extending the result.",
-        "pitfall": "Do not infer a stronger guarantee than the page states; check the source layer and neighboring slides.",
-        "connection": "Connect this page to the next step in the lecture pipeline and to the linked lesson practice."
+        "whatYouSee": "The LSH summary separates cheap candidate filtering from the optional exact document check.",
+        "whyItMatters": "Core interpretation: LSH controls search cost by accepting a candidate-recall/false-positive trade-off; a candidate is not the final answer.",
+        "intuition": "The hash stage makes a shortlist; the verifier decides whether shortlisted documents really satisfy the similarity requirement.",
+        "technicalDetail": "First compare candidate signatures in memory; if the task requires document similarity, make another pass to verify the original shingle sets against the threshold.",
+        "pitfall": "Do not claim that every similar pair is guaranteed to collide, or skip exact verification when the question asks for true document similarity.",
+        "connection": "This boundary is the practical meaning of the three-step pipeline restated on slide 70 and exercised in Assignment 1."
       },
       "textbookRefs": [],
       "referenceRefs": [],
       "socraticQuestions": [
         {
           "type": "recall",
-          "prompt": "What is the main claim or object on this slide?",
-          "answer": "State the slide's main claim and name its symbols.",
-          "hint": "Name the object before explaining its consequence."
+          "prompt": "What remains to be done after LSH nominates a candidate pair?",
+          "answer": "Check the candidate's signatures and, when the task requires document similarity, verify the original documents or shingle sets exactly.",
+          "hint": "A hash collision is a filter result, not a semantic verdict."
         }
       ],
+      "priority": "core",
       "kind": "lecture-source",
       "status": "reviewed"
     },
@@ -16655,23 +16661,24 @@
       },
       "sourceText": "Summary: 3 Steps\n• Shingling: Convert documents to sets\n\nWe used hashing to assign each shingle an ID\n• Min-Hashing: Convert large sets to short signatures,\nwhile preserving similarity\n\nWe used similarity preserving hashing to generate\nsignatures with property Pr[𝒉𝒉π(𝑪𝑪𝟏𝟏) = 𝒉𝒉π(𝑪𝑪𝟐𝟐)] =\n𝒔𝒔𝒔𝒔𝒔𝒔(𝑪𝑪𝟏𝟏, 𝑪𝑪𝟐𝟐)\n• Locality-Sensitive Hashing: Focus on pairs of signatures\nlikely to be from similar documents\n\nWe used hashing to find candidate pairs of\nsimilarity ≥s\n70",
       "explanation": {
-        "whatYouSee": "DSA5101 Lecture 2 · slide 70: Concept and worked notation. Read the source layer for the exact notation and diagram.",
-        "whyItMatters": "This is official lecture-core evidence for DSA5101 Lecture 2. Use it to anchor the concept before opening linked exercises or textbook depth.",
-        "intuition": "Read the page as one claim: identify the object, then its role in the algorithm or definition.",
-        "technicalDetail": "Use the exact notation and assumptions shown on this page before extending the result.",
-        "pitfall": "Do not infer a stronger guarantee than the page states; check the source layer and neighboring slides.",
-        "connection": "Connect this page to the next step in the lecture pipeline and to the linked lesson practice."
+        "whatYouSee": "The lecture closes the MinHash/LSH pipeline: documents become sets, sets become signatures, and signatures produce candidates.",
+        "whyItMatters": "Memorize this order for exam explanations: representation first, similarity-preserving compression second, candidate search third.",
+        "intuition": "Each stage throws away a different amount of detail, so the final candidate list must not be confused with the original comparison.",
+        "technicalDetail": "Shingling defines sets; MinHash estimates Jaccard through row agreements; LSH uses band hashing to find likely pairs with similarity at least the chosen threshold.",
+        "pitfall": "Do not use an LSH candidate probability as a Jaccard value, or treat a short signature as an exact copy of the document.",
+        "connection": "Slides 19, 37, 62, and 69 supply the representation, collision identity, probability, and verification details behind this summary."
       },
       "textbookRefs": [],
       "referenceRefs": [],
       "socraticQuestions": [
         {
           "type": "recall",
-          "prompt": "What is the main claim or object on this slide?",
-          "answer": "State the slide's main claim and name its symbols.",
-          "hint": "Name the object before explaining its consequence."
+          "prompt": "Which order preserves the MinHash/LSH logic?",
+          "answer": "Convert documents to shingle sets, build MinHash signatures that preserve Jaccard evidence, then use LSH banding to nominate candidate pairs for verification.",
+          "hint": "Start with the representation and end with verification."
         }
       ],
+      "priority": "core",
       "kind": "lecture-source",
       "status": "reviewed"
     },
@@ -21745,23 +21752,24 @@
       },
       "sourceText": "Summary of LSH\n• Start with a (𝒅𝒅𝟏𝟏, 𝒅𝒅𝟐𝟐, 𝟏𝟏−𝒅𝒅𝟏𝟏, 𝟏𝟏−𝒅𝒅𝟐𝟐)-sensitive family.\n• By alternating AND constructions and OR-constructions,\nwe manage to transform it to a\n(𝒅𝒅𝟏𝟏, 𝒅𝒅𝟐𝟐, 𝒑𝒑𝟏𝟏, 𝒑𝒑𝟐𝟐)-sensitive family where 𝑝𝑝1 ≈1 and 𝑝𝑝2 ≈0.\n• To get closer to 0 and 1, more hash functions are needed.\n97",
       "explanation": {
-        "whatYouSee": "DSA5101 Lecture 2 · slide 97: Concept and worked notation. Read the source layer for the exact notation and diagram.",
-        "whyItMatters": "This is official lecture-core evidence for DSA5101 Lecture 2. Use it to anchor the concept before opening linked exercises or textbook depth.",
-        "intuition": "Read the page as one claim: identify the object, then its role in the algorithm or definition.",
-        "technicalDetail": "Use the exact notation and assumptions shown on this page before extending the result.",
-        "pitfall": "Do not infer a stronger guarantee than the page states; check the source layer and neighboring slides.",
-        "connection": "Connect this page to the next step in the lecture pipeline and to the linked lesson practice."
+        "whatYouSee": "The general LSH construction alternates AND and OR operations to push near-pair collision probability toward one and far-pair probability toward zero.",
+        "whyItMatters": "Core guarantee question: identify which combination is an AND within a group and which is an OR across groups before interpreting $p_1$ and $p_2$.",
+        "intuition": "AND makes a match stricter; OR gives repeated chances. Together they separate the two distance regimes.",
+        "technicalDetail": "Starting from a $(d_1,d_2,1-d_1,1-d_2)$-sensitive family, compose the family so the resulting near/far probabilities approach the desired $(p_1,p_2)$ behavior.",
+        "pitfall": "More hash functions improve separation only under the stated construction; they do not make the probabilities exactly zero or one for free.",
+        "connection": "The same sensitive-family contract is reused for cosine distance on slide 102 and Euclidean distance on slide 108."
       },
       "textbookRefs": [],
       "referenceRefs": [],
       "socraticQuestions": [
         {
           "type": "recall",
-          "prompt": "What is the main claim or object on this slide?",
-          "answer": "State the slide's main claim and name its symbols.",
-          "hint": "Name the object before explaining its consequence."
+          "prompt": "What do AND and OR constructions do to LSH collision events?",
+          "answer": "AND requires multiple component hashes to agree and makes collisions stricter; OR accepts a match from any group and increases the number of chances for a candidate.",
+          "hint": "Translate AND into ‘all’ and OR into ‘at least one’."
         }
       ],
+      "priority": "core",
       "kind": "lecture-source",
       "status": "reviewed"
     },
@@ -22719,23 +22727,24 @@
       },
       "sourceText": "LSH for Cosine Distance\n• The analogue for Min-Hashing in the case of Cosine\ndistance is a technique called Random Hyperplanes.\n• It allows us to construct a (𝑑𝑑1, 𝑑𝑑2, 1 −𝑑𝑑1, 1 −𝑑𝑑2)-sensitive\nfamily.\nReminder: (𝑑𝑑1, 𝑑𝑑2, 𝑝𝑝1, 𝑝𝑝2)-sensitive means:\n1. If 𝑑𝑑(𝑥𝑥, 𝑦𝑦) ≤𝑑𝑑1, then Prob[ℎ(𝑥𝑥) = ℎ(𝑦𝑦)] ≥𝑝𝑝1.\n2. If 𝑑𝑑(𝑥𝑥, 𝑦𝑦) ≥𝑑𝑑2, then Prob[ℎ(𝑥𝑥) = ℎ(𝑦𝑦)] ≤𝑝𝑝2.\n102",
       "explanation": {
-        "whatYouSee": "DSA5101 Lecture 2 · slide 102: Concept and worked notation. Read the source layer for the exact notation and diagram.",
-        "whyItMatters": "This is official lecture-core evidence for DSA5101 Lecture 2. Use it to anchor the concept before opening linked exercises or textbook depth.",
-        "intuition": "Read the page as one claim: identify the object, then its role in the algorithm or definition.",
-        "technicalDetail": "Use the exact notation and assumptions shown on this page before extending the result.",
-        "pitfall": "Do not infer a stronger guarantee than the page states; check the source layer and neighboring slides.",
-        "connection": "Connect this page to the next step in the lecture pipeline and to the linked lesson practice."
+        "whatYouSee": "For cosine distance, the lecture introduces random hyperplanes as the analogue of MinHash for set similarity.",
+        "whyItMatters": "Know the boundary: the MinHash equality identity belongs to Jaccard sets; cosine uses a different sensitive family and distance contract.",
+        "intuition": "A random hyperplane records which side a vector lies on; nearby directions are more likely to receive the same sign.",
+        "technicalDetail": "Use the stated $(d_1,d_2,p_1,p_2)$-sensitive definition: small distance requires collision probability at least $p_1$, while large distance requires it at most $p_2$.",
+        "pitfall": "Do not copy the Jaccard formula $1-(1-s^r)^b$ into cosine hashing without a construction and probability statement that justify it.",
+        "connection": "This is the metric-specific extension of the sensitive-family construction from slide 97."
       },
       "textbookRefs": [],
       "referenceRefs": [],
       "socraticQuestions": [
         {
           "type": "recall",
-          "prompt": "What is the main claim or object on this slide?",
-          "answer": "State the slide's main claim and name its symbols.",
-          "hint": "Name the object before explaining its consequence."
+          "prompt": "Why can the MinHash formula not be copied directly to cosine distance?",
+          "answer": "MinHash's collision identity is tied to Jaccard set similarity. Cosine distance needs its own family, here random hyperplanes, and its own sensitive-probability contract.",
+          "hint": "Name the metric before naming the hash family."
         }
       ],
+      "priority": "core",
       "kind": "lecture-source",
       "status": "reviewed"
     },
@@ -23939,23 +23948,24 @@
       },
       "sourceText": "LSH for Euclidean Distance\n• Hash functions correspond to lines\n• Partition the line into buckets of size 𝑎𝑎.\n• Hash each datapoint (vector) to the bucket containing its\nprojection onto the line.\n\nThe signature would be a bucket id for that given\nprojection line.\n•\nNearby points are always close;\ndistant points are seldom in the same bucket.\n108",
       "explanation": {
-        "whatYouSee": "DSA5101 Lecture 2 · slide 108: Concept and worked notation. Read the source layer for the exact notation and diagram.",
-        "whyItMatters": "This is official lecture-core evidence for DSA5101 Lecture 2. Use it to anchor the concept before opening linked exercises or textbook depth.",
-        "intuition": "Read the page as one claim: identify the object, then its role in the algorithm or definition.",
-        "technicalDetail": "Use the exact notation and assumptions shown on this page before extending the result.",
-        "pitfall": "Do not infer a stronger guarantee than the page states; check the source layer and neighboring slides.",
-        "connection": "Connect this page to the next step in the lecture pipeline and to the linked lesson practice."
+        "whatYouSee": "For Euclidean distance, each hash projects a vector onto a line and assigns the projection to a bucket of width $a$.",
+        "whyItMatters": "The exam move is geometric: identify the projection, bucket width, and collision interpretation before calculating.",
+        "intuition": "Nearby points tend to land in nearby projection buckets, while distant points are less likely to share a bucket.",
+        "technicalDetail": "Choose a projection line, partition it into buckets of size $a$, and use the bucket ID as the signature component for that line.",
+        "pitfall": "Do not compare raw coordinates as if this were MinHash, or claim that nearby points always collide; the statement is probabilistic.",
+        "connection": "This is the Euclidean counterpart to random-hyperplane hashing and the sensitive-family perspective from slides 97 and 102."
       },
       "textbookRefs": [],
       "referenceRefs": [],
       "socraticQuestions": [
         {
           "type": "recall",
-          "prompt": "What is the main claim or object on this slide?",
-          "answer": "State the slide's main claim and name its symbols.",
-          "hint": "Name the object before explaining its consequence."
+          "prompt": "What determines a Euclidean LSH bucket ID?",
+          "answer": "The vector's projection onto the chosen line and the bucket of width $a$ that contains that projection determine the bucket ID for that hash component.",
+          "hint": "Follow projection first, then quantization into buckets."
         }
       ],
+      "priority": "core",
       "kind": "lecture-source",
       "status": "reviewed"
     },
@@ -26295,23 +26305,24 @@
       },
       "sourceText": "Summary\nSignatures: short\ninteger signatures that\nCandidate pairs:\nthose pairs of\nsignatures that\nwe need to test\nfor similarity\nreflect their similarity\nLocality-\nsensitive\nHashing\nData\nHash\nfunc.\nDesign a (d1, d2, p1, p2)-sensitive\nfamily of hash functions (given a\nAmplify the family\nusing AND and OR\ndistance metric)\nconstructions\n0 1 0 0\n1 1 1 0\n0 0 0 1\n0 1 0 1\n0 0 1 0\n1 0 0 1\nDocuments\nData points\nMinHash\n1\n5\n1\n5\n2\n3\n1\n3\n6\n4\n6\n4\n“Bands” technique\nCandidate pairs\n0 1 0 0\n1 1 1 0\n0 0 0 1\n0 1 0 1\n0 0 1 0\nRandom\nHyperplanes\n-1 +1 -1\n-1\n+1 +1 +1 -1\n“Bands” technique\nCandidate pairs\n-1\n-1\n-1\n-1\n114",
       "explanation": {
-        "whatYouSee": "DSA5101 Lecture 2 · slide 114: Concept and worked notation. Read the source layer for the exact notation and diagram.",
-        "whyItMatters": "This is official lecture-core evidence for DSA5101 Lecture 2. Use it to anchor the concept before opening linked exercises or textbook depth.",
-        "intuition": "Read the page as one claim: identify the object, then its role in the algorithm or definition.",
-        "technicalDetail": "Use the exact notation and assumptions shown on this page before extending the result.",
-        "pitfall": "Do not infer a stronger guarantee than the page states; check the source layer and neighboring slides.",
-        "connection": "Connect this page to the next step in the lecture pipeline and to the linked lesson practice."
+        "whatYouSee": "The final summary places signatures, candidate pairs, data-dependent hash families, and amplification in one comparison across metrics.",
+        "whyItMatters": "Use this as the answer skeleton: name the metric, define the sensitive family, amplify with AND/OR, then verify candidates.",
+        "intuition": "LSH is a controlled funnel: raw data become compact signatures, signatures become a shortlist, and the shortlist returns to the original similarity test.",
+        "technicalDetail": "For each metric, state the hash-family guarantee and the amplification rule separately; do not mix Jaccard banding with cosine or Euclidean bucket definitions.",
+        "pitfall": "A short signature or shared bucket is evidence for a candidate, not proof of exact equality or a guaranteed nearest neighbor.",
+        "connection": "This slide ties the high-yield chain together: set/Jaccard on 19–25, MinHash on 37, bands on 49–70, and metric-specific LSH on 97–108."
       },
       "textbookRefs": [],
       "referenceRefs": [],
       "socraticQuestions": [
         {
           "type": "recall",
-          "prompt": "What is the main claim or object on this slide?",
-          "answer": "State the slide's main claim and name its symbols.",
-          "hint": "Name the object before explaining its consequence."
+          "prompt": "What four-part explanation should you give for an LSH method?",
+          "answer": "Name the distance metric, state the sensitive-family collision guarantee, explain the AND/OR amplification, and separate candidate generation from exact verification.",
+          "hint": "Name the metric, then the family, then amplification, then verification."
         }
       ],
+      "priority": "core",
       "kind": "lecture-source",
       "status": "reviewed"
     },

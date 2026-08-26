@@ -68,9 +68,10 @@
     const localExamCount = (map.evidence || []).filter(item => item.evidenceLevel === "local-exam").length;
     const homeworkCount = (map.evidence || []).filter(item => item.kind === "homework").length;
     const topicCount = (map.topics || []).length;
+    const studyHeading = localExamCount ? "Study what has actually been tested" : "Study what has verified assessment evidence";
     const body = pageHead(esc(code) + " · assessment map", map.title, map.summary);
     root.innerHTML = body +
-      '<section class="nus-card nus-assessment-map-intro"><div class="nus-assessment-map-intro-head"><div><span class="eyebrow">Revision control panel</span><h3>Study what has actually been tested</h3></div><span class="pill violet">Lecture ≠ assessment evidence</span></div><p>' +
+      '<section class="nus-card nus-assessment-map-intro"><div class="nus-assessment-map-intro-head"><div><span class="eyebrow">Revision control panel</span><h3>' + studyHeading + '</h3></div><span class="pill violet">Lecture ≠ assessment evidence</span></div><p>' +
       text(map.disclaimer) + '</p><div class="nus-assessment-map-rule"><b>Use the map in this order:</b><span>read the lecture core → do the mapped derivation or numerical move → practise the evidence-backed format → log the mistake.</span></div></section>' +
       (practicePlan ? '<section class="nus-card nus-assessment-practice"><div><span class="eyebrow">Ready-to-run checkpoint</span><h3>' + esc(practicePlan.title || "Timed mixed exam") + '</h3><p>' + esc(practicePlan.questionCount || practicePlan.questionIds.length) + ' questions · ' + esc(practicePlan.durationMinutes) + ' minutes · ' + esc((practicePlan.mistakeClinic || []).length) + '-step Mistake Clinic.</p></div><div class="nus-card-actions">' + button("Start timed mixed exam", "#/nus/exam/" + map.courseCode + "/mixed-exam", "primary") + '</div></section>' : '') +
       renderAlgorithmFocus(map) +
@@ -78,7 +79,7 @@
       localExamCount + '</b><span>local exam signals</span></div><div class="nus-card"><b>' + homeworkCount +
       '</b><span>homework signals</span></div><div class="nus-card"><b>' + (map.evidence || []).length +
       '</b><span>evidence records</span></div></div>' +
-      '<section class="nus-card nus-assessment-map-controls"><label><span>Filter evidence</span><select id="nus-assessment-map-filter"><option value="all">All mapped evidence</option><option value="past-exam">Past exams only</option><option value="homework">Homework only</option><option value="midterm">Midterm preview only</option><option value="a-plus">A+ focus clusters</option></select></label><p class="nus-muted">Local exams are stronger signals. Public previews are linked for orientation and never replace the lecture or official course material.</p></section>' +
+      '<section class="nus-card nus-assessment-map-controls"><label><span>Filter evidence</span><select id="nus-assessment-map-filter"><option value="all">All mapped evidence</option><option value="past-exam">Past exams only</option><option value="homework">Homework only</option><option value="midterm">Midterm preview only</option><option value="a-plus">A+ focus clusters</option></select></label><p class="nus-muted">Local exams are stronger signals; official assignments and source-backed practice are still study evidence, not a final-exam guarantee.</p></section>' +
       '<div id="nus-assessment-map-topics" class="nus-assessment-map-topics">' + renderTopics(map, lessons, "all") + '</div>' +
       '<section class="nus-card nus-assessment-map-order"><div class="nus-teach-head"><h3>Recommended revision order</h3><span class="pill gold">From derivation to transfer</span></div><div class="nus-assessment-map-order-grid">' +
       (map.studyOrder || []).map((lane, index) => '<article><span>' + (index + 1) + '</span><div><h4>' + esc(lane.label) + '</h4><p>' + text(lane.description) +

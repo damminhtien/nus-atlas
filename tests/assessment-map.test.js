@@ -7,6 +7,10 @@ function loadMap() {
   return JSON.parse(fs.readFileSync("content/courses/DSA5105/assessment-map.json", "utf8"));
 }
 
+function loadDsa5101Map() {
+  return JSON.parse(fs.readFileSync("content/courses/DSA5101/assessment-map.json", "utf8"));
+}
+
 test("DSA5105 assessment map covers the declared evidence graph", () => {
   const map = loadMap();
   const evidenceIds = new Set(map.evidence.map(item => item.id));
@@ -55,6 +59,37 @@ test("assessment map feature renders lesson and evidence links", () => {
   filter.value = "homework";
   filter.handler({ target: filter });
   assert.match(topics.innerHTML, /Homework/);
+});
+
+test("DSA5101 A+ filter exposes the verified assignment topics", () => {
+  const map = loadDsa5101Map();
+  const filter = { value: "all", addEventListener(_type, handler) { this.handler = handler; } };
+  const topics = { innerHTML: "" };
+  const root = {
+    innerHTML: "",
+    querySelector(selector) {
+      if (selector === "#nus-assessment-map-filter") return filter;
+      if (selector === "#nus-assessment-map-topics") return topics;
+      return null;
+    }
+  };
+  const feature = createAssessmentMapFeature({
+    root,
+    getAssessmentMap: () => map,
+    getLessons: () => map.topics.map(topic => ({ id: topic.lessonIds[0], title: topic.title })),
+    pageHead: () => "<h1>Map</h1>",
+    sourceItem: ref => "<span>" + ref.sourceId + "</span>",
+    text: value => String(value || ""),
+    esc: value => String(value || ""),
+    button: label => "<a>" + label + "</a>",
+    notFound() {}
+  });
+
+  feature.render("DSA5101");
+  assert.match(root.innerHTML, /verified assessment evidence/);
+  filter.value = "a-plus";
+  filter.handler({ target: filter });
+  assert.equal((topics.innerHTML.match(/class="nus-assessment-topic nus-assessment-topic-aplus"/g) || []).length, 7);
 });
 
 test("assessment map exposes a runnable timed mixed checkpoint when present", () => {

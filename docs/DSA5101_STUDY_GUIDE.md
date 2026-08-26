@@ -1,6 +1,6 @@
 # DSA5101 study guide
 
-DSA5101 is now a first-class normalized course package in NUS Atlas. Its lecture topics and four explicit Assignment 2 tracks are backed by page-level provenance, a textbook index, visual-learning labs, flashcards, homework prompts, and the same exam/retrieval infrastructure used by the deeper DSA5105 package.
+DSA5101 is a source-backed revision package. It connects the supplied lectures, Assignment 1/2 exercise signals, worked calculations, visual labs, flashcards, and retrieval questions without treating generated study prose as course authority.
 
 ## Source boundary
 
@@ -24,6 +24,20 @@ The raw PDFs remain outside the repository under `/Users/macbook/Desktop/NUS/DSA
 
 Each lesson has a source-backed lab, source lens, retrieval questions, flashcards, and homework. Assignment 2 is split into four named tracks rather than being represented by one mixed lesson. The lecture → assignment → textbook relationships live in `content/courses/DSA5101/assessment-map.json`; the timed set and mistake-clinic protocol live in `content/courses/DSA5101/practice/dsa5101-timed-mixed-exam.json`.
 
+## Exam-priority signals
+
+The following is the highest-confidence study signal currently available. “Verified” means the topic is present in the supplied official lecture or assignment; it does not guarantee that the same wording appears on the final.
+
+| Priority | Verified source signal | Drill until you can do this cold |
+| --- | --- | --- |
+| A+ focus · Assignment 1 | Itemsets p.1; MinHash/LSH p.3–4; hierarchical clustering p.6 | Count/prune, separate support-confidence-lift, compute collision probabilities, and execute linkage updates |
+| A+ focus · Assignment 2 Q1 | Recommenders p.2–3 | Mean-center ratings, compute cosine, then keep latent-factor dot products separate |
+| A+ focus · Assignment 2 Q2 | PageRank p.4 | Choose row/column orientation, run power iterations, and account for damping/dangling mass |
+| A+ focus · Assignment 2 Q3–Q4 | DGIM p.5; Flajolet–Martin/AMS p.6 | Identify the target moment, maintain the sketch invariant, and state the approximation/error source |
+| A+ focus · Assignment 2 Q5 | BALANCE p.7 | Update remaining budgets, branch ties, and compare every relevant path with OPT |
+
+The final is officially open-book, hardcopies only, 150 minutes, and worth 50%; these facts describe the assessment format, not a detailed topic guarantee. Use the A+ filter in the assessment map to start with the rows above.
+
 ## Algorithm consolidation priority
 
 The assessment map ranks the algorithms by verified lecture and assignment signal. Master the following in order, using the lesson calculation, the animation, and then a timed retrieval prompt:
@@ -43,7 +57,7 @@ Every core algorithm note follows the same five-part exam template: **Problem de
 
 ## Final-exam coverage status
 
-The package now has explicit source-backed lessons for Lecture 3 clustering and all four Assignment 2 tracks. This improves study readiness, but it is not proof of A+ performance: the official Canvas project brief/rubric is still pending retrieval, and the final exam’s detailed scope is not stated in the local course-information PDF. Treat the map as a high-coverage study plan, not an official exam specification.
+The package has explicit source-backed lessons for Lecture 3 clustering and all four Assignment 2 tracks. This improves study readiness, but it is not proof of A+ performance: the official Canvas project brief/rubric is still pending retrieval, and the final exam’s detailed topic scope is not stated in the local course-information PDF. Treat the map as an evidence-linked study priority, not an official exam specification.
 
 ## A+ study loop
 

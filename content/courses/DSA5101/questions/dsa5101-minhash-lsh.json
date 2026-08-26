@@ -31,8 +31,8 @@
     "skill": "recall",
     "cognitiveLevel": "understand",
     "estimatedSeconds": 60,
-    "misconception": "Check the assumption behind your answer.",
-    "visualHook": "Explain the idea with a small diagram or example.",
+    "misconception": "Calling one MinHash collision an exact document match; it is one Jaccard sample under a random permutation.",
+    "visualHook": "Compare the two sets, mark the minimum row, and treat one equal minimum as one Bernoulli sample.",
     "courseId": "DSA5101",
     "lessonId": "dsa5101-minhash-lsh",
     "schemaVersion": "nus.question.v1"
@@ -71,8 +71,8 @@
         "status": "current-context"
       }
     ],
-    "misconception": "Check the assumption behind your answer.",
-    "visualHook": "Explain the idea with a small diagram or example.",
+    "misconception": "Using $s^r$ as the full LSH candidate probability; $s^r$ is the event for one band only.",
+    "visualHook": "Write $s^r$ inside one band, then apply $1-(1-s^r)^b$ across the bands.",
     "courseId": "DSA5101",
     "lessonId": "dsa5101-minhash-lsh",
     "schemaVersion": "nus.question.v1"
@@ -105,8 +105,8 @@
         "status": "current-context"
       }
     ],
-    "misconception": "Check the assumption behind your answer.",
-    "visualHook": "Explain the idea with a small diagram or example.",
+    "misconception": "Treating a band match as the final event and forgetting the OR over b independent bands.",
+    "visualHook": "Stack r rows per band and connect the b bands with an OR gate.",
     "courseId": "DSA5101",
     "schemaVersion": "nus.question.v1"
   },
@@ -145,8 +145,8 @@
         "status": "course-depth"
       }
     ],
-    "misconception": "Check the assumption behind your answer.",
-    "visualHook": "Explain the idea with a small diagram or example.",
+    "misconception": "Assuming one band collision proves high Jaccard; it only creates a candidate for verification.",
+    "visualHook": "Draw a candidate arrow to exact verification; stop before claiming similarity.",
     "courseId": "DSA5101",
     "schemaVersion": "nus.question.v1"
   },
@@ -182,8 +182,8 @@
         "status": "course-depth"
       }
     ],
-    "misconception": "Check the assumption behind your answer.",
-    "visualHook": "Explain the idea with a small diagram or example.",
+    "misconception": "Applying MinHash equality without the random-permutation and set-representation assumptions.",
+    "visualHook": "Separate the set intersection/union from the permuted minimum row.",
     "courseId": "DSA5101",
     "schemaVersion": "nus.question.v1"
   }

@@ -24,8 +24,8 @@
     "skill": "interpret-damping",
     "cognitiveLevel": "understand",
     "estimatedSeconds": 60,
-    "misconception": "Check the representation, objective, and scale assumption before committing to an answer.",
-    "visualHook": "Draw the state transition or data summary before calculating.",
+    "misconception": "Calling damping a simple rescaling; it mixes link-following mass with teleportation.",
+    "visualHook": "Split each update into d times link mass and 1−d times teleport mass.",
     "courseId": "DSA5101",
     "lessonId": "dsa5101-pagerank",
     "schemaVersion": "nus.question.v1",
@@ -64,8 +64,8 @@
         "status": "current-context"
       }
     ],
-    "misconception": "Check the representation, objective, and scale assumption before committing to an answer.",
-    "visualHook": "Draw the state transition or data summary before calculating.",
+    "misconception": "Multiplying with the wrong matrix orientation or forgetting to split A's outgoing mass.",
+    "visualHook": "Draw A's two outgoing edges and place half of its mass on each destination before adding the incoming mass.",
     "courseId": "DSA5101",
     "lessonId": "dsa5101-pagerank",
     "schemaVersion": "nus.question.v1"
@@ -104,8 +104,8 @@
     "skill": "handle-dangling-node",
     "cognitiveLevel": "analyze",
     "estimatedSeconds": 90,
-    "misconception": "Check the representation, objective, and scale assumption before committing to an answer.",
-    "visualHook": "Draw the state transition or data summary before calculating.",
+    "misconception": "Assuming a dangling node has zero PageRank; the issue is undefined outgoing transition mass.",
+    "visualHook": "Circle the dangling row and replace it with the declared redistribution vector.",
     "courseId": "DSA5101",
     "lessonId": "dsa5101-pagerank",
     "schemaVersion": "nus.question.v1"
@@ -144,8 +144,8 @@
     "skill": "contrast-ranking",
     "cognitiveLevel": "evaluate",
     "estimatedSeconds": 90,
-    "misconception": "Check the representation, objective, and scale assumption before committing to an answer.",
-    "visualHook": "Draw the state transition or data summary before calculating.",
+    "misconception": "Ranking by indegree alone; incoming contributions depend on source rank and source outdegree.",
+    "visualHook": "Write source-rank divided by source-outdegree beside every incoming edge.",
     "courseId": "DSA5101",
     "lessonId": "dsa5101-pagerank",
     "schemaVersion": "nus.question.v1"
