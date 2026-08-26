@@ -22,7 +22,7 @@ function renderLab(courseId, lessonId) {
 
 test("non-model labs do not render model-selection copy", () => {
   const cases = [
-    ["DSA5101", "dsa5101-ranking-streams", "Rank nodes by link structure"],
+    ["DSA5101", "dsa5101-ranking-streams", "Target first"],
     ["DSA5104", "dsa5104-database-design", "One-to-many"],
     ["DSA5104", "dsa5104-semi-structured", "Relational schema"],
     ["DSA5208", "dsa5208-happens-before", "Same process"],
@@ -73,5 +73,6 @@ test("DSA5101 priority labs expose child-friendly story animations", () => {
     assert.match(html, /Kid-friendly intuition/);
     assert.match(html, /Play story/);
     assert.match(html, /data-animation-frame/);
+    assert.doesNotMatch(html, /<\/span>\$/, lessonId + " duplicated a mixed-mode formula");
   }
 });

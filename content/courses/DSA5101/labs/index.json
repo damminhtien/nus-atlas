@@ -149,88 +149,132 @@
       ],
       "reference": []
     },
+    "stepValueMode": "mixed",
     "exercises": [
       {
         "id": "support",
         "label": "Support",
-        "prompt": "How does a basket table become a support value?",
-        "takeaway": "Count qualifying transactions first; normalize only after the numerator is explicit.",
+        "prompt": "Follow the Lecture 1 basket example: compute support before interpreting any rule.",
+        "takeaway": "The slide's order is count qualifying baskets, normalize, then decide whether the itemset is frequent.",
         "steps": [
           [
+            "Input",
+            "$I=\\{m,b\\},\\quad |\\mathcal{T}|=8,\\quad \\tau=3$",
+            "Use the eight baskets from the worked example and a count threshold of three."
+          ],
+          [
             "Count",
-            "$support(I)=count(I in baskets)$",
-            "Identify the baskets containing every item in the candidate."
+            "$\\operatorname{count}(\\{m,b\\})=4$",
+            "The qualifying baskets are B1, B3, B5, and B6; every item in I must be present."
           ],
           [
             "Normalize",
-            "$supp(I)=count(I)/|T|$",
-            "Divide by the total number of transactions."
+            "$\\operatorname{supp}(\\{m,b\\})=\\frac{4}{8}=\\frac{1}{2}=0.5$",
+            "Only after the numerator is explicit do we divide by the total number of baskets."
+          ],
+          [
+            "Frequent",
+            "$\\operatorname{count}(I)=4\\ge\\tau=3$",
+            "The itemset passes the slide's support threshold; it can now participate in rule generation."
           ],
           [
             "Prune",
-            "$infrequent(I) => infrequent(J) for I subset J$",
-            "Use downward closure to remove every superset safely."
-          ],
-          [
-            "Check",
-            "support -> candidate -> rule",
-            "Only after frequent sets are known should rule confidence be interpreted."
+            "$I\\subseteq J\\ \\land\\ \\operatorname{count}(I)<\\tau\\ \\Longrightarrow\\ \\operatorname{count}(J)<\\tau$",
+            "An infrequent subset eliminates every superset, not every subset."
           ]
         ]
       },
       {
         "id": "confidence",
         "label": "Confidence",
-        "prompt": "Why is the antecedent the denominator?",
-        "takeaway": "Confidence is conditional: among baskets with A, how often does B also occur?",
+        "prompt": "Reproduce the slide's worked rule $\\{m,b\\}\\to c$ without changing the denominator.",
+        "takeaway": "Confidence conditions on the antecedent; the total basket count is not its denominator.",
         "steps": [
           [
-            "Condition",
-            "A -> B",
-            "Start with the baskets that already contain the antecedent."
+            "Rule",
+            "$A=\\{m,b\\},\\quad B=\\{c\\}$",
+            "Keep the antecedent and consequent separate while reading the basket table."
           ],
           [
             "Overlap",
-            "supp(A union B)",
-            "Count baskets containing both sides."
+            "$\\operatorname{count}(A\\cup B)=\\operatorname{count}(\\{m,b,c\\})=2$",
+            "Only B1 and B6 contain all three items."
+          ],
+          [
+            "Condition",
+            "$\\operatorname{count}(A)=\\operatorname{count}(\\{m,b\\})=4$",
+            "The reference population is the four baskets that already contain {m,b}."
           ],
           [
             "Divide",
-            "$conf(A \\to  B)=supp(A union B)/supp(A)$",
-            "The denominator is the antecedent support, not all baskets."
+            "$\\operatorname{conf}(A\\to B)=\\frac{2}{4}=\\frac{1}{2}=0.5$",
+            "This is the exact calculation shown in the Lecture 1 confidence-and-interest example."
           ],
           [
-            "Interpret",
-            "conf != lift",
-            "A high conditional rate can still add little information when B is common."
+            "Check",
+            "$\\operatorname{conf}(A\\to B)\\ne\\operatorname{supp}(A\\cup B)$",
+            "Do not replace a conditional rate with the rule's joint support."
           ]
         ]
       },
       {
         "id": "interest",
         "label": "Interest",
-        "prompt": "What does a base-rate comparison add?",
-        "takeaway": "Lift or interest asks whether the consequent is more likely than its background frequency.",
+        "prompt": "Use the slide's base-rate calculation for $\\{m,b\\}\\to c$.",
+        "takeaway": "In this slide, interest is the absolute gap between confidence and the consequent base rate; it is not automatically lift.",
         "steps": [
           [
             "Baseline",
-            "supp(B)",
-            "Measure how common the consequent is without conditioning."
+            "$\\operatorname{supp}(c)=\\frac{5}{8}$",
+            "Item c occurs in five of the eight baskets, without conditioning on {m,b}."
           ],
           [
             "Conditional",
-            "conf(A -> B)",
-            "Measure how common B is among A baskets."
+            "$\\operatorname{conf}(\\{m,b\\}\\to c)=\\frac{2}{4}=\\frac{1}{2}$",
+            "Reuse the confidence numerator and antecedent denominator from the previous tab."
           ],
           [
             "Compare",
-            "$lift=conf(A \\to  B)/supp(B)$",
-            "A value above one indicates positive association under this measure."
+            "$\\operatorname{interest}=\\left|\\frac{1}{2}-\\frac{5}{8}\\right|=\\frac{1}{8}$",
+            "This is the exact Lecture 1 page-28 computation."
           ],
           [
-            "Boundary",
-            "association != causation",
-            "A rule can be predictive without proving that A causes B."
+            "Interpret",
+            "$\\frac{1}{8}<\\frac{1}{2}$",
+            "The rule is not very interesting in the slide's example because c is common in the background."
+          ]
+        ]
+      },
+      {
+        "id": "candidate-guarantee",
+        "label": "Subset / superset",
+        "prompt": "Solve the Assignment 1 guarantee table by applying downward closure one candidate at a time.",
+        "takeaway": "An infrequent subset proves a superset infrequent; a frequent subset never proves a superset frequent.",
+        "steps": [
+          [
+            "Known",
+            "$\\operatorname{supp}(\\{b,c\\})=2<5$",
+            "The assignment gives support threshold $s=5$ and the pair $\\{b,c\\}$ has support $2$."
+          ],
+          [
+            "Superset",
+            "$\\{b,c\\}\\subseteq\\{b,c,d\\}$",
+            "The candidate contains the known infrequent subset."
+          ],
+          [
+            "Guarantee",
+            "$\\operatorname{supp}(\\{b,c,d\\})\\le2<5$",
+            "Therefore {b,c,d} is guaranteed infrequent; this is the safe Apriori prune."
+          ],
+          [
+            "Frequent subset",
+            "$\\{b,d\\}\\subseteq\\{b,d,e\\},\\quad \\operatorname{supp}(\\{b,d\\})=7$",
+            "A frequent subset only gives an upper bound on the superset's support."
+          ],
+          [
+            "Unknown",
+            "$0\\le\\operatorname{supp}(\\{b,d,e\\})\\le7$",
+            "Both frequent and infrequent outcomes remain possible, so the correct answer is not enough information."
           ]
         ]
       }
@@ -270,6 +314,7 @@
     "courseCode": "DSA5101",
     "lessonId": "dsa5101-minhash-lsh",
     "type": "derivation-trace",
+    "stepValueMode": "mixed",
     "title": "MinHash-to-LSH trace",
     "learningGoal": "Follow the chain from set similarity to compact signatures and then to candidate generation.",
     "sourceRefs": [
@@ -328,24 +373,59 @@
     },
     "steps": [
       [
-        "Set geometry",
-        "$J(A,B)=\\frac{|A\\cap B|}{|A\\cup B|}$",
-        "Define similarity before choosing a sketch."
+        "Shingle sets",
+        "$S_1=\\{\\mathrm{expected\\ this},\\mathrm{this\\ exam},\\mathrm{exam\\ to},\\mathrm{to\\ be},\\mathrm{be\\ very},\\mathrm{very\\ difficult}\\}$",
+        "The document is converted to a set of consecutive 2-shingles; repeated shingles would appear only once."
       ],
       [
-        "One permutation",
-        "$\\Pr[h(A)=h(B)]=J(A,B)$",
-        "A collision is an unbiased similarity signal under a random permutation."
+        "Jaccard",
+        "$S_2=\\{\\mathrm{this\\ exam},\\mathrm{exam\\ is},\\mathrm{is\\ not},\\mathrm{not\\ difficult}\\},\\quad J(S_1,S_2)=\\frac{1}{9}$",
+        "The intersection is {this exam}; the union has 9 distinct shingles."
       ],
       [
-        "Banding",
-        "$P_{\\mathrm{candidate}}=1-(1-s^r)^b$",
-        "At least one matching band is enough to pass the candidate filter."
+        "MinHash row order",
+        "$A_{\\cdot 1}=\\{1,2,5\\},\\quad \\pi_1=(3,5,1,4,2,6)$",
+        "For each permutation, scan rows in the supplied order and keep the first 1 for each document."
+      ],
+      [
+        "Signature matrix",
+        "$M=\\begin{bmatrix}5&4&3&4\\\\2&2&3&4\\\\1&4&3&4\\end{bmatrix}$",
+        "The three rows are the minima for the three permutation columns; do not record the scan position instead of the shingle row id."
+      ],
+      [
+        "One band",
+        "$\\Pr[\\mathrm{band\\ match}]=s^r$",
+        "A band is an AND: every row in that band must agree."
+      ],
+      [
+        "Eight bands",
+        "$s=0.6,\\ r=4,\\ b=8:\\quad P_{\\mathrm{candidate}}=1-(1-0.6^4)^8\\approx0.6706$",
+        "This is Assignment 1(c)(i): at least one of eight bands matches."
+      ],
+      [
+        "Low similarity",
+        "$s=0.2,\\ r=4,\\ b=8:\\quad P_{\\mathrm{candidate}}=1-(1-0.2^4)^8\\approx0.01273$",
+        "The same formula sharply suppresses a low-similarity pair."
+      ],
+      [
+        "Precision choice",
+        "$m=br,\\quad b\\downarrow\\Longrightarrow r\\uparrow\\Longrightarrow s^r\\downarrow$",
+        "With m and s fixed, fewer bands means more rows per band, fewer false positives, and higher precision."
+      ],
+      [
+        "AND-OR-AND",
+        "$P=\\left[1-(1-0.9^5)^6\\right]^7\\approx0.96745$",
+        "Read the slide notation left to right: 5-way AND, then 6-way OR, then 7-way AND."
+      ],
+      [
+        "Hash count",
+        "$5\\times6\\times7\\times3\\times4=2520$",
+        "A sequential (5,6,7) AND-OR-AND followed by (3,4) OR-AND consumes the product of all fan-outs."
       ],
       [
         "Verify",
-        "$\\text{candidate}\\to\\text{exact similarity}$",
-        "LSH generates candidates; it does not certify every candidate as a true neighbor."
+        "$C\\to\\operatorname{verify}(C)$",
+        "LSH only generates candidates; an exact Jaccard check removes false positives."
       ]
     ],
     "initialState": {
@@ -381,8 +461,8 @@
   "dsa5101-ranking-streams": {
     "courseCode": "DSA5101",
     "lessonId": "dsa5101-ranking-streams",
-    "type": "decision-tree",
-    "mode": "generic",
+    "type": "deep-dive",
+    "stepValueMode": "mixed",
     "title": "Ranking and sketch selection lab",
     "learningGoal": "Match a data question to PageRank, DGIM, or Flajolet–Martin without treating every stream method as interchangeable.",
     "sourceRefs": [
@@ -439,37 +519,105 @@
       ],
       "reference": []
     },
-    "splits": [
+    "exercises": [
       {
-        "id": "pagerank",
-        "label": "Rank nodes by link structure",
-        "scope": "Graph ranking",
-        "detail": "Use stationary probability mass and damping."
+        "id": "target",
+        "label": "Target first",
+        "prompt": "Read the quantity being asked for before choosing a ranking or sketch algorithm.",
+        "takeaway": "PageRank, DGIM, and Flajolet–Martin answer different questions; the target quantity is the method selector.",
+        "steps": [
+          [
+            "Node importance",
+            "$\\operatorname{target}=\\operatorname{nodeImportance}(v)$",
+            "A link graph and a node-importance target point to PageRank."
+          ],
+          [
+            "Recent window",
+            "$\\operatorname{target}=\\operatorname{count1s}(t-N+1,t)$",
+            "A count over the last N stream positions points to DGIM."
+          ],
+          [
+            "Distinct values",
+            "$\\operatorname{target}=F_0=\\left|\\operatorname{distinct}(S)\\right|$",
+            "A distinct-cardinality target points to Flajolet–Martin."
+          ],
+          [
+            "FM signal",
+            "$R=\\max_x\\operatorname{trailingZeros}(h(x)),\\quad\\widehat{F_0}=2^R$",
+            "The hash-zero signal is the calculation step after identifying a distinct-cardinality target."
+          ],
+          [
+            "Selection",
+            "$\\operatorname{PageRank}\\ne\\operatorname{DGIM}\\ne\\operatorname{FM}$",
+            "Do not swap an exact target with an approximation just because all three process large data."
+          ]
+        ]
       },
       {
-        "id": "window",
-        "label": "Count recent 1s in a window",
-        "scope": "Recent-window count",
-        "detail": "Use timestamped buckets and bounded memory."
+        "id": "assignment-prompts",
+        "label": "Assignment prompts",
+        "prompt": "Classify the three prompt shapes that appear in Assignment 2 before doing any arithmetic.",
+        "takeaway": "The same word stream can occur in different problems; identify graph rank, recent-window count, or distinct count.",
+        "steps": [
+          [
+            "Prompt A",
+            "$(a)\\quad\\operatorname{rank\\ nodes\\ by\\ links}$",
+            "Build P, preserve its orientation, and iterate the PageRank vector."
+          ],
+          [
+            "Prompt B",
+            "$(b)\\quad\\operatorname{count\\ recent\\ 1s\\ in\\ N\\ bits}$",
+            "Maintain DGIM buckets, locate the oldest partial bucket, and take half of it."
+          ],
+          [
+            "Prompt C",
+            "$(c)\\quad\\operatorname{estimate\\ distinct\\ values}$",
+            "Track the longest trailing-zero signal and report an approximate F0."
+          ],
+          [
+            "Decision",
+            "$a\\mapsto\\operatorname{PageRank},\\quad b\\mapsto\\operatorname{DGIM},\\quad c\\mapsto\\operatorname{FM}$",
+            "The mapping is determined by the requested output, not by the data structure alone."
+          ]
+        ]
       },
       {
-        "id": "distinct",
-        "label": "Estimate distinct stream items",
-        "scope": "Distinct estimate",
-        "detail": "Use hash zero-prefix evidence and accept approximation."
+        "id": "method-boundary",
+        "label": "Boundary checks",
+        "prompt": "Use the failure modes to reject an attractive but wrong method.",
+        "takeaway": "Method selection fails when node rank, recent-window count, and distinct cardinality are treated as interchangeable.",
+        "steps": [
+          [
+            "Wrong target",
+            "$\\operatorname{count1s}(t-N+1,t)\\ne F_0$",
+            "A recent count asks about positions in a window; F0 asks about distinct values."
+          ],
+          [
+            "Wrong state",
+            "$\\operatorname{PageRank}(v)\\ne\\widehat{F_0}$",
+            "Stationary graph mass is not a hash-zero estimate."
+          ],
+          [
+            "Approximation",
+            "$\\widehat{c_N}^{\\,\\mathrm{DGIM}}\\ne c_N$",
+            "DGIM deliberately returns an estimate, so report its boundary-bucket error."
+          ],
+          [
+            "Final check",
+            "$\\operatorname{target}\\Longrightarrow\\operatorname{method}\\Longrightarrow\\operatorname{formula}$",
+            "Before calculating, confirm that the selected formula produces the requested quantity."
+          ]
+        ]
       }
     ],
-    "requiredChoice": "window",
-    "initialState": {
-      "choice": null
-    },
     "reducedMotion": true,
     "explanation": "The right method follows the target quantity: node importance, a recent-window count, or distinct-cardinality estimation."
   },
   "dsa5101-clustering": {
     "courseCode": "DSA5101",
     "lessonId": "dsa5101-clustering",
-    "type": "derivation-trace",
+    "type": "deep-dive",
+    "stepValueMode": "mixed",
     "title": "Clustering method and scale trace",
     "learningGoal": "Choose a geometry, update a compact cluster state, and audit the evaluation claim.",
     "sourceRefs": [
@@ -584,83 +732,180 @@
     },
     "exercises": [
       {
-        "id": "geometry",
-        "label": "Geometry",
-        "prompt": "Which cluster shape and merge rule does the method assume?",
-        "takeaway": "State the representation and distance before comparing algorithms.",
+        "id": "hierarchical",
+        "label": "Dendrograms",
+        "prompt": "Solve Assignment 1 Question 3 by keeping the distance rule and every merge height visible.",
+        "takeaway": "Single, complete, and average linkage use different cross-cluster summaries; never reuse one merge height for all three.",
         "steps": [
           [
-            "Represent",
-            "points + distance",
-            "Name the feature space and similarity."
+            "Input",
+            "$X=\\{2^0,2^1,\\ldots,2^7\\}=\\{1,2,4,8,16,32,64,128\\},\\quad d(x,y)=|x-y|$",
+            "Start with eight singleton clusters and stop only when one cluster remains."
           ],
           [
-            "Choose",
-            "linkage or centroid",
-            "Tie the method to its geometry."
+            "Linkage",
+            "$d_S=\\min d(x,y),\\quad d_C=\\max d(x,y),\\quad d_A=\\frac{1}{|C||D|}\\sum d(x,y)$",
+            "For every candidate merge, calculate min, max, or mean over all cross-cluster pairs."
           ],
           [
-            "Evaluate",
-            "cohesion + purpose",
-            "Avoid treating one score as universal."
+            "Single",
+            "$1,2,4,8,16,32,64$",
+            "Merge chain: {1}+{2}, then {1,2}+{4}, then add 8, 16, 32, 64, and 128; the heights are the displayed values."
+          ],
+          [
+            "Complete",
+            "$1,3,7,15,31,63,127$",
+            "The same chain happens here, but each height is the farthest cross-pair distance after the merge."
+          ],
+          [
+            "Average",
+            "$1,\\frac{5}{2},\\frac{17}{3},\\frac{49}{4},\\frac{129}{5},\\frac{107}{2},\\frac{769}{7}$",
+            "The merge order is again the chain; the heights come from averaging every cross-cluster distance."
+          ],
+          [
+            "Modified metric",
+            "$d(x,y)=\\frac{\\max(x,y)}{\\min(x,y)}$",
+            "For Assignment 1(b), replace Euclidean distance before applying complete linkage."
+          ],
+          [
+            "Tie-break",
+            "$\\operatorname{rank}(2^i)=i+1,\\quad \\operatorname{rank}(C)=\\min_{x\\in C}\\operatorname{rank}(x)$",
+            "When complete-link scores tie, merge the pair whose resulting cluster has the smallest rank."
+          ],
+          [
+            "Modified trace",
+            "$2,2,2,2,8,8,128$",
+            "Merges are {1,2}, {4,8}, {16,32}, {64,128}, then the two pairs of size four, then the final two clusters."
           ]
         ]
       },
       {
-        "id": "scale",
-        "label": "Scale",
-        "prompt": "What can be summarized safely when data no longer fits in memory?",
-        "takeaway": "Use DS/CS/RS or dispersed representatives according to the uncertainty and shape you must preserve.",
+        "id": "kmeans",
+        "label": "K-means",
+        "prompt": "Reproduce the Lecture 3 K-means update on points 1, 3, and 5.",
+        "takeaway": "With assignments fixed, the mean minimizes squared error; with centers fixed, nearest assignment minimizes each point's contribution.",
         "steps": [
           [
-            "Confident",
-            "DS",
-            "Store sufficient statistics."
+            "Input",
+            "$C=\\{1,3,5\\}$",
+            "Use one one-dimensional cluster, so its representative is the only variable."
           ],
           [
-            "Uncertain",
-            "CS or RS",
-            "Delay irreversible assignment."
+            "Objective",
+            "$J(z)=\\sum_{x\\in C}(x-z)^2$",
+            "The Lecture 3 loss is the sum or normalized average of squared distances to the representative."
           ],
           [
-            "Shape",
-            "CURE representatives",
-            "Retain dispersed boundary evidence."
+            "Update",
+            "$z=\\frac{1+3+5}{3}=3$",
+            "Differentiate with respect to z, or use the slide rule that the representative is the cluster mean."
+          ],
+          [
+            "Audit",
+            "$J(3)=(1-3)^2+(3-3)^2+(5-3)^2=4+0+4=8$",
+            "Record the intermediate squared terms before reporting the loss."
+          ],
+          [
+            "Alternation",
+            "$x_i\\mapsto\\operatorname*{argmin}_k|x_i-z_k|^2\\mapsto z_k=\\frac{1}{|C_k|}\\sum_{x_i\\in C_k}x_i$",
+            "Repeat assignment and mean update until the state or objective stops changing; initialization can still lead to a local optimum."
+          ]
+        ]
+      },
+      {
+        "id": "bfr",
+        "label": "BFR summary",
+        "prompt": "Follow the Lecture 3 BFR path from sufficient statistics to a confidence decision.",
+        "takeaway": "A discard-set assignment is reversible only through the summary statistics it preserves; uncertain points stay in CS or RS.",
+        "steps": [
+          [
+            "Summary",
+            "$N=4,\\quad \\mathrm{SUM}=(8,12),\\quad \\mathrm{SUMSQ}=(20,40)$",
+            "Keep count, coordinate sums, and coordinate squared sums instead of all four raw points."
+          ],
+          [
+            "Mean",
+            "$\\mu=\\frac{\\mathrm{SUM}}{N}=(2,3)$",
+            "The summary is enough to recover the centroid used for later assignment."
+          ],
+          [
+            "Spread",
+            "$\\sigma^2=\\frac{\\mathrm{SUMSQ}}{N}-\\mu^2=(1,1)$",
+            "Compute coordinate variance from the same sufficient statistics."
+          ],
+          [
+            "Distance",
+            "$x=(3,4):\\quad d_M(x,\\mu)=\\sqrt{\\sum_j\\left(\\frac{x_j-\\mu_j}{\\sigma_j}\\right)^2}=\\sqrt{2}$",
+            "Use the Mahalanobis-style distance shown in the BFR workflow, coordinate by coordinate."
+          ],
+          [
+            "State",
+            "$d_M<2\\Rightarrow\\mathrm{DS};\\quad \\mathrm{uncertain}\\Rightarrow\\mathrm{CS};\\quad \\mathrm{isolated}\\Rightarrow\\mathrm{RS}$",
+            "A threshold decision is required before compressing; do not force every point into DS."
+          ]
+        ]
+      },
+      {
+        "id": "cure",
+        "label": "CURE shape",
+        "prompt": "Work the Lecture 3 representative-and-shrink step instead of replacing CURE with one centroid.",
+        "takeaway": "CURE keeps several dispersed representatives, then shrinks them toward the mean to preserve shape with less noise.",
+        "steps": [
+          [
+            "Input",
+            "$R=\\{(0,0),(4,0)\\},\\quad \\mu=(2,0),\\quad \\alpha=\\frac{1}{2}$",
+            "Use two boundary representatives and a shrinkage factor of one half."
+          ],
+          [
+            "Select",
+            "$r_1=(0,0),\\quad r_2=(4,0)$",
+            "Represent the cluster by dispersed existing points, not by the mean alone."
+          ],
+          [
+            "Shrink",
+            "$r_i'=\\mu+\\alpha(r_i-\\mu)$",
+            "Move each selected representative toward the cluster mean."
+          ],
+          [
+            "Calculate",
+            "$r_1'=(1,0),\\quad r_2'=(3,0)$",
+            "Both representatives move inward while remaining separated."
+          ],
+          [
+            "Compare",
+            "$\\{r_1',r_2'\\}\\ne\\{\\mu\\}$",
+            "The two-point summary preserves boundary evidence that a centroid-only representation discards."
+          ]
+        ]
+      },
+      {
+        "id": "evaluation",
+        "label": "Evaluate",
+        "prompt": "Compute purity, then state why the Lecture 3 metric is not a complete quality claim.",
+        "takeaway": "Purity is an external label-based score and must be reported with cluster count and the decision it is meant to support.",
+        "steps": [
+          [
+            "Counts",
+            "$C_1=(3A,1B),\\quad C_2=(1A,3B),\\quad N=8$",
+            "Make the cluster-label counts explicit before taking a maximum."
+          ],
+          [
+            "Formula",
+            "$\\operatorname{purity}=\\frac{1}{N}\\sum_k\\max_j|C_k\\cap L_j|$",
+            "For each cluster, keep the count of its majority label."
+          ],
+          [
+            "Calculate",
+            "$\\operatorname{purity}=\\frac{3+3}{8}=\\frac{3}{4}=0.75$",
+            "The score is 0.75 for this labelled partition."
+          ],
+          [
+            "Caveat",
+            "$\\operatorname{purity}\\uparrow\\not\\Rightarrow\\operatorname{utility}\\uparrow$",
+            "Many tiny clusters can inflate purity; pair it with cohesion, separation, stability, or task evidence."
           ]
         ]
       }
-    ],
-    "steps": [
-      [
-        "Represent",
-        "points + distance",
-        "Name the feature space and similarity."
-      ],
-      [
-        "Choose",
-        "linkage or centroid",
-        "Tie the method to its geometry."
-      ],
-      [
-        "Evaluate",
-        "cohesion + purpose",
-        "Avoid treating one score as universal."
-      ],
-      [
-        "Confident",
-        "DS",
-        "Store sufficient statistics."
-      ],
-      [
-        "Uncertain",
-        "CS or RS",
-        "Delay irreversible assignment."
-      ],
-      [
-        "Shape",
-        "CURE representatives",
-        "Retain dispersed boundary evidence."
-      ]
     ],
     "reducedMotion": true,
     "animation": {
@@ -696,7 +941,8 @@
   "dsa5101-recommenders": {
     "courseCode": "DSA5101",
     "lessonId": "dsa5101-recommenders",
-    "type": "decision-tree",
+    "type": "deep-dive",
+    "stepValueMode": "mixed",
     "title": "Assignment 2 · Recommenders practice lab",
     "learningGoal": "Trace the recommenders state without mixing it with the other Assignment 2 tracks.",
     "sourceRefs": [
@@ -770,48 +1016,111 @@
     },
     "exercises": [
       {
-        "id": "setup",
-        "label": "Setup",
-        "prompt": "What is the input and target for Assignment 2 · Recommenders?",
-        "takeaway": "Write the representation, objective, and boundary before calculating.",
+        "id": "user-based",
+        "label": "User-based CF",
+        "prompt": "Solve Assignment 2 Question 1(a): center known ratings, compare overlapping entries, then estimate the blanks.",
+        "takeaway": "Missing entries stay missing during cosine similarity; normalize the neighbours, average their deviations, and add the target user's mean.",
         "steps": [
           [
             "Input",
-            "canonical source",
-            "Copy only the variables the assignment gives."
+            "$R=\\begin{bmatrix}?&10&5\\\\9&16&8\\\\13&?&6\\end{bmatrix}$",
+            "Rows are Alice, Bob, Cathy; columns are Matrix, Inception, Star Wars."
           ],
           [
-            "State",
-            "invariant",
-            "Record budgets, probabilities, ratings, or counters."
+            "Means",
+            "$\\bar r_A=\\frac{10+5}{2}=7.5,\\quad \\bar r_B=\\frac{9+16+8}{3}=11,\\quad \\bar r_C=\\frac{13+6}{2}=9.5$",
+            "Compute each row mean from known ratings only; a blank is not a zero."
           ],
           [
-            "Update",
-            "one step",
-            "Apply the algorithm once and audit the result."
+            "Center",
+            "$A=(2.5,-2.5),\\quad B=(5,-3),\\quad C=(3.5,-3.5)$",
+            "Use only common rated movies for each pair. The centered vectors are shown on their overlaps."
+          ],
+          [
+            "Cosine",
+            "$S=\\begin{bmatrix}1&0.9701&1\\\\0.9701&1&0.5883\\\\1&0.5883&1\\end{bmatrix}$",
+            "For example, Alice-Bob uses Inception and Star Wars; Alice-Cathy has only Star Wars in common."
+          ],
+          [
+            "Estimate Alice",
+            "$\\hat r_{A,M}=7.5+\\frac{(9-11)+(13-9.5)}{2}=8.25$",
+            "Both Bob and Cathy rated Matrix, so average their centered deviations before adding Alice's mean."
+          ],
+          [
+            "Estimate Cathy",
+            "$\\hat r_{C,I}=9.5+\\frac{(10-7.5)+(16-11)}{2}=13.25$",
+            "Both Alice and Bob rated Inception; use their centered deviations, not raw ratings alone."
+          ],
+          [
+            "Audit",
+            "$\\hat r_{u i}=\\bar r_u+\\frac{1}{|N_i|}\\sum_{v\\in N_i}(r_{v i}-\\bar r_v)$",
+            "This is the normalized-neighbour prediction path; do not turn it into a latent-factor dot product."
           ]
         ]
       },
       {
-        "id": "edge",
-        "label": "Edge case",
-        "prompt": "What edge case can make a superficial Assignment 2 · Recommenders answer wrong?",
-        "takeaway": "Use a boundary case to test the guarantee, not just the happy path.",
+        "id": "latent-factor",
+        "label": "Latent factors",
+        "prompt": "Solve Assignment 2 Question 1(b): complete Q and Pᵀ from zero reconstruction error on known ratings.",
+        "takeaway": "Use the known-rating equations to fill factor entries, then predict the blanks with the completed dot products.",
         "steps": [
           [
-            "Find",
-            "tie or boundary",
-            "Identify the decision point."
+            "Input",
+            "$Q=\\begin{bmatrix}2&a\\\\b&2\\\\1&4\\end{bmatrix},\\quad P^T=\\begin{bmatrix}1&4&2\\\\3&c&1\\end{bmatrix}$",
+            "Rows of Q are Alice, Bob, Cathy; columns of Pᵀ are Matrix, Inception, Star Wars."
           ],
           [
-            "Trace",
-            "alternative",
-            "Run the other allowed outcome."
+            "Alice",
+            "$\\hat r_{A,SW}=(2,a)\\cdot(2,1)=4+a=5\\Longrightarrow a=1$",
+            "Use the known Alice-Star Wars rating to solve the missing Alice factor."
           ],
           [
-            "Explain",
-            "claim strength",
-            "Say whether the result is exact, approximate, or merely possible."
+            "Bob",
+            "$\\hat r_{B,M}=(b,2)\\cdot(1,3)=b+6=9\\Longrightarrow b=3$",
+            "Use the known Bob-Matrix rating to solve the missing Bob factor."
+          ],
+          [
+            "Inception",
+            "$\\hat r_{A,I}=(2,1)\\cdot(4,c)=8+c=10\\Longrightarrow c=2$",
+            "The known Alice-Inception rating determines the missing Inception coordinate."
+          ],
+          [
+            "Complete",
+            "$Q=\\begin{bmatrix}2&1\\\\3&2\\\\1&4\\end{bmatrix},\\quad P^T=\\begin{bmatrix}1&4&2\\\\3&2&1\\end{bmatrix}$",
+            "Every known rating now has zero reconstruction error under the given factorization."
+          ],
+          [
+            "Predict",
+            "$\\hat r_{A,M}=(2,1)\\cdot(1,3)=5,\\quad \\hat r_{C,I}=(1,4)\\cdot(4,2)=12$",
+            "The latent-factor estimates are separate from the user-based values in the first tab."
+          ]
+        ]
+      },
+      {
+        "id": "model-boundary",
+        "label": "Model boundary",
+        "prompt": "Explain the two prediction paths before claiming that their missing ratings should match.",
+        "takeaway": "User-based filtering borrows normalized evidence from neighbours; latent factors reconstruct ratings from learned vectors.",
+        "steps": [
+          [
+            "Neighbourhood",
+            "$\\hat r_{u i}=\\bar r_u+\\operatorname{avg}_{v\\in N_i}(r_{v i}-\\bar r_v)$",
+            "The evidence is a selected set of similar users and their deviations on item i."
+          ],
+          [
+            "Factor model",
+            "$\\hat r_{u i}=q_u\\cdot p_i$",
+            "The evidence is a compatible user vector and item vector learned from known ratings."
+          ],
+          [
+            "Do not mix",
+            "$\\operatorname{avg}(r_{v i}-\\bar r_v)\\ne q_u\\cdot p_i$",
+            "A neighbourhood deviation is not a latent coordinate and cannot be copied into Q or Pᵀ."
+          ],
+          [
+            "Boundary",
+            "$|N_i|=0\\Longrightarrow\\hat r_{u i}=\\mathrm{undefined}$",
+            "With no rated neighbours, the centred neighbourhood path is undefined; state a prior or cold-start fallback."
           ]
         ]
       }
@@ -860,7 +1169,9 @@
   "dsa5101-pagerank": {
     "courseCode": "DSA5101",
     "lessonId": "dsa5101-pagerank",
-    "type": "derivation-trace",
+    "type": "deep-dive",
+    "stepValueMode": "mixed",
+    "stepValueMode": "mixed",
     "title": "Assignment 2 · PageRank practice lab",
     "learningGoal": "Trace the pagerank state without mixing it with the other Assignment 2 tracks.",
     "sourceRefs": [
@@ -905,83 +1216,99 @@
     },
     "exercises": [
       {
-        "id": "setup",
-        "label": "Setup",
-        "prompt": "What is the input and target for Assignment 2 · PageRank?",
-        "takeaway": "Write the representation, objective, and boundary before calculating.",
+        "id": "power-iteration",
+        "label": "Power iteration",
+        "prompt": "Solve Assignment 2 Question 2(a)-(b) from the supplied $A\\to B\\to C\\to D\\to E$ graph.",
+        "takeaway": "Write the source-to-destination matrix first, then multiply with the same orientation for both iterations.",
         "steps": [
           [
-            "Input",
-            "canonical source",
-            "Copy only the variables the assignment gives."
+            "Edges",
+            "$A\\to B,C;\\quad B\\to C;\\quad C\\to D;\\quad D\\to E;\\quad E\\to A,D$",
+            "The outdegrees are 2, 1, 1, 1, and 2 in A-B-C-D-E order."
           ],
           [
-            "State",
-            "invariant",
-            "Record budgets, probabilities, ratings, or counters."
+            "Matrix",
+            "$P=\\begin{bmatrix}0&1/2&1/2&0&0\\\\0&0&1&0&0\\\\0&0&0&1&0\\\\0&0&0&0&1\\\\1/2&0&0&1/2&0\\end{bmatrix}$",
+            "Rows are sources and columns are destinations, so each row sums to one."
           ],
           [
-            "Update",
-            "one step",
-            "Apply the algorithm once and audit the result."
+            "Initial",
+            "$r_0=(1,1,1,1,1)$",
+            "Use the unnormalised vector exactly as the assignment states."
+          ],
+          [
+            "Iteration 1",
+            "$r_1=r_0P=\\left(\\frac12,\\frac12,\\frac32,\\frac32,1\\right)$",
+            "For example, C receives one half from A and one from B; D receives one from C and one half from E."
+          ],
+          [
+            "Iteration 2",
+            "$r_2=r_1P=\\left(\\frac12,\\frac12,1,2,\\frac32\\right)$",
+            "Use r1 as the next row vector; do not rebuild the matrix or switch to column multiplication."
+          ],
+          [
+            "Orientation",
+            "$P_{ij}=\\Pr(i\\to j),\\quad r_{t+1}=r_tP,\\quad \\sum_jP_{ij}=1$",
+            "If you prefer column vectors, transpose P and use Pᵀr; mixing conventions changes the answer."
           ]
         ]
       },
       {
-        "id": "edge",
-        "label": "Edge case",
-        "prompt": "What edge case can make a superficial Assignment 2 · PageRank answer wrong?",
-        "takeaway": "Use a boundary case to test the guarantee, not just the happy path.",
+        "id": "teleport",
+        "label": "Teleport set",
+        "prompt": "Solve Assignment 2 Question 2(c): add a 0.1 teleport probability to A and B.",
+        "takeaway": "Teleport mass is distributed over the selected set, then compare every coordinate with the initial vector.",
         "steps": [
           [
-            "Find",
-            "tie or boundary",
-            "Identify the decision point."
+            "Set",
+            "$T=\\{A,B\\},\\quad 1-\\beta=0.1,\\quad v_T=\\left(\\frac12,\\frac12,0,0,0\\right)$",
+            "The teleport distribution is uniform over A and B, not over all five nodes."
           ],
           [
-            "Trace",
-            "alternative",
-            "Run the other allowed outcome."
+            "Link mass",
+            "$\\beta r_1=0.9\\left(\\frac12,\\frac12,\\frac32,\\frac32,1\\right)$",
+            "Keep the link-following contribution separate from the injected teleport mass."
           ],
           [
-            "Explain",
-            "claim strength",
-            "Say whether the result is exact, approximate, or merely possible."
+            "Add teleport",
+            "$r_1^{(T)}=0.9r_1+0.1v_T=\\left(\\frac12,\\frac12,\\frac{27}{20},\\frac{27}{20},\\frac9{10}\\right)$",
+            "Add 0.05 to A and B only."
+          ],
+          [
+            "Compare",
+            "$r_1^{(T)}>(1,1,1,1,1)\\iff\\{C,D\\}$",
+            "C and D increase; A and B remain at one, while E falls below one."
+          ]
+        ]
+      },
+      {
+        "id": "matrix-boundary",
+        "label": "Matrix boundary",
+        "prompt": "Audit the two matrix mistakes that can invalidate an otherwise correct PageRank calculation.",
+        "takeaway": "Stochasticity and dangling-node handling are preconditions for a meaningful power iteration.",
+        "steps": [
+          [
+            "Row check",
+            "$\\forall i:\\quad\\sum_jP_{ij}=1$",
+            "Every source must distribute all its current mass across outgoing destinations."
+          ],
+          [
+            "Column check",
+            "$P_{ij}=\\Pr(i\\to j)\\Longrightarrow\\sum_jP_{ij}=1$",
+            "A row-stochastic matrix pairs with a row vector; a column-stochastic matrix pairs with a column vector."
+          ],
+          [
+            "Dangling node",
+            "$\\operatorname{outdeg}(j)=0\\Longrightarrow P_{j\\cdot}=v_T$",
+            "Before iterating, assign the dangling node's mass to a stated distribution, commonly the teleport distribution."
+          ],
+          [
+            "Mass audit",
+            "$\\sum_i r_{t+1,i}=\\sum_i r_{t,i}$",
+            "If total mass changes unexpectedly, the orientation or dangling convention is inconsistent."
           ]
         ]
       }
-    ],
-    "steps": [
-      [
-        "Input",
-        "canonical source",
-        "Copy only the variables the assignment gives."
-      ],
-      [
-        "State",
-        "invariant",
-        "Record budgets, probabilities, ratings, or counters."
-      ],
-      [
-        "Update",
-        "one step",
-        "Apply the algorithm once and audit the result."
-      ],
-      [
-        "Find",
-        "tie or boundary",
-        "Identify the decision point."
-      ],
-      [
-        "Trace",
-        "alternative",
-        "Run the other allowed outcome."
-      ],
-      [
-        "Explain",
-        "claim strength",
-        "Say whether the result is exact, approximate, or merely possible."
-      ]
     ],
     "reducedMotion": true,
     "animation": {
@@ -1012,7 +1339,8 @@
   "dsa5101-streams": {
     "courseCode": "DSA5101",
     "lessonId": "dsa5101-streams",
-    "type": "derivation-trace",
+    "type": "deep-dive",
+    "stepValueMode": "mixed",
     "title": "Assignment 2 · Streaming sketches practice lab",
     "learningGoal": "Trace the streams state without mixing it with the other Assignment 2 tracks.",
     "sourceRefs": [
@@ -1085,83 +1413,109 @@
     },
     "exercises": [
       {
-        "id": "setup",
-        "label": "Setup",
-        "prompt": "What is the input and target for Assignment 2 · Streaming sketches?",
-        "takeaway": "Write the representation, objective, and boundary before calculating.",
+        "id": "dgim",
+        "label": "DGIM",
+        "prompt": "Solve Assignment 2 Question 3 by locating the largest legal bucket and the oldest partial bucket.",
+        "takeaway": "For $N=500$, the largest legal bucket is $256$, the worst boundary error is $128$, and an all-one window can have a largest bucket of $128$.",
         "steps": [
           [
-            "Input",
-            "canonical source",
-            "Copy only the variables the assignment gives."
+            "Invariant",
+            "$|B|=2^j,\\quad \\#(2^j)\\in\\{1,2\\}$",
+            "Every bucket has a power-of-two size and there are at most two buckets of each size."
           ],
           [
-            "State",
-            "invariant",
-            "Record budgets, probabilities, ratings, or counters."
+            "Largest legal",
+            "$2^8=256\\le N=500<512=2^9$",
+            "A bucket of size 512 would contain more 1s than the 500-bit window can contain, so 256 is the largest possible size."
           ],
           [
-            "Update",
-            "one step",
-            "Apply the algorithm once and audit the result."
+            "Query boundary",
+            "$B_{\\partial}=\\operatorname{oldest\\ partial\\ bucket}$",
+            "Find the oldest bucket that is only partly covered; newer buckets are counted exactly."
+          ],
+          [
+            "Error",
+            "$E\\le\\frac{B_{\\max}}{2}=\\frac{256}{2}=128$",
+            "DGIM counts half of the oldest partial bucket, so the maximum absolute error is half its size."
+          ],
+          [
+            "All ones",
+            "$2\\sum_{j=0}^{6}2^j=254<500\\Longrightarrow B_{\\max}\\ge128$",
+            "With only sizes up to 64, two of each size cover at most 254 ones; a size-128 bucket is necessary."
+          ],
+          [
+            "Tight state",
+            "$500=2(1+2+4+8+16+32+64)+2(128)$",
+            "This legal bucket multiset reaches 500 with largest size 128, so the lower bound is attainable."
           ]
         ]
       },
       {
-        "id": "edge",
-        "label": "Edge case",
-        "prompt": "What edge case can make a superficial Assignment 2 · Streaming sketches answer wrong?",
-        "takeaway": "Use a boundary case to test the guarantee, not just the happy path.",
+        "id": "frequency-moments",
+        "label": "F0, FM, F2",
+        "prompt": "Solve Assignment 2 Question 4 by separating distinct count, FM's hash signal, and the second frequency moment.",
+        "takeaway": "F0 counts distinct values, FM estimates that cardinality, and F2 squares frequencies; these are three different targets.",
         "steps": [
           [
-            "Find",
-            "tie or boundary",
-            "Identify the decision point."
+            "Stream",
+            "$f_i=i\\quad(i=1,2,\\ldots,10),\\qquad n=\\sum_{i=1}^{10}i=55$",
+            "Value i appears i times, so the stream has 55 total occurrences."
           ],
           [
-            "Trace",
-            "alternative",
-            "Run the other allowed outcome."
+            "Zeroth moment",
+            "$F_0=\\left|\\{1,2,\\ldots,10\\}\\right|=10$",
+            "The zeroth moment counts distinct values, not all 55 positions."
           ],
           [
-            "Explain",
-            "claim strength",
-            "Say whether the result is exact, approximate, or merely possible."
+            "FM identity hash",
+            "$h(i)=i,\\quad R=\\max_i\\operatorname{trailingZeros}(h(i))=3$",
+            "Among 1 through 10, $h(8)=1000$ has the longest trailing-zero suffix."
+          ],
+          [
+            "FM estimate",
+            "$\\widehat{F_0}=2^R=2^3=8$",
+            "A single identity hash is noisy and underestimates the exact distinct count 10 in this teaching example."
+          ],
+          [
+            "Second moment",
+            "$F_2=\\sum_{i=1}^{10}f_i^2=\\sum_{i=1}^{10}i^2=385$",
+            "Square each frequency; do not square the number of distinct values."
+          ]
+        ]
+      },
+      {
+        "id": "ams",
+        "label": "AMS estimator",
+        "prompt": "Work the two AMS cases in Assignment 2 Question 4(d): one sampled position, then all positions averaged.",
+        "takeaway": "The one-position estimate is noisy; averaging one variable per position recovers the exact second moment for this stream.",
+        "steps": [
+          [
+            "Estimator",
+            "$X_t=n(2f_t-1)$",
+            "For a sampled position t, f_t is the number of later-or-equal occurrences of the sampled value."
+          ],
+          [
+            "First position",
+            "$x_1=1,\\quad f_1=1,\\quad n=55$",
+            "The first position contains value 1, which occurs only once in the whole stream."
+          ],
+          [
+            "One variable",
+            "$X_1=55(2\\cdot1-1)=55$",
+            "This is the answer when the only variable is anchored at the first position."
+          ],
+          [
+            "Average",
+            "$\\frac{1}{n}\\sum_{t=1}^{n}X_t=\\sum_{t=1}^{n}(2f_t-1)$",
+            "Average the position estimates after constructing one variable for each stream position."
+          ],
+          [
+            "Exact target",
+            "$\\sum_{t=1}^{n}(2f_t-1)=\\sum_{i=1}^{10}i^2=F_2=385$",
+            "For a value with frequency i, the terms are 1,3,...,2i-1 and sum to i²."
           ]
         ]
       }
-    ],
-    "steps": [
-      [
-        "Input",
-        "canonical source",
-        "Copy only the variables the assignment gives."
-      ],
-      [
-        "State",
-        "invariant",
-        "Record budgets, probabilities, ratings, or counters."
-      ],
-      [
-        "Update",
-        "one step",
-        "Apply the algorithm once and audit the result."
-      ],
-      [
-        "Find",
-        "tie or boundary",
-        "Identify the decision point."
-      ],
-      [
-        "Trace",
-        "alternative",
-        "Run the other allowed outcome."
-      ],
-      [
-        "Explain",
-        "claim strength",
-        "Say whether the result is exact, approximate, or merely possible."
-      ]
     ],
     "reducedMotion": true,
     "animation": {
@@ -1192,7 +1546,8 @@
   "dsa5101-balance": {
     "courseCode": "DSA5101",
     "lessonId": "dsa5101-balance",
-    "type": "decision-tree",
+    "type": "deep-dive",
+    "stepValueMode": "mixed",
     "title": "Assignment 2 · BALANCE practice lab",
     "learningGoal": "Trace the balance state without mixing it with the other Assignment 2 tracks.",
     "sourceRefs": [
@@ -1222,65 +1577,103 @@
     },
     "exercises": [
       {
-        "id": "setup",
-        "label": "Setup",
-        "prompt": "What is the input and target for Assignment 2 · BALANCE?",
-        "takeaway": "Write the representation, objective, and boundary before calculating.",
+        "id": "four-sequences",
+        "label": "Four sequences",
+        "prompt": "Solve all four BALANCE sequences in Assignment 2 Question 5 by tracing eligibility, budget, and offline optimum.",
+        "takeaway": "BALANCE is guaranteed optimal only when every allowed tie path reaches the offline optimum.",
         "steps": [
           [
-            "Input",
-            "canonical source",
-            "Copy only the variables the assignment gives."
+            "Setup",
+            "$E(x)=\\{A,B\\},\\quad E(y)=\\{A\\},\\quad E(z)=\\{B\\},\\quad (B_A,B_B)=(2,2)$",
+            "A bids on x,y; B bids on x,z; a served query consumes one unit of the chosen budget."
           ],
           [
-            "State",
-            "invariant",
-            "Record budgets, probabilities, ratings, or counters."
+            "xyzx",
+            "$\\operatorname{serve}_{A\\ gets\\ x}(xyzx)=4,\\quad \\operatorname{serve}_{B\\ gets\\ x}(xyzx)=4,\\quad OPT=4$",
+            "Either first-x tie leaves the later y and z feasible, so the sequence is guaranteed optimal."
+          ],
+          [
+            "xyyy",
+            "$\\operatorname{serve}_{A\\ gets\\ x}(xyyy)=2,\\quad \\operatorname{serve}_{B\\ gets\\ x}(xyyy)=3,\\quad OPT=3$",
+            "One legal tie path serves only two queries, so the sequence is not guaranteed optimal."
+          ],
+          [
+            "xyxz",
+            "$\\operatorname{serve}_{A\\ gets\\ x}(xyxz)=4,\\quad \\operatorname{serve}_{B\\ gets\\ x}(xyxz)=4,\\quad OPT=4$",
+            "Both first-x outcomes still preserve one advertiser for the final x and z demand."
+          ],
+          [
+            "yzyy",
+            "$y\\to A,\\quad z\\to B,\\quad y\\to A,\\quad \\operatorname{serve}(yzyy)=3=OPT$",
+            "There is no first-query tie; the final y is unservable after A's budget is exhausted."
+          ],
+          [
+            "Verdict",
+            "$\\operatorname{guaranteed}(q)\\iff\\min_{\\rho\\in\\mathrm{TiePaths}(q)}\\operatorname{serve}_{\\rho}(q)=OPT(q)$",
+            "The answers are yes for xyzx, no for xyyy, yes for xyxz, and yes for yzyy."
+          ]
+        ]
+      },
+      {
+        "id": "tie-counterexample",
+        "label": "Tie counterexample",
+        "prompt": "Use xyyy to see why one successful simulation is not a guarantee.",
+        "takeaway": "The first tied x can consume the only advertiser that can serve the later y queries.",
+        "steps": [
+          [
+            "Tie",
+            "$B_A=B_B=2\\quad\\Longrightarrow\\quad x\\in E(x)$",
+            "Both advertisers are eligible and have equal remaining budget before the first query."
+          ],
+          [
+            "Bad branch",
+            "$x\\to A:\\quad(B_A,B_B)=(1,2)\\to y\\to A:\\quad(0,2)$",
+            "A tie resolution that gives x to A uses one of A's two y opportunities."
+          ],
+          [
+            "Finish bad branch",
+            "$y\\notin E(remaining),\\quad \\operatorname{serve}=2$",
+            "The third and fourth y queries cannot be served because only A bids on y."
+          ],
+          [
+            "Good branch",
+            "$x\\to B:\\quad(B_A,B_B)=(2,1)\\to y\\to A\\to y\\to A\\quad\\operatorname{serve}=3$",
+            "Giving the tied x to B preserves A's full budget for two y queries."
+          ],
+          [
+            "Guarantee",
+            "$\\min(2,3)=2<OPT(xyyy)=3$",
+            "The existence of a good branch does not repair the bad allowed branch."
+          ]
+        ]
+      },
+      {
+        "id": "budget-update",
+        "label": "State update",
+        "prompt": "Make the BALANCE state transition explicit before judging a sequence.",
+        "takeaway": "Compare remaining budgets only among eligible advertisers, then update exactly the chosen advertiser.",
+        "steps": [
+          [
+            "Eligible set",
+            "$E(q)=\\{a:\\operatorname{bid}(a,q)=1\\}$",
+            "Remove advertisers that do not bid on the current query before comparing budgets."
+          ],
+          [
+            "Choice",
+            "$a_t\\in\\operatorname*{argmax}_{a\\in E(q_t)}B_{t-1}(a)$",
+            "BALANCE chooses an eligible advertiser with the largest remaining budget."
           ],
           [
             "Update",
-            "one step",
-            "Apply the algorithm once and audit the result."
-          ]
-        ]
-      },
-      {
-        "id": "edge",
-        "label": "Edge case",
-        "prompt": "What edge case can make a superficial Assignment 2 · BALANCE answer wrong?",
-        "takeaway": "Use a boundary case to test the guarantee, not just the happy path.",
-        "steps": [
-          [
-            "Find",
-            "tie or boundary",
-            "Identify the decision point."
+            "$B_t(a_t)=B_{t-1}(a_t)-1$",
+            "Only the advertiser that receives $q_t$ loses one budget unit."
           ],
           [
-            "Trace",
-            "alternative",
-            "Run the other allowed outcome."
-          ],
-          [
-            "Explain",
-            "claim strength",
-            "Say whether the result is exact, approximate, or merely possible."
+            "Tie",
+            "$|\\operatorname*{argmax} B_{t-1}|>1\\Longrightarrow\\mathrm{TiePaths}(q_t)>1$",
+            "Branch or state a deterministic tie rule before claiming a unique result."
           ]
         ]
-      }
-    ],
-    "mode": "generic",
-    "splits": [
-      {
-        "id": "target",
-        "label": "Target quantity",
-        "detail": "Name exactly what the algorithm is estimating or allocating.",
-        "scope": "representation and objective"
-      },
-      {
-        "id": "boundary",
-        "label": "Boundary case",
-        "detail": "Trace a tie, missing value, dangling mass, or sketch boundary before claiming success.",
-        "scope": "invariant and guarantee"
       }
     ],
     "reducedMotion": true,
