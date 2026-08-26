@@ -32,9 +32,18 @@
   },
   {
     "id": "dsa5101-stream-q2",
-    "type": "short",
-    "prompt": "Why does DGIM count the oldest partially covered bucket as a source of approximation error?",
-    "explanation": "The algorithm knows the bucket size but not the exact locations of its 1s relative to the query boundary, so it can include at most half of that oldest bucket as a controlled approximation.",
+    "type": "mcq",
+    "prompt": "Why is the oldest partially covered DGIM bucket the source of the query approximation?",
+    "choices": [
+      "Its size is known but its exact 1-positions relative to the window boundary are not",
+      "It is always the largest bucket, so DGIM must discard it entirely",
+      "Its timestamp is random, so the bucket size cannot be trusted",
+      "All newer buckets are approximate while the oldest bucket is exact",
+      "DGIM counts half of every bucket, not only the boundary bucket",
+      "The bucket contains zeros whose positions must be reconstructed by hashing"
+    ],
+    "answer": 0,
+    "explanation": "The oldest boundary bucket may be only partly inside the requested window. DGIM knows its size but not the internal timestamps, so it counts half of that bucket as a controlled approximation while newer covered buckets are exact.",
     "sourceRefs": [
       {
         "sourceId": "DSA5101/Assignments/DSA5101_Assignment_2.pdf",
@@ -59,18 +68,26 @@
     "visualHook": "Draw the state transition or data summary before calculating.",
     "courseId": "DSA5101",
     "lessonId": "dsa5101-streams",
-    "schemaVersion": "nus.question.v1",
-    "accepted": [
-      "unknown positions at boundary",
-      "oldest bucket is only partially in the window"
-    ],
-    "solution": "The bucket summary loses the internal timestamps, so the boundary bucket cannot be counted exactly."
+    "schemaVersion": "nus.question.v1"
   },
   {
     "id": "dsa5101-stream-q3",
-    "type": "calculation",
-    "prompt": "In the one-register Flajolet–Martin teaching approximation, the maximum zero-prefix length is $R=5$. What estimate does the register produce?",
-    "explanation": "The one-register estimate is $2^R=2^5=32$.",
+    "type": "mcq",
+    "difficulty": "hard",
+    "skill": "compute-fm-estimate",
+    "cognitiveLevel": "evaluate",
+    "estimatedSeconds": 90,
+    "prompt": "In the one-register Flajolet–Martin teaching approximation, the maximum zero-prefix length is $R=5$. Which estimate follows?",
+    "choices": [
+      "$\\widehat n\\approx2^R=2^5=32$",
+      "$\\widehat n\\approx R^2=25$",
+      "$\\widehat n\\approx2R=10$",
+      "$\\widehat n\\approx2^{R+1}=64$",
+      "$\\widehat n\\approx5!=120$",
+      "$\\widehat n\\approx\\log_2R=\\log_2 5$"
+    ],
+    "answer": 0,
+    "explanation": "The one-register teaching estimate is $2^R$, so $R=5$ gives $2^5=32$. It is an approximation, not a claim that the exact distinct count is necessarily $32$.",
     "sourceRefs": [
       {
         "sourceId": "DSA5101/Assignments/DSA5101_Assignment_2.pdf",
@@ -87,27 +104,30 @@
         "status": "course-depth"
       }
     ],
-    "difficulty": "medium",
-    "skill": "compute-fm-estimate",
-    "cognitiveLevel": "apply",
-    "estimatedSeconds": 90,
     "misconception": "Check the representation, objective, and scale assumption before committing to an answer.",
     "visualHook": "Draw the state transition or data summary before calculating.",
     "courseId": "DSA5101",
     "lessonId": "dsa5101-streams",
-    "schemaVersion": "nus.question.v1",
-    "accepted": [
-      "32",
-      "2^5=32"
-    ],
-    "solution": "$\\widehat n\\approx2^5=32$.",
-    "hint": "Raise two to the observed maximum zero-prefix length."
+    "schemaVersion": "nus.question.v1"
   },
   {
     "id": "dsa5101-stream-q4",
-    "type": "calculation",
-    "prompt": "A stream contains one 1, two 2s, three 3s, and so on up to ten 10s. What is its second frequency moment?",
-    "explanation": "The frequency of value i is i, so $F_2=1^2+2^2+\\cdots+10^2=385$.",
+    "type": "mcq",
+    "difficulty": "hard",
+    "skill": "compute-second-moment",
+    "cognitiveLevel": "evaluate",
+    "estimatedSeconds": 120,
+    "prompt": "A stream contains one $1$, two $2$s, three $3$s, and so on up to ten $10$s. What is its second frequency moment?",
+    "choices": [
+      "$F_2=\\sum_{i=1}^{10}i^2=385$",
+      "$F_2=\\sum_{i=1}^{10}i=55$",
+      "$F_2=10^2=100$ because there are ten distinct values",
+      "$F_2=\\left(\\sum_{i=1}^{10}i\\right)^2=3025$",
+      "$F_2=\\sum_{i=1}^{10}2i=110$",
+      "$F_2=\\sum_{i=1}^{10}\\sqrt{i}=\\sqrt{55}$"
+    ],
+    "answer": 0,
+    "explanation": "Value $i$ has frequency $f_i=i$, so the second moment squares each frequency: $F_2=\\sum_i f_i^2=\\sum_{i=1}^{10}i^2=385$. The total stream length $55$ is the zeroth-moment input count, not $F_2$.",
     "sourceRefs": [
       {
         "sourceId": "DSA5101/Assignments/DSA5101_Assignment_2.pdf",
@@ -117,21 +137,11 @@
         "status": "current-context"
       }
     ],
-    "difficulty": "hard",
-    "skill": "compute-second-moment",
-    "cognitiveLevel": "apply",
-    "estimatedSeconds": 120,
     "misconception": "Check the representation, objective, and scale assumption before committing to an answer.",
     "visualHook": "Draw the state transition or data summary before calculating.",
     "courseId": "DSA5101",
     "lessonId": "dsa5101-streams",
-    "schemaVersion": "nus.question.v1",
-    "accepted": [
-      "385",
-      "1^2+...+10^2=385"
-    ],
-    "solution": "$F_2=\\sum_{i=1}^{10}i^2=385$.",
-    "hint": "Square each frequency, not each distinct value only."
+    "schemaVersion": "nus.question.v1"
   },
   {
     "id": "dsa5101-stream-q5",

@@ -32,9 +32,18 @@
   },
   {
     "id": "dsa5101-balance-q2",
-    "type": "short",
-    "prompt": "Under the Assignment 2 bids and budgets, is $xyxz$ guaranteed optimal for BALANCE? Explain in one sentence.",
-    "explanation": "Yes. Whichever advertiser receives the first tied x, the later y and z eligibility keeps both budgets available for the remaining x and serves all four queries.",
+    "type": "mcq",
+    "prompt": "A bids on $x,y$, B bids on $x,z$, both budgets start at $2$, and the query sequence is $xyxz$. Which statement is strongest?",
+    "choices": [
+      "BALANCE is guaranteed optimal because both first-$x$ tie paths serve $4$, matching $OPT=4$",
+      "BALANCE is not guaranteed because any tie on $x$ invalidates an optimality claim",
+      "BALANCE is guaranteed only if A receives the first $x$",
+      "BALANCE serves at most $3$ because $y$ is unavailable to B",
+      "The sequence cannot be evaluated without knowing the future budget",
+      "BALANCE is optimal only when it maximizes total remaining budget after each query"
+    ],
+    "answer": 0,
+    "explanation": "For $xyxz$, either advertiser may receive the first tied $x$; the corresponding state still serves all four queries. Since the offline optimum is also $4$, the sequence is guaranteed optimal across both tie paths.",
     "sourceRefs": [
       {
         "sourceId": "DSA5101/Assignments/DSA5101_Assignment_2.pdf",
@@ -52,19 +61,22 @@
     "visualHook": "Draw the state transition or data summary before calculating.",
     "courseId": "DSA5101",
     "lessonId": "dsa5101-balance",
-    "schemaVersion": "nus.question.v1",
-    "accepted": [
-      "yes",
-      "yes, all four can be served",
-      "yes because either first x tie leaves an optimal allocation"
-    ],
-    "solution": "Yes; both tie outcomes serve all four queries, which is the offline optimum."
+    "schemaVersion": "nus.question.v1"
   },
   {
     "id": "dsa5101-balance-q3",
-    "type": "calculation",
-    "prompt": "Why is $xyyy$ not guaranteed optimal when A bids on x,y, B bids on x,z, and both budgets start at 2?",
-    "explanation": "The first x is a tie. If BALANCE gives it to A, A then receives the first y and exhausts its budget after one more y, while B cannot serve y; an offline allocation could give x to B and two y queries to A, serving three.",
+    "type": "mcq",
+    "prompt": "A bids on $x,y$, B bids on $x,z$, both budgets start at $2$, and the query sequence is $xyyy$. Which line proves that BALANCE is not guaranteed optimal?",
+    "choices": [
+      "If $x\\to A$, BALANCE serves $2$; if $x\\to B$, it serves $3$; since $OPT=3$, the worst tie path loses",
+      "Both tie paths serve $3$, while $OPT=2$, so BALANCE is always optimal",
+      "The first tie is irrelevant because BALANCE compares total future demand before serving $x$",
+      "BALANCE must give $x$ to A because A is the only advertiser bidding on $y$",
+      "The sequence has no offline optimum because advertisers cannot see future queries",
+      "A tie automatically means BALANCE is optimal when both initial budgets are equal"
+    ],
+    "answer": 0,
+    "explanation": "Giving the first tied $x$ to A leaves A with only one budget unit for $y$, so the path serves $2$. Giving $x$ to B lets A serve two $y$ queries, so the best path serves $3$ and matches $OPT=3$; the worst path is enough to refute a guarantee.",
     "sourceRefs": [
       {
         "sourceId": "DSA5101/Assignments/DSA5101_Assignment_2.pdf",
@@ -82,20 +94,22 @@
     "visualHook": "Draw the state transition or data summary before calculating.",
     "courseId": "DSA5101",
     "lessonId": "dsa5101-balance",
-    "schemaVersion": "nus.question.v1",
-    "accepted": [
-      "not guaranteed; tie can give x to A and waste A budget on x",
-      "no",
-      "no because the first tie can hurt y-only demand"
-    ],
-    "solution": "No. A bad tie resolution makes BALANCE serve only two queries while OPT serves three.",
-    "hint": "Check both outcomes of the first x tie."
+    "schemaVersion": "nus.question.v1"
   },
   {
     "id": "dsa5101-balance-q4",
-    "type": "short",
-    "prompt": "What is the difference between “BALANCE serves all queries in this simulation” and “BALANCE is guaranteed optimal for this sequence”?",
-    "explanation": "The first claim describes one tie resolution or one execution. The guarantee quantifies over the allowed choices and must equal the offline optimum for the sequence.",
+    "type": "mcq",
+    "prompt": "Which test distinguishes “BALANCE serves all queries in one simulation” from “BALANCE is guaranteed optimal”?",
+    "choices": [
+      "One successful tie path is enough for the first claim; the second requires every allowed tie path to match $OPT$",
+      "The two claims are identical whenever BALANCE serves at least one query",
+      "The guarantee only checks the tie path that maximizes BALANCE's remaining budget",
+      "A successful simulation proves optimality because BALANCE is deterministic",
+      "The guarantee compares BALANCE only with the greedy policy on the same path",
+      "The first claim requires an offline optimum, while the second checks only served-query count"
+    ],
+    "answer": 0,
+    "explanation": "A simulation reports one execution. A guarantee must quantify over the allowed tie resolutions and compare the weakest outcome with the offline optimum for the full sequence.",
     "sourceRefs": [
       {
         "sourceId": "DSA5101/Assignments/DSA5101_Assignment_2.pdf",
@@ -113,11 +127,6 @@
     "visualHook": "Draw the state transition or data summary before calculating.",
     "courseId": "DSA5101",
     "lessonId": "dsa5101-balance",
-    "schemaVersion": "nus.question.v1",
-    "accepted": [
-      "one run versus every tie resolution and offline optimum",
-      "simulation outcome is weaker than guarantee"
-    ],
-    "solution": "Guarantee requires checking the worst allowed tie path, not merely displaying a successful path."
+    "schemaVersion": "nus.question.v1"
   }
 ]

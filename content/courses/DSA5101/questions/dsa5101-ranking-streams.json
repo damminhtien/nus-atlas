@@ -39,15 +39,18 @@
   },
   {
     "id": "dsa5101-rs-q2",
-    "type": "short",
-    "prompt": "Why can a streaming sketch use less memory than storing every event?",
-    "accepted": [
-      "it summarizes the stream",
-      "compact approximate summary",
-      "it stores a compact approximate summary"
+    "type": "mcq",
+    "prompt": "A streaming sketch uses less memory than storing every event. Which statement correctly completes the algorithm contract?",
+    "choices": [
+      "It stores a compact summary and must state the approximation or error guarantee",
+      "It stores every event in compressed form and is therefore always exact",
+      "It avoids memory by assuming the stream contains no duplicates",
+      "It becomes exact whenever the stream is longer than the available memory",
+      "It replaces the stream with a random sample and needs no error analysis",
+      "It uses less memory only because asymptotic time ignores storage"
     ],
-    "solution": "It keeps a compact approximate summary with controlled error instead of every raw event.",
-    "explanation": "Mention approximation/error; the memory saving is not free.",
+    "answer": 0,
+    "explanation": "A sketch saves memory by retaining a bounded summary rather than all raw events. The trade-off is meaningful only when its approximation or error contract is stated.",
     "sourceRefs": [
       {
         "sourceId": "DSA5101/Assignments/DSA5101_Assignment_2.pdf",
@@ -115,18 +118,22 @@
   {
     "id": "dsa5101-bank-011",
     "lessonId": "dsa5101-ranking-streams",
-    "type": "short",
-    "difficulty": "medium",
+    "type": "mcq",
+    "difficulty": "hard",
     "skill": "compare",
-    "cognitiveLevel": "analyze",
+    "cognitiveLevel": "evaluate",
     "estimatedSeconds": 90,
-    "prompt": "Contrast DGIM with Flajolet–Martin by naming the quantity each estimates.",
-    "accepted": [
-      "DGIM recent-window count and Flajolet Martin distinct count",
-      "DGIM counts recent 1s; Flajolet Martin estimates distinct items",
-      "window count versus cardinality"
+    "prompt": "Which pairing correctly matches each sketch to its target quantity?",
+    "choices": [
+      "DGIM estimates recent-window 1s; Flajolet–Martin estimates distinct cardinality",
+      "DGIM estimates distinct cardinality; Flajolet–Martin estimates recent-window 1s",
+      "Both estimate the exact total number of stream positions",
+      "DGIM estimates $F_2$; Flajolet–Martin estimates PageRank",
+      "DGIM estimates link importance; Flajolet–Martin estimates bucket age",
+      "Both estimate the same quantity, but with different hash functions"
     ],
-    "explanation": "DGIM estimates the number of recent 1s in a sliding window, while Flajolet–Martin estimates the number of distinct stream elements from hash-prefix evidence.",
+    "answer": 0,
+    "explanation": "DGIM summarizes the number of recent 1s in a sliding window. Flajolet–Martin uses hash-prefix evidence to estimate the number of distinct stream elements.",
     "sourceRefs": [
       {
         "sourceId": "DSA5101/Assignments/DSA5101_Assignment_2.pdf",

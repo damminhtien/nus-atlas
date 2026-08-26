@@ -39,15 +39,18 @@
   },
   {
     "id": "dsa5101-o-q2",
-    "type": "short",
-    "prompt": "Name the two properties you should record when comparing a big-data algorithm's scalability.",
-    "accepted": [
-      "passes and memory",
-      "number of passes and memory",
-      "passes through data and main memory"
+    "type": "mcq",
+    "prompt": "When comparing two big-data algorithms whose asymptotic time is identical, which pair best captures the lecture's scalability concern?",
+    "choices": [
+      "Number of passes through the data and peak main-memory pressure",
+      "Number of variables and the length of the final explanation",
+      "CPU frequency and the number of labels in the output",
+      "Random-seed width and the number of cache lines in one test",
+      "Number of training epochs and the number of plots generated",
+      "File-extension length and the order of independent experiments"
     ],
-    "solution": "Track passes through the data and the main-memory bottleneck; both are central to the lecture framing.",
-    "explanation": "A good answer mentions data passes and memory pressure.",
+    "answer": 0,
+    "explanation": "The course framing emphasizes repeated data passes and the main-memory bottleneck. Other measurements may matter in a specific system, but they are not the strongest first pair for the stated comparison.",
     "sourceRefs": [
       {
         "sourceId": "DSA5101/DSA5101 Course Information.pdf",
@@ -77,17 +80,21 @@
   {
     "id": "dsa5101-bank-001",
     "lessonId": "dsa5101-orientation",
-    "type": "short",
+    "type": "mcq",
     "difficulty": "medium",
     "skill": "diagnose",
     "cognitiveLevel": "analyze",
     "estimatedSeconds": 90,
-    "prompt": "Two algorithms have the same asymptotic time. Name two measurements that can still decide which one scales better beyond main memory.",
-    "accepted": [
-      "passes and memory",
-      "data passes and memory",
-      "passes memory and shuffle"
+    "prompt": "Two algorithms have the same asymptotic time and process data larger than main memory. Which pair is the strongest first comparison?",
+    "choices": [
+      "Number of full data passes and peak working memory",
+      "CPU clock speed and number of output columns",
+      "Number of classes and random-seed length",
+      "Cache associativity and final model size",
+      "Input alphabet size and number of comments",
+      "Wall-clock time from one unrelated hardware run and file name length"
     ],
+    "answer": 0,
     "explanation": "Count full data passes and peak working memory first; network movement, skew, and synchronization are additional measurements when the workflow is distributed.",
     "sourceRefs": [
       {

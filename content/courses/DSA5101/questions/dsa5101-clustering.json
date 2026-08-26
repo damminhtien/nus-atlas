@@ -39,9 +39,22 @@
   },
   {
     "id": "dsa5101-cluster-q2",
-    "type": "calculation",
-    "prompt": "For one-dimensional points 1, 3, and 5 assigned to one K-means cluster, what is the minimum squared-error loss and its representative?",
-    "explanation": "The representative is the mean 3. The loss is $(1-3)^2+(3-3)^2+(5-3)^2=8$.",
+    "type": "mcq",
+    "difficulty": "hard",
+    "skill": "calculate-distortion",
+    "cognitiveLevel": "evaluate",
+    "estimatedSeconds": 120,
+    "prompt": "For one K-means cluster containing points $1,3,5$, which pair gives the minimizing representative and squared-error loss?",
+    "choices": [
+      "$z=3$ and $J(z)=(1-3)^2+(3-3)^2+(5-3)^2=8$",
+      "$z=1$ and $J(z)=0$ because the first point defines the cluster",
+      "$z=5$ and $J(z)=4$ because only the farthest point matters",
+      "$z=\\frac{1+3+5}{2}=4.5$ and $J(z)=6.5$",
+      "$z=0$ and $J(z)=35$ because the origin is the neutral representative",
+      "$z=3$ and $J(z)=\\sqrt{8}$ because K-means uses unsquared distance"
+    ],
+    "answer": 0,
+    "explanation": "The mean minimizes squared error: $z=(1+3+5)/3=3$. Substitution gives $4+0+4=8$; the square root or a single-point representative solves a different objective.",
     "sourceRefs": [
       {
         "sourceId": "DSA5101/Lec3 - Clustering.pdf",
@@ -58,22 +71,11 @@
         "status": "current"
       }
     ],
-    "difficulty": "medium",
-    "skill": "calculate-distortion",
-    "cognitiveLevel": "apply",
-    "estimatedSeconds": 120,
     "misconception": "Check the representation, objective, and scale assumption before committing to an answer.",
     "visualHook": "Draw the state transition or data summary before calculating.",
     "courseId": "DSA5101",
     "lessonId": "dsa5101-clustering",
-    "schemaVersion": "nus.question.v1",
-    "accepted": [
-      "8; representative 3",
-      "8 and mean 3",
-      "loss 8, centroid 3"
-    ],
-    "solution": "The representative is $3$. The loss is $4+0+4=8$.",
-    "hint": "For squared error, minimize at the arithmetic mean."
+    "schemaVersion": "nus.question.v1"
   },
   {
     "id": "dsa5101-cluster-q3",
@@ -135,9 +137,18 @@
   },
   {
     "id": "dsa5101-cluster-q4",
-    "type": "short",
-    "prompt": "In BFR, what should happen to a point that is not confidently assigned to a discard-set cluster but appears close to other uncertain points?",
-    "explanation": "Keep it in a compression set with a compact summary of the uncertain subcluster; retain isolated outliers in the retained set until later evidence arrives.",
+    "type": "mcq",
+    "prompt": "In BFR, a point is too uncertain for every discard-set cluster but is close to several other uncertain points. What is the correct action?",
+    "choices": [
+      "Assign it directly to the nearest discard set and discard its identity",
+      "Add it to a compression set and summarize the emerging uncertain subcluster",
+      "Put it in the retained set permanently because every non-DS point is an outlier",
+      "Delete it because BFR only keeps confidently assigned points",
+      "Create a new discard set without checking whether nearby uncertain points merge",
+      "Force the point into the closest cluster by Euclidean distance, ignoring the confidence test"
+    ],
+    "answer": 1,
+    "explanation": "A compression set represents an uncertain but compressible group. An isolated uncertain point belongs in the retained set, while a confident assignment belongs in a discard set.",
     "sourceRefs": [
       {
         "sourceId": "DSA5101/Lec3 - Clustering.pdf",
@@ -162,19 +173,22 @@
     "visualHook": "Draw the state transition or data summary before calculating.",
     "courseId": "DSA5101",
     "lessonId": "dsa5101-clustering",
-    "schemaVersion": "nus.question.v1",
-    "accepted": [
-      "compression set",
-      "CS",
-      "keep it in CS until merge evidence"
-    ],
-    "solution": "Put it in CS when it belongs to an uncertain but compressible group; use RS for isolated retained points."
+    "schemaVersion": "nus.question.v1"
   },
   {
     "id": "dsa5101-cluster-q5",
-    "type": "short",
-    "prompt": "Why does CURE keep several dispersed representative points and shrink them toward the mean?",
-    "explanation": "Several representatives preserve non-spherical cluster shape; shrinking reduces noise and makes the representation more stable for scalable assignment.",
+    "type": "mcq",
+    "prompt": "Which explanation best captures why CURE uses several dispersed representative points and then shrinks them toward the cluster mean?",
+    "choices": [
+      "The representatives preserve non-spherical shape, while shrinkage reduces noise and outlier sensitivity",
+      "The representatives force every cluster to become spherical before assignment",
+      "The representatives are interchangeable copies of the centroid, so shape is intentionally discarded",
+      "Shrinkage moves every point to the mean and therefore makes CURE exact",
+      "Several representatives are used only to estimate the number of clusters, not their geometry",
+      "CURE avoids a mean entirely; shrinkage is a replacement for computing cluster statistics"
+    ],
+    "answer": 0,
+    "explanation": "CURE keeps shape information through dispersed representatives, then contracts those representatives toward the mean to stabilize the summary without keeping every point.",
     "sourceRefs": [
       {
         "sourceId": "DSA5101/Lec3 - Clustering.pdf",
@@ -199,18 +213,22 @@
     "visualHook": "Draw the state transition or data summary before calculating.",
     "courseId": "DSA5101",
     "lessonId": "dsa5101-clustering",
-    "schemaVersion": "nus.question.v1",
-    "accepted": [
-      "preserve shape and reduce noise",
-      "multiple representatives preserve non-spherical shape; shrinkage reduces noise"
-    ],
-    "solution": "CURE trades one centroid for a few shrunk representatives so shape is retained without retaining every point."
+    "schemaVersion": "nus.question.v1"
   },
   {
     "id": "dsa5101-cluster-q6",
-    "type": "short",
-    "prompt": "Why is purity alone unsafe as a clustering-quality claim?",
-    "explanation": "Purity uses external labels and can increase by creating many small clusters. It does not measure whether the similarity geometry or downstream decision is useful, so cluster count and the evaluation purpose must be stated.",
+    "type": "mcq",
+    "prompt": "A clustering produces one-item clusters, each containing a single ground-truth label, so its purity is $1$. Which conclusion is invalid?",
+    "choices": [
+      "The clustering has perfect purity under the supplied labels",
+      "The clustering must have useful intrinsic geometry and downstream utility",
+      "Purity can be inflated by increasing the number of clusters",
+      "The purity score depends on external labels",
+      "Cluster count should be reported with the purity value",
+      "An additional intrinsic or task-specific metric is needed for a stronger claim"
+    ],
+    "answer": 1,
+    "explanation": "Purity can reach $1$ through many tiny clusters and does not establish geometric quality or usefulness for a downstream task. Its label source and cluster count must be reported.",
     "sourceRefs": [
       {
         "sourceId": "DSA5101/Lec3 - Clustering.pdf",
@@ -235,11 +253,6 @@
     "visualHook": "Draw the state transition or data summary before calculating.",
     "courseId": "DSA5101",
     "lessonId": "dsa5101-clustering",
-    "schemaVersion": "nus.question.v1",
-    "accepted": [
-      "purity rewards many small clusters and needs labels",
-      "external labels; many tiny clusters; does not prove utility"
-    ],
-    "solution": "Report purity with cluster-count and label context, and pair it with intrinsic or task-specific evidence."
+    "schemaVersion": "nus.question.v1"
   }
 ]

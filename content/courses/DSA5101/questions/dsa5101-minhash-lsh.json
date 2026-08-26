@@ -39,15 +39,22 @@
   },
   {
     "id": "dsa5101-mh-q2",
-    "type": "calculation",
-    "prompt": "With similarity $s=0.8$, $b=2$ bands, and $r=2$ rows, what is the LSH candidate probability?",
-    "accepted": [
-      "0.8704",
-      "87.04%",
-      "0.8704 or 87.04%"
+    "type": "mcq",
+    "difficulty": "hard",
+    "skill": "calculate",
+    "cognitiveLevel": "evaluate",
+    "estimatedSeconds": 120,
+    "prompt": "For $s=0.8$, $b=2$, and $r=2$, which calculation correctly separates a band match from the full LSH candidate event?",
+    "choices": [
+      "Band match $=s^r=0.64$; candidate $=1-(1-s^r)^b=0.8704$",
+      "Band match $=1-s^r=0.36$; candidate $=(1-s^r)^b=0.1296$",
+      "Band match $=s^b=0.64$; candidate $=1-s^b=0.36$",
+      "Band match $=s^{br}=0.4096$; candidate $=1-s^{br}=0.5904$",
+      "Band match $=b s^r=1.28$; candidate $=1.28$ after clipping",
+      "Band match $=s/r=0.4$; candidate $=1-(1-s/r)^b=0.64$"
     ],
-    "solution": "1 − (1 − 0.8²)² = 1 − 0.36² = 0.8704.",
-    "explanation": "First compute the probability of avoiding a match in one band, then across all bands.",
+    "answer": 0,
+    "explanation": "A band requires all $r$ rows to match, giving $s^r=0.64$. The pair becomes a candidate when at least one of the $b$ bands matches, so the complement gives $1-(1-0.64)^2=0.8704$.",
     "sourceRefs": [
       {
         "sourceId": "DSA5101/Assignments/DSA5101_Assignment_1.pdf",
@@ -64,10 +71,6 @@
         "status": "current-context"
       }
     ],
-    "difficulty": "medium",
-    "skill": "calculate",
-    "cognitiveLevel": "apply",
-    "estimatedSeconds": 120,
     "misconception": "Check the assumption behind your answer.",
     "visualHook": "Explain the idea with a small diagram or example.",
     "courseId": "DSA5101",
@@ -77,19 +80,22 @@
   {
     "id": "dsa5101-bank-007",
     "lessonId": "dsa5101-minhash-lsh",
-    "type": "calculation",
-    "difficulty": "medium",
+    "type": "mcq",
+    "difficulty": "hard",
     "skill": "calculate",
-    "cognitiveLevel": "apply",
+    "cognitiveLevel": "evaluate",
     "estimatedSeconds": 90,
-    "prompt": "For similarity $s=0.8$, $b=2$ bands, and $r=2$ rows, compute the LSH candidate probability $1-(1-s^r)^b$.",
-    "accepted": [
-      "0.8704",
-      "87.04%",
-      "0.8704 or 87.04%"
+    "prompt": "For similarity $s=0.8$, $b=2$ bands, and $r=2$ rows, what is the probability that the pair becomes an LSH candidate?",
+    "choices": [
+      "$1-(1-0.8^2)^2=0.8704$",
+      "$0.8^2=0.64$ because one matching band is enough",
+      "$1-0.8^2=0.36$ because all bands must fail",
+      "$2\\cdot0.8^2=1.28$ because the bands add directly",
+      "$0.8^4=0.4096$ because all four entries must match",
+      "$1-(1-0.8)^2=0.96$ because rows are independent events"
     ],
-    "solution": "$1-(1-0.8^2)^2=1-0.36^2=0.8704$.",
-    "explanation": "Compute the probability that a band matches, then take one minus the probability that all bands fail.",
+    "answer": 0,
+    "explanation": "A band matches with probability $s^r=0.8^2$. The candidate event is an OR across the two bands, so its probability is $1-(1-s^r)^b=0.8704$.",
     "sourceRefs": [
       {
         "sourceId": "DSA5101/Assignments/DSA5101_Assignment_1.pdf",
@@ -107,18 +113,22 @@
   {
     "id": "dsa5101-bank-008",
     "lessonId": "dsa5101-minhash-lsh",
-    "type": "short",
-    "difficulty": "medium",
-    "skill": "explain",
-    "cognitiveLevel": "understand",
+    "type": "mcq",
+    "difficulty": "hard",
+    "skill": "diagnose",
+    "cognitiveLevel": "evaluate",
     "estimatedSeconds": 75,
-    "prompt": "Why must an LSH candidate usually be verified with an exact similarity computation?",
-    "accepted": [
-      "LSH produces candidates and false positives",
-      "a band collision is not proof of similarity",
-      "candidate generation is approximate"
+    "prompt": "Two documents match in one LSH band. What is the strongest conclusion that is justified before exact verification?",
+    "choices": [
+      "Their Jaccard similarity equals the band threshold",
+      "They are candidates; the band collision may be a false positive",
+      "Their complete MinHash signatures are identical",
+      "They must share every shingle in the union",
+      "They cannot be dissimilar in another band",
+      "The collision probability is zero when the sets differ"
     ],
-    "explanation": "A pair can collide in one band by chance. LSH is a filter for speed; exact similarity or a downstream score decides whether the candidate is truly useful.",
+    "answer": 1,
+    "explanation": "LSH uses an OR across bands, so one matching band proposes a candidate but does not prove high exact similarity. A later exact Jaccard computation or downstream score removes false positives.",
     "sourceRefs": [
       {
         "sourceId": "DSA5101/Assignments/DSA5101_Assignment_1.pdf",

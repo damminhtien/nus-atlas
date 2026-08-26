@@ -6,20 +6,29 @@
     "orientation": ["scale diagnosis", "passes", "memory", "approximation"],
     "patterns": ["support", "confidence", "lift", "downward closure"],
     "similarity": ["Jaccard", "MinHash", "LSH", "candidate verification"],
-    "streams": ["PageRank", "DGIM", "Flajolet-Martin", "error contracts"]
+    "streams": ["PageRank", "DGIM", "Flajolet-Martin", "error contracts"],
+    "deepDives": ["counterexamples", "boundary cases", "state reconstruction"]
   },
   "questions": [
     {
       "id": "dsa5101-bank-001",
       "lessonId": "dsa5101-orientation",
-      "type": "short",
-      "difficulty": "medium",
+      "type": "mcq",
+      "difficulty": "hard",
       "skill": "diagnose",
-      "cognitiveLevel": "analyze",
+      "cognitiveLevel": "evaluate",
       "estimatedSeconds": 90,
-      "prompt": "Two algorithms have the same asymptotic time. Name two measurements that can still decide which one scales better beyond main memory.",
-      "accepted": ["passes and memory", "data passes and memory", "passes memory and shuffle"],
-      "explanation": "Count full data passes and peak working memory first; network movement, skew, and synchronization are additional measurements when the workflow is distributed.",
+      "prompt": "Two algorithms have the same asymptotic time and process data larger than main memory. Which pair is the strongest first comparison?",
+      "choices": [
+        "Number of full data passes and peak working memory",
+        "CPU clock speed and number of output columns",
+        "Number of classes and random-seed length",
+        "Cache associativity and final model size",
+        "Input alphabet size and number of comments",
+        "Wall-clock time from one unrelated hardware run and file name length"
+      ],
+      "answer": 0,
+      "explanation": "Beyond main memory, repeated data passes and peak working memory expose I/O and memory pressure that asymptotic time alone hides. In distributed workflows, shuffle, skew, and synchronization can be added after this first comparison.",
       "sourceRefs": [
         { "sourceId": "DSA5101/DSA5101 Course Information.pdf", "sourceType": "lecture", "page": 1, "role": "scale framing", "status": "current" },
         { "sourceId": "DSA5101/Reference textbook MMDS 3rd Edition.pdf", "sourceType": "textbook", "page": 3, "role": "scalable algorithm framing", "status": "course-depth" }
@@ -103,28 +112,43 @@
     {
       "id": "dsa5101-bank-007",
       "lessonId": "dsa5101-minhash-lsh",
-      "type": "calculation",
-      "difficulty": "medium",
+      "type": "mcq",
+      "difficulty": "hard",
       "skill": "calculate",
-      "cognitiveLevel": "apply",
+      "cognitiveLevel": "evaluate",
       "estimatedSeconds": 90,
-      "prompt": "For similarity $s=0.8$, $b=2$ bands, and $r=2$ rows, compute the LSH candidate probability $1-(1-s^r)^b$.",
-      "accepted": ["0.8704", "87.04%", "0.8704 or 87.04%"],
-      "solution": "$1-(1-0.8^2)^2=1-0.36^2=0.8704$.",
-      "explanation": "Compute the probability that a band matches, then take one minus the probability that all bands fail.",
+      "prompt": "For similarity $s=0.8$, $b=2$ bands, and $r=2$ rows, what is the probability that the pair becomes an LSH candidate?",
+      "choices": [
+        "$1-(1-0.8^2)^2=0.8704$",
+        "$0.8^2=0.64$ because one matching band is enough",
+        "$1-0.8^2=0.36$ because all bands must fail",
+        "$2\\cdot0.8^2=1.28$ because the bands add directly",
+        "$0.8^4=0.4096$ because all four entries must match",
+        "$1-(1-0.8)^2=0.96$ because rows are independent events"
+      ],
+      "answer": 0,
+      "explanation": "A band matches with probability $s^r=0.8^2$. The candidate event is an OR across the two bands, so its probability is $1-(1-s^r)^b=0.8704$.",
       "sourceRefs": [{ "sourceId": "DSA5101/Assignments/DSA5101_Assignment_1.pdf", "sourceType": "exercise", "page": 4, "role": "LSH banding", "status": "current-context" }]
     },
     {
       "id": "dsa5101-bank-008",
       "lessonId": "dsa5101-minhash-lsh",
-      "type": "short",
-      "difficulty": "medium",
-      "skill": "explain",
-      "cognitiveLevel": "understand",
+      "type": "mcq",
+      "difficulty": "hard",
+      "skill": "diagnose",
+      "cognitiveLevel": "evaluate",
       "estimatedSeconds": 75,
-      "prompt": "Why must an LSH candidate usually be verified with an exact similarity computation?",
-      "accepted": ["LSH produces candidates and false positives", "a band collision is not proof of similarity", "candidate generation is approximate"],
-      "explanation": "A pair can collide in one band by chance. LSH is a filter for speed; exact similarity or a downstream score decides whether the candidate is truly useful.",
+      "prompt": "Two documents match in one LSH band. What is the strongest conclusion that is justified before exact verification?",
+      "choices": [
+        "Their Jaccard similarity equals the band threshold",
+        "They are candidates; the band collision may be a false positive",
+        "Their complete MinHash signatures are identical",
+        "They must share every shingle in the union",
+        "They cannot be dissimilar in another band",
+        "The collision probability is zero when the sets differ"
+      ],
+      "answer": 1,
+      "explanation": "LSH uses an OR across bands, so one matching band proposes a candidate but does not prove high exact similarity. A later exact Jaccard computation or downstream score removes false positives.",
       "sourceRefs": [
         { "sourceId": "DSA5101/Assignments/DSA5101_Assignment_1.pdf", "sourceType": "exercise", "page": 4, "role": "LSH banding", "status": "current-context" },
         { "sourceId": "DSA5101/Reference textbook MMDS 3rd Edition.pdf", "sourceType": "textbook", "page": 100, "role": "LSH candidate filtering", "status": "course-depth" }
@@ -167,14 +191,22 @@
     {
       "id": "dsa5101-bank-011",
       "lessonId": "dsa5101-ranking-streams",
-      "type": "short",
-      "difficulty": "medium",
+      "type": "mcq",
+      "difficulty": "hard",
       "skill": "compare",
-      "cognitiveLevel": "analyze",
+      "cognitiveLevel": "evaluate",
       "estimatedSeconds": 90,
-      "prompt": "Contrast DGIM with Flajolet–Martin by naming the quantity each estimates.",
-      "accepted": ["DGIM recent-window count and Flajolet Martin distinct count", "DGIM counts recent 1s; Flajolet Martin estimates distinct items", "window count versus cardinality"],
-      "explanation": "DGIM estimates the number of recent 1s in a sliding window, while Flajolet–Martin estimates the number of distinct stream elements from hash-prefix evidence.",
+      "prompt": "Which pairing correctly matches each sketch to its target quantity?",
+      "choices": [
+        "DGIM estimates recent-window 1s; Flajolet–Martin estimates distinct cardinality",
+        "DGIM estimates distinct cardinality; Flajolet–Martin estimates recent-window 1s",
+        "Both estimate the exact total number of stream positions",
+        "DGIM estimates $F_2$; Flajolet–Martin estimates PageRank",
+        "DGIM estimates link importance; Flajolet–Martin estimates bucket age",
+        "Both estimate the same quantity, but with different hash functions"
+      ],
+      "answer": 0,
+      "explanation": "DGIM summarizes the number of recent 1s in a sliding window. Flajolet–Martin uses hash-prefix evidence to estimate the number of distinct stream elements.",
       "sourceRefs": [
         { "sourceId": "DSA5101/Assignments/DSA5101_Assignment_2.pdf", "sourceType": "exercise", "page": 4, "role": "streaming sketches", "status": "current-context" },
         { "sourceId": "DSA5101/Reference textbook MMDS 3rd Edition.pdf", "sourceType": "textbook", "page": 155, "role": "streaming depth", "status": "course-depth" }
@@ -194,6 +226,723 @@
       "sourceRefs": [
         { "sourceId": "DSA5101/Assignments/DSA5101_Assignment_2.pdf", "sourceType": "exercise", "page": 4, "role": "Flajolet-Martin", "status": "current-context" },
         { "sourceId": "DSA5101/Reference textbook MMDS 3rd Edition.pdf", "sourceType": "textbook", "page": 155, "role": "cardinality estimation depth", "status": "course-depth" }
+      ]
+    },
+    {
+      "id": "dsa5101-deep-001",
+      "lessonId": "dsa5101-frequent-itemsets",
+      "type": "mcq",
+      "difficulty": "hard",
+      "skill": "prune",
+      "cognitiveLevel": "evaluate",
+      "estimatedSeconds": 90,
+      "prompt": "There are $20$ baskets and the support threshold is $0.4$. If $\\operatorname{supp}(\\{a,c\\})=7/20<0.4$, which conclusion is guaranteed by downward closure?",
+      "choices": [
+        "Every superset containing $\\{a,c\\}$ is infrequent",
+        "Every subset of $\\{a,c\\}$ is infrequent",
+        "Every rule with antecedent $\\{a,c\\}$ has confidence below $0.4$",
+        "The singleton $\\{a\\}$ has support exactly $7/20$",
+        "The item $c$ is independent of item $a$",
+        "A different support threshold can make all supersets frequent"
+      ],
+      "answer": 0,
+      "explanation": "Adding items cannot increase support. Once $\\{a,c\\}$ is below threshold, every itemset that contains it is also below threshold; nothing about confidence, independence, or the supports of its subsets follows.",
+      "sourceRefs": [
+        { "sourceId": "DSA5101/Lec1 - Assoc Rules, Frequent itemsets.pdf", "sourceType": "lecture", "page": 36, "role": "downward closure", "status": "current" },
+        { "sourceId": "DSA5101/Assignments/DSA5101_Assignment_1.pdf", "sourceType": "exercise", "page": 1, "role": "Apriori pruning", "status": "current-context" }
+      ]
+    },
+    {
+      "id": "dsa5101-deep-002",
+      "lessonId": "dsa5101-frequent-itemsets",
+      "type": "mcq",
+      "difficulty": "hard",
+      "skill": "calculate-confidence",
+      "cognitiveLevel": "evaluate",
+      "estimatedSeconds": 90,
+      "prompt": "In $100$ baskets, $A$ occurs $40$ times and $A\\cup B$ occurs $18$ times. What is the confidence of $A\\to B$?",
+      "choices": [
+        "$\\operatorname{conf}(A\\to B)=18/40=0.45$",
+        "$\\operatorname{conf}(A\\to B)=18/100=0.18$",
+        "$\\operatorname{conf}(A\\to B)=40/18\\approx2.22$",
+        "$\\operatorname{conf}(A\\to B)=40/100=0.40$",
+        "$\\operatorname{conf}(A\\to B)=58/100=0.58$",
+        "$\\operatorname{conf}(A\\to B)=1-18/40=0.55$"
+      ],
+      "answer": 0,
+      "explanation": "Confidence conditions on baskets that contain the antecedent, so the denominator is the count of $A$: $18/40=0.45$. Dividing by all baskets computes support of the union instead.",
+      "sourceRefs": [
+        { "sourceId": "DSA5101/Lec1 - Assoc Rules, Frequent itemsets.pdf", "sourceType": "lecture", "page": 28, "role": "confidence definition", "status": "current" },
+        { "sourceId": "DSA5101/Assignments/DSA5101_Assignment_1.pdf", "sourceType": "exercise", "page": 1, "role": "association calculation", "status": "current-context" }
+      ]
+    },
+    {
+      "id": "dsa5101-deep-003",
+      "lessonId": "dsa5101-frequent-itemsets",
+      "type": "mcq",
+      "difficulty": "hard",
+      "skill": "interpret-interest",
+      "cognitiveLevel": "evaluate",
+      "estimatedSeconds": 90,
+      "prompt": "Suppose $\\operatorname{supp}(A\\cup B)=4/10$, $\\operatorname{supp}(A)=8/10$, and $\\operatorname{supp}(B)=5/10$. Under the lecture's absolute-difference interest measure, what is the interest of $A\\to B$?",
+      "choices": [
+        "$|0.4/0.8-0.5|=0$",
+        "$|0.4-0.8|=0.4$",
+        "$|0.5-0.4/0.8|=0.1$",
+        "$0.4/0.8=0.5$",
+        "$0.4/0.5=0.8$",
+        "$|0.4+0.5|=0.9$"
+      ],
+      "answer": 0,
+      "explanation": "The confidence is $(4/10)/(8/10)=0.5$. The consequent baseline is $0.5$, so the absolute difference is $|0.5-0.5|=0$; the rule adds no lift over that baseline.",
+      "sourceRefs": [
+        { "sourceId": "DSA5101/Lec1 - Assoc Rules, Frequent itemsets.pdf", "sourceType": "lecture", "page": 28, "role": "confidence and interest", "status": "current" },
+        { "sourceId": "DSA5101/Assignments/DSA5101_Assignment_1.pdf", "sourceType": "exercise", "page": 1, "role": "rule evaluation", "status": "current-context" }
+      ]
+    },
+    {
+      "id": "dsa5101-deep-004",
+      "lessonId": "dsa5101-frequent-itemsets",
+      "type": "mcq",
+      "difficulty": "hard",
+      "skill": "generate-candidates",
+      "cognitiveLevel": "analyze",
+      "estimatedSeconds": 120,
+      "prompt": "Let $L_2=\\{AB,AC,AD,BC\\}$ be the frequent 2-itemsets. Which candidate survives the Apriori join-and-prune step for size $3$?",
+      "choices": [
+        "$ABC$, because $AB$, $AC$, and $BC$ are all in $L_2$",
+        "$ABD$, because $AB$ and $AD$ are in $L_2$",
+        "$ACD$, because $AC$ and $AD$ are in $L_2$",
+        "$BCD$, because $BC$ is in $L_2$",
+        "All four candidates, because join-and-prune checks only one subset",
+        "None, because $L_2$ cannot produce a size-$3$ candidate"
+      ],
+      "answer": 0,
+      "explanation": "A 3-item candidate survives only if every 2-item subset is frequent. $ABC$ has $AB$, $AC$, and $BC$; each other option contains at least one missing pair.",
+      "sourceRefs": [
+        { "sourceId": "DSA5101/Lec1 - Assoc Rules, Frequent itemsets.pdf", "sourceType": "lecture", "page": 36, "role": "Apriori candidate pruning", "status": "current" },
+        { "sourceId": "DSA5101/Assignments/DSA5101_Assignment_1.pdf", "sourceType": "exercise", "page": 1, "role": "candidate generation", "status": "current-context" }
+      ]
+    },
+    {
+      "id": "dsa5101-deep-005",
+      "lessonId": "dsa5101-frequent-itemsets",
+      "type": "mcq",
+      "difficulty": "hard",
+      "skill": "separate-metrics",
+      "cognitiveLevel": "evaluate",
+      "estimatedSeconds": 105,
+      "prompt": "In $10$ baskets, $A$ occurs $8$ times, $A\\cup B$ occurs $4$ times, and $B$ occurs $5$ times. Which statement about $A\\to B$ is correct?",
+      "choices": [
+        "Support is $0.4$, confidence is $0.5$, and lift is $1$",
+        "Support is $0.8$, confidence is $0.4$, and lift is $1.25$",
+        "Support is $0.5$, confidence is $0.8$, and lift is $0.4$",
+        "Support is $0.4$, confidence is $0.4$, and lift is $0.8$",
+        "Support is $0.5$, confidence is $0.4$, and lift is $2$",
+        "Support is $0.8$, confidence is $0.5$, and lift is $0.625$"
+      ],
+      "answer": 0,
+      "explanation": "The rule support is $4/10=0.4$, confidence is $(4/10)/(8/10)=0.5$, and lift is $0.5/0.5=1$. The confidence equals the consequent baseline, so the rule is not informative under lift.",
+      "sourceRefs": [
+        { "sourceId": "DSA5101/Lec1 - Assoc Rules, Frequent itemsets.pdf", "sourceType": "lecture", "page": 28, "role": "support confidence lift", "status": "current" },
+        { "sourceId": "DSA5101/Assignments/DSA5101_Assignment_1.pdf", "sourceType": "exercise", "page": 1, "role": "rule metrics", "status": "current-context" }
+      ]
+    },
+    {
+      "id": "dsa5101-deep-006",
+      "lessonId": "dsa5101-minhash-lsh",
+      "type": "mcq",
+      "difficulty": "hard",
+      "skill": "distinguish-shingles",
+      "cognitiveLevel": "evaluate",
+      "estimatedSeconds": 90,
+      "prompt": "Document $D_1$ emits shingles $[ab,bc,bc,cd]$ and $D_2$ emits $[ab,bc,cd,cd]$. With set shingles, what Jaccard similarity should MinHash estimate?",
+      "choices": [
+        "$J(D_1,D_2)=|\\{ab,bc,cd\\}|/|\\{ab,bc,cd\\}|=1$",
+        "$J(D_1,D_2)=4/5=0.8$ because duplicate occurrences are counted",
+        "$J(D_1,D_2)=2/4=0.5$ because only $ab$ and $bc$ match",
+        "$J(D_1,D_2)=3/5=0.6$ because the union has five tokens",
+        "$J(D_1,D_2)=0$ because repeated shingles invalidate MinHash",
+        "$J(D_1,D_2)=2/3$ because $cd$ occurs twice in one document"
+      ],
+      "answer": 0,
+      "explanation": "Set shingling removes duplicate occurrences before Jaccard comparison. Both sets are $\\{ab,bc,cd\\}$, so the intersection and union are the same set and the similarity is $1$; multiset Jaccard would be a different definition.",
+      "sourceRefs": [
+        { "sourceId": "DSA5101/Assignments/DSA5101_Assignment_1.pdf", "sourceType": "exercise", "page": 3, "role": "set shingling", "status": "current-context" },
+        { "sourceId": "DSA5101/Reference textbook MMDS 3rd Edition.pdf", "sourceType": "textbook", "page": 95, "role": "Jaccard and MinHash", "status": "course-depth" }
+      ]
+    },
+    {
+      "id": "dsa5101-deep-007",
+      "lessonId": "dsa5101-minhash-lsh",
+      "type": "mcq",
+      "difficulty": "hard",
+      "skill": "separate-collision-levels",
+      "cognitiveLevel": "evaluate",
+      "estimatedSeconds": 105,
+      "prompt": "For set similarity $s=0.6$, an LSH scheme uses $r=4$ rows per band and $b=5$ bands. Which tuple gives the one-row, one-band, and whole-signature candidate probabilities?",
+      "choices": [
+        "$0.6$, $0.6^4=0.1296$, and $1-(1-0.1296)^5\\approx0.50$",
+        "$0.6^4=0.1296$, $0.6$, and $1-(1-0.6)^5=0.98976$",
+        "$0.6$, $5\\cdot0.6^4=0.648$, and $0.6^{20}\\approx0$",
+        "$0.6^5=0.07776$, $0.6^4=0.1296$, and $0.6^9\\approx0.0101$",
+        "$0.6$, $1-0.6^4=0.8704$, and $(1-0.6^4)^5\\approx0.50$",
+        "$0.6^4=0.1296$, $1-(1-0.6)^5=0.98976$, and $0.6^{4+5}=0.0101$"
+      ],
+      "answer": 0,
+      "explanation": "A single row collides with probability $s$. All $r$ rows in one band must collide, giving $s^r$. The pair is a candidate if at least one of the $b$ bands matches, giving $1-(1-s^r)^b$.",
+      "sourceRefs": [
+        { "sourceId": "DSA5101/Assignments/DSA5101_Assignment_1.pdf", "sourceType": "exercise", "page": 4, "role": "LSH collision probability", "status": "current-context" },
+        { "sourceId": "DSA5101/Reference textbook MMDS 3rd Edition.pdf", "sourceType": "textbook", "page": 100, "role": "banding probability", "status": "course-depth" }
+      ]
+    },
+    {
+      "id": "dsa5101-deep-008",
+      "lessonId": "dsa5101-minhash-lsh",
+      "type": "mcq",
+      "difficulty": "hard",
+      "skill": "tune-lsh",
+      "cognitiveLevel": "evaluate",
+      "estimatedSeconds": 105,
+      "prompt": "Keep the MinHash signature length at $m=20$. At similarity $s=0.5$, compare $(b,r)=(4,5)$ with $(10,2)$. What is the correct design conclusion?",
+      "choices": [
+        "Increasing bands makes candidates much more likely, so recall rises while precision tends to fall",
+        "Increasing bands makes candidates less likely, so recall falls while precision tends to rise",
+        "The two settings are equivalent because both have $br=20$",
+        "Only the row count matters; the band count cannot affect the candidate event",
+        "The $(10,2)$ setting guarantees exact Jaccard similarity for every candidate",
+        "The $(4,5)$ setting has no false positives because every band is large"
+      ],
+      "answer": 0,
+      "explanation": "The candidate probability is $1-(1-s^r)^b$. At $s=0.5$, changing from $(4,5)$ to $(10,2)$ lowers $r$ and increases the OR opportunities across bands, so recall increases but more dissimilar pairs can pass the filter, reducing precision.",
+      "sourceRefs": [
+        { "sourceId": "DSA5101/Assignments/DSA5101_Assignment_1.pdf", "sourceType": "exercise", "page": 4, "role": "LSH parameter tradeoff", "status": "current-context" },
+        { "sourceId": "DSA5101/Reference textbook MMDS 3rd Edition.pdf", "sourceType": "textbook", "page": 100, "role": "LSH tuning", "status": "course-depth" }
+      ]
+    },
+    {
+      "id": "dsa5101-deep-009",
+      "lessonId": "dsa5101-minhash-lsh",
+      "type": "mcq",
+      "difficulty": "hard",
+      "skill": "optimize-lsh",
+      "cognitiveLevel": "evaluate",
+      "estimatedSeconds": 90,
+      "prompt": "With a fixed $m=24$ row signature, which choice is the precision-oriented LSH setting when false candidates are especially expensive?",
+      "choices": [
+        "$(b,r)=(3,8)$, because a band needs eight matching rows before it can trigger",
+        "$(b,r)=(12,2)$, because more bands always eliminate false positives",
+        "$(b,r)=(6,4)$, because $b$ and $r$ cancel in the candidate probability",
+        "$(b,r)=(24,1)$, because one matching row is the safest test",
+        "Any setting with $br=24$ has identical precision and recall",
+        "No setting can trade recall for precision because MinHash is exact"
+      ],
+      "answer": 0,
+      "explanation": "For a fixed signature length, larger $r$ makes each band stricter and smaller $b$ reduces OR opportunities. The $(3,8)$ choice therefore tends to suppress low-similarity false candidates, at the cost of recall.",
+      "sourceRefs": [
+        { "sourceId": "DSA5101/Assignments/DSA5101_Assignment_1.pdf", "sourceType": "exercise", "page": 4, "role": "LSH precision recall tradeoff", "status": "current-context" },
+        { "sourceId": "DSA5101/Reference textbook MMDS 3rd Edition.pdf", "sourceType": "textbook", "page": 100, "role": "LSH tuning", "status": "course-depth" }
+      ]
+    },
+    {
+      "id": "dsa5101-deep-010",
+      "lessonId": "dsa5101-minhash-lsh",
+      "type": "mcq",
+      "difficulty": "hard",
+      "skill": "verify-candidates",
+      "cognitiveLevel": "evaluate",
+      "estimatedSeconds": 90,
+      "prompt": "Two documents collide in one of several LSH bands. Which next step is required if the application promises exact duplicate detection?",
+      "choices": [
+        "Compute exact set equality or exact Jaccard on the candidate pair",
+        "Accept the pair because one band collision proves identical signatures",
+        "Discard the pair because any collision across multiple bands is impossible",
+        "Replace the candidate's shingle set with the band key",
+        "Assume the pair has similarity exactly $s^r$",
+        "Increase $b$ until every candidate becomes a duplicate"
+      ],
+      "answer": 0,
+      "explanation": "LSH is a candidate-generation filter. A collision is sufficient to request verification, not sufficient to prove equality; exact detection needs an exact set comparison after the filter.",
+      "sourceRefs": [
+        { "sourceId": "DSA5101/Assignments/DSA5101_Assignment_1.pdf", "sourceType": "exercise", "page": 4, "role": "candidate verification", "status": "current-context" },
+        { "sourceId": "DSA5101/Reference textbook MMDS 3rd Edition.pdf", "sourceType": "textbook", "page": 100, "role": "LSH false positives", "status": "course-depth" }
+      ]
+    },
+    {
+      "id": "dsa5101-deep-011",
+      "lessonId": "dsa5101-clustering",
+      "type": "mcq",
+      "difficulty": "hard",
+      "skill": "compare-linkages",
+      "cognitiveLevel": "apply",
+      "estimatedSeconds": 105,
+      "prompt": "For $d(A,B)=1$, $d(A,C)=4$, and $d(B,C)=3$, what are the single, complete, and average linkage distances between $\\{A,B\\}$ and $\\{C\\}$?",
+      "choices": [
+        "Single $=3$, complete $=4$, average $=3.5$",
+        "Single $=4$, complete $=3$, average $=3.5$",
+        "Single $=1$, complete $=4$, average $=2.5$",
+        "Single $=3.5$, complete $=4$, average $=3$",
+        "Single $=3$, complete $=1$, average $=4$",
+        "All three are $4$ because the cluster representative is $A$"
+      ],
+      "answer": 0,
+      "explanation": "Single linkage takes the minimum cross-pair distance, complete linkage takes the maximum, and average linkage takes the mean: $3$, $4$, and $(4+3)/2=3.5$.",
+      "sourceRefs": [
+        { "sourceId": "DSA5101/Lec3 - Clustering.pdf", "sourceType": "lecture", "page": 21, "role": "linkage definitions", "status": "current" },
+        { "sourceId": "DSA5101/Assignments/DSA5101_Assignment_1.pdf", "sourceType": "exercise", "page": 5, "role": "hierarchical clustering", "status": "current-context" }
+      ]
+    },
+    {
+      "id": "dsa5101-deep-012",
+      "lessonId": "dsa5101-clustering",
+      "type": "mcq",
+      "difficulty": "hard",
+      "skill": "compare-linkages",
+      "cognitiveLevel": "evaluate",
+      "estimatedSeconds": 105,
+      "prompt": "For clusters $X=\\{A,B\\}$ and $Y=\\{C,D\\}$, let the cross distances be $d(A,C)=2$, $d(A,D)=7$, $d(B,C)=5$, and $d(B,D)=1$. Which linkage tuple is correct?",
+      "choices": [
+        "Single $=1$, complete $=7$, average $=15/4$",
+        "Single $=2$, complete $=5$, average $=15/4$",
+        "Single $=1$, complete $=5$, average $=7/4$",
+        "Single $=7$, complete $=1$, average $=15/4$",
+        "Single $=15/4$, complete $=7$, average $=1$",
+        "All three are $15/4$ because linkage averages pair distances"
+      ],
+      "answer": 0,
+      "explanation": "The minimum is $1$, the maximum is $7$, and the mean is $(2+7+5+1)/4=15/4$. Confusing these aggregations changes the merge order in hierarchical clustering.",
+      "sourceRefs": [
+        { "sourceId": "DSA5101/Lec3 - Clustering.pdf", "sourceType": "lecture", "page": 21, "role": "linkage definitions", "status": "current" },
+        { "sourceId": "DSA5101/Assignments/DSA5101_Assignment_1.pdf", "sourceType": "exercise", "page": 6, "role": "linkage calculation", "status": "current-context" }
+      ]
+    },
+    {
+      "id": "dsa5101-deep-013",
+      "lessonId": "dsa5101-clustering",
+      "type": "mcq",
+      "difficulty": "hard",
+      "skill": "diagnose-chaining",
+      "cognitiveLevel": "evaluate",
+      "estimatedSeconds": 90,
+      "prompt": "Two dense point groups are connected by one short bridge of points. Which explanation best predicts single-linkage behavior?",
+      "choices": [
+        "Single linkage can merge the groups through the bridge because one short cross-pair controls each merge",
+        "Single linkage must keep the groups separate because it checks every cross-pair",
+        "Complete linkage is the method that is most sensitive to one short bridge",
+        "Average linkage ignores all bridge points by definition",
+        "The bridge changes only K-means and cannot affect hierarchical linkage",
+        "All linkages produce the same dendrogram whenever the bridge has equal spacing"
+      ],
+      "answer": 0,
+      "explanation": "Single linkage uses the nearest cross-pair, so a chain of locally short links can connect otherwise separated groups. Complete linkage is more resistant because it considers the farthest cross-pair.",
+      "sourceRefs": [
+        { "sourceId": "DSA5101/Lec3 - Clustering.pdf", "sourceType": "lecture", "page": 37, "role": "single-link chaining", "status": "current" },
+        { "sourceId": "DSA5101/Assignments/DSA5101_Assignment_1.pdf", "sourceType": "exercise", "page": 6, "role": "linkage failure mode", "status": "current-context" }
+      ]
+    },
+    {
+      "id": "dsa5101-deep-014",
+      "lessonId": "dsa5101-clustering",
+      "type": "mcq",
+      "difficulty": "hard",
+      "skill": "classify-bfr-point",
+      "cognitiveLevel": "evaluate",
+      "estimatedSeconds": 120,
+      "prompt": "A BFR cluster has centroid $(0,0)$ and standard deviations $(1,2)$. For point $(2,2)$, the normalized Mahalanobis distance is $\\sqrt{(2/1)^2+(2/2)^2}=\\sqrt{5}$. If the assignment threshold is $3$, where does the point go?",
+      "choices": [
+        "Discard set, because $\\sqrt{5}<3$",
+        "Discard set, because Mahalanobis distance ignores standard deviation",
+        "Compression set, because it is outside the threshold but near the cluster",
+        "Compression set, because BFR assigns every non-centroid point there",
+        "Retained set, because every point with a nonzero distance is an outlier",
+        "The point cannot be classified without its raw Euclidean distance"
+      ],
+      "answer": 0,
+      "explanation": "Because $\\sqrt{5}\\approx2.24<3$, the point is absorbed into the discard set for that cluster. BFR uses normalized coordinate deviations, not raw distance alone, to decide whether a point fits a Gaussian-like summary.",
+      "sourceRefs": [
+        { "sourceId": "DSA5101/Lec3 - Clustering.pdf", "sourceType": "lecture", "page": 71, "role": "BFR Mahalanobis assignment", "status": "current" },
+        { "sourceId": "DSA5101/Assignments/DSA5101_Assignment_1.pdf", "sourceType": "exercise", "page": 7, "role": "BFR classification", "status": "current-context" }
+      ]
+    },
+    {
+      "id": "dsa5101-deep-015",
+      "lessonId": "dsa5101-clustering",
+      "type": "mcq",
+      "difficulty": "hard",
+      "skill": "select-cure",
+      "cognitiveLevel": "evaluate",
+      "estimatedSeconds": 90,
+      "prompt": "Why does CURE keep several representative points and then shrink them toward a cluster mean by a factor $0<\\alpha<1$?",
+      "choices": [
+        "It captures non-spherical shape while reducing the influence of outlying representatives",
+        "It forces every cluster to become a hypersphere before merging",
+        "It replaces all distances with a single user mean, so shape is irrelevant",
+        "It guarantees the global K-means optimum in one pass",
+        "It converts a multiset into a set before calculating support",
+        "It removes the need to choose the number of clusters"
+      ],
+      "answer": 0,
+      "explanation": "Multiple representatives preserve shape information, while shrinking them toward the mean makes extreme points less dominant. CURE therefore handles shapes and outliers more flexibly than a single centroid.",
+      "sourceRefs": [
+        { "sourceId": "DSA5101/Lec3 - Clustering.pdf", "sourceType": "lecture", "page": 62, "role": "CURE representatives", "status": "current" },
+        { "sourceId": "DSA5101/Assignments/DSA5101_Assignment_1.pdf", "sourceType": "exercise", "page": 7, "role": "CURE clustering", "status": "current-context" }
+      ]
+    },
+    {
+      "id": "dsa5101-deep-016",
+      "lessonId": "dsa5101-recommenders",
+      "type": "mcq",
+      "difficulty": "hard",
+      "skill": "center-ratings",
+      "cognitiveLevel": "evaluate",
+      "estimatedSeconds": 105,
+      "prompt": "On the two co-rated movies, Alice has $(5,1)$ and Bob has $(4,2)$. What is the key effect of centering each row before cosine similarity?",
+      "choices": [
+        "The centered vectors $(2,-2)$ and $(1,-1)$ have cosine $1$, exposing aligned deviations from different baselines",
+        "Centering changes both vectors to $(5,1)$ and $(4,2)$, so it has no mathematical effect",
+        "Centering makes the cosine $0$ because all rating information is removed",
+        "Centering turns cosine into Euclidean distance and therefore needs no overlap",
+        "Centering makes the vectors $(3,3)$ and $(3,3)$ by replacing each rating with the row mean",
+        "Centering is only needed for item-based filtering, never for user-based filtering"
+      ],
+      "answer": 0,
+      "explanation": "Alice's mean is $3$ and Bob's mean is also $3$, so their centered vectors are $(2,-2)$ and $(1,-1)$, with cosine $1$. The point is to compare preference deviations rather than raw generosity; with different baselines the distinction is even more important.",
+      "sourceRefs": [
+        { "sourceId": "DSA5101/Assignments/DSA5101_Assignment_2.pdf", "sourceType": "exercise", "page": 2, "role": "mean-centered cosine", "status": "current-context" },
+        { "sourceId": "DSA5101/Reference textbook MMDS 3rd Edition.pdf", "sourceType": "textbook", "page": 84, "role": "collaborative filtering", "status": "course-depth" }
+      ]
+    },
+    {
+      "id": "dsa5101-deep-017",
+      "lessonId": "dsa5101-recommenders",
+      "type": "mcq",
+      "difficulty": "hard",
+      "skill": "predict-neighbor",
+      "cognitiveLevel": "evaluate",
+      "estimatedSeconds": 120,
+      "prompt": "The target user's mean is $3$. For item $X$, neighbor $B$ has similarity $0.8$, mean $4$, and rating $5$; neighbor $C$ has similarity $0.4$, mean $2$, and rating $1$. Using the normalized user-based formula, what prediction results?",
+      "choices": [
+        "$3+\\frac{0.8(5-4)+0.4(1-2)}{0.8+0.4}=10/3\\approx3.33$",
+        "$\\frac{0.8(5)+0.4(1)}{0.8+0.4}=11/3\\approx3.67$",
+        "$3+\\frac{0.8(4)+0.4(2)}{0.8+0.4}=14/3\\approx4.67$",
+        "$3+\\frac{(5-4)+(1-2)}{2}=3$",
+        "$\\frac{5+1}{2}=3$ because similarities are used only to select neighbors",
+        "$3+0.8(5-4)+0.4(1-2)=3.4$ because the denominator is omitted"
+      ],
+      "answer": 0,
+      "explanation": "The prediction adds a similarity-weighted average of centered neighbor deviations to the target mean. The numerator is $0.8-0.4=0.4$ and the weight sum is $1.2$, giving $3+1/3=10/3$.",
+      "sourceRefs": [
+        { "sourceId": "DSA5101/Assignments/DSA5101_Assignment_2.pdf", "sourceType": "exercise", "page": 2, "role": "normalized user-based prediction", "status": "current-context" },
+        { "sourceId": "DSA5101/Reference textbook MMDS 3rd Edition.pdf", "sourceType": "textbook", "page": 84, "role": "neighbor prediction", "status": "course-depth" }
+      ]
+    },
+    {
+      "id": "dsa5101-deep-018",
+      "lessonId": "dsa5101-recommenders",
+      "type": "mcq",
+      "difficulty": "hard",
+      "skill": "diagnose-overlap",
+      "cognitiveLevel": "evaluate",
+      "estimatedSeconds": 90,
+      "prompt": "A target user and a possible neighbor have no commonly rated items. What is the mathematically correct handling in the centered user-based method?",
+      "choices": [
+        "Their overlap-based cosine is undefined, so use a fallback or exclude the neighbor",
+        "Set the cosine to $1$ because an empty overlap is a perfect match",
+        "Set the cosine to $-1$ because no shared evidence means opposite taste",
+        "Use the dot product of their full sparse rows without centering",
+        "Infer the cosine from the number of items in the catalogue",
+        "The target's row mean supplies the missing neighbor ratings automatically"
+      ],
+      "answer": 0,
+      "explanation": "Cosine needs a nonempty common coordinate set and nonzero norms on that overlap. With no overlap there is no evidence-based similarity; a cold-start or popularity fallback must be explicit.",
+      "sourceRefs": [
+        { "sourceId": "DSA5101/Assignments/DSA5101_Assignment_2.pdf", "sourceType": "exercise", "page": 2, "role": "overlap-based similarity", "status": "current-context" },
+        { "sourceId": "DSA5101/Reference textbook MMDS 3rd Edition.pdf", "sourceType": "textbook", "page": 84, "role": "collaborative filtering limitations", "status": "course-depth" }
+      ]
+    },
+    {
+      "id": "dsa5101-deep-019",
+      "lessonId": "dsa5101-recommenders",
+      "type": "mcq",
+      "difficulty": "hard",
+      "skill": "compute-latent-factor",
+      "cognitiveLevel": "apply",
+      "estimatedSeconds": 90,
+      "prompt": "A latent-factor predictor uses $\\widehat r_{u,i}=q_u\\cdot p_i$. If $q_A=(2,1)$ and $p_X=(3,-1)$, what rating does it predict?",
+      "choices": [
+        "$q_A\\cdot p_X=2\\cdot3+1\\cdot(-1)=5$",
+        "$q_A\\cdot p_X=2\\cdot3+1\\cdot1=7$",
+        "$q_A\\cdot p_X=2+1+3-1=5$",
+        "$q_A\\cdot p_X=\\sqrt{5}\\sqrt{10}=\\sqrt{50}$",
+        "$q_A\\cdot p_X=(2-1)(3+1)=4$",
+        "$q_A\\cdot p_X=2/3+1/(-1)=-1/3$"
+      ],
+      "answer": 0,
+      "explanation": "A dot product multiplies matching coordinates and sums them: $2\\cdot3+1\\cdot(-1)=6-1=5$. It is not a norm product, coordinate sum, or coordinate-wise ratio.",
+      "sourceRefs": [
+        { "sourceId": "DSA5101/Assignments/DSA5101_Assignment_2.pdf", "sourceType": "exercise", "page": 3, "role": "latent-factor prediction", "status": "current-context" },
+        { "sourceId": "DSA5101/Reference textbook MMDS 3rd Edition.pdf", "sourceType": "textbook", "page": 84, "role": "latent factor model", "status": "course-depth" }
+      ]
+    },
+    {
+      "id": "dsa5101-deep-020",
+      "lessonId": "dsa5101-pagerank",
+      "type": "mcq",
+      "difficulty": "hard",
+      "skill": "orient-transition",
+      "cognitiveLevel": "evaluate",
+      "estimatedSeconds": 90,
+      "prompt": "Let rows index source nodes and columns index destination nodes. If the rank is a row vector, which PageRank update is consistent with this row-stochastic convention?",
+      "choices": [
+        "$r_{t+1}=r_tP$",
+        "$r_{t+1}=Pr_t$",
+        "$r_{t+1}=r_tP^T$",
+        "$r_{t+1}=P^Tr_t^T$",
+        "$r_{t+1}=r_t+P$",
+        "$r_{t+1}=P/r_t$"
+      ],
+      "answer": 0,
+      "explanation": "A row vector multiplied on the right by a row-stochastic transition matrix sends source mass across destination columns: $r_{t+1}=r_tP$. Using a column vector instead would require the transposed orientation.",
+      "sourceRefs": [
+        { "sourceId": "DSA5101/Assignments/DSA5101_Assignment_2.pdf", "sourceType": "exercise", "page": 4, "role": "row-stochastic PageRank update", "status": "current-context" },
+        { "sourceId": "DSA5101/Reference textbook MMDS 3rd Edition.pdf", "sourceType": "textbook", "page": 175, "role": "PageRank matrix convention", "status": "course-depth" }
+      ]
+    },
+    {
+      "id": "dsa5101-deep-021",
+      "lessonId": "dsa5101-pagerank",
+      "type": "mcq",
+      "difficulty": "hard",
+      "skill": "run-power-iteration",
+      "cognitiveLevel": "evaluate",
+      "estimatedSeconds": 120,
+      "prompt": "For edges $A\\to B$, $B\\to C$, $C\\to A$, and $C\\to B$, start with the column vector $[1/3,1/3,1/3]^T$ and use no teleportation. What is the next vector in $A,B,C$ order?",
+      "choices": [
+        "$[1/6,1/2,1/3]^T$",
+        "$[1/3,1/6,1/2]^T$",
+        "$[1/2,1/3,1/6]^T$",
+        "$[1/3,1/3,1/3]^T$",
+        "$[0,1/2,1/2]^T$",
+        "$[1/6,1/3,1/2]^T$"
+      ],
+      "answer": 0,
+      "explanation": "A sends $1/3$ to B, B sends $1/3$ to C, and C splits its $1/3$ equally between A and B. The incoming masses are therefore $[1/6,1/2,1/3]^T$.",
+      "sourceRefs": [
+        { "sourceId": "DSA5101/Assignments/DSA5101_Assignment_2.pdf", "sourceType": "exercise", "page": 4, "role": "PageRank iteration", "status": "current-context" },
+        { "sourceId": "DSA5101/Reference textbook MMDS 3rd Edition.pdf", "sourceType": "textbook", "page": 175, "role": "power iteration", "status": "course-depth" }
+      ]
+    },
+    {
+      "id": "dsa5101-deep-022",
+      "lessonId": "dsa5101-pagerank",
+      "type": "mcq",
+      "difficulty": "hard",
+      "skill": "apply-teleportation",
+      "cognitiveLevel": "evaluate",
+      "estimatedSeconds": 105,
+      "prompt": "Let $\\alpha=0.9$, let the pre-teleport link-following vector be $v=[0,1/2,1/2,0,0]^T$ for nodes $A$ through $E$, and let teleportation be uniform over $A$ and $B$. What is the next rank vector?",
+      "choices": [
+        "$0.9v+0.1[1/2,1/2,0,0,0]^T=[0.05,0.50,0.45,0,0]^T$",
+        "$0.9v+0.1[1/5,1/5,1/5,1/5,1/5]^T=[0.02,0.47,0.47,0.02,0.02]^T$",
+        "$v+0.1[1/2,1/2,0,0,0]^T=[0.05,0.55,0.50,0,0]^T$",
+        "$0.1v+0.9[1/2,1/2,0,0,0]^T=[0.45,0.50,0.05,0,0]^T$",
+        "$0.9v=[0,0.45,0.45,0,0]^T$ because teleportation changes only the next iteration",
+        "$v/0.9=[0,5/9,5/9,0,0]^T$ because damping renormalizes link mass"
+      ],
+      "answer": 0,
+      "explanation": "The damping mixture is $\\alpha v+(1-\\alpha)t$. Here $t$ puts half of the teleport mass on $A$ and half on $B$, yielding $[0.05,0.50,0.45,0,0]^T$ and preserving total mass.",
+      "sourceRefs": [
+        { "sourceId": "DSA5101/Assignments/DSA5101_Assignment_2.pdf", "sourceType": "exercise", "page": 4, "role": "teleportation", "status": "current-context" },
+        { "sourceId": "DSA5101/Reference textbook MMDS 3rd Edition.pdf", "sourceType": "textbook", "page": 175, "role": "damping factor", "status": "course-depth" }
+      ]
+    },
+    {
+      "id": "dsa5101-deep-023",
+      "lessonId": "dsa5101-pagerank",
+      "type": "mcq",
+      "difficulty": "hard",
+      "skill": "handle-dangling-node",
+      "cognitiveLevel": "evaluate",
+      "estimatedSeconds": 90,
+      "prompt": "A graph contains a node with no outgoing links. Which repair preserves a valid PageRank transition process?",
+      "choices": [
+        "Replace its missing outgoing distribution with an explicit distribution, such as uniform or the teleport vector",
+        "Leave its transition row all zero and rely on later normalization of the rank vector",
+        "Delete the node because a dangling node cannot receive rank",
+        "Send all of its mass to the node with the largest indegree",
+        "Give the node a self-loop only when its current rank is nonzero",
+        "Copy the row of the node with the closest label"
+      ],
+      "answer": 0,
+      "explanation": "A dangling row must still distribute one unit of outgoing probability. Explicit redistribution prevents mass loss and keeps the transition matrix stochastic; deleting or guessing a destination changes the graph problem.",
+      "sourceRefs": [
+        { "sourceId": "DSA5101/Assignments/DSA5101_Assignment_2.pdf", "sourceType": "exercise", "page": 4, "role": "dangling-node convention", "status": "current-context" },
+        { "sourceId": "DSA5101/Reference textbook MMDS 3rd Edition.pdf", "sourceType": "textbook", "page": 189, "role": "PageRank implementation", "status": "course-depth" }
+      ]
+    },
+    {
+      "id": "dsa5101-deep-024",
+      "lessonId": "dsa5101-streams",
+      "type": "mcq",
+      "difficulty": "hard",
+      "skill": "bound-dgim-error",
+      "cognitiveLevel": "evaluate",
+      "estimatedSeconds": 105,
+      "prompt": "For a DGIM query window of length $N=500$, what is the largest legal power-of-two bucket size and the standard worst-case additive error contribution of the oldest partial bucket?",
+      "choices": [
+        "Largest bucket $256$ and partial-bucket error at most $128$",
+        "Largest bucket $500$ and partial-bucket error at most $250$",
+        "Largest bucket $512$ and partial-bucket error at most $256$",
+        "Largest bucket $128$ and partial-bucket error at most $64$",
+        "Largest bucket $2$ and partial-bucket error at most $1$",
+        "Largest bucket $256$ and exact error $0$ because timestamps identify every 1"
+      ],
+      "answer": 0,
+      "explanation": "DGIM bucket sizes are powers of two, so the largest size not exceeding $500$ is $256$. If the oldest bucket is only partly inside the window, counting half of it creates an error bounded by $256/2=128$.",
+      "sourceRefs": [
+        { "sourceId": "DSA5101/Assignments/DSA5101_Assignment_2.pdf", "sourceType": "exercise", "page": 5, "role": "DGIM bucket bound", "status": "current-context" },
+        { "sourceId": "DSA5101/Reference textbook MMDS 3rd Edition.pdf", "sourceType": "textbook", "page": 167, "role": "DGIM error", "status": "course-depth" }
+      ]
+    },
+    {
+      "id": "dsa5101-deep-025",
+      "lessonId": "dsa5101-streams",
+      "type": "mcq",
+      "difficulty": "hard",
+      "skill": "query-dgim",
+      "cognitiveLevel": "apply",
+      "estimatedSeconds": 105,
+      "prompt": "A DGIM query includes complete buckets with sizes $1,1,2,2,4,4$ and half of an oldest bucket of size $8$. What estimate does the standard boundary rule return?",
+      "choices": [
+        "$1+1+2+2+4+4+8/2=18$",
+        "$1+1+2+2+4+4+8=22$",
+        "$1+1+2+2+4+4=14$ because the partial bucket is discarded",
+        "$8/2=4$ because only the oldest bucket is approximate",
+        "$2(1+1+2+2+4+4)+8=36$ because every bucket is doubled",
+        "$1+1+2+2+4+4+8^2=78$ because DGIM estimates a second moment"
+      ],
+      "answer": 0,
+      "explanation": "Newer buckets fully covered by the window are counted at their stored sizes. Only the oldest partial bucket is halved, so the estimate is $14+4=18$.",
+      "sourceRefs": [
+        { "sourceId": "DSA5101/Assignments/DSA5101_Assignment_2.pdf", "sourceType": "exercise", "page": 5, "role": "DGIM query rule", "status": "current-context" },
+        { "sourceId": "DSA5101/Reference textbook MMDS 3rd Edition.pdf", "sourceType": "textbook", "page": 167, "role": "DGIM query answering", "status": "course-depth" }
+      ]
+    },
+    {
+      "id": "dsa5101-deep-026",
+      "lessonId": "dsa5101-streams",
+      "type": "mcq",
+      "difficulty": "hard",
+      "skill": "separate-moments",
+      "cognitiveLevel": "evaluate",
+      "estimatedSeconds": 105,
+      "prompt": "A stream has frequencies $f_i=i$ for values $i=1,\\ldots,10$. Which tuple correctly distinguishes the zeroth moment, total stream length, and second frequency moment?",
+      "choices": [
+        "$F_0=10$, $F_1=\\sum_i f_i=55$, and $F_2=\\sum_i f_i^2=385$",
+        "$F_0=55$, $F_1=10$, and $F_2=100$",
+        "$F_0=10$, $F_1=385$, and $F_2=55$",
+        "$F_0=55$, $F_1=55$, and $F_2=55$",
+        "$F_0=385$, $F_1=55$, and $F_2=10$",
+        "$F_0=10$, $F_1=10$, and $F_2=100$ because each value appears once"
+      ],
+      "answer": 0,
+      "explanation": "The zeroth moment counts distinct values, so it is $10$. The first moment counts all occurrences, $1+\\cdots+10=55$, while the second moment squares frequencies, giving $1^2+\\cdots+10^2=385$.",
+      "sourceRefs": [
+        { "sourceId": "DSA5101/Assignments/DSA5101_Assignment_2.pdf", "sourceType": "exercise", "page": 6, "role": "frequency moments", "status": "current-context" },
+        { "sourceId": "DSA5101/Reference textbook MMDS 3rd Edition.pdf", "sourceType": "textbook", "page": 161, "role": "frequency moment definitions", "status": "course-depth" }
+      ]
+    },
+    {
+      "id": "dsa5101-deep-027",
+      "lessonId": "dsa5101-streams",
+      "type": "mcq",
+      "difficulty": "hard",
+      "skill": "compute-ams-variable",
+      "cognitiveLevel": "evaluate",
+      "estimatedSeconds": 105,
+      "prompt": "In the AMS position-sampling formula $X_t=n(2f_t-1)$, the stream length is $n=100$ and the sampled suffix frequency is $f_t=7$. What is the one-position estimate?",
+      "choices": [
+        "$X_t=100(2\\cdot7-1)=1300$",
+        "$X_t=100(2\\cdot7)=1400$",
+        "$X_t=2^7=128$",
+        "$X_t=7^2=49$",
+        "$X_t=100/(2\\cdot7-1)=100/13$",
+        "$X_t=100(7-1)=600$"
+      ],
+      "answer": 0,
+      "explanation": "Substitution gives $X_t=100(14-1)=1300$. The value is one noisy position-based estimate of $F_2$; averaging multiple samples reduces variance.",
+      "sourceRefs": [
+        { "sourceId": "DSA5101/Assignments/DSA5101_Assignment_2.pdf", "sourceType": "exercise", "page": 6, "role": "AMS estimator", "status": "current-context" },
+        { "sourceId": "DSA5101/Reference textbook MMDS 3rd Edition.pdf", "sourceType": "textbook", "page": 161, "role": "AMS frequency moments", "status": "course-depth" }
+      ]
+    },
+    {
+      "id": "dsa5101-deep-028",
+      "lessonId": "dsa5101-balance",
+      "type": "mcq",
+      "difficulty": "hard",
+      "skill": "quantify-balance-guarantee",
+      "cognitiveLevel": "evaluate",
+      "estimatedSeconds": 120,
+      "prompt": "A bids on $x,z$, B bids on $x,y$, both budgets start at $2$, and the sequence is $xyz$. Which analysis correctly tests a BALANCE guarantee?",
+      "choices": [
+        "Enumerate both first-$x$ ties: either path serves all $3$, and $OPT=3$, so this sequence is guaranteed optimal",
+        "Simulate only giving $x$ to A; if that path serves $3$, BALANCE is guaranteed by definition",
+        "Because the first query is a tie, BALANCE must serve at most $2$ and cannot match $OPT$",
+        "Give $x$ to B because B bids on $y$, then stop; future queries cannot be used in a guarantee",
+        "Compare only the final remaining budgets; serving-query count is irrelevant to $OPT$",
+        "The sequence has no offline optimum because BALANCE cannot see future queries"
+      ],
+      "answer": 0,
+      "explanation": "If A receives $x$, B serves $y$ and A serves $z$. If B receives $x$, B still serves $y$ and A serves $z$. Both legal tie paths serve all $3$ queries, and no offline policy can exceed $3$, so this sequence is guaranteed optimal.",
+      "sourceRefs": [
+        { "sourceId": "DSA5101/Assignments/DSA5101_Assignment_2.pdf", "sourceType": "exercise", "page": 7, "role": "BALANCE tie analysis", "status": "current-context" }
+      ]
+    },
+    {
+      "id": "dsa5101-deep-029",
+      "lessonId": "dsa5101-balance",
+      "type": "mcq",
+      "difficulty": "hard",
+      "skill": "simulate-balance",
+      "cognitiveLevel": "evaluate",
+      "estimatedSeconds": 105,
+      "prompt": "A bids on $x,y$ with budget $2$, B bids only on $x$ with budget $1$, and the query sequence is $xxy$. What does BALANCE do under the rule of serving the eligible advertiser with more remaining budget?",
+      "choices": [
+        "Serve the first $x$ to A, the second $x$ to B, and $y$ to A, for a total of $3$",
+        "Serve both $x$ queries to A because A has more total eligible keywords",
+        "Serve the first $x$ to B because B has fewer total keywords, then reject $y$",
+        "Serve the first $x$ to A, reject the second $x$, and serve $y$ to B",
+        "Tie on the first $x$ makes the sequence impossible to evaluate",
+        "Serve the first $x$ to B, the second $x$ to A, and reject $y$ because A's budget is exhausted"
+      ],
+      "answer": 0,
+      "explanation": "Initially A has remaining budget $2$ and B has $1$, so A gets the first $x$ and falls to $1$. The second $x$ goes to B, exhausting B; A still has one unit for $y$, so all three queries are served.",
+      "sourceRefs": [
+        { "sourceId": "DSA5101/Assignments/DSA5101_Assignment_2.pdf", "sourceType": "exercise", "page": 7, "role": "BALANCE simulation", "status": "current-context" }
+      ]
+    },
+    {
+      "id": "dsa5101-deep-030",
+      "lessonId": "dsa5101-balance",
+      "type": "mcq",
+      "difficulty": "hard",
+      "skill": "reason-about-ties",
+      "cognitiveLevel": "evaluate",
+      "estimatedSeconds": 120,
+      "prompt": "A and B both bid on $x$, only A bids on $y$, both start with budget $1$, and the sequence is $xy$. Why must the tie-breaking policy be stated?",
+      "choices": [
+        "If the tie sends $x$ to A, only $1$ query is served; if it sends $x$ to B, both queries are served",
+        "Either tie outcome serves $2$, so tie-breaking is irrelevant",
+        "If the tie sends $x$ to A, $y$ is transferred to B automatically",
+        "BALANCE always breaks ties by choosing the advertiser with fewer keywords",
+        "The offline optimum changes with the tie, so no comparison is possible",
+        "A tie means neither advertiser can serve $x$, so the sequence has value $0$"
+      ],
+      "answer": 0,
+      "explanation": "Giving $x$ to A exhausts the only advertiser that can serve $y$, yielding value $1$. Giving $x$ to B preserves A's budget for $y$, yielding value $2$. A guarantee must therefore quantify over the allowed tie rule or fix it explicitly.",
+      "sourceRefs": [
+        { "sourceId": "DSA5101/Assignments/DSA5101_Assignment_2.pdf", "sourceType": "exercise", "page": 7, "role": "BALANCE tie-breaking", "status": "current-context" }
       ]
     }
   ]

@@ -32,9 +32,22 @@
   },
   {
     "id": "dsa5101-recommender-q2",
-    "type": "calculation",
-    "prompt": "If a user vector is $q=(2,-1)$ and an item vector is $p=(3,4)$, what rating does the dot-product predictor return?",
-    "explanation": "Compute $2\\cdot3+(-1)\\cdot4=2$.",
+    "type": "mcq",
+    "difficulty": "hard",
+    "skill": "compute-dot-product",
+    "cognitiveLevel": "evaluate",
+    "estimatedSeconds": 90,
+    "prompt": "If $q=(2,-1)$ and $p=(3,4)$, what does the latent-factor dot-product predictor return?",
+    "choices": [
+      "$q\\cdot p=2\\cdot3+(-1)\\cdot4=2$",
+      "$q\\cdot p=2\\cdot3+1\\cdot4=10$",
+      "$q\\cdot p=2+(-1)+3+4=8$",
+      "$q\\cdot p=\\sqrt{2^2+(-1)^2}\\sqrt{3^2+4^2}=\\sqrt{50}$",
+      "$q\\cdot p=(2-1)(3-4)=-1$",
+      "$q\\cdot p=\\frac{2}{3}+\\frac{-1}{4}=\\frac{5}{12}$"
+    ],
+    "answer": 0,
+    "explanation": "Multiply matching coordinates and add: $2\\cdot3+(-1)\\cdot4=6-4=2$. Norm products, coordinate sums, and division are different operations.",
     "sourceRefs": [
       {
         "sourceId": "DSA5101/Assignments/DSA5101_Assignment_2.pdf",
@@ -44,27 +57,26 @@
         "status": "current-context"
       }
     ],
-    "difficulty": "medium",
-    "skill": "compute-dot-product",
-    "cognitiveLevel": "apply",
-    "estimatedSeconds": 90,
     "misconception": "Check the representation, objective, and scale assumption before committing to an answer.",
     "visualHook": "Draw the state transition or data summary before calculating.",
     "courseId": "DSA5101",
     "lessonId": "dsa5101-recommenders",
-    "schemaVersion": "nus.question.v1",
-    "accepted": [
-      "2",
-      "2.0"
-    ],
-    "solution": "$\\hat r=q\\cdot p=6-4=2$.",
-    "hint": "Multiply matching coordinates and add them."
+    "schemaVersion": "nus.question.v1"
   },
   {
     "id": "dsa5101-recommender-q3",
-    "type": "short",
-    "prompt": "State one conceptual difference between user-based collaborative filtering and the latent-factor method in Assignment 2.",
-    "explanation": "User-based filtering derives a prediction from similar users and their centered ratings; latent factors learn low-dimensional user and item vectors whose dot product reconstructs known ratings.",
+    "type": "mcq",
+    "prompt": "Which statement correctly distinguishes the two recommender methods used in Assignment 2?",
+    "choices": [
+      "User-based filtering uses centered ratings from similar users; latent factors learn vectors and use $q_u\\cdot p_i$",
+      "Both methods use the same centered-neighbour average; only the notation changes",
+      "User-based filtering learns one vector per item, while latent factors compare raw user rows",
+      "Latent factors require an exact overlap between users, while user-based filtering does not",
+      "User-based filtering predicts with $q_u\\cdot p_i$, while latent factors use only row means",
+      "The methods are conceptually identical whenever they predict the same missing matrix entry"
+    ],
+    "answer": 0,
+    "explanation": "User-based filtering derives a prediction from similar users and their centered observed ratings. Latent factors learn low-dimensional user and item vectors whose dot product estimates a rating; sharing an output does not make the models identical.",
     "sourceRefs": [
       {
         "sourceId": "DSA5101/Assignments/DSA5101_Assignment_2.pdf",
@@ -89,18 +101,22 @@
     "visualHook": "Draw the state transition or data summary before calculating.",
     "courseId": "DSA5101",
     "lessonId": "dsa5101-recommenders",
-    "schemaVersion": "nus.question.v1",
-    "accepted": [
-      "similar users versus learned vectors",
-      "neighbourhood weighted ratings versus dot product of learned factors"
-    ],
-    "solution": "They use different representations and prediction mechanisms even when both estimate the same missing entry."
+    "schemaVersion": "nus.question.v1"
   },
   {
     "id": "dsa5101-recommender-q4",
-    "type": "short",
-    "prompt": "A new user has no known ratings. Which part of the user-based workflow becomes undefined, and why?",
-    "explanation": "There is no row mean or similarity evidence for the new user, so a neighbourhood prediction needs a fallback such as a prior, onboarding signal, or item popularity.",
+    "type": "mcq",
+    "prompt": "A new user has no known ratings. Which part of the user-based workflow fails first?",
+    "choices": [
+      "The user's row mean and centered-overlap similarities are undefined without a fallback",
+      "The item vectors $p_i$ disappear, so every latent-factor prediction is undefined",
+      "Cosine similarity becomes $1$ because an empty profile matches every user",
+      "The target item must be removed because no user can rate it",
+      "The global mean becomes undefined because one user has no ratings",
+      "The neighbourhood is known exactly from the item popularity alone"
+    ],
+    "answer": 0,
+    "explanation": "The user-based workflow needs a profile to compute a row mean and similarities on overlapping rated items. A prior, onboarding signal, or popularity fallback is required; an empty row is not evidence of maximum similarity.",
     "sourceRefs": [
       {
         "sourceId": "DSA5101/Assignments/DSA5101_Assignment_2.pdf",
@@ -125,11 +141,6 @@
     "visualHook": "Draw the state transition or data summary before calculating.",
     "courseId": "DSA5101",
     "lessonId": "dsa5101-recommenders",
-    "schemaVersion": "nus.question.v1",
-    "accepted": [
-      "row mean and similarity are unavailable",
-      "cold start has no ratings for centering or neighbours"
-    ],
-    "solution": "The missing evidence is the user profile itself, not merely one missing matrix cell."
+    "schemaVersion": "nus.question.v1"
   }
 ]

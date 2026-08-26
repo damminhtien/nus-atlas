@@ -39,9 +39,22 @@
   },
   {
     "id": "dsa5101-pagerank-q2",
-    "type": "calculation",
-    "prompt": "For nodes A, B, C with edges $A\\to B$ and $A\\to C$, $B\\to C$, $C\\to A$, start with $[1/3,1/3,1/3]^T$, no teleportation, and distribute A’s mass equally. What is the vector after one iteration in A,B,C order?",
-    "explanation": "A receives $1/3$ from C, B receives $1/6$ from A, and C receives $1/6$ from A plus $1/3$ from B. The result is $[1/3,1/6,1/2]^T$.",
+    "type": "mcq",
+    "difficulty": "hard",
+    "skill": "run-power-iteration",
+    "cognitiveLevel": "evaluate",
+    "estimatedSeconds": 150,
+    "prompt": "For edges $A\\to B$, $A\\to C$, $B\\to C$, and $C\\to A$, start with $[1/3,1/3,1/3]^T$, use no teleportation, and split A's mass equally. What is the next vector in A,B,C order?",
+    "choices": [
+      "$[1/3,1/6,1/2]^T$",
+      "$[1/6,1/3,1/2]^T$",
+      "$[1/3,1/3,1/3]^T$",
+      "$[1/2,1/6,1/3]^T$",
+      "$[1/6,1/6,2/3]^T$",
+      "$[1/2,1/3,1/6]^T$"
+    ],
+    "answer": 0,
+    "explanation": "C sends $1/3$ to A; A sends $1/6$ to B and $1/6$ to C; B sends $1/3$ to C. Therefore the next vector is $[1/3,1/6,1/2]^T$.",
     "sourceRefs": [
       {
         "sourceId": "DSA5101/Assignments/DSA5101_Assignment_2.pdf",
@@ -51,27 +64,26 @@
         "status": "current-context"
       }
     ],
-    "difficulty": "hard",
-    "skill": "run-power-iteration",
-    "cognitiveLevel": "apply",
-    "estimatedSeconds": 150,
     "misconception": "Check the representation, objective, and scale assumption before committing to an answer.",
     "visualHook": "Draw the state transition or data summary before calculating.",
     "courseId": "DSA5101",
     "lessonId": "dsa5101-pagerank",
-    "schemaVersion": "nus.question.v1",
-    "accepted": [
-      "[1/3, 1/6, 1/2]",
-      "0.3333, 0.1667, 0.5"
-    ],
-    "solution": "$[1/3,1/6,1/2]^T$.",
-    "hint": "Split A’s outgoing mass into two equal parts."
+    "schemaVersion": "nus.question.v1"
   },
   {
     "id": "dsa5101-pagerank-q3",
-    "type": "short",
+    "type": "mcq",
     "prompt": "Why must a dangling node receive an explicit transition convention before PageRank iteration?",
-    "explanation": "A node with no outgoing links has no probability distribution to multiply into the next vector; redistributing its mass, commonly uniformly or through the teleport distribution, preserves a valid stochastic process.",
+    "choices": [
+      "Its missing outgoing distribution would otherwise make the transition matrix undefined or lose probability mass",
+      "Its indegree is always zero, so PageRank cannot assign it any score",
+      "Teleportation automatically defines every row, so no convention is needed",
+      "The node must link to itself or the iteration cannot start",
+      "A dangling node has to be removed before constructing any graph matrix",
+      "Its entire mass must be sent to the node with the largest indegree"
+    ],
+    "answer": 0,
+    "explanation": "A row for a node with no outgoing links has no probability distribution. Redistributing its mass, commonly uniformly or through the teleport distribution, preserves a valid stochastic process.",
     "sourceRefs": [
       {
         "sourceId": "DSA5101/Assignments/DSA5101_Assignment_2.pdf",
@@ -96,18 +108,22 @@
     "visualHook": "Draw the state transition or data summary before calculating.",
     "courseId": "DSA5101",
     "lessonId": "dsa5101-pagerank",
-    "schemaVersion": "nus.question.v1",
-    "accepted": [
-      "no outgoing distribution; redistribute its mass",
-      "dangling mass must be redistributed to preserve stochasticity"
-    ],
-    "solution": "Without a convention, the transition matrix loses probability mass or is undefined."
+    "schemaVersion": "nus.question.v1"
   },
   {
     "id": "dsa5101-pagerank-q4",
-    "type": "short",
-    "prompt": "Why can two nodes with the same indegree have different PageRank?",
-    "explanation": "PageRank weights an incoming edge by the source node’s rank and outdegree, and damping may inject different teleport mass. Indegree counts links without either effect.",
+    "type": "mcq",
+    "prompt": "Two nodes have the same indegree. Node $u$ is linked by a high-ranked source with outdegree $1$, while node $v$ is linked by a low-ranked source with outdegree $10$. Which conclusion is valid?",
+    "choices": [
+      "They can have different PageRank because incoming mass depends on source rank, outdegree, and teleportation",
+      "They must have equal PageRank because indegree is the complete PageRank recurrence",
+      "Node $v$ must rank higher because a larger source outdegree contributes more mass",
+      "Their PageRank is determined only by their own outdegrees, not incoming edges",
+      "Teleportation forces all nodes with equal indegree to have equal score",
+      "The comparison is impossible unless the graph has no cycles"
+    ],
+    "answer": 0,
+    "explanation": "PageRank transfers roughly $r_j/d_j$ along an edge from source $j$. A high-ranked source with few outgoing edges can therefore contribute much more than a low-ranked source with many outgoing edges; indegree alone is insufficient.",
     "sourceRefs": [
       {
         "sourceId": "DSA5101/Assignments/DSA5101_Assignment_2.pdf",
@@ -132,11 +148,6 @@
     "visualHook": "Draw the state transition or data summary before calculating.",
     "courseId": "DSA5101",
     "lessonId": "dsa5101-pagerank",
-    "schemaVersion": "nus.question.v1",
-    "accepted": [
-      "source rank and outdegree matter",
-      "PageRank weights incoming rank, not just edge count"
-    ],
-    "solution": "A link from a high-ranked node with few outgoing links transfers more mass than a link from a low-ranked node with many outgoing links."
+    "schemaVersion": "nus.question.v1"
   }
 ]
