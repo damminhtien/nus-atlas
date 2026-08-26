@@ -46,7 +46,10 @@ test("DSA5104 synthetic checkpoint is runnable and clearly separate from past-ye
   assert.equal(plan.questionCount, 12);
   assert.equal(plan.questionIds.length, 12);
   assert.ok(plan.questionIds.every(id => byId.get(id).assessmentLayer === "synthetic-final" && byId.get(id).origin === "synthetic"));
-  assert.deepEqual(compiled.package.course.questionBank.assessmentLayers.map(layer => [layer.id, layer.status]), [["synthetic-final", "not-past-year"]]);
+  assert.deepEqual(compiled.package.course.questionBank.assessmentLayers.map(layer => [layer.id, layer.status]), [
+    ["synthetic-final", "not-past-year"],
+    ["deep-dive-traps", "not-past-year"]
+  ]);
 });
 
 test("DSA5104 default exam selection excludes supplementary and planned lessons", () => {

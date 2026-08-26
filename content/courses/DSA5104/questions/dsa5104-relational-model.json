@@ -64,12 +64,12 @@
     "id": "dsa5104-bank-003",
     "lessonId": "dsa5104-relational-model",
     "type": "derivation",
-    "prompt": "$Given Department(id) and Student(id, department_id), state the key and foreign-key constraints for a one-to-many relationship.$",
+    "prompt": "Given `Department(id)` and `Student(id, department_id)`, state the key and foreign-key constraints for a one-to-many relationship.",
     "accepted": [
       "Department.id primary key and Student.department_id foreign key references Department.id",
       "student department_id references department id"
     ],
-    "solution": "Declare Department.id as the primary key and Student.$department_{id}$ as a foreign key referencing Department.id. The foreign key is on the many side.",
+    "solution": "Declare `Department.id` as the primary key and `Student.department_id` as a foreign key referencing `Department.id`. The foreign key is on the many side.",
     "explanation": "The mapping preserves one department with many student tuples while enforcing referential integrity.",
     "difficulty": "medium",
     "skill": "derive",

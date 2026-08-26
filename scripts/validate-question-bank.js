@@ -10,20 +10,27 @@ const SOURCE_TYPES = new Set(["lecture", "exercise", "textbook", "ref", "assessm
 function readQuestionBank(courseId = "DSA5105", root = ROOT) {
   const questionsRoot = path.join(root, "content", "courses", courseId, "questions");
   const bank = JSON.parse(fs.readFileSync(path.join(questionsRoot, "bank.json"), "utf8"));
-  const supplementalFile = path.join(questionsRoot, "exam-bank.json");
-  if (!fs.existsSync(supplementalFile)) return bank;
-  const supplemental = JSON.parse(fs.readFileSync(supplementalFile, "utf8"));
+  const supplementalBanks = ["exam-bank.json", "deep-dive-bank.json"]
+    .map(file => path.join(questionsRoot, file))
+    .filter(file => fs.existsSync(file))
+    .map(file => JSON.parse(fs.readFileSync(file, "utf8")));
+  if (!supplementalBanks.length) return bank;
+  const supplementalQuestions = supplementalBanks.flatMap(supplemental => (supplemental.questions || []).map(question => ({
+    ...question,
+    ...(supplemental.assessmentLayer && !question.assessmentLayer ? { assessmentLayer: supplemental.assessmentLayer } : {}),
+    ...(supplemental.origin && !question.origin ? { origin: supplemental.origin } : {})
+  })));
   return {
     ...bank,
-    questions: [...(bank.questions || []), ...(supplemental.questions || [])],
+    questions: [...(bank.questions || []), ...supplementalQuestions],
     assessmentLayers: [
       ...(bank.assessmentLayers || []),
-      ...(supplemental.assessmentLayer ? [{
+      ...supplementalBanks.filter(supplemental => supplemental.assessmentLayer).map(supplemental => ({
         id: supplemental.assessmentLayer,
         origin: supplemental.origin || "unspecified",
         status: supplemental.status || "unclassified",
         questionIds: (supplemental.questions || []).map(question => question.id)
-      }] : [])
+      }))
     ]
   };
 }

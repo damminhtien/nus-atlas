@@ -218,7 +218,8 @@ function loadCourseSource(root, courseId) {
   const lessonFiles = new Map(sortedJsonFiles(path.join(courseRoot, "lessons")).map(file => [path.basename(file, ".json"), file]));
   const questionBank = mergeQuestionBanks(
     readJsonIfExists(path.join(courseRoot, "questions", "bank.json")),
-    [readJsonIfExists(path.join(courseRoot, "questions", "exam-bank.json"))]
+    ["exam-bank.json", "deep-dive-bank.json"]
+      .map(file => readJsonIfExists(path.join(courseRoot, "questions", file)))
   );
   const bankByLesson = new Map();
   (questionBank && questionBank.questions || []).forEach(question => {

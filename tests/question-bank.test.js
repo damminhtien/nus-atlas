@@ -3,6 +3,7 @@ const assert = require("node:assert/strict");
 const fs = require("node:fs");
 const path = require("node:path");
 const { readQuestionBank, validateQuestionBank } = require("../scripts/validate-question-bank");
+const { OPEN_RESPONSE_IDS } = require("../scripts/ingest-dsa5104-homework");
 const { loadCanonicalState } = require("../scripts/validate-content");
 const { compileCourse } = require("../tools/content-compiler");
 
@@ -28,12 +29,54 @@ test("DSA5104 question bank covers every lesson with metadata", () => {
   const bank = readQuestionBank("DSA5104");
   const result = validateQuestionBank(bank, loadCanonicalState());
   assert.equal(result.ok, true, result.errors.join("\n"));
-  assert.equal(result.counts.questions, 250);
+  assert.equal(result.counts.questions, 300);
   assert.equal(result.counts.lessons, 17);
   assert.equal(bank.homeworkCoverage.questionCount, 190);
-  assert.deepEqual(bank.assessmentLayers.map(layer => [layer.id, layer.origin, layer.status]), [["synthetic-final", "synthetic", "not-past-year"]]);
+  assert.equal(bank.homeworkCoverage.convertedToMcq, 152);
+  assert.equal(bank.homeworkCoverage.openResponseRetained, 38);
+  assert.equal(bank.homeworkCoverage.targetMcqPercent, 80);
+  assert.deepEqual(bank.assessmentLayers.map(layer => [layer.id, layer.origin, layer.status]), [
+    ["synthetic-final", "synthetic", "not-past-year"],
+    ["deep-dive-traps", "synthetic", "not-past-year"]
+  ]);
+  const deepDiveQuestions = bank.questions.filter(question => /^dsa5104-deep-dive-\d+$/.test(question.id));
+  assert.equal(deepDiveQuestions.length, 50);
+  assert.equal(new Set(deepDiveQuestions.map(question => question.id)).size, 50);
+  assert.ok(deepDiveQuestions.every(question =>
+    question.type === "mcq" &&
+    question.assessmentLayer === "deep-dive-traps" &&
+    question.origin === "synthetic" &&
+    question.choices.length === 4 &&
+    question.commonTrap &&
+    Array.isArray(question.mistakeTags) &&
+    question.mistakeTags.length > 0
+  ));
+  assert.ok(deepDiveQuestions.some(question => question.lessonId === "dsa5104-sql-null"));
+  assert.ok(deepDiveQuestions.some(question => question.lessonId === "dsa5104-sql-nested"));
   const homeworkQuestions = bank.questions.filter(question => /^dsa5104-homework-ch\d+-/.test(question.id));
   assert.equal(homeworkQuestions.length, 190);
+  const converted = homeworkQuestions.filter(question => question.type === "mcq");
+  const openResponse = homeworkQuestions.filter(question => question.type !== "mcq");
+  assert.equal(converted.length, 152);
+  assert.equal(openResponse.length, 38);
+  assert.deepEqual(
+    openResponse.map(question => question.id).sort(),
+    [...OPEN_RESPONSE_IDS].sort()
+  );
+  assert.ok(converted.every(question =>
+    question.assessmentMode === "mcq-summary" &&
+    question.originalType &&
+    question.choices.length === 4 &&
+    new Set(question.choices).size === 4 &&
+    Number.isInteger(question.answer) &&
+    question.answer >= 0 &&
+    question.answer < question.choices.length
+  ));
+  assert.ok(openResponse.every(question =>
+    question.assessmentMode === "open-response" &&
+    question.originalType &&
+    question.type !== "mcq"
+  ));
   const homeworkSourceIds = new Set(homeworkQuestions.flatMap(question => (question.sourceRefs || [])
     .filter(ref => ref.sourceType === "exercise" && /Homework Solutions\//.test(ref.sourceId))
     .map(ref => ref.sourceId)));

@@ -25,6 +25,26 @@ const SQL3_LESSONS = {
   "3.33": "dsa5104-sql-query-shape", "3.34": "dsa5104-sql-aggregation", "3.35": "dsa5104-sql-cte"
 };
 
+// Keep a deliberate 20% open-response slice for skills that are best learned
+// by writing the SQL, drawing the design, or showing the derivation.
+const OPEN_RESPONSE_IDS = new Set([
+  "dsa5104-homework-ch01-1-9", "dsa5104-homework-ch01-1-12",
+  "dsa5104-homework-ch02-2-6", "dsa5104-homework-ch02-2-8", "dsa5104-homework-ch02-2-18",
+  "dsa5104-homework-ch03-3-1", "dsa5104-homework-ch03-3-3", "dsa5104-homework-ch03-3-13",
+  "dsa5104-homework-ch03-3-18", "dsa5104-homework-ch03-3-28",
+  "dsa5104-homework-ch04-4-6", "dsa5104-homework-ch04-4-7", "dsa5104-homework-ch04-4-16",
+  "dsa5104-homework-ch04-4-20",
+  "dsa5104-homework-ch05-5-7", "dsa5104-homework-ch05-5-8", "dsa5104-homework-ch05-5-12", "dsa5104-homework-ch05-5-21",
+  "dsa5104-homework-ch06-6-1", "dsa5104-homework-ch06-6-2", "dsa5104-homework-ch06-6-3",
+  "dsa5104-homework-ch06-6-6", "dsa5104-homework-ch06-6-13", "dsa5104-homework-ch06-6-15",
+  "dsa5104-homework-ch06-6-16", "dsa5104-homework-ch06-6-21", "dsa5104-homework-ch06-6-22",
+  "dsa5104-homework-ch06-6-23", "dsa5104-homework-ch06-6-24", "dsa5104-homework-ch06-6-26",
+  "dsa5104-homework-ch07-7-6", "dsa5104-homework-ch07-7-7", "dsa5104-homework-ch07-7-21",
+  "dsa5104-homework-ch07-7-22", "dsa5104-homework-ch07-7-30", "dsa5104-homework-ch07-7-32",
+  "dsa5104-homework-ch07-7-42", "dsa5104-homework-ch07-7-44"
+]);
+const TARGET_MCQ_PERCENT = 80;
+
 function lessonFor(chapter, exercise) {
   if (chapter === "Ch03_Introduction_to_SQL") return SQL3_LESSONS[exercise] || "dsa5104-sql-query-shape";
   return CHAPTERS.find(entry => entry[0] === chapter)[1];
@@ -111,6 +131,99 @@ function questionId(chapter, exercise) {
   return `dsa5104-homework-ch${chapterNumber}-${exercise.replace(/[^a-z0-9]+/gi, "-").replace(/^-|-$/g, "")}`;
 }
 
+function stableHash(value) {
+  let hash = 2166136261;
+  for (const character of String(value)) {
+    hash ^= character.charCodeAt(0);
+    hash = Math.imul(hash, 16777619);
+  }
+  return hash >>> 0;
+}
+
+function stableShuffle(values, seed) {
+  const shuffled = [...values];
+  for (let index = shuffled.length - 1; index > 0; index -= 1) {
+    const swapIndex = stableHash(String(seed) + ":" + index) % (index + 1);
+    [shuffled[index], shuffled[swapIndex]] = [shuffled[swapIndex], shuffled[index]];
+  }
+  return shuffled;
+}
+
+function truncateChoice(value, limit = 300) {
+  const text = String(value || "").replace(/\s+/g, " ").trim();
+  if (text.length <= limit) return text;
+  const boundary = text.lastIndexOf(" ", limit - 1);
+  return text.slice(0, boundary > 80 ? boundary : limit - 1) + "…";
+}
+
+function choiceText(value) {
+  const backtick = String.fromCharCode(96);
+  return String(value || "")
+    .replace(/\[See source figure[^\]]*\]/gi, "")
+    .replace(new RegExp(backtick + "{1,3}", "g"), "")
+    .replace(/\$+/g, "")
+    .replace(/\\(?:mathrm|operatorname|text)\s*\{([^{}]*)\}/g, "$1")
+    .replace(/\\(rightarrow|to)\b/g, " maps to ")
+    .replace(/\\(bowtie)\b/g, "join")
+    .replace(/\\(div)\b/g, "division")
+    .replace(/\\([A-Za-z]+)/g, "$1")
+    .replace(/<>/g, " not equal ")
+    .replace(/>=/g, " at least ")
+    .replace(/<=/g, " at most ")
+    .replace(/(?<![<>!])=(?!=)/g, " equals ")
+    .replace(/</g, " less than ")
+    .replace(/>/g, " greater than ")
+    .replace(/_/g, " ")
+    .replace(/\b([A-Za-z])\(([^)]*)\)/g, "$1 of $2")
+    .replace(/[∈]/g, " belongs to ")
+    .replace(/[≈≤≥≠]/g, " ")
+    .replace(/-{2,}/g, " ")
+    .replace(/\s+/g, " ")
+    .trim();
+}
+
+function solutionSummary(question) {
+  const backtick = String.fromCharCode(96);
+  const codeFence = backtick.repeat(3);
+  const codeBlocks = [...question.solution.matchAll(new RegExp(codeFence + "[^\\n]*\\n([\\s\\S]*?)" + codeFence, "g"))]
+    .map(match => choiceText(match[1]))
+    .filter(Boolean);
+  if (codeBlocks.length) {
+    return truncateChoice("Uses the requested statements: " + codeBlocks.join(" | "));
+  }
+
+  const prose = choiceText(question.solution)
+    .replace(/\b(?:a|b|c|d)\.\s*/gi, "")
+    .replace(/\s*\|\s*/g, "; ");
+  return truncateChoice(prose || "Follow the source solution and satisfy every stated constraint.");
+}
+
+function chapterKey(question) {
+  const match = question.id.match(/(ch\d+)-/);
+  return match ? match[1] : "";
+}
+
+function makeChoices(question, pool) {
+  const correct = solutionSummary(question);
+  const candidates = pool
+    .filter(candidate => candidate.id !== question.id && chapterKey(candidate) === chapterKey(question))
+    .sort((left, right) => stableHash(question.id + ":" + left.id) - stableHash(question.id + ":" + right.id))
+    .map(solutionSummary)
+    .filter(candidate => candidate && candidate !== correct);
+  const distractors = [...new Set(candidates)].slice(0, 3);
+  const fallbacks = [
+    "The solution ignores the stated schema and returns all records without applying the requested condition.",
+    "The solution changes the database design instead of answering the requested exercise.",
+    "The solution applies an unrelated database concept and does not satisfy the stated constraints."
+  ];
+  for (const fallback of fallbacks) {
+    if (distractors.length >= 3) break;
+    if (!distractors.includes(fallback) && fallback !== correct) distractors.push(fallback);
+  }
+  const choices = stableShuffle([correct, ...distractors], question.id);
+  return { choices, answer: choices.indexOf(correct) };
+}
+
 function collectFiles(sourceRoot) {
   return CHAPTERS.flatMap(([chapter]) => {
     const directory = path.join(sourceRoot, chapter);
@@ -132,6 +245,9 @@ function buildQuestion(item) {
     lessonId,
     courseId: "DSA5104",
     type: questionType(prompt),
+    originalType: questionType(prompt),
+    origin: "teacher-assigned",
+    assessmentMode: OPEN_RESPONSE_IDS.has(questionId(chapter, exercise)) ? "open-response" : "mcq-summary",
     prompt,
     solution,
     explanation: `Teacher-assigned homework exercise from the ${topic} practice set. Use the source solution to check the reasoning after attempting the question.`,
@@ -152,12 +268,33 @@ function buildQuestion(item) {
   };
 }
 
+function convertQuestion(question, pool) {
+  if (OPEN_RESPONSE_IDS.has(question.id)) return question;
+  const originalType = question.originalType || question.type;
+  const { choices, answer } = makeChoices(question, pool);
+  return {
+    ...question,
+    type: "mcq",
+    prompt: "Choose the option that best summarizes the teacher's solution to this exercise.\n\n" + question.prompt,
+    choices,
+    answer,
+    estimatedSeconds: Math.max(45, Math.min(75, Math.round(question.estimatedSeconds / 3))),
+    explanation: "MCQ adaptation of the teacher-assigned exercise (original response type: " + originalType + "). The correct option is a concise solution summary; open the worked solution below to study the exact SQL, design, or derivation."
+  };
+}
+
 function ingest(sourceRoot) {
   const bankPath = path.join(ROOT, "content", "courses", "DSA5104", "questions", "bank.json");
   const bank = JSON.parse(fs.readFileSync(bankPath, "utf8"));
   const files = collectFiles(sourceRoot);
   const retained = bank.questions.filter(question => !/^dsa5104-homework-ch\d+-/.test(question.id));
-  const homework = files.map(buildQuestion);
+  const drafts = files.map(buildQuestion);
+  const homework = drafts.map(question => convertQuestion(question, drafts));
+  const convertedToMcq = homework.filter(question => question.type === "mcq").length;
+  const openResponseRetained = homework.length - convertedToMcq;
+  if (convertedToMcq * 100 !== homework.length * TARGET_MCQ_PERCENT) {
+    throw new Error("MCQ conversion policy failed: " + convertedToMcq + "/" + homework.length + " is not exactly " + TARGET_MCQ_PERCENT + "%");
+  }
   const sourceDirectories = CHAPTERS.map(([chapter]) => `DSA5104/Homework Solutions/${chapter}`);
   const nextBank = {
     ...bank,
@@ -166,19 +303,36 @@ function ingest(sourceRoot) {
       sourceRoot: "DSA5104/Homework Solutions",
       sourceDirectories,
       questionCount: homework.length,
-      policy: "One canonical practice question is ingested per supplied homework solution file."
+      convertedToMcq,
+      openResponseRetained,
+      targetMcqPercent: TARGET_MCQ_PERCENT,
+      policy: "Exactly 80% of teacher-assigned homework questions use MCQ solution summaries; 20% remain open response for SQL, design, and derivation practice."
     },
     questions: [...retained, ...homework]
   };
   fs.writeFileSync(bankPath, `${JSON.stringify(nextBank, null, 2)}\n`);
-  return { total: homework.length, byChapter: Object.fromEntries(CHAPTERS.map(([chapter]) => [chapter, files.filter(item => item.chapter === chapter).length])) };
+  return {
+    total: homework.length,
+    convertedToMcq,
+    openResponseRetained,
+    byChapter: Object.fromEntries(CHAPTERS.map(([chapter]) => [chapter, files.filter(item => item.chapter === chapter).length]))
+  };
 }
 
 if (require.main === module) {
   const { sourceRoot } = parseArgs(process.argv.slice(2));
   const result = ingest(sourceRoot);
-  console.log(`DSA5104 homework ingest complete · ${result.total} questions`);
+  console.log("DSA5104 homework ingest complete · " + result.total + " questions · " + result.convertedToMcq + " MCQ · " + result.openResponseRetained + " open response");
   Object.entries(result.byChapter).forEach(([chapter, count]) => console.log(`  ${chapter}: ${count}`));
 }
 
-module.exports = { cleanMarkdown, splitExercise, collectFiles, ingest };
+module.exports = {
+  OPEN_RESPONSE_IDS,
+  cleanMarkdown,
+  splitExercise,
+  collectFiles,
+  buildQuestion,
+  convertQuestion,
+  makeChoices,
+  ingest
+};
