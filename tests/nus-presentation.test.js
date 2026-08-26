@@ -44,6 +44,16 @@ test("source lens explains examinability and keeps exercise depth distinct", () 
   assert.match(html, /Lec1_exercises-solutions\.pdf · p\.2/);
 });
 
+test("assessment focus highlights evidence-backed exam moves without claiming a syllabus", () => {
+  const html = presentation().assessmentFocus([
+    { title: "SVM duality", priority: "A+ focus", signal: "Exam + homework", examMove: "Check KKT balance before classifying support vectors." }
+  ]);
+  assert.match(html, /Assessment-backed exam focus/);
+  assert.match(html, /A\+ focus/);
+  assert.match(html, /Check KKT balance/);
+  assert.match(html, /not an official final-exam syllabus/);
+});
+
 test("course source groups keep official exercises out of lecture core", () => {
   const groups = presentation().sourceGroups({
     lectureSources: [{ sourceId: "lecture.pdf", sourceType: "lecture", page: 48 }],

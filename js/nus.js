@@ -10,7 +10,7 @@
   if (!window.ATLAS_PRESENTATION) throw new Error("Atlas presentation helpers are required before js/nus.js");
   const presentation = window.ATLAS_PRESENTATION({ getSourceTypes: sourceTypes, getVisuals: visuals });
   const { esc, text, sourceLabel, sourceBadge, sourceItem, sourceGroups, pageHead, card, button, statusPill,
-    visualCard, mathBlock, sourceDisclosure, lessonSection, algorithmNotes, workedExample, recallItem, criticalThinking, studyKit, studyCompass } = presentation;
+    visualCard, mathBlock, sourceDisclosure, sourceLens, assessmentFocus, lessonSection, algorithmNotes, workedExample, recallItem, criticalThinking, studyKit, studyCompass } = presentation;
   const VISUAL_CUE_KEY = "nus.visual-cues.v1";
   let focusTimer = null;
 
@@ -52,6 +52,10 @@
     isDashboard: () => !location.hash || location.hash === "#/"
   }) : null;
   function progress(code) { return window.ATLAS_STUDY_STORE.courseProgress(code, lessons(code)); }
+  function assessmentTopicsForLesson(code, lessonId) {
+    const map = repository() && repository().getAssessmentMap ? repository().getAssessmentMap(code) : null;
+    return map && Array.isArray(map.topics) ? map.topics.filter(topic => (topic.lessonIds || []).includes(lessonId)) : [];
+  }
   function slideResume(code, slideSet) {
     if (!slideSet || !window.ATLAS_STUDY_STORE || typeof window.ATLAS_STUDY_STORE.readingFor !== "function") return { number: 1, label: "Open lecture slides" };
     const saved = window.ATLAS_STUDY_STORE.readingFor(`slide:${code}:${slideSet.id}`);
@@ -548,16 +552,18 @@
     const courseTextbook = repository() && repository().getTextbook ? repository().getTextbook(c.code) : null;
     setReaderMode(readerModeOn());
     let body = pageHead(`${c.code} · Week ${l.week}`, l.title, l.summary, l.contentStatus);
+    const examTopics = assessmentTopicsForLesson(c.code, l.id);
     const slideSet = slideSets(code).find(item => (item.lessonIds || []).includes(l.id)) || ((l.slideSetIds || [])[0] ? { id: l.slideSetIds[0] } : null);
     const slideResumeState = slideResume(code, slideSet);
     const resources = `<details class="nus-lesson-more"><summary>More</summary><div class="nus-lesson-more-actions"><button class="btn ghost" id="nus-mark-lesson" type="button">${done ? "✓ Completed" : "Mark complete"}</button>${slideSet ? button(slideResumeState.label, `#/nus/slides/${c.code}/${slideSet.id}/${slideResumeState.number}`, "ghost") : ""}${(courseTextbook && courseTextbook.reader) || (repository() && repository().hasTextbook && repository().hasTextbook(c.code)) ? button("Open textbook PDF", `#/nus/textbook/${c.code}/1`, "ghost") : ""}${l.contrastDrills && l.contrastDrills.length ? button("Clarify similar concepts", `#/nus/contrast/${c.code}/${l.id}`, "ghost") : ""}${button("Review mistakes", `#/nus/review/mistakes`, "ghost")}${readerButton()}</div></details>`;
     body += `<div class="nus-lesson-actions nus-lesson-primary-actions">${button(`← Week ${l.week}`, `#/nus/course/${c.code}`, "ghost")}${lessonPrimaryAction(c.code, l, done, next)}${resources}</div>${lessonCompletionSurface(c.code, l, done)}`;
+    body += assessmentFocus(examTopics);
     body += studyCompass(l);
     const lab = repository() ? repository().getLab(l.id) : null;
     const visualCueIds = Array.isArray(l.visualIds) ? l.visualIds : [];
     const visualCueBody = visualCueIds.length ? `<p class="nus-visual-cue-intro">Use each cue as a short loop: <b>look → predict → explain</b>. <span data-nus-visual-progress>0/${visualCueIds.length} practiced</span></p>${visualCueIds.map(visualId => visualCard(visualId, { courseCode: c.code, lessonId: l.id, labId: lab && (lab.lessonId || l.id), hasLab: !!lab })).join("")}` : "";
     const miniMap = `<nav class="nus-lesson-mini-map" aria-label="Lesson outline"><div class="eyebrow">In this lesson</div><a href="#nus-lesson-read" data-nus-jump="nus-lesson-read">Introduction</a>${(l.algorithmNotes || []).length ? `<a href="#nus-lesson-algorithms" data-nus-jump="nus-lesson-algorithms">Algorithm note</a>` : ""}${(l.sections || []).map((section, sectionIndex) => `<a href="#nus-lesson-concept-${sectionIndex}" data-nus-jump="nus-lesson-concept-${sectionIndex}">${esc(section.title)}</a>`).join("")}<a href="#nus-lesson-recall" data-nus-jump="nus-lesson-recall">Check yourself</a><a href="#nus-lesson-practice" data-nus-jump="nus-lesson-practice">Practice</a></nav>`;
-    body += `<div class="nus-lesson-grid"><main><section class="nus-card nus-objectives reveal"><div class="nus-teach-head"><h3>What you will learn</h3><span class="pill gold">${esc(l.minutes)} min</span></div><ul>${(l.objectives || []).map(objective => `<li>${esc(objective)}</li>`).join("")}</ul></section>${lab && window.ATLAS_COMPONENTS ? window.ATLAS_COMPONENTS.renderLab(l, lab) : ""}<div id="nus-lesson-read">${algorithmNotes(l)}${(l.sections || []).map((section, sectionIndex) => lessonSection(section, sectionIndex)).join("")}${(l.math || []).map(mathBlock).join("")}</div><div id="nus-lesson-work">${(l.examples || []).map(workedExample).join("")}</div>${criticalThinking(l)}<section class="nus-card nus-recall reveal" id="nus-lesson-recall"><div class="nus-teach-head"><h3>Check yourself</h3><span class="pill">${l.questions.length} prompts</span></div><p class="nus-muted">Answer on paper first. Open each prompt only after you commit to an answer.</p><div class="nus-question-list">${l.questions.map(recallItem).join("")}</div></section>${studyKit(l, { practiceHref: `#/nus/exam/${c.code}/${l.id}`, practiceClass: "ghost" })}<div class="nus-lesson-nav">${previous ? button(`← ${previous.title}`, `#/nus/lesson/${c.code}/${previous.id}`, "ghost") : `<span></span>`}${next ? button(`Next: ${next.title} →`, `#/nus/lesson/${c.code}/${next.id}`, "ghost") : button("Back to course", `#/nus/course/${c.code}`, "ghost")}</div></main><aside>${miniMap}${visualCueIds.length ? card("Visual study cues", visualCueBody, "reveal") : ""}<details class="nus-lesson-sources"><summary>ⓘ Sources</summary>${sourceDisclosure(l.sourceRefs, "Verified source pages")}</details></aside></div>`;
+    body += `<div class="nus-lesson-grid"><main><section class="nus-card nus-objectives reveal"><div class="nus-teach-head"><h3>What you will learn</h3><span class="pill gold">${esc(l.minutes)} min</span></div><ul>${(l.objectives || []).map(objective => `<li>${esc(objective)}</li>`).join("")}</ul></section>${lab && window.ATLAS_COMPONENTS ? window.ATLAS_COMPONENTS.renderLab(l, lab) : ""}<div id="nus-lesson-read">${sourceLens(l.sourceLens)}${algorithmNotes(l)}${(l.sections || []).map((section, sectionIndex) => lessonSection(section, sectionIndex)).join("")}${(l.math || []).map(mathBlock).join("")}</div><div id="nus-lesson-work">${(l.examples || []).map(workedExample).join("")}</div>${criticalThinking(l)}<section class="nus-card nus-recall reveal" id="nus-lesson-recall"><div class="nus-teach-head"><h3>Check yourself</h3><span class="pill">${l.questions.length} prompts</span></div><p class="nus-muted">Answer on paper first. Open each prompt only after you commit to an answer.</p><div class="nus-question-list">${l.questions.map(recallItem).join("")}</div></section>${studyKit(l, { practiceHref: `#/nus/exam/${c.code}/${l.id}`, practiceClass: "ghost" })}<div class="nus-lesson-nav">${previous ? button(`← ${previous.title}`, `#/nus/lesson/${c.code}/${previous.id}`, "ghost") : `<span></span>`}${next ? button(`Next: ${next.title} →`, `#/nus/lesson/${c.code}/${next.id}`, "ghost") : button("Back to course", `#/nus/course/${c.code}`, "ghost")}</div></main><aside>${miniMap}${visualCueIds.length ? card("Visual study cues", visualCueBody, "reveal") : ""}<details class="nus-lesson-sources"><summary>ⓘ Sources</summary>${sourceDisclosure(l.sourceRefs, "Verified source pages")}</details></aside></div>`;
     root.innerHTML = body;
     typesetNus();
     if (window.ATLAS_COMPONENTS) window.ATLAS_COMPONENTS.bind(root);

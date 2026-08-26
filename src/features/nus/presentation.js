@@ -39,7 +39,19 @@
     const groups = [["Lecture scope", lens.lecture], ["Official exercise depth", lens.officialExercise], ["Textbook depth", lens.textbook], ["Reference / assessment", lens.reference]]
       .filter(([, refs]) => Array.isArray(refs) && refs.length)
       .map(([label, refs]) => `<div class="nus-source-lens-group"><b>${esc(label)}</b><ul class="nus-source-list">${refs.map(ref => `<li>${sourceItem(ref)}</li>`).join("")}</ul></div>`).join("");
-    return `<details class="nus-source-lens"><summary><span>Why is this examinable?</span><span class="pill gold">A+ · ${esc(lens.status || "scope mapped")}</span></summary>${lens.whyExaminable ? `<p class="nus-source-lens-why">${text(lens.whyExaminable)}</p>` : ""}<div class="nus-source-lens-grid">${groups}</div></details>`;
+    const priority = lens.priority || "Scope mapped";
+    const title = lens.title || "Why is this examinable?";
+    return `<details class="nus-source-lens"><summary><span>${esc(title)}</span><span class="pill gold">${esc(priority)}</span></summary>${lens.signal ? `<p class="nus-source-lens-signal"><b>Assessment signal:</b> ${text(lens.signal)}</p>` : ""}${lens.whyExaminable ? `<p class="nus-source-lens-why">${text(lens.whyExaminable)}</p>` : ""}${lens.examMove ? `<p class="nus-source-lens-move"><b>High-yield move:</b> ${text(lens.examMove)}</p>` : ""}${lens.caveat ? `<p class="nus-source-lens-caveat"><b>Boundary:</b> ${text(lens.caveat)}</p>` : ""}${groups ? `<div class="nus-source-lens-grid">${groups}</div>` : ""}</details>`;
+  }
+  function assessmentFocus(topics) {
+    const rank = { "A+ focus": 3, High: 2, Targeted: 1 };
+    const mapped = (Array.isArray(topics) ? topics : []).filter(topic => topic && topic.title && topic.priority).slice().sort((a, b) => (rank[b.priority] || 0) - (rank[a.priority] || 0));
+    if (!mapped.length) return "";
+    const priority = mapped[0].priority;
+    const tone = priority === "A+ focus" ? "aplus" : priority === "High" ? "high" : "targeted";
+    const titles = mapped.map(topic => topic.title).join(" · ");
+    const moves = mapped.map(topic => `<li><b>${esc(topic.signal || "Assessment signal")}:</b> ${text(topic.examMove || topic.practice || "Practise the mapped derivation or calculation.")}</li>`).join("");
+    return `<section class="nus-callout nus-exam-focus nus-exam-focus-${tone}" aria-label="Assessment-backed exam focus"><div class="nus-exam-focus-head"><span class="eyebrow">Assessment-backed exam focus</span><span class="pill gold">${esc(priority)}</span></div><p class="nus-exam-focus-title"><b>${esc(titles)}</b></p><ul class="nus-exam-focus-list">${moves}</ul><small>Study priority only: local exam evidence is stronger than public previews, and this is not an official final-exam syllabus.</small></section>`;
   }
   function sourceGroups(course) {
     if (Array.isArray(course.sourceCatalog) && course.sourceCatalog.length) {
@@ -160,7 +172,7 @@
   }
 
   return Object.freeze({
-    esc, text, sourceLabel, sourceBadge, sourceItem, sourceSummary, sourceDisclosure, sourceLens, sourceGroups, quickNav, pageHead, card,
+    esc, text, sourceLabel, sourceBadge, sourceItem, sourceSummary, sourceDisclosure, sourceLens, assessmentFocus, sourceGroups, quickNav, pageHead, card,
     button, statusPill, visualCard, mathBlock, lessonSection, algorithmNotes, workedExample,
     recallItem, criticalThinking, studyKit, studyCompass
   });
