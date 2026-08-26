@@ -38,6 +38,17 @@ Use `npm run agent:check` for the affected loop, `npm run check:full`/`npm run v
   namespace and the browser can refresh automatically.
 - CI should run `npm run version:check` before content build; a mismatch is a release-blocking error.
 
+## Atomic commit workflow
+
+- Work directly on `main`; pull with `git pull --ff-only origin main` before starting.
+- Check `git status --short` first. Treat existing changes as user-owned and never stage, revert, or delete them incidentally.
+- Keep each commit to one coherent change: one bug fix, feature slice, content slice, test slice, or documentation slice.
+- Stage exact paths with `git add -- <files>`. Before committing, inspect `git diff --cached --stat`, `git diff --cached --check`, and the staged diff.
+- Run the narrowest relevant validation before each commit. Use a separate release commit when `VERSION`/cache-busting metadata changes.
+- Use an imperative Conventional Commit subject such as `fix(sync): allow local origins` or `docs: clarify study workflow`.
+- Commit every completed small slice. After the full user request passes its checks, push `main` with `git push origin main` and verify CI/production when applicable.
+- Do not squash unrelated work, amend another user's commit, or use broad staging such as `git add .`.
+
 ## Token-efficient agent workflow
 
 Use the smallest useful context. Prefer targeted queries and compact command output over dumping whole files,
