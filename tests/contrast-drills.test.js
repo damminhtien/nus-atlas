@@ -1,7 +1,7 @@
 const test = require("node:test");
 const assert = require("node:assert/strict");
 const { loadCanonicalState } = require("../scripts/validate-content.js");
-const { REQUIRED_PAIRS, DSA5101_REQUIRED_PAIRS, DSA5104_REQUIRED_PAIRS, DSA5208_REQUIRED_PAIRS, validateContrastDrills } = require("../scripts/validate-contrast-drills.js");
+const { REQUIRED_PAIRS, DSA5101_REQUIRED_PAIRS, DSA5101_TRAP_PAIRS, DSA5104_REQUIRED_PAIRS, DSA5208_REQUIRED_PAIRS, validateContrastDrills } = require("../scripts/validate-contrast-drills.js");
 const createContrastDrills = require("../src/features/nus/contrast-drills.js");
 
 test("DSA5105 has the required concept contrast set", () => {
@@ -16,6 +16,17 @@ test("DSA5101 has a complete concept contrast set", () => {
   const result = validateContrastDrills(state);
   assert.equal(result.ok, true, result.errors.join("\n"));
   assert.ok(DSA5101_REQUIRED_PAIRS.every(pair => state.content.DSA5101.modules.flatMap(module => module.lessons || []).some(lesson => (lesson.contrastDrills || []).some(drill => drill.pair === pair))));
+});
+
+test("DSA5101 names and repairs each requested misconception", () => {
+  const state = loadCanonicalState();
+  const drills = state.content.DSA5101.modules.flatMap(module => module.lessons || []).flatMap(lesson => lesson.contrastDrills || []);
+  for (const pair of DSA5101_TRAP_PAIRS) {
+    const drill = drills.find(item => item.pair === pair);
+    assert.ok(drill, `missing drill: ${pair}`);
+    assert.ok(drill.misconception, `missing misconception: ${pair}`);
+    assert.ok(drill.repair, `missing repair rule: ${pair}`);
+  }
 });
 
 test("DSA5104 has a complete concept contrast set", () => {

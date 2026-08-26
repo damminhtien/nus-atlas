@@ -23,8 +23,19 @@ const DSA5101_REQUIRED_PAIRS = [
   "MinHash vs LSH",
   "False positive vs false negative",
   "PageRank vs indegree",
-  "Exact storage vs sketch summary"
+  "Exact storage vs sketch summary",
+  "Subset vs superset in Apriori",
+  "Shingle set vs multiset",
+  "Row vs band vs whole LSH collision",
+  "More LSH bands vs precision",
+  "Single vs complete vs average linkage",
+  "Row-stochastic vs column-stochastic",
+  "Raw vs mean-centered ratings",
+  "Newest vs oldest DGIM bucket",
+  "Zeroth moment vs total count",
+  "Tie-aware vs tie-blind BALANCE"
 ];
+const DSA5101_TRAP_PAIRS = DSA5101_REQUIRED_PAIRS.slice(-10);
 const DSA5104_REQUIRED_PAIRS = [
   "Schema vs instance",
   "Physical vs logical vs view level",
@@ -117,4 +128,4 @@ if (require.main === module) {
   }
 }
 
-module.exports = { REQUIRED_PAIRS, DSA5101_REQUIRED_PAIRS, DSA5104_REQUIRED_PAIRS, DSA5208_REQUIRED_PAIRS, validateContrastDrills };
+module.exports = { REQUIRED_PAIRS, DSA5101_REQUIRED_PAIRS, DSA5101_TRAP_PAIRS, DSA5104_REQUIRED_PAIRS, DSA5208_REQUIRED_PAIRS, validateContrastDrills };
