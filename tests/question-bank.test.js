@@ -20,7 +20,7 @@ test("DSA5101 question bank covers every lesson with metadata", () => {
   const result = validateQuestionBank(bank, loadCanonicalState());
   assert.equal(result.ok, true, result.errors.join("\n"));
   assert.ok(result.counts.questions >= 12);
-  assert.equal(result.counts.lessons, 4);
+  assert.equal(result.counts.lessons, 9);
   assert.equal(new Set(bank.questions.map(question => question.id)).size, bank.questions.length);
 });
 
