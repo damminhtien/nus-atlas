@@ -215,6 +215,39 @@
       ]
     }
   ],
+  "algorithmNotes": [
+    {
+      "algorithm": "A-Priori / downward closure",
+      "problemDefinition": "Given a collection of transactions, find itemsets whose support meets a threshold without enumerating every possible superset.",
+      "assumptions": "Transactions are sets of items; support is the fraction of transactions containing the candidate; and the support threshold is fixed.",
+      "coreInvariant": "If an itemset is infrequent, every superset is infrequent; support cannot increase when more items are added.",
+      "formulaAlgorithm": "Compute $\\operatorname{supp}(I)$, generate candidates from frequent subsets, and prune any candidate that contains an infrequent subset.",
+      "failureModes": "Common mistakes: pruning subsets instead of supersets, mixing support with confidence, or treating repeated items in one basket as extra transactions.",
+      "sourceRefs": [
+        {
+          "sourceId": "DSA5101/Lec1 - Assoc Rules, Frequent itemsets.pdf",
+          "page": 24,
+          "sourceType": "lecture",
+          "role": "support definition",
+          "status": "current"
+        },
+        {
+          "sourceId": "DSA5101/Lec1 - Assoc Rules, Frequent itemsets.pdf",
+          "page": 36,
+          "sourceType": "lecture",
+          "role": "downward closure",
+          "status": "current"
+        },
+        {
+          "sourceId": "DSA5101/Assignments/DSA5101_Assignment_1.pdf",
+          "page": 1,
+          "sourceType": "exercise",
+          "role": "itemset calculation",
+          "status": "current-context"
+        }
+      ]
+    }
+  ],
   "math": [
     {
       "latex": "\\operatorname{supp}(I) = \\frac{|\\{t \\in \\mathcal{T}: I \\subseteq t\\}|}{|\\mathcal{T}|}",

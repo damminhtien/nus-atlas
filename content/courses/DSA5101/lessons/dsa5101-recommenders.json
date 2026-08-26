@@ -144,6 +144,42 @@
       ]
     }
   ],
+  "algorithmNotes": [
+    {
+      "algorithm": "User-based collaborative filtering",
+      "problemDefinition": "Estimate a missing user-item rating from users whose observed rating patterns overlap with the target user.",
+      "assumptions": "Known ratings are comparable after centering, enough overlap exists to define neighbours, and similarity weights are used consistently.",
+      "coreInvariant": "Similarity compares deviations from each user's own mean; raw generosity or harshness must not dominate the neighbourhood evidence.",
+      "formulaAlgorithm": "Compute each user's mean, center known ratings as $r_{ui}-\\bar r_u$, calculate cosine similarity on the centered values, and combine neighbour evidence for the missing rating.",
+      "failureModes": "Common mistakes: using raw ratings before cosine similarity, treating missing entries as zeros, or confusing neighbourhood prediction with latent-factor prediction.",
+      "sourceRefs": [
+        {
+          "sourceId": "DSA5101/Assignments/DSA5101_Assignment_2.pdf",
+          "page": 2,
+          "sourceType": "exercise",
+          "role": "mean-centered cosine similarity",
+          "status": "current-context"
+        }
+      ]
+    },
+    {
+      "algorithm": "Latent-factor recommender",
+      "problemDefinition": "Predict a missing rating from compact latent vectors for the user and item.",
+      "assumptions": "User and item factors have compatible dimensions, the factor representation is learned from known ratings, and the prediction path is separate from neighbourhood weighting.",
+      "coreInvariant": "The model uses one consistent user vector and item vector for each prediction; known ratings constrain reconstruction rather than defining a new neighbourhood.",
+      "formulaAlgorithm": "Predict with $\\hat r_{ui}=q_u\\cdot p_i$ by multiplying matching latent coordinates and summing their products.",
+      "failureModes": "Common mistakes: reusing mean-centered neighbour estimates as factors, mixing vector dimensions, or forgetting that a dot product is a model prediction.",
+      "sourceRefs": [
+        {
+          "sourceId": "DSA5101/Assignments/DSA5101_Assignment_2.pdf",
+          "page": 3,
+          "sourceType": "exercise",
+          "role": "latent-factor method",
+          "status": "current-context"
+        }
+      ]
+    }
+  ],
   "contrastDrills": [
     {
       "id": "dsa5101-c17",

@@ -302,6 +302,104 @@
       ]
     }
   ],
+  "algorithmNotes": [
+    {
+      "algorithm": "Hierarchical linkage",
+      "problemDefinition": "Merge clusters according to a defined distance between two clusters, then stop at the requested hierarchy level.",
+      "assumptions": "The representation and distance are meaningful for the data, and the merge rule plus stopping condition are stated before comparing results.",
+      "coreInvariant": "Single-link uses the minimum cross-cluster distance, complete-link the maximum, and average-link the mean; the smallest linkage score is merged next.",
+      "formulaAlgorithm": "For each pair of clusters, aggregate all cross-cluster distances with min, max, or mean, merge the best pair, and update the hierarchy.",
+      "failureModes": "Common mistakes: swapping single, complete, and average linkage; ignoring bridge points; or claiming a result without naming the distance and stopping rule.",
+      "sourceRefs": [
+        {
+          "sourceId": "DSA5101/Lec3 - Clustering.pdf",
+          "page": 21,
+          "sourceType": "lecture",
+          "role": "hierarchical linkage",
+          "status": "current"
+        },
+        {
+          "sourceId": "DSA5101/Assignments/DSA5101_Assignment_1.pdf",
+          "page": 6,
+          "sourceType": "exercise",
+          "role": "hierarchical clustering practice",
+          "status": "current-context"
+        }
+      ]
+    },
+    {
+      "algorithm": "K-means",
+      "problemDefinition": "Partition points into K clusters and choose representatives that minimize within-cluster squared error.",
+      "assumptions": "K is fixed, the representative is a mean in the chosen geometry, and squared Euclidean error is an appropriate objective for the representation.",
+      "coreInvariant": "With representatives fixed, nearest assignment does not increase loss; with assignments fixed, replacing each representative by its mean does not increase loss.",
+      "formulaAlgorithm": "Alternate assignment and update steps while tracking $J(R,Z)=\\sum_i\\lVert x_i-z_{r(i)}\\rVert^2$; stop when the state or objective stabilizes.",
+      "failureModes": "Common mistakes: treating monotonic loss as global optimality, forgetting initialization and K, or using a metric that disagrees with the cluster geometry.",
+      "sourceRefs": [
+        {
+          "sourceId": "DSA5101/Lec3 - Clustering.pdf",
+          "page": 37,
+          "sourceType": "lecture",
+          "role": "K-means objective",
+          "status": "current"
+        },
+        {
+          "sourceId": "DSA5101/Lec3 - Clustering.pdf",
+          "page": 44,
+          "sourceType": "lecture",
+          "role": "K-means update",
+          "status": "current"
+        }
+      ]
+    },
+    {
+      "algorithm": "BFR",
+      "problemDefinition": "Cluster data that does not fit in memory by retaining compact summaries instead of every point.",
+      "assumptions": "A confident cluster can be summarized by sufficient statistics, uncertain groups can be compressed, and isolated points may need to remain explicit.",
+      "coreInvariant": "BFR separates confident discard-set points (DS), uncertain compression-set groups (CS), and retained outliers (RS), without silently forcing uncertainty into DS.",
+      "formulaAlgorithm": "Maintain $N$, $SUM$, and $SUMSQ$ for compact clusters, test new points against the summary, and delay or retain assignments when confidence is insufficient.",
+      "failureModes": "Common mistakes: putting every uncertain point in DS, losing RS outliers, or assuming summary statistics preserve arbitrary cluster shapes and boundaries.",
+      "sourceRefs": [
+        {
+          "sourceId": "DSA5101/Lec3 - Clustering.pdf",
+          "page": 59,
+          "sourceType": "lecture",
+          "role": "BFR overview",
+          "status": "current"
+        },
+        {
+          "sourceId": "DSA5101/Lec3 - Clustering.pdf",
+          "page": 71,
+          "sourceType": "lecture",
+          "role": "BFR summary statistics",
+          "status": "current"
+        }
+      ]
+    },
+    {
+      "algorithm": "CURE",
+      "problemDefinition": "Represent large clusters with a small set of points that preserves dispersed or non-spherical shape.",
+      "assumptions": "Cluster shape matters, representative points can be selected across the cluster, and shrinking toward the mean is an acceptable noise reduction.",
+      "coreInvariant": "Several dispersed representatives retain boundary and shape evidence while shrinkage pulls them toward the mean for a more stable compact representation.",
+      "formulaAlgorithm": "Select representative points across a cluster, move each toward the cluster mean by a shrinkage factor, and use the representatives for scalable comparison or assignment.",
+      "failureModes": "Common mistakes: replacing CURE with one centroid, forgetting shrinkage, or claiming shape preservation without stating the representative selection.",
+      "sourceRefs": [
+        {
+          "sourceId": "DSA5101/Lec3 - Clustering.pdf",
+          "page": 78,
+          "sourceType": "lecture",
+          "role": "CURE representative points",
+          "status": "current"
+        },
+        {
+          "sourceId": "DSA5101/Lec3 - Clustering.pdf",
+          "page": 83,
+          "sourceType": "lecture",
+          "role": "CURE shrinkage",
+          "status": "current"
+        }
+      ]
+    }
+  ],
   "contrastDrills": [
     {
       "id": "dsa5101-c15",

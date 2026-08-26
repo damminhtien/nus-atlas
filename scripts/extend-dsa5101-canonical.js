@@ -51,6 +51,13 @@ const existingContrastDrills = (lessonId) => {
   return Array.isArray(lesson.contrastDrills) ? lesson.contrastDrills : [];
 };
 
+const existingAlgorithmNotes = (lessonId) => {
+  const file = path.join(COURSE_ROOT, `lessons/${lessonId}.json`);
+  if (!fs.existsSync(file)) return [];
+  const lesson = JSON.parse(fs.readFileSync(file, 'utf8'));
+  return Array.isArray(lesson.algorithmNotes) ? lesson.algorithmNotes : [];
+};
+
 const commonQuestion = (id, lessonId, type, difficulty, skill, cognitiveLevel, estimatedSeconds, prompt, explanation, sourceRefs, extra = {}) => ({
   id,
   type,
@@ -233,6 +240,7 @@ const clusteringLesson = {
     { name: 'BFR sufficient statistics', purpose: 'Summarize a cluster for later assignment without retaining every point.', latex: 'N,\\;SUM=\\sum_i x_i,\\;SUMSQ=\\sum_i x_i^2', explanation: 'BFR stores a count $N$, coordinate sums $SUM$, and coordinate-wise squared sums $SUMSQ$ so means and variances can be recovered for a compact cluster summary.', symbols: [{ latex: 'N', meaning: 'number of points in the summary' }, { latex: 'SUM', meaning: 'coordinate-wise sum' }, { latex: 'SUMSQ', meaning: 'coordinate-wise squared sum' }], sourceType: 'lecture', sourceRefs: [ref(lecture3, 71, 'lecture', 'BFR summary statistics')] }
   ],
   examples: [{ title: 'K-means arithmetic checkpoint', steps: [['Assign', '$x_i\\to\\operatorname*{argmin}_k\\lVert x_i-z_k\\rVert^2$', 'Choose the closest representative for every point.'], ['Update', '$z_k=\\frac{1}{|C_k|}\\sum_{x_i\\in C_k}x_i$', 'Replace each representative with the mean of its assigned points.'], ['Audit', '$J(R,Z)$', 'Recompute the objective and record whether the loss decreased.']], sourceRefs: [ref(lecture3, 44, 'lecture', 'K-means steps')] }],
+  algorithmNotes: existingAlgorithmNotes('dsa5101-clustering'),
   contrastDrills: existingContrastDrills('dsa5101-clustering'),
   criticalQuestions: [
     { prompt: 'When would you prefer CURE or BFR over plain K-means?', angle: 'Compare shape preservation and memory constraints, then state the cost of the richer summary.', modelAnswer: 'Use CURE when dispersed or non-spherical shape matters, BFR when the data is too large for memory and compact sufficient statistics are available, and K-means when the centroid geometry and objective are appropriate.', focus: 'method selection', sourceRefs: [ref(lecture3, 59, 'lecture', 'BFR overview'), ref(lecture3, 78, 'lecture', 'CURE representatives')] },
@@ -258,6 +266,7 @@ const baseTrackLesson = (track) => ({
   schemaVersion: 'nus.lesson.v1',
   sections: track.sections,
   math: track.math,
+  algorithmNotes: existingAlgorithmNotes(track.id),
   contrastDrills: existingContrastDrills(track.id),
   criticalQuestions: [
     { prompt: `What assumption would falsify the ${track.title} answer?`, angle: 'Name the representation or boundary condition that the calculation relies on.', modelAnswer: 'A changed input representation, violated invariant, or unhandled boundary case can invalidate a result even when the arithmetic is correct.', focus: 'assumption audit', sourceRefs: track.sourceRefs },

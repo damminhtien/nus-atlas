@@ -119,6 +119,32 @@
       ]
     }
   ],
+  "algorithmNotes": [
+    {
+      "algorithm": "PageRank power iteration",
+      "problemDefinition": "Assign importance to graph nodes by repeatedly transferring probability mass through outgoing links and teleportation.",
+      "assumptions": "The source-to-destination orientation is fixed, outgoing probabilities are normalized, dangling nodes have a stated convention, and damping or teleportation is applied consistently.",
+      "coreInvariant": "The transition process preserves probability mass: every source distributes all of its current mass according to the same row- or column-stochastic convention.",
+      "formulaAlgorithm": "Construct the transition operator, then repeat the update $\\operatorname{PR}(i)=\\frac{1-\\beta}{|T|}\\mathbf{1}_{i\\in T}+\\beta\\sum_{j\\to i}\\frac{\\operatorname{PR}(j)}{\\operatorname{outdeg}(j)}$.",
+      "failureModes": "Common mistakes: swapping row- and column-stochastic multiplication, dropping dangling mass, applying teleportation to the wrong set, or relying on indegree alone.",
+      "sourceRefs": [
+        {
+          "sourceId": "DSA5101/Assignments/DSA5101_Assignment_2.pdf",
+          "page": 4,
+          "sourceType": "exercise",
+          "role": "transition matrix and power iteration",
+          "status": "current-context"
+        },
+        {
+          "sourceId": "DSA5101/Reference textbook MMDS 3rd Edition.pdf",
+          "page": 175,
+          "sourceType": "textbook",
+          "role": "PageRank definition",
+          "status": "course-depth"
+        }
+      ]
+    }
+  ],
   "contrastDrills": [
     {
       "id": "dsa5101-c16",

@@ -284,6 +284,63 @@
       ]
     }
   ],
+  "algorithmNotes": [
+    {
+      "algorithm": "MinHash",
+      "problemDefinition": "Estimate Jaccard similarity between large shingle sets using compact signatures instead of comparing every shingle directly.",
+      "assumptions": "Each document is represented as a set of shingles, the permutations or hash functions are sufficiently random, and the same row construction is used for both documents.",
+      "coreInvariant": "For one random permutation, the probability that two minimum-hash values collide equals their Jaccard similarity.",
+      "formulaAlgorithm": "For each permutation $\\pi$, store the minimum hashed shingle; estimate $J(A,B)$ by the fraction of signature rows whose minimum values agree.",
+      "failureModes": "Common mistakes: treating a shingle set as a multiset, using cosine instead of Jaccard, or reading one observed collision as an exact similarity.",
+      "sourceRefs": [
+        {
+          "sourceId": "DSA5101/Lec 2 - Finding Similar items, LSH.pdf",
+          "page": 25,
+          "sourceType": "lecture",
+          "role": "Jaccard similarity for shingles",
+          "status": "current"
+        },
+        {
+          "sourceId": "DSA5101/Lec 2 - Finding Similar items, LSH.pdf",
+          "page": 37,
+          "sourceType": "lecture",
+          "role": "MinHash collision property",
+          "status": "current"
+        },
+        {
+          "sourceId": "DSA5101/Assignments/DSA5101_Assignment_1.pdf",
+          "page": 3,
+          "sourceType": "exercise",
+          "role": "MinHash signature",
+          "status": "current-context"
+        }
+      ]
+    },
+    {
+      "algorithm": "LSH banding",
+      "problemDefinition": "Reduce near-neighbour search cost by generating likely similar pairs before exact similarity verification.",
+      "assumptions": "The signature is divided into b bands of r rows, band events are treated as independent for the probability calculation, and a candidate is not automatically a true neighbour.",
+      "coreInvariant": "A pair passes the candidate filter when at least one complete band matches; a single row match is not the whole LSH event.",
+      "formulaAlgorithm": "With signature similarity s, one row collides with probability $s$, one band with $s^r$, and at least one of b bands with $1-(1-s^r)^b$.",
+      "failureModes": "Common mistakes: confusing row, band, and whole-filter probabilities; assuming more bands always improve precision; or skipping exact verification.",
+      "sourceRefs": [
+        {
+          "sourceId": "DSA5101/Lec 2 - Finding Similar items, LSH.pdf",
+          "page": 62,
+          "sourceType": "lecture",
+          "role": "LSH banding candidate probability",
+          "status": "current"
+        },
+        {
+          "sourceId": "DSA5101/Assignments/DSA5101_Assignment_1.pdf",
+          "page": 4,
+          "sourceType": "exercise",
+          "role": "LSH banding",
+          "status": "current-context"
+        }
+      ]
+    }
+  ],
   "math": [
     {
       "latex": "\\Pr\\bigl[h_{\\pi}(A)=h_{\\pi}(B)\\bigr] = J(A,B) = \\frac{|A\\cap B|}{|A\\cup B|}",

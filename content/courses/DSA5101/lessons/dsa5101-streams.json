@@ -143,6 +143,73 @@
       ]
     }
   ],
+  "algorithmNotes": [
+    {
+      "algorithm": "DGIM",
+      "problemDefinition": "Estimate the number of 1s in the most recent window of a binary stream using bounded memory.",
+      "assumptions": "The stream is timestamped and binary, buckets summarize consecutive 1s, and the query window may cut through an old bucket.",
+      "coreInvariant": "Buckets are time ordered, have power-of-two sizes, and maintain at most two buckets of each size; the oldest partially covered bucket is the approximation boundary.",
+      "formulaAlgorithm": "Insert and merge timestamped buckets while preserving the size invariant, count fully covered buckets exactly, and count the oldest boundary bucket fractionally.",
+      "failureModes": "Common mistakes: choosing the newest instead of the oldest boundary bucket, counting the partial bucket fully, or claiming an exact window count from a summary.",
+      "sourceRefs": [
+        {
+          "sourceId": "DSA5101/Assignments/DSA5101_Assignment_2.pdf",
+          "page": 5,
+          "sourceType": "exercise",
+          "role": "DGIM window and error",
+          "status": "current-context"
+        }
+      ]
+    },
+    {
+      "algorithm": "Flajolet–Martin",
+      "problemDefinition": "Estimate the number of distinct values in a stream without storing every value.",
+      "assumptions": "The hash behaves approximately uniformly, zero-prefix lengths are observable, and the target is distinct cardinality rather than total stream length.",
+      "coreInvariant": "The longest observed zero-prefix in a hashed stream value provides a logarithmic signal for the distinct count, so the estimate grows roughly as $2^R$.",
+      "formulaAlgorithm": "Hash each value, track the maximum zero-prefix length $R$, and form a cardinality estimate from $2^R$ with the course's stated correction or repetition rule.",
+      "failureModes": "Common mistakes: confusing $F_0$ with the total number of occurrences, using a non-uniform hash assumption, or treating one register as a noiseless exact count.",
+      "sourceRefs": [
+        {
+          "sourceId": "DSA5101/Assignments/DSA5101_Assignment_2.pdf",
+          "page": 6,
+          "sourceType": "exercise",
+          "role": "Flajolet–Martin estimate",
+          "status": "current-context"
+        },
+        {
+          "sourceId": "DSA5101/Reference textbook MMDS 3rd Edition.pdf",
+          "page": 155,
+          "sourceType": "textbook",
+          "role": "Flajolet–Martin",
+          "status": "course-depth"
+        }
+      ]
+    },
+    {
+      "algorithm": "AMS frequency-moment sketch",
+      "problemDefinition": "Estimate a frequency moment such as $F_2$ from a stream while keeping only a small number of sampled statistics.",
+      "assumptions": "The stream positions or samples follow the stated sampling rule, the target moment is defined before sampling, and repeated estimates are combined as specified.",
+      "coreInvariant": "Each sampled variable targets the same frequency moment in expectation; averaging multiple noisy estimates reduces variance without storing the full stream.",
+      "formulaAlgorithm": "Define $F_2=\\sum_i f_i^2$, construct the position-based estimator from the sampled suffix frequency, and average the resulting estimates.",
+      "failureModes": "Common mistakes: calling $F_0$ the total number of elements, squaring distinct counts instead of frequencies, or using DGIM/Flajolet–Martin for the wrong target.",
+      "sourceRefs": [
+        {
+          "sourceId": "DSA5101/Assignments/DSA5101_Assignment_2.pdf",
+          "page": 6,
+          "sourceType": "exercise",
+          "role": "AMS moments",
+          "status": "current-context"
+        },
+        {
+          "sourceId": "DSA5101/Reference textbook MMDS 3rd Edition.pdf",
+          "page": 154,
+          "sourceType": "textbook",
+          "role": "stream query model",
+          "status": "course-depth"
+        }
+      ]
+    }
+  ],
   "contrastDrills": [
     {
       "id": "dsa5101-c18",

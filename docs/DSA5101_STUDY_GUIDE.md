@@ -39,6 +39,8 @@ The assessment map ranks the algorithms by verified lecture and assignment signa
 
 Each priority lab now includes a short child-friendly story animation with Play, Next, and Reset controls. These analogies are explicitly marked `intuition-only`; the source-backed equations, assignment pages, and worked answers remain authoritative.
 
+Every core algorithm note follows the same five-part exam template: **Problem definition**, **Assumptions**, **Core invariant**, **Formula/algorithm**, and **Failure modes and common mistakes**. The template keeps the target quantity, validity conditions, update rule, and boundary cases visible together instead of leaving them implicit across separate sections.
+
 ## Final-exam coverage status
 
 The package now has explicit source-backed lessons for Lecture 3 clustering and all four Assignment 2 tracks. This improves study readiness, but it is not proof of A+ performance: the official Canvas project brief/rubric is still pending retrieval, and the final exam’s detailed scope is not stated in the local course-information PDF. Treat the map as a high-coverage study plan, not an official exam specification.
@@ -61,6 +63,7 @@ Before committing DSA5101 content, run:
 ```bash
 node scripts/validate-question-bank.js
 node scripts/validate-contrast-drills.js
+node scripts/validate-algorithm-notes.js
 node scripts/validate-latex.js
 node scripts/validate-latex-render.js --course DSA5101
 node scripts/validate-extracted.js

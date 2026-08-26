@@ -115,6 +115,19 @@
     const id = Number.isInteger(index) ? ` id="nus-lesson-concept-${index}"` : "";
     return `<section class="nus-teach-card reveal"${id}><div class="nus-teach-head"><h3>${esc(section.title)}</h3>${badge}</div>${paragraphs(section.body)}${teachingHtml}${section.math ? mathBlock(section.math) : ""}${sourceLens(section.sourceLens)}</section>`;
   }
+  function algorithmNotes(lesson) {
+    const notes = Array.isArray(lesson && lesson.algorithmNotes) ? lesson.algorithmNotes : [];
+    if (!notes.length) return "";
+    const fields = [
+      ["Problem definition", "problemDefinition"],
+      ["Assumptions", "assumptions"],
+      ["Core invariant", "coreInvariant"],
+      ["Formula / algorithm", "formulaAlgorithm"],
+      ["Failure modes & common mistakes", "failureModes"]
+    ];
+    const cards = notes.map(note => `<article class="nus-algorithm-note"><div class="nus-algorithm-note-head"><span class="pill violet">Five-part note</span><h4>${esc(note.algorithm)}</h4></div><ol>${fields.map(([label, key]) => `<li><b>${esc(label)}</b><p>${text(note[key])}</p></li>`).join("")}</ol>${sourceDisclosure(note.sourceRefs, "Note sources")}</article>`).join("");
+    return `<section class="nus-card nus-algorithm-notes reveal" id="nus-lesson-algorithms"><div class="nus-teach-head"><div><h3>Algorithm note standard</h3><p class="nus-muted">Every core algorithm starts with the problem, states its invariant, and ends with the mistakes that break a solution.</p></div><span class="pill gold">${notes.length} note${notes.length === 1 ? "" : "s"}</span></div><div class="nus-algorithm-note-list">${cards}</div></section>`;
+  }
   function workedExample(example) {
     const steps = (example.steps || []).map((step, index) => `<li><b>${index + 1}.</b><span>${text(step)}</span></li>`).join("");
     return `<section class="nus-example"><div class="nus-teach-head"><h3>${esc(example.title)}</h3>${sourceBadge({ sourceType: example.sourceType || "lecture" })}</div><ol>${steps}</ol><details><summary>Check the result</summary><p>${text(example.answer)}</p></details></section>`;
@@ -148,7 +161,7 @@
 
   return Object.freeze({
     esc, text, sourceLabel, sourceBadge, sourceItem, sourceSummary, sourceDisclosure, sourceLens, sourceGroups, quickNav, pageHead, card,
-    button, statusPill, visualCard, mathBlock, lessonSection, workedExample,
+    button, statusPill, visualCard, mathBlock, lessonSection, algorithmNotes, workedExample,
     recallItem, criticalThinking, studyKit, studyCompass
   });
 });

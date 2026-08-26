@@ -100,6 +100,25 @@
       ]
     }
   ],
+  "algorithmNotes": [
+    {
+      "algorithm": "BALANCE",
+      "problemDefinition": "Serve as many online queries as possible by assigning each query to an eligible advertiser with limited remaining budget.",
+      "assumptions": "Eligibility, bid sets, starting budgets, query order, and the offline comparison are all fixed; tie behavior is stated rather than guessed.",
+      "coreInvariant": "For each query, choose an eligible advertiser with the larger remaining budget, apply the budget update, and preserve the same tie rule throughout the trace.",
+      "formulaAlgorithm": "Track $B_t(a)=B_{t-1}(a)-1$ after assigning query t to advertiser a; when budgets tie, apply the declared deterministic rule or branch over allowed outcomes for a guarantee test.",
+      "failureModes": "Common mistakes: ignoring tie-breaking, updating the wrong budget, or treating one successful simulation as proof of optimality for every allowed execution.",
+      "sourceRefs": [
+        {
+          "sourceId": "DSA5101/Assignments/DSA5101_Assignment_2.pdf",
+          "page": 7,
+          "sourceType": "exercise",
+          "role": "BALANCE sequences",
+          "status": "current-context"
+        }
+      ]
+    }
+  ],
   "contrastDrills": [
     {
       "id": "dsa5101-c20",
