@@ -39,7 +39,8 @@
 
   function questionLabel(question) {
     const layer = question.assessmentLayer || (question.origin === "synthetic" ? "synthetic" : "");
-    return `${layer ? `${layer} · ` : ""}${question.difficulty || "medium"} · ${question.skill || "explain"} · ${question.estimatedSeconds || 90}s`;
+    const layerLabel = layer === "generated-practice" ? "Generated practice" : layer;
+    return `${layerLabel ? `${layerLabel} · ` : ""}${question.difficulty || "medium"} · ${question.skill || "explain"} · ${question.estimatedSeconds || 90}s`;
   }
 
   function persistActivePractice() {
@@ -51,7 +52,7 @@
     const store = getStore();
     if (!store || typeof store.activePractice !== "function") return false;
     const saved = store.activePractice();
-    if (!saved || saved.courseCode !== code || saved.scope !== (scope || "") || saved.status === "finished") return false;
+    if (!saved || saved.courseCode !== code || (scope && saved.scope !== scope) || saved.status === "finished") return false;
     const questions = saved.mode === "mock"
       ? questionsForPracticePlan(code, practicePlanFor(code, saved.scope))
       : saved.mode === "deep"
@@ -270,6 +271,20 @@
     const selfReview = answers.filter(answer => answer.gradedBy !== "local" && answer.gradedBy !== "ai").length;
     const gradingSummary = `${exactCorrect}/${exactAnswers.length} exact · ${aiAssisted} AI-assisted · ${selfReview} self-review`;
     let body = pageHead(`${esc(state.courseCode)} · review`, "Practice complete", `${gradingSummary}. Only deterministic local grades contribute mastery evidence.`);
+    const breakdown = { skill: new Map(), topic: new Map(), cognitiveLevel: new Map() };
+    answers.forEach(answer => {
+      ["skill", "topic", "cognitiveLevel"].forEach(dimension => {
+        const key = answer.q[dimension] || "general";
+        const current = breakdown[dimension].get(key) || { total: 0, correct: 0 };
+        current.total += 1;
+        if (answer.correct) current.correct += 1;
+        breakdown[dimension].set(key, current);
+      });
+    });
+    const weakest = dimension => [...breakdown[dimension]].sort((left, right) => left[1].correct / left[1].total - right[1].correct / right[1].total || right[1].total - left[1].total);
+    const breakdownGroup = (label, dimension) => `<div><b>${label}</b><div class="nus-result-breakdown-grid">${weakest(dimension).slice(0, 4).map(([key, item]) => `<div><b>${esc(key)}</b><span>${item.correct}/${item.total} correct · ${Math.round(item.correct / item.total * 100)}%</span></div>`).join("") || "<p class=\"nus-muted\">No scored answers yet.</p>"}</div></div>`;
+    const weakConcepts = weakest("skill").slice(0, 3).map(([key]) => key);
+    body += `<section class="nus-card nus-result-breakdown"><div class="nus-teach-head"><h3>What to review next</h3><span class="pill">${esc(state.mode === "deep" ? "Generated practice" : state.mode === "mock" ? "Mock exam" : "Adaptive practice")}</span></div>${breakdownGroup("By skill", "skill")}${breakdownGroup("By topic", "topic")}${breakdownGroup("By cognitive level", "cognitiveLevel")}${weakConcepts.length ? `<p class="nus-muted"><strong>Top weak concepts:</strong> ${weakConcepts.map(key => esc(key)).join(" · ")}</p>` : ""}</section>`;
     body += `<div class="nus-result-score"><b>${Math.round(correct / Math.max(1, total) * 100)}%</b><span>${correct} correct · ${total - correct - skipped} to review · ${skipped} skipped</span></div>${total - correct ? `<div class="nus-callout nus-mistake-callout"><b>${total - correct} review item${total - correct === 1 ? "" : "s"}</b><span>Retry misses from Review; this attempt does not schedule spaced retrieval.</span>${button("Review mistakes", `#/nus/mistakes/${state.courseCode}`, "primary")}</div>` : ""}<div class="nus-review-deck">${answers.map((answer, index) => { const mode = gradingMode(answer.q); const label = mode === "exact" ? (answer.correct ? "Correct" : "Review") : (answer.correct ? "Feedback match" : "Self-review"); return `<article class="nus-review-item ${answer.correct ? "correct" : "missed"}><div><span class="pill ${answer.correct ? "sage" : ""}">${label}</span><b>${index + 1}. ${esc(answer.q.prompt)}</b></div><p><strong>Grading:</strong> ${mode === "exact" ? "deterministic local" : "heuristic feedback; no mastery evidence"}</p><p><strong>Source:</strong> ${(answer.q.sourceRefs || answer.q.lessonSourceRefs || []).slice(0, 2).map(sourceItem).join(" ")}</p><p><strong>Your answer:</strong> ${esc(answer.q.type === "mcq" ? (answer.q.choices[Number(answer.raw)] || "No choice") : answer.raw)}</p><p><strong>Worked answer:</strong> ${text(answer.q.solution || answer.q.explanation || "Review the source lesson.")}</p></article>`; }).join("")}</div><div class="nus-lesson-actions">${button("Retry misses", `#/nus/exam/${state.courseCode}`, "primary")}${button("Continue deep practice", `#/nus/exam/${state.courseCode}/deep-practice`, "ghost")}${button("Back to course", `#/nus/course/${state.courseCode}`, "ghost")}</div>`;
     root.innerHTML = body;
     typeset();
@@ -357,5 +372,5 @@
     startTimer();
   }
 
-  return Object.freeze({ render, renderMistakes, stopTimer, questionsFor, questionsForPracticePlan, practicePlanFor, answerKey, gradingMode, masteryEligible });
+  return Object.freeze({ render, renderMistakes, stopTimer, questionsFor, questionsForPracticePlan, deepPracticeQuestions, practicePlanFor, answerKey, gradingMode, masteryEligible });
 });

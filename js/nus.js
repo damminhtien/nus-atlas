@@ -577,6 +577,10 @@
     getCourses: courses,
     getLessons: lessons,
     getAssessmentMap: code => repository() && repository().getAssessmentMap ? repository().getAssessmentMap(code) : null,
+    getCurrentWeek: code => {
+      const items = lessons(code).filter(lessonItem => lessonItem.examEligible !== false && !window.ATLAS_STUDY_STORE.lessonDone(lessonItem.id));
+      return items.map(lessonItem => Number(lessonItem.week) || 0).filter(Boolean).sort((a, b) => a - b)[0] || null;
+    },
     getStore: () => window.ATLAS_STUDY_STORE,
     pageHead,
     sourceItem,

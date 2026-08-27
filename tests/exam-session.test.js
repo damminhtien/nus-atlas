@@ -30,6 +30,15 @@ test("skip moves forward and records no scored answer", () => {
   assert.equal(state.answers.length, 0);
 });
 
+test("advance wraps to the first unanswered question after navigator jumps", () => {
+  const api = session();
+  let state = api.create({ questions });
+  state = api.goTo(state, 2);
+  state = api.answer(state, { raw: "last", correct: true, gradingMode: "exact" });
+  state = api.advance(state);
+  assert.equal(state.currentIndex, 0);
+});
+
 test("snapshot excludes question payload and restores it by stable ids", () => {
   const api = session();
   const state = api.create({ courseCode: "DSA5105", mode: "mock", questions, limitMinutes: 90 });

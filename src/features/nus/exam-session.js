@@ -93,8 +93,7 @@
   function advance(state) {
     if (!state.questionIds.length) return touch(state, { status: "finished" });
     const next = state.currentIndex + 1;
-    if (next >= state.questionIds.length) return touch(state, { currentIndex: state.questionIds.length - 1 });
-    return touch(state, { currentIndex: nextOpenIndex(state, next) });
+    return touch(state, { currentIndex: nextOpenIndex(state, next >= state.questionIds.length ? 0 : next) });
   }
 
   function back(state) { return touch(state, { currentIndex: Math.max(0, state.currentIndex - 1) }); }
@@ -104,7 +103,7 @@
     const questionId = state.questionIds[state.currentIndex];
     if (!questionId) return state;
     const skipped = [...new Set([...(state.skippedQuestionIds || []), questionId])];
-    const next = state.currentIndex + 1 < state.questionIds.length ? nextOpenIndex({ ...state, skippedQuestionIds: skipped }, state.currentIndex + 1) : state.currentIndex;
+    const next = nextOpenIndex({ ...state, skippedQuestionIds: skipped }, state.currentIndex + 1 < state.questionIds.length ? state.currentIndex + 1 : 0);
     return touch(state, { skippedQuestionIds: skipped, currentIndex: next });
   }
 

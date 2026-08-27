@@ -108,3 +108,29 @@ test("numeric grading is local and open-response grading stays outside mastery",
   assert.equal(feature.answerKey(numeric, "2.005"), true);
   assert.equal(feature.masteryEligible(numeric), true);
 });
+
+test("deep practice generates only labelled variations from available course skills", () => {
+  const feature = createExamFeature({
+    root: { innerHTML: "" },
+    getCourses: () => [{ code: "DSA5105" }],
+    getLessons: () => [{ id: "lesson", questions: [{ id: "q", skill: "pca-variance" }] }],
+    getStore: () => ({}), pageHead: () => "", sourceItem: () => "", text: value => value, esc: value => String(value), button: () => "", typeset() {}
+  });
+  const questions = feature.deepPracticeQuestions("DSA5105", 1, "fixed-seed");
+  assert.equal(questions.length, 1);
+  assert.equal(questions[0].generatedFrom, "pca-explained-variance");
+  assert.equal(questions[0].origin, "generated");
+});
+
+test("practice setup exposes adaptive, deep, and mock modes without a fixed course", () => {
+  const root = { innerHTML: "", querySelector: () => ({ addEventListener() {} }), querySelectorAll: () => [] };
+  const feature = createExamFeature({
+    root, getCourses: () => [{ code: "DSA5101", title: "Big Data" }], getLessons: () => [], getStore: () => ({}),
+    pageHead: (_kicker, title, description) => `<h1>${title}</h1><p>${description || ""}</p>`, sourceItem: ref => ref.sourceId, text: value => value, esc: value => String(value), button: label => label, typeset() {}
+  });
+  feature.render("DSA5101");
+  assert.match(root.innerHTML, /Adaptive practice/);
+  assert.match(root.innerHTML, /Deep practice/);
+  assert.match(root.innerHTML, /Mock exam/);
+  assert.doesNotMatch(root.innerHTML, /DSA5208/);
+});
