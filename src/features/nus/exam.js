@@ -13,6 +13,7 @@
     getCourses,
     getLessons,
     getAssessmentMap,
+    getQuestionTemplates,
     getStore,
     pageHead,
     sourceItem,
@@ -27,7 +28,7 @@
 
   const selection = createExamSelection ? createExamSelection({ getLessons, getStore, getAssessmentMap }) : null;
   const sessionApi = createExamSession ? createExamSession() : null;
-  const generators = createExamGenerators ? createExamGenerators() : null;
+  const generators = createExamGenerators ? createExamGenerators({ getTemplates: getQuestionTemplates }) : null;
   const renderer = createExamRenderer ? createExamRenderer({ pageHead, sourceItem, text, esc, button }) : null;
 
   function defaultCourseCode() {
@@ -118,7 +119,7 @@
   function deepPracticeQuestions(code, limit, seed) {
     if (!generators || !selection) return [];
     const skills = selection.eligibleQuestions(code, "").map(question => question.skill).filter(Boolean);
-    return generators.generate({ seed, limit, skills });
+    return generators.generate({ courseCode: code, templates: getQuestionTemplates ? getQuestionTemplates(code) : null, seed, limit, skills });
   }
 
   function deepQuestionsFromSnapshot(snapshot) {
@@ -126,7 +127,7 @@
     return snapshot.questionIds.map(questionId => {
       const generationSeed = snapshot.generatedSeeds && snapshot.generatedSeeds[questionId];
       const generatorId = String(questionId).split(":")[1];
-      return generationSeed == null ? null : generators.generateOne({ generatorId, generationSeed });
+      return generationSeed == null ? null : generators.generateOne({ courseCode: snapshot.courseCode, templates: getQuestionTemplates ? getQuestionTemplates(snapshot.courseCode) : null, generatorId, generationSeed });
     }).filter(Boolean);
   }
 
@@ -279,7 +280,7 @@
     if (!state) {
       const selected = selectedCode;
       const practicePlan = practicePlanFor(selected, scope);
-      root.innerHTML = renderer.setup({ courses: getCourses(), selectedCode: selected, scope, lessons: getLessons(selected), practicePlan });
+      root.innerHTML = renderer.setup({ courses: getCourses(), selectedCode: selected, courseCode: selected, scope, lessons: getLessons(selected), practicePlan });
       typeset();
       const courseSelect = root.querySelector("#nus-exam-course");
       const scopeSelect = root.querySelector("#nus-exam-scope");

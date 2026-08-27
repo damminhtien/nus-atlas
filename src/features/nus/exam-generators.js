@@ -3,7 +3,12 @@
 (function (root, factory) {
   if (typeof module === "object" && module.exports) module.exports = factory;
   else root.ATLAS_EXAM_GENERATORS = factory;
-})(typeof globalThis === "object" ? globalThis : this, function createExamGenerators() {
+})(typeof globalThis === "object" ? globalThis : this, function createExamGenerators(options) {
+  const config = options || {};
+  const createDsa5101Generators = typeof module === "object" && module.exports
+    ? require("./dsa5101-generators")
+    : globalThis.ATLAS_DSA5101_GENERATORS;
+  const dsa5101 = createDsa5101Generators ? createDsa5101Generators({ getTemplates: config.getTemplates }) : null;
   const source = {
     ols: [{ sourceId: "DSA5105/Lec4_annotated.pdf", page: 17, sourceType: "lecture", role: "weighted objective", status: "current" }, { sourceId: "DSA5105/Textbook.pdf", page: 100, sourceType: "textbook", role: "weighted least squares", status: "supporting" }],
     ridge: [{ sourceId: "DSA5105/Lec1_annotated.pdf", page: 48, sourceType: "lecture", role: "regularization", status: "current" }, { sourceId: "DSA5105/Lec1_exercises-solutions.pdf", page: 2, sourceType: "exercise", role: "ridge spectral filter", status: "current-context" }],
@@ -100,15 +105,23 @@
     { id: "mdp", skills: ["value-iteration", "bellman-backup", "bellman-optimality", "mdp-policy"], generate: mdp }
   ];
 
-  function forSkills(skills) {
-    const available = new Set(skills || []);
+  function isDsa5101Request(input) {
+    const request = input || {};
+    return request.courseCode === "DSA5101" || (request.templates && request.templates.courseId === "DSA5101");
+  }
+
+  function forSkills(skills, input) {
+    const request = Array.isArray(skills) ? { ...(input || {}), skills } : (skills || {});
+    if (isDsa5101Request(request) && dsa5101) return dsa5101.forSkills(request);
+    const available = new Set(request.skills || []);
     return generators.filter(generator => generator.skills.some(skill => available.has(skill)));
   }
 
   function generate(input) {
     const request = input || {};
+    if (isDsa5101Request(request) && dsa5101) return dsa5101.generate(request);
     const limit = Math.max(1, Number(request.limit) || 1);
-    const available = forSkills(request.skills);
+    const available = forSkills(request.skills, request);
     const pool = available.length ? available : generators;
     const seed = request.seed == null ? 1 : request.seed;
     return Array.from({ length: limit }, (_, index) => {
@@ -118,5 +131,12 @@
     });
   }
 
-  return Object.freeze({ list: () => generators.map(generator => ({ id: generator.id, skills: generator.skills.slice() })), forSkills, generate, hash });
+  function generateOne(input) {
+    const request = input || {};
+    if (isDsa5101Request(request) && dsa5101) return dsa5101.generateOne(request);
+    const generator = generators.find(item => item.id === request.generatorId);
+    return generator ? generator.generate(String(request.generationSeed == null ? 1 : request.generationSeed)) : null;
+  }
+
+  return Object.freeze({ list: () => generators.map(generator => ({ id: generator.id, skills: generator.skills.slice() })), forSkills, generate, generateOne, hash });
 });

@@ -122,6 +122,42 @@ test("deep practice generates only labelled variations from available course ski
   assert.equal(questions[0].origin, "generated");
 });
 
+test("DSA5101 deep practice uses its canonical templates and exact cards", () => {
+  const catalog = require("../content/courses/DSA5101/questions/templates.json");
+  const feature = createExamFeature({
+    root: { innerHTML: "" },
+    getCourses: () => [{ code: "DSA5101" }],
+    getLessons: () => [{ id: "dsa5101-frequent-itemsets", questions: [{ id: "q", skill: "support-calculation" }] }],
+    getQuestionTemplates: () => catalog,
+    getStore: () => ({}), pageHead: () => "", sourceItem: () => "", text: value => value, esc: value => String(value), button: () => "", typeset() {}
+  });
+  const questions = feature.deepPracticeQuestions("DSA5101", 1, "fixed-seed");
+  assert.equal(questions.length, 1);
+  assert.equal(questions[0].courseId, "DSA5101");
+  assert.equal(questions[0].cardId, "support-confidence-lift");
+  assert.equal(questions[0].generatedFrom, "support-calculation");
+  assert.equal(questions[0].grading.type, "numeric");
+});
+
+test("DSA5101 deep-practice snapshots regenerate the same card question", () => {
+  const catalog = require("../content/courses/DSA5101/questions/templates.json");
+  const generated = require("../src/features/nus/exam-generators.js")({ getTemplates: () => catalog }).generateOne({ courseCode: "DSA5101", templates: catalog, generatorId: "dsa5101-support", generationSeed: "resume-seed" });
+  const root = { innerHTML: "", querySelector: () => ({ addEventListener() {} }), querySelectorAll: () => [] };
+  const snapshot = {
+    courseCode: "DSA5101", scope: "deep-practice", mode: "deep", focus: "smart", status: "active",
+    questionIds: [generated.id], generatedSeeds: { [generated.id]: generated.generationSeed }, answers: [], skippedQuestionIds: [],
+    currentIndex: 0, startedAt: new Date().toISOString(), elapsedSeconds: 0, limitMinutes: 30
+  };
+  const feature = createExamFeature({
+    root, getCourses: () => [{ code: "DSA5101" }], getLessons: () => [], getQuestionTemplates: () => catalog,
+    getStore: () => ({ activePractice: () => snapshot }), pageHead: () => "", sourceItem: () => "", text: value => value, esc: value => String(value), button: () => "", typeset() {}
+  });
+  feature.render("DSA5101", "deep-practice");
+  feature.stopTimer();
+  assert.match(root.innerHTML, /In \d+ baskets, itemset I occurs/);
+  assert.match(root.innerHTML, /Card: support-confidence-lift/);
+});
+
 test("practice setup exposes adaptive, deep, and mock modes without a fixed course", () => {
   const root = { innerHTML: "", querySelector: () => ({ addEventListener() {} }), querySelectorAll: () => [] };
   const feature = createExamFeature({
