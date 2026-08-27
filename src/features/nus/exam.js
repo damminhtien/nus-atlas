@@ -6,6 +6,7 @@
 })(typeof globalThis === "object" ? globalThis : this, function createNusExamFeature(options) {
   const createExamSelection = options.selection || (typeof module === "object" && module.exports ? require("./exam-selection") : globalThis.ATLAS_EXAM_SELECTION);
   const createExamSession = options.session || (typeof module === "object" && module.exports ? require("./exam-session") : globalThis.ATLAS_EXAM_SESSION);
+  const createExamGenerators = options.generators || (typeof module === "object" && module.exports ? require("./exam-generators") : globalThis.ATLAS_EXAM_GENERATORS);
   const {
     root,
     getCourses,
@@ -25,6 +26,7 @@
 
   const selection = createExamSelection ? createExamSelection({ getLessons, getStore, getAssessmentMap }) : null;
   const sessionApi = createExamSession ? createExamSession() : null;
+  const generators = createExamGenerators ? createExamGenerators() : null;
 
   function defaultCourseCode() {
     const first = (getCourses() || [])[0];
@@ -52,7 +54,9 @@
     if (!saved || saved.courseCode !== code || saved.scope !== (scope || "") || saved.status === "finished") return false;
     const questions = saved.mode === "mock"
       ? questionsForPracticePlan(code, practicePlanFor(code, saved.scope))
-      : questionsFor(code, saved.scope, saved.focus || "smart", Infinity);
+      : saved.mode === "deep"
+        ? deepQuestionsFromSnapshot(saved)
+        : questionsFor(code, saved.scope, saved.focus || "smart", Infinity);
     if (!questions.length || questions.length < saved.questionIds.length) return false;
     state = sessionApi.fromSnapshot(saved, questions);
     return state.questionIds.length === saved.questionIds.length;
@@ -112,6 +116,21 @@
     }))).map(question => [question.id, question]));
     const questions = plan.questionIds.map(id => byId.get(id)).filter(Boolean);
     return questions.length === plan.questionIds.length ? questions : [];
+  }
+
+  function deepPracticeQuestions(code, limit, seed) {
+    if (!generators || !selection) return [];
+    const skills = selection.eligibleQuestions(code, "").map(question => question.skill).filter(Boolean);
+    return generators.generate({ seed, limit, skills });
+  }
+
+  function deepQuestionsFromSnapshot(snapshot) {
+    if (!generators || !snapshot || !Array.isArray(snapshot.questionIds)) return [];
+    return snapshot.questionIds.map(questionId => {
+      const generationSeed = snapshot.generatedSeeds && snapshot.generatedSeeds[questionId];
+      const generatorId = String(questionId).split(":")[1];
+      return generationSeed == null ? null : generators.generateOne({ generatorId, generationSeed });
+    }).filter(Boolean);
   }
 
   function answerKey(question, raw) {
@@ -251,7 +270,7 @@
     const selfReview = answers.filter(answer => answer.gradedBy !== "local" && answer.gradedBy !== "ai").length;
     const gradingSummary = `${exactCorrect}/${exactAnswers.length} exact · ${aiAssisted} AI-assisted · ${selfReview} self-review`;
     let body = pageHead(`${esc(state.courseCode)} · review`, "Practice complete", `${gradingSummary}. Only deterministic local grades contribute mastery evidence.`);
-    body += `<div class="nus-result-score"><b>${Math.round(correct / Math.max(1, total) * 100)}%</b><span>${correct} correct · ${total - correct - skipped} to review · ${skipped} skipped</span></div>${total - correct ? `<div class="nus-callout nus-mistake-callout"><b>${total - correct} review item${total - correct === 1 ? "" : "s"}</b><span>Retry misses from Review; this attempt does not schedule spaced retrieval.</span>${button("Review mistakes", `#/nus/mistakes/${state.courseCode}`, "primary")}</div>` : ""}<div class="nus-review-deck">${answers.map((answer, index) => { const mode = gradingMode(answer.q); const label = mode === "exact" ? (answer.correct ? "Correct" : "Review") : (answer.correct ? "Feedback match" : "Self-review"); return `<article class="nus-review-item ${answer.correct ? "correct" : "missed"}><div><span class="pill ${answer.correct ? "sage" : ""}">${label}</span><b>${index + 1}. ${esc(answer.q.prompt)}</b></div><p><strong>Grading:</strong> ${mode === "exact" ? "deterministic local" : "heuristic feedback; no mastery evidence"}</p><p><strong>Source:</strong> ${(answer.q.sourceRefs || answer.q.lessonSourceRefs || []).slice(0, 2).map(sourceItem).join(" ")}</p><p><strong>Your answer:</strong> ${esc(answer.q.type === "mcq" ? (answer.q.choices[Number(answer.raw)] || "No choice") : answer.raw)}</p><p><strong>Worked answer:</strong> ${text(answer.q.solution || answer.q.explanation || "Review the source lesson.")}</p></article>`; }).join("")}</div><div class="nus-lesson-actions">${button("Retry misses", `#/nus/exam/${state.courseCode}`, "primary")}${button("Continue deep practice", `#/nus/exam/${state.courseCode}`, "ghost")}${button("Back to course", `#/nus/course/${state.courseCode}`, "ghost")}</div>`;
+    body += `<div class="nus-result-score"><b>${Math.round(correct / Math.max(1, total) * 100)}%</b><span>${correct} correct · ${total - correct - skipped} to review · ${skipped} skipped</span></div>${total - correct ? `<div class="nus-callout nus-mistake-callout"><b>${total - correct} review item${total - correct === 1 ? "" : "s"}</b><span>Retry misses from Review; this attempt does not schedule spaced retrieval.</span>${button("Review mistakes", `#/nus/mistakes/${state.courseCode}`, "primary")}</div>` : ""}<div class="nus-review-deck">${answers.map((answer, index) => { const mode = gradingMode(answer.q); const label = mode === "exact" ? (answer.correct ? "Correct" : "Review") : (answer.correct ? "Feedback match" : "Self-review"); return `<article class="nus-review-item ${answer.correct ? "correct" : "missed"}><div><span class="pill ${answer.correct ? "sage" : ""}">${label}</span><b>${index + 1}. ${esc(answer.q.prompt)}</b></div><p><strong>Grading:</strong> ${mode === "exact" ? "deterministic local" : "heuristic feedback; no mastery evidence"}</p><p><strong>Source:</strong> ${(answer.q.sourceRefs || answer.q.lessonSourceRefs || []).slice(0, 2).map(sourceItem).join(" ")}</p><p><strong>Your answer:</strong> ${esc(answer.q.type === "mcq" ? (answer.q.choices[Number(answer.raw)] || "No choice") : answer.raw)}</p><p><strong>Worked answer:</strong> ${text(answer.q.solution || answer.q.explanation || "Review the source lesson.")}</p></article>`; }).join("")}</div><div class="nus-lesson-actions">${button("Retry misses", `#/nus/exam/${state.courseCode}`, "primary")}${button("Continue deep practice", `#/nus/exam/${state.courseCode}/deep-practice`, "ghost")}${button("Back to course", `#/nus/course/${state.courseCode}`, "ghost")}</div>`;
     root.innerHTML = body;
     typeset();
   }
@@ -266,11 +285,12 @@
       const selected = selectedCode;
       const practicePlan = practicePlanFor(selected, scope);
       const mockRoute = scope === "mixed-exam" && !!practicePlan;
-      const scopeOptions = `${practicePlan ? `<option value="mixed-exam" selected>Canonical timed mixed exam · ${esc(practicePlan.durationMinutes)} min</option>` : ""}<option value="">All core lessons</option>${getLessons(selected).map(lesson => `<option value="${esc(lesson.id)}" ${scope === lesson.id ? "selected" : ""}>${esc(lesson.title)}${lesson.examEligible === false ? " · supplementary" : ""}</option>`).join("")}`;
-      const countOptions = `<option value="5" ${practicePlan ? "" : ""}>5 questions</option><option value="10" ${practicePlan ? "" : "selected"}>10 questions</option><option value="12" ${practicePlan ? "selected" : ""}>12 questions · canonical mixed set</option><option value="15">15 questions</option>`;
-      const timeOptions = `<option value="15">15 minutes</option><option value="30" ${practicePlan ? "" : "selected"}>30 minutes</option><option value="45">45 minutes</option><option value="90" ${practicePlan ? "selected" : ""}>90 minutes · canonical mixed set</option>`;
-      const planCopy = mockRoute ? `<div class="nus-callout nus-practice-plan"><b>Mock exam</b><span>${esc(practicePlan.questionCount || practicePlan.questionIds.length)} questions · ${esc(practicePlan.durationMinutes)} minutes. Answers and explanations stay hidden until submission.</span></div>` : `<div class="nus-callout"><b>Adaptive practice</b><span>Atlas prioritizes due retrievals, unresolved mistakes, weak skills, unseen concepts, assessment signals, and current-week lessons. Every choice is explainable.</span></div>`;
-      const modeOptions = `<option value="adaptive" ${mockRoute ? "" : "selected"}>Adaptive practice</option><option value="mock" ${mockRoute ? "selected" : ""}>Mock exam</option>`;
+      const deepRoute = scope === "deep-practice";
+      const scopeOptions = `${practicePlan ? `<option value="mixed-exam" ${mockRoute ? "selected" : ""}>Canonical timed mixed exam · ${esc(practicePlan.durationMinutes)} min</option>` : ""}<option value="deep-practice" ${deepRoute ? "selected" : ""}>Deep practice · generated variations</option><option value="" ${!scope ? "selected" : ""}>All core lessons</option>${getLessons(selected).map(lesson => `<option value="${esc(lesson.id)}" ${scope === lesson.id ? "selected" : ""}>${esc(lesson.title)}${lesson.examEligible === false ? " · supplementary" : ""}</option>`).join("")}`;
+      const countOptions = `<option value="5">5 questions</option><option value="8">8 questions</option><option value="10" ${!practicePlan && !deepRoute ? "selected" : ""}>10 questions</option><option value="12" ${practicePlan || deepRoute ? "selected" : ""}>12 questions</option><option value="20">20 questions · deep</option>`;
+      const timeOptions = `<option value="15">15 minutes</option><option value="30" ${practicePlan || deepRoute ? "" : "selected"}>30 minutes</option><option value="45" ${deepRoute ? "selected" : ""}>45 minutes</option><option value="90" ${practicePlan ? "selected" : ""}>90 minutes · canonical mock</option>`;
+      const planCopy = mockRoute ? `<div class="nus-callout nus-practice-plan"><b>Mock exam</b><span>${esc(practicePlan.questionCount || practicePlan.questionIds.length)} questions · ${esc(practicePlan.durationMinutes)} minutes. Answers and explanations stay hidden until submission.</span></div>` : deepRoute ? `<div class="nus-callout"><b>Deep practice</b><span>Fresh deterministic variations are generated on demand for weighted OLS, SVM, PCA, GMM/EM, backpropagation, and MDP value iteration. Generated items are practice only.</span></div>` : `<div class="nus-callout"><b>Adaptive practice</b><span>Atlas prioritizes due retrievals, unresolved mistakes, weak skills, unseen concepts, assessment signals, and current-week lessons. Every choice is explainable.</span></div>`;
+      const modeOptions = `<option value="adaptive" ${mockRoute || deepRoute ? "" : "selected"}>Adaptive practice</option><option value="deep" ${deepRoute ? "selected" : ""}>Deep practice</option><option value="mock" ${mockRoute ? "selected" : ""}>Mock exam</option>`;
       root.innerHTML = pageHead("NUS practice", "Practice", "Adaptive practice is the default. Use Mock exam for a timed exam-style simulation. MCQs are exact; open responses are clearly labeled feedback until verified.") + `<section class="nus-card nus-exam-setup reveal"><div class="nus-exam-setup-grid"><label>Course<select id="nus-exam-course">${optionsHtml}</select></label><label>Scope<select id="nus-exam-scope">${scopeOptions}</select></label><label>Mode<select id="nus-exam-mode">${modeOptions}</select></label><label>Focus<select id="nus-exam-focus"><option value="smart">Smart mix</option><option value="weakness">Weak topics</option><option value="new">New concepts</option><option value="mixed">Mixed retrieval</option></select></label><label>Questions<select id="nus-exam-count">${countOptions}</select></label><label>Time<select id="nus-exam-minutes">${timeOptions}</select></label></div>${planCopy}<div class="nus-card-actions"><button class="btn primary" id="nus-start-exam">Start practice</button>${button("Course map", `#/nus/course/${esc(selected)}`, "ghost")}${button("Mistakes", `#/nus/mistakes/${esc(selected)}`, "ghost")}</div></section>`;
       typeset();
       const courseSelect = root.querySelector("#nus-exam-course");
@@ -281,12 +301,13 @@
         const selectedMode = root.querySelector("#nus-exam-mode").value;
         const selectedPlan = selectedMode === "mock" ? practicePlanFor(selected, scope) : null;
         const planQuestions = questionsForPracticePlan(selected, selectedPlan);
-        const questions = selectedPlan ? planQuestions : questionsFor(selected, scope, root.querySelector("#nus-exam-focus").value, Number(root.querySelector("#nus-exam-count").value));
+        const questionCount = Number(root.querySelector("#nus-exam-count").value);
+        const questions = selectedPlan ? planQuestions : selectedMode === "deep" ? deepPracticeQuestions(selected, questionCount, `${selected}:${Date.now()}`) : questionsFor(selected, scope === "deep-practice" ? "" : scope, root.querySelector("#nus-exam-focus").value, questionCount);
         if (!questions.length) return;
         state = sessionApi.create({
           courseCode: selected,
           mode: selectedMode,
-          scope: selectedPlan ? "mixed-exam" : scope || "",
+          scope: selectedPlan ? "mixed-exam" : selectedMode === "deep" ? "deep-practice" : scope || "",
           focus: selectedPlan ? "canonical mixed" : root.querySelector("#nus-exam-focus").value,
           questions,
           startedAt: new Date().toISOString(),

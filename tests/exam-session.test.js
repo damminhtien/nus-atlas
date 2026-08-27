@@ -41,6 +41,12 @@ test("snapshot excludes question payload and restores it by stable ids", () => {
   assert.equal(restored.mode, "mock");
 });
 
+test("deep mode survives the serializable session boundary", () => {
+  const api = session();
+  const state = api.create({ courseCode: "DSA5105", mode: "deep", questions, limitMinutes: 45 });
+  assert.equal(api.fromSnapshot(api.snapshot(state), questions).mode, "deep");
+});
+
 test("timeout finishes a session and records timeout state", () => {
   const api = session();
   const state = api.create({ questions, startedAt: new Date(0).toISOString(), limitMinutes: 1 });

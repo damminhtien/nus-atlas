@@ -34,7 +34,7 @@
     return {
       attemptId: item.attemptId || makeId(),
       courseCode: String(item.courseCode || ""),
-      mode: item.mode === "mock" ? "mock" : "adaptive",
+      mode: ["mock", "deep"].includes(item.mode) ? item.mode : "adaptive",
       scope: String(item.scope || ""),
       focus: String(item.focus || "smart"),
       questionIds: questionIds(questions),
