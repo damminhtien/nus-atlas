@@ -23,7 +23,7 @@ The supplied `chapter1.pdf`, `chapter2.pdf`, and `chapter3.pdf` decks define the
 
 `#/nus/slides/DSA5104/dsa5104-chapter3/1`
 
-Each slide keeps page-aware extraction blocks, bounding boxes, image IDs, a compact explanation, textbook pointers, and Socratic prompts. The source layer is collapsed by default so the reader remains useful for learning rather than becoming a citation wall.
+Each slide keeps page-aware extraction blocks, bounding boxes, image IDs, and textbook pointers. Only high-yield slides carry an Atlas study note with the exam focus and common trap; support, context, and exercise pages remain source-only so the reader does not turn every slide into generated prose. The source layer is collapsed by default.
 
 ## Source boundary
 
@@ -35,6 +35,8 @@ The current final-exam map is also partial. The supplied lecture sources cover C
 
 No real DSA5104 past-year paper was found in the supplied local sources, so the current timed final checkpoint is explicitly synthetic. It is not presented as historical exam material. Use `npm run validate:dsa5104:exam` to check that assessment metadata remains honest.
 
+The verified-lecture revision order is: (1) keys, integrity, and schema state; (2) relational-algebra selection, projection, joins, set semantics, equivalence, and decomposition; (3) SQL DDL and constraints; (4) SELECT-FROM-WHERE, joins, duplicates, NULL, aggregation, and BIG 6; (5) nested queries, SOME/ALL, EXISTS/NOT EXISTS, CTEs, scalar subqueries, and safe mutations. History, application lists, logistics, continuation/result-only pages, and future source-pending chapters are deliberately deprioritized. The exact slide filter is stored in `highYieldSlideNumbers` for each DSA5104 slide set and summarized in `content/courses/DSA5104/assessment-map.json`.
+
 Chapter 2 pages 43–44 now have an explicit bridge lesson section: relational algebra leads to redundancy, bad design, decomposition, and the later Chapter 7 functional-dependency material.
 
 Chapter 3's `chap3_mysql_code_in_slides.sql` and the canonical University database files (`DDL.sql`, `smallRelationsInsertFile.sql`, and `largeRelationsInsertFile.sql`) are cataloged source artifacts. SQL Studio now separates a fast SQLite/WASM Concept Lab from a DSA5104 MySQL Lab. The latter prefers a configured server-side MySQL runner and labels its SQLite compatibility fallback explicitly.
@@ -42,7 +44,7 @@ Chapter 3's `chap3_mysql_code_in_slides.sql` and the canonical University databa
 ## A+ study loop
 
 1. Start at `#/nus/course/DSA5104` and choose one current module.
-2. Read the lecture-core explanation, then open the source lens to see why the distinction is examinable.
+2. Read the high-yield note first. Open support/context pages only when a worked example or source detail is needed.
 3. Use the visual lab to manipulate the model: map ER entities, trace a query pipeline, or compare schema and execution choices.
 4. Run the 30–60 second contrast drill before looking at the worked explanation.
 5. Attempt the homework or SQL exercise; all 190 supplied teacher-solution files from Ch01–Ch07 are ingested as exercise-depth questions. Treat the official solution as exercise depth, not as a replacement for the lecture concept.

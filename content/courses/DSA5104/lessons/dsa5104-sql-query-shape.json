@@ -83,7 +83,7 @@
       ],
       "sourceLens": {
         "status": "core DSA5104",
-        "whyExaminable": "This unit is split directly from the supplied Chapter 3 lecture deck so retrieval and mistake repair stay topic-sized.",
+        "whyExaminable": "Query-writing questions test clause roles, projection, row predicates, and whether duplicate rows are preserved by default.",
         "lecture": [
           {
             "sourceId": "DSA5104/chapter3.pdf",
@@ -133,24 +133,24 @@
       "title": "Write a query for course titles in one department, then decide whether duplicate elimination is required by the wording.",
       "sourceType": "lecture",
       "steps": [
-        "Read a query from the requested output backwards: name the projected attributes, list the relations that supply them, and then state the row predicate. Projection does not automatically remove duplicates.",
-        "State the output, input relations, predicate, and one edge case before checking the solution."
+        "Read the request backwards: name the output attributes, the supplying relation, and the row predicate.",
+        "Check whether two qualifying tuples can project to the same value; add DISTINCT only if the requested result is a set of unique values."
       ],
-      "answer": "A strong answer names the semantic boundary and cites the source page or exercise file."
+      "answer": "SELECT chooses output attributes, FROM supplies candidate rows, and WHERE keeps qualifying rows. Projection alone does not remove duplicate result values; DISTINCT does."
     }
   ],
   "criticalQuestions": [
     {
-      "prompt": "What is the decisive semantic boundary in Ch3.2 · SELECT-FROM-WHERE and duplicates?",
-      "angle": "Name the operation, its input, its output, and the condition that would make the shortcut fail.",
-      "modelAnswer": "The answer should identify the operation's input/output boundary and one counterexample or edge case.",
-      "focus": "source and semantics"
+      "prompt": "For `SELECT dept_name FROM instructor WHERE salary > 80000`, what does each clause control and can the result repeat a department?",
+      "angle": "Trace output, input, filtering, and duplicate policy separately.",
+      "modelAnswer": "SELECT returns dept_name, FROM reads instructor, and WHERE keeps salaries above 80000. Yes, the same department can appear more than once when several instructors qualify; DISTINCT is required to remove that repetition.",
+      "focus": "query shape and duplicates"
     },
     {
-      "prompt": "Which tempting shortcut would produce a plausible but incorrect answer?",
-      "angle": "Separate what the source says from what a familiar SQL pattern seems to imply.",
-      "modelAnswer": "The shortcut is unsafe when it changes row scope, duplicate policy, NULL treatment, or constraint meaning.",
-      "focus": "common trap"
+      "prompt": "When is adding DISTINCT an incorrect repair rather than a harmless cleanup?",
+      "angle": "Ask whether duplicate multiplicity is part of the requested result.",
+      "modelAnswer": "DISTINCT is wrong when repeated rows represent distinct qualifying tuples or when the question asks for all matching rows. Use it only when duplicate elimination is part of the requested meaning.",
+      "focus": "duplicate semantics"
     }
   ],
   "math": [
@@ -162,11 +162,11 @@
       "symbols": [
         {
           "latex": "A",
-          "meaning": "the key object in this unit"
+          "meaning": "projected attributes"
         },
         {
           "latex": "projected attributes",
-          "meaning": "the associated semantic role"
+          "meaning": "row predicate applied to candidate tuples"
         }
       ],
       "sourceType": "lecture",

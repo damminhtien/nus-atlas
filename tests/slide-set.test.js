@@ -3,7 +3,7 @@ const assert = require("node:assert/strict");
 const fs = require("node:fs");
 const { validateAll } = require("../scripts/validate-slides");
 
-test("all slide packages preserve page, block, explanation, question, and asset provenance", () => {
+test("all slide packages preserve page, block, study layer, and asset provenance", () => {
   const result = validateAll();
   assert.equal(result.ok, true, result.errors.join("\n"));
   assert.equal(result.counts.slideSets, 13);
@@ -15,6 +15,10 @@ test("DSA5104 Chapter 1 reader keeps 52 pages and source-layer assets", () => {
   assert.equal(set.courseId, "DSA5104");
   assert.equal(set.source.pageCount, 52);
   assert.equal(set.slides.length, 52);
+  assert.equal(set.highYieldSlideNumbers.length, 14);
+  assert.equal(set.slides.find(slide => slide.slideNumber === 8).studyPriority, "high-yield");
+  assert.equal(set.slides.find(slide => slide.slideNumber === 5).studyPriority, "context");
+  assert.ok(set.slides.filter(slide => slide.studyNote).every(slide => slide.studyPriority === "high-yield"));
   assert.ok(set.slides.every(slide => slide.sourceRef.sourceType === "lecture" && slide.extraction.blocks.every(block => block.sourceId === set.source.sourceId)));
 });
 
@@ -22,7 +26,10 @@ test("DSA5104 Chapter 2 reader exposes core algebra formulas and textbook pointe
   const set = JSON.parse(fs.readFileSync("content/courses/DSA5104/slides/dsa5104-chapter2.json", "utf8"));
   assert.equal(set.source.pageCount, 46);
   assert.equal(set.slides.length, 46);
+  assert.equal(set.highYieldSlideNumbers.length, 25);
   assert.ok(set.coreSlideNumbers.includes(24));
+  assert.equal(set.slides.find(slide => slide.slideNumber === 24).studyPriority, "high-yield");
+  assert.equal(set.slides.find(slide => slide.slideNumber === 42).studyPriority, "context");
   assert.equal(set.slides.find(slide => slide.slideNumber === 24).keyFormula.name, "Theta join");
   assert.match(set.slides.find(slide => slide.slideNumber === 24).keyFormula.latex, /bowtie/);
   assert.ok(set.slides.find(slide => slide.slideNumber === 46).textbookRefs.length > 0);
@@ -33,11 +40,14 @@ test("DSA5104 Chapter 3 reader exposes SQL formulas, priorities, and textbook po
   const set = JSON.parse(fs.readFileSync("content/courses/DSA5104/slides/dsa5104-chapter3.json", "utf8"));
   assert.equal(set.source.pageCount, 99);
   assert.equal(set.slides.length, 99);
-  assert.equal(set.coreSlideNumbers.length, 93);
+  assert.equal(set.highYieldSlideNumbers.length, 56);
+  assert.equal(set.coreSlideNumbers.length, 94);
+  assert.equal(set.slides.find(slide => slide.slideNumber === 54).studyPriority, "high-yield");
   assert.equal(set.slides.find(slide => slide.slideNumber === 54).keyFormula.name, "SQL logical query order");
   assert.match(set.slides.find(slide => slide.slideNumber === 73).keyFormula.latex, /subseteq/);
   assert.ok(set.slides.find(slide => slide.slideNumber === 79).textbookRefs.length > 0);
   assert.equal(set.slides.find(slide => slide.slideNumber === 99).lecturePriority, "exercise");
+  assert.equal(set.slides.find(slide => slide.slideNumber === 99).studyPriority, "exercise");
   assert.ok(set.slides.every(slide => slide.sourceRef.sourceId === "DSA5104/chapter3.pdf"));
 });
 

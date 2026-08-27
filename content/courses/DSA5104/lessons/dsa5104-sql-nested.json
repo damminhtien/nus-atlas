@@ -97,7 +97,7 @@
       ],
       "sourceLens": {
         "status": "core DSA5104",
-        "whyExaminable": "This unit is split directly from the supplied Chapter 3 lecture deck so retrieval and mistake repair stay topic-sized.",
+        "whyExaminable": "Nested-query questions test membership, comparison quantifiers, correlation, and the NULL trap in NOT IN.",
         "lecture": [
           {
             "sourceId": "DSA5104/chapter3.pdf",
@@ -154,24 +154,24 @@
       "title": "Express a universal requirement as NOT EXISTS a required item for which the candidate has no matching row.",
       "sourceType": "lecture",
       "steps": [
-        "A nested query is a relation-valued component of a larger query. First describe what the inner result means, then decide whether the outer condition needs membership, a witness, or the absence of a counterexample.",
-        "State the output, input relations, predicate, and one edge case before checking the solution."
+        "Describe the inner result first: a value set, a witness row, or the counterexamples that must be absent.",
+        "For an every-condition, write NOT EXISTS for a required item with no matching row and check whether nullable NOT IN changes the truth value."
       ],
-      "answer": "A strong answer names the semantic boundary and cites the source page or exercise file."
+      "answer": "IN tests membership, SOME and ALL compare against a returned set, and EXISTS tests whether a row exists. NOT EXISTS expresses a universal condition by ruling out a counterexample and avoids the nullable NOT IN trap when correlated correctly."
     }
   ],
   "criticalQuestions": [
     {
-      "prompt": "What is the decisive semantic boundary in Ch3.6 · Nested queries and quantifiers?",
-      "angle": "Name the operation, its input, its output, and the condition that would make the shortcut fail.",
-      "modelAnswer": "The answer should identify the operation's input/output boundary and one counterexample or edge case.",
-      "focus": "source and semantics"
+      "prompt": "How do you express ‘students who took every required Biology course’ without relying on a division operator?",
+      "angle": "Translate every into the absence of a missing required item.",
+      "modelAnswer": "Select a student for whom NOT EXISTS a required Biology course such that NOT EXISTS a matching takes row for that student. The outer query rejects every student with a counterexample.",
+      "focus": "universal condition"
     },
     {
-      "prompt": "Which tempting shortcut would produce a plausible but incorrect answer?",
-      "angle": "Separate what the source says from what a familiar SQL pattern seems to imply.",
-      "modelAnswer": "The shortcut is unsafe when it changes row scope, duplicate policy, NULL treatment, or constraint meaning.",
-      "focus": "common trap"
+      "prompt": "Why can `ID NOT IN (subquery)` fail when the subquery returns NULL, and what is the safer rewrite?",
+      "angle": "Follow UNKNOWN through the outer WHERE predicate.",
+      "modelAnswer": "A NULL in the subquery can make the NOT IN comparison UNKNOWN, so expected rows disappear. Use a correlated NOT EXISTS, or filter NULL explicitly before using NOT IN.",
+      "focus": "NOT IN and NULL"
     }
   ],
   "math": [
@@ -183,11 +183,11 @@
       "symbols": [
         {
           "latex": "\\neg\\exists",
-          "meaning": "the key object in this unit"
+          "meaning": "no counterexample exists"
         },
         {
           "latex": "no counterexample exists",
-          "meaning": "the associated semantic role"
+          "meaning": "the candidate satisfies the universal condition"
         }
       ],
       "sourceType": "lecture",

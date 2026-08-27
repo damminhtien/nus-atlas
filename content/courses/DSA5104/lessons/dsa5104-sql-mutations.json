@@ -83,7 +83,7 @@
       ],
       "sourceLens": {
         "status": "core DSA5104",
-        "whyExaminable": "This unit is split directly from the supplied Chapter 3 lecture deck so retrieval and mistake repair stay topic-sized.",
+        "whyExaminable": "Mutation questions test target-set safety, constraint failures, and the exact rows affected by cascades or missing WHERE clauses.",
         "lecture": [
           {
             "sourceId": "DSA5104/chapter3.pdf",
@@ -133,24 +133,24 @@
       "title": "Preview an UPDATE with the same WHERE clause, verify the target key set, and explain what a cascading delete would remove.",
       "sourceType": "lecture",
       "steps": [
-        "A mutation is safe only when its target set is explicit. Before executing INSERT, DELETE, or UPDATE, write a SELECT with the same predicate, check the affected keys, and then apply the change deliberately.",
-        "State the output, input relations, predicate, and one edge case before checking the solution."
+        "Rewrite the UPDATE or DELETE as a SELECT with the same WHERE clause and inspect the affected primary keys.",
+        "For a parent-key change or delete, trace the foreign-key action: reject, cascade, set NULL, or another declared behavior."
       ],
-      "answer": "A strong answer names the semantic boundary and cites the source page or exercise file."
+      "answer": "The WHERE predicate defines the mutation target. Previewing it as SELECT exposes accidental all-row changes, while foreign-key actions determine whether dependent rows are rejected, removed, or changed."
     }
   ],
   "criticalQuestions": [
     {
-      "prompt": "What is the decisive semantic boundary in Ch3.8 · INSERT, DELETE, UPDATE safety?",
-      "angle": "Name the operation, its input, its output, and the condition that would make the shortcut fail.",
-      "modelAnswer": "The answer should identify the operation's input/output boundary and one counterexample or edge case.",
-      "focus": "source and semantics"
+      "prompt": "What is the safe first step before running `UPDATE instructor SET salary = salary * 1.1 WHERE dept_name = 'Physics'`?",
+      "angle": "Make the target set observable before changing it.",
+      "modelAnswer": "Run `SELECT ID, salary FROM instructor WHERE dept_name = 'Physics'` first, inspect the keys and values, then execute the UPDATE only if that target set is intended.",
+      "focus": "mutation target set"
     },
     {
-      "prompt": "Which tempting shortcut would produce a plausible but incorrect answer?",
-      "angle": "Separate what the source says from what a familiar SQL pattern seems to imply.",
-      "modelAnswer": "The shortcut is unsafe when it changes row scope, duplicate policy, NULL treatment, or constraint meaning.",
-      "focus": "common trap"
+      "prompt": "What is the difference between a rejected parent DELETE and `ON DELETE CASCADE`?",
+      "angle": "Trace referential actions from the referenced row to its dependents.",
+      "modelAnswer": "A restrictive foreign key rejects the delete while dependent rows exist; ON DELETE CASCADE deletes the matching dependent rows as part of the parent deletion.",
+      "focus": "referential action"
     }
   ],
   "math": [
@@ -162,11 +162,11 @@
       "symbols": [
         {
           "latex": "P",
-          "meaning": "the key object in this unit"
+          "meaning": "mutation predicate"
         },
         {
           "latex": "mutation predicate",
-          "meaning": "the associated semantic role"
+          "meaning": "P determines which tuples are eligible for the UPDATE"
         }
       ],
       "sourceType": "lecture",

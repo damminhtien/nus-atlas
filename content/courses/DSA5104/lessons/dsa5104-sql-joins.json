@@ -83,7 +83,7 @@
       ],
       "sourceLens": {
         "status": "core DSA5104",
-        "whyExaminable": "This unit is split directly from the supplied Chapter 3 lecture deck so retrieval and mistake repair stay topic-sized.",
+        "whyExaminable": "Join questions test key paths, accidental natural-join attributes, Cartesian-product mistakes, and duplicate policy in set operators.",
         "lecture": [
           {
             "sourceId": "DSA5104/chapter3.pdf",
@@ -133,24 +133,24 @@
       "title": "Join student, takes, and course through their key path, then compare the result with a natural join that uses an unintended same-name attribute.",
       "sourceType": "lecture",
       "steps": [
-        "A join states which tuples belong together. The safe invariant is a predicate over related keys or explicitly intended attributes; row order and accidental column names are not identity.",
-        "State the output, input relations, predicate, and one edge case before checking the solution."
+        "Write the key path `student.ID -> takes.ID -> course.course_id` and state which columns are returned.",
+        "Remove the join predicate once to see the Cartesian-product error, then compare UNION with UNION ALL on repeated tuples."
       ],
-      "answer": "A strong answer names the semantic boundary and cites the source page or exercise file."
+      "answer": "A correct join states the intended key equality; omitting it pairs unrelated rows. Natural join is safe only when every same-name attribute is intended as a join key, while UNION removes duplicates and UNION ALL preserves them."
     }
   ],
   "criticalQuestions": [
     {
-      "prompt": "What is the decisive semantic boundary in Ch3.3 · Joins and set operations?",
-      "angle": "Name the operation, its input, its output, and the condition that would make the shortcut fail.",
-      "modelAnswer": "The answer should identify the operation's input/output boundary and one counterexample or edge case.",
-      "focus": "source and semantics"
+      "prompt": "What does the join predicate contribute when joining `instructor` to `teaches` on ID, and what happens if it is omitted?",
+      "angle": "Connect a tuple pair to the condition that justifies combining it.",
+      "modelAnswer": "The predicate keeps only instructor/teaches pairs for the same person. Without it, the FROM clause forms a Cartesian product and unrelated instructors can be paired with every teaching row.",
+      "focus": "join predicate"
     },
     {
-      "prompt": "Which tempting shortcut would produce a plausible but incorrect answer?",
-      "angle": "Separate what the source says from what a familiar SQL pattern seems to imply.",
-      "modelAnswer": "The shortcut is unsafe when it changes row scope, duplicate policy, NULL treatment, or constraint meaning.",
-      "focus": "common trap"
+      "prompt": "Two compatible queries return the same course_id twice. When should the result use UNION ALL instead of UNION?",
+      "angle": "Treat multiplicity as part of the result contract.",
+      "modelAnswer": "Use UNION ALL when both occurrences represent qualifying output tuples and must be preserved; UNION applies duplicate elimination.",
+      "focus": "set multiplicity"
     }
   ],
   "math": [
@@ -162,11 +162,11 @@
       "symbols": [
         {
           "latex": "R,S",
-          "meaning": "the key object in this unit"
+          "meaning": "input relations"
         },
         {
           "latex": "input relations",
-          "meaning": "the associated semantic role"
+          "meaning": "predicate selecting tuple pairs to combine"
         }
       ],
       "sourceType": "lecture",

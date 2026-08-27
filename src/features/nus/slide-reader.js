@@ -80,9 +80,25 @@
     return `textbook:${courseCode}:${sourceId}`;
   }
 
+  function slideStudyPriority(slide) {
+    return slide && slide.studyPriority || (slide && slide.lecturePriority === "exercise" ? "exercise" : slide && slide.lecturePriority === "context" ? "context" : "support");
+  }
+
+  function isHighYieldSlide(slide) {
+    return slideStudyPriority(slide) === "high-yield";
+  }
+
+  function slidePriorityBadge(slide) {
+    if (!slide.studyPriority && (slide.lecturePriority === "core" || slide.priority === "core")) return `<span class="pill gold">Core slide</span>`;
+    const priority = slideStudyPriority(slide);
+    const labels = { "high-yield": "High-yield", support: "Support", context: "Context only", exercise: "Exercise" };
+    const tones = { "high-yield": "gold", support: "sage", context: "", exercise: "" };
+    return `<span class="pill ${tones[priority] || ""} nus-slide-priority-${esc(priority)}">${labels[priority] || "Source"}</span>`;
+  }
+
   function isCoreSlide(slideSet, slide) {
     const coreSlideNumbers = Array.isArray(slideSet && slideSet.coreSlideNumbers) ? slideSet.coreSlideNumbers : [];
-    return coreSlideNumbers.includes(Number(slide.slideNumber)) || slide.priority === "core";
+    return coreSlideNumbers.includes(Number(slide.slideNumber)) || ["high-yield", "support"].includes(slideStudyPriority(slide)) || slide.priority === "core";
   }
 
   function studyStore() {
@@ -144,7 +160,7 @@
   function textbookMapping(courseCode, slide, textbook) {
     const refs = Array.isArray(slide.textbookRefs) ? slide.textbookRefs : [];
     if (!refs.length) return `<div class="nus-slide-textbook-empty"><span class="pill">Not mapped</span><p class="nus-muted">No textbook page is linked to this slide yet. The lecture remains the primary study source.</p></div>`;
-    const annotation = slide.explanation && (slide.explanation.whyItMatters || slide.explanation.connection || slide.explanation.whatYouSee);
+    const annotation = slide.studyNote && slide.studyNote.focus || slide.explanation && (slide.explanation.whyItMatters || slide.explanation.connection || slide.explanation.whatYouSee);
     const uniqueSourceIds = [...new Set(refs.map(ref => ref.sourceId))];
     const cards = refs.map(ref => {
       const location = findTextbookLocation(textbook, ref.page);
@@ -176,11 +192,18 @@
 
   function extractedBlocks(slide) {
     const blocks = slide.extraction && Array.isArray(slide.extraction.blocks) ? slide.extraction.blocks : [];
-    if (!blocks.length) return `<p class="nus-muted">No text blocks were extracted from this page. Use the rendered slide and authored note.</p>`;
+    if (!blocks.length) return `<p class="nus-muted">No text blocks were extracted from this page. Use the rendered slide.</p>`;
     return `<div class="nus-extraction-blocks">${blocks.map(block => `<article class="nus-extraction-block"><div><span class="pill">${esc(block.type)}</span><code>${esc(block.blockId)}</code>${block.imageId ? `<code>${esc(block.imageId)}</code>` : ""}</div>${block.text ? `<p>${text(block.text)}</p>` : `<p class="nus-muted">Image/visual block — inspect the slide render.</p>`}</article>`).join("")}</div>`;
   }
 
   function explanation(slide) {
+    const formula = slide.keyFormula;
+    const formulaHtml = formula && formula.name && formula.latex
+      ? `<section class="nus-slide-key-formula"><div class="nus-slide-key-formula-label">Key formula</div><h4>${esc(formula.name)}</h4><div class="nus-slide-key-formula-math">$$${esc(formula.latex)}$$</div>${formula.purpose ? `<p><b>Use it for:</b> ${text(formula.purpose)}</p>` : ""}</section>`
+      : "";
+    if (slide.studyNote) {
+      return `${formulaHtml}<p>${text(slide.studyNote.focus)}</p>${slide.studyNote.trap ? `<p class="nus-slide-trap"><b>Trap:</b> ${text(slide.studyNote.trap)}</p>` : ""}`;
+    }
     const value = slide.explanation || {};
     const fields = [
       ["What you need to learn", value.whyItMatters],
@@ -190,15 +213,17 @@
       ["Common failure mode", value.pitfall],
       ["Source observation", value.whatYouSee]
     ];
-    const formula = slide.keyFormula;
-    const formulaHtml = formula && formula.name && formula.latex
-      ? `<section class="nus-slide-key-formula"><div class="nus-slide-key-formula-label">Key formula</div><h4>${esc(formula.name)}</h4><div class="nus-slide-key-formula-math">$$${esc(formula.latex)}$$</div>${formula.purpose ? `<p><b>Use it for:</b> ${text(formula.purpose)}</p>` : ""}</section>`
-      : "";
-    return formulaHtml + fields.filter(([, body]) => body).map(([title, body]) => `<section class="nus-slide-note"><h4>${esc(title)}</h4><p>${text(body)}</p></section>`).join("");
+    const notes = fields.filter(([, body]) => body).map(([title, body]) => `<section class="nus-slide-note"><h4>${esc(title)}</h4><p>${text(body)}</p></section>`).join("");
+    return formulaHtml + (notes || `<section class="nus-slide-note"><p class="nus-muted">Source slide only. No additional Atlas note is attached to this page.</p></section>`);
+  }
+
+  function slideQuestions(slide) {
+    const checkpoint = slide.studyNote && slide.studyNote.checkpoint;
+    return checkpoint ? [checkpoint] : (slide.socraticQuestions || []);
   }
 
   function questions(slide) {
-    return (slide.socraticQuestions || []).map((question, index) => `<details class="nus-slide-question"><summary><span>${index + 1}. ${esc(question.prompt)}</span><small>${esc(question.type)}</small></summary><p><b>Hint:</b> ${text(question.hint)}</p><details><summary>Reveal a strong answer</summary><p>${text(question.answer)}</p></details></details>`).join("");
+    return slideQuestions(slide).map((question, index) => `<details class="nus-slide-question"><summary><span>${index + 1}. ${esc(question.prompt)}</span><small>${esc(question.type)}</small></summary><p><b>Hint:</b> ${text(question.hint)}</p><details><summary>Reveal a strong answer</summary><p>${text(question.answer)}</p></details></details>`).join("");
   }
 
   function closeSocraticCheckpoint() {
@@ -209,7 +234,7 @@
   }
 
   function showSocraticCheckpoint(slideSet, current, target) {
-    const prompts = Array.isArray(current.socraticQuestions) ? current.socraticQuestions : [];
+    const prompts = slideQuestions(current);
     if (!prompts.length || typeof document === "undefined" || !document.body) {
       location.hash = slideLink(slideSet, target);
       return;
@@ -243,7 +268,7 @@
 
   function navigateToSlide(slideSet, current, target) {
     if (!target) return;
-    if (target.slideNumber > current.slideNumber && (current.socraticQuestions || []).length) {
+    if (target.slideNumber > current.slideNumber && slideQuestions(current).length) {
       showSocraticCheckpoint(slideSet, current, target);
       return;
     }
@@ -347,7 +372,10 @@
     const source = slideSet.source || {};
     const unitLabel = slideSetUnitLabel(slideSet);
     const core = isCoreSlide(slideSet, slide);
+    const highYield = isHighYieldSlide(slide);
+    const hasStudyNote = Boolean(slide.studyNote);
     const coreCount = slideSet.slides.filter(item => isCoreSlide(slideSet, item)).length;
+    const highYieldCount = slideSet.slides.filter(isHighYieldSlide).length;
     const resumeSlide = rawSlideNumber != null && previousReading && !previousReading.completed && Number(previousReading.position) > number
       ? slideSet.slides[Math.min(slideSet.slides.length, Number(previousReading.position)) - 1]
       : null;
@@ -358,11 +386,11 @@
     body += `${readingTimer && typeof readingTimer.render === "function" ? readingTimer.render(resourceId) : ""}<div class="nus-lesson-actions"><div class="nus-slide-study-actions">${button("← Lesson", `#/nus/lesson/${course.code}/${lessonIds[0] || "dsa5105-erm"}`, "ghost")}${button("Course map", `#/nus/course/${course.code}`, "ghost")}${textbook && textbook.reader ? button("Textbook PDF", `#/nus/textbook/${course.code}/${slide.textbookRefs && slide.textbookRefs[0] ? slide.textbookRefs[0].page : 1}`, "ghost") : ""}${button("Practice lesson", `#/nus/exam/${course.code}/${lessonIds[0] || "dsa5105-erm"}`, "primary")}<button class="btn ghost" id="nus-toggle-focus" type="button" aria-pressed="${focusModeOn()}" aria-label="${focusModeOn() ? "Exit focus reading" : "Enter focus reading"}">${focusModeOn() ? "Exit focus reading" : "Focus reading"} <kbd>F</kbd></button><button class="btn ghost" id="nus-toggle-source" type="button" aria-controls="nus-slide-source-panel">Source layer <kbd>I</kbd></button></div><span class="nus-slide-key-hint"><kbd>←</kbd><kbd>→</kbd> or <kbd>J</kbd><kbd>K</kbd> switch slides · <kbd>F</kbd> focus · <kbd>I</kbd> source</span>${slideNavigation(slideSet, index)}</div>`;
     body += slideProgress(courseCode, slideSet, source, slide, resumeSlide);
     body += sourcePanel(slide, source);
-    body += `<div class="nus-slide-focus-bar" aria-live="polite"><span class="eyebrow">Focus reading</span><strong>${esc(slide.title)}</strong>${core ? `<span class="pill gold">Core slide</span>` : ""}<span>Slide ${slide.slideNumber}/${slideSet.slides.length}</span></div>`;
+    body += `<div class="nus-slide-focus-bar" aria-live="polite"><span class="eyebrow">Focus reading</span><strong>${esc(slide.title)}</strong>${slidePriorityBadge(slide)}${!slide.studyPriority && core ? `<span class="pill gold">Core slide</span>` : ""}${highYield ? `<span class="pill gold">Put on A4 / drill</span>` : ""}<span>Slide ${slide.slideNumber}/${slideSet.slides.length}</span></div>`;
     body += `<div class="nus-slide-reader-grid">
-      <aside class="nus-slide-strip" aria-label="${esc(unitLabel)} slides"><div class="nus-slide-strip-head"><b>All slides</b><span>${coreCount ? `${coreCount} core · ` : ""}${slideSet.slides.length} pages</span></div>${slideSet.slides.map(item => { const itemCore = isCoreSlide(slideSet, item); return `<a class="nus-slide-thumb ${item.slideNumber === slide.slideNumber ? "active" : ""} ${itemCore ? "core" : ""}" href="${slideLink(slideSet, item)}" data-route data-slide-number="${item.slideNumber}" aria-label="Slide ${item.slideNumber}: ${esc(item.title)}${itemCore ? " · core slide" : ""}"><img loading="lazy" src="${esc(item.assetPath)}" alt=""><span><b>${String(item.slideNumber).padStart(2, "0")}</b>${itemCore ? `<em>Core</em>` : ""}<small>${esc(item.title)}</small></span></a>`; }).join("")}</aside>
-      <main class="nus-slide-main"><section class="nus-slide-canvas nus-card"><div class="nus-slide-canvas-head"><span>${sourceBadge(slide.sourceRef)}${core ? ` <span class="pill gold">Core slide</span>` : ""}</span><span class="nus-muted">${esc(slide.kind)} · ${esc(slide.status)} · ${slide.slideNumber}/${slideSet.slides.length}</span></div><img src="${esc(slide.assetPath)}" alt="${esc(slide.title)} — slide ${slide.slideNumber}" class="nus-slide-image"><p class="nus-slide-caption">Rendered from <code>${esc(source.sourceId || slide.sourceRef.sourceId)}</code>, page ${slide.pdfPage}. The image is the visual reference; the source layer above can be opened when you need to audit extraction.</p></section></main>
-      <aside class="nus-slide-context"><section class="nus-card nus-slide-explanation"><div class="nus-slide-section-head"><div><span class="eyebrow">Atlas layer</span><h3>Explanation</h3></div><span class="pill violet">Derived note</span></div>${explanation(slide)}</section><section class="nus-card nus-slide-depth" id="nus-slide-textbook-map"><div class="nus-slide-section-head"><div><span class="eyebrow">Parallel reading</span><h3>Textbook bridge</h3></div><span class="pill sage">${(slide.textbookRefs || []).length} mapped</span></div>${textbookMapping(courseCode, slide, textbook)}${textbookReadingLens(slide, textbook)}<div class="nus-slide-reference-group"><h4>Reference layer</h4>${referenceList(slide.referenceRefs)}</div><p class="nus-muted">Lecture remains the exam-priority source. Textbook and reference material add depth; they do not rewrite the lecture.</p></section></aside>
+      <aside class="nus-slide-strip" aria-label="${esc(unitLabel)} slides"><div class="nus-slide-strip-head"><b>All slides</b><span>${highYieldCount ? `${highYieldCount} high-yield · ` : ""}${coreCount ? `${coreCount} core · ` : ""}${slideSet.slides.length} pages</span></div>${slideSet.slides.map(item => { const itemCore = isCoreSlide(slideSet, item); const itemHighYield = isHighYieldSlide(item); return `<a class="nus-slide-thumb ${item.slideNumber === slide.slideNumber ? "active" : ""} ${itemCore ? "core" : ""} ${itemHighYield ? "high-yield" : ""}" href="${slideLink(slideSet, item)}" data-route data-slide-number="${item.slideNumber}" aria-label="Slide ${item.slideNumber}: ${esc(item.title)} · ${esc(slideStudyPriority(item))}"><img loading="lazy" src="${esc(item.assetPath)}" alt=""><span><b>${String(item.slideNumber).padStart(2, "0")}</b>${itemHighYield ? `<em>High-yield</em>` : itemCore ? `<em>Support</em>` : ""}<small>${esc(item.title)}</small></span></a>`; }).join("")}</aside>
+      <main class="nus-slide-main"><section class="nus-slide-canvas nus-card"><div class="nus-slide-canvas-head"><span>${sourceBadge(slide.sourceRef)} ${slidePriorityBadge(slide)}${!slide.studyPriority && core ? ` <span class="pill gold">Core slide</span>` : ""}${highYield ? ` <span class="pill gold">Put on A4 / drill</span>` : ""}</span><span class="nus-muted">${esc(slide.kind)} · ${esc(slide.status)} · ${slide.slideNumber}/${slideSet.slides.length}</span></div><img src="${esc(slide.assetPath)}" alt="${esc(slide.title)} — slide ${slide.slideNumber}" class="nus-slide-image"><p class="nus-slide-caption">Rendered from <code>${esc(source.sourceId || slide.sourceRef.sourceId)}</code>, page ${slide.pdfPage}. The image is the visual reference; the source layer above can be opened when you need to audit extraction.</p></section></main>
+      <aside class="nus-slide-context"><section class="nus-card nus-slide-explanation"><div class="nus-slide-section-head"><div><span class="eyebrow">${hasStudyNote ? "Study filter" : "Source layer"}</span><h3>${hasStudyNote ? "Exam focus" : "Source-only page"}</h3></div>${hasStudyNote ? slidePriorityBadge(slide) : `<span class="pill">No generated note</span>`}</div>${explanation(slide)}</section><section class="nus-card nus-slide-depth" id="nus-slide-textbook-map"><div class="nus-slide-section-head"><div><span class="eyebrow">Parallel reading</span><h3>Textbook bridge</h3></div><span class="pill sage">${(slide.textbookRefs || []).length} mapped</span></div>${textbookMapping(courseCode, slide, textbook)}${textbookReadingLens(slide, textbook)}<div class="nus-slide-reference-group"><h4>Reference layer</h4>${referenceList(slide.referenceRefs)}</div><p class="nus-muted">Lecture remains the exam-priority source. Textbook and reference material add depth; they do not rewrite the lecture.</p></section></aside>
     </div>`;
     body += `<div class="nus-slide-bottom">${slideNavigation(slideSet, index)}</div></div>`;
     root.innerHTML = body;

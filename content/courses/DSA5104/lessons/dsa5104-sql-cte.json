@@ -69,7 +69,7 @@
       ],
       "sourceLens": {
         "status": "core DSA5104",
-        "whyExaminable": "This unit is split directly from the supplied Chapter 3 lecture deck so retrieval and mistake repair stay topic-sized.",
+        "whyExaminable": "CTE questions test statement scope, intermediate relation meaning, and whether a query refactor changes stored schema or only readability.",
         "lecture": [
           {
             "sourceId": "DSA5104/chapter3.pdf",
@@ -112,24 +112,24 @@
       "title": "Compute department totals in one CTE, then compare each total with the average of those totals in a second query step.",
       "sourceType": "lecture",
       "steps": [
-        "A CTE names a temporary relation for one statement. It improves the reasoning surface of a query without changing the stored schema or creating persistent data.",
-        "State the output, input relations, predicate, and one edge case before checking the solution."
+        "Give the CTE a relation meaning, such as one row per department with its total, before reading the outer SELECT.",
+        "Check that the CTE name is used only by the statement after WITH and distinguish it from a persistent view or table."
       ],
-      "answer": "A strong answer names the semantic boundary and cites the source page or exercise file."
+      "answer": "A CTE is a named intermediate relation visible within one statement. It can make a multi-stage query auditable, but it does not create a permanent schema object or automatically change the result semantics."
     }
   ],
   "criticalQuestions": [
     {
-      "prompt": "What is the decisive semantic boundary in Ch3.7 · Common table expressions?",
-      "angle": "Name the operation, its input, its output, and the condition that would make the shortcut fail.",
-      "modelAnswer": "The answer should identify the operation's input/output boundary and one counterexample or edge case.",
-      "focus": "source and semantics"
+      "prompt": "What is the scope of `WITH totals AS (...) SELECT ... FROM totals`?",
+      "angle": "Separate a statement-scoped name from persistent database objects.",
+      "modelAnswer": "totals is available to the SELECT statement that follows WITH, including other CTEs in that statement, and is not a permanent table or view after the statement ends.",
+      "focus": "CTE scope"
     },
     {
-      "prompt": "Which tempting shortcut would produce a plausible but incorrect answer?",
-      "angle": "Separate what the source says from what a familiar SQL pattern seems to imply.",
-      "modelAnswer": "The shortcut is unsafe when it changes row scope, duplicate policy, NULL treatment, or constraint meaning.",
-      "focus": "common trap"
+      "prompt": "When does replacing a nested subquery with a CTE preserve meaning?",
+      "angle": "Check the intermediate rows, predicates, joins, and duplicate policy rather than the spelling.",
+      "modelAnswer": "It preserves meaning when the CTE returns the same relation used by the subquery and the outer predicates, joins, and duplicate behavior remain unchanged. The rewrite improves structure, not semantics by itself.",
+      "focus": "semantics-preserving rewrite"
     }
   ],
   "math": [
@@ -141,11 +141,11 @@
       "symbols": [
         {
           "latex": "T",
-          "meaning": "the key object in this unit"
+          "meaning": "statement-scoped relation name"
         },
         {
           "latex": "statement-scoped relation",
-          "meaning": "the associated semantic role"
+          "meaning": "query Q supplies the intermediate relation for this statement"
         }
       ],
       "sourceType": "lecture",

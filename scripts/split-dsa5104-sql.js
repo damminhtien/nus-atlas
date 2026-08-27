@@ -276,13 +276,121 @@ const CONTRAST_DRILLS = {
   }]
 };
 
+const CORE_STUDY = {
+  "dsa5104-sql-ddl": {
+    whyExaminable: "DDL questions test whether you can separate a relation definition from its tuples and predict key or foreign-key rejection.",
+    exampleSteps: [
+      "Label the table name, attribute domains, primary key, and foreign key before writing CREATE TABLE.",
+      "Predict one duplicate-key row and one missing-reference row; then distinguish DROP or ALTER from INSERT, UPDATE, and DELETE."
+    ],
+    exampleAnswer: "A duplicate or NULL primary key violates entity integrity; a missing referenced key violates referential integrity. DROP and ALTER change the schema, while INSERT, UPDATE, and DELETE change its current tuples.",
+    questions: [
+      { prompt: "A CREATE TABLE declares `student.ID` as PRIMARY KEY and `student.dept_name` as a foreign key. What two failures should you predict?", angle: "Map each constraint to the tuple that would be rejected.", modelAnswer: "A duplicate or NULL ID violates the primary-key constraint; a non-NULL `dept_name` with no matching department key violates the foreign key.", focus: "constraint prediction" },
+      { prompt: "Why is `DELETE FROM student` not a substitute for `DROP TABLE student`?", angle: "Separate the relation schema from the current relation instance.", modelAnswer: "DELETE removes tuples but preserves the table definition; DROP removes the schema object itself, so later inserts or queries against that table no longer have the same object to use.", focus: "DDL/DML boundary" }
+    ],
+    symbolMeanings: ["schema definition", "DDL creates or changes relation metadata"]
+  },
+  "dsa5104-sql-query-shape": {
+    whyExaminable: "Query-writing questions test clause roles, projection, row predicates, and whether duplicate rows are preserved by default.",
+    exampleSteps: [
+      "Read the request backwards: name the output attributes, the supplying relation, and the row predicate.",
+      "Check whether two qualifying tuples can project to the same value; add DISTINCT only if the requested result is a set of unique values."
+    ],
+    exampleAnswer: "SELECT chooses output attributes, FROM supplies candidate rows, and WHERE keeps qualifying rows. Projection alone does not remove duplicate result values; DISTINCT does.",
+    questions: [
+      { prompt: "For `SELECT dept_name FROM instructor WHERE salary > 80000`, what does each clause control and can the result repeat a department?", angle: "Trace output, input, filtering, and duplicate policy separately.", modelAnswer: "SELECT returns dept_name, FROM reads instructor, and WHERE keeps salaries above 80000. Yes, the same department can appear more than once when several instructors qualify; DISTINCT is required to remove that repetition.", focus: "query shape and duplicates" },
+      { prompt: "When is adding DISTINCT an incorrect repair rather than a harmless cleanup?", angle: "Ask whether duplicate multiplicity is part of the requested result.", modelAnswer: "DISTINCT is wrong when repeated rows represent distinct qualifying tuples or when the question asks for all matching rows. Use it only when duplicate elimination is part of the requested meaning.", focus: "duplicate semantics" }
+    ],
+    symbolMeanings: ["projected attributes", "row predicate applied to candidate tuples"]
+  },
+  "dsa5104-sql-joins": {
+    whyExaminable: "Join questions test key paths, accidental natural-join attributes, Cartesian-product mistakes, and duplicate policy in set operators.",
+    exampleSteps: [
+      "Write the key path `student.ID -> takes.ID -> course.course_id` and state which columns are returned.",
+      "Remove the join predicate once to see the Cartesian-product error, then compare UNION with UNION ALL on repeated tuples."
+    ],
+    exampleAnswer: "A correct join states the intended key equality; omitting it pairs unrelated rows. Natural join is safe only when every same-name attribute is intended as a join key, while UNION removes duplicates and UNION ALL preserves them.",
+    questions: [
+      { prompt: "What does the join predicate contribute when joining `instructor` to `teaches` on ID, and what happens if it is omitted?", angle: "Connect a tuple pair to the condition that justifies combining it.", modelAnswer: "The predicate keeps only instructor/teaches pairs for the same person. Without it, the FROM clause forms a Cartesian product and unrelated instructors can be paired with every teaching row.", focus: "join predicate" },
+      { prompt: "Two compatible queries return the same course_id twice. When should the result use UNION ALL instead of UNION?", angle: "Treat multiplicity as part of the result contract.", modelAnswer: "Use UNION ALL when both occurrences represent qualifying output tuples and must be preserved; UNION applies duplicate elimination.", focus: "set multiplicity" }
+    ],
+    symbolMeanings: ["input relations", "predicate selecting tuple pairs to combine"]
+  },
+  "dsa5104-sql-null": {
+    whyExaminable: "NULL questions are trap-heavy: equality does not test missingness, WHERE removes UNKNOWN, and aggregates treat NULL selectively.",
+    exampleSteps: [
+      "For a missing right-side row from a LEFT JOIN, write the produced NULL values before evaluating the predicate.",
+      "Evaluate `= NULL`, `IS NULL`, COUNT(*), and COUNT(column) separately; do not replace NULL with zero or an empty string."
+    ],
+    exampleAnswer: "`salary = NULL` evaluates to UNKNOWN and is not retained by WHERE; `salary IS NULL` explicitly tests missingness. COUNT(*) counts rows, while COUNT(salary) ignores NULL salary values.",
+    questions: [
+      { prompt: "A LEFT JOIN produces an instructor row with `salary = NULL`. Why does `WHERE salary = NULL` return no row while `WHERE salary IS NULL` can keep it?", angle: "Use three-valued logic rather than ordinary Boolean equality.", modelAnswer: "Comparing with NULL yields UNKNOWN, and WHERE retains only TRUE. IS NULL is the dedicated predicate that returns TRUE for a NULL value.", focus: "UNKNOWN versus NULL test" },
+      { prompt: "A column contains 90000, NULL, and 60000. What do COUNT(*) and COUNT(salary) return?", angle: "Track row counting separately from non-NULL value counting.", modelAnswer: "COUNT(*) returns 3 because it counts rows; COUNT(salary) returns 2 because the NULL salary is ignored.", focus: "aggregate NULL behavior" }
+    ],
+    symbolMeanings: ["result of an indeterminate comparison", "WHERE keeps only TRUE from the three truth values"]
+  },
+  "dsa5104-sql-aggregation": {
+    whyExaminable: "Aggregation questions test row-versus-group filtering, grouping keys, NULL-sensitive counts, and the BIG 6 query shape.",
+    exampleSteps: [
+      "Filter instructor rows in WHERE, form one group per dept_name, compute the aggregate, then apply the threshold in HAVING.",
+      "Check the BIG 6 clauses in SQL order and the logical row/group order before predicting the result."
+    ],
+    exampleAnswer: "WHERE removes rows before groups exist; GROUP BY defines groups; HAVING filters completed groups. An aggregate predicate such as AVG(salary) > 50000 belongs in HAVING, not WHERE.",
+    questions: [
+      { prompt: "Where does `AVG(salary) > 50000` belong in a per-department query—WHERE or HAVING—and why?", angle: "Identify whether the predicate needs a row or a completed group.", modelAnswer: "It belongs in HAVING because AVG is computed after rows have been grouped. WHERE runs before grouping and can reference row values, not the completed group average.", focus: "WHERE versus HAVING" },
+      { prompt: "What is the logical role of GROUP BY when SELECT contains `dept_name` and `COUNT(*)`?", angle: "Explain what determines one output group.", modelAnswer: "GROUP BY partitions the filtered rows by `dept_name`, so `COUNT(*)` is computed separately for each department and `dept_name` identifies each output group.", focus: "group identity" }
+    ],
+    symbolMeanings: ["semantic ordering of row filtering, grouping, and group filtering", "logical precedence, not a promise about the physical execution plan"]
+  },
+  "dsa5104-sql-nested": {
+    whyExaminable: "Nested-query questions test membership, comparison quantifiers, correlation, and the NULL trap in NOT IN.",
+    exampleSteps: [
+      "Describe the inner result first: a value set, a witness row, or the counterexamples that must be absent.",
+      "For an every-condition, write NOT EXISTS for a required item with no matching row and check whether nullable NOT IN changes the truth value."
+    ],
+    exampleAnswer: "IN tests membership, SOME and ALL compare against a returned set, and EXISTS tests whether a row exists. NOT EXISTS expresses a universal condition by ruling out a counterexample and avoids the nullable NOT IN trap when correlated correctly.",
+    questions: [
+      { prompt: "How do you express ‘students who took every required Biology course’ without relying on a division operator?", angle: "Translate every into the absence of a missing required item.", modelAnswer: "Select a student for whom NOT EXISTS a required Biology course such that NOT EXISTS a matching takes row for that student. The outer query rejects every student with a counterexample.", focus: "universal condition" },
+      { prompt: "Why can `ID NOT IN (subquery)` fail when the subquery returns NULL, and what is the safer rewrite?", angle: "Follow UNKNOWN through the outer WHERE predicate.", modelAnswer: "A NULL in the subquery can make the NOT IN comparison UNKNOWN, so expected rows disappear. Use a correlated NOT EXISTS, or filter NULL explicitly before using NOT IN.", focus: "NOT IN and NULL" }
+    ],
+    symbolMeanings: ["no counterexample exists", "the candidate satisfies the universal condition"]
+  },
+  "dsa5104-sql-cte": {
+    whyExaminable: "CTE questions test statement scope, intermediate relation meaning, and whether a query refactor changes stored schema or only readability.",
+    exampleSteps: [
+      "Give the CTE a relation meaning, such as one row per department with its total, before reading the outer SELECT.",
+      "Check that the CTE name is used only by the statement after WITH and distinguish it from a persistent view or table."
+    ],
+    exampleAnswer: "A CTE is a named intermediate relation visible within one statement. It can make a multi-stage query auditable, but it does not create a permanent schema object or automatically change the result semantics.",
+    questions: [
+      { prompt: "What is the scope of `WITH totals AS (...) SELECT ... FROM totals`?", angle: "Separate a statement-scoped name from persistent database objects.", modelAnswer: "totals is available to the SELECT statement that follows WITH, including other CTEs in that statement, and is not a permanent table or view after the statement ends.", focus: "CTE scope" },
+      { prompt: "When does replacing a nested subquery with a CTE preserve meaning?", angle: "Check the intermediate rows, predicates, joins, and duplicate policy rather than the spelling.", modelAnswer: "It preserves meaning when the CTE returns the same relation used by the subquery and the outer predicates, joins, and duplicate behavior remain unchanged. The rewrite improves structure, not semantics by itself.", focus: "semantics-preserving rewrite" }
+    ],
+    symbolMeanings: ["statement-scoped relation name", "query Q supplies the intermediate relation for this statement"]
+  },
+  "dsa5104-sql-mutations": {
+    whyExaminable: "Mutation questions test target-set safety, constraint failures, and the exact rows affected by cascades or missing WHERE clauses.",
+    exampleSteps: [
+      "Rewrite the UPDATE or DELETE as a SELECT with the same WHERE clause and inspect the affected primary keys.",
+      "For a parent-key change or delete, trace the foreign-key action: reject, cascade, set NULL, or another declared behavior."
+    ],
+    exampleAnswer: "The WHERE predicate defines the mutation target. Previewing it as SELECT exposes accidental all-row changes, while foreign-key actions determine whether dependent rows are rejected, removed, or changed.",
+    questions: [
+      { prompt: "What is the safe first step before running `UPDATE instructor SET salary = salary * 1.1 WHERE dept_name = 'Physics'`?", angle: "Make the target set observable before changing it.", modelAnswer: "Run `SELECT ID, salary FROM instructor WHERE dept_name = 'Physics'` first, inspect the keys and values, then execute the UPDATE only if that target set is intended.", focus: "mutation target set" },
+      { prompt: "What is the difference between a rejected parent DELETE and `ON DELETE CASCADE`?", angle: "Trace referential actions from the referenced row to its dependents.", modelAnswer: "A restrictive foreign key rejects the delete while dependent rows exist; ON DELETE CASCADE deletes the matching dependent rows as part of the parent deletion.", focus: "referential action" }
+    ],
+    symbolMeanings: ["mutation predicate", "P determines which tuples are eligible for the UPDATE"]
+  }
+};
+
 function lens(refs, status, why) {
   return { status, whyExaminable: why, lecture: status === "core DSA5104" ? refs : [], officialExercise: refs.filter(ref => ref.sourceType === "exercise"), textbook: [{ sourceId: "DSA5104/Database System Concepts, 7th edition", page: 1, sourceType: "textbook", role: "textbook depth pointer", status: "course-depth" }], reference: [] };
 }
 
 function makeLesson(unit, index, planned = false) {
   const refs = planned ? [exercise(unit.chapter, "1", `${unit.topic} exercise set`)] : unit.pages.map(page => lecture(page, unit.title));
-  const sourceLens = lens(refs, planned ? "exercise-only" : "core DSA5104", planned ? "The local solution set supplies practice depth only; no supplied lecture deck authorizes this topic as current Exam Mode scope." : "This unit is split directly from the supplied Chapter 3 lecture deck so retrieval and mistake repair stay topic-sized.");
+  const study = CORE_STUDY[unit.id] || {};
+  const sourceLens = lens(refs, planned ? "exercise-only" : "core DSA5104", planned ? "The local solution set supplies practice depth only; no supplied lecture deck authorizes this topic as current Exam Mode scope." : study.whyExaminable || "The supplied lecture deck defines this unit's current scope.");
   const formula = unit.formula;
   return {
     id: unit.id,
@@ -300,12 +408,12 @@ function makeLesson(unit, index, planned = false) {
     sourceRefs: refs,
     visualIds: !planned && index === 0 ? ["dsa5104-sql-flow"] : [],
     sections: [{ title: planned ? "Exercise-only boundary" : unit.title.replace(/^Ch3\.\d+ · /, ""), sourceType: planned ? "exercise" : "lecture", body: unit.body, sourceRefs: refs, sourceLens }],
-    examples: [{ title: unit.example || "Source-first exercise move", sourceType: planned ? "exercise" : "lecture", steps: [unit.body, "State the output, input relations, predicate, and one edge case before checking the solution."], answer: "A strong answer names the semantic boundary and cites the source page or exercise file." }],
-    criticalQuestions: [
-      { prompt: planned ? "What evidence would upgrade this preview from exercise-only to current lecture scope?" : `What is the decisive semantic boundary in ${unit.title}?`, angle: "Name the operation, its input, its output, and the condition that would make the shortcut fail.", modelAnswer: planned ? "A supplied, verified DSA5104 lecture source with page-level provenance would be required." : "The answer should identify the operation's input/output boundary and one counterexample or edge case.", focus: "source and semantics" },
-      { prompt: planned ? "Why should this material stay out of default Exam Mode today?" : "Which tempting shortcut would produce a plausible but incorrect answer?", angle: "Separate what the source says from what a familiar SQL pattern seems to imply.", modelAnswer: planned ? "Because the local source is a homework solution set, not a verified current lecture deck." : "The shortcut is unsafe when it changes row scope, duplicate policy, NULL treatment, or constraint meaning.", focus: "common trap" }
-    ],
-    math: [{ name: formula[0], purpose: formula[1], latex: formula[2], explanation: formula[3], symbols: formula[4].map(latex => ({ latex, meaning: latex === formula[4][0] ? "the key object in this unit" : "the associated semantic role" })), sourceType: planned ? "exercise" : "lecture", sourceRefs: [refs[0]] }],
+    examples: [{ title: unit.example || "Source-first exercise move", sourceType: planned ? "exercise" : "lecture", steps: planned ? [unit.body, "Label the source boundary before attempting the exercise."] : study.exampleSteps || [unit.body], answer: planned ? "The exercise set is practice depth only until a current lecture source is supplied." : study.exampleAnswer }],
+    criticalQuestions: planned ? [
+      { prompt: "What evidence would upgrade this preview from exercise-only to current lecture scope?", angle: "Separate local exercise evidence from a supplied lecture source.", modelAnswer: "A supplied, verified DSA5104 lecture source with page-level provenance would be required.", focus: "source boundary" },
+      { prompt: "Why should this material stay out of default Exam Mode today?", angle: "Check whether the source is lecture-authoritative for the current course.", modelAnswer: "Because the local source is a homework solution set, not a verified current lecture deck.", focus: "scope boundary" }
+    ] : study.questions,
+    math: [{ name: formula[0], purpose: formula[1], latex: formula[2], explanation: formula[3], symbols: formula[4].map((latex, index) => ({ latex, meaning: (study.symbolMeanings || [])[index] || (index === 0 ? "the key object in this unit" : "the associated semantic role") })), sourceType: planned ? "exercise" : "lecture", sourceRefs: [refs[0]] }],
     contrastDrills: CONTRAST_DRILLS[unit.id] || [],
     schemaVersion: "nus.lesson.v1"
   };

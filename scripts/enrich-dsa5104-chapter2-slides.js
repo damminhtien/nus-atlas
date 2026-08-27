@@ -11,6 +11,7 @@
  */
 const fs = require('fs');
 const path = require('path');
+const { applyStudyLayer } = require('./dsa5104-study-layer.js');
 
 const ROOT = path.join(__dirname, '..');
 const FILE = path.join(ROOT, 'content', 'courses', 'DSA5104', 'slides', 'dsa5104-chapter2.json');
@@ -381,6 +382,7 @@ function main() {
       console.warn(`No study metadata for slide ${page}; keeping extractor defaults.`);
     }
   }
+  applyStudyLayer(data, 'chapter2');
   fs.writeFileSync(FILE, JSON.stringify(data, null, 2) + '\n', 'utf8');
   console.log(`Updated ${updated}/${data.slides.length} chapter 2 slides with study layers.`);
 }

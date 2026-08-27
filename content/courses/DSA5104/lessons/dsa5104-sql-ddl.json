@@ -85,7 +85,7 @@
       ],
       "sourceLens": {
         "status": "core DSA5104",
-        "whyExaminable": "This unit is split directly from the supplied Chapter 3 lecture deck so retrieval and mistake repair stay topic-sized.",
+        "whyExaminable": "DDL questions test whether you can separate a relation definition from its tuples and predict key or foreign-key rejection.",
         "lecture": [
           {
             "sourceId": "DSA5104/chapter3.pdf",
@@ -135,24 +135,24 @@
       "title": "Create a table with a primary key and foreign key, then explain which constraint rejects an invalid reference.",
       "sourceType": "lecture",
       "steps": [
-        "DDL defines the relation schema and its integrity constraints. Before writing a statement, identify whether the operation changes the schema or only the current tuples.",
-        "State the output, input relations, predicate, and one edge case before checking the solution."
+        "Label the table name, attribute domains, primary key, and foreign key before writing CREATE TABLE.",
+        "Predict one duplicate-key row and one missing-reference row; then distinguish DROP or ALTER from INSERT, UPDATE, and DELETE."
       ],
-      "answer": "A strong answer names the semantic boundary and cites the source page or exercise file."
+      "answer": "A duplicate or NULL primary key violates entity integrity; a missing referenced key violates referential integrity. DROP and ALTER change the schema, while INSERT, UPDATE, and DELETE change its current tuples."
     }
   ],
   "criticalQuestions": [
     {
-      "prompt": "What is the decisive semantic boundary in Ch3.1 · DDL, integrity, and schema changes?",
-      "angle": "Name the operation, its input, its output, and the condition that would make the shortcut fail.",
-      "modelAnswer": "The answer should identify the operation's input/output boundary and one counterexample or edge case.",
-      "focus": "source and semantics"
+      "prompt": "A CREATE TABLE declares `student.ID` as PRIMARY KEY and `student.dept_name` as a foreign key. What two failures should you predict?",
+      "angle": "Map each constraint to the tuple that would be rejected.",
+      "modelAnswer": "A duplicate or NULL ID violates the primary-key constraint; a non-NULL `dept_name` with no matching department key violates the foreign key.",
+      "focus": "constraint prediction"
     },
     {
-      "prompt": "Which tempting shortcut would produce a plausible but incorrect answer?",
-      "angle": "Separate what the source says from what a familiar SQL pattern seems to imply.",
-      "modelAnswer": "The shortcut is unsafe when it changes row scope, duplicate policy, NULL treatment, or constraint meaning.",
-      "focus": "common trap"
+      "prompt": "Why is `DELETE FROM student` not a substitute for `DROP TABLE student`?",
+      "angle": "Separate the relation schema from the current relation instance.",
+      "modelAnswer": "DELETE removes tuples but preserves the table definition; DROP removes the schema object itself, so later inserts or queries against that table no longer have the same object to use.",
+      "focus": "DDL/DML boundary"
     }
   ],
   "math": [
@@ -164,11 +164,11 @@
       "symbols": [
         {
           "latex": "\\mathrm{DDL}",
-          "meaning": "the key object in this unit"
+          "meaning": "schema definition"
         },
         {
           "latex": "schema definition",
-          "meaning": "the associated semantic role"
+          "meaning": "DDL creates or changes relation metadata"
         }
       ],
       "sourceType": "lecture",

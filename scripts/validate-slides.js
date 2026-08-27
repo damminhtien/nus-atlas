@@ -14,8 +14,26 @@ const GENERIC_SOCRATIC_PATTERNS = [
   /How would the reasoning on .*change when the database becomes larger or more concurrent/i
 ];
 
+const STUDY_PRIORITIES = new Set(["high-yield", "support", "context", "exercise"]);
+
 function isGenericSocraticPrompt(prompt) {
   return GENERIC_SOCRATIC_PATTERNS.some(pattern => pattern.test(prompt || ""));
+}
+
+function validateCompactStudyLayer(slide, label) {
+  const errors = [];
+  if (!STUDY_PRIORITIES.has(slide.studyPriority)) {
+    errors.push(`invalid studyPriority: ${label}`);
+    return errors;
+  }
+  const note = slide.studyNote;
+  if (slide.studyPriority === "high-yield") {
+    if (!note || typeof note.focus !== "string" || note.focus.trim().length < 20) errors.push(`missing high-yield focus: ${label}`);
+    if (!note || typeof note.trap !== "string" || note.trap.trim().length < 15) errors.push(`missing high-yield trap: ${label}`);
+  } else if (note) {
+    errors.push(`non-high-yield slide carries study prose: ${label}`);
+  }
+  return errors;
 }
 
 function jsonFiles(dir) {
@@ -55,14 +73,18 @@ function validateSlideSet(set, file, root = ROOT) {
     for (const block of extraction && extraction.blocks || []) {
       if (!block.blockId || !block.type || block.page !== slide.pdfPage || block.sourceId !== set.source.sourceId || !validBbox(block.bbox)) errors.push(`invalid block provenance: ${label}/${block.blockId || "<missing>"}`);
     }
-    const explanation = slide && slide.explanation;
-    for (const field of ["whatYouSee", "whyItMatters", "intuition", "technicalDetail", "pitfall", "connection"]) {
-      if (!explanation || typeof explanation[field] !== "string" || !explanation[field].trim()) errors.push(`missing explanation ${field}: ${label}`);
-    }
-    if (!Array.isArray(slide && slide.socraticQuestions) || !slide.socraticQuestions.length) errors.push(`slide has no Socratic questions: ${label}`);
-    for (const question of slide && slide.socraticQuestions || []) {
-      if (!question.type || !question.prompt || !question.answer || !question.hint) errors.push(`incomplete Socratic question: ${label}`);
-      if (isGenericSocraticPrompt(question.prompt)) errors.push(`generic Socratic prompt: ${label}`);
+    if (slide && slide.studyPriority) {
+      errors.push(...validateCompactStudyLayer(slide, label));
+    } else {
+      const explanation = slide && slide.explanation;
+      for (const field of ["whatYouSee", "whyItMatters", "intuition", "technicalDetail", "pitfall", "connection"]) {
+        if (!explanation || typeof explanation[field] !== "string" || !explanation[field].trim()) errors.push(`missing explanation ${field}: ${label}`);
+      }
+      if (!Array.isArray(slide && slide.socraticQuestions) || !slide.socraticQuestions.length) errors.push(`slide has no Socratic questions: ${label}`);
+      for (const question of slide && slide.socraticQuestions || []) {
+        if (!question.type || !question.prompt || !question.answer || !question.hint) errors.push(`incomplete Socratic question: ${label}`);
+        if (isGenericSocraticPrompt(question.prompt)) errors.push(`generic Socratic prompt: ${label}`);
+      }
     }
     if (!slide.assetPath || !fs.existsSync(path.join(root, slide.assetPath))) errors.push(`missing slide asset: ${label} -> ${slide.assetPath || "<none>"}`);
   }
@@ -96,4 +118,4 @@ if (require.main === module) {
   }
 }
 
-module.exports = { validateSlideSet, validateAll, isGenericSocraticPrompt };
+module.exports = { validateSlideSet, validateAll, isGenericSocraticPrompt, validateCompactStudyLayer };

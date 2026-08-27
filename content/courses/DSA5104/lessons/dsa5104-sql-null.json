@@ -83,7 +83,7 @@
       ],
       "sourceLens": {
         "status": "core DSA5104",
-        "whyExaminable": "This unit is split directly from the supplied Chapter 3 lecture deck so retrieval and mistake repair stay topic-sized.",
+        "whyExaminable": "NULL questions are trap-heavy: equality does not test missingness, WHERE removes UNKNOWN, and aggregates treat NULL selectively.",
         "lecture": [
           {
             "sourceId": "DSA5104/chapter3.pdf",
@@ -133,24 +133,24 @@
       "title": "Trace a LEFT JOIN row with a missing instructor and explain why `= NULL` fails while `IS NULL` succeeds.",
       "sourceType": "lecture",
       "steps": [
-        "A comparison involving NULL normally yields UNKNOWN. WHERE keeps only TRUE, so an UNKNOWN row disappears even though UNKNOWN is not the same truth value as FALSE.",
-        "State the output, input relations, predicate, and one edge case before checking the solution."
+        "For a missing right-side row from a LEFT JOIN, write the produced NULL values before evaluating the predicate.",
+        "Evaluate `= NULL`, `IS NULL`, COUNT(*), and COUNT(column) separately; do not replace NULL with zero or an empty string."
       ],
-      "answer": "A strong answer names the semantic boundary and cites the source page or exercise file."
+      "answer": "`salary = NULL` evaluates to UNKNOWN and is not retained by WHERE; `salary IS NULL` explicitly tests missingness. COUNT(*) counts rows, while COUNT(salary) ignores NULL salary values."
     }
   ],
   "criticalQuestions": [
     {
-      "prompt": "What is the decisive semantic boundary in Ch3.4 · NULL and three-valued logic?",
-      "angle": "Name the operation, its input, its output, and the condition that would make the shortcut fail.",
-      "modelAnswer": "The answer should identify the operation's input/output boundary and one counterexample or edge case.",
-      "focus": "source and semantics"
+      "prompt": "A LEFT JOIN produces an instructor row with `salary = NULL`. Why does `WHERE salary = NULL` return no row while `WHERE salary IS NULL` can keep it?",
+      "angle": "Use three-valued logic rather than ordinary Boolean equality.",
+      "modelAnswer": "Comparing with NULL yields UNKNOWN, and WHERE retains only TRUE. IS NULL is the dedicated predicate that returns TRUE for a NULL value.",
+      "focus": "UNKNOWN versus NULL test"
     },
     {
-      "prompt": "Which tempting shortcut would produce a plausible but incorrect answer?",
-      "angle": "Separate what the source says from what a familiar SQL pattern seems to imply.",
-      "modelAnswer": "The shortcut is unsafe when it changes row scope, duplicate policy, NULL treatment, or constraint meaning.",
-      "focus": "common trap"
+      "prompt": "A column contains 90000, NULL, and 60000. What do COUNT(*) and COUNT(salary) return?",
+      "angle": "Track row counting separately from non-NULL value counting.",
+      "modelAnswer": "COUNT(*) returns 3 because it counts rows; COUNT(salary) returns 2 because the NULL salary is ignored.",
+      "focus": "aggregate NULL behavior"
     }
   ],
   "math": [
@@ -162,11 +162,11 @@
       "symbols": [
         {
           "latex": "\\mathrm{UNKNOWN}",
-          "meaning": "the key object in this unit"
+          "meaning": "result of an indeterminate comparison"
         },
         {
           "latex": "result of an indeterminate comparison",
-          "meaning": "the associated semantic role"
+          "meaning": "WHERE keeps only TRUE from the three truth values"
         }
       ],
       "sourceType": "lecture",

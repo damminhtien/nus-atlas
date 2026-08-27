@@ -83,7 +83,7 @@
       ],
       "sourceLens": {
         "status": "core DSA5104",
-        "whyExaminable": "This unit is split directly from the supplied Chapter 3 lecture deck so retrieval and mistake repair stay topic-sized.",
+        "whyExaminable": "Aggregation questions test row-versus-group filtering, grouping keys, NULL-sensitive counts, and the BIG 6 query shape.",
         "lecture": [
           {
             "sourceId": "DSA5104/chapter3.pdf",
@@ -133,24 +133,24 @@
       "title": "Count students per department, then retain only groups meeting a threshold with HAVING.",
       "sourceType": "lecture",
       "steps": [
-        "WHERE filters rows before grouping. GROUP BY forms groups, aggregate functions summarize them, and HAVING filters completed groups. Keep this reasoning order separate from the SQL text order.",
-        "State the output, input relations, predicate, and one edge case before checking the solution."
+        "Filter instructor rows in WHERE, form one group per dept_name, compute the aggregate, then apply the threshold in HAVING.",
+        "Check the BIG 6 clauses in SQL order and the logical row/group order before predicting the result."
       ],
-      "answer": "A strong answer names the semantic boundary and cites the source page or exercise file."
+      "answer": "WHERE removes rows before groups exist; GROUP BY defines groups; HAVING filters completed groups. An aggregate predicate such as AVG(salary) > 50000 belongs in HAVING, not WHERE."
     }
   ],
   "criticalQuestions": [
     {
-      "prompt": "What is the decisive semantic boundary in Ch3.5 · Aggregation, GROUP BY, HAVING, and BIG 6?",
-      "angle": "Name the operation, its input, its output, and the condition that would make the shortcut fail.",
-      "modelAnswer": "The answer should identify the operation's input/output boundary and one counterexample or edge case.",
-      "focus": "source and semantics"
+      "prompt": "Where does `AVG(salary) > 50000` belong in a per-department query—WHERE or HAVING—and why?",
+      "angle": "Identify whether the predicate needs a row or a completed group.",
+      "modelAnswer": "It belongs in HAVING because AVG is computed after rows have been grouped. WHERE runs before grouping and can reference row values, not the completed group average.",
+      "focus": "WHERE versus HAVING"
     },
     {
-      "prompt": "Which tempting shortcut would produce a plausible but incorrect answer?",
-      "angle": "Separate what the source says from what a familiar SQL pattern seems to imply.",
-      "modelAnswer": "The shortcut is unsafe when it changes row scope, duplicate policy, NULL treatment, or constraint meaning.",
-      "focus": "common trap"
+      "prompt": "What is the logical role of GROUP BY when SELECT contains `dept_name` and `COUNT(*)`?",
+      "angle": "Explain what determines one output group.",
+      "modelAnswer": "GROUP BY partitions the filtered rows by `dept_name`, so `COUNT(*)` is computed separately for each department and `dept_name` identifies each output group.",
+      "focus": "group identity"
     }
   ],
   "math": [
@@ -162,11 +162,11 @@
       "symbols": [
         {
           "latex": "\\prec",
-          "meaning": "the key object in this unit"
+          "meaning": "semantic ordering of row filtering, grouping, and group filtering"
         },
         {
           "latex": "conceptually happens before",
-          "meaning": "the associated semantic role"
+          "meaning": "logical precedence, not a promise about the physical execution plan"
         }
       ],
       "sourceType": "lecture",

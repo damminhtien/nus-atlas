@@ -13,6 +13,7 @@
 const fs = require('fs');
 const path = require('path');
 const study = require('./enrich-dsa5104-chapter3-study.js');
+const { applyStudyLayer } = require('./dsa5104-study-layer.js');
 
 const ROOT = path.join(__dirname, '..');
 const FILE = path.join(ROOT, 'content', 'courses', 'DSA5104', 'slides', 'dsa5104-chapter3.json');
@@ -222,6 +223,7 @@ function main() {
     }
   }
   const enriched = study.applyStudyLayer(data);
+  applyStudyLayer(enriched, 'chapter3');
   fs.writeFileSync(FILE, JSON.stringify(enriched, null, 2) + '\n', 'utf8');
   console.log(`Updated ${updated}/${enriched.slides.length} chapter 3 slides with study layers.`);
 }

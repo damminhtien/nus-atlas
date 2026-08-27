@@ -1,8 +1,16 @@
 const test = require("node:test");
 const assert = require("node:assert/strict");
+const fs = require("node:fs");
+const path = require("node:path");
 const { compileCourse, loadCourseSource } = require("../tools/content-compiler");
 const createExamFeature = require("../src/features/nus/exam.js");
 const { check: checkSources } = require("../scripts/validate-dsa5104-sources.js");
+
+function dsa5104SlideSets() {
+  return ["dsa5104-chapter1.json", "dsa5104-chapter2.json", "dsa5104-chapter3.json"].map(file =>
+    JSON.parse(fs.readFileSync(path.join(process.cwd(), "content/courses/DSA5104/slides", file), "utf8"))
+  );
+}
 
 test("DSA5104 source manifest is the canonical metadata for every source view", () => {
   const result = checkSources();
@@ -17,6 +25,35 @@ test("DSA5104 keeps lecture coverage, exercise coverage, and source-pending targ
   assert.deepEqual(source.course.coverage.plannedOrUnverified, ["Ch9", "XML", "MongoDB", "MapReduce", "Spark SQL", "VectorDB"]);
   assert.deepEqual(source.course.coverage.targets.map(target => target.id), ["Ch4", "Ch5", "Ch6", "Ch7", "Ch9", "XML", "MongoDB", "MapReduce", "Spark SQL", "VectorDB"]);
   assert.equal(source.course.coverage.status, "partial-current-scope");
+});
+
+test("DSA5104 slide annotations are sparse and high-yield focused", () => {
+  const slides = dsa5104SlideSets().flatMap(set => set.slides);
+  const annotated = slides.filter(slide => slide.studyNote);
+  assert.equal(annotated.length, 95);
+  assert.ok(annotated.length < slides.length / 2);
+  assert.ok(annotated.every(slide => slide.studyPriority === "high-yield" && slide.studyNote.focus && slide.studyNote.trap));
+  assert.ok(slides.every(slide => !slide.explanation && !slide.socraticQuestions));
+  assert.ok(slides.some(slide => slide.studyPriority === "context"));
+  assert.ok(slides.some(slide => slide.studyPriority === "exercise"));
+});
+
+test("DSA5104 Ch3 core lessons use topic-specific exam checks", () => {
+  const source = loadCourseSource(process.cwd(), "DSA5104");
+  const lessons = source.modules.flatMap(module => module.lessons)
+    .filter(lesson => lesson.id.startsWith("dsa5104-sql-") && lesson.examEligible);
+  assert.equal(lessons.length, 8);
+  const generic = [
+    "Which tempting shortcut would produce a plausible but incorrect answer?",
+    "State the output, input relations, predicate, and one edge case before checking the solution.",
+    "A strong answer names the semantic boundary and cites the source page or exercise file."
+  ];
+  const text = JSON.stringify(lessons);
+  assert.ok(generic.every(value => !text.includes(value)), "generic AI-study filler leaked into a Ch3 core lesson");
+  assert.ok(lessons.every(lesson => lesson.criticalQuestions.length === 2));
+  assert.ok(lessons.every(lesson => lesson.criticalQuestions.every(question => question.modelAnswer.length > 40)));
+  assert.ok(lessons.some(lesson => lesson.criticalQuestions.some(question => question.prompt.includes("NOT IN"))));
+  assert.ok(lessons.some(lesson => lesson.criticalQuestions.some(question => question.prompt.includes("HAVING"))));
 });
 
 test("DSA5104 splits Ch3 into eight core learning units and keeps Ch6/future previews out of default exam scope", () => {
