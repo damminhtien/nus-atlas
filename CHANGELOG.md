@@ -6,6 +6,10 @@ and refresh first-party asset URLs so browsers and the service worker pick up th
 
 ## [Unreleased]
 
+## [0.2.69] - 2026-08-27
+
+- Ship Exam Mode 2.0 adaptive, mock, and deep practice
+
 ## [0.2.68] - 2026-08-23
 
 - Fix private Blob snapshot writes for cross-device progress sync.
