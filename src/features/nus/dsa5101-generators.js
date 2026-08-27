@@ -505,6 +505,15 @@
     const matched = all.filter(item => skills.has(item.template.skill) || skills.has(item.generatorId) || skills.has(item.template.id));
     return matched.length ? matched : all;
   }
+  function seededPermutation(items, seed) {
+    const next = random(seed);
+    const result = items.slice();
+    for (let index = result.length - 1; index > 0; index -= 1) {
+      const swapIndex = Math.floor(next() * (index + 1));
+      [result[index], result[swapIndex]] = [result[swapIndex], result[index]];
+    }
+    return result;
+  }
   function generateOne(input) {
     const request = input || {};
     const catalog = catalogFor(request);
@@ -513,10 +522,11 @@
   }
   function generate(input) {
     const request = input || {};
-    const pool = forSkills(request);
+    const seed = request.seed == null ? 1 : request.seed;
+    const all = definitions(catalogFor(request));
+    const pool = request.allForms ? seededPermutation(all, `${seed}:forms`) : forSkills(request);
     if (!pool.length) return [];
     const limit = Math.max(1, Number(request.limit) || 1);
-    const seed = request.seed == null ? 1 : request.seed;
     return Array.from({ length: limit }, (_, index) => {
       const item = pool[index % pool.length];
       return item.generate(`${seed}:${index}`, item.template);

@@ -134,9 +134,30 @@ test("DSA5101 deep practice uses its canonical templates and exact cards", () =>
   const questions = feature.deepPracticeQuestions("DSA5101", 1, "fixed-seed");
   assert.equal(questions.length, 1);
   assert.equal(questions[0].courseId, "DSA5101");
-  assert.equal(questions[0].cardId, "support-confidence-lift");
-  assert.equal(questions[0].generatedFrom, "support-calculation");
-  assert.equal(questions[0].grading.type, "numeric");
+  const template = catalog.templates.find(item => item.id === questions[0].generatedFrom);
+  assert.ok(template);
+  assert.equal(questions[0].cardId, template.cardId);
+  assert.equal(questions[0].lessonId, template.lessonId);
+});
+
+test("DSA5101 deep practice reaches every catalogued generator form", () => {
+  const catalog = require("../content/courses/DSA5101/questions/templates.json");
+  const feature = createExamFeature({
+    root: { innerHTML: "" },
+    getCourses: () => [{ code: "DSA5101" }],
+    getLessons: () => [{ id: "dsa5101-frequent-itemsets", questions: [{ id: "q", skill: "support-calculation" }] }],
+    getQuestionTemplates: () => catalog,
+    getStore: () => ({}), pageHead: () => "", sourceItem: () => "", text: value => value, esc: value => String(value), button: () => "", typeset() {}
+  });
+  const count = catalog.templates.filter(template => template.generatorId).length;
+  const questions = feature.deepPracticeQuestions("DSA5101", count, "catalog-seed");
+
+  assert.equal(questions.length, count);
+  assert.equal(new Set(questions.map(question => question.generatedFrom)).size, count);
+  assert.deepEqual(
+    questions.map(question => question.generatedFrom).sort(),
+    catalog.templates.filter(template => template.generatorId).map(template => template.id).sort()
+  );
 });
 
 test("DSA5101 deep-practice snapshots regenerate the same card question", () => {

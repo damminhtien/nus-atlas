@@ -119,7 +119,14 @@
   function deepPracticeQuestions(code, limit, seed) {
     if (!generators || !selection) return [];
     const skills = selection.eligibleQuestions(code, "").map(question => question.skill).filter(Boolean);
-    return generators.generate({ courseCode: code, templates: getQuestionTemplates ? getQuestionTemplates(code) : null, seed, limit, skills });
+    return generators.generate({
+      courseCode: code,
+      templates: getQuestionTemplates ? getQuestionTemplates(code) : null,
+      seed,
+      limit,
+      skills,
+      ...(code === "DSA5101" ? { allForms: true } : {})
+    });
   }
 
   function deepQuestionsFromSnapshot(snapshot) {

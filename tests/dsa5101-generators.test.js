@@ -70,3 +70,18 @@ test("DSA5101 generator lookup accepts exact study-card skills", () => {
   assert.deepEqual(selected.map(item => item.id), ["dsa5101-centered-cosine"]);
   assert.equal(selected[0].template.cardId, "recommender-centering");
 });
+
+test("DSA5101 allForms uses a seeded permutation without early repeats", () => {
+  const generators = generatorApi();
+  const count = generatorTemplates.length;
+  const first = generators.generate({ courseCode: "DSA5101", templates: catalog, allForms: true, seed: "all-forms-seed", limit: count });
+  const repeated = generators.generate({ courseCode: "DSA5101", templates: catalog, allForms: true, seed: "all-forms-seed", limit: count });
+  const different = generators.generate({ courseCode: "DSA5101", templates: catalog, allForms: true, seed: "other-seed", limit: count });
+  const short = generators.generate({ courseCode: "DSA5101", templates: catalog, allForms: true, seed: "all-forms-seed", limit: count - 1 });
+
+  assert.deepEqual(first, repeated);
+  assert.notDeepEqual(first.map(question => question.generatedFrom), different.map(question => question.generatedFrom));
+  assert.equal(new Set(first.map(question => question.generatedFrom)).size, count);
+  assert.equal(new Set(short.map(question => question.generatedFrom)).size, count - 1);
+  assert.deepEqual(first.map(question => question.generatedFrom).sort(), generatorTemplates.map(template => template.id).sort());
+});
