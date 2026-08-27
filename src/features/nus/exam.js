@@ -23,6 +23,11 @@
 
   const selection = createExamSelection ? createExamSelection({ getLessons, getStore, getAssessmentMap }) : null;
 
+  function defaultCourseCode() {
+    const first = (getCourses() || [])[0];
+    return first && first.code ? first.code : "";
+  }
+
   function questionsFor(code, scope, focus = "smart", limit = Infinity) {
     return selection ? selection.selectQuestions({ courseCode: code, scope, focus, limit }) : [];
   }
@@ -138,10 +143,11 @@
     const mistakes = store && typeof store.mistakes === "function" ? store.mistakes(code) : [];
     let body = pageHead(`${esc(code || "NUS")} · review`, "Mistakes", "Repair the ideas you missed recently. Each item keeps its source trail and misconception cue visible.");
     if (!mistakes.length) {
-      root.innerHTML = body + `<section class="nus-card nus-empty-state"><h3>No unresolved mistakes</h3><p>Complete a practice run first. Missed questions will appear here with a focused repair path.</p><div class="nus-lesson-actions">${button("Start a smart run", `#/nus/exam/${esc(code || "DSA5208")}`, "primary")}${button("Course map", `#/nus/course/${esc(code || "DSA5208")}`, "ghost")}${button("Back to dashboard", "#/", "ghost")}</div></section>`;
+      const courseCode = code || defaultCourseCode();
+      root.innerHTML = body + `<section class="nus-card nus-empty-state"><h3>No unresolved mistakes</h3><p>Complete a practice run first. Missed questions will appear here with a focused repair path.</p><div class="nus-lesson-actions">${button("Start a smart run", `#/nus/exam/${esc(courseCode)}`, "primary")}${button("Course map", `#/nus/course/${esc(courseCode)}`, "ghost")}${button("Back to dashboard", "#/", "ghost")}</div></section>`;
       return;
     }
-      body += `<div class="nus-mistake-clinic">${mistakes.map((mistake, index) => `<article class="nus-card nus-mistake-item reveal"><div class="nus-mistake-head"><span class="pill rust">Missed</span><span class="nus-question-meta">${esc(questionLabel(mistake))}</span></div><h3>${index + 1}. ${esc(mistake.prompt || mistake.questionId)}</h3><p class="nus-mistake-cue"><b>Misconception cue:</b> ${esc(mistake.misconception || "Rebuild the assumption before retrying.")}</p><details><summary>Open worked repair</summary><p>${text(mistake.solution || mistake.explanation || "Review the linked lesson.")}</p><p>${(mistake.sourceRefs || []).slice(0, 2).map(sourceItem).join(" ")}</p></details><div class="nus-card-actions">${mistake.lessonId ? button("Review lesson", `#/nus/lesson/${esc(mistake.courseCode || code || "DSA5208")}/${esc(mistake.lessonId)}`, "ghost") : ""}<button class="btn primary" type="button" data-redeem-mistake="${esc(mistake.questionId)}" data-attempt-event="${esc(mistake.attemptEventId || "")}">Mark repaired</button></div></article>`).join("")}</div><div class="nus-lesson-actions">${button("Run weak topics", `#/nus/exam/${esc(code || "DSA5208")}`, "primary")}${button("Back to course", `#/nus/course/${esc(code || "DSA5208")}`, "ghost")}</div>`;
+      body += `<div class="nus-mistake-clinic">${mistakes.map((mistake, index) => `<article class="nus-card nus-mistake-item reveal"><div class="nus-mistake-head"><span class="pill rust">Missed</span><span class="nus-question-meta">${esc(questionLabel(mistake))}</span></div><h3>${index + 1}. ${esc(mistake.prompt || mistake.questionId)}</h3><p class="nus-mistake-cue"><b>Misconception cue:</b> ${esc(mistake.misconception || "Rebuild the assumption before retrying.")}</p><details><summary>Open worked repair</summary><p>${text(mistake.solution || mistake.explanation || "Review the linked lesson.")}</p><p>${(mistake.sourceRefs || []).slice(0, 2).map(sourceItem).join(" ")}</p></details><div class="nus-card-actions">${mistake.lessonId ? button("Review lesson", `#/nus/lesson/${esc(mistake.courseCode || code || defaultCourseCode())}/${esc(mistake.lessonId)}`, "ghost") : ""}<button class="btn primary" type="button" data-redeem-mistake="${esc(mistake.questionId)}" data-attempt-event="${esc(mistake.attemptEventId || "")}">Mark repaired</button></div></article>`).join("")}</div><div class="nus-lesson-actions">${button("Run weak topics", `#/nus/exam/${esc(code || defaultCourseCode())}`, "primary")}${button("Back to course", `#/nus/course/${esc(code || defaultCourseCode())}`, "ghost")}</div>`;
     root.innerHTML = body;
     root.querySelectorAll("[data-redeem-mistake]").forEach(element => element.addEventListener("click", () => {
       if (store && typeof store.redeemMistake === "function") store.redeemMistake(element.dataset.redeemMistake, element.dataset.attemptEvent || "latest");
@@ -181,26 +187,30 @@
     if (!state || (routed && (state.code !== (code || "all") || state.scope !== (scope || "")))) state = null;
     if (!state) {
       const optionsHtml = getCourses().map(course => `<option value="${esc(course.code)}" ${code === course.code ? "selected" : ""}>${esc(course.code)} · ${esc(course.title)}</option>`).join("");
-      const selected = code || "DSA5208";
+      const selected = code || defaultCourseCode();
       const practicePlan = practicePlanFor(selected, scope);
+      const mockRoute = scope === "mixed-exam" && !!practicePlan;
       const scopeOptions = `${practicePlan ? `<option value="mixed-exam" selected>Canonical timed mixed exam · ${esc(practicePlan.durationMinutes)} min</option>` : ""}<option value="">All core lessons</option>${getLessons(selected).map(lesson => `<option value="${esc(lesson.id)}" ${scope === lesson.id ? "selected" : ""}>${esc(lesson.title)}${lesson.examEligible === false ? " · supplementary" : ""}</option>`).join("")}`;
       const countOptions = `<option value="5" ${practicePlan ? "" : ""}>5 questions</option><option value="10" ${practicePlan ? "" : "selected"}>10 questions</option><option value="12" ${practicePlan ? "selected" : ""}>12 questions · canonical mixed set</option><option value="15">15 questions</option>`;
       const timeOptions = `<option value="15">15 minutes</option><option value="30" ${practicePlan ? "" : "selected"}>30 minutes</option><option value="45">45 minutes</option><option value="90" ${practicePlan ? "selected" : ""}>90 minutes · canonical mixed set</option>`;
-      const planCopy = practicePlan ? `<div class="nus-callout nus-practice-plan"><b>Canonical timed mixed set</b><span>${esc(practicePlan.questionCount || practicePlan.questionIds.length)} questions · ${esc(practicePlan.durationMinutes)} minutes. Follow the four-step Mistake Clinic after submission.</span></div>` : `<div class="nus-callout"><b>Practice loop</b><span>Answer first, review the explanation, then repair misses in Mistake Clinic. Lecture refs are primary; textbook/ref refs are labeled as support.</span></div>`;
-      root.innerHTML = pageHead("NUS practice", "Exam mode", "Choose a course, a focus, and a short attempt. MCQ answers are exact auto-grades; open responses use heuristic rubric/phrase checks for feedback and do not automatically become mastery evidence.") + `<section class="nus-card nus-exam-setup reveal"><div class="nus-exam-setup-grid"><label>Course<select id="nus-exam-course">${optionsHtml}</select></label><label>Scope<select id="nus-exam-scope">${scopeOptions}</select></label><label>Focus<select id="nus-exam-focus"><option value="smart">Smart mix</option><option value="weakness">Weak topics</option><option value="new">New concepts</option><option value="mixed">Mixed retrieval</option></select></label><label>Questions<select id="nus-exam-count">${countOptions}</select></label><label>Time<select id="nus-exam-minutes">${timeOptions}</select></label></div>${planCopy}<div class="nus-card-actions"><button class="btn primary" id="nus-start-exam">Start attempt</button>${button("Course map", `#/nus/course/${esc(selected)}`, "ghost")}${button("Mistake Clinic", `#/nus/mistakes/${esc(selected)}`, "ghost")}</div></section>`;
+      const planCopy = mockRoute ? `<div class="nus-callout nus-practice-plan"><b>Mock exam</b><span>${esc(practicePlan.questionCount || practicePlan.questionIds.length)} questions · ${esc(practicePlan.durationMinutes)} minutes. Answers and explanations stay hidden until submission.</span></div>` : `<div class="nus-callout"><b>Adaptive practice</b><span>Atlas prioritizes due retrievals, unresolved mistakes, weak skills, unseen concepts, assessment signals, and current-week lessons. Every choice is explainable.</span></div>`;
+      const modeOptions = `<option value="adaptive" ${mockRoute ? "" : "selected"}>Adaptive practice</option><option value="mock" ${mockRoute ? "selected" : ""}>Mock exam</option>`;
+      root.innerHTML = pageHead("NUS practice", "Practice", "Adaptive practice is the default. Use Mock exam for a timed exam-style simulation. MCQs are exact; open responses are clearly labeled feedback until verified.") + `<section class="nus-card nus-exam-setup reveal"><div class="nus-exam-setup-grid"><label>Course<select id="nus-exam-course">${optionsHtml}</select></label><label>Scope<select id="nus-exam-scope">${scopeOptions}</select></label><label>Mode<select id="nus-exam-mode">${modeOptions}</select></label><label>Focus<select id="nus-exam-focus"><option value="smart">Smart mix</option><option value="weakness">Weak topics</option><option value="new">New concepts</option><option value="mixed">Mixed retrieval</option></select></label><label>Questions<select id="nus-exam-count">${countOptions}</select></label><label>Time<select id="nus-exam-minutes">${timeOptions}</select></label></div>${planCopy}<div class="nus-card-actions"><button class="btn primary" id="nus-start-exam">Start practice</button>${button("Course map", `#/nus/course/${esc(selected)}`, "ghost")}${button("Mistakes", `#/nus/mistakes/${esc(selected)}`, "ghost")}</div></section>`;
       typeset();
       const courseSelect = root.querySelector("#nus-exam-course");
       const scopeSelect = root.querySelector("#nus-exam-scope");
       courseSelect.addEventListener("change", () => { location.hash = `#/nus/exam/${courseSelect.value}`; });
       scopeSelect.addEventListener("change", () => { location.hash = `#/nus/exam/${courseSelect.value}/${scopeSelect.value}`; });
       root.querySelector("#nus-start-exam").addEventListener("click", () => {
-        const selectedPlan = practicePlanFor(selected, scope);
+        const selectedMode = root.querySelector("#nus-exam-mode").value;
+        const selectedPlan = selectedMode === "mock" ? practicePlanFor(selected, scope) : null;
         const planQuestions = questionsForPracticePlan(selected, selectedPlan);
         const questions = selectedPlan ? planQuestions : questionsFor(selected, scope, root.querySelector("#nus-exam-focus").value, Number(root.querySelector("#nus-exam-count").value));
         if (!questions.length) return;
         state = {
           attemptId: `nus-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`,
           code: selected,
+          mode: selectedMode,
           scope: selectedPlan ? "mixed-exam" : scope || "",
           focus: selectedPlan ? "canonical mixed" : root.querySelector("#nus-exam-focus").value,
           limit: questions.length,

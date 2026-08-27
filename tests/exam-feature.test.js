@@ -25,11 +25,11 @@ test("exam feature keeps question selection scoped to a lesson", () => {
 
   feature.render("DSA5105", "lesson-a");
 
-  assert.match(root.innerHTML, /Exam mode/);
+  assert.match(root.innerHTML, /Practice/);
   assert.match(root.innerHTML, /Linear models/);
-  assert.match(root.innerHTML, /Start attempt/);
-  assert.match(root.innerHTML, /Mistake Clinic/);
-  assert.match(root.innerHTML, /open responses use heuristic rubric\/phrase checks/);
+  assert.match(root.innerHTML, /Start practice/);
+  assert.match(root.innerHTML, /Adaptive practice/);
+  assert.match(root.innerHTML, /open responses are clearly labeled feedback/);
 });
 
 test("exam feature runs the canonical DSA5101 timed mixed plan", () => {
@@ -60,7 +60,7 @@ test("exam feature runs the canonical DSA5101 timed mixed plan", () => {
   const plan = feature.practicePlanFor("DSA5101", "mixed-exam");
   assert.equal(feature.questionsForPracticePlan("DSA5101", plan).length, 2);
   feature.render("DSA5101", "mixed-exam");
-  assert.match(root.innerHTML, /Canonical timed mixed set/);
+  assert.match(root.innerHTML, /Mock exam/);
   assert.match(root.innerHTML, /90 minutes/);
 });
 
