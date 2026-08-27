@@ -4,6 +4,7 @@
   if (typeof module === "object" && module.exports) module.exports = factory;
   else root.ATLAS_EXAM_FEATURE = factory;
 })(typeof globalThis === "object" ? globalThis : this, function createNusExamFeature(options) {
+  const createExamSelection = options.selection || (typeof module === "object" && module.exports ? require("./exam-selection") : globalThis.ATLAS_EXAM_SELECTION);
   const {
     root,
     getCourses,
@@ -20,43 +21,10 @@
   let state = null;
   let timer = null;
 
-  function questionStats(question) {
-    const store = getStore();
-    return store && typeof store.questionStats === "function"
-      ? store.questionStats(question.id)
-      : { attempts: 0, correct: 0, misses: 0, accuracy: 0 };
-  }
+  const selection = createExamSelection ? createExamSelection({ getLessons, getStore, getAssessmentMap }) : null;
 
   function questionsFor(code, scope, focus = "smart", limit = Infinity) {
-    let questions = getLessons(code).filter(lesson => scope || lesson.examEligible !== false).flatMap(lesson => (lesson.questions || []).map(question => ({
-      ...question,
-      lessonId: lesson.id,
-      lessonTitle: lesson.title,
-      lessonSourceRefs: lesson.sourceRefs || []
-    })));
-    if (scope) questions = questions.filter(question => question.lessonId === scope);
-    const ranked = questions.map((question, index) => {
-      const stats = questionStats(question);
-      const weakness = stats.misses * 100 + (stats.attempts && stats.accuracy < 0.8 ? 40 : 0);
-      const novelty = stats.attempts ? 0 : 30;
-      const difficulty = question.difficulty === "hard" ? 8 : question.difficulty === "medium" ? 4 : 0;
-      const focusScore = focus === "weakness" ? weakness + difficulty : focus === "new" ? novelty + difficulty : focus === "mixed" ? novelty + weakness / 3 + difficulty : weakness + novelty + difficulty;
-      return { question, index, focusScore };
-    }).sort((a, b) => b.focusScore - a.focusScore || a.index - b.index);
-    const selected = [];
-    const skills = new Set();
-    for (const item of ranked) {
-      if (selected.length >= limit) break;
-      if (!skills.has(item.question.skill) || selected.length >= Math.min(3, limit)) {
-        selected.push(item.question);
-        skills.add(item.question.skill);
-      }
-    }
-    for (const item of ranked) {
-      if (selected.length >= limit) break;
-      if (!selected.includes(item.question)) selected.push(item.question);
-    }
-    return selected;
+    return selection ? selection.selectQuestions({ courseCode: code, scope, focus, limit }) : [];
   }
 
   function questionLabel(question) {
