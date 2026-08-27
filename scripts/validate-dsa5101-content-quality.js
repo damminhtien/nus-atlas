@@ -48,7 +48,7 @@ function validateQuestionTemplates(errors) {
   if (catalog.schemaVersion !== "nus.question-templates.v1") errors.push("question template catalog has the wrong schema version");
   if (catalog.courseId !== "DSA5101") errors.push("question template catalog has the wrong course");
   if (archetypes.length !== 4) errors.push(`expected 4 question archetypes, got ${archetypes.length}`);
-  if (templates.length < 20) errors.push(`expected at least 20 question templates, got ${templates.length}`);
+  if (templates.length < 45) errors.push(`expected at least 45 question templates, got ${templates.length}`);
 
   const uniqueIds = (items, label) => {
     const seen = new Set();
@@ -70,6 +70,7 @@ function validateQuestionTemplates(errors) {
     if (!lessonIds.has(card.lessonId)) errors.push(`study card ${card.id}: unknown lesson ${card.lessonId}`);
     if (!card.title || !card.objective || !card.anchor) errors.push(`study card ${card.id}: missing title/objective/anchor`);
     for (const ref of card.lectureRefs || []) validateTemplateSourceRef(errors, `study card ${card.id}`, ref);
+    for (const ref of card.sourceRefs || []) validateTemplateSourceRef(errors, `study card ${card.id}`, ref);
   }
   const templateIds = uniqueIds(templates, "question template");
   for (const template of templates) {
@@ -82,6 +83,7 @@ function validateQuestionTemplates(errors) {
     if (!Array.isArray(template.failureModes) || template.failureModes.length < 2) errors.push(`question template ${template.id}: needs at least two failure modes`);
     if (!Array.isArray(template.sourceRefs) || template.sourceRefs.length === 0) errors.push(`question template ${template.id}: missing source references`);
     for (const ref of template.sourceRefs || []) validateTemplateSourceRef(errors, `question template ${template.id}`, ref);
+    if (template.questionType === "calculation" && !template.generatorId) errors.push(`question template ${template.id}: calculations must have a seeded generator`);
     if (template.generatorId && !/^dsa5101-/.test(template.generatorId)) errors.push(`question template ${template.id}: invalid DSA5101 generator id`);
   }
 

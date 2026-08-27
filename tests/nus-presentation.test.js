@@ -103,6 +103,10 @@ test("study-card index and external references stay directly navigable", () => {
   const html = view.studyCardIndex([{ id: "lsh-probability", anchor: "nus-study-card-lsh-probability", title: "LSH probability", objective: "Compute the event." }]);
   assert.match(html, /id="nus-study-card-lsh-probability"/);
   assert.match(html, /Exact review targets/);
+  const referenceHtml = view.studyCardIndex([{ id: "svd", title: "SVD vs CUR", objective: "Choose the representation.", scope: "official-course-information", sourceRefs: [{ sourceId: "Stanford CS246/slides/06-dim_red.pdf", sourceType: "ref", page: 4, url: "https://web.stanford.edu/class/cs246/slides/06-dim_red.pdf" }] }]);
+  assert.match(referenceHtml, /Course Information/);
+  assert.match(referenceHtml, /Reference anchor/);
+  assert.match(referenceHtml, /06-dim_red\.pdf/);
   assert.match(view.sourceItem({ sourceId: "Stanford CS246\/slides\/03-lsh.pdf", sourceType: "ref", page: 1, url: "https:\/\/web.stanford.edu\/class\/cs246\/slides\/03-lsh.pdf" }), /target="_blank"/);
 });
 

@@ -237,8 +237,8 @@ export type QuestionTemplateCatalog = {
   schemaVersion: "nus.question-templates.v1";
   courseId: string;
   archetypes: Array<{ id: string; label: string; description: string }>;
-  cards: Array<{ id: string; lessonId: string; title: string; objective: string; anchor: string; lectureRefs: SourceRef[] }>;
-  templates: Array<{ id: string; archetype: string; cardId: string; lessonId: string; questionType: string; skill: string; problemDefinition: string; assumptions: string; coreInvariant: string; formulaAlgorithm: string; failureModes: string[]; sourceRefs: SourceRef[]; generatorId?: string }>;
+  cards: Array<{ id: string; lessonId: string; title: string; objective: string; anchor: string; lectureRefs: SourceRef[]; sourceRefs?: SourceRef[]; scope?: string }>;
+  templates: Array<{ id: string; archetype: string; cardId: string; lessonId: string; questionType: string; skill: string; problemDefinition: string; assumptions: string; coreInvariant: string; formulaAlgorithm: string; failureModes: string[]; sourceRefs: SourceRef[]; scope?: string; generatorId?: string }>;
 };
 export type LessonPayload = Lesson & StudyKit & { questions: Question[] };
 export type ContentRepository = {
