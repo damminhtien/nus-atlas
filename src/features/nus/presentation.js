@@ -19,7 +19,10 @@
     const status = ref.status && !["current", "course-depth", "current-context"].includes(ref.status) ? ` · ${ref.status}` : "";
     return `<span class="pill ${esc(meta.tone)}">${esc(meta.shortLabel)}${esc(status)}</span>`;
   }
-  function sourceItem(ref) { return `${sourceBadge(ref)} <span>${esc(sourceLabel(ref))}</span>${ref && ref.role ? `<small>${esc(ref.role)}</small>` : ""}`; }
+  function sourceItem(ref) {
+    const label = ref && ref.url ? `<a href="${esc(ref.url)}" target="_blank" rel="noreferrer">${esc(sourceLabel(ref))} ↗</a>` : `<span>${esc(sourceLabel(ref))}</span>`;
+    return `${sourceBadge(ref)} ${label}${ref && ref.role ? `<small>${esc(ref.role)}</small>` : ""}`;
+  }
   function sourceSummary(refs) {
     const counts = new Map();
     (refs || []).forEach(ref => {
@@ -140,6 +143,11 @@
     const cards = notes.map(note => `<article class="nus-algorithm-note"><div class="nus-algorithm-note-head"><span class="pill violet">Five-part note</span><h4>${esc(note.algorithm)}</h4></div><ol>${fields.map(([label, key]) => `<li><b>${esc(label)}</b><p>${text(note[key])}</p></li>`).join("")}</ol>${sourceDisclosure(note.sourceRefs, "Note sources")}</article>`).join("");
     return `<section class="nus-card nus-algorithm-notes reveal" id="nus-lesson-algorithms"><div class="nus-teach-head"><div><h3>Algorithm note standard</h3><p class="nus-muted">Every core algorithm starts with the problem, states its invariant, and ends with the mistakes that break a solution.</p></div><span class="pill gold">${notes.length} note${notes.length === 1 ? "" : "s"}</span></div><div class="nus-algorithm-note-list">${cards}</div></section>`;
   }
+  function studyCardIndex(cards) {
+    const items = Array.isArray(cards) ? cards.filter(cardItem => cardItem && cardItem.id && cardItem.title) : [];
+    if (!items.length) return "";
+    return `<section class="nus-card nus-study-card-index reveal" id="nus-lesson-cards"><div class="nus-teach-head"><div><span class="eyebrow">Exact review targets</span><h3>Study cards for this topic</h3><p class="nus-muted">Every question points to one of these cards. Finish the card before moving to a broader lecture review.</p></div><span class="pill gold">${items.length} card${items.length === 1 ? "" : "s"}</span></div><div class="nus-study-card-list">${items.map(cardItem => `<article class="nus-study-card" id="${esc(cardItem.anchor || `nus-study-card-${cardItem.id}`)}"><div class="nus-study-card-head"><span class="pill violet">Card</span><h4>${esc(cardItem.title)}</h4></div><p>${text(cardItem.objective)}</p>${cardItem.templateCount ? `<small>${esc(cardItem.templateCount)} question form${cardItem.templateCount === 1 ? "" : "s"} mapped</small>` : ""}${sourceDisclosure(cardItem.lectureRefs, "Lecture anchor")}</article>`).join("")}</div></section>`;
+  }
   function workedExample(example) {
     const steps = (example.steps || []).map((step, index) => `<li><b>${index + 1}.</b><span>${text(step)}</span></li>`).join("");
     return `<section class="nus-example"><div class="nus-teach-head"><h3>${esc(example.title)}</h3>${sourceBadge({ sourceType: example.sourceType || "lecture" })}</div><ol>${steps}</ol><details><summary>Check the result</summary><p>${text(example.answer)}</p></details></section>`;
@@ -174,6 +182,6 @@
   return Object.freeze({
     esc, text, sourceLabel, sourceBadge, sourceItem, sourceSummary, sourceDisclosure, sourceLens, assessmentFocus, sourceGroups, quickNav, pageHead, card,
     button, statusPill, visualCard, mathBlock, lessonSection, algorithmNotes, workedExample,
-    recallItem, criticalThinking, studyKit, studyCompass
+    recallItem, criticalThinking, studyKit, studyCompass, studyCardIndex
   });
 });

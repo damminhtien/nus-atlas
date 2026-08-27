@@ -159,6 +159,26 @@ test("slide reader shows saved progress and a resume action", () => {
   assert.match(root.innerHTML, /50–74% · Halfway/);
 });
 
+test("slide reader routes a lecture page to its exact question card", () => {
+  const root = makeRoot();
+  const feature = createSlideReaderFeature({
+    root,
+    getCourse: () => ({ code: "DSA5101" }),
+    getSlideSet: () => ({
+      courseId: "DSA5101", id: "lecture2", summary: "Finding similar items", lessonIds: ["dsa5101-minhash-lsh"],
+      source: { fileName: "Lecture 2.pdf", sourceId: "DSA5101/Lec 2 - Finding Similar items, LSH.pdf", access: "local-only" },
+      slides: [{ slideNumber: 1, pdfPage: 62, title: "LSH bands", kind: "lecture", status: "reviewed", assetPath: "slide.jpg", sourceRef: { sourceId: "DSA5101/Lec 2 - Finding Similar items, LSH.pdf", sourceType: "lecture", page: 62 }, extraction: { blocks: [] }, explanation: { whatYouSee: "Bands." }, textbookRefs: [], referenceRefs: [], socraticQuestions: [] }]
+    }),
+    getQuestionTemplates: () => ({ cards: [{ id: "lsh-probability", lessonId: "dsa5101-minhash-lsh", title: "LSH probability", lectureRefs: [{ sourceId: "DSA5101/Lec 2 - Finding Similar items, LSH.pdf", page: 62 }] }] }),
+    getTextbook: () => null,
+    pageHead: (_kicker, title) => `<h1>${title}</h1>`, sourceBadge: () => "", sourceItem: ref => ref.sourceId,
+    button: (label, href) => `<a href="${href}">${label}</a>`, text: value => String(value || ""), esc: value => String(value || ""), typeset() {}, notFound() {}
+  });
+  feature.render("DSA5101", "lecture2", 1);
+  assert.match(root.innerHTML, /Exact card from this lecture page/);
+  assert.match(root.innerHTML, /#\/nus\/lesson\/DSA5101\/dsa5101-minhash-lsh\/lsh-probability/);
+});
+
 test("Socratic checkpoint typesets formulas inserted after the slide render", () => {
   const previousDocument = global.document;
   const previousLocation = global.location;

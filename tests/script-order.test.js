@@ -4,7 +4,7 @@ const fs = require("node:fs");
 
 test("browser script order loads NUS dependencies before the entrypoint", () => {
   const html = fs.readFileSync("index.html", "utf8");
-  const before = ["src/core/content/transport.js", "src/core/content/repository.js", "src/app/bootstrap.js", "src/core/study-store.js", "src/core/router.js", "src/features/nus/presentation.js", "src/features/nus/sql.js", "src/features/nus/simulations.js", "src/features/nus/retrieval.js", "src/features/nus/exam-schedule.js", "src/features/nus/exam-selection.js", "src/features/nus/exam-session.js", "src/features/nus/exam-generators.js", "src/features/nus/exam-renderer.js"];
+  const before = ["src/core/content/transport.js", "src/core/content/repository.js", "src/app/bootstrap.js", "src/core/study-store.js", "src/core/router.js", "src/features/nus/presentation.js", "src/features/nus/sql.js", "src/features/nus/simulations.js", "src/features/nus/retrieval.js", "src/features/nus/exam-schedule.js", "src/features/nus/exam-selection.js", "src/features/nus/exam-session.js", "src/features/nus/dsa5101-generators.js", "src/features/nus/exam-generators.js", "src/features/nus/exam-renderer.js"];
   const nus = html.indexOf('src="js/nus.js');
   assert.ok(nus > 0);
   before.forEach(script => assert.ok(html.indexOf(script) < nus, `${script} must load before js/nus.js`));
@@ -13,6 +13,7 @@ test("browser script order loads NUS dependencies before the entrypoint", () => 
 test("app shell exposes a persistent collapsible left navigation", () => {
   const html = fs.readFileSync("index.html", "utf8");
   const app = fs.readFileSync("js/app.js", "utf8");
+  const nus = fs.readFileSync("js/nus.js", "utf8");
   const css = fs.readFileSync("css/styles.css", "utf8");
   assert.match(html, /id="menu-btn"[^>]+aria-controls="sidebar"/);
   assert.match(app, /atlas\.sidebarCollapsed/);
@@ -31,6 +32,8 @@ test("app shell exposes a persistent collapsible left navigation", () => {
   assert.match(css, /#app\.nus-root \{ font-size:1\.06rem; \}/);
   assert.match(css, /#app\.nus-root \.nus-slide-note p \{ font-size:16px; line-height:1\.62; \}/);
   assert.match(css, /body\.nus-slide-focus-mode #app\.nus-root \.nus-slide-note p \{ font-size:clamp\(16px, 1\.15vw, 20px\)/);
+  assert.match(nus, /renderLesson\(parts\[1\], parts\[2\], context, parts\[3\]\)/);
+  assert.match(nus, /getElementById\(`nus-study-card-\$\{focusCardId\}`\)/);
 });
 
 test("KaTeX boundary guards against double-escaped authored commands", () => {

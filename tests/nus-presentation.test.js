@@ -98,6 +98,14 @@ test("same-lesson visual labs use an in-page anchor instead of an SPA route", ()
   assert.doesNotMatch(html, /data-route/);
 });
 
+test("study-card index and external references stay directly navigable", () => {
+  const view = presentation();
+  const html = view.studyCardIndex([{ id: "lsh-probability", anchor: "nus-study-card-lsh-probability", title: "LSH probability", objective: "Compute the event." }]);
+  assert.match(html, /id="nus-study-card-lsh-probability"/);
+  assert.match(html, /Exact review targets/);
+  assert.match(view.sourceItem({ sourceId: "Stanford CS246\/slides\/03-lsh.pdf", sourceType: "ref", page: 1, url: "https:\/\/web.stanford.edu\/class\/cs246\/slides\/03-lsh.pdf" }), /target="_blank"/);
+});
+
 test("linked visual labs retain a routable lesson destination", () => {
   const view = createPresentation({
     getSourceTypes: () => ({}),

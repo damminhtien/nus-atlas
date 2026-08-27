@@ -10,6 +10,7 @@
     getCourse,
     getSlideSet,
     getTextbook,
+    getQuestionTemplates,
     getStore,
     pageHead,
     sourceBadge,
@@ -23,6 +24,7 @@
   let keyboardHandler = null;
   let checkpointOverlay = null;
   let checkpointKeydown = null;
+  let activeCourseCode = "";
   const FOCUS_MODE_KEY = "nus.slide-focus-mode";
 
   function focusModeOn() {
@@ -196,13 +198,27 @@
     return `<div class="nus-extraction-blocks">${blocks.map(block => `<article class="nus-extraction-block"><div><span class="pill">${esc(block.type)}</span><code>${esc(block.blockId)}</code>${block.imageId ? `<code>${esc(block.imageId)}</code>` : ""}</div>${block.text ? `<p>${text(block.text)}</p>` : `<p class="nus-muted">Image/visual block — inspect the slide render.</p>`}</article>`).join("")}</div>`;
   }
 
-  function explanation(slide) {
+  function studyCardsForSlide(courseCode, slide) {
+    const catalog = typeof getQuestionTemplates === "function" ? getQuestionTemplates(courseCode) : null;
+    const sourceId = slide && slide.sourceRef && slide.sourceRef.sourceId;
+    const page = Number(slide && slide.pdfPage);
+    return (catalog && catalog.cards || []).filter(cardItem => (cardItem.lectureRefs || []).some(ref => ref.sourceId === sourceId && Number(ref.page) === page));
+  }
+
+  function studyCardLinks(courseCode, slide) {
+    const cards = studyCardsForSlide(courseCode, slide);
+    if (!cards.length) return "";
+    return `<section class="nus-slide-study-cards"><div class="eyebrow">Exact card from this lecture page</div><div>${cards.map(cardItem => button(`Study ${cardItem.title}`, `#/nus/lesson/${courseCode}/${cardItem.lessonId}/${cardItem.id}`, "ghost")).join("")}</div></section>`;
+  }
+
+  function explanation(slide, courseCode) {
+    courseCode = courseCode || activeCourseCode;
     const formula = slide.keyFormula;
     const formulaHtml = formula && formula.name && formula.latex
       ? `<section class="nus-slide-key-formula"><div class="nus-slide-key-formula-label">Key formula</div><h4>${esc(formula.name)}</h4><div class="nus-slide-key-formula-math">$$${esc(formula.latex)}$$</div>${formula.purpose ? `<p><b>Use it for:</b> ${text(formula.purpose)}</p>` : ""}</section>`
       : "";
     if (slide.studyNote) {
-      return `${formulaHtml}<p>${text(slide.studyNote.focus)}</p>${slide.studyNote.trap ? `<p class="nus-slide-trap"><b>Trap:</b> ${text(slide.studyNote.trap)}</p>` : ""}`;
+      return `${formulaHtml}${studyCardLinks(courseCode, slide)}<p>${text(slide.studyNote.focus)}</p>${slide.studyNote.trap ? `<p class="nus-slide-trap"><b>Trap:</b> ${text(slide.studyNote.trap)}</p>` : ""}`;
     }
     const value = slide.explanation || {};
     const fields = [
@@ -214,7 +230,7 @@
       ["Source observation", value.whatYouSee]
     ];
     const notes = fields.filter(([, body]) => body).map(([title, body]) => `<section class="nus-slide-note"><h4>${esc(title)}</h4><p>${text(body)}</p></section>`).join("");
-    return formulaHtml + (notes || `<section class="nus-slide-note"><p class="nus-muted">Source slide only. No additional Atlas note is attached to this page.</p></section>`);
+    return formulaHtml + studyCardLinks(courseCode, slide) + (notes || `<section class="nus-slide-note"><p class="nus-muted">Source slide only. No additional Atlas note is attached to this page.</p></section>`);
   }
 
   function slideQuestions(slide) {
@@ -356,6 +372,7 @@
   }
 
   function render(courseCode, slideSetId, rawSlideNumber) {
+    activeCourseCode = courseCode || "";
     removeKeyboard();
     closeSocraticCheckpoint();
     setFocusMode(focusModeOn());

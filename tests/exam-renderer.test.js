@@ -38,6 +38,22 @@ test("exam renderer keeps setup modes and question controls explicit", () => {
   assert.match(question, /nus-question-navigator/);
 });
 
+test("DSA5101 deep practice names its card families and links the exact card", () => {
+  const view = createExamRenderer({
+    pageHead: (_kicker, title, description) => `<h1>${title}</h1><p>${description || ""}</p>`,
+    sourceItem: ref => `<span>${ref.sourceId}</span>`,
+    text: value => String(value),
+    esc: value => String(value),
+    button: (label, href) => `<a href="${href}">${label}</a>`
+  });
+  assert.match(view.setup({ courses: [{ code: "DSA5101", title: "Big Data" }], selectedCode: "DSA5101", courseCode: "DSA5101", scope: "deep-practice", lessons: [], practicePlan: null }), /Apriori, shingle\/Jaccard/);
+  assert.match(view.question({
+    state: { courseCode: "DSA5101", mode: "deep", focus: "smart", currentIndex: 0, questionIds: ["q1"] },
+    item: { id: "q1", type: "calculation", prompt: "Compute.", skill: "support-calculation", cardId: "support-confidence-lift", lessonId: "dsa5101-frequent-itemsets", grading: { type: "numeric", expected: 0.5, tolerance: 0.01 } },
+    answerInput: '<textarea id="nus-answer"></textarea>', rubricHint: "", questionNav: "", answersSoFar: 0
+  }), /#\/nus\/lesson\/DSA5101\/dsa5101-frequent-itemsets\/support-confidence-lift/);
+});
+
 test("exam renderer exposes safe result grading breakdowns", () => {
   const view = renderer();
   const state = { courseCode: "DSA5105", mode: "deep", questionIds: ["q1"], skippedQuestionIds: [] };
