@@ -10,6 +10,7 @@ export type SourceRef = {
   imageId?: string;
   role?: string;
   status?: string;
+  url?: string;
 };
 
 export type BlockBase = { id: string; sourceRefs: SourceRef[]; sourceType?: SourceType };
@@ -90,6 +91,8 @@ export type Question = {
   grading?: { type: "numeric"; expected: number; tolerance: number };
   generatedFrom?: string;
   generationSeed?: string | number;
+  templateId?: string;
+  cardId?: string;
 };
 export type StudyKit = {
   lessonId: string;
@@ -225,9 +228,17 @@ export type CoursePackage = {
   labAssets: Record<string, string>;
   visualAssets: Record<string, string>;
   slideAssets: Record<string, string>;
+  questionTemplates?: QuestionTemplateCatalog;
   textbookAsset?: string;
   sourceManifestAsset?: string;
   schemaVersion: "nus.course-payload.v1";
+};
+export type QuestionTemplateCatalog = {
+  schemaVersion: "nus.question-templates.v1";
+  courseId: string;
+  archetypes: Array<{ id: string; label: string; description: string }>;
+  cards: Array<{ id: string; lessonId: string; title: string; objective: string; anchor: string; lectureRefs: SourceRef[] }>;
+  templates: Array<{ id: string; archetype: string; cardId: string; lessonId: string; questionType: string; skill: string; problemDefinition: string; assumptions: string; coreInvariant: string; formulaAlgorithm: string; failureModes: string[]; sourceRefs: SourceRef[]; generatorId?: string }>;
 };
 export type LessonPayload = Lesson & StudyKit & { questions: Question[] };
 export type ContentRepository = {
@@ -244,13 +255,14 @@ export type ContentRepository = {
   loadSlides(courseId: string): Promise<SlideSet[]>;
   loadTextbook(courseId: string): Promise<TextbookIndex | null>;
   getAssessment(courseId: string): Assessment[];
+  getQuestionTemplates?(courseId: string): QuestionTemplateCatalog | null;
   getLab(labId: string): Lab | null;
   needsLoad(courseId: string): boolean;
   isLessonLoaded(courseId: string, lessonId: string): boolean;
 };
 export const CONTENT_SCHEMA_VERSIONS = {
   course: "nus.course.v1", courseOutline: "nus.course-outline.v1", coursePayload: "nus.course-payload.v1",
-  lesson: "nus.lesson.v1", lessonOutline: "nus.lesson-outline.v1", question: "nus.question.v1", studyKit: "nus.study-kit.v1"
+  lesson: "nus.lesson.v1", lessonOutline: "nus.lesson-outline.v1", question: "nus.question.v1", questionTemplates: "nus.question-templates.v1", studyKit: "nus.study-kit.v1"
 } as const;
 export function isLessonBlock(value: unknown): value is LessonBlock {
   if (!value || typeof value !== "object") return false;

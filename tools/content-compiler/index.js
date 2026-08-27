@@ -221,6 +221,7 @@ function loadCourseSource(root, courseId) {
     ["exam-bank.json", "deep-dive-bank.json"]
       .map(file => readJsonIfExists(path.join(courseRoot, "questions", file)))
   );
+  const questionTemplates = readJsonIfExists(path.join(courseRoot, "questions", "templates.json"));
   const bankByLesson = new Map();
   (questionBank && questionBank.questions || []).forEach(question => {
     const list = bankByLesson.get(question.lessonId) || [];
@@ -270,7 +271,8 @@ function loadCourseSource(root, courseId) {
     textbook: readJsonIfExists(path.join(courseRoot, "textbook.json")),
     assessmentMap: readJsonIfExists(path.join(courseRoot, "assessment-map.json")),
     schedule: readJsonIfExists(path.join(courseRoot, "schedule.json")),
-    questionBank
+    questionBank,
+    questionTemplates
   };
 }
 
@@ -384,7 +386,8 @@ function compileCourseSource(source, courseId = source && source.course && sourc
     timelineLessonIds: timeline.ids,
     assessmentIds: assessments.map(item => item.id),
     sourceCatalog: collectSources(course, source.modules, assessments, source.sourceManifest),
-    questionBank: source.questionBank ? { schemaVersion: source.questionBank.schemaVersion, purpose: source.questionBank.purpose, blueprint: cleanObject(source.questionBank.blueprint || {}), questionIds: source.questionBank.questions.map(question => question.id), extensionCount: source.questionBank.questions.length, ...(source.questionBank.assessmentLayers ? { assessmentLayers: cleanObject(source.questionBank.assessmentLayers) } : {}) } : null,
+    questionBank: source.questionBank ? { schemaVersion: source.questionBank.schemaVersion, purpose: source.questionBank.purpose, blueprint: cleanObject(source.questionBank.blueprint || {}), questionIds: source.questionBank.questions.map(question => question.id), extensionCount: source.questionBank.questions.length, ...(source.questionTemplates ? { templateCount: (source.questionTemplates.templates || []).length } : {}), ...(source.questionBank.assessmentLayers ? { assessmentLayers: cleanObject(source.questionBank.assessmentLayers) } : {}) } : null,
+    ...(source.questionTemplates ? { questionTemplates: cleanObject(source.questionTemplates) } : {}),
     slideSetIds: source.slideSets.map(slideSet => slideSet.id),
     sourcePolicy: source.sourceManifest ? cleanObject(source.sourceManifest.policy || {}) : {},
     visualIds: [...visualIds],
@@ -409,10 +412,11 @@ function compileCourseSource(source, courseId = source && source.course && sourc
     slideSets: cleanObject(source.slideSets),
     ...(source.textbook ? { textbook: source.textbook } : {}),
     ...(source.questionBank ? { questionBank: cleanObject(packageCourse.questionBank) } : {}),
+    ...(source.questionTemplates ? { questionTemplates: cleanObject(source.questionTemplates) } : {}),
     visuals: Object.fromEntries([...visualIds].filter(id => source.visuals[id]).map(id => [id, cleanObject(source.visuals[id])])),
     labs: Object.fromEntries([...labIds].filter(id => source.labs[id]).map(id => [id, cleanObject(source.labs[id])])),
     schedule: source.schedule || null,
-    counts: { modules: modules.length, lessons: Object.keys(lessons).length, questions: Object.values(questions).reduce((n, list) => n + list.length, 0), questionBank: source.questionBank ? source.questionBank.questions.length : 0, artifacts: Object.keys(studyKits).length, slideSets: source.slideSets.length, slides: source.slideSets.reduce((total, set) => total + (set.slides || []).length, 0) }
+    counts: { modules: modules.length, lessons: Object.keys(lessons).length, questions: Object.values(questions).reduce((n, list) => n + list.length, 0), questionBank: source.questionBank ? source.questionBank.questions.length : 0, questionTemplates: source.questionTemplates ? (source.questionTemplates.templates || []).length : 0, artifacts: Object.keys(studyKits).length, slideSets: source.slideSets.length, slides: source.slideSets.reduce((total, set) => total + (set.slides || []).length, 0) }
   };
   const outline = { schemaVersion: "nus.course-outline.v1", courseId, entityKey: `course:${courseId}/outline`, course: courseManifest(packageCourse), timelineLessonIds: timeline.ids, collections, modules: modules.map((module, index) => ({ ...module, title: source.modules[index].title, lessons: source.modules[index].lessons.map(lesson => ({ id: lesson.id, entityKey: `lesson:${courseId}/${lesson.id}`, title: lesson.title, courseId, moduleId: module.id, ...(lesson.scope ? { scope: lesson.scope } : {}), ...(lesson.examEligible !== undefined ? { examEligible: lesson.examEligible } : {}), ...(lesson.contentStatus ? { contentStatus: lesson.contentStatus } : {}), week: lesson.week, sequence: timeline.metadata.get(lesson.id).sequence, orderInWeek: timeline.metadata.get(lesson.id).orderInWeek, collectionIds: collectionIdsByLesson.get(lesson.id) || [], minutes: lesson.minutes, summary: lesson.summary, objectiveCount: (lesson.objectives || []).length, questionCount: questions[lesson.id].length, questionIds: questions[lesson.id].map(question => question.id), hasVisualLab: !!source.labs[lesson.id], visualIds: lesson.visualIds || [], slideSetIds: source.slideSets.filter(slideSet => (slideSet.lessonIds || []).includes(lesson.id)).map(slideSet => slideSet.id), schemaVersion: "nus.lesson-outline.v1" })) })), labs: Object.values(source.labs).map(lab => ({ id: lab.id || lab.lessonId, courseCode: lab.courseCode, lessonId: lab.lessonId, title: lab.title, type: lab.type })) };
   return { source, package: joined, outline, lessons, questions, studyKits };
@@ -488,6 +492,7 @@ function writeCourseArtifacts(outputRoot, compiled) {
     sources: compiled.package.sources,
     assessmentMap: compiled.package.assessmentMap,
     questionBank: compiled.package.questionBank,
+    questionTemplates: compiled.package.questionTemplates,
     schedule: compiled.package.schedule,
     counts: compiled.package.counts,
     lessonAssets,

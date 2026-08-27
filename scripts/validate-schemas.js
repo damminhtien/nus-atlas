@@ -21,6 +21,11 @@ function validateCourse(courseRoot, entry) {
   const course = json(courseFile);
   required(course, ["course", "assessments", "sources", "lessonAssets", "questionAssets", "studyKitAssets", "labAssets", "visualAssets", "slideAssets", "schemaVersion"], `${entry.code}/course`);
   if (course.schemaVersion !== "nus.course-payload.v1") errors.push(`${entry.code}/course has invalid schemaVersion`);
+  if (entry.code === "DSA5101") {
+    required(course, ["questionTemplates"], `${entry.code}/course`);
+    if (course.questionTemplates && course.questionTemplates.schemaVersion !== "nus.question-templates.v1") errors.push(`${entry.code}/questionTemplates has invalid schemaVersion`);
+    if (course.questionTemplates && course.questionTemplates.courseId !== entry.code) errors.push(`${entry.code}/questionTemplates has invalid courseId`);
+  }
   namespaced(course.course && course.course.entityKey, `${entry.code}/course.entityKey`);
   for (const [lessonId, asset] of Object.entries(entry.lessonAssets || {})) {
     const payload = json(path.join(courseRoot, asset));

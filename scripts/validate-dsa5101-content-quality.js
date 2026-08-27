@@ -40,6 +40,65 @@ function validateQuestions(errors) {
   }
 }
 
+function validateQuestionTemplates(errors) {
+  const catalog = read("questions/templates.json");
+  const archetypes = Array.isArray(catalog.archetypes) ? catalog.archetypes : [];
+  const cards = Array.isArray(catalog.cards) ? catalog.cards : [];
+  const templates = Array.isArray(catalog.templates) ? catalog.templates : [];
+  if (catalog.schemaVersion !== "nus.question-templates.v1") errors.push("question template catalog has the wrong schema version");
+  if (catalog.courseId !== "DSA5101") errors.push("question template catalog has the wrong course");
+  if (archetypes.length !== 4) errors.push(`expected 4 question archetypes, got ${archetypes.length}`);
+  if (templates.length < 20) errors.push(`expected at least 20 question templates, got ${templates.length}`);
+
+  const uniqueIds = (items, label) => {
+    const seen = new Set();
+    items.forEach(item => {
+      if (!item.id) errors.push(`${label}: missing id`);
+      else if (seen.has(item.id)) errors.push(`${label}: duplicate ${item.id}`);
+      seen.add(item.id);
+    });
+    return seen;
+  };
+  const archetypeIds = uniqueIds(archetypes, "archetype");
+  const cardIds = uniqueIds(cards, "study card");
+  const lessonIds = new Set();
+  for (const moduleId of read("course.json").moduleIds || []) {
+    const module = read(path.join("modules", `${moduleId}.json`));
+    (module.lessonIds || []).forEach(id => lessonIds.add(id));
+  }
+  for (const card of cards) {
+    if (!lessonIds.has(card.lessonId)) errors.push(`study card ${card.id}: unknown lesson ${card.lessonId}`);
+    if (!card.title || !card.objective || !card.anchor) errors.push(`study card ${card.id}: missing title/objective/anchor`);
+    for (const ref of card.lectureRefs || []) validateTemplateSourceRef(errors, `study card ${card.id}`, ref);
+  }
+  const templateIds = uniqueIds(templates, "question template");
+  for (const template of templates) {
+    if (!archetypeIds.has(template.archetype)) errors.push(`question template ${template.id}: unknown archetype ${template.archetype}`);
+    if (!cardIds.has(template.cardId)) errors.push(`question template ${template.id}: unknown study card ${template.cardId}`);
+    if (!lessonIds.has(template.lessonId)) errors.push(`question template ${template.id}: unknown lesson ${template.lessonId}`);
+    for (const field of ["problemDefinition", "assumptions", "coreInvariant", "formulaAlgorithm"]) {
+      if (!template[field]) errors.push(`question template ${template.id}: missing ${field}`);
+    }
+    if (!Array.isArray(template.failureModes) || template.failureModes.length < 2) errors.push(`question template ${template.id}: needs at least two failure modes`);
+    if (!Array.isArray(template.sourceRefs) || template.sourceRefs.length === 0) errors.push(`question template ${template.id}: missing source references`);
+    for (const ref of template.sourceRefs || []) validateTemplateSourceRef(errors, `question template ${template.id}`, ref);
+    if (template.generatorId && !/^dsa5101-/.test(template.generatorId)) errors.push(`question template ${template.id}: invalid DSA5101 generator id`);
+  }
+
+  const bank = read("questions/bank.json");
+  for (const question of bank.questions || []) {
+    const template = templates.find(item => item.id === question.templateId);
+    if (!templateIds.has(question.templateId)) errors.push(`question ${question.id}: unknown template ${question.templateId}`);
+    if (!cardIds.has(question.cardId)) errors.push(`question ${question.id}: unknown study card ${question.cardId}`);
+    if (template && question.cardId !== template.cardId) errors.push(`question ${question.id}: card does not match template ${question.templateId}`);
+  }
+}
+
+function validateTemplateSourceRef(errors, location, ref) {
+  if (!ref || !ref.sourceId || !ref.sourceType || !Number.isInteger(ref.page) || ref.page < 1) errors.push(`${location}: invalid source reference`);
+  if (ref && ref.sourceType === "ref" && !/^https?:\/\//.test(ref.url || "")) errors.push(`${location}: external reference is missing a URL`);
+}
+
 function validateFormulaNames(errors) {
   const lesson = read("lessons/dsa5101-frequent-itemsets.json");
   const formulas = Array.isArray(lesson.math) ? lesson.math : [];
@@ -84,6 +143,7 @@ function validateCoreSlides(errors) {
 function validateDsa5101ContentQuality() {
   const errors = [];
   validateQuestions(errors);
+  validateQuestionTemplates(errors);
   validateFormulaNames(errors);
   validateAssessmentMap(errors);
   validateCoreSlides(errors);
@@ -97,7 +157,7 @@ if (require.main === module) {
     result.errors.forEach(error => console.error(`- ${error}`));
     process.exitCode = 1;
   } else {
-    console.log("DSA5101 CONTENT QUALITY GREEN · specific question metadata · verified A+ map · core-slide guard");
+    console.log("DSA5101 CONTENT QUALITY GREEN · question templates/cards · specific question metadata · verified A+ map · core-slide guard");
   }
 }
 

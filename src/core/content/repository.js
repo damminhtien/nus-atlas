@@ -162,6 +162,7 @@
   function getSourceCatalog(courseId) { const packageData = packageFor(courseId); return packageData && packageData.sources ? packageData.sources.slice() : []; }
   function getTextbook(courseId) { const packageData = packageFor(courseId); return packageData && packageData.textbook ? packageData.textbook : null; }
   function getQuestionBank(courseId) { const packageData = packageFor(courseId); return packageData && packageData.questionBank ? packageData.questionBank : null; }
+  function getQuestionTemplates(courseId) { const packageData = packageFor(courseId); return packageData && packageData.questionTemplates ? packageData.questionTemplates : null; }
   function getSourceManifest(courseId) { const packageData = packageFor(courseId); return packageData && packageData.sourceManifest ? packageData.sourceManifest : null; }
   function getSlideSets(courseId) { const packageData = packageFor(courseId); return packageData && Array.isArray(packageData.slideSets) ? packageData.slideSets.slice() : []; }
   function listSlideSets(courseId) { const item = entry(courseId); return item ? Object.keys(item.slideAssets || {}).map(id => ({ id })) : []; }
@@ -170,5 +171,5 @@
   function hasTextbook(courseId) { const item = entry(courseId); const packageData = packageFor(courseId); return !!((packageData && packageData.textbookAsset) || (item && item.hasTextbook)); }
   function stats() { return { courses: listCourses().length, lessons: listCourses().reduce((count, course) => count + listLessons(course.code).length, 0), loadedCourses: packages.size, loadedLessons: lessons.size }; }
 
-  return Object.freeze({ listCourses, getCourse, peekCourse: getCourse, getCourseOutline, getCatalog, listLessons, peekLesson, getLesson, loadCourse, loadLesson, getQuestions, getStudyKit, loadSlides, loadTextbook, loadSourceManifest, needsLoad, isLessonLoaded, getAssessment, listAssessments, getAssessmentMap, getLab, listLabs, getVisual, listVisuals, getSchedule, getSourceTypes, getSourceCatalog, getTextbook, hasTextbook, getQuestionBank, getSourceManifest, listSlideSets, getSlideSets, getSlideSet, getSlide, stats });
+  return Object.freeze({ listCourses, getCourse, peekCourse: getCourse, getCourseOutline, getCatalog, listLessons, peekLesson, getLesson, loadCourse, loadLesson, getQuestions, getStudyKit, loadSlides, loadTextbook, loadSourceManifest, needsLoad, isLessonLoaded, getAssessment, listAssessments, getAssessmentMap, getLab, listLabs, getVisual, listVisuals, getSchedule, getSourceTypes, getSourceCatalog, getTextbook, hasTextbook, getQuestionBank, getQuestionTemplates, getSourceManifest, listSlideSets, getSlideSets, getSlideSet, getSlide, stats });
 });
