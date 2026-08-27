@@ -87,6 +87,9 @@ export type Question = {
   commonTrap?: string;
   mistakeTags?: string[];
   timedSeconds?: number;
+  grading?: { type: "numeric"; expected: number; tolerance: number };
+  generatedFrom?: string;
+  generationSeed?: string | number;
 };
 export type StudyKit = {
   lessonId: string;
