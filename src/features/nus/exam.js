@@ -17,7 +17,8 @@
     text,
     esc,
     button,
-    typeset
+    typeset,
+    gradeOpenResponse
   } = options;
   let state = null;
   let timer = null;
@@ -83,7 +84,9 @@
   }
 
   function gradingMode(question) {
+    if (question && question.gradingMode) return question.gradingMode;
     if (question && question.type === "mcq") return "exact";
+    if (question && question.grading && question.grading.type === "numeric") return "exact";
     if (question && question.type === "derivation" && Array.isArray(question.rubric) && question.rubric.length) return "rubric";
     return "heuristic";
   }
@@ -113,6 +116,12 @@
 
   function answerKey(question, raw) {
     if (question.type === "mcq") return Number(raw) === question.answer;
+    const numeric = question.grading && question.grading.type === "numeric" ? question.grading : null;
+    if (numeric) {
+      const match = String(raw).replace(/,/g, "").match(/-?\d+(?:\.\d+)?/);
+      const value = match ? Number(match[0]) : NaN;
+      return Number.isFinite(value) && Math.abs(value - Number(numeric.expected)) <= Number(numeric.tolerance || 0);
+    }
     const rubricResult = rubricPasses(question, raw);
     if (rubricResult !== null) return rubricResult;
     const value = normalizeAnswer(raw);
@@ -120,6 +129,39 @@
       const normalized = normalizeAnswer(answer);
       return value === normalized || value.includes(normalized);
     });
+  }
+
+  function localGrade(question, raw) {
+    const mode = gradingMode(question);
+    const correct = answerKey(question, raw);
+    return {
+      correct,
+      mode,
+      status: mode === "exact" ? "graded" : "self-review",
+      gradedBy: mode === "exact" ? "local" : "heuristic",
+      score: mode === "exact" ? (correct ? 1 : 0) : null,
+      feedback: mode === "exact" ? "" : "Local rubric/phrase feedback; verify the reasoning against the worked answer."
+    };
+  }
+
+  async function gradeResponse(question, raw) {
+    const local = localGrade(question, raw);
+    if (local.mode === "exact" || typeof gradeOpenResponse !== "function") return local;
+    try {
+      const external = await gradeOpenResponse({
+        courseCode: state.courseCode,
+        questionId: question.id,
+        prompt: question.prompt,
+        answer: raw,
+        referenceAnswer: question.solution || question.explanation || "",
+        accepted: question.accepted || [],
+        rubric: question.rubric || [],
+        sourceRefs: question.sourceRefs || question.lessonSourceRefs || []
+      });
+      return { correct: !!external.correct, mode: "ai", status: "graded", gradedBy: "ai", score: external.score == null ? null : Number(external.score), feedback: external.feedback || "AI-assisted feedback. This result is not mastery evidence." };
+    } catch (_) {
+      return { ...local, feedback: "External grader unavailable; local feedback shown. Review the worked answer before retrying." };
+    }
   }
 
   function stopTimer() {
@@ -131,7 +173,7 @@
 
   function answerRecords() {
     const byId = new Map((state && state.questions || []).map(question => [question.id, question]));
-    return (state && state.answers || []).map(answer => ({ ...answer, q: byId.get(answer.questionId) })).filter(answer => answer.q);
+    return (state && state.answers || []).map(answer => ({ ...answer, q: byId.has(answer.questionId) ? { ...byId.get(answer.questionId), gradingMode: answer.gradingMode, feedback: answer.feedback } : null })).filter(answer => answer.q);
   }
 
   function finish(timedOut = false) {
@@ -204,12 +246,11 @@
     const total = state.questions.length;
     const exactAnswers = answers.filter(answer => masteryEligible(answer.q));
     const exactCorrect = exactAnswers.filter(answer => answer.correct).length;
-    const openResponses = answers.filter(answer => !masteryEligible(answer.q)).length;
     const skipped = state.skippedQuestionIds.length;
-    const gradingSummary = exactAnswers.length
-      ? `${exactCorrect}/${exactAnswers.length} exact auto-graded${openResponses ? ` · ${openResponses} open-response self-check${openResponses === 1 ? "" : "s"}` : ""}`
-      : `${openResponses} open-response self-check${openResponses === 1 ? "" : "s"}`;
-    let body = pageHead(`${esc(state.courseCode)} · review`, "Practice complete", `${gradingSummary}. Open-response grading remains feedback unless a deterministic checker confirms it.`);
+    const aiAssisted = answers.filter(answer => answer.gradedBy === "ai").length;
+    const selfReview = answers.filter(answer => answer.gradedBy !== "local" && answer.gradedBy !== "ai").length;
+    const gradingSummary = `${exactCorrect}/${exactAnswers.length} exact · ${aiAssisted} AI-assisted · ${selfReview} self-review`;
+    let body = pageHead(`${esc(state.courseCode)} · review`, "Practice complete", `${gradingSummary}. Only deterministic local grades contribute mastery evidence.`);
     body += `<div class="nus-result-score"><b>${Math.round(correct / Math.max(1, total) * 100)}%</b><span>${correct} correct · ${total - correct - skipped} to review · ${skipped} skipped</span></div>${total - correct ? `<div class="nus-callout nus-mistake-callout"><b>${total - correct} review item${total - correct === 1 ? "" : "s"}</b><span>Retry misses from Review; this attempt does not schedule spaced retrieval.</span>${button("Review mistakes", `#/nus/mistakes/${state.courseCode}`, "primary")}</div>` : ""}<div class="nus-review-deck">${answers.map((answer, index) => { const mode = gradingMode(answer.q); const label = mode === "exact" ? (answer.correct ? "Correct" : "Review") : (answer.correct ? "Feedback match" : "Self-review"); return `<article class="nus-review-item ${answer.correct ? "correct" : "missed"}><div><span class="pill ${answer.correct ? "sage" : ""}">${label}</span><b>${index + 1}. ${esc(answer.q.prompt)}</b></div><p><strong>Grading:</strong> ${mode === "exact" ? "deterministic local" : "heuristic feedback; no mastery evidence"}</p><p><strong>Source:</strong> ${(answer.q.sourceRefs || answer.q.lessonSourceRefs || []).slice(0, 2).map(sourceItem).join(" ")}</p><p><strong>Your answer:</strong> ${esc(answer.q.type === "mcq" ? (answer.q.choices[Number(answer.raw)] || "No choice") : answer.raw)}</p><p><strong>Worked answer:</strong> ${text(answer.q.solution || answer.q.explanation || "Review the source lesson.")}</p></article>`; }).join("")}</div><div class="nus-lesson-actions">${button("Retry misses", `#/nus/exam/${state.courseCode}`, "primary")}${button("Continue deep practice", `#/nus/exam/${state.courseCode}`, "ghost")}${button("Back to course", `#/nus/course/${state.courseCode}`, "ghost")}</div>`;
     root.innerHTML = body;
     typeset();
@@ -274,14 +315,15 @@
     }).join("");
     root.innerHTML = pageHead(`${esc(state.courseCode)} · Question ${state.currentIndex + 1}/${state.questions.length}`, state.mode === "mock" ? "Mock exam" : "Practice", question.lessonTitle) + `<div class="nus-exam-bar"><span>Time left <b id="nus-exam-timer">--:--</b></span><span>${answersSoFar} answered</span><span>${esc(state.focus || "smart")} · ${state.questions.length} questions</span></div><section class="nus-card nus-exam-question reveal"><div class="nus-question-source">${(question.sourceRefs || question.lessonSourceRefs || []).slice(0, 2).map(sourceItem).join(" ")}</div><div class="nus-question-meta"><span>${esc(questionLabel(question))}</span><span>${esc(question.cognitiveLevel || "understand")}</span></div><h3>${esc(question.prompt)}</h3>${question.selectionReasons && question.selectionReasons.length ? `<p class="nus-callout nus-question-why"><b>Why this question?</b><span>${esc(question.selectionReasons.join(" · "))}.</span></p>` : ""}${rubricHint}${input}<div class="nus-exam-footer"><span class="nus-muted">Answer reveal is locked until the attempt ends.</span><div class="nus-exam-footer-actions"><button class="btn ghost" id="nus-exam-back" type="button" ${state.currentIndex === 0 ? "disabled" : ""}>Back</button><button class="btn ghost" id="nus-exam-skip" type="button">Skip</button>${question.lessonId ? button("Review lesson", `#/nus/lesson/${esc(state.courseCode)}/${esc(question.lessonId)}`, "ghost") : ""}<button class="btn primary" id="nus-next-answer">${state.currentIndex + 1 === state.questions.length ? "Save & finish" : "Save & next"}</button></div></div><nav class="nus-question-navigator" aria-label="Question navigator">${questionNav}</nav></section>`;
     typeset();
-    const submit = () => {
+    const submit = async () => {
       const raw = question.type === "mcq" ? (root.querySelector("input[name='nus-answer']:checked") || {}).value : root.querySelector("#nus-answer").value;
       if (raw == null || !String(raw).trim()) return;
-      const correct = answerKey(question, raw);
-      const mode = gradingMode(question);
-      state = sessionApi.answer(state, { questionId: question.id, raw, correct, gradingMode: mode });
+      const submitButton = root.querySelector("#nus-next-answer");
+      if (submitButton) { submitButton.disabled = true; submitButton.textContent = "Checking…"; }
+      const grading = await gradeResponse(question, raw);
+      state = sessionApi.answer(state, { questionId: question.id, raw, correct: grading.correct, gradingMode: grading.mode, gradingStatus: grading.status, gradedBy: grading.gradedBy, score: grading.score, feedback: grading.feedback });
       const store = getStore();
-      if (store && typeof store.recordQuestionAttempt === "function") store.recordQuestionAttempt({ attemptId: state.attemptId, courseCode: state.courseCode, correct, raw, question, gradingMode: mode });
+      if (store && typeof store.recordQuestionAttempt === "function") store.recordQuestionAttempt({ attemptId: state.attemptId, courseCode: state.courseCode, correct: grading.correct, raw, question, gradingMode: grading.mode, gradingStatus: grading.status, gradedBy: grading.gradedBy, score: grading.score, feedback: grading.feedback });
       if (sessionApi.isComplete(state)) finish();
       else { state = sessionApi.advance(state); persistActivePractice(); render(null, null, true); }
     };

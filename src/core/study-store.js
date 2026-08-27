@@ -233,7 +233,12 @@
         sourceRefs: question.sourceRefs || [],
         difficulty: question.difficulty,
         skill: question.skill,
-        cognitiveLevel: question.cognitiveLevel
+        cognitiveLevel: question.cognitiveLevel,
+        gradingMode: item.gradingMode || null,
+        gradingStatus: item.gradingStatus || null,
+        gradedBy: item.gradedBy || null,
+        gradeScore: item.score == null ? null : Number(item.score),
+        feedback: item.feedback || ""
       }
     });
   }

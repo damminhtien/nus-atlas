@@ -583,7 +583,10 @@
     text,
     esc,
     button,
-    typeset: typesetNus
+    typeset: typesetNus,
+    gradeOpenResponse: window.ATLAS_RETRIEVAL_GRADER && window.ATLAS_RETRIEVAL_GRADER.grade
+      ? payload => window.ATLAS_RETRIEVAL_GRADER.grade(payload)
+      : null
   }) : null;
   function stopExamTimer() { if (examFeature) examFeature.stopTimer(); }
   async function renderExam(code, scope, internal, context) {

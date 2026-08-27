@@ -97,3 +97,14 @@ test("only deterministic grades are eligible for mastery evidence", () => {
   assert.equal(feature.masteryEligible(derivation), false);
   assert.equal(feature.masteryEligible(short), false);
 });
+
+test("numeric grading is local and open-response grading stays outside mastery", () => {
+  const feature = createExamFeature({
+    root: { innerHTML: "" }, getCourses: () => [], getLessons: () => [], getStore: () => ({}),
+    pageHead: () => "", sourceItem: () => "", text: value => value, esc: value => String(value), button: () => "", typeset() {},
+    gradeOpenResponse: async () => { throw new Error("offline"); }
+  });
+  const numeric = { type: "calculation", grading: { type: "numeric", expected: 2, tolerance: 0.01 } };
+  assert.equal(feature.answerKey(numeric, "2.005"), true);
+  assert.equal(feature.masteryEligible(numeric), true);
+});
