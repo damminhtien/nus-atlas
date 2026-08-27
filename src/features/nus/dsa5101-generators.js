@@ -112,6 +112,350 @@
     const next = random(seed), frequencies = Array.from({ length: 3 }, () => integer(next, 1, 7)), expected = frequencies.reduce((sum, value) => sum + value * value, 0);
     return numeric(template, "dsa5101-ams-f2", seed, `A stream has key frequencies ${frequencies.join(", ")}. Compute its second frequency moment F_2.`, `F_2 = ${frequencies.map(value => `${value}^2`).join("+")} = ${expected}.`, "The second moment squares each key frequency; it is not the stream length or the number of distinct keys.", expected);
   }
+  function distinctChoices(correct, alternatives) {
+    const values = [correct].concat(alternatives).map(value => String(value));
+    const choices = [];
+    values.forEach(value => {
+      if (!choices.includes(value)) choices.push(value);
+    });
+    while (choices.length < 6) choices.push("Option " + (choices.length + 1));
+    return choices.slice(0, 6);
+  }
+  function mcq(template, generatorId, seed, prompt, solution, explanation, correct, alternatives) {
+    return base(template, generatorId, seed, prompt, solution, explanation, {
+      type: "mcq",
+      choices: distinctChoices(correct, alternatives),
+      answer: 0
+    });
+  }
+  function shuffled(next, values) {
+    const result = values.slice();
+    for (let index = result.length - 1; index > 0; index -= 1) {
+      const swap = integer(next, 0, index);
+      [result[index], result[swap]] = [result[swap], result[index]];
+    }
+    return result;
+  }
+  function pcy(seed, template) {
+    const next = random(seed);
+    const threshold = integer(next, 3, 5);
+    const counts = [
+      threshold + integer(next, 0, 3),
+      threshold + integer(next, 0, 3),
+      threshold + integer(next, 0, 3),
+      integer(next, 1, threshold - 1)
+    ];
+    const items = ["A", "B", "C", "D"];
+    const pairs = ["AB", "AC", "AD", "BC", "BD", "CD"];
+    const frequentPairs = ["AB", "AC", "BC"];
+    const selected = frequentPairs[integer(next, 0, frequentPairs.length - 1)];
+    const buckets = pairs.map(pair => pair === selected ? threshold + integer(next, 0, 3) : integer(next, 1, threshold - 1));
+    const correct = selected + " (bucket count " + buckets[pairs.indexOf(selected)] + ")";
+    const alternatives = pairs.filter(pair => pair !== selected).slice(0, 5).map(pair => pair + " (bucket count " + buckets[pairs.indexOf(pair)] + ")");
+    return mcq(template, "dsa5101-pcy", seed,
+      "PCY uses minimum support " + threshold + ". Singleton counts are A=" + counts[0] + ", B=" + counts[1] + ", C=" + counts[2] + ", D=" + counts[3] + ". Which pair remains a candidate after both frequent-item and frequent-bucket tests?",
+      "The surviving pair is " + correct + ": both items are frequent and its hashed bucket reaches the threshold.",
+      "PCY prunes a pair when either item is infrequent or its bucket is infrequent; passing only one test is insufficient.",
+      correct,
+      alternatives);
+  }
+  function minhashSignature(seed, template) {
+    const next = random(seed);
+    const matrix = Array.from({ length: 4 }, () => Array.from({ length: 3 }, () => next() < 0.5 ? 1 : 0));
+    for (let column = 0; column < 3; column += 1) {
+      if (matrix.every(row => row[column] === 0)) matrix[integer(next, 0, 3)][column] = 1;
+    }
+    const order = shuffled(next, [0, 1, 2, 3]);
+    const signature = Array.from({ length: 3 }, (_, column) => {
+      const row = order.find(index => matrix[index][column] === 1);
+      return row + 1;
+    });
+    const correct = "(" + signature.join(", ") + ")";
+    const original = Array.from({ length: 3 }, (_, column) => {
+      const row = matrix.findIndex(candidate => candidate[column] === 1);
+      return row + 1;
+    });
+    const alternatives = [
+      "(" + original.join(", ") + ")",
+      "(" + signature.slice().reverse().join(", ") + ")",
+      "(" + signature.map((value, index) => index === 0 ? value + 1 : value).join(", ") + ")",
+      "(" + signature.map((value, index) => index === 1 ? Math.max(1, value - 1) : value).join(", ") + ")",
+      "The number of 1s in each column"
+    ];
+    return mcq(template, "dsa5101-minhash-signature", seed,
+      "For the binary characteristic matrix " + JSON.stringify(matrix) + ", MinHash scans rows in permutation order " + (order.map(index => index + 1).join(" -> ")) + ". What signature is produced?",
+      "The first 1 in each column under that row order gives signature " + correct + ".",
+      "A MinHash signature records the first permuted row containing a 1 for each column; it is not a column sum.",
+      correct,
+      alternatives);
+  }
+  function lshReverse(seed, template) {
+    const next = random(seed);
+    const rowsTotal = next() < 0.5 ? 20 : 24;
+    const high = next() < 0.5 ? 0.8 : 0.85;
+    const low = next() < 0.5 ? 0.25 : 0.3;
+    const bands = rowsTotal === 20 ? 5 : 6;
+    const rows = 4;
+    const highProbability = round(1 - Math.pow(1 - Math.pow(high, rows), bands));
+    const lowProbability = round(1 - Math.pow(1 - Math.pow(low, rows), bands));
+    const correct = "(b=" + bands + ", r=" + rows + ")";
+    const alternatives = [
+      "(b=1, r=" + rowsTotal + ")",
+      "(b=2, r=" + (rowsTotal / 2) + ")",
+      "(b=" + (rowsTotal / 4) + ", r=4)",
+      "(b=" + (rowsTotal / 5) + ", r=5)",
+      "No factorization of " + rowsTotal + " can satisfy both targets"
+    ];
+    return mcq(template, "dsa5101-lsh-reverse", seed,
+      "Choose b bands and r rows per band with br=" + rowsTotal + " so that similarity " + high + " has candidate probability 0.90-0.99 while similarity " + low + " has probability 0.01-0.05. Which pair is the best design?",
+      "Use " + correct + ". It gives P(high) approximately " + highProbability + " and P(low) approximately " + lowProbability + ".",
+      "The candidate probability is 1-(1-s^r)^b. Increasing r sharpens the threshold; b and r must still multiply to the total signature rows.",
+      correct,
+      alternatives);
+  }
+  function kmeansConvergence(seed, template) {
+    const next = random(seed);
+    let point = integer(next, 1, 4);
+    const points = [point];
+    while (points.length < 6) {
+      point += integer(next, 1, 4);
+      points.push(point);
+    }
+    const initialCentroids = [points[1], points[4]];
+    let centroids = initialCentroids.slice();
+    let assignments = [];
+    for (let iteration = 0; iteration < 10; iteration += 1) {
+      const nextAssignments = points.map(value => Math.abs(value - centroids[0]) <= Math.abs(value - centroids[1]) ? 0 : 1);
+      const nextCentroids = [0, 1].map(cluster => {
+        const members = points.filter((_, index) => nextAssignments[index] === cluster);
+        return members.reduce((sum, value) => sum + value, 0) / members.length;
+      });
+      const stable = assignments.length > 0 && nextAssignments.every((value, index) => value === assignments[index]);
+      assignments = nextAssignments;
+      centroids = nextCentroids;
+      if (stable) break;
+    }
+    const groups = [0, 1].map(cluster => points.filter((_, index) => assignments[index] === cluster).join(", "));
+    const correct = "Cluster 1={" + groups[0] + "}; Cluster 2={" + groups[1] + "}";
+    const alternatives = [
+      "Cluster 1={" + points.slice(0, 3).join(", ") + "}; Cluster 2={" + points.slice(3).join(", ") + "}",
+      "Cluster 1={" + points.filter((_, index) => assignments[index] === 1).join(", ") + "}; Cluster 2={" + points.filter((_, index) => assignments[index] === 0).join(", ") + "}",
+      "Keep the initial centroids without reassigning points",
+      "Assign every point to the nearest global mean",
+      "Split the sorted points into alternating odd and even positions"
+    ];
+    return mcq(template, "dsa5101-kmeans-convergence", seed,
+      "Run one-dimensional Lloyd K-means on points [" + points.join(", ") + "] with initial centroids [" + initialCentroids.join(", ") + "] until assignments stop changing. Which final partition is correct? Ties go to Cluster 1.",
+      "The stable nearest-centroid assignment is " + correct + ".",
+      "K-means alternates assignment and mean recomputation; convergence means the assignments no longer change, not that the initial centroids are retained.",
+      correct,
+      alternatives);
+  }
+  function latentFactor(seed, template) {
+    const next = random(seed);
+    const user = [integer(next, -2, 4), integer(next, -2, 4)];
+    const item = [integer(next, -2, 4), integer(next, -2, 4)];
+    const expected = round(user[0] * item[0] + user[1] * item[1]);
+    return numeric(template, "dsa5101-latent-factor", seed,
+      "A latent-factor model uses user vector [" + user.join(", ") + "] and item vector [" + item.join(", ") + "]. Compute the dot-product score.",
+      "score = " + user[0] + "·" + item[0] + " + " + user[1] + "·" + item[1] + " = " + expected + ".",
+      "The latent prediction core is the inner product of the user and item factors; a bias term would be added separately only if specified.",
+      expected);
+  }
+  function pagerankTwo(seed, template) {
+    const next = random(seed);
+    const a = integer(next, 2, 8) / 10;
+    const b = integer(next, 2, 8) / 10;
+    const first = integer(next, 2, 8) / 10;
+    const r1 = round(a * first + b * (1 - first));
+    const expected = round(a * r1 + b * (1 - r1));
+    const matrix = "[[" + a + ", " + b + "], [" + round(1 - a) + ", " + round(1 - b) + "]]";
+    return numeric(template, "dsa5101-pagerank-two", seed,
+      "With column-stochastic M=" + matrix + " and r^(0)=[" + first + ", " + round(1 - first) + "]^T, compute node A after two power iterations.",
+      "r_A^(1)=" + r1 + " and r_A^(2)=" + a + "·" + r1 + " + " + b + "·" + round(1 - r1) + " = " + expected + ".",
+      "Use the same transition convention at every iteration: r^(t+1)=M r^(t). Do not transpose M halfway through.",
+      expected);
+  }
+  function fm(seed, template) {
+    const next = random(seed);
+    const zeros = integer(next, 2, 7);
+    const expected = Math.pow(2, zeros);
+    return numeric(template, "dsa5101-fm", seed,
+      "An FM sketch observes a maximum trailing-zero run R=" + zeros + " in its hash-pattern samples. What distinct-count estimate follows from the basic 2^R rule?",
+      "Estimate = 2^" + zeros + " = " + expected + ".",
+      "The basic FM estimator converts the maximum trailing-zero position into a power-of-two scale; it is not the number of observed stream items.",
+      expected);
+  }
+  function amsEstimator(seed, template) {
+    const next = random(seed);
+    const n = integer(next, 20, 80);
+    const frequency = integer(next, 2, 8);
+    const expected = n * (2 * frequency - 1);
+    return numeric(template, "dsa5101-ams-estimator", seed,
+      "An AMS F2 sample uses stream length n=" + n + " and sampled item frequency X=" + frequency + ". Compute the single-sample estimator n(2X-1).",
+      "n(2X-1) = " + n + "(2·" + frequency + "-1) = " + expected + ".",
+      "AMS estimates the second moment from a signed sample; do not replace the estimator with nX or X^2.",
+      expected);
+  }
+  function svdSigma(seed, template) {
+    const next = random(seed);
+    const sigma = integer(next, 2, 9);
+    const squared = sigma * sigma;
+    return numeric(template, "dsa5101-svd-sigma", seed,
+      "An eigenvalue of A^T A is λ=" + squared + ". Assuming singular values are nonnegative, compute the corresponding singular value σ.",
+      "σ = sqrt(" + squared + ") = " + sigma + ".",
+      "Singular values are the nonnegative square roots of the eigenvalues of A^T A; do not report λ itself.",
+      sigma);
+  }
+  function svdError(seed, template) {
+    const next = random(seed);
+    const first = integer(next, 5, 10);
+    const second = integer(next, 3, first - 1);
+    const third = integer(next, 2, second - 1);
+    const fourth = integer(next, 1, third - 1);
+    const singularValues = [first, second, third, fourth];
+    const rank = integer(next, 1, 2);
+    const expected = singularValues.slice(rank).reduce((sum, value) => sum + value * value, 0);
+    return numeric(template, "dsa5101-svd-error", seed,
+      "A matrix has singular values [" + singularValues.join(", ") + "]. Compute the squared Frobenius error of its best rank-" + rank + " approximation.",
+      "Error^2 = " + singularValues.slice(rank).map(value => value + "^2").join(" + ") + " = " + expected + ".",
+      "The Eckart-Young tail keeps the singular values after the retained rank and sums their squares.",
+      expected);
+  }
+  function conductance(seed, template) {
+    const next = random(seed);
+    const cut = integer(next, 1, 4);
+    const volumeLeft = integer(next, 5, 15);
+    const volumeRight = integer(next, 5, 15);
+    const expected = round(cut / Math.min(volumeLeft, volumeRight));
+    return numeric(template, "dsa5101-conductance", seed,
+      "A cut has " + cut + " crossing edges, volume(S)=" + volumeLeft + ", and volume(complement)=" + volumeRight + ". Compute conductance cut/min(volumes).",
+      "φ(S) = " + cut + "/min(" + volumeLeft + ", " + volumeRight + ") = " + expected + ".",
+      "Conductance normalizes the cut by the smaller side volume; using the larger volume changes the objective.",
+      expected);
+  }
+  function pprSweep(seed, template) {
+    const next = random(seed);
+    const nodes = ["A", "B", "C", "D"];
+    const scores = nodes.map(() => integer(next, 1, 9));
+    const degrees = nodes.map(() => integer(next, 1, 5));
+    const ratios = nodes.map((node, index) => ({ node, ratio: scores[index] / degrees[index] }));
+    ratios.sort((left, right) => right.ratio - left.ratio || left.node.localeCompare(right.node));
+    const correct = ratios.map(entry => entry.node).join(" > ");
+    const alternatives = [
+      nodes.slice().sort((left, right) => scores[nodes.indexOf(right)] - scores[nodes.indexOf(left)]).join(" > "),
+      nodes.slice().sort((left, right) => degrees[nodes.indexOf(left)] - degrees[nodes.indexOf(right)]).join(" > "),
+      correct.split(" > ").reverse().join(" > "),
+      nodes.join(" > "),
+      nodes.slice().reverse().join(" > ")
+    ];
+    return mcq(template, "dsa5101-ppr-sweep", seed,
+      "A personalized PageRank sweep ranks nodes by p(v)/d(v). Scores are A=" + scores[0] + ", B=" + scores[1] + ", C=" + scores[2] + ", D=" + scores[3] + "; degrees are A=" + degrees[0] + ", B=" + degrees[1] + ", C=" + degrees[2] + ", D=" + degrees[3] + ". Which descending order is used?",
+      "Compute each score-to-degree ratio and sort descending: " + correct + ".",
+      "The sweep ordering uses personalized score normalized by degree, not raw score alone; the prefix sets define the conductance curve.",
+      correct,
+      alternatives);
+  }
+  function binaryEntropy(positive, negative) {
+    const total = positive + negative;
+    const terms = [positive / total, negative / total].filter(value => value > 0);
+    return -terms.reduce((sum, probability) => sum + probability * Math.log2(probability), 0);
+  }
+  function entropy(seed, template) {
+    const next = random(seed);
+    const positive = integer(next, 1, 12);
+    const negative = integer(next, 1, 12);
+    const expected = round(binaryEntropy(positive, negative));
+    return numeric(template, "dsa5101-entropy", seed,
+      "A decision-tree node contains " + positive + " positive and " + negative + " negative examples. Compute its binary entropy in bits.",
+      "H = -p+log2(p+) - p-log2(p-) = " + expected + ".",
+      "Entropy measures label uncertainty. It is zero only for a pure node and is maximized near a 50/50 split.",
+      expected);
+  }
+  function informationGain(seed, template) {
+    const next = random(seed);
+    const leftPositive = integer(next, 1, 8);
+    const leftNegative = integer(next, 1, 8);
+    const rightPositive = integer(next, 1, 8);
+    const rightNegative = integer(next, 1, 8);
+    const parentPositive = leftPositive + rightPositive;
+    const parentNegative = leftNegative + rightNegative;
+    const leftTotal = leftPositive + leftNegative;
+    const rightTotal = rightPositive + rightNegative;
+    const total = leftTotal + rightTotal;
+    const expected = round(binaryEntropy(parentPositive, parentNegative) -
+      (leftTotal / total) * binaryEntropy(leftPositive, leftNegative) -
+      (rightTotal / total) * binaryEntropy(rightPositive, rightNegative));
+    return numeric(template, "dsa5101-information-gain", seed,
+      "A split creates left [" + leftPositive + " positive, " + leftNegative + " negative] and right [" + rightPositive + " positive, " + rightNegative + " negative]. Compute information gain in bits.",
+      "IG = H(parent) - (" + leftTotal + "/" + total + ")H(left) - (" + rightTotal + "/" + total + ")H(right) = " + expected + ".",
+      "Information gain is the parent entropy minus the child entropies weighted by child size; do not subtract unweighted entropies.",
+      expected);
+  }
+  function submodular(seed, template) {
+    const next = random(seed);
+    const smallSetGain = integer(next, 4, 10);
+    const largeSetGain = integer(next, 1, smallSetGain - 1);
+    const correct = "Δ(x|A)=" + smallSetGain + " ≥ Δ(x|B)=" + largeSetGain + " when A⊆B";
+    const alternatives = [
+      "Δ(x|A)=" + largeSetGain + " ≥ Δ(x|B)=" + smallSetGain + " when A⊆B",
+      "The marginal gain must stay constant for all sets",
+      "The larger set always has the larger marginal gain",
+      "Greedy is optimal for every non-submodular objective",
+      "Diminishing returns compares total values, not marginal gains"
+    ];
+    return mcq(template, "dsa5101-submodular", seed,
+      "For a coverage objective, adding x to smaller set A gives gain " + smallSetGain + " while adding x to larger set B gives gain " + largeSetGain + ", with A⊆B. Which statement captures submodularity?",
+      "Diminishing returns requires " + correct + ".",
+      "Submodularity compares the marginal contribution of the same item as the context set grows; it does not say the total objective decreases.",
+      correct,
+      alternatives);
+  }
+  function banditMean(seed, template) {
+    const next = random(seed);
+    const rewards = Array.from({ length: integer(next, 3, 5) }, () => integer(next, 0, 10));
+    const expected = round(rewards.reduce((sum, value) => sum + value, 0) / rewards.length);
+    return numeric(template, "dsa5101-bandit-mean", seed,
+      "An arm produced rewards [" + rewards.join(", ") + "]. Compute its empirical mean reward.",
+      "mean = (" + rewards.join(" + ") + ")/" + rewards.length + " = " + expected + ".",
+      "The empirical mean is cumulative reward divided by pulls; it is not the maximum observed reward.",
+      expected);
+  }
+  function epsilonGreedy(seed, template) {
+    const next = random(seed);
+    const arms = integer(next, 3, 5);
+    const epsilon = [0.1, 0.2, 0.3, 0.4][integer(next, 0, 3)];
+    const expected = round(1 - epsilon + epsilon / arms);
+    return numeric(template, "dsa5101-epsilon-greedy", seed,
+      "Epsilon-greedy has " + arms + " arms, exploration rate ε=" + epsilon + ", and a unique best arm. What is the probability of selecting the best arm on the next round?",
+      "P(best) = 1-ε + ε/" + arms + " = " + expected + ".",
+      "Exploit the best arm with probability 1-ε; during exploration, each arm receives ε/K under uniform exploration.",
+      expected);
+  }
+  function ucb(seed, template) {
+    const next = random(seed);
+    const mean = integer(next, 2, 8) / 10;
+    const time = integer(next, 10, 50);
+    const pulls = integer(next, 1, 8);
+    const bonus = Math.sqrt(Math.log(time) / pulls);
+    const expected = round(mean + bonus);
+    return numeric(template, "dsa5101-ucb", seed,
+      "For UCB with empirical mean μ̂=" + mean + ", t=" + time + ", and N=" + pulls + ", compute μ̂ + sqrt(ln(t)/N).",
+      "UCB = " + mean + " + sqrt(ln(" + time + ")/" + pulls + ") = " + expected + ".",
+      "The confidence bonus grows with time and shrinks with arm pulls; use natural logarithm as specified by UCB1.",
+      expected);
+  }
+  function linkageGenerated(seed, template) {
+    const next = random(seed);
+    const mode = ["single", "complete", "average"][integer(next, 0, 2)];
+    const distances = Array.from({ length: 4 }, () => integer(next, 2, 10));
+    const expected = mode === "single" ? Math.min(...distances) : mode === "complete" ? Math.max(...distances) : round(distances.reduce((sum, value) => sum + value, 0) / distances.length);
+    return numeric(template, "dsa5101-linkage", seed,
+      "Two clusters have cross-distances [" + distances.join(", ") + "]. Using " + mode + " linkage, compute their inter-cluster distance.",
+      mode + " linkage gives " + expected + ".",
+      "Single takes the minimum cross-distance, complete takes the maximum, and average takes the mean. Select the linkage rule before aggregating.",
+      expected);
+  }
   function balance(seed, template) {
     const next = random(seed), a = integer(next, 1, 5), b = integer(next, 1, 5), tie = next() < 0.35, budgetA = tie ? b : a, chosen = budgetA >= b ? "A" : "B", remaining = Math.max(budgetA, b) - 1;
     const choices = [`Advertiser ${chosen}; its remaining budget becomes ${remaining}`, `Advertiser ${chosen}; its remaining budget becomes ${remaining + 1}`, `Advertiser ${chosen === "A" ? "B" : "A"}; its remaining budget becomes ${Math.max(budgetA, b)}`, "Reject the query because BALANCE never resolves ties", "Choose by original budget, ignoring current remaining budget", "Choose the advertiser with fewer eligible keywords"];
@@ -119,7 +463,38 @@
     return base(template, "dsa5101-balance", seed, `Advertiser A has remaining budget ${budgetA} and B has ${b}; both bid on the current query. Which allocation follows BALANCE?${tieNote}`, `BALANCE selects ${chosen} and leaves it with ${remaining}.`, "Compare the current remaining budgets among eligible advertisers, then apply the tie rule before decrementing exactly one budget.", { type: "mcq", choices, answer: 0 });
   }
 
-  const implementations = { "dsa5101-support": support, "dsa5101-jaccard": jaccard, "dsa5101-minhash-collision": minhashCollision, "dsa5101-lsh-probability": lshProbability, "dsa5101-linkage": linkage, "dsa5101-kmeans": kmeans, "dsa5101-centered-cosine": centeredCosine, "dsa5101-neighbor-prediction": neighborPrediction, "dsa5101-pagerank": pagerank, "dsa5101-dgim": dgim, "dsa5101-ams-f2": amsF2, "dsa5101-balance": balance };
+  const implementations = {
+    "dsa5101-support": support,
+    "dsa5101-jaccard": jaccard,
+    "dsa5101-minhash-collision": minhashCollision,
+    "dsa5101-lsh-probability": lshProbability,
+    "dsa5101-linkage": linkageGenerated,
+    "dsa5101-kmeans": kmeans,
+    "dsa5101-centered-cosine": centeredCosine,
+    "dsa5101-neighbor-prediction": neighborPrediction,
+    "dsa5101-pagerank": pagerank,
+    "dsa5101-dgim": dgim,
+    "dsa5101-ams-f2": amsF2,
+    "dsa5101-balance": balance,
+    "dsa5101-pcy": pcy,
+    "dsa5101-minhash-signature": minhashSignature,
+    "dsa5101-lsh-reverse": lshReverse,
+    "dsa5101-kmeans-convergence": kmeansConvergence,
+    "dsa5101-latent-factor": latentFactor,
+    "dsa5101-pagerank-two": pagerankTwo,
+    "dsa5101-fm": fm,
+    "dsa5101-ams-estimator": amsEstimator,
+    "dsa5101-svd-sigma": svdSigma,
+    "dsa5101-svd-error": svdError,
+    "dsa5101-conductance": conductance,
+    "dsa5101-ppr-sweep": pprSweep,
+    "dsa5101-entropy": entropy,
+    "dsa5101-information-gain": informationGain,
+    "dsa5101-submodular": submodular,
+    "dsa5101-bandit-mean": banditMean,
+    "dsa5101-epsilon-greedy": epsilonGreedy,
+    "dsa5101-ucb": ucb
+  };
   function definitions(catalog) {
     return Object.keys(implementations).map(generatorId => ({ id: generatorId, generatorId, template: templateFor(catalog, generatorId), generate: implementations[generatorId] })).filter(item => item.template);
   }
