@@ -9,7 +9,14 @@
     "patterns": ["support", "confidence", "lift", "downward closure"],
     "similarity": ["Jaccard", "MinHash", "LSH", "candidate verification"],
     "streams": ["PageRank", "DGIM", "Flajolet-Martin", "error contracts"],
-    "deepDives": ["counterexamples", "boundary cases", "state reconstruction"]
+    "deepDives": ["counterexamples", "boundary cases", "state reconstruction"],
+    "referenceExtensions": {
+      "dimensionalityReduction": ["SVD singular values", "rank-k approximation error", "CUR versus SVD"],
+      "communities": ["PPR sweep ordering", "conductance", "Louvain local optimum", "TrustRank"],
+      "decisionTrees": ["entropy", "weighted information gain", "validation and pruning"],
+      "submodular": ["diminishing returns", "maximum-coverage greedy"],
+      "bandits": ["empirical means", "epsilon-greedy", "UCB", "regret"]
+    }
   },
   "questions": [
     {
@@ -1029,6 +1036,181 @@
       "explanation": "Giving $x$ to A exhausts the only advertiser that can serve $y$, yielding value $1$. Giving $x$ to B preserves A's budget for $y$, yielding value $2$. A guarantee must therefore quantify over the allowed tie rule or fix it explicitly.",
       "sourceRefs": [
         { "sourceId": "DSA5101/Assignments/DSA5101_Assignment_2.pdf", "sourceType": "exercise", "page": 7, "role": "BALANCE tie-breaking", "status": "current-context" }
+      ]
+    },
+    {
+      "id": "dsa5101-stanford-001",
+      "lessonId": "dsa5101-orientation",
+      "templateId": "cur-vs-svd-choice",
+      "cardId": "cur-vs-svd",
+      "type": "mcq",
+      "difficulty": "hard",
+      "skill": "cur-vs-svd-choice",
+      "cognitiveLevel": "evaluate",
+      "estimatedSeconds": 105,
+      "prompt": "A sparse matrix must be approximated, and the output should remain interpretable as actual rows and columns from the original data. Which representation is the best fit?",
+      "choices": [
+        "CUR, because C and R preserve sampled original columns and rows",
+        "SVD only, because every low-rank method must preserve original rows",
+        "PageRank, because it removes dimensions by teleportation",
+        "K-means, because centroids are always original rows and columns",
+        "A random projection with no error or sparsity check",
+        "The full matrix, because approximation cannot preserve interpretability"
+      ],
+      "answer": 0,
+      "explanation": "CUR explicitly builds an approximation from selected columns C and rows R, while SVD uses latent singular directions. The choice follows the representation requirement, not the claim that one method is universally more accurate.",
+      "sourceRefs": [
+        { "sourceId": "Stanford CS246/slides/06-dim_red.pdf", "sourceType": "ref", "page": 1, "role": "CUR versus SVD", "status": "supporting", "url": "https://web.stanford.edu/class/cs246/slides/06-dim_red.pdf" }
+      ]
+    },
+    {
+      "id": "dsa5101-stanford-002",
+      "lessonId": "dsa5101-pagerank",
+      "templateId": "pagerank-trustrank",
+      "cardId": "pagerank-trustrank",
+      "type": "mcq",
+      "difficulty": "hard",
+      "skill": "trustrank-spam-mass",
+      "cognitiveLevel": "analyze",
+      "estimatedSeconds": 105,
+      "prompt": "The link graph is held fixed. Standard PageRank teleports uniformly, while TrustRank teleports only to trusted seeds outside a suspected spam region. If the spam region receives less rank mass under TrustRank, what conclusion is justified?",
+      "choices": [
+        "The changed teleport preference reduced trust propagation into that region",
+        "The spam pages must have lost every incoming hyperlink",
+        "TrustRank is identical to PageRank because both use a transition matrix",
+        "The graph must have become disconnected during the experiment",
+        "Lower rank mass proves the spam region has zero outdegree",
+        "TrustRank guarantees that every non-seed page is malicious"
+      ],
+      "answer": 0,
+      "explanation": "With the transition graph fixed, the controlled change is the teleport distribution. TrustRank injects mass at trusted seeds, so lower spam mass is evidence about trust propagation, not proof that links or graph structure disappeared.",
+      "sourceRefs": [
+        { "sourceId": "Stanford CS246/slides/10-spam.pdf", "sourceType": "ref", "page": 1, "role": "TrustRank and spam mass", "status": "supporting", "url": "https://web.stanford.edu/class/cs246/slides/10-spam.pdf" }
+      ]
+    },
+    {
+      "id": "dsa5101-stanford-003",
+      "lessonId": "dsa5101-pagerank",
+      "templateId": "louvain-local-optimum",
+      "cardId": "graph-communities",
+      "type": "mcq",
+      "difficulty": "hard",
+      "skill": "louvain-local-optimum",
+      "cognitiveLevel": "evaluate",
+      "estimatedSeconds": 105,
+      "prompt": "A Louvain pass stops because no single allowed local move increases modularity. Which statement is correct?",
+      "choices": [
+        "The current partition is locally optimal for the move rule, but not necessarily globally optimal",
+        "The partition is globally optimal because modularity cannot improve anywhere",
+        "The algorithm failed because every community must contain the same number of nodes",
+        "The result is independent of initialization and node-processing order",
+        "Modularity is irrelevant once the first local move is accepted",
+        "The next aggregation phase must always decrease modularity"
+      ],
+      "answer": 0,
+      "explanation": "Louvain accepts local modularity-improving moves and can stop at a local optimum. Initialization, node order, and the aggregation path can affect the final partition, so convergence is not a global-optimality certificate.",
+      "sourceRefs": [
+        { "sourceId": "Stanford CS246/slides/11-graphs.pdf", "sourceType": "ref", "page": 1, "role": "community optimization", "status": "supporting", "url": "https://web.stanford.edu/class/cs246/slides/11-graphs.pdf" }
+      ]
+    },
+    {
+      "id": "dsa5101-stanford-004",
+      "lessonId": "dsa5101-pagerank",
+      "templateId": "ppr-sweep-order",
+      "cardId": "graph-communities",
+      "type": "mcq",
+      "difficulty": "hard",
+      "skill": "ppr-sweep-order",
+      "cognitiveLevel": "apply",
+      "estimatedSeconds": 90,
+      "prompt": "A PPR sweep orders nodes by descending $p(v)/d(v)$, breaking ties alphabetically. Scores are $A=0.20$, $B=0.15$, $C=0.40$, $D=0.10$ and degrees are $A=2$, $B=1$, $C=4$, $D=2$. Which order is correct?",
+      "choices": [
+        "$B>A>C>D$",
+        "$C>A>B>D$",
+        "$A>B>C>D$",
+        "$B>C>A>D$",
+        "$D>B>A>C$",
+        "$C>B>A>D$"
+      ],
+      "answer": 0,
+      "explanation": "The normalized scores are $B=0.15$, $A=0.10$, $C=0.10$, and $D=0.05$. A and C tie, so alphabetical order places A before C.",
+      "sourceRefs": [
+        { "sourceId": "Stanford CS246/slides/11-graphs.pdf", "sourceType": "ref", "page": 1, "role": "PPR sweep and conductance", "status": "supporting", "url": "https://web.stanford.edu/class/cs246/slides/11-graphs.pdf" }
+      ]
+    },
+    {
+      "id": "dsa5101-stanford-005",
+      "lessonId": "dsa5101-orientation",
+      "templateId": "submodular-diminishing-returns",
+      "cardId": "submodular-greedy",
+      "type": "mcq",
+      "difficulty": "hard",
+      "skill": "submodular-diminishing-returns",
+      "cognitiveLevel": "evaluate",
+      "estimatedSeconds": 90,
+      "prompt": "For the same item x and nested sets $A⊆B$, adding x gives marginal gains 7 and 3 respectively. Which statement is the valid submodularity check?",
+      "choices": [
+        "$\\Delta(x|A)=7 \\ge \\Delta(x|B)=3$, so the diminishing-returns condition holds",
+        "$\\Delta(x|A)=7 \\le \\Delta(x|B)=3$, so the condition holds",
+        "The condition compares only $f(A)$ and $f(B)$, not marginal gains",
+        "The larger set must always have a larger marginal gain",
+        "Submodularity requires the two marginal gains to be equal",
+        "The inequality cannot be tested unless the objective is non-monotone"
+      ],
+      "answer": 0,
+      "explanation": "Submodularity requires the marginal contribution to decrease as the context set grows: $\\Delta(x|A) \\ge \\Delta(x|B)$ whenever $A\\subseteq B$. It is a statement about marginal gains, not total values.",
+      "sourceRefs": [
+        { "sourceId": "Stanford CS246/slides/18-submodular.pdf", "sourceType": "ref", "page": 1, "role": "diminishing returns", "status": "supporting", "url": "https://web.stanford.edu/class/cs246/slides/18-submodular.pdf" }
+      ]
+    },
+    {
+      "id": "dsa5101-stanford-006",
+      "lessonId": "dsa5101-orientation",
+      "templateId": "decision-tree-overfit-choice",
+      "cardId": "decision-tree-split",
+      "type": "mcq",
+      "difficulty": "hard",
+      "skill": "decision-tree-overfit-choice",
+      "cognitiveLevel": "evaluate",
+      "estimatedSeconds": 105,
+      "prompt": "A split has the largest training information gain, but validation error rises sharply when the tree keeps splitting. What is the strongest next decision?",
+      "choices": [
+        "Use validation-guided pruning or a depth constraint; training gain alone does not certify generalization",
+        "Keep splitting until every leaf has one example because training entropy will be zero",
+        "Replace information gain by the raw number of child nodes",
+        "Choose the deepest tree because overfitting is impossible after a high-gain split",
+        "Discard all splits and use PageRank to classify the labels",
+        "Use unweighted child entropies so small leaves dominate the score"
+      ],
+      "answer": 0,
+      "explanation": "Information gain is a training impurity criterion. Rising validation error is evidence that model selection must include pruning, depth control, or another regularization decision.",
+      "sourceRefs": [
+        { "sourceId": "Stanford CS246/slides/15-dt.pdf", "sourceType": "ref", "page": 1, "role": "decision-tree splitting and overfitting", "status": "supporting", "url": "https://web.stanford.edu/class/cs246/slides/15-dt.pdf" }
+      ]
+    },
+    {
+      "id": "dsa5101-stanford-007",
+      "lessonId": "dsa5101-orientation",
+      "templateId": "bandit-exploration-choice",
+      "cardId": "bandits-reward-regret",
+      "type": "mcq",
+      "difficulty": "hard",
+      "skill": "bandit-exploration-choice",
+      "cognitiveLevel": "evaluate",
+      "estimatedSeconds": 105,
+      "prompt": "Arm A has empirical mean 0.65 after 100 pulls. Arm B has mean 0.60 after only 2 pulls, and future reward matters. Which policy response is most defensible?",
+      "choices": [
+        "Give B exploration probability or an uncertainty bonus before declaring A permanently best",
+        "Always choose A because the empirical mean is the only relevant statistic",
+        "Always choose B because fewer pulls proves its true mean is higher",
+        "Discard both arms because empirical means cannot be used online",
+        "Choose the arm with the smaller mean to maximize immediate reward",
+        "Use the number of labels in the dataset as the exploration probability"
+      ],
+      "answer": 0,
+      "explanation": "The low pull count makes B uncertain. An epsilon policy reserves exploration mass, while UCB adds a larger confidence bonus to less-sampled arms; both make the exploration-exploitation trade-off explicit.",
+      "sourceRefs": [
+        { "sourceId": "Stanford CS246/slides/19-bandits.pdf", "sourceType": "ref", "page": 1, "role": "exploration and regret", "status": "supporting", "url": "https://web.stanford.edu/class/cs246/slides/19-bandits.pdf" }
       ]
     }
   ]
