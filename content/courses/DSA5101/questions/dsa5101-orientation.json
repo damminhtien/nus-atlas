@@ -35,6 +35,8 @@
     "visualHook": "Write each assessment percentage in a row and circle the maximum.",
     "courseId": "DSA5101",
     "lessonId": "dsa5101-orientation",
+    "templateId": "assessment-format",
+    "cardId": "assessment-format",
     "schemaVersion": "nus.question.v1"
   },
   {
@@ -75,113 +77,8 @@
     "visualHook": "Make a four-column checklist: time, passes, memory, and error.",
     "courseId": "DSA5101",
     "lessonId": "dsa5101-orientation",
-    "schemaVersion": "nus.question.v1"
-  },
-  {
-    "id": "dsa5101-bank-001",
-    "lessonId": "dsa5101-orientation",
-    "type": "mcq",
-    "difficulty": "medium",
-    "skill": "diagnose",
-    "cognitiveLevel": "analyze",
-    "estimatedSeconds": 90,
-    "prompt": "Two algorithms have the same asymptotic time and process data larger than main memory. Which pair is the strongest first comparison?",
-    "choices": [
-      "Number of full data passes and peak working memory",
-      "CPU clock speed and number of output columns",
-      "Number of classes and random-seed length",
-      "Cache associativity and final model size",
-      "Input alphabet size and number of comments",
-      "Wall-clock time from one unrelated hardware run and file name length"
-    ],
-    "answer": 0,
-    "explanation": "Count full data passes and peak working memory first; network movement, skew, and synchronization are additional measurements when the workflow is distributed.",
-    "sourceRefs": [
-      {
-        "sourceId": "DSA5101/DSA5101 Course Information.pdf",
-        "sourceType": "lecture",
-        "page": 1,
-        "role": "scale framing",
-        "status": "current"
-      },
-      {
-        "sourceId": "DSA5101/Reference textbook MMDS 3rd Edition.pdf",
-        "sourceType": "textbook",
-        "page": 3,
-        "role": "scalable algorithm framing",
-        "status": "course-depth"
-      }
-    ],
-    "misconception": "Treating equal asymptotic time as equal scalability when the data exceed memory.",
-    "visualHook": "Place dataset size against RAM, then mark passes and I/O.",
-    "courseId": "DSA5101",
-    "schemaVersion": "nus.question.v1"
-  },
-  {
-    "id": "dsa5101-bank-002",
-    "lessonId": "dsa5101-orientation",
-    "type": "mcq",
-    "difficulty": "easy",
-    "skill": "distinguish",
-    "cognitiveLevel": "understand",
-    "estimatedSeconds": 45,
-    "prompt": "A streaming sketch uses less memory than storing every event. What must be stated alongside the memory claim?",
-    "choices": [
-      "The error or approximation guarantee",
-      "That the result is always exact",
-      "That the stream has no duplicates",
-      "That the input fits in cache"
-    ],
-    "answer": 0,
-    "explanation": "A sketch trades exact storage for a controlled approximation, so its error model is part of the algorithm contract.",
-    "sourceRefs": [
-      {
-        "sourceId": "DSA5101/DSA5101 Course Information.pdf",
-        "sourceType": "lecture",
-        "page": 1,
-        "role": "scale framing",
-        "status": "current"
-      }
-    ],
-    "misconception": "Reporting memory savings without naming the approximated target and its error or guarantee.",
-    "visualHook": "Pair every memory claim with a target-statistic label and an error line.",
-    "courseId": "DSA5101",
-    "schemaVersion": "nus.question.v1"
-  },
-  {
-    "id": "dsa5101-bank-003",
-    "lessonId": "dsa5101-orientation",
-    "type": "derivation",
-    "difficulty": "hard",
-    "skill": "explain",
-    "cognitiveLevel": "analyze",
-    "estimatedSeconds": 120,
-    "prompt": "Explain why a one-pass algorithm can be preferable to a multi-pass algorithm even when both have the same asymptotic time.",
-    "accepted": [
-      "one pass reduces repeated reads and memory pressure",
-      "fewer passes and bounded memory",
-      "avoids repeated scans"
-    ],
-    "explanation": "When data is larger than memory, repeated scans can dominate I/O and coordination. A one-pass design can keep a bounded summary, subject to its error contract.",
-    "sourceRefs": [
-      {
-        "sourceId": "DSA5101/DSA5101 Course Information.pdf",
-        "sourceType": "lecture",
-        "page": 1,
-        "role": "scale framing",
-        "status": "current"
-      },
-      {
-        "sourceId": "DSA5101/Reference textbook MMDS 3rd Edition.pdf",
-        "sourceType": "textbook",
-        "page": 3,
-        "role": "scalable algorithm framing",
-        "status": "course-depth"
-      }
-    ],
-    "misconception": "Assuming one pass is automatically better without checking accuracy, state, and update cost.",
-    "visualHook": "Draw the one-pass data flow and annotate memory, error, and update cost.",
-    "courseId": "DSA5101",
+    "templateId": "scale-algorithm-choice",
+    "cardId": "scale-and-passes",
     "schemaVersion": "nus.question.v1"
   }
 ]

@@ -37,13 +37,22 @@ function orderedJsonFiles(dir, ids, label) {
   }
   return ids.map(id => `${id}.json`);
 }
-function mergeQuestions(primary, extras) {
-  const seen = new Set();
-  return [...(primary || []), ...(extras || [])].filter(question => {
-    if (!question || !question.id || seen.has(question.id)) return false;
-    seen.add(question.id);
-    return true;
-  });
+function mergeQuestions(primary, extras, options = {}) {
+  const merged = [];
+  const positions = new Map();
+  for (const [source, prefer] of [[primary, false], [extras, true]]) {
+    for (const question of source || []) {
+      if (!question || !question.id) continue;
+      const position = positions.get(question.id);
+      if (position === undefined) {
+        positions.set(question.id, merged.length);
+        merged.push(question);
+      } else if (options.preferExtras && prefer) {
+        merged[position] = question;
+      }
+    }
+  }
+  return merged;
 }
 
 function mergeQuestionBanks(primary, supplementalBanks) {
@@ -234,7 +243,8 @@ function loadCourseSource(root, courseId) {
     const lesson = readJson(path.join(courseRoot, "lessons", lessonFile));
     const questionFile = path.join(courseRoot, "questions", `${id}.json`);
     const artifactFile = path.join(courseRoot, "artifacts", `${id}.json`);
-    const questions = mergeQuestions(fs.existsSync(questionFile) ? readJson(questionFile) : [], bankByLesson.get(id) || []);
+    // Authored lesson order remains stable, but the bank owns any colliding ID.
+    const questions = mergeQuestions(fs.existsSync(questionFile) ? readJson(questionFile) : [], bankByLesson.get(id) || [], { preferExtras: true });
     const kit = fs.existsSync(artifactFile) ? readJson(artifactFile) : {};
     return { ...lesson, questions, ...kit };
   });

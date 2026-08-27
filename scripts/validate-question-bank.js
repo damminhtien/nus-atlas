@@ -43,6 +43,16 @@ function validateQuestionBank(bank, state = loadCanonicalState(ROOT)) {
   const existingIds = new Set((state.content[courseId] && state.content[courseId].modules || []).flatMap(module => (module.lessons || []).flatMap(lesson => (lesson.questions || []).map(question => question.id))));
   const ids = new Set();
   const questions = Array.isArray(bank && bank.questions) ? bank.questions : [];
+  if (courseId === "DSA5101") {
+    const bankIds = new Set(questions.map(question => question && question.id).filter(Boolean));
+    const questionsRoot = path.join(ROOT, "content", "courses", courseId, "questions");
+    for (const file of fs.existsSync(questionsRoot) ? fs.readdirSync(questionsRoot).filter(name => name.startsWith("dsa5101-") && name.endsWith(".json")) : []) {
+      const lessonQuestions = JSON.parse(fs.readFileSync(path.join(questionsRoot, file), "utf8"));
+      for (const question of Array.isArray(lessonQuestions) ? lessonQuestions : []) {
+        if (bankIds.has(question.id)) errors.push(`bank question appears in lesson question file: ${file}/${question.id}`);
+      }
+    }
+  }
   if (!questions.length) errors.push("question bank is empty");
   for (const question of questions) {
     const owner = `question ${question && question.id || "<missing>"}`;

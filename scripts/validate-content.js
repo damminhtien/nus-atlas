@@ -215,7 +215,16 @@ function validatePackageDirectory(root = ROOT) {
       const questionFile = path.join(dir, "questions", file);
       const questions = fs.existsSync(questionFile) ? readJson(questionFile) : [];
       if (!Array.isArray(questions)) errors.push(`question package must be an array: ${lesson.id}`);
-      const ids = (questions || []).map(question => question.id).filter(Boolean);
+      const bankFile = path.join(dir, "questions", "bank.json");
+      const bank = fs.existsSync(bankFile) ? readJson(bankFile) : null;
+      const bankIds = (bank && bank.questions || [])
+        .filter(question => question && question.lessonId === lesson.id)
+        .map(question => question.id)
+        .filter(Boolean);
+      const authoredIds = (questions || []).map(question => question.id).filter(Boolean);
+      const ids = entry.name === "DSA5101"
+        ? [...authoredIds, ...bankIds].filter((id, index, all) => all.indexOf(id) === index)
+        : authoredIds;
       questionCount += ids.length;
       if (JSON.stringify(ids) !== JSON.stringify(lesson.questionIds || [])) errors.push(`question IDs do not match lesson: ${lesson.id}`);
       const artifactFile = path.join(dir, "artifacts", file);

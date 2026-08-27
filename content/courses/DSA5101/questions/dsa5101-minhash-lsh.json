@@ -35,6 +35,8 @@
     "visualHook": "Compare the two sets, mark the minimum row, and treat one equal minimum as one Bernoulli sample.",
     "courseId": "DSA5101",
     "lessonId": "dsa5101-minhash-lsh",
+    "templateId": "minhash-collision",
+    "cardId": "minhash-collision",
     "schemaVersion": "nus.question.v1"
   },
   {
@@ -75,116 +77,8 @@
     "visualHook": "Write $s^r$ inside one band, then apply $1-(1-s^r)^b$ across the bands.",
     "courseId": "DSA5101",
     "lessonId": "dsa5101-minhash-lsh",
-    "schemaVersion": "nus.question.v1"
-  },
-  {
-    "id": "dsa5101-bank-007",
-    "lessonId": "dsa5101-minhash-lsh",
-    "type": "mcq",
-    "difficulty": "hard",
-    "skill": "calculate",
-    "cognitiveLevel": "evaluate",
-    "estimatedSeconds": 90,
-    "prompt": "For similarity $s=0.8$, $b=2$ bands, and $r=2$ rows, what is the probability that the pair becomes an LSH candidate?",
-    "choices": [
-      "$1-(1-0.8^2)^2=0.8704$",
-      "$0.8^2=0.64$ because one matching band is enough",
-      "$1-0.8^2=0.36$ because all bands must fail",
-      "$2\\cdot0.8^2=1.28$ because the bands add directly",
-      "$0.8^4=0.4096$ because all four entries must match",
-      "$1-(1-0.8)^2=0.96$ because rows are independent events"
-    ],
-    "answer": 0,
-    "explanation": "A band matches with probability $s^r=0.8^2$. The candidate event is an OR across the two bands, so its probability is $1-(1-s^r)^b=0.8704$.",
-    "sourceRefs": [
-      {
-        "sourceId": "DSA5101/Assignments/DSA5101_Assignment_1.pdf",
-        "sourceType": "exercise",
-        "page": 4,
-        "role": "LSH banding",
-        "status": "current-context"
-      }
-    ],
-    "misconception": "Treating a band match as the final event and forgetting the OR over b independent bands.",
-    "visualHook": "Stack r rows per band and connect the b bands with an OR gate.",
-    "courseId": "DSA5101",
-    "schemaVersion": "nus.question.v1"
-  },
-  {
-    "id": "dsa5101-bank-008",
-    "lessonId": "dsa5101-minhash-lsh",
-    "type": "mcq",
-    "difficulty": "hard",
-    "skill": "diagnose",
-    "cognitiveLevel": "evaluate",
-    "estimatedSeconds": 75,
-    "prompt": "Two documents match in one LSH band. What is the strongest conclusion that is justified before exact verification?",
-    "choices": [
-      "Their Jaccard similarity equals the band threshold",
-      "They are candidates; the band collision may be a false positive",
-      "Their complete MinHash signatures are identical",
-      "They must share every shingle in the union",
-      "They cannot be dissimilar in another band",
-      "The collision probability is zero when the sets differ"
-    ],
-    "answer": 1,
-    "explanation": "LSH uses an OR across bands, so one matching band proposes a candidate but does not prove high exact similarity. A later exact Jaccard computation or downstream score removes false positives.",
-    "sourceRefs": [
-      {
-        "sourceId": "DSA5101/Assignments/DSA5101_Assignment_1.pdf",
-        "sourceType": "exercise",
-        "page": 4,
-        "role": "LSH banding",
-        "status": "current-context"
-      },
-      {
-        "sourceId": "DSA5101/Reference textbook MMDS 3rd Edition.pdf",
-        "sourceType": "textbook",
-        "page": 100,
-        "role": "LSH candidate filtering",
-        "status": "course-depth"
-      }
-    ],
-    "misconception": "Assuming one band collision proves high Jaccard; it only creates a candidate for verification.",
-    "visualHook": "Draw a candidate arrow to exact verification; stop before claiming similarity.",
-    "courseId": "DSA5101",
-    "schemaVersion": "nus.question.v1"
-  },
-  {
-    "id": "dsa5101-bank-009",
-    "lessonId": "dsa5101-minhash-lsh",
-    "type": "derivation",
-    "difficulty": "hard",
-    "skill": "derive",
-    "cognitiveLevel": "analyze",
-    "estimatedSeconds": 120,
-    "prompt": "Connect one MinHash collision to Jaccard similarity and state the assumption that makes the equality valid.",
-    "accepted": [
-      "Pr[h(A)=h(B)] = J(A,B)",
-      "random permutation",
-      "collision probability equals Jaccard"
-    ],
-    "solution": "Under a random permutation, $\\Pr[h_{\\pi}(A)=h_{\\pi}(B)]=J(A,B)=|A\\cap B|/|A\\cup B|$.",
-    "explanation": "The equality is a property of the random-permutation MinHash construction, not a generic fact about every hash function.",
-    "sourceRefs": [
-      {
-        "sourceId": "DSA5101/Assignments/DSA5101_Assignment_1.pdf",
-        "sourceType": "exercise",
-        "page": 3,
-        "role": "MinHash signature",
-        "status": "current-context"
-      },
-      {
-        "sourceId": "DSA5101/Reference textbook MMDS 3rd Edition.pdf",
-        "sourceType": "textbook",
-        "page": 95,
-        "role": "MinHash depth",
-        "status": "course-depth"
-      }
-    ],
-    "misconception": "Applying MinHash equality without the random-permutation and set-representation assumptions.",
-    "visualHook": "Separate the set intersection/union from the permuted minimum row.",
-    "courseId": "DSA5101",
+    "templateId": "lsh-banding-probability",
+    "cardId": "lsh-probability",
     "schemaVersion": "nus.question.v1"
   }
 ]

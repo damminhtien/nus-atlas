@@ -35,6 +35,8 @@
     "visualHook": "Split the PageRank update into a d link lane and a 1−d teleport lane.",
     "courseId": "DSA5101",
     "lessonId": "dsa5101-ranking-streams",
+    "templateId": "pagerank-teleport-dangling",
+    "cardId": "pagerank-teleport-dangling",
     "schemaVersion": "nus.question.v1"
   },
   {
@@ -75,120 +77,8 @@
     "visualHook": "Write three labels beside the sketch: target statistic, error, and update rule.",
     "courseId": "DSA5101",
     "lessonId": "dsa5101-ranking-streams",
-    "schemaVersion": "nus.question.v1"
-  },
-  {
-    "id": "dsa5101-bank-010",
-    "lessonId": "dsa5101-ranking-streams",
-    "type": "mcq",
-    "difficulty": "medium",
-    "skill": "distinguish",
-    "cognitiveLevel": "understand",
-    "estimatedSeconds": 60,
-    "prompt": "Why can PageRank differ from raw indegree?",
-    "choices": [
-      "PageRank weights incoming mass by source rank and out-degree",
-      "PageRank ignores the graph",
-      "Indegree already includes teleportation",
-      "PageRank only counts self-links"
-    ],
-    "answer": 0,
-    "explanation": "PageRank is a stationary random-walk quantity. A link from an important page can transfer more rank than a link from a low-ranked page, and damping adds teleportation.",
-    "sourceRefs": [
-      {
-        "sourceId": "DSA5101/Assignments/DSA5101_Assignment_2.pdf",
-        "sourceType": "exercise",
-        "page": 2,
-        "role": "PageRank iteration",
-        "status": "current-context"
-      },
-      {
-        "sourceId": "DSA5101/Reference textbook MMDS 3rd Edition.pdf",
-        "sourceType": "textbook",
-        "page": 175,
-        "role": "PageRank depth",
-        "status": "course-depth"
-      }
-    ],
-    "misconception": "Treating every incoming link equally, as raw indegree does, instead of weighting source rank and outdegree.",
-    "visualHook": "Annotate each incoming arrow with source rank divided by source outdegree.",
-    "courseId": "DSA5101",
-    "schemaVersion": "nus.question.v1"
-  },
-  {
-    "id": "dsa5101-bank-011",
-    "lessonId": "dsa5101-ranking-streams",
-    "type": "mcq",
-    "difficulty": "hard",
-    "skill": "compare",
-    "cognitiveLevel": "evaluate",
-    "estimatedSeconds": 90,
-    "prompt": "Which pairing correctly matches each sketch to its target quantity?",
-    "choices": [
-      "DGIM estimates recent-window 1s; Flajolet–Martin estimates distinct cardinality",
-      "DGIM estimates distinct cardinality; Flajolet–Martin estimates recent-window 1s",
-      "Both estimate the exact total number of stream positions",
-      "DGIM estimates $F_2$; Flajolet–Martin estimates PageRank",
-      "DGIM estimates link importance; Flajolet–Martin estimates bucket age",
-      "Both estimate the same quantity, but with different hash functions"
-    ],
-    "answer": 0,
-    "explanation": "DGIM summarizes the number of recent 1s in a sliding window. Flajolet–Martin uses hash-prefix evidence to estimate the number of distinct stream elements.",
-    "sourceRefs": [
-      {
-        "sourceId": "DSA5101/Assignments/DSA5101_Assignment_2.pdf",
-        "sourceType": "exercise",
-        "page": 4,
-        "role": "streaming sketches",
-        "status": "current-context"
-      },
-      {
-        "sourceId": "DSA5101/Reference textbook MMDS 3rd Edition.pdf",
-        "sourceType": "textbook",
-        "page": 155,
-        "role": "streaming depth",
-        "status": "course-depth"
-      }
-    ],
-    "misconception": "Matching by algorithm name rather than target statistic: window count, distinct count, or F2.",
-    "visualHook": "Put each sketch under its target quantity before doing any calculation.",
-    "courseId": "DSA5101",
-    "schemaVersion": "nus.question.v1"
-  },
-  {
-    "id": "dsa5101-bank-012",
-    "lessonId": "dsa5101-ranking-streams",
-    "type": "derivation",
-    "difficulty": "hard",
-    "skill": "interpret",
-    "cognitiveLevel": "analyze",
-    "estimatedSeconds": 120,
-    "prompt": "Explain why the one-register estimate $\\widehat{n}\\approx2^R$ has high variance and how a practical sketch reduces that risk.",
-    "accepted": [
-      "one register is noisy; use multiple registers and bias correction",
-      "multiple registers reduce variance",
-      "zero prefix is probabilistic"
-    ],
-    "explanation": "The longest zero-prefix is a noisy statistic. Multiple independent registers and bias correction stabilize the estimate while preserving bounded memory.",
-    "sourceRefs": [
-      {
-        "sourceId": "DSA5101/Assignments/DSA5101_Assignment_2.pdf",
-        "sourceType": "exercise",
-        "page": 4,
-        "role": "Flajolet-Martin",
-        "status": "current-context"
-      },
-      {
-        "sourceId": "DSA5101/Reference textbook MMDS 3rd Edition.pdf",
-        "sourceType": "textbook",
-        "page": 155,
-        "role": "cardinality estimation depth",
-        "status": "course-depth"
-      }
-    ],
-    "misconception": "Treating 2^R as stable or exact; one register is noisy and needs repetition or aggregation.",
-    "visualHook": "Show several R estimates, then combine them with the stated aggregation rule.",
-    "courseId": "DSA5101",
+    "templateId": "stream-moment-choice",
+    "cardId": "stream-moments",
     "schemaVersion": "nus.question.v1"
   }
 ]
