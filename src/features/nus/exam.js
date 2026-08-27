@@ -5,6 +5,7 @@
   else root.ATLAS_EXAM_FEATURE = factory;
 })(typeof globalThis === "object" ? globalThis : this, function createNusExamFeature(options) {
   const createExamSelection = options.selection || (typeof module === "object" && module.exports ? require("./exam-selection") : globalThis.ATLAS_EXAM_SELECTION);
+  const createExamSession = options.session || (typeof module === "object" && module.exports ? require("./exam-session") : globalThis.ATLAS_EXAM_SESSION);
   const {
     root,
     getCourses,
@@ -22,6 +23,7 @@
   let timer = null;
 
   const selection = createExamSelection ? createExamSelection({ getLessons, getStore, getAssessmentMap }) : null;
+  const sessionApi = createExamSession ? createExamSession() : null;
 
   function defaultCourseCode() {
     const first = (getCourses() || [])[0];
@@ -109,30 +111,40 @@
     }
   }
 
-  function finish() {
-    if (!state) return;
-    state.finished = true;
+  function answerRecords() {
+    const byId = new Map((state && state.questions || []).map(question => [question.id, question]));
+    return (state && state.answers || []).map(answer => ({ ...answer, q: byId.get(answer.questionId) })).filter(answer => answer.q);
+  }
+
+  function finish(timedOut = false) {
+    if (!state || state.status === "finished") return;
+    state = timedOut ? sessionApi.timeout(state) : sessionApi.finish(state);
     stopTimer();
-    const score = state.answers.filter(answer => answer.correct).length;
+    const answers = answerRecords();
+    const score = answers.filter(answer => answer.correct).length;
     const store = getStore();
-    state.answers.filter(answer => answer.correct && masteryEligible(answer.q)).forEach(answer => store.recordEvidence({
-      eventId: `recall:${state.attemptId}:${answer.q.id}`,
-      type: "recall_correct",
-      courseCode: state.code,
-      lessonId: answer.q.lessonId,
-      xp: 5,
-      meta: { questionId: answer.q.id, gradingMode: "exact" }
-    }));
-    store.recordAttempt({
+    answers.filter(answer => answer.correct && masteryEligible(answer.q)).forEach(answer => {
+      if (store && typeof store.recordEvidence === "function") store.recordEvidence({
+        eventId: `recall:${state.attemptId}:${answer.q.id}`,
+        type: "recall_correct",
+        courseCode: state.courseCode,
+        lessonId: answer.q.lessonId,
+        xp: 5,
+        meta: { questionId: answer.q.id, gradingMode: "exact" }
+      });
+    });
+    if (store && typeof store.recordAttempt === "function") store.recordAttempt({
       attemptId: state.attemptId,
-      mode: "exam",
-      courseCode: state.code,
+      mode: state.mode,
+      courseCode: state.courseCode,
       lessonId: state.scope || null,
       score,
       total: state.questions.length,
       meta: {
-        exactAutoGraded: state.answers.filter(answer => masteryEligible(answer.q)).length,
-        openResponse: state.answers.filter(answer => !masteryEligible(answer.q)).length
+        timedOut: state.timedOut,
+        skipped: state.skippedQuestionIds.length,
+        exactAutoGraded: answers.filter(answer => masteryEligible(answer.q)).length,
+        openResponse: answers.filter(answer => !masteryEligible(answer.q)).length
       }
     });
     render(null, null, true);
@@ -159,32 +171,34 @@
   function startTimer() {
     stopTimer();
     timer = setInterval(() => {
-      if (!state || state.finished) return stopTimer();
-      const left = Math.max(0, (state.limitMinutes * 60) - Math.floor((Date.now() - state.startedAt) / 1000));
+      if (!state || state.status === "finished") return stopTimer();
+      const left = Math.max(0, (state.limitMinutes * 60) - sessionApi.elapsedSeconds(state));
       const element = document.getElementById("nus-exam-timer");
       if (element) element.textContent = `${Math.floor(left / 60)}:${String(left % 60).padStart(2, "0")}`;
-      if (left <= 0) finish();
+      if (left <= 0) finish(true);
     }, 1000);
   }
 
   function renderResult() {
-    const correct = state.answers.filter(answer => answer.correct).length;
+    const answers = answerRecords();
+    const correct = answers.filter(answer => answer.correct).length;
     const total = state.questions.length;
-    const exactAnswers = state.answers.filter(answer => masteryEligible(answer.q));
+    const exactAnswers = answers.filter(answer => masteryEligible(answer.q));
     const exactCorrect = exactAnswers.filter(answer => answer.correct).length;
-    const openResponses = total - exactAnswers.length;
+    const openResponses = answers.filter(answer => !masteryEligible(answer.q)).length;
+    const skipped = state.skippedQuestionIds.length;
     const gradingSummary = exactAnswers.length
       ? `${exactCorrect}/${exactAnswers.length} exact auto-graded${openResponses ? ` · ${openResponses} open-response self-check${openResponses === 1 ? "" : "s"}` : ""}`
       : `${openResponses} open-response self-check${openResponses === 1 ? "" : "s"}`;
-    let body = pageHead(`${esc(state.code)} · review`, "Attempt complete", `${gradingSummary}. Open-response rubric/phrase matches are feedback signals, not mastery evidence.`);
-    body += `<div class="nus-result-score"><b>${Math.round(correct / Math.max(1, total) * 100)}%</b><span>${correct} matched · ${total - correct} to review</span></div>${total - correct ? `<div class="nus-callout nus-mistake-callout"><b>${total - correct} repair${total - correct === 1 ? "" : "s"} queued</b><span>Open Mistake Clinic to turn each miss into a corrected idea.</span>${button("Open Mistake Clinic", `#/nus/mistakes/${state.code}`, "primary")}</div>` : ""}<div class="nus-review-deck">${state.answers.map((answer, index) => { const mode = gradingMode(answer.q); const label = mode === "exact" ? (answer.correct ? "Correct" : "Review") : (answer.correct ? "Rubric match" : "Self-review"); return `<article class="nus-review-item ${answer.correct ? "correct" : "missed"}"><div><span class="pill ${answer.correct ? "sage" : ""}">${label}</span><b>${index + 1}. ${esc(answer.q.prompt)}</b></div><p><strong>Grading:</strong> ${mode === "exact" ? "deterministic" : "heuristic feedback; does not award mastery evidence"}</p><p><strong>Source:</strong> ${(answer.q.sourceRefs || answer.q.lessonSourceRefs || []).slice(0, 2).map(sourceItem).join(" ")}</p><p><strong>Your answer:</strong> ${esc(answer.q.type === "mcq" ? (answer.q.choices[Number(answer.raw)] || "No choice") : answer.raw)}</p><p><strong>Worked answer:</strong> ${text(answer.q.solution || answer.q.explanation || "Review the source lesson.")}</p></article>`; }).join("")}</div><div class="nus-card"><h3>Cheat sheet</h3>${getLessons(state.code).map(lesson => `<details><summary>${esc(lesson.title)}</summary>${lesson.sections.map(section => `<p>${text(section.body)}</p>`).join("")}</details>`).join("")}</div><div class="nus-lesson-actions">${button("Try again", `#/nus/exam/${state.code}${state.scope ? `/${state.scope}` : ""}`, "primary")}${button("Back to course", `#/nus/course/${state.code}`, "ghost")}${button("Study desk", "#/", "ghost")}</div>`;
+    let body = pageHead(`${esc(state.courseCode)} · review`, "Practice complete", `${gradingSummary}. Open-response grading remains feedback unless a deterministic checker confirms it.`);
+    body += `<div class="nus-result-score"><b>${Math.round(correct / Math.max(1, total) * 100)}%</b><span>${correct} correct · ${total - correct - skipped} to review · ${skipped} skipped</span></div>${total - correct ? `<div class="nus-callout nus-mistake-callout"><b>${total - correct} review item${total - correct === 1 ? "" : "s"}</b><span>Retry misses from Review; this attempt does not schedule spaced retrieval.</span>${button("Review mistakes", `#/nus/mistakes/${state.courseCode}`, "primary")}</div>` : ""}<div class="nus-review-deck">${answers.map((answer, index) => { const mode = gradingMode(answer.q); const label = mode === "exact" ? (answer.correct ? "Correct" : "Review") : (answer.correct ? "Feedback match" : "Self-review"); return `<article class="nus-review-item ${answer.correct ? "correct" : "missed"}><div><span class="pill ${answer.correct ? "sage" : ""}">${label}</span><b>${index + 1}. ${esc(answer.q.prompt)}</b></div><p><strong>Grading:</strong> ${mode === "exact" ? "deterministic local" : "heuristic feedback; no mastery evidence"}</p><p><strong>Source:</strong> ${(answer.q.sourceRefs || answer.q.lessonSourceRefs || []).slice(0, 2).map(sourceItem).join(" ")}</p><p><strong>Your answer:</strong> ${esc(answer.q.type === "mcq" ? (answer.q.choices[Number(answer.raw)] || "No choice") : answer.raw)}</p><p><strong>Worked answer:</strong> ${text(answer.q.solution || answer.q.explanation || "Review the source lesson.")}</p></article>`; }).join("")}</div><div class="nus-lesson-actions">${button("Retry misses", `#/nus/exam/${state.courseCode}`, "primary")}${button("Continue deep practice", `#/nus/exam/${state.courseCode}`, "ghost")}${button("Back to course", `#/nus/course/${state.courseCode}`, "ghost")}</div>`;
     root.innerHTML = body;
     typeset();
   }
 
   function render(code, scope, internal) {
     const routed = !internal;
-    if (!state || (routed && (state.code !== (code || "all") || state.scope !== (scope || "")))) state = null;
+    if (!state || (routed && (state.courseCode !== (code || "all") || state.scope !== (scope || "")))) state = null;
     if (!state) {
       const optionsHtml = getCourses().map(course => `<option value="${esc(course.code)}" ${code === course.code ? "selected" : ""}>${esc(course.code)} · ${esc(course.title)}</option>`).join("");
       const selected = code || defaultCourseCode();
@@ -207,47 +221,54 @@
         const planQuestions = questionsForPracticePlan(selected, selectedPlan);
         const questions = selectedPlan ? planQuestions : questionsFor(selected, scope, root.querySelector("#nus-exam-focus").value, Number(root.querySelector("#nus-exam-count").value));
         if (!questions.length) return;
-        state = {
-          attemptId: `nus-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`,
-          code: selected,
+        state = sessionApi.create({
+          courseCode: selected,
           mode: selectedMode,
           scope: selectedPlan ? "mixed-exam" : scope || "",
           focus: selectedPlan ? "canonical mixed" : root.querySelector("#nus-exam-focus").value,
-          limit: questions.length,
           questions,
-          index: 0,
-          answers: [],
-          startedAt: Date.now(),
-          limitMinutes: selectedPlan ? Number(selectedPlan.durationMinutes) : Number(root.querySelector("#nus-exam-minutes").value),
-          finished: false
-        };
+          startedAt: new Date().toISOString(),
+          limitMinutes: selectedPlan ? Number(selectedPlan.durationMinutes) : Number(root.querySelector("#nus-exam-minutes").value)
+        });
         render(null, null, true);
       });
       return;
     }
-    if (state.finished) return renderResult();
-    const question = state.questions[state.index];
+    if (state.status === "finished") return renderResult();
+    const question = sessionApi.questionAt(state);
     if (!question) return finish();
     const answersSoFar = state.answers.length;
+    const savedAnswer = sessionApi.answered(state, question.id);
     const input = question.type === "mcq"
-      ? `<div class="nus-choices">${question.choices.map((choice, index) => `<label><input type="radio" name="nus-answer" value="${index}"><span>${esc(choice)}</span></label>`).join("")}</div>`
-      : `<textarea class="nus-answer-input" id="nus-answer" rows="5" placeholder="Write your answer here…"></textarea>`;
+      ? `<div class="nus-choices">${question.choices.map((choice, index) => `<label><input type="radio" name="nus-answer" value="${index}" ${savedAnswer && Number(savedAnswer.raw) === index ? "checked" : ""}><span>${esc(choice)}</span></label>`).join("")}</div>`
+      : `<textarea class="nus-answer-input" id="nus-answer" rows="5" placeholder="Write your answer here…">${savedAnswer ? esc(savedAnswer.raw) : ""}</textarea>`;
     const rubricHint = question.type === "derivation" && Array.isArray(question.rubric) && question.rubric.length
       ? `<p class="nus-muted nus-rubric-hint"><b>Self-review rubric:</b> ${question.rubric.map(item => esc(item.label)).join(" · ")}. Matching all components is heuristic feedback, not a deterministic proof of correctness.</p>`
       : "";
-    root.innerHTML = pageHead(`${esc(state.code)} · Question ${state.index + 1}/${state.questions.length}`, question.type.toUpperCase(), question.lessonTitle) + `<div class="nus-exam-bar"><span>Time left <b id="nus-exam-timer">--:--</b></span><span>${answersSoFar} submitted</span><span>${esc(state.focus || "smart")} · ${state.questions.length} questions</span></div><section class="nus-card nus-exam-question reveal"><div class="nus-question-source">${(question.sourceRefs || question.lessonSourceRefs || []).slice(0, 2).map(sourceItem).join(" ")}</div><div class="nus-question-meta"><span>${esc(questionLabel(question))}</span><span>${esc(question.cognitiveLevel || "understand")}</span></div><h3>${esc(question.prompt)}</h3>${rubricHint}${input}<div class="nus-exam-footer"><span class="nus-muted">Answer reveal is locked until the attempt ends.</span><div class="nus-exam-footer-actions">${question.lessonId ? button("Review lesson", `#/nus/lesson/${esc(state.code)}/${esc(question.lessonId)}`, "ghost") : ""}${button("Mistakes", `#/nus/mistakes/${esc(state.code)}`, "ghost")}<button class="btn primary" id="nus-next-answer">${state.index + 1 === state.questions.length ? "Submit attempt" : "Next question"}</button></div></div></section>`;
+    const questionNav = state.questions.map((item, index) => {
+      const answer = sessionApi.answered(state, item.id);
+      const marker = answer ? (answer.correct ? "✓" : "•") : (state.skippedQuestionIds.includes(item.id) ? "–" : "○");
+      return `<button class="nus-question-nav ${index === state.currentIndex ? "is-current" : ""}" type="button" data-exam-go="${index}" aria-label="Question ${index + 1}">${marker} ${index + 1}</button>`;
+    }).join("");
+    root.innerHTML = pageHead(`${esc(state.courseCode)} · Question ${state.currentIndex + 1}/${state.questions.length}`, state.mode === "mock" ? "Mock exam" : "Practice", question.lessonTitle) + `<div class="nus-exam-bar"><span>Time left <b id="nus-exam-timer">--:--</b></span><span>${answersSoFar} answered</span><span>${esc(state.focus || "smart")} · ${state.questions.length} questions</span></div><section class="nus-card nus-exam-question reveal"><div class="nus-question-source">${(question.sourceRefs || question.lessonSourceRefs || []).slice(0, 2).map(sourceItem).join(" ")}</div><div class="nus-question-meta"><span>${esc(questionLabel(question))}</span><span>${esc(question.cognitiveLevel || "understand")}</span></div><h3>${esc(question.prompt)}</h3>${question.selectionReasons && question.selectionReasons.length ? `<p class="nus-callout nus-question-why"><b>Why this question?</b><span>${esc(question.selectionReasons.join(" · "))}.</span></p>` : ""}${rubricHint}${input}<div class="nus-exam-footer"><span class="nus-muted">Answer reveal is locked until the attempt ends.</span><div class="nus-exam-footer-actions"><button class="btn ghost" id="nus-exam-back" type="button" ${state.currentIndex === 0 ? "disabled" : ""}>Back</button><button class="btn ghost" id="nus-exam-skip" type="button">Skip</button>${question.lessonId ? button("Review lesson", `#/nus/lesson/${esc(state.courseCode)}/${esc(question.lessonId)}`, "ghost") : ""}<button class="btn primary" id="nus-next-answer">${state.currentIndex + 1 === state.questions.length ? "Save & finish" : "Save & next"}</button></div></div><nav class="nus-question-navigator" aria-label="Question navigator">${questionNav}</nav></section>`;
     typeset();
-    root.querySelector("#nus-next-answer").addEventListener("click", () => {
+    const submit = () => {
       const raw = question.type === "mcq" ? (root.querySelector("input[name='nus-answer']:checked") || {}).value : root.querySelector("#nus-answer").value;
       if (raw == null || !String(raw).trim()) return;
       const correct = answerKey(question, raw);
-      state.answers.push({ q: question, raw, correct });
+      const mode = gradingMode(question);
+      state = sessionApi.answer(state, { questionId: question.id, raw, correct, gradingMode: mode });
       const store = getStore();
-      if (store && typeof store.recordQuestionAttempt === "function") store.recordQuestionAttempt({ attemptId: state.attemptId, courseCode: state.code, correct, raw, question, gradingMode: gradingMode(question) });
-      state.index++;
-      if (state.index >= state.questions.length) finish();
-      else render(null, null, true);
-    });
+      if (store && typeof store.recordQuestionAttempt === "function") store.recordQuestionAttempt({ attemptId: state.attemptId, courseCode: state.courseCode, correct, raw, question, gradingMode: mode });
+      if (sessionApi.isComplete(state)) finish();
+      else { state = sessionApi.advance(state); render(null, null, true); }
+    };
+    root.querySelector("#nus-next-answer").addEventListener("click", submit);
+    root.querySelector("#nus-exam-back").addEventListener("click", () => { state = sessionApi.back(state); render(null, null, true); });
+    root.querySelector("#nus-exam-skip").addEventListener("click", () => { state = sessionApi.skip(state); if (sessionApi.isComplete(state)) finish(); else render(null, null, true); });
+    root.querySelectorAll("[data-exam-go]").forEach(control => control.addEventListener("click", () => { state = sessionApi.goTo(state, Number(control.dataset.examGo)); render(null, null, true); }));
+    root.querySelectorAll("input[name='nus-answer']").forEach(control => control.addEventListener("change", () => { if (question.type === "mcq") submit(); }));
+    root.querySelector("#nus-answer")?.addEventListener("keydown", event => { if ((event.metaKey || event.ctrlKey) && event.key === "Enter") submit(); });
     startTimer();
   }
 
