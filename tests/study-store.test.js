@@ -22,15 +22,15 @@ test("study store migrates legacy v1 state without losing progress", () => {
   });
   const store = createStudyStore({ storage, now: () => new Date("2026-08-15T10:00:00.000Z") });
 
-  assert.equal(store.schemaVersion, "nus.study.v4");
-  assert.equal(store.raw.schemaVersion, "nus.study.v4");
+  assert.equal(store.schemaVersion, "nus.study.v5");
+  assert.equal(store.raw.schemaVersion, "nus.study.v5");
   assert.equal(store.lessonDone("lesson1"), true);
   assert.equal(store.task("hw1").status, "done");
   assert.equal(store.attempts()[0].attemptId, "old-attempt");
   assert.equal(storage.read().schemaVersion, undefined, "migration persists at the next write");
 
   store.recordEvidence({ eventId: "recall:q1", type: "recall_correct", lessonId: "lesson1", xp: 5 });
-  assert.equal(storage.read().schemaVersion, "nus.study.v4");
+  assert.equal(storage.read().schemaVersion, "nus.study.v5");
 });
 
 test("study store persists and resumes slide/textbook reading positions", () => {
@@ -173,4 +173,21 @@ test("question attempts build a repairable mistake signal without passive XP", (
   store.recordQuestionAttempt({ attemptId: "a2", courseCode: "DSA5105", correct: false, raw: "Still no", question });
   store.recordQuestionAttempt({ attemptId: "a3", courseCode: "DSA5105", correct: true, raw: "Because", question });
   assert.equal(store.mistakes("DSA5105").length, 0, "a later correct answer clears the unresolved queue");
+});
+
+test("study store persists a compact active practice snapshot and clears only its completed attempt", () => {
+  const storage = memoryStorage();
+  const store = createStudyStore({ storage, now: () => new Date("2026-08-15T10:00:00.000Z") });
+  store.setActivePractice({
+    attemptId: "practice-1", courseCode: "DSA5105", mode: "adaptive", scope: "", questionIds: ["q1"],
+    generatedSeeds: { q1: 42 }, answers: [{ questionId: "q1", raw: "answer", correct: true, gradingMode: "exact" }],
+    currentIndex: 1, startedAt: "2026-08-15T09:00:00.000Z", elapsedSeconds: 60, limitMinutes: 30,
+    updatedAt: "2026-08-15T10:00:00.000Z", status: "active"
+  });
+  assert.equal(store.activePractice().attemptId, "practice-1");
+  assert.equal(storage.read().activePractice.answers[0].questionId, "q1");
+  store.recordAttempt({ attemptId: "other", courseCode: "DSA5105", score: 0, total: 1 });
+  assert.equal(store.activePractice().attemptId, "practice-1");
+  store.recordAttempt({ attemptId: "practice-1", courseCode: "DSA5105", score: 1, total: 1 });
+  assert.equal(store.activePractice(), null);
 });

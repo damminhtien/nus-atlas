@@ -39,6 +39,24 @@
     return `${layer ? `${layer} · ` : ""}${question.difficulty || "medium"} · ${question.skill || "explain"} · ${question.estimatedSeconds || 90}s`;
   }
 
+  function persistActivePractice() {
+    const store = getStore();
+    if (state && state.status !== "finished" && store && typeof store.setActivePractice === "function") store.setActivePractice(sessionApi.snapshot(state));
+  }
+
+  function restoreActivePractice(code, scope) {
+    const store = getStore();
+    if (!store || typeof store.activePractice !== "function") return false;
+    const saved = store.activePractice();
+    if (!saved || saved.courseCode !== code || saved.scope !== (scope || "") || saved.status === "finished") return false;
+    const questions = saved.mode === "mock"
+      ? questionsForPracticePlan(code, practicePlanFor(code, saved.scope))
+      : questionsFor(code, saved.scope, saved.focus || "smart", Infinity);
+    if (!questions.length || questions.length < saved.questionIds.length) return false;
+    state = sessionApi.fromSnapshot(saved, questions);
+    return state.questionIds.length === saved.questionIds.length;
+  }
+
   function normalizeAnswer(raw) {
     return String(raw || "")
       .toLowerCase()
@@ -176,6 +194,7 @@
       const element = document.getElementById("nus-exam-timer");
       if (element) element.textContent = `${Math.floor(left / 60)}:${String(left % 60).padStart(2, "0")}`;
       if (left <= 0) finish(true);
+      else if (left % 10 === 0) persistActivePractice();
     }, 1000);
   }
 
@@ -199,9 +218,11 @@
   function render(code, scope, internal) {
     const routed = !internal;
     if (!state || (routed && (state.courseCode !== (code || "all") || state.scope !== (scope || "")))) state = null;
+    const selectedCode = code || defaultCourseCode();
+    if (!state && routed && restoreActivePractice(selectedCode, scope)) return render(null, null, true);
     if (!state) {
       const optionsHtml = getCourses().map(course => `<option value="${esc(course.code)}" ${code === course.code ? "selected" : ""}>${esc(course.code)} · ${esc(course.title)}</option>`).join("");
-      const selected = code || defaultCourseCode();
+      const selected = selectedCode;
       const practicePlan = practicePlanFor(selected, scope);
       const mockRoute = scope === "mixed-exam" && !!practicePlan;
       const scopeOptions = `${practicePlan ? `<option value="mixed-exam" selected>Canonical timed mixed exam · ${esc(practicePlan.durationMinutes)} min</option>` : ""}<option value="">All core lessons</option>${getLessons(selected).map(lesson => `<option value="${esc(lesson.id)}" ${scope === lesson.id ? "selected" : ""}>${esc(lesson.title)}${lesson.examEligible === false ? " · supplementary" : ""}</option>`).join("")}`;
@@ -230,6 +251,7 @@
           startedAt: new Date().toISOString(),
           limitMinutes: selectedPlan ? Number(selectedPlan.durationMinutes) : Number(root.querySelector("#nus-exam-minutes").value)
         });
+        persistActivePractice();
         render(null, null, true);
       });
       return;
@@ -261,12 +283,12 @@
       const store = getStore();
       if (store && typeof store.recordQuestionAttempt === "function") store.recordQuestionAttempt({ attemptId: state.attemptId, courseCode: state.courseCode, correct, raw, question, gradingMode: mode });
       if (sessionApi.isComplete(state)) finish();
-      else { state = sessionApi.advance(state); render(null, null, true); }
+      else { state = sessionApi.advance(state); persistActivePractice(); render(null, null, true); }
     };
     root.querySelector("#nus-next-answer").addEventListener("click", submit);
-    root.querySelector("#nus-exam-back").addEventListener("click", () => { state = sessionApi.back(state); render(null, null, true); });
-    root.querySelector("#nus-exam-skip").addEventListener("click", () => { state = sessionApi.skip(state); if (sessionApi.isComplete(state)) finish(); else render(null, null, true); });
-    root.querySelectorAll("[data-exam-go]").forEach(control => control.addEventListener("click", () => { state = sessionApi.goTo(state, Number(control.dataset.examGo)); render(null, null, true); }));
+    root.querySelector("#nus-exam-back").addEventListener("click", () => { state = sessionApi.back(state); persistActivePractice(); render(null, null, true); });
+    root.querySelector("#nus-exam-skip").addEventListener("click", () => { state = sessionApi.skip(state); if (sessionApi.isComplete(state)) finish(); else { persistActivePractice(); render(null, null, true); } });
+    root.querySelectorAll("[data-exam-go]").forEach(control => control.addEventListener("click", () => { state = sessionApi.goTo(state, Number(control.dataset.examGo)); persistActivePractice(); render(null, null, true); }));
     root.querySelectorAll("input[name='nus-answer']").forEach(control => control.addEventListener("change", () => { if (question.type === "mcq") submit(); }));
     root.querySelector("#nus-answer")?.addEventListener("keydown", event => { if ((event.metaKey || event.ctrlKey) && event.key === "Enter") submit(); });
     startTimer();

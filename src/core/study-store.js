@@ -13,7 +13,7 @@
   const atlasStore = config.atlasStore || null;
   const clock = typeof config.now === "function" ? config.now : () => new Date();
   const KEY = config.key || "nus.v1";
-  const SCHEMA_VERSION = "nus.study.v4";
+  const SCHEMA_VERSION = "nus.study.v5";
   const RETRIEVAL_INTERVALS = [1, 3, 7, 14, 30, 60, 120];
 
   const QUESTS = [
@@ -34,10 +34,32 @@
   ];
 
   function blank() {
-    return { schemaVersion: SCHEMA_VERSION, version: 4, tasks: {}, lessons: {}, attempts: [], lastStudy: null, lastLesson: null, events: {}, mastery: {}, retrieval: {}, reading: {}, questHistory: {} };
+    return { schemaVersion: SCHEMA_VERSION, version: 5, tasks: {}, lessons: {}, attempts: [], activePractice: null, lastStudy: null, lastLesson: null, events: {}, mastery: {}, retrieval: {}, reading: {}, questHistory: {} };
   }
 
   function objectOrEmpty(value) { return value && typeof value === "object" && !Array.isArray(value) ? value : {}; }
+
+  function activePracticeSnapshot(value) {
+    if (!value || typeof value !== "object" || Array.isArray(value) || !value.attemptId) return null;
+    const fields = ["attemptId", "courseCode", "mode", "scope", "focus", "questionIds", "generatedSeeds", "currentIndex", "startedAt", "elapsedSeconds", "limitMinutes", "updatedAt", "status", "timedOut", "skippedQuestionIds"];
+    const snapshot = Object.fromEntries(fields.filter(field => value[field] !== undefined).map(field => [field, value[field]]));
+    snapshot.attemptId = String(snapshot.attemptId);
+    snapshot.questionIds = Array.isArray(snapshot.questionIds) ? snapshot.questionIds.map(String).filter(Boolean) : [];
+    snapshot.skippedQuestionIds = Array.isArray(snapshot.skippedQuestionIds) ? snapshot.skippedQuestionIds.map(String).filter(Boolean) : [];
+    snapshot.generatedSeeds = objectOrEmpty(snapshot.generatedSeeds);
+    snapshot.answers = (Array.isArray(value.answers) ? value.answers : []).filter(answer => answer && answer.questionId).map(answer => ({
+      questionId: String(answer.questionId),
+      raw: String(answer.raw || "").slice(0, 12000),
+      correct: !!answer.correct,
+      gradingMode: String(answer.gradingMode || "heuristic"),
+      gradingStatus: String(answer.gradingStatus || "self-review"),
+      gradedBy: String(answer.gradedBy || "heuristic"),
+      score: answer.score == null ? null : Number(answer.score),
+      feedback: String(answer.feedback || "").slice(0, 4000),
+      answeredAt: answer.answeredAt || null
+    }));
+    return snapshot;
+  }
 
   function migrate(data) {
     if (!data || typeof data !== "object" || Array.isArray(data)) return blank();
@@ -45,10 +67,11 @@
       ...blank(),
       ...data,
       schemaVersion: SCHEMA_VERSION,
-      version: 4,
+      version: 5,
       tasks: objectOrEmpty(data.tasks),
       lessons: objectOrEmpty(data.lessons),
       attempts: Array.isArray(data.attempts) ? data.attempts : [],
+      activePractice: activePracticeSnapshot(data.activePractice),
       lastLesson: data.lastLesson && typeof data.lastLesson === "object" ? {
         courseCode: String(data.lastLesson.courseCode || ""),
         lessonId: String(data.lastLesson.lessonId || ""),
@@ -153,6 +176,7 @@
     if (state.attempts.some(attempt => attempt.attemptId === attemptId)) return state.attempts.find(attempt => attempt.attemptId === attemptId);
     const attempt = { ...input, attemptId, at: timestamp() };
     state.attempts = state.attempts.concat([attempt]).slice(-100);
+    if (state.activePractice && state.activePractice.attemptId === attemptId) state.activePractice = null;
     recordEvidence({ eventId: `exam:${attemptId}`, type: "exam_submitted", courseCode: input.courseCode, lessonId: input.lessonId, xp: Math.min(35, 15 + Number(input.score || 0) * 2), meta: { score: input.score, total: input.total } });
     return attempt;
   }
@@ -397,6 +421,19 @@
     mistakes,
     redeemMistake,
     attempts() { return state.attempts.slice(); },
+    activePractice() { return state.activePractice ? JSON.parse(JSON.stringify(state.activePractice)) : null; },
+    setActivePractice(value) {
+      state.activePractice = activePracticeSnapshot(value);
+      save();
+      return this.activePractice();
+    },
+    clearActivePractice(attemptId) {
+      if (!attemptId || !state.activePractice || state.activePractice.attemptId === attemptId) {
+        state.activePractice = null;
+        save();
+      }
+      return null;
+    },
     events() { return eventList(); },
     masteryFor(id) { return state.mastery[id] || { score: 0, attempts: 0, correct: 0, lastAt: null }; },
     masteryByCourse(code, lessonList) { return (lessonList || []).map(lesson => ({ lesson, mastery: this.masteryFor(lesson.id) })).filter(item => item.mastery.attempts > 0); },
