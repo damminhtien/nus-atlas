@@ -56,7 +56,7 @@
       "cognitiveLevel": "understand",
       "estimatedSeconds": 45,
       "prompt": "A streaming sketch uses less memory than storing every event. What must be stated alongside the memory claim?",
-      "choices": ["The error or approximation guarantee", "That the result is always exact", "That the stream has no duplicates", "That the input fits in cache"],
+      "choices": ["The error or approximation guarantee", "That the result is always exact", "That the stream has no duplicates", "That the input fits in cache", "The number of distinct keys in the stream", "The number of hash functions only"],
       "answer": 0,
       "explanation": "A sketch trades exact storage for a controlled approximation, so its error model is part of the algorithm contract.",
       "sourceRefs": [{ "sourceId": "DSA5101/DSA5101 Course Information.pdf", "sourceType": "lecture", "page": 1, "role": "scale framing", "status": "current" }]
@@ -125,7 +125,7 @@
       "cognitiveLevel": "apply",
       "estimatedSeconds": 60,
       "prompt": "If $I$ is infrequent under a support threshold, which statement is guaranteed?",
-      "choices": ["Every subset of $I$ is infrequent", "Every superset of $I$ is infrequent", "Every rule from $I$ has low confidence", "The consequent is independent"],
+      "choices": ["Every subset of $I$ is infrequent", "Every superset of $I$ is infrequent", "Every rule from $I$ has low confidence", "The consequent is independent", "The subset and superset have identical support by definition", "Only the subset can be pruned after the superset fails"],
       "answer": 1,
       "explanation": "Downward closure says support cannot increase when more items are added, so all supersets can be pruned. It does not determine confidence or causality.",
       "sourceRefs": [{ "sourceId": "DSA5101/Lec1 - Assoc Rules, Frequent itemsets.pdf", "sourceType": "lecture", "page": 36, "role": "downward closure", "status": "current" }]
@@ -209,7 +209,7 @@
       "cognitiveLevel": "understand",
       "estimatedSeconds": 60,
       "prompt": "Why can PageRank differ from raw indegree?",
-      "choices": ["PageRank weights incoming mass by source rank and out-degree", "PageRank ignores the graph", "Indegree already includes teleportation", "PageRank only counts self-links"],
+      "choices": ["PageRank weights incoming mass by source rank and out-degree", "PageRank ignores the graph", "Indegree already includes teleportation", "PageRank only counts self-links", "PageRank counts only the number of outgoing links", "Indegree includes the stationary random-walk weighting"],
       "answer": 0,
       "explanation": "PageRank is a stationary random-walk quantity. A link from an important page can transfer more rank than a link from a low-ranked page, and damping adds teleportation.",
       "sourceRefs": [
@@ -1211,6 +1211,272 @@
       "explanation": "The low pull count makes B uncertain. An epsilon policy reserves exploration mass, while UCB adds a larger confidence bonus to less-sampled arms; both make the exploration-exploitation trade-off explicit.",
       "sourceRefs": [
         { "sourceId": "Stanford CS246/slides/19-bandits.pdf", "sourceType": "ref", "page": 1, "role": "exploration and regret", "status": "supporting", "url": "https://web.stanford.edu/class/cs246/slides/19-bandits.pdf" }
+      ]
+    },
+    {
+      "id": "dsa5101-tune-001",
+      "lessonId": "dsa5101-minhash-lsh",
+      "templateId": "lsh-tune-bands",
+      "cardId": "lsh-tuning",
+      "type": "mcq",
+      "difficulty": "hard",
+      "skill": "lsh-tuning",
+      "cognitiveLevel": "evaluate",
+      "estimatedSeconds": 120,
+      "prompt": "Two MinHash LSH designs use the same signature length $m=24$ and target similarity $s=0.7$. If false candidates are expensive, which design is the better precision-oriented choice?",
+      "choices": [
+        "$(b,r)=(6,4)$, because the larger $r$ makes a band match stricter",
+        "$(b,r)=(12,2)$, because more bands always improves precision",
+        "$(b,r)=(24,1)$, because one row per band removes false positives",
+        "$(b,r)=(4,6)$, because fewer bands always improves recall and precision",
+        "Both designs have identical candidate probability because $br$ is fixed",
+        "The choice cannot be made without knowing the document vocabulary"
+      ],
+      "answer": 0,
+      "explanation": "With $br$ fixed, $(6,4)$ uses more rows per band, so a band match requires a stricter AND event. That suppresses low-similarity false candidates, while $(12,2)$ uses more bands and is more permissive.",
+      "misconception": "Assuming a fixed signature length makes every banding choice equivalent, or assuming more bands automatically raises precision.",
+      "visualHook": "Write the AND inside each band and the OR across bands before comparing the two S-curves.",
+      "sourceRefs": [
+        { "sourceId": "DSA5101/Lec 2 - Finding Similar items, LSH.pdf", "sourceType": "lecture", "page": 70, "role": "LSH precision-recall trade-off", "status": "current" },
+        { "sourceId": "Stanford CS246/slides/04-lsh_theory.pdf", "sourceType": "ref", "page": 1, "role": "LSH parameter trade-off", "status": "supporting", "url": "https://web.stanford.edu/class/cs246/slides/04-lsh_theory.pdf" }
+      ]
+    },
+    {
+      "id": "dsa5101-tune-002",
+      "lessonId": "dsa5101-minhash-lsh",
+      "templateId": "lsh-tune-bands",
+      "cardId": "lsh-tuning",
+      "type": "mcq",
+      "difficulty": "hard",
+      "skill": "lsh-tuning",
+      "cognitiveLevel": "evaluate",
+      "estimatedSeconds": 105,
+      "prompt": "Hold the rows per band at $r=3$ and increase the number of bands from $b=4$ to $b=8$. What is the expected trade-off for candidate generation?",
+      "choices": [
+        "Recall tends to rise, while precision tends to fall because more low-similarity pairs can pass one band",
+        "Recall and precision both must fall because every band becomes stricter",
+        "Recall falls and precision rises because the OR event becomes harder",
+        "Neither changes because only $r$ controls the candidate probability",
+        "Precision becomes one because a pair must match all eight bands",
+        "The candidate probability becomes $s^{24}$ because all rows are ANDed globally"
+      ],
+      "answer": 0,
+      "explanation": "The candidate probability is $1-(1-s^r)^b$. With $r$ fixed, increasing $b$ makes the OR event easier, increasing recall but also admitting more false positives, so precision can decrease.",
+      "misconception": "Reading bands as an AND event, or treating higher recall as proof of higher precision.",
+      "visualHook": "Circle the OR across bands and compare the curve after adding four more opportunities to collide.",
+      "sourceRefs": [
+        { "sourceId": "DSA5101/Lec 2 - Finding Similar items, LSH.pdf", "sourceType": "lecture", "page": 70, "role": "LSH precision-recall trade-off", "status": "current" },
+        { "sourceId": "Stanford CS246/slides/04-lsh_theory.pdf", "sourceType": "ref", "page": 1, "role": "LSH parameter trade-off", "status": "supporting", "url": "https://web.stanford.edu/class/cs246/slides/04-lsh_theory.pdf" }
+      ]
+    },
+    {
+      "id": "dsa5101-tune-003",
+      "lessonId": "dsa5101-minhash-lsh",
+      "templateId": "lsh-reverse-design",
+      "cardId": "lsh-tuning",
+      "type": "mcq",
+      "difficulty": "hard",
+      "skill": "lsh-reverse-design",
+      "cognitiveLevel": "evaluate",
+      "estimatedSeconds": 150,
+      "prompt": "A signature has $m=20$ rows. Choose $(b,r)$ with $br=20$ so that similarity $s=0.8$ has candidate probability in $[0.90,0.99]$ while $s=0.3$ has probability in $[0.01,0.05]$.",
+      "choices": [
+        "$(b,r)=(5,4)$",
+        "$(b,r)=(4,5)$",
+        "$(b,r)=(10,2)$",
+        "$(b,r)=(2,10)$",
+        "$(b,r)=(20,1)$",
+        "No factor pair satisfies both constraints"
+      ],
+      "answer": 0,
+      "explanation": "Using $P(s)=1-(1-s^r)^b$, $(5,4)$ gives approximately $P(0.8)=0.922$ and $P(0.3)=0.040$. It satisfies both the high-similarity recall and low-similarity false-positive bounds.",
+      "misconception": "Checking only the high-similarity target, or changing $b$ and $r$ without preserving $br=m$.",
+      "visualHook": "Make a divisor table for $20$ and evaluate both endpoints for every plausible pair.",
+      "sourceRefs": [
+        { "sourceId": "DSA5101/Lec 2 - Finding Similar items, LSH.pdf", "sourceType": "lecture", "page": 70, "role": "LSH tuning", "status": "current" },
+        { "sourceId": "Stanford CS246/slides/04-lsh_theory.pdf", "sourceType": "ref", "page": 1, "role": "LSH parameter design", "status": "supporting", "url": "https://web.stanford.edu/class/cs246/slides/04-lsh_theory.pdf" }
+      ]
+    },
+    {
+      "id": "dsa5101-tune-004",
+      "lessonId": "dsa5101-minhash-lsh",
+      "templateId": "lsh-reverse-design",
+      "cardId": "lsh-tuning",
+      "type": "mcq",
+      "difficulty": "hard",
+      "skill": "lsh-reverse-design",
+      "cognitiveLevel": "evaluate",
+      "estimatedSeconds": 150,
+      "prompt": "A signature has $m=24$ rows. Which factor pair satisfies $P(0.85)\\in[0.90,0.99]$ and $P(0.3)\\in[0.01,0.05]$ under $P(s)=1-(1-s^r)^b$?",
+      "choices": [
+        "$(b,r)=(6,4)$",
+        "$(b,r)=(4,6)$",
+        "$(b,r)=(8,3)$",
+        "$(b,r)=(3,8)$",
+        "$(b,r)=(12,2)$",
+        "$(b,r)=(24,1)$"
+      ],
+      "answer": 0,
+      "explanation": "For $(6,4)$, $P(0.85)\\approx0.988$ and $P(0.3)\\approx0.0477$, so both constraints hold. The alternative pairs either admit too many low-similarity candidates or miss the high-similarity recall target.",
+      "misconception": "Selecting the pair with the most bands without checking the low-similarity false-positive constraint.",
+      "visualHook": "Evaluate each candidate pair at both similarities; one endpoint is not enough for reverse design.",
+      "sourceRefs": [
+        { "sourceId": "DSA5101/Lec 2 - Finding Similar items, LSH.pdf", "sourceType": "lecture", "page": 70, "role": "LSH tuning", "status": "current" },
+        { "sourceId": "Stanford CS246/slides/04-lsh_theory.pdf", "sourceType": "ref", "page": 1, "role": "LSH parameter design", "status": "supporting", "url": "https://web.stanford.edu/class/cs246/slides/04-lsh_theory.pdf" }
+      ]
+    },
+    {
+      "id": "dsa5101-tune-005",
+      "lessonId": "dsa5101-clustering",
+      "templateId": "kmeans-convergence",
+      "cardId": "kmeans-update",
+      "type": "mcq",
+      "difficulty": "hard",
+      "skill": "kmeans-convergence",
+      "cognitiveLevel": "evaluate",
+      "estimatedSeconds": 120,
+      "prompt": "For the same K-means data and initialization, the implementation stops when centroid movement is at most $\\varepsilon$. What is the most defensible effect of lowering $\\varepsilon$?",
+      "choices": [
+        "It generally permits more iterations, can reduce the final objective, and increases runtime",
+        "It always produces a globally optimal clustering in fewer iterations",
+        "It increases the stopping threshold, so the algorithm stops earlier with lower error",
+        "It changes the distance metric from Euclidean to Manhattan",
+        "It removes the dependence on initialization because the tolerance is smaller",
+        "It changes the number of clusters without changing any assignment"
+      ],
+      "answer": 0,
+      "explanation": "A smaller $\\varepsilon$ is a stricter convergence condition. Lloyd iterations may continue longer and refine the local solution, but initialization still matters and no global-optimum guarantee appears.",
+      "misconception": "Treating a stricter stopping tolerance as an initialization or global-optimality guarantee.",
+      "visualHook": "Place the tolerance on the centroid-movement stopping line and mark the runtime-versus-refinement trade-off.",
+      "sourceRefs": [
+        { "sourceId": "DSA5101/Lec3 - Clustering.pdf", "sourceType": "lecture", "page": 37, "role": "K-means iteration and stopping", "status": "current" },
+        { "sourceId": "Stanford CS246/slides/05-clustering.pdf", "sourceType": "ref", "page": 1, "role": "K-means convergence", "status": "supporting", "url": "https://web.stanford.edu/class/cs246/slides/05-clustering.pdf" }
+      ]
+    },
+    {
+      "id": "dsa5101-tune-006",
+      "lessonId": "dsa5101-orientation",
+      "templateId": "bandit-ucb",
+      "cardId": "bandits-reward-regret",
+      "type": "calculation",
+      "difficulty": "hard",
+      "skill": "bandit-ucb",
+      "cognitiveLevel": "evaluate",
+      "estimatedSeconds": 120,
+      "prompt": "For UCB with $\\hat{\\mu}=0.6$, $t=16$, and $N=4$, compute $\\hat{\\mu}+\\sqrt{\\ln(t)/N}$ to three decimal places.",
+      "accepted": ["1.433", "1.43", "1.4326"],
+      "solution": "$UCB=0.6+\\sqrt{\\ln(16)/4}=0.6+0.8326\\approx1.433$.",
+      "explanation": "Compute the uncertainty bonus with the arm-specific pull count $N$, then add it to the empirical mean. The natural logarithm gives the bonus $\\sqrt{\\ln(16)/4}\\approx0.8326$.",
+      "misconception": "Using total rounds instead of arm pulls, or dropping the uncertainty bonus.",
+      "visualHook": "Separate the empirical reward and confidence bonus into two terms before adding them.",
+      "sourceRefs": [
+        { "sourceId": "DSA5101/DSA5101 Course Information.pdf", "sourceType": "lecture", "page": 1, "role": "multi-armed bandits course scope", "status": "current" },
+        { "sourceId": "Stanford CS246/slides/19-bandits.pdf", "sourceType": "ref", "page": 1, "role": "UCB and exploration", "status": "supporting", "url": "https://web.stanford.edu/class/cs246/slides/19-bandits.pdf" }
+      ]
+    },
+    {
+      "id": "dsa5101-tune-007",
+      "lessonId": "dsa5101-orientation",
+      "templateId": "bandit-ucb",
+      "cardId": "bandits-reward-regret",
+      "type": "calculation",
+      "difficulty": "hard",
+      "skill": "bandit-ucb",
+      "cognitiveLevel": "evaluate",
+      "estimatedSeconds": 120,
+      "prompt": "For UCB with $\\hat{\\mu}=0.4$, $t=25$, and $N=5$, compute $\\hat{\\mu}+\\sqrt{\\ln(t)/N}$ to three decimal places.",
+      "accepted": ["1.202", "1.20", "1.2024"],
+      "solution": "$UCB=0.4+\\sqrt{\\ln(25)/5}=0.4+0.8024\\approx1.202$.",
+      "explanation": "The same empirical mean can receive a larger or smaller score depending on uncertainty. Here the arm-specific count is $N=5$, not the horizon $t=25$.",
+      "misconception": "Replacing $N$ by $t$, or rounding the bonus before adding the empirical mean.",
+      "visualHook": "Underline the arm-specific denominator $N=5$ and keep the logarithm attached to the time horizon.",
+      "sourceRefs": [
+        { "sourceId": "DSA5101/DSA5101 Course Information.pdf", "sourceType": "lecture", "page": 1, "role": "multi-armed bandits course scope", "status": "current" },
+        { "sourceId": "Stanford CS246/slides/19-bandits.pdf", "sourceType": "ref", "page": 1, "role": "UCB and exploration", "status": "supporting", "url": "https://web.stanford.edu/class/cs246/slides/19-bandits.pdf" }
+      ]
+    },
+    {
+      "id": "dsa5101-tune-008",
+      "lessonId": "dsa5101-orientation",
+      "templateId": "bandit-ucb",
+      "cardId": "bandits-reward-regret",
+      "type": "calculation",
+      "difficulty": "hard",
+      "skill": "bandit-ucb",
+      "cognitiveLevel": "evaluate",
+      "estimatedSeconds": 120,
+      "prompt": "For UCB with $\\hat{\\mu}=0.7$, $t=36$, and $N=9$, compute $\\hat{\\mu}+\\sqrt{\\ln(t)/N}$ to three decimal places.",
+      "accepted": ["1.331", "1.33", "1.3310"],
+      "solution": "$UCB=0.7+\\sqrt{\\ln(36)/9}=0.7+0.6310\\approx1.331$.",
+      "explanation": "The uncertainty bonus decreases as $N$ grows, but still depends on the time horizon through $\\ln(t)$. Add the bonus only after evaluating the square root.",
+      "misconception": "Using $\\ln(N)$ instead of $\\ln(t)$, or treating UCB as only the empirical mean.",
+      "visualHook": "Label the numerator as horizon information and the denominator as arm-specific evidence.",
+      "sourceRefs": [
+        { "sourceId": "DSA5101/DSA5101 Course Information.pdf", "sourceType": "lecture", "page": 1, "role": "multi-armed bandits course scope", "status": "current" },
+        { "sourceId": "Stanford CS246/slides/19-bandits.pdf", "sourceType": "ref", "page": 1, "role": "UCB and exploration", "status": "supporting", "url": "https://web.stanford.edu/class/cs246/slides/19-bandits.pdf" }
+      ]
+    },
+    {
+      "id": "dsa5101-tune-009",
+      "lessonId": "dsa5101-orientation",
+      "templateId": "svd-rank-k-error",
+      "cardId": "dimensionality-reduction",
+      "type": "calculation",
+      "difficulty": "hard",
+      "skill": "svd-rank-k-error",
+      "cognitiveLevel": "evaluate",
+      "estimatedSeconds": 120,
+      "prompt": "A matrix has singular values $[9,6,4,2]$. Compute the squared Frobenius error of its best rank-$1$ approximation.",
+      "accepted": ["56", "4^2+6^2+2^2", "36+16+4"],
+      "solution": "$\\lVert A-A_1\\rVert_F^2=6^2+4^2+2^2=36+16+4=56$.",
+      "explanation": "A rank-$1$ approximation retains only $\\sigma_1$. The error is the squared energy in the discarded tail, not the retained singular direction.",
+      "misconception": "Summing retained energy, taking a square root when squared error is requested, or using the total number of matrix entries.",
+      "visualHook": "Draw a divider after $\\sigma_1$ and square only the singular values to its right.",
+      "sourceRefs": [
+        { "sourceId": "DSA5101/DSA5101 Course Information.pdf", "sourceType": "lecture", "page": 1, "role": "dimensionality-reduction course scope", "status": "current" },
+        { "sourceId": "Stanford CS246/slides/06_dim_red.pdf", "sourceType": "ref", "page": 1, "role": "low-rank approximation", "status": "supporting", "url": "https://web.stanford.edu/class/cs246/slides/06_dim_red.pdf" }
+      ]
+    },
+    {
+      "id": "dsa5101-tune-010",
+      "lessonId": "dsa5101-orientation",
+      "templateId": "svd-rank-k-error",
+      "cardId": "dimensionality-reduction",
+      "type": "calculation",
+      "difficulty": "hard",
+      "skill": "svd-rank-k-error",
+      "cognitiveLevel": "evaluate",
+      "estimatedSeconds": 120,
+      "prompt": "A matrix has singular values $[8,5,3,1]$. Compute the squared Frobenius error of its best rank-$2$ approximation.",
+      "accepted": ["10", "3^2+1^2", "9+1"],
+      "solution": "$\\lVert A-A_2\\rVert_F^2=3^2+1^2=9+1=10$.",
+      "explanation": "Retaining rank $2$ keeps $8$ and $5$; the discarded tail is $[3,1]$, whose squared energy is $10$.",
+      "misconception": "Using the first two singular values in the error or confusing Frobenius error with spectral error.",
+      "visualHook": "Mark the retained rank boundary after the second singular value and sum the tail squares.",
+      "sourceRefs": [
+        { "sourceId": "DSA5101/DSA5101 Course Information.pdf", "sourceType": "lecture", "page": 1, "role": "dimensionality-reduction course scope", "status": "current" },
+        { "sourceId": "Stanford CS246/slides/06_dim_red.pdf", "sourceType": "ref", "page": 1, "role": "low-rank approximation", "status": "supporting", "url": "https://web.stanford.edu/class/cs246/slides/06_dim_red.pdf" }
+      ]
+    },
+    {
+      "id": "dsa5101-tune-011",
+      "lessonId": "dsa5101-orientation",
+      "templateId": "svd-rank-k-error",
+      "cardId": "dimensionality-reduction",
+      "type": "calculation",
+      "difficulty": "hard",
+      "skill": "svd-rank-k-error",
+      "cognitiveLevel": "evaluate",
+      "estimatedSeconds": 120,
+      "prompt": "A matrix has singular values $[10,7,4,2]$. Compute the squared Frobenius error of its best rank-$3$ approximation.",
+      "accepted": ["4", "2^2"],
+      "solution": "$\\lVert A-A_3\\rVert_F^2=2^2=4$ because only $\\sigma_4$ is discarded.",
+      "explanation": "Increasing the retained rank removes more tail energy. At rank $3$, the only discarded singular direction has value $2$, so the squared error is $4$.",
+      "misconception": "Adding all singular values or treating rank $3$ as retaining only the first singular value.",
+      "visualHook": "Circle the one singular value after the rank-$3$ cutoff and square it.",
+      "sourceRefs": [
+        { "sourceId": "DSA5101/DSA5101 Course Information.pdf", "sourceType": "lecture", "page": 1, "role": "dimensionality-reduction course scope", "status": "current" },
+        { "sourceId": "Stanford CS246/slides/06_dim_red.pdf", "sourceType": "ref", "page": 1, "role": "low-rank approximation", "status": "supporting", "url": "https://web.stanford.edu/class/cs246/slides/06_dim_red.pdf" }
       ]
     }
   ]
