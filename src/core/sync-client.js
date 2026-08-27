@@ -79,6 +79,34 @@
     return merged;
   }
 
+  function time(value) {
+    const parsed = Date.parse(value || "");
+    return Number.isFinite(parsed) ? parsed : 0;
+  }
+
+  function mergeActivePractice(left, right) {
+    const local = object(left), remote = object(right);
+    if (!Object.keys(local).length) return Object.keys(remote).length ? clone(remote) : null;
+    if (!Object.keys(remote).length) return clone(local);
+    if (local.attemptId !== remote.attemptId) return time(local.updatedAt) >= time(remote.updatedAt) ? clone(local) : clone(remote);
+    const primary = time(local.updatedAt) >= time(remote.updatedAt) ? local : remote;
+    const secondary = primary === local ? remote : local;
+    const answerMap = new Map();
+    [...array(secondary.answers), ...array(primary.answers)].forEach(answer => {
+      if (!answer || !answer.questionId) return;
+      const previous = answerMap.get(answer.questionId);
+      if (!previous || time(answer.answeredAt) >= time(previous.answeredAt)) answerMap.set(answer.questionId, clone(answer));
+    });
+    return {
+      ...clone(secondary),
+      ...clone(primary),
+      questionIds: [...new Set([...array(primary.questionIds), ...array(secondary.questionIds)])],
+      generatedSeeds: { ...object(secondary.generatedSeeds), ...object(primary.generatedSeeds) },
+      answers: [...answerMap.values()],
+      updatedAt: primary.updatedAt || secondary.updatedAt || null
+    };
+  }
+
   function mergeLegacy(left, right) {
     const local = object(left), remote = object(right);
     const merged = { ...remote, ...local };
@@ -114,6 +142,7 @@
     merged.lessons = mergeBooleanMap(local.lessons, remote.lessons);
     merged.events = { ...object(remote.events), ...object(local.events) };
     merged.attempts = uniqueArray(local.attempts, remote.attempts, item => String(item && (item.attemptId || item.at) || JSON.stringify(item)));
+    merged.activePractice = mergeActivePractice(local.activePractice, remote.activePractice);
     merged.mastery = mergeRecordMap(local.mastery, remote.mastery, (a, b) => {
       const leftScore = Number(a && a.score) || 0, rightScore = Number(b && b.score) || 0;
       if (leftScore !== rightScore) return leftScore > rightScore ? clone(a || b) : clone(b || a);

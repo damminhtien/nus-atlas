@@ -109,3 +109,14 @@ test("switching accounts never uploads the previous account's local mirror", asy
   assert.equal(uploaded.legacy.xp, 4);
   assert.equal(storage.getItem("atlas.sync.account.v1"), "seconduser");
 });
+
+test("active practice merges answers by attempt and answer timestamps", () => {
+  const { client } = clientWithState({}, {});
+  const merged = client.mergeSnapshots(
+    { schemaVersion: "atlas.sync.v1", legacy: {}, study: { activePractice: { attemptId: "a1", updatedAt: "2026-08-15T10:00:00.000Z", currentIndex: 2, questionIds: ["q1", "q2"], answers: [{ questionId: "q1", raw: "old", answeredAt: "2026-08-15T09:00:00.000Z" }] } }, preferences: {} },
+    { schemaVersion: "atlas.sync.v1", legacy: {}, study: { activePractice: { attemptId: "a1", updatedAt: "2026-08-15T11:00:00.000Z", currentIndex: 1, questionIds: ["q1", "q2", "q3"], answers: [{ questionId: "q1", raw: "new", answeredAt: "2026-08-15T10:30:00.000Z" }, { questionId: "q2", raw: "remote", answeredAt: "2026-08-15T10:45:00.000Z" }] } }, preferences: {} }
+  );
+  assert.equal(merged.study.activePractice.currentIndex, 1, "newer session metadata wins");
+  assert.deepEqual(merged.study.activePractice.questionIds, ["q1", "q2", "q3"]);
+  assert.deepEqual(merged.study.activePractice.answers.map(item => item.raw).sort(), ["new", "remote"]);
+});
