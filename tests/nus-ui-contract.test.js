@@ -6,9 +6,12 @@ const indexHtml = fs.readFileSync("index.html", "utf8");
 const nusSource = fs.readFileSync("js/nus.js", "utf8");
 const styles = fs.readFileSync("css/styles.css", "utf8");
 
-test("NUS navigation keeps the four learning destinations and one reference surface", () => {
-  assert.match(indexHtml, /Reference library/);
-  assert.match(indexHtml, /Progress &amp; achievements/);
+test("NUS navigation keeps course study destinations and focused tools", () => {
+  assert.match(indexHtml, /Assessment map/);
+  assert.match(indexHtml, /SQL Studio/);
+  assert.match(indexHtml, /Systems lab/);
+  assert.match(indexHtml, /DSA courses/);
+  assert.doesNotMatch(indexHtml, /Reference library|Visualization lab|Knowledge map|Code playground|Glossary/);
   assert.doesNotMatch(indexHtml, /> Daily review</);
   assert.doesNotMatch(indexHtml, /> Custom test</);
   assert.doesNotMatch(indexHtml, /> Foundation library</);

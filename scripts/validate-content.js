@@ -1,45 +1,9 @@
-/* Content contract and referential-integrity checks.
- *
- * The production validator reads canonical JSON packages. Legacy globals remain
- * available only for the one-way migration tool and compatibility tests.
- */
+/* Canonical content contract and referential-integrity checks. */
 const fs = require("fs");
 const path = require("path");
 const { loadCourseSource, normalizeAssessment, assessmentWeightTotal } = require("../tools/content-compiler");
 
 const ROOT = path.resolve(__dirname, "..");
-const NUS_FILES = [
-  "data/nus/provenance.js",
-  "data/nus/courses.js",
-  "data/nus/schedule.js",
-  "data/nus/assessments.js",
-  "data/nus/visuals.js",
-  "data/nus/dsa5101.js",
-  "data/nus/dsa5104.js",
-  "data/nus/dsa5105.js",
-  "data/nus/dsa5208.js",
-  "data/nus/artifacts.js",
-  "data/nus/formula-depth.js",
-  "data/nus/visual-labs.js"
-];
-
-function loadLegacyState(root = ROOT) {
-  const window = {};
-  for (const relative of NUS_FILES) {
-    const source = fs.readFileSync(path.join(root, relative), "utf8");
-    new Function("window", source)(window);
-  }
-  return {
-    courses: window.NUS_COURSES || [],
-    content: window.NUS_CONTENT || {},
-    assessments: window.NUS_ASSESSMENTS || [],
-    artifacts: window.NUS_ARTIFACTS || {},
-    labs: window.NUS_VISUAL_LABS || {},
-    visuals: window.NUS_VISUALS || {},
-    sourceTypes: window.NUS_SOURCE_TYPES || {}
-  };
-}
-
 function loadCanonicalState(root = ROOT) {
   const coursesRoot = path.join(root, "content", "courses");
   const sourceTypes = JSON.parse(fs.readFileSync(path.join(root, "content", "source-types.json"), "utf8"));
@@ -262,4 +226,4 @@ if (require.main === module) {
   }
 }
 
-module.exports = { NUS_FILES, loadLegacyState, loadCanonicalState, validateContentState, validatePackageDirectory };
+module.exports = { loadCanonicalState, validateContentState, validatePackageDirectory };

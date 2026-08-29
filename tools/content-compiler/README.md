@@ -1,7 +1,7 @@
 # Content compiler
 
 The compiler reads `content/courses/**` and writes only the deployment artifact.
-It never imports `data/nus/**` and never writes to `content/**`.
+It never writes to `content/**`.
 
 The output is deterministic, content-addressed JSON under `dist/content/`:
 
@@ -15,5 +15,3 @@ The output is deterministic, content-addressed JSON under `dist/content/`:
 The domain compiler is `compileCourseSource(source)`. Filesystem access is kept
 in `loadCourseSource` and the thin `compileCourse` adapter, so a source object
 can be compiled and tested without disk or browser globals.
-
-Legacy import is a separate operation under `tools/migrations/legacy-nus/`.

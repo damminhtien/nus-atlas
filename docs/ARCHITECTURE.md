@@ -24,7 +24,7 @@ content/courses/<COURSE>/ + schemas/
 - `schemas/**` defines the discriminated runtime payload contract; `scripts/validate-schemas.js`
   checks the compiled representation and namespaced entity keys.
 - `dist/**` is a generated deployment artifact and is ignored by Git.
-- `data/nus/**` is legacy migration input only. It is never loaded by the production runtime.
+- `data/extracted/**` contains normalized DSA lecture extraction artifacts and remains source data.
 
 The compiler reads canonical JSON and writes only `dist/content/**`. It produces
 stable, content-addressed shard names, so a changed lesson invalidates only its
@@ -51,8 +51,8 @@ shards they need. The service worker installs only eager shell assets and
 caches content shards on demand.
 
 Feature modules receive repository and study-state accessors from the NUS entry
-point. They do not read canonical files, generated bundles, or legacy content
-globals. Generic UI and interactive labs remain separate from content data.
+point. They do not read files directly; they use the repository and composition
+boundaries. Interactive labs remain separate from content data.
 
 ## Adding or removing a course
 
@@ -70,17 +70,10 @@ required. Removing a course from the canonical directory removes its manifest
 entry on the next build; the repository returns `null` for stale deep links and
 the remaining catalog still boots.
 
-## Migration boundary
-
-`tools/migrations/legacy-nus/import.js` is intentionally one-way. It can create
-a canonical package from the historical IIFE registries when a course has not
-yet been migrated, but normal validation and production builds do not import
-those files. This keeps migration concerns out of the compiler and runtime.
-
 ## Build and deploy
 
 The Pages workflow runs version checks, architecture checks, canonical build and
-validation, tests, the NUS and generic gates, and prerendering. `prerender.js`
+validation, tests, the DSA provenance gate, and prerendering. `prerender.js`
 uses the same canonical compiler and writes the same `dist/content` shards that
 the browser loads. The final `dist/` directory is uploaded to GitHub Pages; no
 generated content is committed.

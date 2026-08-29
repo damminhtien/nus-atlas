@@ -115,7 +115,6 @@ After editing NUS data, run:
 
 ```bash
 node nus-gate.js
-node gate.js
 git diff --check
 ```
 

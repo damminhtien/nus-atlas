@@ -70,5 +70,4 @@ node scripts/validate-latex-render.js --course DSA5208
 node scripts/validate-slides.js
 node scripts/validate-contrast-drills.js
 node nus-gate.js
-node gate.js
 ```

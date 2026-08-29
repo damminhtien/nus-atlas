@@ -1,5 +1,5 @@
-/* Cross-device Atlas state sync. The server is authoritative after login;
- * localStorage remains only as an offline mirror used by the existing stores. */
+/* Cross-device study-state sync. The server is authoritative after login;
+ * localStorage remains the offline mirror for the canonical study store. */
 (function (root, factory) {
   "use strict";
   if (typeof module === "object" && module.exports) module.exports = factory;
@@ -66,11 +66,6 @@
       return true;
     });
   }
-  function chooseCard(left, right) {
-    const a = object(left), b = object(right);
-    if ((Number(a.reps) || 0) !== (Number(b.reps) || 0)) return (Number(a.reps) || 0) > (Number(b.reps) || 0) ? clone(a) : clone(b);
-    return (Number(a.due) || 0) >= (Number(b.due) || 0) ? clone(a) : clone(b);
-  }
   function mergeRecordMap(left, right, chooser) {
     const merged = { ...object(right) };
     new Set([...Object.keys(object(left)), ...Object.keys(object(right))]).forEach(key => {
@@ -107,34 +102,6 @@
     };
   }
 
-  function mergeLegacy(left, right) {
-    const local = object(left), remote = object(right);
-    const merged = { ...remote, ...local };
-    ["xp", "cardsReviewed", "missedFixed", "perfectQuizzes", "focusSessions", "quickChecks", "maxStreak", "streak", "freezes"].forEach(key => {
-      merged[key] = Math.max(Number(local[key]) || 0, Number(remote[key]) || 0);
-    });
-    ["lessons", "achievements", "hwRevealed", "mastery", "notes", "bookmarks", "missed", "vizSeen", "solvedCode", "deepDivesSeen"].forEach(key => {
-      if (key === "mastery") merged[key] = mergeRecordMap(local[key], remote[key], (a, b) => {
-        const leftScore = Number(a && a.s != null ? a.s : a && a.score) || 0;
-        const rightScore = Number(b && b.s != null ? b.s : b && b.score) || 0;
-        if (leftScore !== rightScore) return leftScore > rightScore ? clone(a || b) : clone(b || a);
-        return String(a && (a.ts || a.lastAt) || "") >= String(b && (b.ts || b.lastAt) || "") ? clone(a || b) : clone(b || a);
-      });
-      else if (key === "lessons") merged[key] = mergeBooleanMap(local[key], remote[key]);
-      else if (key === "notes") merged[key] = { ...object(remote[key]), ...object(local[key]) };
-      else merged[key] = unionMap(local[key], remote[key]);
-    });
-    merged.activity = Object.fromEntries([...new Set([...Object.keys(object(local.activity)), ...Object.keys(object(remote.activity))])].map(key => [key, Math.max(Number(local.activity && local.activity[key]) || 0, Number(remote.activity && remote.activity[key]) || 0)]));
-    merged.activeDays = unionMap(local.activeDays, remote.activeDays);
-    merged.cards = mergeRecordMap(local.cards, remote.cards, chooseCard);
-    merged.tests = uniqueArray(local.tests, remote.tests, item => String(item && (item.attemptId || item.id || item.at) || JSON.stringify(item)));
-    merged.lastActive = String(local.lastActive || "") >= String(remote.lastActive || "") ? local.lastActive || remote.lastActive || null : remote.lastActive || local.lastActive || null;
-    merged.lastLesson = latest(local.lastLesson, remote.lastLesson, "at");
-    merged.goalXp = Number(local.goalXp) || Number(remote.goalXp) || 50;
-    merged.newPerSession = Number(local.newPerSession) || Number(remote.newPerSession) || 30;
-    return merged;
-  }
-
   function mergeStudy(left, right) {
     const local = object(left), remote = object(right);
     const merged = { ...remote, ...local };
@@ -169,7 +136,6 @@
     const left = object(local), right = object(remote);
     return {
       schemaVersion: "atlas.sync.v1",
-      legacy: mergeLegacy(left.legacy, right.legacy),
       study: mergeStudy(left.study, right.study),
       preferences: { ...object(right.preferences), ...object(left.preferences) }
     };
@@ -195,10 +161,7 @@
     currentStatus = status;
     listeners.forEach(listener => { try { listener({ status, detail: detail || "", revision }); } catch (_) {} });
   }
-  function readJson(value) { try { return value ? JSON.parse(value) : null; } catch (_) { return null; } }
-
   function snapshot() {
-    const store = root.Store;
     const studyStore = root.ATLAS_STUDY_STORE;
     const preferences = {};
     PREFERENCE_KEYS.forEach(key => {
@@ -209,7 +172,6 @@
     });
     return {
       schemaVersion: "atlas.sync.v1",
-      legacy: store && typeof store.exportData === "function" ? readJson(store.exportData()) : null,
       study: studyStore && studyStore.raw ? clone(studyStore.raw) : null,
       preferences
     };
@@ -219,7 +181,6 @@
     const state = object(value);
     suspended = true;
     try {
-      if (state.legacy && root.Store && typeof root.Store.importData === "function") root.Store.importData(JSON.stringify(state.legacy));
       if (state.study && root.ATLAS_STUDY_STORE && typeof root.ATLAS_STUDY_STORE.importData === "function") root.ATLAS_STUDY_STORE.importData(state.study);
       Object.entries(object(state.preferences)).forEach(([key, item]) => {
         if (PREFERENCE_KEYS.includes(key) && storage) {

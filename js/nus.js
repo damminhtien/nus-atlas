@@ -98,7 +98,7 @@
     const concept = recommended ? recommended.lesson.title : "Your next concept";
     const label = masteryLabel(Number(mastery.score) || 0);
     const masteryPath = label === "Strong" ? label : `${label} → Strong`;
-    return `<section class="nus-gamification-surface reveal" aria-label="Study momentum"><div class="nus-gamification-streak"><span aria-hidden="true">🔥</span><div><b>${streak}-day streak</b><small>Personal consistency</small></div></div><div class="nus-gamification-goal"><div><span>Weekly goal</span><b>${weeklyCount}/${weeklyGoal}</b></div><i><em style="width:${Math.round(weeklyCount / weeklyGoal * 100)}%"></em></i></div>${recommended ? `<a class="nus-gamification-mastery" href="#/nus/lesson/${esc(recommended.course.code)}/${esc(recommended.lesson.id)}" data-route><span>Current concept</span><b>${esc(concept)}</b><small>${esc(masteryPath)} · ${Math.round((Number(mastery.score) || 0) * 100)}% evidence mastery</small></a>` : ""}<a class="nus-gamification-detail" href="#/stats" data-route>Progress details →</a></section>`;
+    return `<section class="nus-gamification-surface reveal" aria-label="Study momentum"><div class="nus-gamification-streak"><span aria-hidden="true">🔥</span><div><b>${streak}-day streak</b><small>Personal consistency</small></div></div><div class="nus-gamification-goal"><div><span>Weekly goal</span><b>${weeklyCount}/${weeklyGoal}</b></div><i><em style="width:${Math.round(weeklyCount / weeklyGoal * 100)}%"></em></i></div>${recommended ? `<a class="nus-gamification-mastery" href="#/nus/lesson/${esc(recommended.course.code)}/${esc(recommended.lesson.id)}" data-route><span>Current concept</span><b>${esc(concept)}</b><small>${esc(masteryPath)} · ${Math.round((Number(mastery.score) || 0) * 100)}% evidence mastery</small></a>` : ""}<a class="nus-gamification-detail" href="#/nus/review" data-route>Progress details →</a></section>`;
   }
   function courseProgressBar(code) { const p = progress(code); return `<div class="nus-progress"><span style="width:${p.pct}%;background:${esc(course(code).color)}"></span></div><div class="nus-muted">${p.done}/${p.total} lessons complete · ${p.pct}%</div>`; }
   function courseTimeline(code) {
@@ -392,7 +392,7 @@
     return repo.loadCourse(code).then(packageData => {
       if (!routeIsCurrent(context, route)) return false;
       if (packageData) return true;
-      root.innerHTML = `<section class="nus-card reveal"><div class="eyebrow">Course unavailable</div><h2>${esc(code)}</h2><p>The course package could not be loaded. The legacy adapter remains available for other courses.</p></section>`;
+      root.innerHTML = `<section class="nus-card reveal"><div class="eyebrow">Course unavailable</div><h2>${esc(code)}</h2><p>The DSA course package could not be loaded. Return to the course directory and try again.</p></section>`;
       return false;
     }).catch(error => {
       if (routeIsCurrent(context, route)) root.innerHTML = `<section class="nus-card reveal"><div class="eyebrow">Course unavailable</div><h2>${esc(code)}</h2><p>${esc(error.message || "The course package could not be loaded.")}</p></section>`;

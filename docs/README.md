@@ -6,7 +6,6 @@
 - [DSA5208 study guide](DSA5208_STUDY_GUIDE.md) — normalized distributed-systems package, 52-slide readers, clock/order labs, source boundary, contrast drills, and retrieval loop.
 - [Production workflow](PRODUCTION_WORKFLOW.md) — main-only editing, GitHub Pages deployment, production verification, and troubleshooting.
 - [Atomic commit workflow](ATOMIC_COMMIT_WORKFLOW.md) — small independent slices, scoped staging, validation, and main push rules.
-- [NUS data policy](../data/nus/README.md) — normalized data, privacy boundary, and source classes.
+- [Canonical content policy](../content/README.md) — normalized DSA data, privacy boundary, and source classes.
 - [Architecture](ARCHITECTURE.md) — package layout, repository boundary, plugin registry, and build flow.
-- [Refactor plan](REFACTOR_PLAN.md) — completed slices, next boundaries, and the course/textbook expansion roadmap.
 - [Agent workflow](../AGENTS.md) — Graphify, RTK, source inspection, and validation guidance.

@@ -1,6 +1,6 @@
 # Exam Mode 2.0
 
-Atlas calls the default route `Practice`. The legacy route `#/nus/exam/...` is
+Atlas calls the default route `Practice`. The established route `#/nus/exam/...` is
 kept for existing links, but it now opens an adaptive practice session unless
 the learner explicitly chooses another mode.
 

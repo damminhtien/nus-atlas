@@ -56,7 +56,7 @@ function check(options = {}) {
   const files = trackedFiles();
   for (const file of files) {
     const rule = ownershipFor(file, ownership.rules);
-    if (!rule && /^(content|schemas|src|tools|tests|data\/nus\/generated|dist|legacy)\//.test(file)) {
+    if (!rule && /^(content|schemas|src|tools|scripts|tests|data\/extracted|dist)\//.test(file)) {
       errors.push(`${file} has no ownership rule`);
     }
     if (rule && rule.role === "generated" && changedFiles().includes(file)) {

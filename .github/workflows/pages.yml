@@ -23,7 +23,7 @@ jobs:
     runs-on: ubuntu-latest
     env:
       # checkout initializes a temporary repository before fetching main; keep Git's
-      # legacy default-branch advice out of the Actions log.
+      # default-branch advice out of the Actions log.
       GIT_CONFIG_COUNT: 1
       GIT_CONFIG_KEY_0: advice.defaultBranchName
       GIT_CONFIG_VALUE_0: false
@@ -55,7 +55,7 @@ jobs:
       - name: Confirm the compiler did not mutate source
         run: npm run check:source-clean
       - name: Validate content contracts, extraction provenance, LaTeX, contrast drills, and gates
-        run: node scripts/validate-content.js && node scripts/validate-extracted.js && node scripts/validate-textbook.js && node scripts/validate-slides.js && node scripts/validate-latex.js && node scripts/validate-latex-render.js && node scripts/validate-contrast-drills.js && node --test tests/*.test.js && node nus-gate.js && node gate.js
+        run: node scripts/validate-content.js && node scripts/validate-extracted.js && node scripts/validate-textbook.js && node scripts/validate-slides.js && node scripts/validate-latex.js && node scripts/validate-latex-render.js && node scripts/validate-contrast-drills.js && node --test tests/*.test.js && node nus-gate.js
       - name: Prerender lesson pages + sitemap + robots
         run: node prerender.js
       - name: Configure GitHub Pages

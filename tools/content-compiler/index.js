@@ -1,7 +1,6 @@
 /* Canonical content compiler.
  *
  * The compiler reads only content/** and writes only the deployment artifact.
- * Migration from data/nus is deliberately outside this module.
  */
 const fs = require("fs");
 const path = require("path");
@@ -104,20 +103,6 @@ function normalizeQuestion(question, courseId, lessonId) {
   };
 }
 
-function legacyAssessmentFacts(assessment) {
-  const sourceRefs = assessment.source ? [assessment.source] : [];
-  return {
-    weight: { value: assessment.weight ?? null, sourceRefs },
-    timing: {
-      ...(assessment.timing || {}),
-      date: assessment.date ?? null,
-      dateStatus: assessment.dateStatus || (assessment.date ? "confirmed" : "pending"),
-      timeStatus: assessment.timeStatus || (assessment.date ? "confirmed" : "pending"),
-      sourceRefs
-    }
-  };
-}
-
 function firstAssessmentSource(facts) {
   for (const fact of Object.values(facts || {})) {
     if (fact && Array.isArray(fact.sourceRefs) && fact.sourceRefs.length) return fact.sourceRefs[0];
@@ -130,8 +115,8 @@ function firstAssessmentSource(facts) {
 
 function normalizeAssessment(assessment) {
   if (!assessment || !assessment.id) return assessment;
-  const facts = cleanObject(assessment.officialFacts || legacyAssessmentFacts(assessment));
-  const guidance = cleanObject(assessment.studentGuidance || { checklist: assessment.checklist || [] });
+  const facts = cleanObject(assessment.officialFacts || {});
+  const guidance = cleanObject(assessment.studentGuidance || {});
   const weightSpec = facts.weight || {};
   const timing = facts.timing || {};
   const weight = Number.isFinite(weightSpec.value) ? weightSpec.value : null;

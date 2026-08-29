@@ -63,7 +63,6 @@ node scripts/validate-slides.js
 node scripts/validate-dsa5104-sources.js
 node scripts/validate-dsa5104-exam.js
 node nus-gate.js
-node gate.js
 ```
 
 Rebuild the deployable shards with `npm run content:build`; do not hand-edit `dist/content/`, which is generated and ignored.

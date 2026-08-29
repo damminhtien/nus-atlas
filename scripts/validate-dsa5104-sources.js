@@ -10,7 +10,7 @@ function topIds(items) { return new Set((items || []).filter(item => item && !it
 function check() {
   const course = readJson(path.join(COURSE_ROOT, "course.json"));
   const manifest = readJson(path.join(COURSE_ROOT, "sources", "manifest.json"));
-  const legacyView = readJson(path.join(COURSE_ROOT, "sources.json"));
+  const sourceView = readJson(path.join(COURSE_ROOT, "sources.json"));
   const expected = topIds(manifest.sources);
   const errors = [];
   const manifestById = new Map(manifest.sources.map(source => [source.sourceId, source]));
@@ -20,7 +20,7 @@ function check() {
     ["course.textbookSources", course.textbookSources],
     ["course.referenceSources", course.referenceSources],
     ["course.sourceCatalog", course.sourceCatalog],
-    ["sources.json", legacyView]
+    ["sources.json", sourceView]
   ];
   const views = new Set(viewEntries.flatMap(([, items]) => [...topIds(items)]));
   for (const sourceId of expected) if (!views.has(sourceId)) errors.push(`manifest source missing from a course view: ${sourceId}`);

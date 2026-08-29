@@ -2,7 +2,7 @@
  *
  * The store is intentionally framework-free and CommonJS-compatible. The
  * browser bootstrap keeps the existing NUS_STORE API, while tests and future
- * features can inject storage, time, and the legacy Atlas evidence bridge.
+ * features can inject storage and time.
  */
 (function (root, factory) {
   if (typeof module === "object" && module.exports) module.exports = factory;
@@ -10,7 +10,6 @@
 })(typeof globalThis === "object" ? globalThis : this, function createStudyStore(options) {
   const config = options || {};
   const storage = config.storage || null;
-  const atlasStore = config.atlasStore || null;
   const clock = typeof config.now === "function" ? config.now : () => new Date();
   const KEY = config.key || "nus.v1";
   const SCHEMA_VERSION = "nus.study.v5";
@@ -30,7 +29,7 @@
     { id: "mastery-builder", icon: "▲", name: "Mastery builder", desc: "Reach 60% evidence mastery on 3 lessons.", test: state => Object.values(state.mastery).filter(item => item.score >= 0.6).length >= 3, value: state => Math.min(1, Object.values(state.mastery).filter(item => item.score >= 0.6).length / 3) },
     { id: "mistake-redeemer", icon: "↗", name: "Mistake redeemer", desc: "Turn one missed idea into a corrected one.", test: state => countType(state, "mistake_redeemed") >= 1, value: state => Math.min(1, countType(state, "mistake_redeemed")) },
     { id: "exam-ready", icon: "◇", name: "Exam ready", desc: "Score at least 80% on a 5-question attempt.", test: state => state.attempts.some(attempt => attempt.total >= 5 && attempt.score / attempt.total >= 0.8), value: state => state.attempts.some(attempt => attempt.total >= 5 && attempt.score / attempt.total >= 0.8) ? 1 : 0 },
-    { id: "steady-scholar", icon: "✦", name: "Steady scholar", desc: "Build a 3-day study streak.", test: () => atlasStore && atlasStore.raw && atlasStore.raw.streak >= 3, value: () => Math.min(1, ((atlasStore && atlasStore.raw && atlasStore.raw.streak) || 0) / 3) }
+    { id: "steady-scholar", icon: "✦", name: "Steady scholar", desc: "Build a 3-day study streak.", test: state => streakFor(activeDayMap(state.events), today()) >= 3, value: state => Math.min(1, streakFor(activeDayMap(state.events), today()) / 3) }
   ];
 
   function blank() {
@@ -109,6 +108,27 @@
   }
   function countType(snapshot, type) { return snapshot.events.filter(event => event.type === type).length; }
   function eventList() { return Object.values(state.events).sort((a, b) => new Date(a.at) - new Date(b.at)); }
+  function dayKey(value) { return String(value || "").slice(0, 10); }
+  function activeDayMap(events) {
+    return Object.fromEntries((events || []).filter(event => event && event.at).map(event => [dayKey(event.at), 1]));
+  }
+  function streakFor(activeDays, endDay) {
+    const date = new Date(`${endDay}T12:00:00Z`);
+    let streak = 0;
+    while (activeDays[dayKey(date.toISOString())]) {
+      streak += 1;
+      date.setUTCDate(date.getUTCDate() - 1);
+    }
+    return streak;
+  }
+  function levelFor(xp) {
+    const levels = [[0, "Novice"], [150, "Apprentice"], [400, "Student"], [800, "Scholar"], [1400, "Adept"], [2200, "Savant"], [3200, "Sage"], [4500, "Master"], [6200, "Luminary"], [8500, "Polymath"], [12000, "Grandmaster"], [18000, "Oracle"], [26000, "Laureate"], [32000, "Magnum"]];
+    let index = 0;
+    levels.forEach((item, position) => { if (xp >= item[0]) index = position; });
+    const current = levels[index], next = levels[index + 1] || null;
+    const span = next ? next[0] - current[0] : 1;
+    return { level: index + 1, name: current[1], xp, pct: next ? Math.min(100, Math.round((xp - current[0]) / span * 100)) : 100, toNext: next ? next[0] - xp : 0, next: next ? { level: index + 2, name: next[1], xp: next[0] } : null };
+  }
 
   function updateMastery(event) {
     if (!event.lessonId) return;
@@ -147,7 +167,6 @@
     const event = { eventId, type: String(item.type || "study_action"), courseCode: item.courseCode || null, lessonId: item.lessonId || null, xp: Math.max(0, Number(item.xp) || 0), at: timestamp(), meta: item.meta || {} };
     state.events[eventId] = event;
     updateMastery(event);
-    if (atlasStore && typeof atlasStore.recordNusEvidence === "function") atlasStore.recordNusEvidence(event);
     touch();
     return { ...event, awarded: true, duplicate: false };
   }
@@ -395,15 +414,17 @@
   }
 
   function gamification() {
-    const legacy = atlasStore && typeof atlasStore.stats === "function" ? atlasStore.stats() : {};
-    const legacyState = atlasStore && atlasStore.raw && typeof atlasStore.raw === "object" ? atlasStore.raw : {};
+    const events = eventList();
+    const activeDays = activeDayMap(events);
+    const xp = events.reduce((sum, event) => sum + (Number(event.xp) || 0), 0);
+    const todayKey = today();
     return {
-      xp: Number(legacyState.xp) || 0,
-      streak: Number(legacy.streak) || 0,
-      todayXp: atlasStore && typeof atlasStore.todayXP === "function" ? Number(atlasStore.todayXP()) || 0 : 0,
-      goalXp: Number(legacyState.goalXp) || 50,
-      activeDays: objectOrEmpty(legacyState.activeDays),
-      level: atlasStore && typeof atlasStore.levelInfo === "function" ? { ...atlasStore.levelInfo() } : null
+      xp,
+      streak: streakFor(activeDays, todayKey),
+      todayXp: events.filter(event => dayKey(event.at) === todayKey).reduce((sum, event) => sum + (Number(event.xp) || 0), 0),
+      goalXp: 50,
+      activeDays,
+      level: levelFor(xp)
     };
   }
 

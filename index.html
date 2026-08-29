@@ -94,16 +94,13 @@
 
       <details class="atlas-shelf">
         <summary><span>More tools</span><small>optional</small></summary>
-        <nav class="nav" aria-label="Atlas reference navigation">
-          <a href="#/atlas" data-route><span class="i" aria-hidden="true">⌘</span> Reference library</a>
-          <a href="#/lab" data-route><span class="i" aria-hidden="true">◌</span> Visualization lab</a>
-          <a href="#/map" data-route><span class="i" aria-hidden="true">⌁</span> Knowledge map</a>
-          <a href="#/playground" data-route><span class="i" aria-hidden="true">›_</span> Code playground</a>
-          <a href="#/glossary" data-route><span class="i" aria-hidden="true">Aa</span> Glossary</a>
-          <a href="#/stats" data-route><span class="i" aria-hidden="true">↗</span> Progress &amp; achievements</a>
+        <nav class="nav" aria-label="NUS tools navigation">
+          <a href="#/nus/assessment-map" data-route><span class="i" aria-hidden="true">⌘</span> Assessment map</a>
+          <a href="#/nus/sql" data-route><span class="i" aria-hidden="true">▤</span> SQL Studio</a>
+          <a href="#/nus/simulations" data-route><span class="i" aria-hidden="true">◌</span> Systems lab</a>
         </nav>
         <div class="nav nav-courses">
-          <div class="nav-label">Reference topics</div>
+          <div class="nav-label">DSA courses</div>
           <div id="nav-courses"></div>
         </div>
       </details>
@@ -136,7 +133,7 @@
           <div class="xp-bar"><div class="xp-fill" id="xp-fill" style="width:0%"></div></div>
           <div class="xp-text" id="xp-text">0 XP</div>
         </div>
-        <a class="streak" href="#/stats" data-route title="View your progress" aria-label="Day streak — view your progress">
+        <a class="streak" href="#/nus/review" data-route title="Review your progress" aria-label="Day streak — review your progress">
           <span class="flame" aria-hidden="true">🔥</span>
           <span class="num" id="streak-num">0</span>
           <span class="lbl">day<br>streak</span>
@@ -153,77 +150,12 @@
     </div>
   </div>
 
-  <!-- Pre-hydrate the whole header badge from saved state at parse time, so it never flashes the misleading
-       defaults (Level 1 · Novice · 0 XP · "0 day streak" with an inert flame) before the deferred data/app
-       scripts run. renderChrome() keeps it in sync afterward (incl. today's streak tick-up). Falls back
-       silently to the hardcoded defaults on any error. The LEVELS curve + flame tiers mirror store.js/app.js;
-       a drift would only affect this one pre-paint frame (renderChrome corrects it immediately after). -->
-  <script>
-    (function () {
-      try {
-        var s = JSON.parse(localStorage.getItem("atlas.v1") || "{}");
-        var set = function (id, v) { var e = document.getElementById(id); if (e) e.textContent = v; };
-        // streak number + flame intensity tier — show the EFFECTIVE streak (mirror store.js touchStreak's
-        // day-diff logic) so the first paint matches what the app computes a moment later. Without this,
-        // reopening after a missed day briefly flashed the stale, now-broken streak (e.g. "30" with a blazing
-        // flame) before it collapsed to 1 once the deferred ~6MB scripts booted. renderChrome re-syncs after.
-        var n = (function () {
-          var saved = (s && Number.isFinite(s.streak)) ? s.streak : 0;
-          var fz = (s && Number.isFinite(s.freezes)) ? s.freezes : 0;
-          var la = s && s.lastActive;
-          if (!la) return saved > 0 ? saved : 1;       // brand-new/first open → touchStreak counts today
-          var d = new Date(), today = d.getFullYear() + "-" + String(d.getMonth() + 1).padStart(2, "0") + "-" + String(d.getDate()).padStart(2, "0");
-          if (la === today) return saved;              // already counted today → unchanged
-          var diff = Math.round((new Date(today + "T00:00:00") - new Date(la + "T00:00:00")) / 86400000);
-          if (diff === 1) return saved + 1;            // consecutive day → ticks up
-          if (diff === 2 && fz > 0) return saved + 1;  // a freeze will cover the 1-day gap
-          return 1;                                    // missed >1 day (or no freeze) → resets
-        })();
-        set("streak-num", n);
-        var f = document.querySelector(".streak .flame");
-        if (f) {
-          var tier = n <= 0 ? "unlit" : n < 7 ? "lit" : n < 30 ? "hot" : n < 100 ? "blazing" : "inferno";
-          f.classList.add("flame-" + tier); f.dataset.tier = tier;
-        }
-        // level ring + XP bar (LEVELS mirrors store.js)
-        var xp = (s && Number.isFinite(s.xp)) ? s.xp : 0;
-        var L = [[0, "Novice"], [150, "Apprentice"], [400, "Student"], [800, "Scholar"], [1400, "Adept"], [2200, "Savant"], [3200, "Sage"], [4500, "Master"], [6200, "Luminary"], [8500, "Polymath"], [12000, "Grandmaster"], [18000, "Oracle"], [26000, "Laureate"], [32000, "Magnum"]];
-        var idx = 0; for (var i = 0; i < L.length; i++) if (xp >= L[i][0]) idx = i;
-        var level = idx + 1, name = L[idx][1], next = L[idx + 1] || null;
-        var span = next ? next[0] - L[idx][0] : 1, pct = next ? Math.min(100, Math.round((xp - L[idx][0]) / span * 100)) : 100;
-        set("ring-num", level); set("lvl-name", name); set("lvl-sub", "Level " + level);
-        var ring = document.getElementById("ring"); if (ring) ring.style.setProperty("--ring", pct + "%");
-        var xf = document.getElementById("xp-fill"); if (xf) xf.style.width = pct + "%";
-        set("xp-text", next ? (xp.toLocaleString() + " XP · " + (next[0] - xp).toLocaleString() + " to " + next[1]) : (xp.toLocaleString() + " XP · max level"));
-      } catch (e) {}
-    })();
-  </script>
-
-  <!-- data + logic — `defer`: fetched in parallel, executed in document order after parse, before DOMContentLoaded -->
+  <!-- canonical DSA content + runtime — `defer`: fetched in parallel, executed in document order after parse -->
   <script defer src="src/core/access-gate.js?v=0.2.69"></script>
-  <!-- curriculum order (holistic reorder, iter 1217): foundations → core ML → frontier.
-       Under this order every cross-topic edge in data/prereqs.js points backward. -->
-  <script defer src="data/linear-algebra.js?v=0.2.69"></script>
-  <script defer src="data/calculus.js?v=0.2.69"></script>
-  <script defer src="data/probability-statistics.js?v=0.2.69"></script>
-  <script defer src="data/algorithms.js?v=0.2.69"></script>
-  <script defer src="data/information-theory.js?v=0.2.69"></script>
-  <script defer src="data/machine-learning.js?v=0.2.69"></script>
-  <script defer src="data/deep-learning.js?v=0.2.69"></script>
-  <script defer src="data/reinforcement-learning.js?v=0.2.69"></script>
-  <script defer src="data/llm.js?v=0.2.69"></script>
-  <script defer src="data/time-series.js?v=0.2.69"></script>
-  <script defer src="data/game-theory.js?v=0.2.69"></script>
-  <script defer src="data/prereqs.js?v=0.2.69"></script>
-  <script defer src="data/references.js?v=0.2.69"></script>
-  <script defer src="data/glossary.js?v=0.2.69"></script>
   <script defer src="src/core/content/transport.js?v=0.2.69"></script>
   <script defer src="src/core/content/repository.js?v=0.2.69"></script>
   <script defer src="src/app/bootstrap.js?v=0.2.69"></script>
   <script defer src="src/core/sync-client.js?v=0.2.69"></script>
-  <script defer src="js/viz.js?v=0.2.69"></script>
-  <script defer src="js/playground.js?v=0.2.69"></script>
-  <script defer src="js/store.js?v=0.2.69"></script>
   <script defer src="src/core/study-store.js?v=0.2.69"></script>
   <script defer src="js/nus-store.js?v=0.2.69"></script>
   <script defer src="src/ui/labs/registry.js?v=0.2.69"></script>

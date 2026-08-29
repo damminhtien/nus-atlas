@@ -24,8 +24,10 @@ async function main() {
   if (!lessonAsset) throw new Error("production lesson shard missing");
   await get(`/content/${lessonAsset}`);
   await get("/nus/DSA5105/dsa5105-linear-week1/");
-  const legacy = await fetch(`${base}/data/nus/dsa5105.js`, { cache: "no-store" });
-  if (legacy.ok) throw new Error("legacy public NUS bundle is still deployed");
+  for (const pathname of ["/data/algorithms.js", "/data/nus/dsa5105.js"]) {
+    const removedAsset = await fetch(`${base}${pathname}`, { cache: "no-store" });
+    if (removedAsset.ok) throw new Error(`removed Atlas asset is still deployed: ${pathname}`);
+  }
   console.log(`PRODUCTION SMOKE GREEN · ${base} · v${version} · DSA5105 outline + lesson shard`);
 }
 if (require.main === module) main().catch(error => { console.error(`PRODUCTION SMOKE FAILED · ${error.message}`); process.exitCode = 1; });

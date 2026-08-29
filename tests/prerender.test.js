@@ -3,9 +3,10 @@ const assert = require("node:assert/strict");
 const fs = require("node:fs");
 const packageJson = require("../package.json");
 
-test("Pages prerender copies public slide assets into the deploy artifact", () => {
+test("Pages prerender copies public DSA assets into the deploy artifact", () => {
   const prerender = fs.readFileSync("prerender.js", "utf8");
-  assert.match(prerender, /\["index\.html"[\s\S]*"data", "assets"\]/);
+  assert.match(prerender, /\["index\.html"[\s\S]*"assets"\]/);
+  assert.doesNotMatch(prerender, /data\/|COURSES|lessonPage/);
 });
 
 test("Pages prerender scopes generated caches to NUS Atlas", () => {

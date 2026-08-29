@@ -27,7 +27,7 @@ Gamification in NUS Atlas is a private feedback loop for studying, not a public 
 }
 ```
 
-The NUS ledger owns deduplication and mastery. The existing global store receives only the resulting XP and streak signal through `Store.recordNusEvidence`, so the shared gamification engine remains coherent. NUS deliberately keeps level and XP out of the primary top bar and exposes only a compact study-momentum surface on Home.
+The canonical DSA ledger owns deduplication, XP, streaks, and mastery. The app shell reads its compact gamification snapshot through the study-store boundary, so there is one source of truth for study progress.
 
 | Evidence | Default XP | Mastery signal |
 | --- | ---: | --- |
@@ -56,7 +56,7 @@ The engine still records XP, levels, streaks, and recognition internally. The in
 
 ## Reusable visual-learning contract
 
-Every visual lab in `data/nus/visual-labs.js` declares:
+Every visual lab in `content/courses/<COURSE>/labs/index.json` declares:
 
 - `learningGoal`: one observable reasoning outcome.
 - `sourceRefs`: typed lecture, exercise, textbook, or reference pointers.
@@ -106,4 +106,4 @@ All 4 DSA5101, 7 DSA5104, 23 DSA5105, and 9 DSA5208 package lessons now resolve 
 
 ## Validation checklist
 
-Before release, run `node nus-gate.js`, `node gate.js`, `node prerender.js`, and `git diff --check`. Verify that a refresh does not duplicate an event, keyboard focus reaches every control, reduced motion removes transitions, and the deployed GitHub Pages route shows the same source labels as the normalized data.
+Before release, run `node nus-gate.js`, `node prerender.js`, and `git diff --check`. Verify that a refresh does not duplicate an event, keyboard focus reaches every control, reduced motion removes transitions, and the deployed GitHub Pages route shows the same source labels as the normalized data.

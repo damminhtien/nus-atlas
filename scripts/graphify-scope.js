@@ -1,4 +1,4 @@
-/* Keep Graphify updates explicit and out of generated/legacy trees. */
+/* Keep Graphify updates explicit and out of generated trees. */
 const { execFileSync } = require("child_process");
 const fs = require("fs");
 const os = require("os");
@@ -8,7 +8,7 @@ const scopes = {
   content: ["content", "schemas"],
   full: ["src", "js", "tools", "scripts", "tests", "content", "schemas", "docs"]
 };
-const forbidden = /^(?:dist|graphify-out|data\/nus|legacy)(?:\/|$)/;
+const forbidden = /^(?:dist|graphify-out)(?:\/|$)/;
 function run(scope = process.argv[2] || "code") {
   if (!scopes[scope]) throw new Error(`Unknown Graphify scope: ${scope}`);
   if (scopes[scope].some(file => forbidden.test(file))) throw new Error(`Forbidden Graphify input in ${scope}`);

@@ -1,6 +1,6 @@
 # Normalized course packages
 
-`content/courses/<COURSE>/` is the source package for migrated NUS courses.
+`content/courses/<COURSE>/` is the canonical source package for NUS DSA courses.
 Raw lecture PDFs, textbook PDFs, Canvas exports, and personal documents remain
 outside the repository.
 
@@ -21,7 +21,4 @@ npm run content:build
 ```
 
 The compiler reads only the JSON under `content/` and never writes back into it.
-Edit canonical package JSON, then rebuild; never edit `dist/` directly. Legacy
-IIFE data under `data/nus/` is migration input only and is not part of the
-canonical content pipeline. Run `npm run content:migrate:legacy -- COURSE` only
-when intentionally importing an unmigrated course.
+Edit canonical package JSON, then rebuild; never edit `dist/` directly.

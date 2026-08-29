@@ -11,7 +11,7 @@ function memoryStorage(value) {
   };
 }
 
-test("study store migrates legacy v1 state without losing progress", () => {
+test("study store migrates an earlier v1 state without losing progress", () => {
   const storage = memoryStorage({
     tasks: { hw1: { status: "done", checks: [true] } },
     lessons: { lesson1: true },
@@ -87,24 +87,17 @@ test("study store remembers the last lesson without awarding learning evidence",
   assert.equal(storage.read().lastLesson.lessonId, "basis-functions");
 });
 
-test("study store exposes a compact gamification snapshot through its boundary", () => {
-  const store = createStudyStore({
-    storage: memoryStorage(),
-    atlasStore: {
-      raw: { xp: 240, goalXp: 50, activeDays: { "2026-08-15": 1 } },
-      stats: () => ({ streak: 12 }),
-      todayXP: () => 30,
-      levelInfo: () => ({ level: 2, name: "Apprentice" })
-    }
-  });
-  assert.deepEqual(store.gamification(), {
-    xp: 240,
-    streak: 12,
-    todayXp: 30,
-    goalXp: 50,
-    activeDays: { "2026-08-15": 1 },
-    level: { level: 2, name: "Apprentice" }
-  });
+test("study store derives gamification from canonical DSA evidence", () => {
+  const store = createStudyStore({ storage: memoryStorage(), now: () => new Date("2026-08-15T10:00:00.000Z") });
+  store.recordEvidence({ eventId: "lesson:one", type: "lesson_complete", courseCode: "DSA5105", lessonId: "one", xp: 40 });
+  store.recordEvidence({ eventId: "recall:one", type: "recall_correct", courseCode: "DSA5105", lessonId: "one", xp: 5 });
+  const snapshot = store.gamification();
+  assert.equal(snapshot.xp, 45);
+  assert.equal(snapshot.streak, 1);
+  assert.equal(snapshot.todayXp, 45);
+  assert.deepEqual(snapshot.activeDays, { "2026-08-15": 1 });
+  assert.equal(snapshot.goalXp, 50);
+  assert.deepEqual(snapshot.level, { level: 1, name: "Novice", xp: 45, pct: 30, toNext: 105, next: { level: 2, name: "Apprentice", xp: 150 } });
 });
 
 test("study store keeps evidence idempotent and updates mastery", () => {

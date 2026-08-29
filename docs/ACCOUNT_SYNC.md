@@ -29,7 +29,7 @@ The API is `api/sync.js` and is deployed with the existing `nus-atlas-grader` Ve
 | --- | --- |
 | `BLOB_READ_WRITE_TOKEN` | Token for a **private** Vercel Blob store |
 | `ATLAS_SYNC_USERS_JSON` | JSON object mapping each username to its scrypt hash |
-| `ATLAS_SYNC_USERNAME` | Default username for the legacy single-user fallback |
+| `ATLAS_SYNC_USERNAME` | Default username for the single-user fallback |
 | `ATLAS_SYNC_PASSWORD_HASH` | Legacy single-user fallback; never the plain password |
 | `ATLAS_SYNC_SESSION_SECRET` | Random secret used to sign 30-day bearer sessions |
 | `ATLAS_SYNC_ORIGIN` | Additional allowed browser origins, comma-separated if needed. GitHub Pages and loopback development (`localhost` / `127.0.0.1` over HTTP on any port) are always allowed. |

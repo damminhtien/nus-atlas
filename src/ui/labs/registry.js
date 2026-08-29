@@ -1,7 +1,4 @@
-/* Small plugin registry shared by visual-learning labs.
- * Renderers stay in the legacy-compatible component file for now; the registry
- * gives them a stable boundary so each renderer can move to its own module later.
- */
+/* Small plugin registry shared by canonical DSA visual-learning labs. */
 (function (root, factory) {
   if (typeof module === "object" && module.exports) module.exports = factory;
   else root.ATLAS_LAB_REGISTRY = factory;

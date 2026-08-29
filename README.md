@@ -27,10 +27,9 @@ The normalized packages currently contain 43 lessons across four courses. The da
 - Critical-thinking prompts that challenge assumptions and include strong-answer comparisons.
 - Reading-first lesson pages with editorial typography, a four-step Read/Work/Reason/Recall compass, and Focus Reading mode.
 - Derived visual study cues that explain what a referenced diagram, table, chart, or screenshot is meant to teach without publishing raw course slides.
-- A quiet study-momentum surface on NUS Home: streak, weekly goal, current-concept mastery, and concise lesson-completion feedback. Detailed progress and achievements stay under Progress & achievements; page views never award XP.
+- A quiet study-momentum surface on NUS Home: streak, weekly goal, current-concept mastery, and concise lesson-completion feedback. Page views never award XP.
 - Automatic spaced retrieval that schedules mastered concepts for `+1`, `+3`, `+7`, `+14`, and later intervals; each review asks only 1–2 questions and adapts to correctness and confidence.
 - Reusable visual-learning labs for ERM comparison, SVM geometry, derivation traces, PCA, GMM/EM, Bellman backups, DP tables, graph kernels, spectral clustering, and GNN message passing.
-- General Atlas remains available at `#/atlas`.
 
 Useful routes:
 
@@ -69,7 +68,7 @@ DSA5101, DSA5104, DSA5105, and DSA5208 deliberately separate four source classes
 - `textbook`: derivations and background from `Textbook.pdf`; useful for depth, but not automatically examinable.
 - `ref`: optional, historical, or assessment-derived support. Draft, old, and `assessment-derived` references are marked explicitly and must not redefine current lecture scope or dates.
 
-Every normalized lesson and question uses typed `sourceRefs` with `sourceId`, page, `sourceType`, role, and status. Concept cards and visual derivations can also expose an **A+ source lens** that explains why a topic is examinable and separates lecture scope from official exercise depth. See [the DSA5105 study guide](docs/NUS_STUDY_GUIDE.md), [the DSA5101 study guide](docs/DSA5101_STUDY_GUIDE.md), [the DSA5104 study guide](docs/DSA5104_STUDY_GUIDE.md), [the DSA5208 study guide](docs/DSA5208_STUDY_GUIDE.md), [the source metadata](data/nus/provenance.js), and [the normalized data policy](data/nus/README.md).
+Every normalized lesson and question uses typed `sourceRefs` with `sourceId`, page, `sourceType`, role, and status. Concept cards and visual derivations can also expose an **A+ source lens** that explains why a topic is examinable and separates lecture scope from official exercise depth. See [the DSA5105 study guide](docs/NUS_STUDY_GUIDE.md), [the DSA5101 study guide](docs/DSA5101_STUDY_GUIDE.md), [the DSA5104 study guide](docs/DSA5104_STUDY_GUIDE.md), [the DSA5208 study guide](docs/DSA5208_STUDY_GUIDE.md), [the source metadata](content/source-types.json), and [the canonical data policy](content/README.md).
 
 ## Data and privacy
 
@@ -116,7 +115,6 @@ node scripts/validate-content.js
 node scripts/validate-latex.js
 node --test tests/*.test.js
 node nus-gate.js
-node gate.js
 node prerender.js
 git diff --check
 ```
@@ -131,7 +129,7 @@ npm run build     # generate the deployable Pages artifact in dist/
 
 Direct `file://` opening is intentionally not a supported runtime contract.
 
-`nus-gate.js` verifies that all 43 NUS lessons have a LaTeX formula model, formula explanations, source labels, and at least two critical-thinking questions. `data/nus/formula-depth.js` contains the shared formula and critique layer; lecture, textbook, and reference content remains visibly separated.
+`nus-gate.js` verifies that all 43 canonical DSA lessons have a LaTeX formula model, formula explanations, source labels, and at least two critical-thinking questions. Canonical course packages keep lecture, textbook, exercise, and reference content visibly separated.
 
 ### Strict authored-math rule
 
@@ -145,7 +143,7 @@ The Pages workflow runs `node prerender.js` in CI, creates the static `dist/` ar
 - `src/core/content/repository.js` — async catalog, outline, course, and lesson repository.
 - `src/core/content/transport.js` — manifest and content-addressed JSON transport.
 - `src/app/bootstrap.js` — composition root that loads the catalog before views start.
-- `src/core/study-store.js` — versioned local study state, evidence, mastery, and migration.
+- `src/core/study-store.js` — versioned local DSA study state, evidence, mastery, and migration.
 - `src/core/router.js` — framework-free hash route lifecycle used by the app shell.
 - `src/features/nus/route-table.js` — NUS route contract.
 - `src/features/nus/presentation.js` — reusable NUS lesson/source/visual presenters.
@@ -160,11 +158,10 @@ The Pages workflow runs `node prerender.js` in CI, creates the static `dist/` ar
 - `js/nus-components.js` — reusable visual-learning lab templates.
 - `content/courses/` — normalized course packages for DSA5101, DSA5104, DSA5105, and DSA5208.
 - `content/` — canonical course packages and source metadata.
-- `data/nus/` — legacy migration input only; it is not loaded by the production runtime.
+- `data/extracted/` — normalized DSA lecture extraction artifacts and reader views.
 - `scripts/content-build.js` — thin adapter that compiles canonical packages into ignored `dist/content/` shards.
 - `scripts/validate-latex.js` — blocks raw math fragments in authored study content.
 - `scripts/latex-utils.js` — shared authored-content normalization and field rules.
-- `scripts/normalize-latex.js` — one-time migration helper for JSON content packages.
 - `nus-gate.js` — NUS data, privacy, and provenance gate.
 
 ### External textbox grader
@@ -176,6 +173,4 @@ The optional `api/grade.js` endpoint is designed for a Vercel deployment. Set `G
 - `.github/workflows/pages.yml` — production Pages workflow.
 - `docs/` — study and production documentation.
 
-The staged refactor roadmap is in [docs/REFACTOR_PLAN.md](docs/REFACTOR_PLAN.md).
-
-For content changes, start with [data/nus/README.md](data/nus/README.md). For agent tooling and token-efficient source inspection, see [AGENTS.md](AGENTS.md).
+For content changes, start with [content/README.md](content/README.md). For agent tooling and token-efficient source inspection, see [AGENTS.md](AGENTS.md).
