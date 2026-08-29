@@ -18,9 +18,10 @@ the learner explicitly chooses another mode.
 
 ## Question eligibility and provenance
 
-The selector only includes lessons with `examEligible !== false`. Textbook,
-reference, supplementary, and source-pending lessons therefore cannot silently
-become exam-scope questions. A generated question carries:
+The selector uses lesson eligibility as the default and honors an explicit
+question-level `examEligible` override. This lets a curated question re-enter
+Exam Mode without promoting the whole supplementary or source-pending lesson;
+unmarked questions in that lesson remain excluded. A generated question carries:
 
 ```json
 {

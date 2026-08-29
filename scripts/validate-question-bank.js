@@ -61,6 +61,7 @@ function validateQuestionBank(bank, state = loadCanonicalState(ROOT)) {
     if (existingIds.has(question.id)) errors.push(`bank question duplicates existing id: ${question.id}`);
     ids.add(question.id);
     if (!lessons.has(question.lessonId)) errors.push(`${owner} references unknown lesson: ${question.lessonId}`);
+    if (question.examEligible !== undefined && typeof question.examEligible !== "boolean") errors.push(`${owner} has invalid examEligible flag`);
     if (!TYPES.has(question.type)) errors.push(`${owner} has invalid type`);
     if (!DIFFICULTIES.has(question.difficulty)) errors.push(`${owner} has invalid difficulty`);
     if (!question.skill || !question.cognitiveLevel) errors.push(`${owner} is missing skill metadata`);

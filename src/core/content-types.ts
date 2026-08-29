@@ -93,6 +93,7 @@ export type Question = {
   generationSeed?: string | number;
   templateId?: string;
   cardId?: string;
+  examEligible?: boolean;
 };
 export type StudyKit = {
   lessonId: string;

@@ -4,16 +4,16 @@ DSA5104 is a normalized, source-backed course package in NUS Atlas and the curre
 
 ## Course package
 
-The editable package lives under `content/courses/DSA5104/`. It currently exposes eight learning surfaces across six modules and 17 lessons. The default Exam Mode uses only verified, exam-eligible lecture content; supplementary and source-pending material stays visible but is excluded by default:
+The editable package lives under `content/courses/DSA5104/`. It currently exposes eight learning surfaces across six modules and 17 lessons. The default Exam Mode uses verified, exam-eligible lecture content plus explicitly promoted question-level exceptions; supplementary and source-pending lessons stay visible and remain excluded by default:
 
 - **Orientation:** data management scope, database systems, and the role of a DBMS.
 - **Relational model:** schemas, instances, keys, constraints, and relational algebra intuition.
 - **SQL:** eight focused Chapter 3 units covering DDL/integrity, query shape, joins, NULL logic, aggregation, nested queries, CTEs, and safe mutations.
-- **Database design (supplementary):** ER modeling and mapping to relations, available for project context but excluded from default Exam Mode because Chapter 6 is not in the current lecture scope.
+- **Database design (supplementary):** ER modeling and mapping to relations, available for project context. Its 31 bank questions are explicitly promoted into Exam Mode; the two authored lesson checks remain outside the default selection.
 - **Query processing:** parsing, optimization, indexes, scans, and execution plans.
 - **Transactions and architecture:** atomicity, concurrency, recovery, centralized/distributed deployments, and tiered systems.
 - **Semi-structured data:** JSON/XML-style flexibility, schema-on-read, and the relational trade-off.
-- **Planned / source pending:** exercise-backed previews for Ch4, Ch5, and Ch7; future Ch9 and second-half materials remain ledger entries until their official lecture sources are supplied.
+- **Planned / source pending:** exercise-backed previews for Ch4, Ch5, and Ch7. The current 94 bank questions in these previews are explicitly promoted into Exam Mode; future Ch9 and second-half materials remain ledger entries until their official lecture sources are supplied.
 
 The supplied `chapter1.pdf`, `chapter2.pdf`, and `chapter3.pdf` decks define the currently supplied lecture scope. Their page-aware readers are available at:
 
@@ -29,7 +29,7 @@ Each slide keeps page-aware extraction blocks, bounding boxes, image IDs, and te
 
 `DSA5104/chapter1.pdf`, `DSA5104/chapter2.pdf`, and `DSA5104/chapter3.pdf` define the currently supplied lecture scope. The Codex appendix is supplementary lecture material. All supplied Ch01–Ch07 homework-solution folders are ingested as exercise-depth content: 190 source questions, one per Markdown solution file. The source solutions do not silently upgrade Chapters 4–7 into lecture authority; the textbook index points to `Database System Concepts, 7th edition` for background and derivations.
 
-The normalized source manifest is `content/courses/DSA5104/sources/manifest.json`. Raw PDFs and homework files remain outside the repository under `/Users/macbook/Desktop/NUS/DSA5104`; only normalized extraction, page references, and derived study notes are committed.
+The normalized source manifest is `content/courses/DSA5104/sources/manifest.json`. Raw PDFs and homework files remain outside the repository under `/Users/macbook/Desktop/NUS/DSA5104`; only normalized extraction, page references, and derived study notes are committed. Homework remains exercise-depth evidence; only the 125 bank questions with an explicit `examEligible: true` flag are admitted to Exam Mode.
 
 The current final-exam map is also partial. The supplied lecture sources cover Chapters 1–3; Chapters 4, 5, 9, and the second-half materials (including XML, MongoDB, MapReduce, Spark SQL, and vector databases) remain explicit ingestion targets. Do not read the current lesson list as complete semester coverage until those official sources are added. `content/courses/DSA5104/assessment-map.json` records this boundary and the provenance of the practice layers.
 

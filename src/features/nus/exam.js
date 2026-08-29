@@ -97,6 +97,12 @@
     return gradingMode(question) === "exact";
   }
 
+  function isQuestionExamEligible(lesson, question) {
+    return question && question.examEligible !== undefined
+      ? question.examEligible === true
+      : !!lesson && lesson.examEligible !== false;
+  }
+
   function practicePlanFor(code, scope) {
     if (scope !== "mixed-exam" || typeof getAssessmentMap !== "function") return null;
     const map = getAssessmentMap(code);
@@ -106,12 +112,14 @@
 
   function questionsForPracticePlan(code, plan) {
     if (!plan) return [];
-    const byId = new Map(getLessons(code).filter(lesson => lesson.examEligible !== false).flatMap(lesson => (lesson.questions || []).map(question => ({
-      ...question,
-      lessonId: lesson.id,
-      lessonTitle: lesson.title,
-      lessonSourceRefs: lesson.sourceRefs || []
-    }))).map(question => [question.id, question]));
+    const byId = new Map(getLessons(code).filter(lesson => lesson).flatMap(lesson => (lesson.questions || [])
+      .filter(question => isQuestionExamEligible(lesson, question))
+      .map(question => ({
+        ...question,
+        lessonId: lesson.id,
+        lessonTitle: lesson.title,
+        lessonSourceRefs: lesson.sourceRefs || []
+      }))).map(question => [question.id, question]));
     const questions = plan.questionIds.map(id => byId.get(id)).filter(Boolean);
     return questions.length === plan.questionIds.length ? questions : [];
   }

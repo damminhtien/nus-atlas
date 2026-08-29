@@ -89,8 +89,13 @@ test("DSA5104 synthetic checkpoint is runnable and clearly separate from past-ye
   ]);
 });
 
-test("DSA5104 default exam selection excludes supplementary and planned lessons", () => {
+test("DSA5104 keeps lesson scope labels while admitting exactly the promoted bank questions", () => {
   const packageData = compileCourse(process.cwd(), "DSA5104").package;
+  const targetLessons = new Set(["dsa5104-database-design", "dsa5104-ch4-preview", "dsa5104-ch5-preview", "dsa5104-ch7-preview"]);
+  const targetQuestions = packageData.content.modules.flatMap(module => module.lessons)
+    .filter(lesson => targetLessons.has(lesson.id))
+    .flatMap(lesson => lesson.questions);
+  const promoted = targetQuestions.filter(question => question.examEligible === true);
   const feature = createExamFeature({
     root: { innerHTML: "" },
     getCourses: () => [],
@@ -105,6 +110,10 @@ test("DSA5104 default exam selection excludes supplementary and planned lessons"
   });
   const selected = feature.questionsFor("DSA5104", "", "new", Infinity);
   assert.ok(selected.length > 0);
-  assert.ok(selected.every(question => !["dsa5104-database-design", "dsa5104-ch4-preview", "dsa5104-ch5-preview", "dsa5104-ch7-preview"].includes(question.lessonId)));
+  assert.equal(targetQuestions.length, 127);
+  assert.equal(promoted.length, 125);
+  assert.equal(new Set(promoted.map(question => question.id)).size, 125);
+  assert.deepEqual(selected.filter(question => targetLessons.has(question.lessonId)).map(question => question.id), promoted.map(question => question.id));
+  assert.ok(!selected.some(question => ["dsa5104-dd-q1", "dsa5104-dd-q2"].includes(question.id)));
   assert.ok(selected.some(question => question.id === "dsa5104-synthetic-final-001"));
 });

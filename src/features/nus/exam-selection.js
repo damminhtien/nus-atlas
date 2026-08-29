@@ -60,20 +60,28 @@
     return new Set(store && typeof store.mistakes === "function" ? store.mistakes(code).map(item => item.questionId).filter(Boolean) : []);
   }
 
+  function isQuestionExamEligible(lesson, question) {
+    return question && question.examEligible !== undefined
+      ? question.examEligible === true
+      : !!lesson && lesson.examEligible !== false;
+  }
+
   function eligibleQuestions(code, scope) {
     return getLessons(code)
-      .filter(lesson => lesson && lesson.examEligible !== false)
+      .filter(lesson => lesson)
       .filter(lesson => !scope || scope === "mixed-exam" || lesson.id === scope)
       .sort(compareLessonOrder)
-      .flatMap(lesson => (lesson.questions || []).map((question, index) => ({
-        ...question,
-        lessonId: lesson.id,
-        lessonTitle: lesson.title,
-        lessonSourceRefs: lesson.sourceRefs || [],
-        lessonWeek: lesson.week,
-        lessonSequence: lesson.sequence,
-        questionOrder: index
-      })));
+      .flatMap(lesson => (lesson.questions || [])
+        .filter(question => isQuestionExamEligible(lesson, question))
+        .map((question, index) => ({
+          ...question,
+          lessonId: lesson.id,
+          lessonTitle: lesson.title,
+          lessonSourceRefs: lesson.sourceRefs || [],
+          lessonWeek: lesson.week,
+          lessonSequence: lesson.sequence,
+          questionOrder: index
+        })));
   }
 
   function rankedQuestions(input) {
@@ -170,5 +178,5 @@
     };
   }
 
-  return Object.freeze({ eligibleQuestions, rankedQuestions, selectQuestions, compareLessonOrder });
+  return Object.freeze({ eligibleQuestions, rankedQuestions, selectQuestions, compareLessonOrder, isQuestionExamEligible });
 });

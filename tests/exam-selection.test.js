@@ -23,6 +23,14 @@ test("selection excludes non-exam lessons even for a scoped route", () => {
   assert.deepEqual(selector.selectQuestions({ courseCode: "DSA5105", scope: "supplement", limit: 2 }), []);
 });
 
+test("selection admits an explicit question override inside a non-exam lesson", () => {
+  const selector = makeSelection({ lessons: [lesson("supplement", 2, [
+    question("q1", "ref"),
+    question("q2", "ref", { examEligible: true })
+  ], { examEligible: false })] });
+  assert.deepEqual(selector.selectQuestions({ courseCode: "DSA5105", scope: "supplement", limit: 2 }).map(item => item.id), ["q2"]);
+});
+
 test("selection prioritizes due retrieval, mistakes, weak accuracy, and assessment priority", () => {
   const lessons = [
     lesson("new", 1, [question("new-q", "new")]),

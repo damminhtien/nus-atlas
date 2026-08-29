@@ -12,6 +12,12 @@ const CHAPTERS = [
   ["Ch06_Database_Design_Using_the_ER_Model", "dsa5104-database-design", "ER design"],
   ["Ch07_Relational_Database_Design", "dsa5104-ch7-preview", "relational database design"]
 ];
+const EXAM_ELIGIBLE_LESSON_IDS = new Set([
+  "dsa5104-ch4-preview",
+  "dsa5104-ch5-preview",
+  "dsa5104-database-design",
+  "dsa5104-ch7-preview"
+]);
 
 const SQL3_LESSONS = {
   "3.1": "dsa5104-sql-query-shape", "3.2": "dsa5104-sql-aggregation", "3.3": "dsa5104-sql-mutations", "3.4": "dsa5104-sql-mutations",
@@ -542,7 +548,8 @@ function buildQuestion(item) {
       status: "current-context"
     }],
     schemaVersion: "nus.question.v1",
-    reviewStatus: sourceIncomplete ? "source-solution-incomplete" : "ready"
+    reviewStatus: sourceIncomplete ? "source-solution-incomplete" : "ready",
+    ...(EXAM_ELIGIBLE_LESSON_IDS.has(lessonId) ? { examEligible: true } : {})
   };
 }
 
@@ -605,6 +612,7 @@ if (require.main === module) {
 }
 
 module.exports = {
+  EXAM_ELIGIBLE_LESSON_IDS,
   INCOMPLETE_SOURCE_IDS,
   OPEN_RESPONSE_IDS,
   choiceText,
