@@ -5,9 +5,9 @@
   else root.ATLAS_EXAM_GENERATORS = factory;
 })(typeof globalThis === "object" ? globalThis : this, function createExamGenerators(options) {
   const config = options || {};
-  const createDsa5101Generators = typeof module === "object" && module.exports
+  const createDsa5101Generators = config.dsa5101Generators || (typeof module === "object" && module.exports
     ? require("./dsa5101-generators")
-    : globalThis.ATLAS_DSA5101_GENERATORS;
+    : null);
   const dsa5101 = createDsa5101Generators ? createDsa5101Generators({ getTemplates: config.getTemplates }) : null;
   const source = {
     ols: [{ sourceId: "DSA5105/Lec4_annotated.pdf", page: 17, sourceType: "lecture", role: "weighted objective", status: "current" }, { sourceId: "DSA5105/Textbook.pdf", page: 100, sourceType: "textbook", role: "weighted least squares", status: "supporting" }],

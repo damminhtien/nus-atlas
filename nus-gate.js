@@ -113,7 +113,7 @@ for (const packageData of packages) {
 
 const labTypes = new Set(["compare", "geometry", "math-stepper", "algorithm-trace", "derivation-trace", "event-timeline", "pipeline-builder", "concept-map", "decision-tree", "delivery-guarantee", "deep-dive"]);
 for (const packageData of packages) for (const [id, lab] of Object.entries(packageData.labs || {})) if (!labTypes.has(lab.type)) errors.push(`unknown visual lab type: ${id}`);
-const publicFiles = ["js/nus.js", "js/nus-store.js", "js/nus-components.js", "src/app/bootstrap.js", "src/core/content/transport.js", "src/core/content/repository.js"];
+const publicFiles = ["src/app/bootstrap.js", "src/app/app-shell.js", "src/app/nus-ui.js", "src/ui/nus-components.js", "src/core/content/transport.js", "src/core/content/repository.js"];
 const publicText = publicFiles.map(file => fs.readFileSync(path.join(ROOT, file), "utf8"));
 if (publicText.some(text => /\/Users\/|Desktop\/NUS|(?:passport|medical|identity)[^\n]{0,80}\.(?:pdf|docx?|png|jpe?g)/i.test(text))) errors.push("public NUS runtime contains a private/raw source marker");
 if (errors.length) { console.error("NUS GATE FAILED"); errors.forEach(error => console.error(`- ${error}`)); process.exit(1); }

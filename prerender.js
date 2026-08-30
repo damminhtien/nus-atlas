@@ -78,7 +78,7 @@ function copyInto(source, destination) {
 fs.rmSync(OUT, { recursive: true, force: true });
 fs.mkdirSync(OUT, { recursive: true });
 require("./scripts/content-build").buildAll();
-["index.html", "sw.js", "manifest.webmanifest", "icon.svg", "css", "js", "src", "assets"].forEach(item => {
+["index.html", "sw.js", "manifest.webmanifest", "icon.svg", "css", "src", "assets"].forEach(item => {
   const source = path.join(__dirname, item);
   if (fs.existsSync(source)) copyInto(source, path.join(OUT, item));
 });

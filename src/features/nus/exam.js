@@ -4,10 +4,10 @@
   if (typeof module === "object" && module.exports) module.exports = factory;
   else root.ATLAS_EXAM_FEATURE = factory;
 })(typeof globalThis === "object" ? globalThis : this, function createNusExamFeature(options) {
-  const createExamSelection = options.selection || (typeof module === "object" && module.exports ? require("./exam-selection") : globalThis.ATLAS_EXAM_SELECTION);
-  const createExamSession = options.session || (typeof module === "object" && module.exports ? require("./exam-session") : globalThis.ATLAS_EXAM_SESSION);
-  const createExamGenerators = options.generators || (typeof module === "object" && module.exports ? require("./exam-generators") : globalThis.ATLAS_EXAM_GENERATORS);
-  const createExamRenderer = options.renderer || (typeof module === "object" && module.exports ? require("./exam-renderer") : globalThis.ATLAS_EXAM_RENDERER);
+  const createExamSelection = options.selection || (typeof module === "object" && module.exports ? require("./exam-selection") : null);
+  const createExamSession = options.session || (typeof module === "object" && module.exports ? require("./exam-session") : null);
+  const createExamGenerators = options.generators || (typeof module === "object" && module.exports ? require("./exam-generators") : null);
+  const createExamRenderer = options.renderer || (typeof module === "object" && module.exports ? require("./exam-renderer") : null);
   const {
     root,
     getCourses,
@@ -28,7 +28,7 @@
 
   const selection = createExamSelection ? createExamSelection({ getLessons, getStore, getAssessmentMap }) : null;
   const sessionApi = createExamSession ? createExamSession() : null;
-  const generators = createExamGenerators ? createExamGenerators({ getTemplates: getQuestionTemplates }) : null;
+  const generators = createExamGenerators ? createExamGenerators({ getTemplates: getQuestionTemplates, dsa5101Generators: options.dsa5101Generators }) : null;
   const renderer = createExamRenderer ? createExamRenderer({ pageHead, sourceItem, text, esc, button }) : null;
 
   function defaultCourseCode() {

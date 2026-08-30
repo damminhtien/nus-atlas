@@ -1,9 +1,24 @@
-/* NUS Atlas application shell.
- * Course content and study features live behind the canonical repository. */
-(function () {
+/* NUS Atlas application shell. DOM and application dependencies are injected
+ * by the browser composition root. */
+(function (root, factory) {
+  if (typeof module === "object" && module.exports) module.exports = factory;
+  else root.ATLAS_APP_SHELL_FACTORY = factory;
+})(typeof globalThis === "object" ? globalThis : this, function startApp(options) {
   "use strict";
 
-  const app = document.getElementById("app");
+  const config = options || {};
+  const window = config.window || (typeof globalThis === "object" && globalThis.window) || globalThis;
+  const document = config.document || window.document;
+  const localStorage = config.localStorage || window.localStorage;
+  const location = config.location || window.location;
+  const NodeFilter = window.NodeFilter || globalThis.NodeFilter;
+  const CustomEvent = window.CustomEvent || globalThis.CustomEvent;
+  const app = config.root || document.getElementById("app");
+  const repository = () => config.repository || null;
+  const studyStore = config.store || null;
+  const routerFactory = config.router;
+  const features = config.features || {};
+  let nusUI;
   const SIDEBAR_KEY = "atlas.sidebarCollapsed";
   let router;
   let shortcuts = null;
@@ -72,12 +87,21 @@
     }
     if (retries < 40) setTimeout(() => typeset(target, retries + 1), 120);
   }
-  window.typeset = typeset;
-
-  function repository() { return window.ATLAS_REPOSITORY || null; }
   function courses() { return repository() ? repository().listCourses() : []; }
   function lessons(code) { return repository() ? repository().listLessons(code) : []; }
   function currentHash() { return location.hash || "#/"; }
+
+  if (typeof features.nusUI !== "function") throw new Error("NUS UI factory is not configured");
+  nusUI = features.nusUI({
+    document,
+    window,
+    root: app,
+    repository: config.repository,
+    store: studyStore,
+    components: features.components,
+    typeset,
+    features
+  });
 
   function reducedMotion() {
     try { return document.documentElement.getAttribute("data-reduce-motion") === "on" || window.matchMedia("(prefers-reduced-motion: reduce)").matches; }
@@ -131,7 +155,7 @@
   }
 
   function renderChrome() {
-    const store = window.ATLAS_STUDY_STORE;
+    const store = studyStore;
     const signal = store?.gamification?.() || {};
     const level = signal.level || { level: 1, name: "Novice", pct: 0, xp: Number(signal.xp) || 0, toNext: 0, next: null };
     const nav = document.getElementById("nav-courses");
@@ -285,14 +309,15 @@
     app.classList.add("nus-root");
     window.scrollTo?.(0, 0);
     document.title = path[0] === "nus" ? "NUS Atlas · Study Studio" : "NUS Atlas · Study Studio";
-    if (!window.ATLAS_NUS_UI) throw new Error("NUS study UI is not loaded");
-    return window.ATLAS_NUS_UI.renderRoute(path[0] === "nus" ? path.slice(1) : path, context);
+    if (!nusUI) throw new Error("NUS study UI is not configured");
+    return nusUI.renderRoute(path[0] === "nus" ? path.slice(1) : path, context);
   }
 
   function bootRouter() {
-    router = window.ATLAS_ROUTER({
+    if (typeof routerFactory !== "function") throw new Error("Atlas router is not configured");
+    router = routerFactory({
       beforeRoute(parts) {
-        window.ATLAS_NUS_UI?.stopTransient();
+        nusUI?.stopTransient();
         closeSidebar();
         app.innerHTML = "";
         document.body.classList.toggle("nus-root", parts.length === 0 || parts[0] === "nus");
@@ -307,7 +332,6 @@
       }
     });
     window.addEventListener("hashchange", () => router.navigate());
-    window.ATLAS_ROUTER_INSTANCE = router;
     router.navigate();
   }
 
@@ -323,9 +347,9 @@
     document.getElementById("shortcuts-btn")?.addEventListener("click", showShortcuts);
     document.getElementById("guide-btn")?.addEventListener("click", () => showIntro(true));
     document.getElementById("skip-link")?.addEventListener("click", () => { app.focus(); app.scrollIntoView(); });
-    const accessCredential = window.ATLAS_ACCESS_GATE?.consumeCredential?.() || null;
-    if (window.ATLAS_SYNC_UI && window.ATLAS_SYNC_CLIENT) {
-      const syncTask = window.ATLAS_SYNC_UI({ document }).mount(window.ATLAS_SYNC_CLIENT, accessCredential);
+    const accessCredential = config.accessGate?.consumeCredential?.() || null;
+    if (config.syncUi && config.syncClient) {
+      const syncTask = config.syncUi({ document }).mount(config.syncClient, accessCredential);
       if (accessCredential && syncTask?.then) await syncTask;
     }
     bootRouter();
@@ -334,14 +358,9 @@
   }
 
   function startBoot() {
-    const accessReady = window.ATLAS_ACCESS_READY?.then ? window.ATLAS_ACCESS_READY : Promise.resolve();
-    accessReady.then(async () => {
-      const contentReady = window.ATLAS_CONTENT_READY?.then ? window.ATLAS_CONTENT_READY : Promise.resolve();
-      await contentReady.catch(error => { app.innerHTML = `<section class="empty-state"><h1>DSA content unavailable</h1><p>${esc(error.message || "Refresh to try again.")}</p></section>`; });
-      await boot();
-    }).catch(error => { app.innerHTML = `<section class="empty-state"><h1>Atlas could not start</h1><p>${esc(error.message || "Refresh to try again.")}</p></section>`; });
+    const accessReady = config.accessReady?.then ? config.accessReady : Promise.resolve();
+    return accessReady.then(() => boot()).catch(error => { app.innerHTML = `<section class="empty-state"><h1>Atlas could not start</h1><p>${esc(error.message || "Refresh to try again.")}</p></section>`; });
   }
 
-  if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", startBoot, { once: true });
-  else startBoot();
-})();
+  return startBoot();
+});

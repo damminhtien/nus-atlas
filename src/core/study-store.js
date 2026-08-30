@@ -1,8 +1,7 @@
 /* Persistent study state boundary.
  *
  * The store is intentionally framework-free and CommonJS-compatible. The
- * browser bootstrap keeps the existing NUS_STORE API, while tests and future
- * features can inject storage and time.
+ * browser composition root injects storage and the optional sync scheduler.
  */
 (function (root, factory) {
   if (typeof module === "object" && module.exports) module.exports = factory;
@@ -11,6 +10,7 @@
   const config = options || {};
   const storage = config.storage || null;
   const clock = typeof config.now === "function" ? config.now : () => new Date();
+  let syncScheduler = typeof config.syncScheduler === "function" ? config.syncScheduler : null;
   const KEY = config.key || "nus.v1";
   const SCHEMA_VERSION = "nus.study.v5";
   const RETRIEVAL_INTERVALS = [1, 3, 7, 14, 30, 60, 120];
@@ -97,7 +97,7 @@
 
   function save() {
     if (storage && typeof storage.setItem === "function") storage.setItem(KEY, JSON.stringify(state));
-    if (typeof globalThis === "object" && globalThis.ATLAS_SYNC_CLIENT && typeof globalThis.ATLAS_SYNC_CLIENT.schedule === "function") globalThis.ATLAS_SYNC_CLIENT.schedule();
+    if (syncScheduler) syncScheduler();
   }
 
   function timestamp() { return clock().toISOString(); }
@@ -475,6 +475,7 @@
     recordReading,
     readingList,
     gamification,
+    setSyncScheduler(scheduler) { syncScheduler = typeof scheduler === "function" ? scheduler : null; },
     importData(value) {
       try {
         const parsed = typeof value === "string" ? JSON.parse(value) : value;

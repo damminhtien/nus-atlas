@@ -3,15 +3,10 @@
 (function (root, factory) {
   "use strict";
   if (typeof module === "object" && module.exports) module.exports = factory;
-  else root.ATLAS_SYNC_CLIENT = factory({
-    root,
-    storage: root.localStorage,
-    sessionStorage: root.sessionStorage,
-    endpoint: (root.document && (root.document.querySelector("meta[name='atlas-sync-endpoint']") || {}).content) || ""
-  });
+  else root.ATLAS_SYNC_CLIENT_FACTORY = factory;
 })(typeof globalThis === "object" ? globalThis : this, function createSyncClient(options) {
   const config = options || {};
-  const root = config.root || globalThis;
+  const studyStore = config.studyStore || null;
   const storage = config.storage || null;
   const sessionStorage = config.sessionStorage || null;
   const endpoint = String(config.endpoint || "").trim();
@@ -162,7 +157,6 @@
     listeners.forEach(listener => { try { listener({ status, detail: detail || "", revision }); } catch (_) {} });
   }
   function snapshot() {
-    const studyStore = root.ATLAS_STUDY_STORE;
     const preferences = {};
     PREFERENCE_KEYS.forEach(key => {
       try {
@@ -181,7 +175,7 @@
     const state = object(value);
     suspended = true;
     try {
-      if (state.study && root.ATLAS_STUDY_STORE && typeof root.ATLAS_STUDY_STORE.importData === "function") root.ATLAS_STUDY_STORE.importData(state.study);
+      if (state.study && studyStore && typeof studyStore.importData === "function") studyStore.importData(state.study);
       Object.entries(object(state.preferences)).forEach(([key, item]) => {
         if (PREFERENCE_KEYS.includes(key) && storage) {
           try { storage.setItem(key, String(item)); } catch (_) {}

@@ -1,8 +1,12 @@
-(function () {
+(function (root, factory) {
+  if (typeof module === "object" && module.exports) module.exports = factory;
+  else root.ATLAS_COMPONENTS_FACTORY = factory;
+})(typeof globalThis === "object" ? globalThis : this, function createNusComponents(options) {
   "use strict";
-  const repository = () => window.ATLAS_REPOSITORY || null;
+  const config = options || {};
+  const repository = () => config.repository || null;
   const sourceTypes = () => repository() && repository().getSourceTypes ? repository().getSourceTypes() : {};
-  const studyStore = () => window.ATLAS_STUDY_STORE || null;
+  const studyStore = () => config.store || null;
   const esc = value => String(value == null ? "" : value).replace(/[&<>"']/g, ch => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", "\"": "&quot;", "'": "&#39;" }[ch]));
   function mathSource(value) {
     const source = String(value == null ? "" : value).trim();
@@ -254,7 +258,7 @@
     const nextButton = root.querySelector("[data-lab-next]"); if (nextButton) nextButton.textContent = next === steps.length - 1 ? "Complete reasoning move" : nextButton.textContent;
     if (next === steps.length - 1) complete(lab, root);
   }
-  const registry = window.ATLAS_LAB_REGISTRY ? window.ATLAS_LAB_REGISTRY() : { register() { return this; }, get() { return null; }, types() { return []; } };
+  const registry = config.labRegistry ? config.labRegistry() : { register() { return this; }, get() { return null; }, types() { return []; } };
   registry.register("compare", compare)
     .register("geometry", geometry)
     .register("math-stepper", mathStepper)
@@ -296,5 +300,5 @@
       }));
     });
   }
-  window.ATLAS_COMPONENTS = { renderLab, bind, labRegistry: registry };
-})();
+  return Object.freeze({ renderLab, bind, labRegistry: registry });
+});
