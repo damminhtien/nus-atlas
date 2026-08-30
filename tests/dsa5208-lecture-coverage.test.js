@@ -21,9 +21,10 @@ function renderLab(lessonId) {
     types() { return [...renderers.keys()]; }
   };
   const context = { window: { ATLAS_LAB_REGISTRY: () => registry } };
-  vm.runInNewContext(fs.readFileSync(path.join(__dirname, "..", "js", "nus-components.js"), "utf8"), context);
+  vm.runInNewContext(fs.readFileSync(path.join(__dirname, "..", "src", "ui", "nus-components.js"), "utf8"), context);
+  const components = context.ATLAS_COMPONENTS_FACTORY({ labRegistry: context.window.ATLAS_LAB_REGISTRY });
   const lesson = { id: lessonId, courseId: "DSA5208" };
-  return context.window.ATLAS_COMPONENTS.renderLab(lesson, packageData.labs[lessonId]);
+  return components.renderLab(lesson, packageData.labs[lessonId]);
 }
 
 test("DSA5208 Lecture 2 and 3 lessons expose worked examples and expanded quizzes", () => {

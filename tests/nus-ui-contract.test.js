@@ -3,7 +3,7 @@ const assert = require("node:assert/strict");
 const fs = require("node:fs");
 
 const indexHtml = fs.readFileSync("index.html", "utf8");
-const nusSource = fs.readFileSync("js/nus.js", "utf8");
+const nusSource = fs.readFileSync("src/app/nus-ui.js", "utf8");
 const styles = fs.readFileSync("css/styles.css", "utf8");
 
 test("NUS navigation keeps course study destinations and focused tools", () => {

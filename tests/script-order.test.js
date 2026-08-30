@@ -4,21 +4,24 @@ const fs = require("node:fs");
 
 test("browser script order loads NUS dependencies before the entrypoint", () => {
   const html = fs.readFileSync("index.html", "utf8");
-  const before = ["src/core/content/transport.js", "src/core/content/repository.js", "src/app/bootstrap.js", "src/core/study-store.js", "src/core/router.js", "src/features/nus/presentation.js", "src/features/nus/sql.js", "src/features/nus/simulations.js", "src/features/nus/retrieval.js", "src/features/nus/exam-schedule.js", "src/features/nus/exam-selection.js", "src/features/nus/exam-session.js", "src/features/nus/dsa5101-generators.js", "src/features/nus/exam-generators.js", "src/features/nus/exam-renderer.js"];
-  const nus = html.indexOf('src="js/nus.js');
-  assert.ok(nus > 0);
-  before.forEach(script => assert.ok(html.indexOf(script) < nus, `${script} must load before js/nus.js`));
+  const before = ["src/core/access-gate.js", "src/core/content/transport.js", "src/core/content/repository.js", "src/core/study-store.js", "src/core/sync-client.js", "src/core/router.js", "src/features/nus/presentation.js", "src/features/nus/sql.js", "src/features/nus/simulations.js", "src/features/nus/retrieval.js", "src/features/nus/exam-schedule.js", "src/features/nus/exam-selection.js", "src/features/nus/exam-session.js", "src/features/nus/dsa5101-generators.js", "src/features/nus/exam-generators.js", "src/features/nus/exam-renderer.js", "src/ui/nus-components.js", "src/app/nus-ui.js", "src/app/app-shell.js"];
+  const bootstrap = html.indexOf('src="src/app/bootstrap.js');
+  assert.ok(bootstrap > 0);
+  before.forEach(script => assert.ok(html.indexOf(script) < bootstrap, `${script} must load before the composition root`));
+  ["js/app.js", "js/nus.js", "js/nus-store.js", "js/nus-components.js"].forEach(script => assert.equal(html.includes(script), false, `${script} must not be a production entrypoint`));
 });
 
 test("app shell exposes a persistent collapsible left navigation", () => {
   const html = fs.readFileSync("index.html", "utf8");
-  const app = fs.readFileSync("js/app.js", "utf8");
-  const nus = fs.readFileSync("js/nus.js", "utf8");
+  const app = fs.readFileSync("src/app/app-shell.js", "utf8");
+  const nus = fs.readFileSync("src/app/nus-ui.js", "utf8");
   const css = fs.readFileSync("css/styles.css", "utf8");
   assert.match(html, /id="menu-btn"[^>]+aria-controls="sidebar"/);
   assert.match(app, /atlas\.sidebarCollapsed/);
   assert.match(app, /e\.key === "\\\\"/);
-  assert.match(app, /ATLAS_NUS_UI/);
+  assert.match(app, /features\.nusUI/);
+  assert.match(nus, /ATLAS_NUS_UI_FACTORY/);
+  assert.match(fs.readFileSync("src/app/bootstrap.js", "utf8"), /appShellFactory\(\{[\s\S]*repository,[\s\S]*store,[\s\S]*features/);
   assert.doesNotMatch(app, /window\.COURSES|VIZ_CATALOG|Playground|window\.Store|#\/stats/);
   assert.match(css, /body\.nus-sidebar-collapsed \.shell/);
   assert.match(css, /body\.nus-slide-focus-mode \.nus-slide-reader-grid[^}]*grid-template-columns:minmax\(0, 3fr\) minmax\(0, 1fr\)/);
@@ -36,16 +39,18 @@ test("app shell exposes a persistent collapsible left navigation", () => {
   assert.match(css, /body\.nus-slide-focus-mode #app\.nus-root \.nus-slide-note p \{ font-size:clamp\(16px, 1\.15vw, 20px\)/);
   assert.match(nus, /renderLesson\(parts\[1\], parts\[2\], context, parts\[3\]\)/);
   assert.match(nus, /getElementById\(`nus-study-card-\$\{focusCardId\}`\)/);
+  assert.doesNotMatch(app, /window\.ATLAS_/);
+  assert.doesNotMatch(nus, /window\.ATLAS_|globalThis\.ATLAS_/);
 });
 
 test("KaTeX boundary guards against double-escaped authored commands", () => {
-  const app = fs.readFileSync("js/app.js", "utf8");
+  const app = fs.readFileSync("src/app/app-shell.js", "utf8");
   assert.match(app, /normalizeDoubleEscapedMath/);
   assert.match(app, /normalizeMathTextNodes/);
 });
 
 test("visual lab provenance stays collapsed by default", () => {
-  const components = fs.readFileSync("js/nus-components.js", "utf8");
+  const components = fs.readFileSync("src/ui/nus-components.js", "utf8");
   assert.doesNotMatch(components, /Source lens/);
   assert.match(components, /nus-lab-source-details/);
 });

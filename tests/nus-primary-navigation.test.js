@@ -5,7 +5,7 @@ const assert = require("node:assert/strict");
 
 const root = path.join(__dirname, "..");
 const html = fs.readFileSync(path.join(root, "index.html"), "utf8");
-const nusUi = fs.readFileSync(path.join(root, "js", "nus.js"), "utf8");
+const nusUi = fs.readFileSync(path.join(root, "src", "app", "nus-ui.js"), "utf8");
 
 test("NUS primary navigation exposes the four learning-loop destinations", () => {
   const primary = html.match(/<nav class="nav nav-nus"[\s\S]*?<\/nav>/)?.[0] || "";

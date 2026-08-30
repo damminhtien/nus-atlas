@@ -61,7 +61,7 @@ test("every DSA5208 lesson has a source-backed visual lab", () => {
 });
 
 test("formula-bearing labs use exactly-once math wrapping", () => {
-  const source = fs.readFileSync("js/nus-components.js", "utf8");
+  const source = fs.readFileSync("src/ui/nus-components.js", "utf8");
   assert.match(source, /function mathSource\(value\)/);
   assert.match(source, /const mathMarkup = value =>/);
   assert.match(source, /mathMarkup\(step\[1\]\)/);

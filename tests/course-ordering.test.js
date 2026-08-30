@@ -70,7 +70,7 @@ test("compiler rejects a partial canonical timeline", () => {
 });
 
 test("NUS course UI renders the canonical timeline and collection route", () => {
-  const source = fs.readFileSync("js/nus.js", "utf8");
+  const source = fs.readFileSync("src/app/nus-ui.js", "utf8");
   assert.match(source, /function courseTimeline\(code\)/);
   assert.match(source, /catalog\.timelineLessonIds/);
   assert.match(source, /collection: \(parts, context\) => renderCollection/);

@@ -13,8 +13,9 @@ function clientWithState(study = {}, preferences = {}) {
   const storage = new MemoryStorage(preferences);
   const session = new MemoryStorage();
   const root = { ATLAS_STUDY_STORE: { raw: study, importData: value => { root.importedStudy = value; } } };
+  const studyStore = root.ATLAS_STUDY_STORE;
   const client = createSyncClient({
-    root,
+    studyStore,
     storage,
     sessionStorage: session,
     endpoint: "https://example.test/api/sync",
@@ -58,8 +59,9 @@ test("empty last-lesson values remain null instead of becoming an empty object",
 test("an expired session becomes signed out so the user can sign in again", async () => {
   const session = new MemoryStorage({ "atlas.sync.session.v1": "expired-token" });
   const root = { ATLAS_STUDY_STORE: { raw: {} } };
+  const studyStore = root.ATLAS_STUDY_STORE;
   const client = createSyncClient({
-    root,
+    studyStore,
     storage: new MemoryStorage(),
     sessionStorage: session,
     endpoint: "https://example.test/api/sync",
@@ -76,8 +78,9 @@ test("switching accounts never uploads the previous account's local mirror", asy
   let study = { lessons: { privateToDefault: true } };
   let uploaded;
   const root = { ATLAS_STUDY_STORE: { get raw() { return study; }, importData: value => { study = value; } } };
+  const studyStore = root.ATLAS_STUDY_STORE;
   const client = createSyncClient({
-    root,
+    studyStore,
     storage,
     sessionStorage: session,
     endpoint: "https://example.test/api/sync",

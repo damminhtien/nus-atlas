@@ -11,7 +11,7 @@ test("DSA5101 formulas keep prose out of math and preserve explicit fractions", 
 });
 
 test("derivation traces can render prose steps without wrapping them as math", () => {
-  const source = fs.readFileSync("js/nus-components.js", "utf8");
+  const source = fs.readFileSync("src/ui/nus-components.js", "utf8");
   assert.match(source, /function stepValueMarkup\(lab, value\)/);
   assert.match(source, /lab\.stepValueMode === "mixed"/);
   assert.match(source, /stepValueMarkup\(lab, step\[1\]\)/);

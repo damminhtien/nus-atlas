@@ -5,7 +5,7 @@ const path = require("node:path");
 const vm = require("node:vm");
 const { compileCourse } = require("../tools/content-compiler");
 
-const source = fs.readFileSync(path.join(__dirname, "..", "js", "nus-components.js"), "utf8");
+const source = fs.readFileSync(path.join(__dirname, "..", "src", "ui", "nus-components.js"), "utf8");
 
 function renderLab(courseId, lessonId) {
   const renderers = new Map();
@@ -15,9 +15,10 @@ function renderLab(courseId, lessonId) {
   };
   const context = { window: { ATLAS_LAB_REGISTRY: () => registry } };
   vm.runInNewContext(source, context);
+  const components = context.ATLAS_COMPONENTS_FACTORY({ labRegistry: context.window.ATLAS_LAB_REGISTRY });
   const packageData = compileCourse(path.join(__dirname, ".."), courseId).package;
   const lab = packageData.labs[lessonId];
-  return { lab, html: context.window.ATLAS_COMPONENTS.renderLab({ id: lessonId, courseId }, lab) };
+  return { lab, html: components.renderLab({ id: lessonId, courseId }, lab) };
 }
 
 test("non-model labs do not render model-selection copy", () => {
