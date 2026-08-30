@@ -24,19 +24,81 @@
         "sourceRefs": [{ "sourceId": "DSA5104/chapter1.pdf", "sourceType": "lecture", "page": 1, "role": "Project 1 timing trigger", "status": "current" }]
       },
       "scope": {
-        "value": "Query a single table.",
-        "sourceRefs": [{ "sourceId": "DSA5104/chapter1.pdf", "sourceType": "lecture", "page": 1, "role": "Project 1 description", "status": "current" }]
+        "value": "Write read-only SQL queries over the kaggle_car database; Q4 and Q10 also use the us_states and vin_info lookup tables.",
+        "sourceRefs": [{ "sourceId": "DSA5104/Project 1/proj1_questions.sql", "sourceType": "exercise", "page": 1, "lineStart": 31, "lineEnd": 70, "role": "Project 1 database schema", "status": "current" }]
       },
       "submission": {
-        "value": "Submit a .sql file through Canvas.",
-        "sourceRefs": [{ "sourceId": "DSA5104/chapter1.pdf", "sourceType": "lecture", "page": 1, "role": "project submission policy", "status": "current" }]
+        "value": "Submit one SQL file through Canvas with exactly 14 query statements, Q1 through Q14, using the required begin/end delimiters.",
+        "sourceRefs": [{ "sourceId": "DSA5104/Project 1/proj1_questions.sql", "sourceType": "exercise", "page": 1, "lineStart": 6, "lineEnd": 29, "role": "Project 1 submission format", "status": "current" }]
+      },
+      "format": {
+        "value": "Do not create or modify tables. A CTE, subquery, or set operation remains part of one SQL statement.",
+        "sourceRefs": [{ "sourceId": "DSA5104/Project 1/proj1_questions.sql", "sourceType": "exercise", "page": 1, "lineStart": 6, "lineEnd": 29, "role": "Project 1 query constraints", "status": "current" }]
       }
     },
     "studentGuidance": {
-      "checklist": ["Confirm project brief", "Create a schema/query checklist", "Run SQL practice", "Record open questions"],
-      "notes": ["The project group contributes to the 60% total; the individual project weight is not specified."]
-    }
+      "checklist": ["Confirm the 14-question brief", "Import kaggle_car into MySQL", "Run and time every query", "Check columns, order, limits, and delimiters", "Submit the final .sql file"],
+      "notes": ["The project group contributes to the 60% total; the individual project weight is not specified.", "The 9am, 6 September 2026 date is a student-set NUS-atlas completion reminder, not an official Canvas deadline."],
+      "studyDeadline": {
+        "deadline": "2026-09-06T09:00:00+08:00",
+        "label": "Complete Project 1",
+        "timeZone": "Asia/Singapore",
+        "origin": "user-set"
+      }
+    },
+  "studentPlan": {
+    "deadline": "2026-09-06T09:00:00+08:00",
+    "label": "Complete Project 1",
+    "timeZone": "Asia/Singapore",
+    "origin": "user-set"
   },
+  "projectBrief": {
+    "schemaVersion": "nus.dsa5104-project.v1",
+    "title": "Project 1: SQL Queries on the kaggle_car Database",
+    "summary": "Write and validate 14 read-only SQL queries over the car sales dataset.",
+    "sourceRefs": [{ "sourceId": "DSA5104/Project 1/proj1_questions.sql", "sourceType": "exercise", "page": 1, "lineStart": 2, "lineEnd": 505, "role": "Complete Project 1 brief", "status": "current" }],
+    "database": {
+      "name": "kaggle_car",
+      "rowCount": 558797,
+      "tables": [
+        { "name": "car_sales", "columns": ["year_manufacture INTEGER", "make VARCHAR(20)", "model VARCHAR(40)", "trim VARCHAR(100)", "body VARCHAR(40)", "transmission VARCHAR(20)", "vin CHAR(17)", "state CHAR(2)", "condition_scale INTEGER", "odometer INTEGER", "color VARCHAR(20)", "interior VARCHAR(20)", "seller VARCHAR(100)", "mmr INTEGER", "selling_price INTEGER", "selling_date CHAR(39)"], "primaryKey": "(vin, selling_price, selling_date)" },
+        { "name": "us_states", "columns": ["full_name VARCHAR(20)", "abbreviation CHAR(2)"], "primaryKey": "abbreviation" },
+        { "name": "vin_info", "columns": ["code CHAR(1)", "year INTEGER"], "primaryKey": "year" }
+      ]
+    },
+    "requirements": [
+      "Submit exactly 14 SQL query statements in order from Q1 through Q14.",
+      "Each question must produce exactly one result table.",
+      "Use the exact -- begin Qi code and -- end Qi code delimiters; do not put comments inside them.",
+      "Do not create or modify tables in the submission.",
+      "A CTE, subquery, UNION, INTERSECT, or EXCEPT is still part of one statement.",
+      "State comparisons are case-insensitive; car_sales state values may be lowercase.",
+      "The tenth VIN character is the model-year code used by Q10.",
+      "Return the requested columns, ordering, and row limits. Most questions request the first four rows.",
+      "Each query must finish within 20 seconds on the specified laptop."
+    ],
+    "grading": {
+      "totalMarks": 30,
+      "questionMarks": { "Q1-Q12": 2, "Q13-Q14": 3 }
+    },
+    "questions": [
+      { "id": "dsa5104-project-1-q1", "number": 1, "marks": 2, "sourceLine": 202, "title": "February 2015 sales", "prompt": "Count February 2015 transaction rows and sum selling_price; repeated VINs count as separate sales.", "expectedColumns": ["number_of_sales", "total_selling_price"], "topics": ["query-shape", "aggregation"] },
+      { "id": "dsa5104-project-1-q2", "number": 2, "marks": 2, "sourceLine": 217, "title": "Low-odometer vehicles", "prompt": "List distinct make, model, body combinations for manufacture years 2012–2015 with known odometer below 20,000, ordered and limited to four.", "expectedColumns": ["make", "model", "body"], "topics": ["query-shape", "null"] },
+      { "id": "dsa5104-project-1-q3", "number": 3, "marks": 2, "sourceLine": 234, "title": "Discounted CA, TX, and FL sales", "prompt": "Find qualifying sales at least 20% below a positive mmr and calculate price_difference and discount_percent.", "expectedColumns": ["vin", "make", "model", "state", "mmr", "selling_price", "price_difference", "discount_percent"], "topics": ["query-shape", "null"] },
+      { "id": "dsa5104-project-1-q4", "number": 4, "marks": 2, "sourceLine": 257, "title": "State names and prices", "prompt": "Join matching states, keep states with at least 500 sales, and report counts and average selling price for the first four.", "expectedColumns": ["state_name", "state_abbreviation", "number_of_sales", "average_selling_price"], "topics": ["joins", "aggregation"] },
+      { "id": "dsa5104-project-1-q5", "number": 5, "marks": 2, "sourceLine": 275, "title": "Selling-price categories", "prompt": "Classify every transaction as Budget, Common, Luxury, or Super and count each category.", "expectedColumns": ["car_category", "number_of_sales"], "topics": ["aggregation"] },
+      { "id": "dsa5104-project-1-q6", "number": 6, "marks": 2, "sourceLine": 296, "title": "Finance sellers", "prompt": "For non-null sellers containing finance regardless of case, report sales count, distinct VIN count, and average price for the first four.", "expectedColumns": ["seller", "number_of_sales", "number_of_distinct_vins", "average_selling_price"], "topics": ["query-shape", "aggregation"] },
+      { "id": "dsa5104-project-1-q7", "number": 7, "marks": 2, "sourceLine": 312, "title": "Sales above group average", "prompt": "Count non-null make/model transactions whose selling price is at least three times the average price for their make/model; use an efficient CTE or window strategy.", "expectedColumns": ["number_of_qualified_sales"], "topics": ["aggregation", "nested-queries", "cte"] },
+      { "id": "dsa5104-project-1-q8", "number": 8, "marks": 2, "sourceLine": 369, "title": "Exactly one of California or Texas", "prompt": "Using SQL set operations, find non-null makes sold in exactly one of California and Texas, ordered and limited to four.", "expectedColumns": ["make"], "topics": ["joins"] },
+      { "id": "dsa5104-project-1-q9", "number": 9, "marks": 2, "sourceLine": 385, "title": "Repeated VIN sales", "prompt": "For VINs with at least two transactions, report count, minimum price, maximum price, and price spread for the first four.", "expectedColumns": ["vin", "number_of_sales", "lowest_selling_price", "highest_selling_price", "price_spread"], "topics": ["aggregation"] },
+      { "id": "dsa5104-project-1-q10", "number": 10, "marks": 2, "sourceLine": 407, "title": "VIN year-code mismatches", "prompt": "Find transaction rows whose tenth VIN character disagrees with the code in vin_info for year_manufacture.", "expectedColumns": ["vin", "year_manufacture", "vin_year_code"], "topics": ["query-shape", "joins"] },
+      { "id": "dsa5104-project-1-q11", "number": 11, "marks": 2, "sourceLine": 429, "title": "Make-model versus make average", "prompt": "For make/model groups with more than 200 transactions, compare the model-group average with the make-wide average, including NULL model groups.", "expectedColumns": ["make", "model", "number_of_sales", "average_model_price", "average_make_price"], "topics": ["aggregation", "nested-queries"] },
+      { "id": "dsa5104-project-1-q12", "number": 12, "marks": 2, "sourceLine": 451, "title": "Makes present in every large state", "prompt": "Find non-null makes with at least one sale in every non-null state having more than 5,000 transactions.", "expectedColumns": ["make"], "topics": ["nested-queries", "cte"] },
+      { "id": "dsa5104-project-1-q13", "number": 13, "marks": 3, "sourceLine": 467, "title": "Top make-model per large state", "prompt": "For every large state, find the non-null make-model combination(s) with the greatest sales count, preserving ties and returning the first four rows.", "expectedColumns": ["state", "make", "model", "number_of_sales"], "topics": ["aggregation", "cte"] },
+      { "id": "dsa5104-project-1-q14", "number": 14, "marks": 3, "sourceLine": 487, "title": "Inconsistent repeated VIN records", "prompt": "Find repeated VINs whose recorded make/model values are inconsistent, treating NULL as a missing wildcard according to the brief.", "expectedColumns": ["vin"], "topics": ["null", "nested-queries"] }
+    ]
+  }
+},
   {
     "schemaVersion": "nus.assessment.v2",
     "id": "dsa5104-project-2",

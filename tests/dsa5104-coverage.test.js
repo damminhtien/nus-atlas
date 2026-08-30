@@ -15,7 +15,7 @@ function dsa5104SlideSets() {
 test("DSA5104 source manifest is the canonical metadata for every source view", () => {
   const result = checkSources();
   assert.equal(result.ok, true, result.errors.join("\n"));
-  assert.equal(result.count, 16);
+  assert.equal(result.count, 17);
 });
 
 test("DSA5104 keeps lecture coverage, exercise coverage, and source-pending targets distinct", () => {

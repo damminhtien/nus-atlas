@@ -41,6 +41,12 @@ Chapter 2 pages 43–44 now have an explicit bridge lesson section: relational a
 
 Chapter 3's `chap3_mysql_code_in_slides.sql` and the canonical University database files (`DDL.sql`, `smallRelationsInsertFile.sql`, and `largeRelationsInsertFile.sql`) are cataloged source artifacts. SQL Studio now separates a fast SQLite/WASM Concept Lab from a DSA5104 MySQL Lab. The latter prefers a configured server-side MySQL runner and labels its SQLite compatibility fallback explicitly.
 
+## Project 1
+
+The Plan page includes the teacher-assigned Project 1 brief: 14 read-only SQL queries over the `kaggle_car` database, its `car_sales`, `us_states`, and `vin_info` tables, the exact submission constraints, and the 30-mark breakdown. The Project 1 source brief remains local-only; the 121 MB dataset and personal submission file are not copied into the public bundle. The NUS-atlas study reminder is set for 09:00 on 06 September 2026 (Asia/Singapore) and is explicitly labelled as a user-set reminder, not an official Canvas deadline.
+
+Use `npm run validate:dsa5104:project1` to verify the 14-question structure, marks, schema, provenance, and reminder date.
+
 ## A+ study loop
 
 1. Start at `#/nus/course/DSA5104` and choose one current module.

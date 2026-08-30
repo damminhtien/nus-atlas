@@ -52,6 +52,9 @@ test("repository loads the canonical DSA5104 SQL practice package", async () => 
   assert.deepEqual(Object.keys(packageData.course.sqlPractice.modes), ["concept", "mysql"]);
   assert.deepEqual(packageData.course.sqlPractice.modes.concept.schema.map(table => table.name), ["Department", "Student", "Enrollment"]);
   assert.equal(packageData.course.sqlPractice.modes.mysql.exercises.length, 7);
+  const project = packageData.assessments.find(assessment => assessment.id === "dsa5104-project-1");
+  assert.equal(project.projectBrief.questions.length, 14);
+  assert.equal(project.studentPlan.deadline, "2026-09-06T09:00:00+08:00");
 });
 
 test("missing course and lesson are safe async lookups", async () => {

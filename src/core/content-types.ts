@@ -55,6 +55,8 @@ export type Assessment = {
   timing?: AssessmentTiming;
   checklist: string[];
   source?: SourceRef;
+  studentPlan?: { deadline: string; label?: string; timeZone?: string; origin?: string };
+  projectBrief?: { schemaVersion: string; title: string; summary: string; sourceRefs: SourceRef[]; database: unknown; requirements: string[]; grading: unknown; questions: unknown[] };
 };
 export type LabSummary = { id: string; courseCode: string; lessonId: string; title: string; type: LabType };
 export type Lab = LabSummary & { sourceRefs?: SourceRef[]; sourceLens?: { whyExaminable?: string; lectureScope?: string; exerciseDepth?: string }; exercises?: Array<{ id?: string; title?: string; prompt?: string; steps?: string[] }> };

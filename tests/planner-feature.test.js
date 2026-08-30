@@ -156,3 +156,45 @@ test("planner renders grouped assessment weights without inventing an individual
   assert.match(root.innerHTML, /part of 60%/);
   assert.doesNotMatch(root.innerHTML, /null%/);
 });
+
+test("planner renders the Project 1 study deadline and brief roadmap", () => {
+  const root = { innerHTML: "", querySelectorAll: () => [] };
+  const feature = createPlannerFeature({
+    root,
+    getAssessments: () => [{
+      id: "project-1",
+      courseCode: "DSA5104",
+      title: "Project 1",
+      kind: "project",
+      weightLabel: "part of 60%",
+      date: null,
+      studentPlan: { deadline: "2026-09-06T09:00:00+08:00", label: "Complete Project 1", timeZone: "Asia/Singapore", origin: "user-set" },
+      projectBrief: {
+        summary: "Fourteen read-only SQL queries.",
+        database: { name: "kaggle_car", rowCount: 558797, tables: [{ name: "car_sales", columns: ["vin"], primaryKey: "vin" }] },
+        requirements: ["Exactly 14 statements."],
+        grading: { totalMarks: 30 },
+        questions: [{ number: 1, marks: 2, title: "February sales", prompt: "Count sales.", topics: ["aggregation"], expectedColumns: ["number_of_sales"] }],
+        sourceRefs: [{ sourceId: "Project 1 brief", page: 1 }]
+      },
+      checklist: ["Submit"]
+    }],
+    getStore: () => ({ task: () => ({ status: "todo", checks: [] }) }),
+    pageHead: (_kicker, title) => `<h1>${title}</h1>`,
+    dayCount: () => 7,
+    fmtDate: () => "Sep 6, 2026, 9:00 AM",
+    formatAssessmentDate: () => "Sep 6, 2026, 9:00 AM · study reminder",
+    formatAssessmentWeight: assessment => assessment.weightLabel,
+    statusPill: status => `<b>${status}</b>`,
+    sourceLabel: ref => `${ref.sourceId} · p.${ref.page}`,
+    esc: value => String(value)
+  });
+
+  feature.render();
+
+  assert.match(root.innerHTML, /Sep 6, 2026, 9:00 AM · study reminder/);
+  assert.match(root.innerHTML, /Open Project 1 brief/);
+  assert.match(root.innerHTML, /Fourteen read-only SQL queries/);
+  assert.match(root.innerHTML, /Q1 · February sales/);
+  assert.match(root.innerHTML, /Study course/);
+});
