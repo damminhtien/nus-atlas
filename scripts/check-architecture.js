@@ -6,6 +6,8 @@ const { execFileSync } = require("child_process");
 const ROOT = path.resolve(__dirname, "..");
 const OWNERSHIP_FILE = path.join(ROOT, "architecture", "ownership.json");
 const GLOBAL_BRIDGE_ALLOWLIST = new Set();
+const OWNED_RUNTIME_PATH = /^(?:content|schemas|src|tools|scripts|tests|data\/extracted|dist|api|assets|css|js)\//;
+const OWNED_RUNTIME_ROOT_FILES = new Set(["index.html", "manifest.webmanifest", "sw.js", "prerender.js", "nus-gate.js", "icon.svg"]);
 
 function readOwnership() {
   return JSON.parse(fs.readFileSync(OWNERSHIP_FILE, "utf8"));
@@ -56,7 +58,7 @@ function check(options = {}) {
   const files = trackedFiles();
   for (const file of files) {
     const rule = ownershipFor(file, ownership.rules);
-    if (!rule && /^(content|schemas|src|tools|scripts|tests|data\/extracted|dist)\//.test(file)) {
+    if (!rule && (OWNED_RUNTIME_PATH.test(file) || OWNED_RUNTIME_ROOT_FILES.has(file))) {
       errors.push(`${file} has no ownership rule`);
     }
     if (rule && rule.role === "generated" && changedFiles().includes(file)) {

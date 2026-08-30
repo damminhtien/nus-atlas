@@ -12,15 +12,22 @@ content/courses/<COURSE>/ + schemas/
       dist/content/<COURSE>/{textbook,source-manifest}.<hash>.json
                 │
                 ▼  src/app/bootstrap.js
-   transport → async ContentRepository → NUS features and views
+   transport → async ContentRepository
+              + StudyStore + feature factories
+                ▼
+     startApp({ repository, store, router, features })
+                ▼
+       app-shell → NUS UI → route features
 ```
 
 ## Ownership invariants
 
-`architecture/ownership.json` classifies every project area:
+`architecture/ownership.json` classifies every content, build, and runtime area:
 
 - `content/**` and `schemas/**` are canonical, editable truth.
 - `src/**`, `tools/**`, `scripts/**`, and `tests/**` are implementation or test source.
+- `api/**`, `assets/**`, `css/**`, and the root runtime/build files are explicit source boundaries;
+  `js/**` is retained only as a migration/legacy boundary and is not a browser entrypoint.
 - `schemas/**` defines the discriminated runtime payload contract; `scripts/validate-schemas.js`
   checks the compiled representation and namespaced entity keys.
 - `dist/**` is a generated deployment artifact and is ignored by Git.
@@ -33,10 +40,13 @@ modifies canonical content.
 
 ## Runtime boundary
 
-`src/app/bootstrap.js` is the composition root. It loads the small manifest,
-constructs the transport and repository, and exposes the ready promise used by
-the app shell. `src/core/content/transport.js` supports `fetch` and the browser
-XHR fallback; `src/core/content/repository.js` provides:
+`src/app/bootstrap.js` is the sole browser composition root. It is loaded last
+by `index.html`, resolves the registered factories, creates the transport,
+repository, study store, and lab components, then calls
+`startApp({ repository, store, router, features })`. The app shell and NUS UI
+never discover runtime instances from `window.ATLAS_*`; they receive their
+dependencies through that call. `src/core/content/transport.js` supports
+`fetch` and the browser XHR fallback; `src/core/content/repository.js` provides:
 
 - synchronous catalog and outline metadata for a cold dashboard;
 - asynchronous course, lesson, question, study-kit, slide, and textbook loading;
@@ -50,9 +60,12 @@ their own shard only when opened. Practice routes deliberately load the lesson
 shards they need. The service worker installs only eager shell assets and
 caches content shards on demand.
 
-Feature modules receive repository and study-state accessors from the NUS entry
-point. They do not read files directly; they use the repository and composition
-boundaries. Interactive labs remain separate from content data.
+`src/app/app-shell.js` owns DOM chrome, access/sync lifecycle, and router
+navigation. `src/app/nus-ui.js` owns NUS route/view composition, while
+`src/ui/nus-components.js` owns reusable lab rendering. Feature modules receive
+repository and study-state accessors from these explicit boundaries. They do not
+read files directly or consume runtime globals; interactive labs remain separate
+from content data.
 
 ## Adding or removing a course
 

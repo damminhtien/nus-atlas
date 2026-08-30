@@ -13,7 +13,7 @@ Gamification in NUS Atlas is a private feedback loop for studying, not a public 
 
 ## Evidence ledger
 
-`js/nus-store.js` stores the NUS-only ledger under `nus.v1` and preserves the existing task, lesson, and attempt fields. An evidence event has this shape:
+`src/core/study-store.js` stores the NUS-only ledger under `nus.v1` and preserves the existing task, lesson, and attempt fields. The browser composition root creates one instance and injects it into the app shell and features. An evidence event has this shape:
 
 ```js
 {
@@ -67,7 +67,7 @@ Every visual lab in `content/courses/<COURSE>/labs/index.json` declares:
 - `explanation`: the short model of what the interaction is showing.
 - `reducedMotion`: declares that the template respects the global reduced-motion preference; native controls also provide keyboard support.
 
-`js/nus-components.js` renders the following templates:
+`src/ui/nus-components.js` renders the following templates:
 
 | Template | Package examples | Reasoning move |
 | --- | --- | --- |

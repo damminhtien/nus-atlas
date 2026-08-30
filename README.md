@@ -143,6 +143,8 @@ The Pages workflow runs `node prerender.js` in CI, creates the static `dist/` ar
 - `src/core/content/repository.js` — async catalog, outline, course, and lesson repository.
 - `src/core/content/transport.js` — manifest and content-addressed JSON transport.
 - `src/app/bootstrap.js` — composition root that loads the catalog before views start.
+- `src/app/app-shell.js` — browser shell, navigation lifecycle, and global chrome.
+- `src/app/nus-ui.js` — NUS route/view coordinator, constructed by the composition root.
 - `src/core/study-store.js` — versioned local DSA study state, evidence, mastery, and migration.
 - `src/core/router.js` — framework-free hash route lifecycle used by the app shell.
 - `src/features/nus/route-table.js` — NUS route contract.
@@ -153,9 +155,10 @@ The Pages workflow runs `node prerender.js` in CI, creates the static `dist/` ar
 - `src/features/nus/retrieval-grader.js` / `api/grade.js` — optional external Gemini grader for textbox answers; the API key stays server-side.
 - `src/core/sync-client.js` / `api/sync.js` — authenticated cross-device sync for Atlas-owned study state; browser-profile data is out of scope.
 - `src/ui/labs/registry.js` — visual-learning lab plugin registry.
-- `js/nus.js` — NUS views using the repository boundary.
-- `js/nus-store.js` — local study progress and attempts.
-- `js/nus-components.js` — reusable visual-learning lab templates.
+- `src/ui/nus-components.js` — reusable visual-learning lab templates.
+- `api/` — server-only API handlers; credentials stay in deployment environment variables.
+- `assets/` / `css/` — static source assets and presentation styles.
+- `js/` — reserved for migration-only compatibility code; current production runtime is under `src/`.
 - `content/courses/` — normalized course packages for DSA5101, DSA5104, DSA5105, and DSA5208.
 - `content/` — canonical course packages and source metadata.
 - `data/extracted/` — normalized DSA lecture extraction artifacts and reader views.
