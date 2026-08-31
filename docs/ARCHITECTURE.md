@@ -27,7 +27,9 @@ content/courses/<COURSE>/ + schemas/
 - `content/**` and `schemas/**` are canonical, editable truth.
 - `src/**`, `tools/**`, `scripts/**`, and `tests/**` are implementation or test source.
 - `api/**`, `assets/**`, `css/**`, and the root runtime/build files are explicit source boundaries;
-  `js/**` is retained only as a migration/legacy boundary and is not a browser entrypoint.
+  `js/**` and `data/nus/**` are non-runtime legacy boundaries and are not browser entrypoints.
+  They are intentionally non-editable in the ownership map; migrated truth belongs in
+  `content/**` and normalized source belongs in `data/extracted/**`.
 - `schemas/**` defines the discriminated runtime payload contract; `scripts/validate-schemas.js`
   checks the compiled representation and namespaced entity keys.
 - `dist/**` is a generated deployment artifact and is ignored by Git.

@@ -1,4 +1,5 @@
 const base = (process.env.SITE_URL || "https://damminhtien.github.io/nus-atlas").replace(/\/+$/, "");
+const REMOVED_LEGACY_ASSETS = ["/data/algorithms.js", "/data/nus/dsa5105.js"];
 const wait = ms => new Promise(resolve => setTimeout(resolve, ms));
 async function get(pathname, attempt = 0) {
   try {
@@ -24,7 +25,8 @@ async function main() {
   if (!lessonAsset) throw new Error("production lesson shard missing");
   await get(`/content/${lessonAsset}`);
   await get("/nus/DSA5105/dsa5105-linear-week1/");
-  for (const pathname of ["/data/algorithms.js", "/data/nus/dsa5105.js"]) {
+  // Keep stale pre-canonical bundles from silently returning after deployment.
+  for (const pathname of REMOVED_LEGACY_ASSETS) {
     const removedAsset = await fetch(`${base}${pathname}`, { cache: "no-store" });
     if (removedAsset.ok) throw new Error(`removed Atlas asset is still deployed: ${pathname}`);
   }
