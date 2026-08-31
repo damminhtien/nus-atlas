@@ -6,6 +6,10 @@ and refresh first-party asset URLs so browsers and the service worker pick up th
 
 ## [Unreleased]
 
+## [0.2.71] - 2026-08-31
+
+- Release runtime composition hardening
+
 ## [0.2.70] - 2026-08-29
 
 - Remove legacy Atlas surfaces
