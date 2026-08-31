@@ -25,6 +25,14 @@
     return assessment && (assessment.date || (assessment.studentPlan && assessment.studentPlan.deadline)) || null;
   }
 
+  function assessmentTimestamp(assessment) {
+    const deadline = assessmentDeadline(assessment);
+    if (!deadline) return Number.POSITIVE_INFINITY;
+    const raw = String(deadline);
+    const timestamp = raw.length === 10 ? Date.parse(`${raw}T23:59:59+08:00`) : Date.parse(raw);
+    return Number.isFinite(timestamp) ? timestamp : Number.POSITIVE_INFINITY;
+  }
+
   function projectBrief(assessment) {
     const brief = assessment && assessment.projectBrief;
     if (!brief) return "";
@@ -63,7 +71,7 @@
       "Confirmed assessments appear here with the next useful preparation step. Dates stay pending until an official source confirms them."
     );
     body += `<div class="nus-callout"><b>Plan with confidence</b><span>Confirmed dates surface at 7, 3, and 1 day. Partially confirmed timing stays visible without inventing a date or time.</span></div>`;
-    body += `<div class="nus-planner-list">${getAssessments().map(assessment => {
+    body += `<div class="nus-planner-list">${getAssessments().slice().sort((a, b) => assessmentTimestamp(a) - assessmentTimestamp(b)).map(assessment => {
       const task = store.task(assessment.id);
       const checks = Array.isArray(task.checks) ? task.checks : [];
       const done = checks.filter(Boolean).length;

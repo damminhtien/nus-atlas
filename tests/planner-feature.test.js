@@ -198,3 +198,27 @@ test("planner renders the Project 1 study deadline and brief roadmap", () => {
   assert.match(root.innerHTML, /Q1 · February sales/);
   assert.match(root.innerHTML, /Study course/);
 });
+
+test("planner puts dated assignments and projects before undated assessments", () => {
+  const root = { innerHTML: "", querySelectorAll: () => [] };
+  const feature = createPlannerFeature({
+    root,
+    getAssessments: () => [
+      { id: "pending", courseCode: "DSA5105", title: "Quiz 1", kind: "quiz", date: null, checklist: [] },
+      { id: "later", courseCode: "DSA5101", title: "Assignment 2", kind: "assignment", date: "2026-10-25", checklist: [] },
+      { id: "soon", courseCode: "DSA5101", title: "Assignment 1", kind: "assignment", date: "2026-09-13", checklist: [] }
+    ],
+    getStore: () => ({ task: () => ({ status: "todo", checks: [] }) }),
+    pageHead: (_kicker, title) => `<h1>${title}</h1>`,
+    dayCount: () => 10,
+    formatAssessmentDate: item => item.date || "Date pending",
+    statusPill: status => `<b>${status}</b>`,
+    sourceLabel: () => "",
+    esc: value => String(value)
+  });
+
+  feature.render();
+
+  assert.ok(root.innerHTML.indexOf("Assignment 1") < root.innerHTML.indexOf("Assignment 2"));
+  assert.ok(root.innerHTML.indexOf("Assignment 2") < root.innerHTML.indexOf("Quiz 1"));
+});

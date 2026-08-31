@@ -6,6 +6,10 @@ and refresh first-party asset URLs so browsers and the service worker pick up th
 
 ## [Unreleased]
 
+## [0.2.73] - 2026-08-31
+
+- Show upcoming assessments in Home and Plan
+
 ## [0.2.72] - 2026-08-31
 
 - Fix streak calendar-day recovery

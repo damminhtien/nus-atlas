@@ -67,6 +67,8 @@
     esc,
     button,
     formatDate: fmtDate,
+    formatAssessmentDate: fmtAssessmentDate,
+    getAssessmentDeadline: assessmentDeadline,
     isDashboard: () => !location.hash || location.hash === "#/"
   }) : null;
   function progress(code) { return store.courseProgress(code, lessons(code)); }

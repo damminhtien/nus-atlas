@@ -1,4 +1,4 @@
-/* Exam schedule feature. Keeps countdown rendering and the dashboard reminder
+/* Assessment calendar feature. Keeps countdown rendering and the dashboard reminder
  * on the same confirmed schedule/assessment data contract. */
 (function (root, factory) {
   if (typeof module === "object" && module.exports) module.exports = factory;
@@ -13,6 +13,10 @@
   const formatDate = typeof config.formatDate === "function"
     ? config.formatDate
     : value => new Intl.DateTimeFormat("en-SG", { timeZone: "Asia/Singapore", dateStyle: "medium", timeStyle: "short" }).format(new Date(value));
+  const formatAssessmentDate = typeof config.formatAssessmentDate === "function" ? config.formatAssessmentDate : formatDate;
+  const getAssessmentDeadline = typeof config.getAssessmentDeadline === "function"
+    ? config.getAssessmentDeadline
+    : assessment => assessment && (assessment.date || (assessment.studentPlan && assessment.studentPlan.deadline)) || null;
   const isDashboard = typeof config.isDashboard === "function" ? config.isDashboard : () => true;
   let overlay = null;
   let timer = null;
@@ -25,6 +29,36 @@
 
   function finalAssessment(code) {
     return getAssessments().find(item => item.courseCode === code && item.kind === "exam" && /final/i.test(item.title || ""));
+  }
+
+  function assessmentCountdownDate(assessment) {
+    const deadline = getAssessmentDeadline(assessment);
+    if (!deadline) return null;
+    const raw = String(deadline);
+    if (raw.length !== 10) return raw;
+    const time = assessment && assessment.timing && assessment.timing.time;
+    const match = String(time || "").match(/(?:^|\D)(\d{1,2}):(\d{2})/);
+    if (match) return `${raw}T${String(match[1]).padStart(2, "0")}:${match[2]}:00+08:00`;
+    return `${raw}T23:59:59+08:00`;
+  }
+
+  function assessmentCalendarItem(assessment, courseByCode) {
+    const countdownDate = assessmentCountdownDate(assessment);
+    if (!countdownDate || !Number.isFinite(Date.parse(countdownDate))) return null;
+    const course = courseByCode.get(assessment.courseCode) || {};
+    return {
+      id: assessment.id || `${assessment.courseCode}:${assessment.title}`,
+      code: assessment.courseCode,
+      title: assessment.title || "Assessment",
+      courseTitle: course.title || assessment.courseCode,
+      kind: assessment.kind || "assessment",
+      date: countdownDate,
+      dateLabel: formatAssessmentDate(assessment),
+      timestamp: Date.parse(countdownDate),
+      durationMinutes: assessment.timing && assessment.timing.durationMinutes || null,
+      weight: assessment.weightLabel || (assessment.weight != null ? `${assessment.weight}%` : ""),
+      isStudyReminder: !assessment.date && !!assessment.studentPlan
+    };
   }
 
   function confirmedExams() {
@@ -50,6 +84,20 @@
     }).filter(Boolean).sort((a, b) => a.timestamp - b.timestamp);
   }
 
+  function upcomingAssessments(now = Date.now()) {
+    const courseByCode = new Map(getCourses().map(course => [course.code, course]));
+    const finalExamCodes = new Set(confirmedExams().map(item => item.code));
+    const items = getAssessments()
+      .filter(assessment => !finalExamCodes.has(assessment.courseCode) || !/final/i.test(assessment.title || ""))
+      .map(assessment => assessmentCalendarItem(assessment, courseByCode))
+      .filter(Boolean)
+      .filter(item => item.timestamp >= now);
+    confirmedExams().forEach(item => {
+      if (item.timestamp >= now) items.push({ ...item, kind: "exam", dateLabel: formatDate(item.date), isStudyReminder: false });
+    });
+    return items.sort((a, b) => a.timestamp - b.timestamp);
+  }
+
   function remaining(date, now = Date.now()) {
     const totalSeconds = Math.max(0, Math.floor((Date.parse(date) - now) / 1000));
     return {
@@ -61,18 +109,18 @@
     };
   }
 
-  function countdownLabel(date, now = Date.now()) {
+  function countdownLabel(date, now = Date.now(), label = "Exam") {
     const left = remaining(date, now);
     const delta = Date.parse(date) - now;
-    if (delta < 0) return "Exam passed";
+    if (delta < 0) return `${label} passed`;
     if (left.totalSeconds === 0) return "Exam time";
     return left.days + "d " + String(left.hours).padStart(2, "0") + "h " + String(left.minutes).padStart(2, "0") + "m " + String(left.seconds).padStart(2, "0") + "s";
   }
 
-  function daysLabel(date, now = Date.now()) {
+  function daysLabel(date, now = Date.now(), label = "Exam") {
     const left = remaining(date, now);
     const delta = Date.parse(date) - now;
-    if (delta < 0) return "Exam passed";
+    if (delta < 0) return `${label} passed`;
     return left.totalSeconds === 0 ? "Exam time" : left.days + " days left";
   }
 
@@ -96,7 +144,7 @@
   function updateCountdowns() {
     if (!overlay) return;
     overlay.querySelectorAll("[data-exam-countdown]").forEach(element => {
-      element.textContent = countdownLabel(element.dataset.examCountdown);
+      element.textContent = countdownLabel(element.dataset.examCountdown, Date.now(), element.dataset.examLabel || "Exam");
     });
   }
 
@@ -121,15 +169,19 @@
       window.setTimeout(showPopup, 250);
       return false;
     }
-    const exams = confirmedExams();
-    if (!exams.length) return false;
+    const items = upcomingAssessments();
+    if (!items.length) return false;
     close();
     opener = document.activeElement;
     overlay = document.createElement("div");
     overlay.className = "nus-exam-schedule-overlay";
     overlay.setAttribute("aria-labelledby", "nus-exam-schedule-title");
-    const rows = exams.map(item => '<article class="nus-exam-schedule-row"><div><span class="nus-code">' + esc(item.code) + "</span><h3>" + esc(item.title) + "</h3><p>" + esc(item.courseTitle) + " · " + esc(formatDate(item.date)) + (item.durationMinutes ? " · " + esc(item.durationMinutes) + " min" : "") + '</p></div><div class="nus-exam-schedule-count"><b data-exam-countdown="' + esc(item.date) + '">' + esc(countdownLabel(item.date)) + "</b>" + (item.weight ? '<small>' + esc(item.weight) + " of final grade</small>" : "") + "</div></article>").join("");
-    overlay.innerHTML = '<section class="nus-exam-schedule-card" role="dialog" aria-modal="true" aria-labelledby="nus-exam-schedule-title" tabindex="-1"><div class="nus-exam-schedule-head"><div><span class="eyebrow">Exam calendar · synced</span><h2 id="nus-exam-schedule-title">Your confirmed exam dates</h2></div><button class="nus-exam-schedule-close" type="button" data-exam-schedule-close aria-label="Close exam schedule">×</button></div><p class="nus-exam-schedule-lead">These countdowns combine the canonical course schedule with the matching final-assessment record. Pending quizzes, midterms, and project dates are not guessed.</p><div class="nus-exam-schedule-list">' + rows + '</div><div class="nus-exam-schedule-actions">' + button("Open planner", "#/nus/planner", "primary") + '<button class="btn ghost" type="button" data-exam-schedule-close>Continue studying</button></div><p class="nus-muted nus-exam-schedule-note">Check CourseReg@EduRec for venue and seat details when released.</p></section>';
+    const rows = items.map(item => {
+      const label = item.kind === "exam" ? "Exam" : item.isStudyReminder ? "Study reminder" : "Due";
+      const detail = [item.courseTitle, item.dateLabel || formatDate(item.date), item.durationMinutes ? `${item.durationMinutes} min` : ""].filter(Boolean).join(" · ");
+      return '<article class="nus-exam-schedule-row"><div><span class="nus-code">' + esc(item.code) + "</span><h3>" + esc(item.title) + "</h3><p>" + esc(detail) + '</p></div><div class="nus-exam-schedule-count"><b data-exam-countdown="' + esc(item.date) + '" data-exam-label="' + esc(label) + '">' + esc(countdownLabel(item.date, Date.now(), label)) + "</b>" + (item.weight ? '<small>' + esc(item.weight) + (item.kind === "exam" ? " of final grade" : "") + "</small>" : "") + "</div></article>";
+    }).join("");
+    overlay.innerHTML = '<section class="nus-exam-schedule-card" role="dialog" aria-modal="true" aria-labelledby="nus-exam-schedule-title" tabindex="-1"><div class="nus-exam-schedule-head"><div><span class="eyebrow">Assessment calendar · synced</span><h2 id="nus-exam-schedule-title">What is coming next?</h2></div><button class="nus-exam-schedule-close" type="button" data-exam-schedule-close aria-label="Close assessment calendar">×</button></div><p class="nus-exam-schedule-lead">Confirmed exam and assessment dates are shown first, followed by your preparation reminders. Undated quizzes and projects stay in Plan without guessed deadlines.</p><div class="nus-exam-schedule-list">' + rows + '</div><div class="nus-exam-schedule-actions">' + button("Open planner", "#/nus/planner", "primary") + '<button class="btn ghost" type="button" data-exam-schedule-close>Continue studying</button></div><p class="nus-muted nus-exam-schedule-note">Check CourseReg@EduRec or Canvas for any later deadline update.</p></section>';
     document.body.appendChild(overlay);
     overlay.addEventListener("click", event => {
       if (event.target === overlay || event.target.closest("[data-exam-schedule-close]")) close();
@@ -146,5 +198,5 @@
     return true;
   }
 
-  return Object.freeze({ confirmedExams, remaining, countdownLabel, daysLabel, renderCards, showPopup, close });
+  return Object.freeze({ confirmedExams, upcomingAssessments, remaining, countdownLabel, daysLabel, renderCards, showPopup, close });
 });
