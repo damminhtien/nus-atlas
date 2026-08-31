@@ -100,6 +100,48 @@ test("study store derives gamification from canonical DSA evidence", () => {
   assert.deepEqual(snapshot.level, { level: 1, name: "Novice", xp: 45, pct: 30, toNext: 105, next: { level: 2, name: "Apprentice", xp: 150 } });
 });
 
+test("study store uses the Singapore calendar day for streak activity", () => {
+  const store = createStudyStore({
+    storage: memoryStorage(),
+    now: () => new Date("2026-08-15T16:30:00.000Z")
+  });
+
+  store.recordEvidence({ eventId: "study:after-midnight", type: "study_action", xp: 7 });
+
+  assert.deepEqual(store.gamification().activeDays, { "2026-08-16": 1 });
+  assert.equal(store.gamification().streak, 1);
+  assert.equal(store.gamification().todayXp, 7);
+});
+
+test("study store preserves yesterday's streak until a full day is missed", () => {
+  let now = new Date("2026-08-15T10:00:00.000Z");
+  const store = createStudyStore({ storage: memoryStorage(), now: () => now });
+  store.recordEvidence({ eventId: "study:yesterday", type: "study_action", xp: 0 });
+
+  now = new Date("2026-08-16T10:00:00.000Z");
+  assert.equal(store.gamification().streak, 1);
+
+  now = new Date("2026-08-17T10:00:00.000Z");
+  assert.equal(store.gamification().streak, 0);
+});
+
+test("meaningful reading progress keeps the study streak active without XP", () => {
+  let now = new Date("2026-08-15T10:00:00.000Z");
+  const store = createStudyStore({ storage: memoryStorage(), now: () => now });
+  const reading = { resourceId: "slide:DSA5105:week1", kind: "slide", courseCode: "DSA5105", position: 1, total: 10 };
+
+  store.recordReading(reading);
+  assert.equal(store.events().length, 0, "opening a resource is not study evidence");
+  store.recordReading({ ...reading, position: 2 });
+  assert.equal(store.events()[0].type, "reading_progress");
+  assert.equal(store.gamification().streak, 1);
+  assert.equal(store.gamification().xp, 0);
+
+  now = new Date("2026-08-15T11:00:00.000Z");
+  store.recordReading({ ...reading, position: 3 });
+  assert.equal(store.events().length, 1, "reading activity is idempotent within a calendar day");
+});
+
 test("study store keeps evidence idempotent and updates mastery", () => {
   const store = createStudyStore({ storage: memoryStorage(), now: () => new Date("2026-08-15T10:00:00.000Z") });
   const first = store.recordEvidence({ eventId: "recall:q1", type: "recall_correct", lessonId: "lesson1", xp: 5 });

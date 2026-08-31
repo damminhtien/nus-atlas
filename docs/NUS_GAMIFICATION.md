@@ -4,7 +4,7 @@ Gamification in NUS Atlas is a private feedback loop for studying, not a public 
 
 ## Design principles
 
-- Reward evidence, not page views. Opening a route never awards XP.
+- Reward evidence, not page views. Opening a route never awards XP; meaningful reading progress can keep a streak active without awarding XP.
 - Keep the signal personal. There is no leaderboard, public rank, streak shaming, or score penalty.
 - Make rewards idempotent. Every award has a stable `eventId`, so refreshes and repeated clicks cannot duplicate XP.
 - Prefer recovery over punishment. A missed question becomes a prompt for another attempt, not a permanent deduction.
@@ -36,6 +36,7 @@ The canonical DSA ledger owns deduplication, XP, streaks, and mastery. The app s
 | Submit an exam attempt | 15 + 2 per correct, capped at 35 | +15% on the scoped lesson |
 | Complete a visual lab | 10 | +18% on the lab lesson |
 | Redeem a mistake | 8 | +18% |
+| Make meaningful reading progress | 0 | Keeps the streak active; no XP or mastery |
 
 These are feedback weights, not grades. They do not alter course marks or assessment records.
 

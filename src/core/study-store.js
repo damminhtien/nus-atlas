@@ -13,6 +13,13 @@
   let syncScheduler = typeof config.syncScheduler === "function" ? config.syncScheduler : null;
   const KEY = config.key || "nus.v1";
   const SCHEMA_VERSION = "nus.study.v5";
+  const STUDY_TIME_ZONE = String(config.timeZone || "Asia/Singapore");
+  const calendarDayFormatter = new Intl.DateTimeFormat("en-SG", {
+    timeZone: STUDY_TIME_ZONE,
+    year: "numeric",
+    month: "2-digit",
+    day: "2-digit"
+  });
   const RETRIEVAL_INTERVALS = [1, 3, 7, 14, 30, 60, 120];
 
   const QUESTS = [
@@ -102,22 +109,36 @@
 
   function timestamp() { return clock().toISOString(); }
   function touch() { state.lastStudy = timestamp(); save(); }
-  function today() {
-    const date = clock();
-    return `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, "0")}-${String(date.getDate()).padStart(2, "0")}`;
+  function calendarDay(value) {
+    if (value == null || String(value).trim() === "") return "";
+    const date = value instanceof Date ? value : new Date(value);
+    if (!Number.isFinite(date.getTime())) return "";
+    const fields = Object.fromEntries(calendarDayFormatter.formatToParts(date)
+      .filter(part => part.type !== "literal")
+      .map(part => [part.type, part.value]));
+    return `${fields.year}-${fields.month}-${fields.day}`;
   }
+  function today() { return calendarDay(clock()); }
   function countType(snapshot, type) { return snapshot.events.filter(event => event.type === type).length; }
   function eventList() { return Object.values(state.events).sort((a, b) => new Date(a.at) - new Date(b.at)); }
-  function dayKey(value) { return String(value || "").slice(0, 10); }
+  function dayOffset(day, amount) {
+    const date = new Date(`${day}T12:00:00Z`);
+    if (!Number.isFinite(date.getTime())) return "";
+    date.setUTCDate(date.getUTCDate() + amount);
+    return date.toISOString().slice(0, 10);
+  }
   function activeDayMap(events) {
-    return Object.fromEntries((events || []).filter(event => event && event.at).map(event => [dayKey(event.at), 1]));
+    return Object.fromEntries((events || []).filter(event => event && event.at).map(event => [calendarDay(event.at), 1]));
   }
   function streakFor(activeDays, endDay) {
-    const date = new Date(`${endDay}T12:00:00Z`);
+    let day = endDay;
+    // Keep yesterday's streak visible until the learner has had a full day
+    // to study. This prevents a new calendar day from looking like a loss.
+    if (!activeDays[day]) day = dayOffset(day, -1);
     let streak = 0;
-    while (activeDays[dayKey(date.toISOString())]) {
+    while (activeDays[day]) {
       streak += 1;
-      date.setUTCDate(date.getUTCDate() - 1);
+      day = dayOffset(day, -1);
     }
     return streak;
   }
@@ -147,7 +168,7 @@
 
   function questState() {
     const day = today();
-    const events = eventList().filter(event => event.at.slice(0, 10) === day);
+    const events = eventList().filter(event => calendarDay(event.at) === day);
     const quests = QUESTS.map(quest => ({ ...quest, progress: Math.min(quest.target, events.filter(event => quest.types.includes(event.type)).length) }));
     const complete = quests.every(quest => quest.progress >= quest.target);
     if (complete && !state.questHistory[day]) { state.questHistory[day] = { completedAt: timestamp() }; save(); }
@@ -401,6 +422,18 @@
       lastAt: timestamp()
     };
     state.reading[resourceId] = progress;
+    const progressed = previous.position !== undefined && (
+      position !== Number(previous.position) || progress.completed !== !!previous.completed
+    );
+    if (progressed) {
+      recordEvidence({
+        eventId: `reading:${resourceId}:${today()}`,
+        type: "reading_progress",
+        courseCode: progress.courseCode,
+        xp: 0,
+        meta: { resourceId, kind: progress.kind, position, total }
+      });
+    }
     touch();
     return { ...progress };
   }
@@ -421,7 +454,7 @@
     return {
       xp,
       streak: streakFor(activeDays, todayKey),
-      todayXp: events.filter(event => dayKey(event.at) === todayKey).reduce((sum, event) => sum + (Number(event.xp) || 0), 0),
+      todayXp: events.filter(event => calendarDay(event.at) === todayKey).reduce((sum, event) => sum + (Number(event.xp) || 0), 0),
       goalXp: 50,
       activeDays,
       level: levelFor(xp)
