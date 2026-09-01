@@ -306,34 +306,6 @@
       ]
     },
     {
-      "id": "dsa5208-bank-012",
-      "lessonId": "dsa5208-lamport-scalar",
-      "type": "short",
-      "prompt": "Why can scalar timestamps order concurrent events?",
-      "accepted": [
-        "scalar clocks are not strongly consistent",
-        "causality implication is one way",
-        "concurrent events may have ordered values"
-      ],
-      "solution": "Scalar clocks preserve causal order in one direction but do not prove causality from timestamp order.",
-      "explanation": "The artificial total order can be useful while still being incomplete for concurrency detection.",
-      "difficulty": "medium",
-      "skill": "explain",
-      "cognitiveLevel": "analyze",
-      "estimatedSeconds": 90,
-      "misconception": "An increasing scalar value does not imply happens-before.",
-      "visualHook": "Compare scalar and vector clock limits.",
-      "sourceRefs": [
-        {
-          "sourceId": "DSA5208/Lec1.pdf",
-          "page": 19,
-          "sourceType": "lecture",
-          "role": "scalar properties",
-          "status": "current"
-        }
-      ]
-    },
-    {
       "id": "dsa5208-bank-013",
       "lessonId": "dsa5208-vector-clocks",
       "type": "calculation",
@@ -356,62 +328,6 @@
           "page": 22,
           "sourceType": "lecture",
           "role": "vector comparison",
-          "status": "current"
-        }
-      ]
-    },
-    {
-      "id": "dsa5208-bank-014",
-      "lessonId": "dsa5208-vector-clocks",
-      "type": "short",
-      "prompt": "What is the message-size trade-off of a basic vector clock?",
-      "accepted": [
-        "$O(n)$ metadata per message",
-        "one component per process",
-        "linear message overhead"
-      ],
-      "solution": "A vector contains one component per process, so each message carries $O(n)$ timestamp metadata.",
-      "explanation": "Vector clocks recover more causal information at a larger communication cost.",
-      "difficulty": "medium",
-      "skill": "explain",
-      "cognitiveLevel": "analyze",
-      "estimatedSeconds": 75,
-      "misconception": "Vector clocks are not constant-size metadata.",
-      "visualHook": "Scale the number of process components.",
-      "sourceRefs": [
-        {
-          "sourceId": "DSA5208/Lec1.pdf",
-          "page": 23,
-          "sourceType": "lecture",
-          "role": "vector message complexity",
-          "status": "current"
-        }
-      ]
-    },
-    {
-      "id": "dsa5208-bank-015",
-      "lessonId": "dsa5208-compressed-timestamps",
-      "type": "short",
-      "prompt": "Why can a sender omit unchanged vector entries for one receiver?",
-      "accepted": [
-        "the receiver already knows them",
-        "only changed entries need sending",
-        "prior message stores those values"
-      ],
-      "solution": "The receiver has already observed the prior values from the last message on that sender-receiver pair, so only changed entries need to be sent.",
-      "explanation": "Compression relies on receiver-specific history.",
-      "difficulty": "medium",
-      "skill": "explain",
-      "cognitiveLevel": "analyze",
-      "estimatedSeconds": 90,
-      "misconception": "Compression may omit repetition, not required causal knowledge.",
-      "visualHook": "Trace the metadata delta.",
-      "sourceRefs": [
-        {
-          "sourceId": "DSA5208/Lec1.pdf",
-          "page": 24,
-          "sourceType": "lecture",
-          "role": "compressed timestamp idea",
           "status": "current"
         }
       ]
@@ -441,77 +357,6 @@
           "page": 29,
           "sourceType": "lecture",
           "role": "differential technique",
-          "status": "current"
-        }
-      ]
-    },
-    {
-      "id": "dsa5208-bank-017",
-      "lessonId": "dsa5208-consistency-spark",
-      "type": "mcq",
-      "prompt": "Which model additionally preserves real-time order between non-overlapping operations?",
-      "choices": [
-        "Linearizability",
-        "Sequential consistency",
-        "Eventual consistency",
-        "Monotonic writes"
-      ],
-      "answer": 0,
-      "explanation": "Linearizability preserves a legal sequence and also respects real-time non-overlap; sequential consistency keeps one legal sequence without the same real-time constraint.",
-      "difficulty": "medium",
-      "skill": "distinguish",
-      "cognitiveLevel": "understand",
-      "estimatedSeconds": 60,
-      "misconception": "One common sequence is not automatically the same as preserving real-time order.",
-      "visualHook": "Compare the strict and sequential consistency examples.",
-      "sourceRefs": [
-        {
-          "sourceId": "DSA5208/Lec3.pdf",
-          "page": 10,
-          "sourceType": "lecture",
-          "role": "strict consistency (linearizability)",
-          "status": "current"
-        },
-        {
-          "sourceId": "DSA5208/Lec3.pdf",
-          "page": 15,
-          "sourceType": "lecture",
-          "role": "sequential consistency",
-          "status": "current"
-        }
-      ]
-    },
-    {
-      "id": "dsa5208-bank-018",
-      "lessonId": "dsa5208-consistency-spark",
-      "type": "short",
-      "prompt": "Why are MongoDB read concern \"majority\" and write concern \"majority\" still not enough by themselves to guarantee read-your-writes consistency by definition?",
-      "accepted": [
-        "majority snapshot can lag the client write",
-        "need session or lamport clock state",
-        "read may hit node not caught up to that client"
-      ],
-      "solution": "A read served from a majority-committed snapshot can still miss the client's latest write on that serving node. MongoDB therefore adds session or Lamport-clock state so the read waits until the node has caught up to that client's write.",
-      "explanation": "Majority visibility and one client's session guarantee are related but not identical.",
-      "difficulty": "hard",
-      "skill": "explain",
-      "cognitiveLevel": "analyze",
-      "estimatedSeconds": 120,
-      "misconception": "A majority acknowledgement does not automatically guarantee that every possible reader already provides the client's session guarantee.",
-      "visualHook": "Inspect the majority snapshot and Lamport-clock enforcement slides together.",
-      "sourceRefs": [
-        {
-          "sourceId": "DSA5208/Lec3.pdf",
-          "page": 48,
-          "sourceType": "lecture",
-          "role": "read and write concerns",
-          "status": "current"
-        },
-        {
-          "sourceId": "DSA5208/Lec3.pdf",
-          "page": 53,
-          "sourceType": "lecture",
-          "role": "MongoDB read-your-writes implementation with Lamport clocks",
           "status": "current"
         }
       ]

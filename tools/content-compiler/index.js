@@ -36,17 +36,30 @@ function orderedJsonFiles(dir, ids, label) {
   }
   return ids.map(id => `${id}.json`);
 }
+function normalizeQuestionPrompt(prompt) {
+  return typeof prompt === "string" ? prompt.replace(/\s+/g, " ").trim().toLowerCase() : "";
+}
+
 function mergeQuestions(primary, extras, options = {}) {
   const merged = [];
   const positions = new Map();
+  const promptPositions = new Map();
   for (const [source, prefer] of [[primary, false], [extras, true]]) {
     for (const question of source || []) {
       if (!question || !question.id) continue;
       const position = positions.get(question.id);
-      if (position === undefined) {
+      const promptKey = normalizeQuestionPrompt(question.prompt);
+      const promptPosition = promptKey ? promptPositions.get(promptKey) : undefined;
+      if (position === undefined && promptPosition === undefined) {
         positions.set(question.id, merged.length);
+        if (promptKey) promptPositions.set(promptKey, merged.length);
         merged.push(question);
       } else if (options.preferExtras && prefer) {
+        if (position === undefined || (promptPosition !== undefined && promptPosition !== position)) continue;
+        const previous = merged[position];
+        const previousPromptKey = normalizeQuestionPrompt(previous.prompt);
+        if (previousPromptKey) promptPositions.delete(previousPromptKey);
+        if (promptKey) promptPositions.set(promptKey, position);
         merged[position] = question;
       }
     }
@@ -529,4 +542,4 @@ function validateCanonical(root, courseId) {
   if (errors.length) throw new Error(`Canonical authored math contract failed for ${courseId}:\n- ${errors.slice(0, 10).map(error => `${error.location} [${error.label}: ${error.token}]`).join("\n- ")}`);
 }
 
-module.exports = { compileAll, compileCourse, compileCourseSource, loadCourseSource, stableStringify, hash, validateCanonical, writeCourseArtifacts, normalizeLesson, normalizeAssessment, assessmentWeightTotal };
+module.exports = { compileAll, compileCourse, compileCourseSource, loadCourseSource, stableStringify, hash, validateCanonical, writeCourseArtifacts, normalizeLesson, normalizeAssessment, assessmentWeightTotal, lessonBlocks, mergeQuestions, normalizeQuestionPrompt };

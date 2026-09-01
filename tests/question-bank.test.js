@@ -5,7 +5,7 @@ const path = require("node:path");
 const { readQuestionBank, validateQuestionBank } = require("../scripts/validate-question-bank");
 const { OPEN_RESPONSE_IDS } = require("../scripts/ingest-dsa5104-homework");
 const { loadCanonicalState } = require("../scripts/validate-content");
-const { compileCourse } = require("../tools/content-compiler");
+const { compileCourse, mergeQuestions } = require("../tools/content-compiler");
 
 test("DSA5105 question bank covers every lesson with metadata", () => {
   const bank = readQuestionBank();
@@ -129,8 +129,22 @@ test("DSA5208 question bank covers every lesson with metadata", () => {
   const bank = readQuestionBank("DSA5208");
   const result = validateQuestionBank(bank, loadCanonicalState());
   assert.equal(result.ok, true, result.errors.join("\n"));
-  assert.equal(result.counts.questions, 17);
-  assert.equal(result.counts.lessons, 9);
+  assert.equal(result.counts.questions, 12);
+  assert.equal(result.counts.lessons, 8);
+});
+
+test("question merging keeps the first owner of a repeated prompt", () => {
+  const primary = [{ id: "lesson-q", prompt: "What is FIFO?" }];
+  const extras = [{ id: "bank-q", prompt: "  what is   fifo? " }];
+  assert.deepEqual(mergeQuestions(primary, extras), primary);
+  assert.deepEqual(mergeQuestions([{ id: "same", prompt: "old" }], [{ id: "same", prompt: "new" }], { preferExtras: true }), [{ id: "same", prompt: "new" }]);
+});
+
+test("compiled DSA5208 lessons expose unique quiz prompts", () => {
+  const packageData = compileCourse(process.cwd(), "DSA5208").package;
+  const questions = packageData.content.modules.flatMap(module => module.lessons).flatMap(lesson => lesson.questions);
+  const normalize = prompt => prompt.replace(/\s+/g, " ").trim().toLowerCase();
+  assert.equal(new Set(questions.map(question => normalize(question.prompt))).size, questions.length);
 });
 
 test("DSA5208 keeps extension questions only in the question bank", () => {
