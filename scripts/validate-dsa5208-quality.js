@@ -93,7 +93,8 @@ function validateDsa5208Quality(root = ROOT) {
   const courseRoot = path.join(root, "content", "courses", "DSA5208");
   const slideChecks = [
     ["dsa5208-lec2.json", 15],
-    ["dsa5208-lec3.json", 17]
+    ["dsa5208-lec3.json", 17],
+    ["dsa5208-lec4.json", 33]
   ].map(([file, coreCount]) => validateSlides(path.join(courseRoot, "slides", file), coreCount));
   const questionDirectory = path.join(courseRoot, "questions");
   const questionErrors = [];

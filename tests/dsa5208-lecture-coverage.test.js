@@ -27,10 +27,10 @@ function renderLab(lessonId) {
   return components.renderLab(lesson, packageData.labs[lessonId]);
 }
 
-test("DSA5208 Lecture 2 and 3 lessons expose worked examples and expanded quizzes", () => {
+test("DSA5208 supplied lecture lessons expose worked examples and expanded quizzes", () => {
   const packageData = coursePackage("DSA5208");
   const lessons = packageData.content.modules.flatMap(module => module.lessons);
-  for (const id of ["dsa5208-broadcast", "dsa5208-shortest-path", "dsa5208-synchronizers", "dsa5208-consistency-spark"]) {
+  for (const id of ["dsa5208-broadcast", "dsa5208-shortest-path", "dsa5208-synchronizers", "dsa5208-consistency-spark", "dsa5208-spark"]) {
     const lesson = lessons.find(item => item.id === id);
     assert.ok(lesson, `missing lesson ${id}`);
     assert.ok(lesson.examples.length >= 2, `${id} needs a worked visual example`);
@@ -39,7 +39,7 @@ test("DSA5208 Lecture 2 and 3 lessons expose worked examples and expanded quizze
   }
 });
 
-test("DSA5208 visual labs render configured Lecture 2 and 3 algorithms", () => {
+test("DSA5208 visual labs render configured Lecture 2 to 4 algorithms", () => {
   const shortest = renderLab("dsa5208-shortest-path");
   assert.match(shortest, /Initialize/);
   assert.match(shortest, /d\(s\)=0/);
@@ -54,6 +54,12 @@ test("DSA5208 visual labs render configured Lecture 2 and 3 algorithms", () => {
   assert.match(consistency, /Read-your-writes/);
   assert.match(consistency, /Digest read repair/);
   assert.doesNotMatch(consistency, /Roadmap-to-measurement|Week 1 derivation/);
+
+  const spark = renderLab("dsa5208-spark");
+  assert.match(spark, /DataFrame to job/);
+  assert.match(spark, /GPU columnar path/);
+  assert.match(spark, /ColumnarToRow/);
+  assert.doesNotMatch(spark, /Model complexity|Training risk|Validation risk|Message\s+delivery/);
 });
 
 test("DSA5208 delivery ordering uses a guarantee-specific lab", () => {

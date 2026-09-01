@@ -34,14 +34,14 @@ test("DSA5105 keeps topic modules separate from its chronological lecture timeli
   ]);
 });
 
-test("DSA5208 maps its content to three lecture weeks", () => {
+test("DSA5208 maps its content to four numbered lecture weeks", () => {
   const source = loadCourseSource(process.cwd(), "DSA5208");
   const compiled = compileCourse(process.cwd(), "DSA5208");
   const timeline = source.course.timelineLessonIds.map(id => compiled.lessons[id]);
   const weekIds = week => timeline.filter(lesson => lesson.week === week).map(lesson => lesson.id);
   const orientation = source.modules.flatMap(module => module.lessons).find(lesson => lesson.id === "dsa5208-orientation");
 
-  assert.deepEqual([...new Set(timeline.map(lesson => lesson.week))], [1, 2, 3]);
+  assert.deepEqual([...new Set(timeline.map(lesson => lesson.week))], [1, 2, 3, 4]);
   assert.equal(orientation.math.length, 1);
   assert.equal(new Set(orientation.sections.map(section => section.title)).size, 2);
   assert.equal(Object.prototype.hasOwnProperty.call(orientation, "blocks"), false);
@@ -58,6 +58,7 @@ test("DSA5208 maps its content to three lecture weeks", () => {
   ]);
   assert.deepEqual(weekIds(2), ["dsa5208-broadcast", "dsa5208-shortest-path", "dsa5208-synchronizers"]);
   assert.deepEqual(weekIds(3), ["dsa5208-consistency-spark"]);
+  assert.deepEqual(weekIds(4), ["dsa5208-spark"]);
 });
 
 test("compiler rejects a partial canonical timeline", () => {

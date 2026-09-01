@@ -1,0 +1,30 @@
+{
+  "lessonId": "dsa5208-spark",
+  "schemaVersion": "nus.study-kit.v1",
+  "flashcards": [
+    { "front": "What triggers a lazy Spark DataFrame plan?", "back": "An action such as count, first, collect, or save requests a result and triggers execution of the accumulated transformations." },
+    { "front": "What separates narrow and wide transformations?", "back": "Narrow work can read input partitions independently; wide work reorganizes records across partitions and can require a shuffle." },
+    { "front": "What is the CUDA-X filter fallback boundary?", "back": "An unsupported cuDF predicate converts through ColumnarToRow and uses Spark's row-wise implementation." }
+  ],
+  "homework": [
+    {
+      "prompt": "Trace a flight-delay DataFrame from CSV read through groupBy, aggregation, orderBy, and write. Label each call as a transformation or action and mark the likely shuffle boundary.",
+      "rubric": "Names the partitioned DataFrame, separates transformations from the write action, and identifies grouping or ordering as a cross-partition dependency rather than treating every call as local.",
+      "sourceRefs": [{ "sourceId": "DSA5208/Lec4.pdf", "page": 6, "sourceType": "lecture", "role": "flight DataFrame workload", "status": "current" }, { "sourceId": "DSA5208/Lec4.pdf", "page": 21, "sourceType": "lecture", "role": "wide transformations and shuffle", "status": "current" }]
+    },
+    {
+      "prompt": "Compare Spark's row-wise filter path with CUDA-X's columnar filter path, including the unsupported-predicate fallback.",
+      "rubric": "Explains row retrieval and UnsafeRow output, then mask plus exclusive scan, and finally the ColumnarToRow fallback without claiming universal GPU execution.",
+      "sourceRefs": [{ "sourceId": "DSA5208/Lec4.pdf", "page": 34, "sourceType": "lecture", "role": "Spark row-wise filter implementation", "status": "current" }, { "sourceId": "DSA5208/Lec4.pdf", "page": 36, "sourceType": "lecture", "role": "CUDA-X filter mask and scan", "status": "current" }, { "sourceId": "DSA5208/Lec4.pdf", "page": 37, "sourceType": "lecture", "role": "GPU fallback boundary", "status": "current" }]
+    }
+  ],
+  "codeExercises": [
+    {
+      "id": "dsa5208-spark-trace-plan",
+      "language": "python",
+      "prompt": "Annotate a PySpark flight-delay query with transformation, action, narrow, and wide labels.",
+      "starter": "flights = spark.read.csv(\"flights.csv\", header=True, inferSchema=True)\nresult = (flights.filter(\"arrDelay IS NOT NULL\")\n          .groupBy(\"carrier\")\n          .avg(\"arrDelay\")\n          .orderBy(\"avg(arrDelay)\"))\nresult.write.csv(\"out\")",
+      "review": "The read and transformations build a plan; groupBy and orderBy can require cross-partition coordination; the write requests execution. Inspect the physical plan before making a stronger claim."
+    }
+  ]
+}

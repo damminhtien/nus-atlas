@@ -1,0 +1,222 @@
+{
+  "id": "dsa5208-spark",
+  "title": "Apache Spark: DataFrames, execution, and GPU acceleration",
+  "week": 4,
+  "minutes": 75,
+  "summary": "Trace the Lecture 4 path from a DataFrame API call through lazy logical and physical planning to jobs, stages, tasks, and the row or columnar representation used by CPU and GPU execution.",
+  "objectives": [
+    "Separate Spark's analytics engine from the storage system that supplies data",
+    "Distinguish DataFrame transformations from actions and narrow from wide transformations",
+    "Read the logical-plan, physical-plan, job, stage, and task boundaries in a Spark workflow",
+    "Explain why columnar layout helps GPU filtering and where unsupported operations fall back to Spark"
+  ],
+  "sourceRefs": [
+    { "sourceId": "DSA5208/Lec4.pdf", "page": 3, "sourceType": "lecture", "role": "Spark analytics and storage boundary", "status": "current" },
+    { "sourceId": "DSA5208/Lec4.pdf", "page": 6, "sourceType": "lecture", "role": "flight DataFrame workload", "status": "current" },
+    { "sourceId": "DSA5208/Lec4.pdf", "page": 10, "sourceType": "lecture", "role": "DataFrame partitions", "status": "current" },
+    { "sourceId": "DSA5208/Lec4.pdf", "page": 18, "sourceType": "lecture", "role": "lazy evaluation", "status": "current" },
+    { "sourceId": "DSA5208/Lec4.pdf", "page": 20, "sourceType": "lecture", "role": "narrow transformations", "status": "current" },
+    { "sourceId": "DSA5208/Lec4.pdf", "page": 21, "sourceType": "lecture", "role": "wide transformations and shuffle", "status": "current" },
+    { "sourceId": "DSA5208/Lec4.pdf", "page": 23, "sourceType": "lecture", "role": "logical and physical plans", "status": "current" },
+    { "sourceId": "DSA5208/Lec4.pdf", "page": 25, "sourceType": "lecture", "role": "physical plan selection", "status": "current" },
+    { "sourceId": "DSA5208/Lec4.pdf", "page": 26, "sourceType": "lecture", "role": "jobs, stages, and tasks", "status": "current" },
+    { "sourceId": "DSA5208/Lec4.pdf", "page": 29, "sourceType": "lecture", "role": "row and column storage", "status": "current" },
+    { "sourceId": "DSA5208/Lec4.pdf", "page": 32, "sourceType": "lecture", "role": "illustrative row versus column benchmark", "status": "current" },
+    { "sourceId": "DSA5208/Lec4.pdf", "page": 33, "sourceType": "lecture", "role": "Spark filter semantics", "status": "current" },
+    { "sourceId": "DSA5208/Lec4.pdf", "page": 36, "sourceType": "lecture", "role": "CUDA-X filter mask and scan", "status": "current" },
+    { "sourceId": "DSA5208/Lec4.pdf", "page": 37, "sourceType": "lecture", "role": "GPU fallback boundary", "status": "current" },
+    { "sourceId": "DSA5208/Lec4.pdf", "page": 40, "sourceType": "lecture", "role": "CUDA-X projection", "status": "current" },
+    { "sourceId": "DSA5208/Lec4.pdf", "page": 42, "sourceType": "lecture", "role": "lecture summary", "status": "current" }
+  ],
+  "sourceLens": {
+    "status": "core DSA5208 Lecture 4",
+    "whyExaminable": "The lecture tests whether an API-level DataFrame operation can be traced to its execution trigger, shuffle boundary, task granularity, and physical data layout without confusing a local benchmark with a universal guarantee.",
+    "lecture": [
+      { "sourceId": "DSA5208/Lec4.pdf", "page": 6, "sourceType": "lecture", "role": "flight DataFrame workload", "status": "current" },
+      { "sourceId": "DSA5208/Lec4.pdf", "page": 18, "sourceType": "lecture", "role": "lazy evaluation", "status": "current" },
+      { "sourceId": "DSA5208/Lec4.pdf", "page": 23, "sourceType": "lecture", "role": "logical and physical plans", "status": "current" },
+      { "sourceId": "DSA5208/Lec4.pdf", "page": 26, "sourceType": "lecture", "role": "jobs, stages, and tasks", "status": "current" },
+      { "sourceId": "DSA5208/Lec4.pdf", "page": 36, "sourceType": "lecture", "role": "CUDA-X filter mask and scan", "status": "current" },
+      { "sourceId": "DSA5208/Lec4.pdf", "page": 40, "sourceType": "lecture", "role": "CUDA-X projection", "status": "current" }
+    ],
+    "officialExercise": [],
+    "textbook": [],
+    "reference": []
+  },
+  "visualIds": ["dsa5208-spark-execution"],
+  "math": [
+    {
+      "name": "Spark execution pipeline",
+      "purpose": "Use this chain to connect a DataFrame call to the planning and partition-level work that an action schedules.",
+      "latex": "\\text{DataFrame API} \\to \\text{logical plan} \\to \\text{physical plan} \\to \\text{tasks}",
+      "explanation": "The API states the requested computation; Spark builds and optimizes a logical plan, selects a physical plan, and schedules tasks over partitioned data.",
+      "symbols": [
+        { "latex": "\\text{DataFrame API}", "meaning": "the user's structured operations" },
+        { "latex": "\\text{logical plan}", "meaning": "the analyzed and optimized computation meaning" },
+        { "latex": "\\text{physical plan}", "meaning": "the executable operator strategy" },
+        { "latex": "\\text{tasks}", "meaning": "partition-level work on worker nodes" }
+      ],
+      "sourceType": "lecture",
+      "sourceRefs": [
+        { "sourceId": "DSA5208/Lec4.pdf", "page": 18, "sourceType": "lecture", "role": "lazy evaluation", "status": "current" },
+        { "sourceId": "DSA5208/Lec4.pdf", "page": 23, "sourceType": "lecture", "role": "logical and physical plans", "status": "current" },
+        { "sourceId": "DSA5208/Lec4.pdf", "page": 26, "sourceType": "lecture", "role": "jobs, stages, and tasks", "status": "current" }
+      ]
+    }
+  ],
+  "sections": [
+    {
+      "title": "Spark is an analytics engine",
+      "sourceType": "lecture",
+      "body": "Apache Spark is presented as a unified engine for large-scale data analytics. It can read from and write to storage systems such as HDFS, but the storage system and the compute engine are different boundaries. The same engine exposes Spark SQL, Pandas API on Spark, MLlib, GraphX, and Structured Streaming for different workloads.",
+      "sourceRefs": [
+        { "sourceId": "DSA5208/Lec4.pdf", "page": 3, "sourceType": "lecture", "role": "Spark analytics and storage boundary", "status": "current" },
+        { "sourceId": "DSA5208/Lec4.pdf", "page": 4, "sourceType": "lecture", "role": "Spark component map", "status": "current" }
+      ]
+    },
+    {
+      "title": "DataFrames, columns, and partitions",
+      "sourceType": "lecture",
+      "body": "A DataFrame presents named columns and typed values while its rows are distributed across partitions on worker nodes. The flight-delay example uses select, filter, groupBy, aggregation, ordering, and writing to describe a workload without requiring the whole CSV to fit on one machine. Selecting or deriving columns changes the logical schema; filtering changes which rows are retained.",
+      "sourceRefs": [
+        { "sourceId": "DSA5208/Lec4.pdf", "page": 6, "sourceType": "lecture", "role": "flight DataFrame workload", "status": "current" },
+        { "sourceId": "DSA5208/Lec4.pdf", "page": 10, "sourceType": "lecture", "role": "DataFrame partitions", "status": "current" },
+        { "sourceId": "DSA5208/Lec4.pdf", "page": 13, "sourceType": "lecture", "role": "column operations", "status": "current" },
+        { "sourceId": "DSA5208/Lec4.pdf", "page": 14, "sourceType": "lecture", "role": "filter and union operations", "status": "current" },
+        { "sourceId": "DSA5208/Lec4.pdf", "page": 16, "sourceType": "lecture", "role": "aggregation operations", "status": "current" }
+      ]
+    },
+    {
+      "title": "Lazy evaluation and shuffle boundaries",
+      "sourceType": "lecture",
+      "body": "Transformations such as filter, withColumn, sort, and groupBy build a computation plan rather than immediately scanning the data. An action such as count, first, collect, or save requests a result and triggers execution. Narrow transformations can read each input partition independently; wide transformations reorganize records across partitions and normally introduce a shuffle boundary.",
+      "sourceRefs": [
+        { "sourceId": "DSA5208/Lec4.pdf", "page": 18, "sourceType": "lecture", "role": "lazy evaluation", "status": "current" },
+        { "sourceId": "DSA5208/Lec4.pdf", "page": 20, "sourceType": "lecture", "role": "narrow transformations", "status": "current" },
+        { "sourceId": "DSA5208/Lec4.pdf", "page": 21, "sourceType": "lecture", "role": "wide transformations and shuffle", "status": "current" },
+        { "sourceId": "DSA5208/Lec4.pdf", "page": 22, "sourceType": "lecture", "role": "actions", "status": "current" }
+      ]
+    },
+    {
+      "title": "Plans become jobs, stages, and tasks",
+      "sourceType": "lecture",
+      "body": "Spark parses and analyzes the requested operations, optimizes the logical plan, then selects a physical plan using available planning information and cost reasoning. An action creates a job. The job is divided into stages at wide-operation boundaries, and a task processes one partitioned subset in parallel on a worker node. Adaptive Query Execution can change physical choices at runtime, so the plan should be inspected rather than guessed from API names.",
+      "sourceRefs": [
+        { "sourceId": "DSA5208/Lec4.pdf", "page": 23, "sourceType": "lecture", "role": "logical and physical plans", "status": "current" },
+        { "sourceId": "DSA5208/Lec4.pdf", "page": 24, "sourceType": "lecture", "role": "logical planning", "status": "current" },
+        { "sourceId": "DSA5208/Lec4.pdf", "page": 25, "sourceType": "lecture", "role": "physical plan selection", "status": "current" },
+        { "sourceId": "DSA5208/Lec4.pdf", "page": 26, "sourceType": "lecture", "role": "jobs, stages, and tasks", "status": "current" }
+      ]
+    },
+    {
+      "title": "Row layout versus columnar acceleration",
+      "sourceType": "lecture",
+      "body": "Row storage keeps all fields for one record together, while columnar storage keeps values from the same field together. The source uses a small benchmark to illustrate why a column scan can be faster for a column-focused computation, but the measured numbers are hardware- and workload-specific. CUDA-X can evaluate supported predicates in parallel with a mask and exclusive scan, falls back through ColumnarToRow for unsupported operations, and can avoid new row construction for a pure column selection or reorder.",
+      "sourceRefs": [
+        { "sourceId": "DSA5208/Lec4.pdf", "page": 28, "sourceType": "lecture", "role": "RAPIDS and CUDA-X context", "status": "current" },
+        { "sourceId": "DSA5208/Lec4.pdf", "page": 29, "sourceType": "lecture", "role": "row and column storage", "status": "current" },
+        { "sourceId": "DSA5208/Lec4.pdf", "page": 32, "sourceType": "lecture", "role": "illustrative row versus column benchmark", "status": "current" },
+        { "sourceId": "DSA5208/Lec4.pdf", "page": 36, "sourceType": "lecture", "role": "CUDA-X filter mask and scan", "status": "current" },
+        { "sourceId": "DSA5208/Lec4.pdf", "page": 37, "sourceType": "lecture", "role": "GPU fallback boundary", "status": "current" },
+        { "sourceId": "DSA5208/Lec4.pdf", "page": 40, "sourceType": "lecture", "role": "CUDA-X projection", "status": "current" }
+      ]
+    }
+  ],
+  "examples": [
+    {
+      "title": "Flight-delay aggregation from API to output",
+      "sourceType": "lecture",
+      "steps": [
+        "Read the flight CSV into a DataFrame whose rows are distributed across partitions.",
+        "Select the carrier and delay columns, then group rows by carrier and compute an average arrival delay.",
+        "Order the aggregate result so the carriers with larger average delays appear first.",
+        "Write the resulting DataFrame to CSV; the write is an action that requests execution of the prior plan."
+      ],
+      "answer": "The API calls describe a plan over partitioned rows; the output write is the point that requests Spark to execute that plan.",
+      "sourceRefs": [
+        { "sourceId": "DSA5208/Lec4.pdf", "page": 6, "sourceType": "lecture", "role": "flight DataFrame workload", "status": "current" },
+        { "sourceId": "DSA5208/Lec4.pdf", "page": 7, "sourceType": "lecture", "role": "PySpark flight aggregation", "status": "current" },
+        { "sourceId": "DSA5208/Lec4.pdf", "page": 22, "sourceType": "lecture", "role": "save action", "status": "current" }
+      ]
+    },
+    {
+      "title": "One lazy chain, two execution boundaries",
+      "sourceType": "lecture",
+      "steps": [
+        "Build a chain with filter and withColumn; these transformations do not immediately scan every partition.",
+        "Add groupBy or sort; records may need to move between partitions, so a shuffle can divide the work into stages.",
+        "Call count or first; this action requests a result and turns the accumulated transformations into a job.",
+        "Inspect the parsed, analyzed, optimized, and physical plans instead of assuming the API spelling fixes the physical operator."
+      ],
+      "answer": "The chain remains declarative until an action. Narrow work can stay partition-local, while a wide operation creates a shuffle boundary that the job scheduler represents with stages and tasks.",
+      "sourceRefs": [
+        { "sourceId": "DSA5208/Lec4.pdf", "page": 18, "sourceType": "lecture", "role": "lazy evaluation", "status": "current" },
+        { "sourceId": "DSA5208/Lec4.pdf", "page": 21, "sourceType": "lecture", "role": "wide transformations and shuffle", "status": "current" },
+        { "sourceId": "DSA5208/Lec4.pdf", "page": 23, "sourceType": "lecture", "role": "logical and physical plans", "status": "current" },
+        { "sourceId": "DSA5208/Lec4.pdf", "page": 26, "sourceType": "lecture", "role": "jobs, stages, and tasks", "status": "current" }
+      ]
+    },
+    {
+      "title": "GPU filter and projection paths",
+      "sourceType": "lecture",
+      "steps": [
+        "Keep the input in columnar batches so values from the predicate column can be processed together.",
+        "Evaluate the supported predicate in parallel, record a one for each passing row, and use an exclusive scan to compute compact output positions.",
+        "If cuDF does not support the predicate, convert through ColumnarToRow and use the Spark row-wise implementation instead of claiming an all-GPU path.",
+        "For a pure select or reorder, CUDA-X can reference existing columns without building new rows; a derived column still needs computation."
+      ],
+      "answer": "The accelerator advantage depends on both supported operators and columnar layout; the fallback boundary is part of the algorithmic explanation.",
+      "sourceRefs": [
+        { "sourceId": "DSA5208/Lec4.pdf", "page": 29, "sourceType": "lecture", "role": "row and column storage", "status": "current" },
+        { "sourceId": "DSA5208/Lec4.pdf", "page": 36, "sourceType": "lecture", "role": "CUDA-X filter mask and scan", "status": "current" },
+        { "sourceId": "DSA5208/Lec4.pdf", "page": 37, "sourceType": "lecture", "role": "GPU fallback boundary", "status": "current" },
+        { "sourceId": "DSA5208/Lec4.pdf", "page": 40, "sourceType": "lecture", "role": "CUDA-X projection", "status": "current" }
+      ]
+    }
+  ],
+  "criticalQuestions": [
+    {
+      "prompt": "Why is `groupBy` a different scalability question from `filter` even though both are DataFrame transformations?",
+      "angle": "Compare the partition-local dependency of a predicate with the cross-partition grouping of equal keys.",
+      "modelAnswer": "A filter can decide each output row from the record and its local predicate, while a groupBy must bring records with the same key together and therefore can require a shuffle between partitions.",
+      "focus": "shuffle boundary",
+      "sourceRefs": [
+        { "sourceId": "DSA5208/Lec4.pdf", "page": 20, "sourceType": "lecture", "role": "narrow transformations", "status": "current" },
+        { "sourceId": "DSA5208/Lec4.pdf", "page": 21, "sourceType": "lecture", "role": "wide transformations and shuffle", "status": "current" }
+      ]
+    },
+    {
+      "prompt": "What evidence would you inspect before claiming that a DataFrame call runs on the GPU?",
+      "angle": "Separate the requested API, the selected physical plan, the supported cuDF operator set, and the data layout.",
+      "modelAnswer": "Inspect the physical plan and operator support, then check whether the data remains columnar. An unsupported predicate can cross the ColumnarToRow fallback boundary, so the API name alone is not evidence of GPU execution.",
+      "focus": "performance claim boundary",
+      "sourceRefs": [
+        { "sourceId": "DSA5208/Lec4.pdf", "page": 25, "sourceType": "lecture", "role": "physical plan selection", "status": "current" },
+        { "sourceId": "DSA5208/Lec4.pdf", "page": 37, "sourceType": "lecture", "role": "GPU fallback boundary", "status": "current" }
+      ]
+    },
+    {
+      "prompt": "Why should the row-versus-column benchmark on page 32 be treated as an illustration rather than a universal speedup theorem?",
+      "angle": "Identify the hardware, data layout, operation, and implementation assumptions behind a measured time.",
+      "modelAnswer": "The reported time comes from one toy workload, implementation, and Intel i7-13800H setup. It illustrates cache and layout effects; it does not determine every workload or hardware result.",
+      "focus": "benchmark scope",
+      "sourceRefs": [
+        { "sourceId": "DSA5208/Lec4.pdf", "page": 32, "sourceType": "lecture", "role": "illustrative row versus column benchmark", "status": "current" }
+      ]
+    }
+  ],
+  "contentStatus": "CURRENT LECTURE",
+  "questionIds": [
+    "dsa5208-spark-q1",
+    "dsa5208-spark-q2",
+    "dsa5208-spark-q3",
+    "dsa5208-spark-q4",
+    "dsa5208-spark-q5",
+    "dsa5208-spark-q6",
+    "dsa5208-spark-q7",
+    "dsa5208-spark-q8"
+  ],
+  "courseId": "DSA5208",
+  "moduleId": "dsa5208-spark",
+  "schemaVersion": "nus.lesson.v1"
+}

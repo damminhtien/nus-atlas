@@ -1087,7 +1087,7 @@
     "reducedMotion": true,
     "explanation": "The trace keeps the shortest-path recurrence separate from the execution model that transports it."
   },
-  "dsa5208-synchronizers": {
+    "dsa5208-synchronizers": {
     "courseCode": "DSA5208",
     "lessonId": "dsa5208-synchronizers",
     "type": "event-timeline",
@@ -1173,5 +1173,92 @@
     },
     "reducedMotion": true,
     "explanation": "The timeline makes a logical barrier visible without pretending the physical network has a global clock."
+  },
+  "dsa5208-spark": {
+    "courseCode": "DSA5208",
+    "lessonId": "dsa5208-spark",
+    "type": "deep-dive",
+    "title": "Spark execution studio",
+    "learningGoal": "Trace a DataFrame operation from partitions through lazy planning to CPU or GPU execution.",
+    "sourceRefs": [
+      { "sourceId": "DSA5208/Lec4.pdf", "page": 10, "sourceType": "lecture", "role": "DataFrame partitions", "status": "current" },
+      { "sourceId": "DSA5208/Lec4.pdf", "page": 23, "sourceType": "lecture", "role": "logical and physical plans", "status": "current" },
+      { "sourceId": "DSA5208/Lec4.pdf", "page": 26, "sourceType": "lecture", "role": "jobs, stages, and tasks", "status": "current" },
+      { "sourceId": "DSA5208/Lec4.pdf", "page": 36, "sourceType": "lecture", "role": "CUDA-X filter mask and scan", "status": "current" },
+      { "sourceId": "DSA5208/Lec4.pdf", "page": 37, "sourceType": "lecture", "role": "GPU fallback boundary", "status": "current" },
+      { "sourceId": "DSA5208/Lec4.pdf", "page": 40, "sourceType": "lecture", "role": "CUDA-X projection", "status": "current" }
+    ],
+    "sourceLens": {
+      "status": "core DSA5208 Lecture 4",
+      "whyExaminable": "The studio makes the boundaries between API semantics, execution planning, partition scheduling, and accelerator compatibility explicit.",
+      "lecture": [
+        { "sourceId": "DSA5208/Lec4.pdf", "page": 23, "sourceType": "lecture", "role": "logical and physical plans", "status": "current" },
+        { "sourceId": "DSA5208/Lec4.pdf", "page": 36, "sourceType": "lecture", "role": "CUDA-X filter mask and scan", "status": "current" }
+      ],
+      "officialExercise": [],
+      "textbook": [],
+      "reference": []
+    },
+    "stepValueMode": "mixed",
+    "exercises": [
+      {
+        "id": "dataframe-to-job",
+        "label": "DataFrame to job",
+        "prompt": "Trace a flight DataFrame from distributed input to an action-triggered job.",
+        "steps": [
+          ["Input", "`flights.csv` becomes a DataFrame", "The table-like API hides rows distributed across partitions."],
+          ["Partition", "DataFrame -> partitions", "Each worker receives a partitioned subset rather than the complete dataset."],
+          ["Plan", "Transformations -> logical plan", "filter and aggregation describe work without immediately scanning the input."],
+          ["Action", "`count()` requests computation", "The action turns the accumulated plan into a job that can be scheduled."]
+        ],
+        "takeaway": "An action is the bridge from a lazy DataFrame description to an executed job.",
+        "sourceLens": {
+          "status": "Lecture 4 pages 10, 18, and 22",
+          "whyExaminable": "It tests whether a learner can locate the partition and action boundaries.",
+          "lecture": [{ "sourceId": "DSA5208/Lec4.pdf", "page": 18, "sourceType": "lecture", "role": "lazy evaluation", "status": "current" }],
+          "officialExercise": [], "textbook": [], "reference": []
+        }
+      },
+      {
+        "id": "plan-selection",
+        "label": "Plan selection",
+        "prompt": "Connect logical planning to physical scheduling without treating an API name as a physical operator.",
+        "steps": [
+          ["User code", "DataFrame operations", "The API expresses the requested result, not the final execution plan."],
+          ["Logical", "Parsed -> analyzed -> optimized", "Spark resolves names and types, then applies logical optimization."],
+          ["Physical", "Candidate physical plans -> selected plan", "Planning information and cost reasoning select an executable plan."],
+          ["Runtime", "AQE may change choices", "Adaptive Query Execution can revise physical choices after runtime statistics appear."]
+        ],
+        "takeaway": "Read the plan and its runtime context before inferring cost from a DataFrame method name.",
+        "sourceLens": {
+          "status": "Lecture 4 pages 23 to 25",
+          "whyExaminable": "It separates logical intent from physical execution and keeps AQE as a runtime caveat.",
+          "lecture": [{ "sourceId": "DSA5208/Lec4.pdf", "page": 25, "sourceType": "lecture", "role": "physical plan selection", "status": "current" }],
+          "officialExercise": [], "textbook": [], "reference": []
+        }
+      },
+      {
+        "id": "gpu-columnar",
+        "label": "GPU columnar path",
+        "prompt": "Trace a supported GPU filter, its fallback, and a pure projection.",
+        "steps": [
+          ["Layout", "Columnar batches", "Values from one field are adjacent and can be processed together."],
+          ["Mask", "Predicate -> mask", "Parallel checks mark passing rows with one values."],
+          ["Compact", "Mask -> exclusive-scan positions", "The scan supplies output locations for retained rows."],
+          ["Boundary", "Unsupported cuDF op -> ColumnarToRow -> Spark", "The compatibility fallback is part of the execution story."],
+          ["Projection", "Select or reorder existing columns", "CUDA-X can preserve column vectors without constructing new rows when no derived expression is needed."]
+        ],
+        "takeaway": "Columnar layout helps only along a supported operator path; fallback and derived expressions change the work.",
+        "sourceLens": {
+          "status": "Lecture 4 pages 29, 36, 37, and 40",
+          "whyExaminable": "It makes both the accelerator algorithm and its compatibility limit visible.",
+          "lecture": [{ "sourceId": "DSA5208/Lec4.pdf", "page": 37, "sourceType": "lecture", "role": "GPU fallback boundary", "status": "current" }],
+          "officialExercise": [], "textbook": [], "reference": []
+        }
+      }
+    ],
+    "initialState": { "exercise": "dataframe-to-job", "step": 0 },
+    "reducedMotion": true,
+    "explanation": "The studio keeps the API, plan, scheduling, storage layout, and fallback boundary visible as separate reasoning steps."
   }
 }
