@@ -44,11 +44,12 @@ function mergeQuestions(primary, extras, options = {}) {
   const merged = [];
   const positions = new Map();
   const promptPositions = new Map();
+  const dedupePrompts = options.dedupePrompts === true;
   for (const [source, prefer] of [[primary, false], [extras, true]]) {
     for (const question of source || []) {
       if (!question || !question.id) continue;
       const position = positions.get(question.id);
-      const promptKey = normalizeQuestionPrompt(question.prompt);
+      const promptKey = dedupePrompts ? normalizeQuestionPrompt(question.prompt) : "";
       const promptPosition = promptKey ? promptPositions.get(promptKey) : undefined;
       if (position === undefined && promptPosition === undefined) {
         positions.set(question.id, merged.length);
@@ -67,7 +68,7 @@ function mergeQuestions(primary, extras, options = {}) {
   return merged;
 }
 
-function mergeQuestionBanks(primary, supplementalBanks) {
+function mergeQuestionBanks(primary, supplementalBanks, options = {}) {
   const banks = [primary, ...(supplementalBanks || [])].filter(Boolean);
   if (!banks.length) return null;
   const supplementalQuestions = banks.slice(1).flatMap(bank => (bank.questions || []).map(question => ({
@@ -85,7 +86,7 @@ function mergeQuestionBanks(primary, supplementalBanks) {
     }));
   return {
     ...banks[0],
-    questions: mergeQuestions(banks[0].questions, supplementalQuestions),
+    questions: mergeQuestions(banks[0].questions, supplementalQuestions, options),
     ...(assessmentLayers.length ? { assessmentLayers } : {})
   };
 }
@@ -218,6 +219,7 @@ function normalizeLesson(courseId, module, lesson, questions, kit, ordering = {}
 
 function loadCourseSource(root, courseId) {
   const courseRoot = path.join(root, "content", "courses", courseId);
+  const questionMergeOptions = { dedupePrompts: courseId === "DSA5208" };
   const course = readJson(path.join(courseRoot, "course.json"));
   const sqlPractice = readJsonIfExists(path.join(courseRoot, "sql-practice.json"));
   const canonicalCourse = sqlPractice ? { ...course, sqlPractice } : course;
@@ -225,8 +227,8 @@ function loadCourseSource(root, courseId) {
   const lessonFiles = new Map(sortedJsonFiles(path.join(courseRoot, "lessons")).map(file => [path.basename(file, ".json"), file]));
   const questionBank = mergeQuestionBanks(
     readJsonIfExists(path.join(courseRoot, "questions", "bank.json")),
-    ["exam-bank.json", "deep-dive-bank.json"]
-      .map(file => readJsonIfExists(path.join(courseRoot, "questions", file)))
+    ["exam-bank.json", "deep-dive-bank.json"].map(file => readJsonIfExists(path.join(courseRoot, "questions", file))),
+    questionMergeOptions
   );
   const questionTemplates = readJsonIfExists(path.join(courseRoot, "questions", "templates.json"));
   const bankByLesson = new Map();
@@ -242,7 +244,11 @@ function loadCourseSource(root, courseId) {
     const questionFile = path.join(courseRoot, "questions", `${id}.json`);
     const artifactFile = path.join(courseRoot, "artifacts", `${id}.json`);
     // Authored lesson order remains stable, but the bank owns any colliding ID.
-    const questions = mergeQuestions(fs.existsSync(questionFile) ? readJson(questionFile) : [], bankByLesson.get(id) || [], { preferExtras: true });
+    const questions = mergeQuestions(
+      fs.existsSync(questionFile) ? readJson(questionFile) : [],
+      bankByLesson.get(id) || [],
+      { ...questionMergeOptions, preferExtras: true }
+    );
     const kit = fs.existsSync(artifactFile) ? readJson(artifactFile) : {};
     return { ...lesson, questions, ...kit };
   });

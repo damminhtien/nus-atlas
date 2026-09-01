@@ -133,10 +133,11 @@ test("DSA5208 question bank covers every lesson with metadata", () => {
   assert.equal(result.counts.lessons, 8);
 });
 
-test("question merging keeps the first owner of a repeated prompt", () => {
+test("question merging can keep the first owner of a repeated prompt", () => {
   const primary = [{ id: "lesson-q", prompt: "What is FIFO?" }];
   const extras = [{ id: "bank-q", prompt: "  what is   fifo? " }];
-  assert.deepEqual(mergeQuestions(primary, extras), primary);
+  assert.deepEqual(mergeQuestions(primary, extras), [...primary, ...extras]);
+  assert.deepEqual(mergeQuestions(primary, extras, { dedupePrompts: true }), primary);
   assert.deepEqual(mergeQuestions([{ id: "same", prompt: "old" }], [{ id: "same", prompt: "new" }], { preferExtras: true }), [{ id: "same", prompt: "new" }]);
 });
 
