@@ -7,8 +7,8 @@ const { extractSlides } = require("../tools/extractors/lecture-slides");
 test("all slide packages preserve page, block, study layer, and asset provenance", () => {
   const result = validateAll();
   assert.equal(result.ok, true, result.errors.join("\n"));
-  assert.equal(result.counts.slideSets, 15);
-  assert.equal(result.counts.slides, 973);
+  assert.equal(result.counts.slideSets, 16);
+  assert.equal(result.counts.slides, 1015);
 });
 
 test("DSA5104 Chapter 1 reader keeps 52 pages and source-layer assets", () => {
@@ -80,21 +80,25 @@ test("DSA5101 Lecture 4 reader keeps 67 pages and dimensionality-reduction study
   assert.ok(set.slides.every(slide => slide.sourceRef.sourceType === "lecture" && slide.extraction.blocks.every(block => block.sourceId === set.source.sourceId)));
 });
 
-test("DSA5208 readers preserve both supplied lectures and page-aware assets", () => {
+test("DSA5208 readers preserve all supplied lectures and page-aware assets", () => {
   const lec0 = JSON.parse(fs.readFileSync("content/courses/DSA5208/slides/dsa5208-lec0.json", "utf8"));
   const lec1 = JSON.parse(fs.readFileSync("content/courses/DSA5208/slides/dsa5208-lec1.json", "utf8"));
   const lec2 = JSON.parse(fs.readFileSync("content/courses/DSA5208/slides/dsa5208-lec2.json", "utf8"));
   const lec3 = JSON.parse(fs.readFileSync("content/courses/DSA5208/slides/dsa5208-lec3.json", "utf8"));
+  const lec4 = JSON.parse(fs.readFileSync("content/courses/DSA5208/slides/dsa5208-lec4.json", "utf8"));
   assert.equal(lec0.courseId, "DSA5208");
   assert.equal(lec0.source.pageCount, 16);
   assert.equal(lec1.source.pageCount, 36);
   assert.equal(lec2.source.pageCount, 58);
   assert.equal(lec3.source.pageCount, 61);
+  assert.equal(lec4.source.pageCount, 42);
   assert.equal(lec0.slides.length, 16);
   assert.equal(lec1.slides.length, 36);
   assert.equal(lec2.slides.length, 58);
   assert.equal(lec3.slides.length, 61);
-  assert.ok([lec0, lec1, lec2, lec3].every(set => set.slides.every(slide => slide.sourceRef.sourceType === "lecture" && slide.extraction.blocks.every(block => block.sourceId === set.source.sourceId))));
+  assert.equal(lec4.slides.length, 42);
+  assert.equal(lec4.source.sha256, "4185b4779dbed01d5121adde196b4ad7de41c4a4c2f0dbeeb25d84a5bad47519");
+  assert.ok([lec0, lec1, lec2, lec3, lec4].every(set => set.slides.every(slide => slide.sourceRef.sourceType === "lecture" && slide.extraction.blocks.every(block => block.sourceId === set.source.sourceId))));
 });
 
 test("mechanical lecture extraction stays source-only", () => {
