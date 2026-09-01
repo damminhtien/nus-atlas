@@ -11,7 +11,10 @@ const GENERIC_SOCRATIC_PATTERNS = [
   /What invariant or metric makes the idea on/i,
   /How would the reasoning on .*change if the dataset no longer fit in memory/i,
   /Which boundary or invariant is the key idea on/i,
-  /How would the reasoning on .*change when the database becomes larger or more concurrent/i,
+  /How would the reasoning on .*change when the database becomes larger or more concurrent/i
+];
+
+const DSA5208_GENERIC_SOCRATIC_PATTERNS = [
   /What is the main claim or object on this slide/i,
   /Read the authored lecture note in the canonical lesson package/i,
   /Concept and worked notation/i,
@@ -21,7 +24,12 @@ const GENERIC_SOCRATIC_PATTERNS = [
 const STUDY_PRIORITIES = new Set(["high-yield", "support", "context", "exercise"]);
 
 function isGenericSocraticPrompt(prompt) {
-  return GENERIC_SOCRATIC_PATTERNS.some(pattern => pattern.test(prompt || ""));
+  return [...GENERIC_SOCRATIC_PATTERNS, ...DSA5208_GENERIC_SOCRATIC_PATTERNS].some(pattern => pattern.test(prompt || ""));
+}
+
+function isGenericSocraticPromptForCourse(prompt, courseId) {
+  const patterns = courseId === "DSA5208" ? [...GENERIC_SOCRATIC_PATTERNS, ...DSA5208_GENERIC_SOCRATIC_PATTERNS] : GENERIC_SOCRATIC_PATTERNS;
+  return patterns.some(pattern => pattern.test(prompt || ""));
 }
 
 function validateCompactStudyLayer(slide, label) {
@@ -87,7 +95,7 @@ function validateSlideSet(set, file, root = ROOT) {
       if (!Array.isArray(slide && slide.socraticQuestions) || !slide.socraticQuestions.length) errors.push(`slide has no Socratic questions: ${label}`);
       for (const question of slide && slide.socraticQuestions || []) {
         if (!question.type || !question.prompt || !question.answer || !question.hint) errors.push(`incomplete Socratic question: ${label}`);
-        if (isGenericSocraticPrompt(question.prompt)) errors.push(`generic Socratic prompt: ${label}`);
+        if (isGenericSocraticPromptForCourse(question.prompt, set.courseId)) errors.push(`generic Socratic prompt: ${label}`);
       }
     }
     if (!slide.assetPath || !fs.existsSync(path.join(root, slide.assetPath))) errors.push(`missing slide asset: ${label} -> ${slide.assetPath || "<none>"}`);
@@ -122,4 +130,4 @@ if (require.main === module) {
   }
 }
 
-module.exports = { validateSlideSet, validateAll, isGenericSocraticPrompt, validateCompactStudyLayer };
+module.exports = { validateSlideSet, validateAll, isGenericSocraticPrompt, isGenericSocraticPromptForCourse, validateCompactStudyLayer };
