@@ -2,6 +2,7 @@ const test = require("node:test");
 const assert = require("node:assert/strict");
 const fs = require("node:fs");
 const { validateAll } = require("../scripts/validate-slides");
+const { extractSlides } = require("../tools/extractors/lecture-slides");
 
 test("all slide packages preserve page, block, study layer, and asset provenance", () => {
   const result = validateAll();
@@ -83,4 +84,17 @@ test("DSA5208 readers preserve both supplied lectures and page-aware assets", ()
   assert.equal(lec2.slides.length, 58);
   assert.equal(lec3.slides.length, 61);
   assert.ok([lec0, lec1, lec2, lec3].every(set => set.slides.every(slide => slide.sourceRef.sourceType === "lecture" && slide.extraction.blocks.every(block => block.sourceId === set.source.sourceId))));
+});
+
+test("mechanical lecture extraction stays source-only", () => {
+  const set = extractSlides({
+    input: "data/extracted/DSA5208/lec2.json",
+    courseId: "DSA5208",
+    sourceId: "DSA5208/Lec2.pdf",
+    slideSetId: "dsa5208-extractor-test"
+  });
+  assert.equal(set.slides.length, 58);
+  assert.ok(set.slides.every(slide => slide.title && slide.studyPriority === "context"));
+  assert.ok(set.slides.every(slide => !slide.explanation && !slide.socraticQuestions));
+  assert.doesNotMatch(JSON.stringify(set), /What is the main claim or object on this slide|Read the authored lecture note/);
 });

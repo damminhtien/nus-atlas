@@ -18,19 +18,25 @@
     "sourceRef": { "type": "object", "required": ["sourceId", "sourceType", "page"], "properties": { "sourceId": { "type": "string" }, "sourceType": { "type": "string" }, "page": { "type": "integer", "minimum": 1 } }, "additionalProperties": true },
     "slide": {
       "type": "object",
-      "required": ["slideId", "slideNumber", "pdfPage", "sourceRef", "extraction", "explanation", "socraticQuestions"],
+      "required": ["slideId", "slideNumber", "pdfPage", "sourceRef", "extraction"],
       "properties": {
         "slideId": { "type": "string" },
         "slideNumber": { "type": "integer", "minimum": 1 },
         "pdfPage": { "type": "integer", "minimum": 1 },
+        "title": { "type": "string", "minLength": 1 },
         "sourceRef": { "$ref": "#/$defs/sourceRef" },
         "assetPath": { "type": "string" },
         "extraction": { "type": "object", "required": ["sourceId", "page", "blocks"], "properties": { "sourceId": { "type": "string" }, "page": { "type": "integer", "minimum": 1 }, "blocks": { "type": "array", "items": { "type": "object", "required": ["blockId", "type", "page", "sourceId", "bbox"], "properties": { "blockId": { "type": "string" }, "type": { "type": "string" }, "page": { "type": "integer", "minimum": 1 }, "sourceId": { "type": "string" }, "bbox": { "$ref": "#/$defs/bbox" }, "imageId": { "type": ["string", "null"] }, "text": { "type": "string" } }, "additionalProperties": true } } }, "additionalProperties": true },
         "explanation": { "type": "object", "required": ["whatYouSee", "whyItMatters", "intuition", "technicalDetail", "pitfall", "connection"], "additionalProperties": { "type": "string" } },
         "textbookRefs": { "type": "array", "items": { "$ref": "#/$defs/sourceRef" } },
         "referenceRefs": { "type": "array", "items": { "$ref": "#/$defs/sourceRef" } },
-        "socraticQuestions": { "type": "array", "minItems": 1, "items": { "type": "object", "required": ["type", "prompt", "answer", "hint"], "properties": { "type": { "type": "string" }, "prompt": { "type": "string" }, "answer": { "type": "string" }, "hint": { "type": "string" } }, "additionalProperties": true } }
+        "socraticQuestions": { "type": "array", "minItems": 1, "items": { "type": "object", "required": ["type", "prompt", "answer", "hint"], "properties": { "type": { "type": "string" }, "prompt": { "type": "string" }, "answer": { "type": "string" }, "hint": { "type": "string" } }, "additionalProperties": true } },
+        "studyPriority": { "enum": ["high-yield", "support", "context", "exercise"] }
       },
+      "oneOf": [
+        { "required": ["explanation", "socraticQuestions"] },
+        { "required": ["studyPriority"], "not": { "anyOf": [{ "required": ["explanation"] }, { "required": ["socraticQuestions"] }] } }
+      ],
       "additionalProperties": true
     }
   },

@@ -1,10 +1,11 @@
 # Generic lecture extraction
 
 `lecture-slides.js` is the only slide-package extractor. It consumes the
-normalized page/block JSON produced by the PDF pipeline and writes a canonical
-slide-set JSON file. Course-specific study notes, textbook links, and Socratic
-prompts are authored in `content/courses/<COURSE>/slides/*.json` after the
-mechanical extraction step.
+normalized page/block JSON produced by the PDF pipeline and writes a source-only
+slide-set JSON file. It does not invent explanations or Socratic prompts.
+Course-specific study notes, textbook links, and Socratic prompts are authored
+in `content/courses/<COURSE>/slides/*.json` after the mechanical extraction
+step.
 
 The extracted page text is stored as `sourceText` and remains a faithful PDF
 source layer. It is deliberately not treated as authored prose: PDF glyph

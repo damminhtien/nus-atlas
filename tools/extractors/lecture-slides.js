@@ -24,10 +24,23 @@ function normalizePages(input) {
 function pageText(page) {
   return (page.blocks || []).map(block => block.text || block.content || "").filter(Boolean).join("\n").trim();
 }
+function titleFromText(text, courseId, page) {
+  const candidates = String(text || "").split(/\r?\n/)
+    .map(line => line.replace(/^[\s\u2022▶-]+/, "").replace(/\s+/g, " ").trim())
+    .filter(line => line.length >= 4 && line.length <= 120)
+    .filter(line => !/^\d+[.)]?$/.test(line))
+    .filter(line => !/^lecture\s+\d+\s*:/i.test(line))
+    .filter(line => !/^dsa\d+\s*:/i.test(line))
+    .filter(line => !/^zhenning cai$/i.test(line))
+    .filter(line => !/^department of mathematics/i.test(line))
+    .filter(line => !/^ay\d{4}/i.test(line));
+  return candidates[0] || `${courseId} source page ${page}`;
+}
 function extractSlides({ input, courseId, sourceId, slideSetId, imageRoot }) {
   const pages = normalizePages(readJson(input));
   const slides = pages.map((page, index) => {
     const number = Number(page.page || page.number || index + 1);
+    const sourceText = pageText(page);
     const blocks = (page.blocks || []).map((block, blockIndex) => ({
       blockId: block.blockId || `${slideSetId}-p${number}-b${blockIndex + 1}`,
       type: block.type || "text",
@@ -44,14 +57,13 @@ function extractSlides({ input, courseId, sourceId, slideSetId, imageRoot }) {
       sourceRef: { sourceId, sourceType: "lecture", page: number },
       ...(imageRoot ? { assetPath: `${imageRoot}/page-${String(number).padStart(3, "0")}.png` } : {}),
       extraction: { sourceId, page: number, blocks },
-      // Keep parser text explicitly in the source layer. It may contain faithful
-      // PDF glyph extraction rather than renderable LaTeX and must not be
-      // treated as authored study prose by the math validator.
-      sourceText: pageText(page),
-      explanation: { whatYouSee: pageText(page), whyItMatters: "Read the authored lecture note in the canonical lesson package.", intuition: "", technicalDetail: "", pitfall: "", connection: "" },
+      title: titleFromText(sourceText, courseId, number),
+      // Extraction is source-only. Authored explanations and questions must be
+      // added in a reviewed course-content pass instead of being guessed here.
+      studyPriority: "context",
+      sourceText,
       textbookRefs: [],
-      referenceRefs: [],
-      socraticQuestions: [{ type: "recall", prompt: "What is the main claim or object on this slide?", answer: "State the slide's main claim and name its symbols.", hint: "Name the object before explaining its consequence." }]
+      referenceRefs: []
     };
   });
   return { schemaVersion: "nus.slide-set.v1", id: slideSetId, courseId, lessonIds: [], coreSlideNumbers: [], source: { sourceId, sourceType: "lecture", pageCount: slides.length }, slides };
