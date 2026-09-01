@@ -10,7 +10,7 @@ test("DSA5104 questions pass the presentation and readability audit", () => {
   const result = validateDsa5104QuestionQuality();
   assert.equal(result.ok, true, result.errors.join("\n"));
   assert.deepEqual(result.counts, {
-    unique: 314,
+    unique: 334,
     homework: 190,
     homeworkMcq: 152,
     homeworkOpen: 38,

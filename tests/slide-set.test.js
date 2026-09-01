@@ -7,8 +7,8 @@ const { extractSlides } = require("../tools/extractors/lecture-slides");
 test("all slide packages preserve page, block, study layer, and asset provenance", () => {
   const result = validateAll();
   assert.equal(result.ok, true, result.errors.join("\n"));
-  assert.equal(result.counts.slideSets, 14);
-  assert.equal(result.counts.slides, 882);
+  assert.equal(result.counts.slideSets, 15);
+  assert.equal(result.counts.slides, 973);
 });
 
 test("DSA5104 Chapter 1 reader keeps 52 pages and source-layer assets", () => {

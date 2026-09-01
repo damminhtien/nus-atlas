@@ -8,14 +8,14 @@ The editable package lives under `content/courses/DSA5104/`. It currently expose
 
 - **Orientation:** data management scope, database systems, and the role of a DBMS.
 - **Relational model:** schemas, instances, keys, constraints, and relational algebra intuition.
-- **SQL:** eight focused Chapter 3 units covering DDL/integrity, query shape, joins, NULL logic, aggregation, nested queries, CTEs, and safe mutations.
+- **SQL:** eight focused Chapter 3 units plus the Week 4 Chapter 4 lecture covering joins, views, transactions, constraints, indexes, and authorization.
 - **Database design (supplementary):** ER modeling and mapping to relations, available for project context. Its 31 bank questions are explicitly promoted into Exam Mode; the two authored lesson checks remain outside the default selection.
 - **Query processing:** parsing, optimization, indexes, scans, and execution plans.
 - **Transactions and architecture:** atomicity, concurrency, recovery, centralized/distributed deployments, and tiered systems.
 - **Semi-structured data:** JSON/XML-style flexibility, schema-on-read, and the relational trade-off.
-- **Planned / source pending:** exercise-backed previews for Ch4, Ch5, and Ch7. The current 94 bank questions in these previews are explicitly promoted into Exam Mode; future Ch9 and second-half materials remain ledger entries until their official lecture sources are supplied.
+- **Planned / source pending:** exercise-backed previews for Ch5 and Ch7. The current bank questions in these previews are explicitly promoted into Exam Mode; future Ch9 and second-half materials remain ledger entries until their official lecture sources are supplied.
 
-The supplied `chapter1.pdf`, `chapter2.pdf`, and `chapter3.pdf` decks define the currently supplied lecture scope. Their page-aware readers are available at:
+The supplied `chapter1.pdf`, `chapter2.pdf`, `chapter3.pdf`, and `chapter4.pdf` decks define the currently supplied lecture scope. Their page-aware readers are available at:
 
 `#/nus/slides/DSA5104/dsa5104-chapter1/1`
 
@@ -23,19 +23,21 @@ The supplied `chapter1.pdf`, `chapter2.pdf`, and `chapter3.pdf` decks define the
 
 `#/nus/slides/DSA5104/dsa5104-chapter3/1`
 
+`#/nus/slides/DSA5104/dsa5104-chapter4/1`
+
 Each slide keeps page-aware extraction blocks, bounding boxes, image IDs, and textbook pointers. Only high-yield slides carry an Atlas study note with the exam focus and common trap; support, context, and exercise pages remain source-only so the reader does not turn every slide into generated prose. The source layer is collapsed by default.
 
 ## Source boundary
 
-`DSA5104/chapter1.pdf`, `DSA5104/chapter2.pdf`, and `DSA5104/chapter3.pdf` define the currently supplied lecture scope. The Codex appendix is supplementary lecture material. All supplied Ch01–Ch07 homework-solution folders are ingested as exercise-depth content: 190 source questions, one per Markdown solution file. The source solutions do not silently upgrade Chapters 4–7 into lecture authority; the textbook index points to `Database System Concepts, 7th edition` for background and derivations.
+`DSA5104/chapter1.pdf`, `DSA5104/chapter2.pdf`, `DSA5104/chapter3.pdf`, and `DSA5104/chapter4.pdf` define the currently supplied lecture scope. The Codex appendix is supplementary lecture material. All supplied Ch01–Ch07 homework-solution folders are ingested as exercise-depth content: 190 source questions, one per Markdown solution file. The source solutions do not silently upgrade Chapters 5–7 into lecture authority; the textbook index points to `Database System Concepts, 7th edition` for background and derivations.
 
 The normalized source manifest is `content/courses/DSA5104/sources/manifest.json`. Raw PDFs and homework files remain outside the repository under `/Users/macbook/Desktop/NUS/DSA5104`; only normalized extraction, page references, and derived study notes are committed. Homework remains exercise-depth evidence; only the 125 bank questions with an explicit `examEligible: true` flag are admitted to Exam Mode.
 
-The current final-exam map is also partial. The supplied lecture sources cover Chapters 1–3; Chapters 4, 5, 9, and the second-half materials (including XML, MongoDB, MapReduce, Spark SQL, and vector databases) remain explicit ingestion targets. Do not read the current lesson list as complete semester coverage until those official sources are added. `content/courses/DSA5104/assessment-map.json` records this boundary and the provenance of the practice layers.
+The current final-exam map is also partial. The supplied lecture sources cover Chapters 1–4; Chapters 5, 9, and the second-half materials (including XML, MongoDB, MapReduce, Spark SQL, and vector databases) remain explicit ingestion targets. Do not read the current lesson list as complete semester coverage until those official sources are added. `content/courses/DSA5104/assessment-map.json` records this boundary and the provenance of the practice layers.
 
 No real DSA5104 past-year paper was found in the supplied local sources, so the current timed final checkpoint is explicitly synthetic. It is not presented as historical exam material. Use `npm run validate:dsa5104:exam` to check that assessment metadata remains honest.
 
-The verified-lecture revision order is: (1) keys, integrity, and schema state; (2) relational-algebra selection, projection, joins, set semantics, equivalence, and decomposition; (3) SQL DDL and constraints; (4) SELECT-FROM-WHERE, joins, duplicates, NULL, aggregation, and BIG 6; (5) nested queries, SOME/ALL, EXISTS/NOT EXISTS, CTEs, scalar subqueries, and safe mutations. History, application lists, logistics, continuation/result-only pages, and future source-pending chapters are deliberately deprioritized. The exact slide filter is stored in `highYieldSlideNumbers` for each DSA5104 slide set and summarized in `content/courses/DSA5104/assessment-map.json`.
+The verified-lecture revision order is: (1) keys, integrity, and schema state; (2) relational-algebra selection, projection, joins, set semantics, equivalence, and decomposition; (3) SQL DDL and constraints; (4) SELECT-FROM-WHERE, joins, duplicates, NULL, aggregation, and BIG 6; (5) nested queries, SOME/ALL, EXISTS/NOT EXISTS, CTEs, scalar subqueries, and safe mutations; (6) Week 4 joins, view updateability, MySQL transactions/autocommit, constraint actions, indexes, and authorization. History, application lists, logistics, continuation/result-only pages, and future source-pending chapters are deliberately deprioritized. The exact slide filter is stored in `highYieldSlideNumbers` for each DSA5104 slide set and summarized in `content/courses/DSA5104/assessment-map.json`.
 
 Chapter 2 pages 43–44 now have an explicit bridge lesson section: relational algebra leads to redundancy, bad design, decomposition, and the later Chapter 7 functional-dependency material.
 

@@ -92,7 +92,7 @@ function validateDsa5104QuestionQuality(root = ROOT) {
     if (question.prompt.startsWith("Choose the option that best summarizes")) add(question, "obsolete MCQ wrapper remains");
   }
 
-  if (unique.length !== 314) errors.push(`expected 314 unique questions, found ${unique.length}`);
+  if (unique.length !== 334) errors.push(`expected 334 unique questions, found ${unique.length}`);
   if (homework.length !== 190) errors.push(`expected 190 homework questions, found ${homework.length}`);
   if (homeworkMcq.length !== 152 || homeworkOpen.length !== 38) errors.push(`expected 152 homework MCQs and 38 open responses, found ${homeworkMcq.length}/${homeworkOpen.length}`);
   if (reviewItems.length !== INCOMPLETE_SOURCE_IDS.size) errors.push(`expected ${INCOMPLETE_SOURCE_IDS.size} source-review items, found ${reviewItems.length}`);

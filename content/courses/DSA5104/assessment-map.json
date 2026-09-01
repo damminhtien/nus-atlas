@@ -2,12 +2,12 @@
   "schemaVersion": "nus.assessment-map.v1",
   "courseCode": "DSA5104",
   "title": "DSA5104 lecture → teacher homework → exam-practice map",
-  "summary": "The verified Ch1–Ch3 lecture reader now separates high-yield study targets from support, context, and exercise-only pages. The timed paper below is synthetic and covers only the currently verified lecture scope.",
+  "summary": "The verified Ch1–Ch4 lecture reader separates high-yield study targets from support, context, and exercise-only pages. The timed paper below is a deliberately narrower synthetic foundation checkpoint.",
   "questionEligibilityPolicy": {
     "default": "lesson",
     "override": "A question with examEligible:true is eligible even when its parent lesson remains supplementary or source-pending; unmarked questions keep the lesson default.",
     "promotedBankQuestionCount": 125,
-    "promotedBankScope": "The current DSA5104 bank explicitly promotes the previously excluded Ch4, Ch5, Ch6, and Ch7 questions. This is a question-level Atlas assessment decision and does not claim that the supplied exercise sources are lecture authority."
+    "promotedBankScope": "The current DSA5104 bank explicitly promotes selected exercise questions from Ch4, Ch5, Ch6, and Ch7. Ch4 is now lecture-backed; the remaining exercise promotions do not claim that Ch5–Ch7 are lecture authority."
   },
   "priorityPolicy": {
     "highYield": "Definitions, canonical derivations, SQL edge cases, and repeated lecture/project moves that deserve first-pass revision.",
@@ -15,7 +15,7 @@
     "context": "Titles, history, logistics, and other source pages retained for provenance without extra Atlas teaching prose.",
     "caveat": "This is a study filter, not a prediction from historical papers; no supplied DSA5104 past-year paper is available."
   },
-  "disclaimer": "No real DSA5104 past-year paper was found in the supplied local DSA5104 source folder on 2026-08-26. Synthetic questions are labeled synthetic-final and must not be treated as historical exam evidence. Future Ch4, Ch5, Ch7, Ch9, XML, MongoDB, MapReduce, Spark SQL, and VectorDB scope remains source-pending until the relevant course material is supplied.",
+  "disclaimer": "No real DSA5104 past-year paper was found in the supplied local DSA5104 source folder on 2026-08-26. Synthetic questions are labeled synthetic-final and must not be treated as historical exam evidence. Future Ch5, Ch7, Ch9, XML, MongoDB, MapReduce, Spark SQL, and VectorDB scope remains source-pending until the relevant course material is supplied.",
   "pastPaperStatus": {
     "status": "not-found-in-supplied-local-sources",
     "searchedSourceRoot": "DSA5104",
@@ -23,21 +23,22 @@
     "policy": "Never represent synthetic questions as past-year questions."
   },
   "evidenceLegend": [
-    { "key": "official-lecture", "label": "Verified lecture", "description": "The supplied Ch1–Ch3 lecture PDFs define the current lecture boundary." },
-    { "key": "teacher-assigned", "label": "Teacher homework", "description": "All 190 supplied Ch01–Ch07 homework solution files are ingested as practice questions; exercise depth does not silently become lecture scope." },
+    { "key": "official-lecture", "label": "Verified lecture", "description": "The supplied Ch1–Ch4 lecture PDFs define the current lecture boundary." },
+    { "key": "teacher-assigned", "label": "Teacher homework", "description": "All 190 supplied Ch01–Ch07 homework solution files are ingested as practice questions; exercise depth does not silently become lecture scope for Ch5–Ch7." },
     { "key": "synthetic", "label": "Synthetic exam practice", "description": "Atlas-authored timed practice for current verified scope; not past-year evidence." }
   ],
   "evidence": [
     {
       "id": "dsa5104-current-lectures",
-      "label": "Supplied lecture PDFs: Ch1–Ch3",
+      "label": "Supplied lecture PDFs: Ch1–Ch4",
       "kind": "lecture",
       "evidenceLevel": "official-lecture",
       "description": "Chapter 1, Chapter 2, and Chapter 3 are the currently verified lecture sources.",
       "sourceRefs": [
         { "sourceId": "DSA5104/chapter1.pdf", "page": 1, "sourceType": "lecture", "role": "current lecture scope", "status": "current" },
         { "sourceId": "DSA5104/chapter2.pdf", "page": 1, "sourceType": "lecture", "role": "current lecture scope", "status": "current" },
-        { "sourceId": "DSA5104/chapter3.pdf", "page": 1, "sourceType": "lecture", "role": "current lecture scope", "status": "current" }
+        { "sourceId": "DSA5104/chapter3.pdf", "page": 1, "sourceType": "lecture", "role": "current lecture scope", "status": "current" },
+        { "sourceId": "DSA5104/chapter4.pdf", "page": 1, "sourceType": "lecture", "role": "current lecture scope", "status": "current" }
       ]
     },
     {
@@ -45,7 +46,7 @@
       "label": "Complete supplied teacher homework bank",
       "kind": "homework",
       "evidenceLevel": "teacher-assigned",
-      "description": "190 questions, one per supplied solution file, covering Ch01–Ch07. Ch04, Ch05, and Ch07 remain exercise-only until lecture sources are verified; Ch06 is supplementary.",
+      "description": "190 questions, one per supplied solution file, covering Ch01–Ch07. Ch05 and Ch07 remain exercise-only until lecture sources are verified; Ch06 is supplementary.",
       "sourceRefs": [
         { "sourceId": "DSA5104/Homework Solutions", "page": 1, "sourceType": "exercise", "role": "complete supplied homework root", "status": "current-context" }
       ]
@@ -55,7 +56,7 @@
       "label": "Synthetic current-scope final checkpoint",
       "kind": "synthetic-exam",
       "evidenceLevel": "synthetic",
-      "description": "Twelve Atlas-authored questions for timed retrieval across Ch1–Ch3. This is not a past-year paper.",
+      "description": "Twelve Atlas-authored questions for timed retrieval across the Ch1–Ch3 foundation. This is not a past-year paper and is not a complete Ch4 checkpoint.",
       "topicIds": ["abstraction", "keys-integrity", "decomposition", "ddl", "query-shape", "joins", "null", "aggregation", "nested-queries", "cte"],
       "sourceRefs": [
         { "sourceId": "DSA5104/chapter1.pdf", "page": 1, "sourceType": "assessment-derived", "role": "synthetic practice scope anchor", "status": "assessment-derived" }
@@ -72,10 +73,11 @@
     { "id": "null", "title": "NULL and three-valued logic", "priority": "High-yield", "lessonIds": ["dsa5104-sql-null"] },
     { "id": "aggregation", "title": "Aggregation, GROUP BY, HAVING", "priority": "High-yield", "lessonIds": ["dsa5104-sql-aggregation"] },
     { "id": "nested-queries", "title": "Nested queries and quantifiers", "priority": "High-yield", "lessonIds": ["dsa5104-sql-nested"] },
-    { "id": "cte", "title": "Common table expressions", "priority": "High-yield", "lessonIds": ["dsa5104-sql-cte"] }
+    { "id": "cte", "title": "Common table expressions", "priority": "High-yield", "lessonIds": ["dsa5104-sql-cte"] },
+    { "id": "intermediate-sql", "title": "Week 4 intermediate SQL", "priority": "High-yield", "lessonIds": ["dsa5104-ch4-preview"] }
   ],
   "studyOrder": [
-    { "id": "current-lecture-core", "label": "Verified Ch1–Ch3 core", "topicIds": ["abstraction", "keys-integrity", "decomposition", "ddl", "query-shape", "joins", "null", "aggregation", "nested-queries", "cte"] },
+    { "id": "current-lecture-core", "label": "Verified Ch1–Ch4 core", "topicIds": ["abstraction", "keys-integrity", "decomposition", "ddl", "query-shape", "joins", "null", "aggregation", "nested-queries", "cte", "intermediate-sql"] },
     { "id": "teacher-homework", "label": "All supplied teacher homework", "topicIds": ["decomposition", "ddl", "query-shape", "joins", "aggregation", "nested-queries", "cte"] },
     { "id": "synthetic-final", "label": "Synthetic timed checkpoint", "topicIds": ["abstraction", "keys-integrity", "decomposition", "ddl", "query-shape", "joins", "null", "aggregation", "nested-queries", "cte"] },
     { "id": "source-pending", "label": "Future source-pending coverage", "topicIds": [] }

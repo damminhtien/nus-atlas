@@ -1,124 +1,494 @@
 {
   "id": "dsa5104-ch4-preview",
   "courseId": "DSA5104",
-  "title": "Ch4 · Intermediate SQL exercise preview",
-  "moduleId": "dsa5104-planned",
-  "scope": "planned",
-  "examEligible": false,
-  "contentStatus": "PLANNED · EXERCISE-ONLY · SOURCE PENDING",
-  "week": 9,
-  "orderInWeek": 1,
-  "minutes": 45,
-  "summary": "This preview organizes the supplied Chapter 4 homework solutions around joins, views, outer joins, constraints, and authorization. No DSA5104 Chapter 4 lecture deck is currently supplied, so this remains exercise-only; only explicitly promoted bank questions enter default Exam Mode.",
+  "title": "Week 4 · Chapter 4: Intermediate SQL",
+  "moduleId": "dsa5104-sql",
+  "scope": "core",
+  "examEligible": true,
+  "contentStatus": "CURRENT LECTURE",
+  "week": 4,
+  "orderInWeek": 9,
+  "minutes": 180,
+  "summary": "The supplied Week 4 deck covers explicit joins, outer joins, views, transactions, integrity constraints, indexes, and SQL authorization. The reader keeps all 91 source pages and highlights only the high-yield distinctions.",
   "objectives": [
-    "Use the supplied solution set as practice depth",
-    "Label unsupported lecture assumptions",
-    "Record one question for the official deck"
+    "Choose NATURAL JOIN, JOIN ... USING, or JOIN ... ON from the intended matching rule",
+    "Predict which tuples survive inner and outer joins, including MySQL's FULL OUTER JOIN workaround",
+    "Explain view updateability, transaction boundaries, and MySQL autocommit",
+    "Apply NOT NULL, UNIQUE, CHECK, foreign-key, and cascading-action semantics",
+    "Distinguish physical indexes from logical constraints and use GRANT/REVOKE/roles correctly"
   ],
   "sourceRefs": [
-    {
-      "sourceId": "DSA5104/Homework Solutions/Ch04_Intermediate_SQL/1.md",
-      "page": 1,
-      "sourceType": "exercise",
-      "role": "intermediate SQL exercise set",
-      "status": "current-context"
-    }
+    { "sourceId": "DSA5104/chapter4.pdf", "page": 1, "sourceType": "lecture", "role": "Week 4 Chapter 4 lecture deck", "status": "current" },
+    { "sourceId": "DSA5104/chapter4.pdf", "page": 3, "sourceType": "lecture", "role": "join semantics", "status": "current" },
+    { "sourceId": "DSA5104/chapter4.pdf", "page": 11, "sourceType": "lecture", "role": "USING clause", "status": "current" },
+    { "sourceId": "DSA5104/chapter4.pdf", "page": 17, "sourceType": "lecture", "role": "MySQL full outer join workaround", "status": "current" },
+    { "sourceId": "DSA5104/chapter4.pdf", "page": 24, "sourceType": "lecture", "role": "view definition", "status": "current" },
+    { "sourceId": "DSA5104/chapter4.pdf", "page": 37, "sourceType": "lecture", "role": "MySQL transaction behavior", "status": "current" },
+    { "sourceId": "DSA5104/chapter4.pdf", "page": 44, "sourceType": "lecture", "role": "CHECK constraint", "status": "current" },
+    { "sourceId": "DSA5104/chapter4.pdf", "page": 46, "sourceType": "lecture", "role": "referential integrity", "status": "current" },
+    { "sourceId": "DSA5104/chapter4.pdf", "page": 60, "sourceType": "lecture", "role": "index creation", "status": "current" },
+    { "sourceId": "DSA5104/chapter4.pdf", "page": 73, "sourceType": "lecture", "role": "GRANT syntax", "status": "current" },
+    { "sourceId": "DSA5104/chapter4.pdf", "page": 91, "sourceType": "lecture", "role": "lecture homework", "status": "current" }
   ],
   "visualIds": [],
+  "slideSetIds": ["dsa5104-chapter4"],
   "sections": [
     {
-      "title": "Exercise-only boundary",
-      "sourceType": "exercise",
-      "body": "This preview organizes the supplied Chapter 4 homework solutions around joins, views, outer joins, constraints, and authorization. No DSA5104 Chapter 4 lecture deck is currently supplied, so this remains exercise-only; only explicitly promoted bank questions enter default Exam Mode.",
+      "title": "1. Joins: state the relationship explicitly",
+      "sourceType": "lecture",
+      "body": "A join starts from candidate tuple pairs and keeps the pairs justified by a matching rule. NATURAL JOIN uses every same-named attribute, USING names the equality columns, and ON accepts a general predicate. Use an outer join when unmatched tuples must remain visible.",
       "sourceRefs": [
-        {
-          "sourceId": "DSA5104/Homework Solutions/Ch04_Intermediate_SQL/1.md",
-          "page": 1,
-          "sourceType": "exercise",
-          "role": "intermediate SQL exercise set",
-          "status": "current-context"
-        }
+        { "sourceId": "DSA5104/chapter4.pdf", "page": 3, "sourceType": "lecture", "role": "join semantics", "status": "current" },
+        { "sourceId": "DSA5104/chapter4.pdf", "page": 9, "sourceType": "lecture", "role": "natural join trap", "status": "current" },
+        { "sourceId": "DSA5104/chapter4.pdf", "page": 11, "sourceType": "lecture", "role": "USING clause", "status": "current" },
+        { "sourceId": "DSA5104/chapter4.pdf", "page": 12, "sourceType": "lecture", "role": "ON condition", "status": "current" },
+        { "sourceId": "DSA5104/chapter4.pdf", "page": 17, "sourceType": "lecture", "role": "full outer join", "status": "current" }
       ],
       "sourceLens": {
-        "status": "exercise-only",
-        "whyExaminable": "The local solution set supplies practice depth only; no supplied lecture deck authorizes this topic as current Exam Mode scope.",
-        "lecture": [],
-        "officialExercise": [
-          {
-            "sourceId": "DSA5104/Homework Solutions/Ch04_Intermediate_SQL/1.md",
-            "page": 1,
-            "sourceType": "exercise",
-            "role": "intermediate SQL exercise set",
-            "status": "current-context"
-          }
+        "status": "core DSA5104",
+        "whyExaminable": "Join questions expose missing predicates, accidental natural-join matches, and the difference between preserving and discarding unmatched tuples.",
+        "lecture": [
+          { "sourceId": "DSA5104/chapter4.pdf", "page": 3, "sourceType": "lecture", "role": "join semantics", "status": "current" },
+          { "sourceId": "DSA5104/chapter4.pdf", "page": 9, "sourceType": "lecture", "role": "natural join trap", "status": "current" },
+          { "sourceId": "DSA5104/chapter4.pdf", "page": 17, "sourceType": "lecture", "role": "full outer join", "status": "current" }
         ],
-        "textbook": [
-          {
-            "sourceId": "DSA5104/Database System Concepts, 7th edition",
-            "page": 1,
-            "sourceType": "textbook",
-            "role": "textbook depth pointer",
-            "status": "course-depth"
-          }
+        "officialExercise": [{ "sourceId": "DSA5104/Homework Solutions/Ch04_Intermediate_SQL", "page": 1, "sourceType": "exercise", "role": "Intermediate SQL homework solutions", "status": "current-context" }],
+        "textbook": [{ "sourceId": "DSA5104/Database System Concepts, 7th edition", "page": 176, "sourceType": "textbook", "role": "Chapter 4 exercise pointer", "status": "course-depth" }],
+        "reference": []
+      }
+    },
+    {
+      "title": "2. Views: reusable interfaces over queries",
+      "sourceType": "lecture",
+      "body": "A view gives a relation-shaped interface over a query. It can hide columns or rows, and one view can be defined from another. A view update is allowed only when the DBMS can map it unambiguously to base-table changes; a materialized view additionally stores a result that must be refreshed.",
+      "sourceRefs": [
+        { "sourceId": "DSA5104/chapter4.pdf", "page": 23, "sourceType": "lecture", "role": "view motivation", "status": "current" },
+        { "sourceId": "DSA5104/chapter4.pdf", "page": 24, "sourceType": "lecture", "role": "view definition", "status": "current" },
+        { "sourceId": "DSA5104/chapter4.pdf", "page": 30, "sourceType": "lecture", "role": "materialized views", "status": "current" },
+        { "sourceId": "DSA5104/chapter4.pdf", "page": 35, "sourceType": "lecture", "role": "view update rules", "status": "current" }
+      ],
+      "sourceLens": {
+        "status": "core DSA5104",
+        "whyExaminable": "View questions test whether you can separate a logical query interface, stored result, and legal update mapping.",
+        "lecture": [
+          { "sourceId": "DSA5104/chapter4.pdf", "page": 24, "sourceType": "lecture", "role": "CREATE VIEW", "status": "current" },
+          { "sourceId": "DSA5104/chapter4.pdf", "page": 30, "sourceType": "lecture", "role": "materialized view", "status": "current" },
+          { "sourceId": "DSA5104/chapter4.pdf", "page": 35, "sourceType": "lecture", "role": "updateable views", "status": "current" }
         ],
+        "officialExercise": [{ "sourceId": "DSA5104/Homework Solutions/Ch04_Intermediate_SQL", "page": 1, "sourceType": "exercise", "role": "Intermediate SQL homework solutions", "status": "current-context" }],
+        "textbook": [{ "sourceId": "DSA5104/Database System Concepts, 7th edition", "page": 176, "sourceType": "textbook", "role": "Chapter 4 exercise pointer", "status": "course-depth" }],
+        "reference": []
+      }
+    },
+    {
+      "title": "3. Transactions: commit the unit or undo it",
+      "sourceType": "lecture",
+      "body": "A transaction groups statements into one logical unit. In MySQL, autocommit is enabled by default; START TRANSACTION keeps the unit open until COMMIT or ROLLBACK. Constraint failures must be reasoned about together with the transaction boundary.",
+      "sourceRefs": [
+        { "sourceId": "DSA5104/chapter4.pdf", "page": 36, "sourceType": "lecture", "role": "transaction unit", "status": "current" },
+        { "sourceId": "DSA5104/chapter4.pdf", "page": 37, "sourceType": "lecture", "role": "MySQL autocommit", "status": "current" },
+        { "sourceId": "DSA5104/chapter4.pdf", "page": 39, "sourceType": "lecture", "role": "transaction example", "status": "current" },
+        { "sourceId": "DSA5104/chapter4.pdf", "page": 50, "sourceType": "lecture", "role": "constraint violation in transaction", "status": "current" }
+      ],
+      "sourceLens": {
+        "status": "core DSA5104",
+        "whyExaminable": "The key trap is confusing statement-level autocommit with an explicit multi-statement transaction.",
+        "lecture": [
+          { "sourceId": "DSA5104/chapter4.pdf", "page": 36, "sourceType": "lecture", "role": "transaction definition", "status": "current" },
+          { "sourceId": "DSA5104/chapter4.pdf", "page": 37, "sourceType": "lecture", "role": "MySQL autocommit", "status": "current" }
+        ],
+        "officialExercise": [{ "sourceId": "DSA5104/Homework Solutions/Ch04_Intermediate_SQL", "page": 1, "sourceType": "exercise", "role": "Intermediate SQL homework solutions", "status": "current-context" }],
+        "textbook": [{ "sourceId": "DSA5104/Database System Concepts, 7th edition", "page": 176, "sourceType": "textbook", "role": "Chapter 4 exercise pointer", "status": "course-depth" }],
+        "reference": []
+      }
+    },
+    {
+      "title": "4. Integrity constraints: keep database states legal",
+      "sourceType": "lecture",
+      "body": "NOT NULL, PRIMARY KEY, UNIQUE, and CHECK constrain one relation. Foreign keys constrain a relationship between relations. ON DELETE and ON UPDATE actions determine how parent changes affect referencing rows; temporarily disabling checks changes the safety boundary.",
+      "sourceRefs": [
+        { "sourceId": "DSA5104/chapter4.pdf", "page": 40, "sourceType": "lecture", "role": "integrity constraints", "status": "current" },
+        { "sourceId": "DSA5104/chapter4.pdf", "page": 44, "sourceType": "lecture", "role": "CHECK constraint", "status": "current" },
+        { "sourceId": "DSA5104/chapter4.pdf", "page": 46, "sourceType": "lecture", "role": "referential integrity", "status": "current" },
+        { "sourceId": "DSA5104/chapter4.pdf", "page": 48, "sourceType": "lecture", "role": "cascading actions", "status": "current" },
+        { "sourceId": "DSA5104/chapter4.pdf", "page": 54, "sourceType": "lecture", "role": "foreign-key checks", "status": "current" }
+      ],
+      "sourceLens": {
+        "status": "core DSA5104",
+        "whyExaminable": "Constraint questions are compact distinction checks: single-relation rules versus foreign-key rules and default versus cascading actions.",
+        "lecture": [
+          { "sourceId": "DSA5104/chapter4.pdf", "page": 41, "sourceType": "lecture", "role": "single-relation constraints", "status": "current" },
+          { "sourceId": "DSA5104/chapter4.pdf", "page": 44, "sourceType": "lecture", "role": "CHECK", "status": "current" },
+          { "sourceId": "DSA5104/chapter4.pdf", "page": 46, "sourceType": "lecture", "role": "referential integrity", "status": "current" },
+          { "sourceId": "DSA5104/chapter4.pdf", "page": 48, "sourceType": "lecture", "role": "cascade", "status": "current" }
+        ],
+        "officialExercise": [{ "sourceId": "DSA5104/Homework Solutions/Ch04_Intermediate_SQL", "page": 1, "sourceType": "exercise", "role": "Intermediate SQL homework solutions", "status": "current-context" }],
+        "textbook": [{ "sourceId": "DSA5104/Database System Concepts, 7th edition", "page": 176, "sourceType": "textbook", "role": "Chapter 4 exercise pointer", "status": "course-depth" }],
+        "reference": []
+      }
+    },
+    {
+      "title": "5. Data types and indexes: declare and access",
+      "sourceType": "lecture",
+      "body": "SQL data types are part of the schema contract. An index is a physical access structure that can make selective retrieval cheaper, but it does not change query semantics, make values unique, or enforce a foreign-key rule.",
+      "sourceRefs": [
+        { "sourceId": "DSA5104/chapter4.pdf", "page": 55, "sourceType": "lecture", "role": "built-in data types", "status": "current" },
+        { "sourceId": "DSA5104/chapter4.pdf", "page": 60, "sourceType": "lecture", "role": "index creation", "status": "current" },
+        { "sourceId": "DSA5104/chapter4.pdf", "page": 63, "sourceType": "lecture", "role": "B+-tree index", "status": "current" },
+        { "sourceId": "DSA5104/chapter4.pdf", "page": 70, "sourceType": "lecture", "role": "non-candidate-key index", "status": "current" }
+      ],
+      "sourceLens": {
+        "status": "core DSA5104",
+        "whyExaminable": "Index questions test physical-versus-logical reasoning and whether an access path is being confused with a constraint.",
+        "lecture": [
+          { "sourceId": "DSA5104/chapter4.pdf", "page": 55, "sourceType": "lecture", "role": "SQL data types", "status": "current" },
+          { "sourceId": "DSA5104/chapter4.pdf", "page": 60, "sourceType": "lecture", "role": "CREATE INDEX", "status": "current" },
+          { "sourceId": "DSA5104/chapter4.pdf", "page": 70, "sourceType": "lecture", "role": "index on non-candidate key", "status": "current" }
+        ],
+        "officialExercise": [],
+        "textbook": [{ "sourceId": "DSA5104/Database System Concepts, 7th edition", "page": 176, "sourceType": "textbook", "role": "Chapter 4 exercise pointer", "status": "course-depth" }],
+        "reference": []
+      }
+    },
+    {
+      "title": "6. Authorization: grant the smallest required privilege",
+      "sourceType": "lecture",
+      "body": "Authorization distinguishes read, data-modification, reference, and schema privileges. GRANT assigns a privilege to a user, PUBLIC, or role; REVOKE removes it. A view can narrow the interface, but access to a view does not imply unrestricted access to its base tables.",
+      "sourceRefs": [
+        { "sourceId": "DSA5104/chapter4.pdf", "page": 71, "sourceType": "lecture", "role": "authorization types", "status": "current" },
+        { "sourceId": "DSA5104/chapter4.pdf", "page": 73, "sourceType": "lecture", "role": "GRANT syntax", "status": "current" },
+        { "sourceId": "DSA5104/chapter4.pdf", "page": 75, "sourceType": "lecture", "role": "REVOKE syntax", "status": "current" },
+        { "sourceId": "DSA5104/chapter4.pdf", "page": 82, "sourceType": "lecture", "role": "roles", "status": "current" },
+        { "sourceId": "DSA5104/chapter4.pdf", "page": 84, "sourceType": "lecture", "role": "authorization on views", "status": "current" }
+      ],
+      "sourceLens": {
+        "status": "core DSA5104",
+        "whyExaminable": "Authorization questions are syntax-and-meaning contrasts: privilege type, grant target, revoke effect, and role inheritance.",
+        "lecture": [
+          { "sourceId": "DSA5104/chapter4.pdf", "page": 73, "sourceType": "lecture", "role": "GRANT", "status": "current" },
+          { "sourceId": "DSA5104/chapter4.pdf", "page": 75, "sourceType": "lecture", "role": "REVOKE", "status": "current" },
+          { "sourceId": "DSA5104/chapter4.pdf", "page": 82, "sourceType": "lecture", "role": "roles", "status": "current" },
+          { "sourceId": "DSA5104/chapter4.pdf", "page": 84, "sourceType": "lecture", "role": "view authorization", "status": "current" }
+        ],
+        "officialExercise": [],
+        "textbook": [{ "sourceId": "DSA5104/Database System Concepts, 7th edition", "page": 176, "sourceType": "textbook", "role": "Chapter 4 exercise pointer", "status": "course-depth" }],
         "reference": []
       }
     }
   ],
   "examples": [
     {
-      "title": "Source-first exercise move",
-      "sourceType": "exercise",
+      "title": "Debug a natural join before trusting its result",
+      "sourceType": "lecture",
       "steps": [
-        "This preview organizes the supplied Chapter 4 homework solutions around joins, views, outer joins, constraints, and authorization. No DSA5104 Chapter 4 lecture deck is currently supplied, so this remains exercise-only; only explicitly promoted bank questions enter default Exam Mode.",
-        "Label the source boundary before attempting the exercise."
+        "List every same-named attribute in the participating relations.",
+        "Mark which equalities are intended relationship keys.",
+        "Rewrite the query with JOIN ... ON or JOIN ... USING when natural join would equate an unrelated column."
       ],
-      "answer": "The exercise set is practice depth only until a current lecture source is supplied."
+      "answer": "A successful natural join can still be semantically wrong. Make the intended key equality visible before inspecting the result.",
+      "sourceRefs": [
+        { "sourceId": "DSA5104/chapter4.pdf", "page": 9, "sourceType": "lecture", "role": "dangerous natural join", "status": "current" },
+        { "sourceId": "DSA5104/chapter4.pdf", "page": 11, "sourceType": "lecture", "role": "USING clause", "status": "current" }
+      ]
+    },
+    {
+      "title": "Recover a full outer join in MySQL",
+      "sourceType": "lecture",
+      "steps": [
+        "Write the left outer join to preserve every left-side tuple.",
+        "Write the right outer join to preserve right-only tuples.",
+        "Combine the two results with UNION after aligning the projected columns."
+      ],
+      "answer": "MySQL does not provide direct FULL OUTER JOIN syntax in this deck; the two outer-join results preserve both sides.",
+      "sourceRefs": [
+        { "sourceId": "DSA5104/chapter4.pdf", "page": 15, "sourceType": "lecture", "role": "left outer join", "status": "current" },
+        { "sourceId": "DSA5104/chapter4.pdf", "page": 16, "sourceType": "lecture", "role": "right outer join", "status": "current" },
+        { "sourceId": "DSA5104/chapter4.pdf", "page": 17, "sourceType": "lecture", "role": "full outer join workaround", "status": "current" }
+      ]
+    },
+    {
+      "title": "Predict the transaction outcome",
+      "sourceType": "lecture",
+      "steps": [
+        "Identify whether autocommit is active or an explicit transaction has started.",
+        "Mark the statement that violates the CHECK or foreign-key constraint.",
+        "Decide whether COMMIT persists the unit or ROLLBACK removes its uncommitted effects."
+      ],
+      "answer": "The answer depends on the transaction boundary and the configured constraint action, not just on the order of SQL text.",
+      "sourceRefs": [
+        { "sourceId": "DSA5104/chapter4.pdf", "page": 37, "sourceType": "lecture", "role": "MySQL autocommit", "status": "current" },
+        { "sourceId": "DSA5104/chapter4.pdf", "page": 44, "sourceType": "lecture", "role": "CHECK constraint", "status": "current" },
+        { "sourceId": "DSA5104/chapter4.pdf", "page": 48, "sourceType": "lecture", "role": "cascading actions", "status": "current" }
+      ]
     }
   ],
   "criticalQuestions": [
     {
-      "prompt": "What evidence would upgrade this preview from exercise-only to current lecture scope?",
-      "angle": "Separate local exercise evidence from a supplied lecture source.",
-      "modelAnswer": "A supplied, verified DSA5104 lecture source with page-level provenance would be required.",
-      "focus": "source boundary"
+      "prompt": "Why can NATURAL JOIN return too few rows even when every SQL statement succeeds?",
+      "angle": "Audit all same-named attributes before accepting an implicit equality.",
+      "modelAnswer": "NATURAL JOIN equates every same-named attribute. If one shared name is unrelated to the intended relationship, valid tuple pairs are filtered out without a syntax error.",
+      "focus": "natural join trap",
+      "sourceRefs": [{ "sourceId": "DSA5104/chapter4.pdf", "page": 9, "sourceType": "lecture", "role": "dangerous natural join", "status": "current" }]
     },
     {
-      "prompt": "Why should unpromoted material stay out of default Exam Mode today?",
-      "angle": "Check whether the source is lecture-authoritative for the current course.",
-      "modelAnswer": "Because the local source is a homework solution set, not a verified current lecture deck.",
-      "focus": "scope boundary"
+      "prompt": "What changes when START TRANSACTION is added before two MySQL updates?",
+      "angle": "Compare an explicit transaction boundary with default autocommit.",
+      "modelAnswer": "The updates remain in one open unit until COMMIT or ROLLBACK; with autocommit, each statement is committed independently unless it is explicitly enclosed in a transaction.",
+      "focus": "transaction boundary",
+      "sourceRefs": [{ "sourceId": "DSA5104/chapter4.pdf", "page": 37, "sourceType": "lecture", "role": "MySQL autocommit", "status": "current" }]
+    },
+    {
+      "prompt": "Why does an index not replace a UNIQUE or foreign-key constraint?",
+      "angle": "Separate physical access cost from legal database states.",
+      "modelAnswer": "An index is an access structure used to locate tuples efficiently. UNIQUE and foreign-key constraints enforce logical integrity conditions; they answer different questions.",
+      "focus": "index versus constraint",
+      "sourceRefs": [
+        { "sourceId": "DSA5104/chapter4.pdf", "page": 43, "sourceType": "lecture", "role": "UNIQUE constraint", "status": "current" },
+        { "sourceId": "DSA5104/chapter4.pdf", "page": 60, "sourceType": "lecture", "role": "index creation", "status": "current" }
+      ]
     }
   ],
   "math": [
     {
-      "name": "Intermediate SQL bridge",
-      "purpose": "Use the exercise set to connect multi-table queries to views and integrity constraints.",
-      "latex": "R\\bowtie S\\;\\rightarrow\\;\\mathrm{view}\\;\\rightarrow\\;\\mathrm{constraint}",
-      "explanation": "The exercise solutions are practice depth, not evidence that this chapter is current lecture scope.",
+      "name": "Theta join",
+      "purpose": "State the predicate that selects related tuple pairs.",
+      "latex": "R\\bowtie_{\\theta}S",
+      "explanation": "The predicate $\\theta$ controls which pairs from $R$ and $S$ appear in the joined relation.",
       "symbols": [
-        {
-          "latex": "R,S",
-          "meaning": "the key object in this unit"
-        },
-        {
-          "latex": "relations joined by a stated predicate",
-          "meaning": "the associated semantic role"
-        }
+        { "latex": "R,S", "meaning": "input relations" },
+        { "latex": "\\theta", "meaning": "join predicate" }
       ],
-      "sourceType": "exercise",
-      "sourceRefs": [
-        {
-          "sourceId": "DSA5104/Homework Solutions/Ch04_Intermediate_SQL/1.md",
-          "page": 1,
-          "sourceType": "exercise",
-          "role": "intermediate SQL exercise set",
-          "status": "current-context"
-        }
-      ]
+      "sourceType": "lecture",
+      "sourceRefs": [{ "sourceId": "DSA5104/chapter4.pdf", "page": 3, "sourceType": "lecture", "role": "join semantics", "status": "current" }]
+    },
+    {
+      "name": "Referential-integrity condition",
+      "purpose": "Check whether a non-null foreign key points to an existing parent key.",
+      "latex": "fk(c)\\in pk(p)\\cup\\{NULL\\}",
+      "explanation": "A child foreign-key value must match a referenced parent key, unless the foreign-key value is allowed to be $NULL$.",
+      "symbols": [
+        { "latex": "fk(c)", "meaning": "foreign-key value in child tuple $c$" },
+        { "latex": "pk(p)", "meaning": "referenced key in parent relation $p$" }
+      ],
+      "sourceType": "lecture",
+      "sourceRefs": [{ "sourceId": "DSA5104/chapter4.pdf", "page": 46, "sourceType": "lecture", "role": "referential integrity", "status": "current" }]
     }
   ],
-  "contrastDrills": [],
+  "contrastDrills": [
+    {
+      "id": "dsa5104-ch4-contrast-natural-on",
+      "type": "contrast",
+      "kind": "concept-contrast",
+      "pair": "NATURAL JOIN vs JOIN ... ON",
+      "prompt": "Which form is safer when two relations share a column name that is not part of the intended relationship?",
+      "choices": ["NATURAL JOIN", "JOIN ... ON with an explicit predicate", "A Cartesian product", "JOIN without a condition"],
+      "answer": 1,
+      "explanation": "JOIN ... ON makes the intended relationship explicit and avoids unintended equalities over other same-named columns.",
+      "estimatedSeconds": 45,
+      "difficulty": "easy",
+      "skill": "join-semantics",
+      "cognitiveLevel": "distinguish",
+      "misconception": "Assuming same-named attributes always represent the same fact.",
+      "sourceRefs": [{ "sourceId": "DSA5104/chapter4.pdf", "page": 9, "sourceType": "lecture", "role": "natural join trap", "status": "current" }]
+    },
+    {
+      "id": "dsa5104-ch4-contrast-inner-left",
+      "type": "contrast",
+      "kind": "concept-contrast",
+      "pair": "INNER JOIN vs LEFT OUTER JOIN",
+      "prompt": "Which join keeps every instructor even when that instructor teaches no section?",
+      "choices": ["INNER JOIN", "LEFT OUTER JOIN with instructor on the left", "NATURAL JOIN only", "CROSS JOIN"],
+      "answer": 1,
+      "explanation": "A left outer join preserves every left-side tuple and fills unmatched right-side attributes with NULL.",
+      "estimatedSeconds": 45,
+      "difficulty": "easy",
+      "skill": "outer-join-semantics",
+      "cognitiveLevel": "apply",
+      "misconception": "Thinking an inner join preserves entities with no matching row.",
+      "sourceRefs": [{ "sourceId": "DSA5104/chapter4.pdf", "page": 15, "sourceType": "lecture", "role": "left outer join", "status": "current" }]
+    },
+    {
+      "id": "dsa5104-ch4-contrast-left-full",
+      "type": "contrast",
+      "kind": "concept-contrast",
+      "pair": "LEFT OUTER JOIN vs FULL OUTER JOIN",
+      "prompt": "Which result preserves unmatched tuples from both input relations?",
+      "choices": ["LEFT OUTER JOIN", "RIGHT OUTER JOIN", "FULL OUTER JOIN", "INNER JOIN"],
+      "answer": 2,
+      "explanation": "A full outer join preserves the unmatched tuples from both sides; MySQL implements the deck's version by combining left and right outer joins with UNION.",
+      "estimatedSeconds": 45,
+      "difficulty": "easy",
+      "skill": "outer-join-semantics",
+      "cognitiveLevel": "distinguish",
+      "misconception": "Treating left and full outer joins as interchangeable.",
+      "sourceRefs": [{ "sourceId": "DSA5104/chapter4.pdf", "page": 17, "sourceType": "lecture", "role": "full outer join", "status": "current" }]
+    },
+    {
+      "id": "dsa5104-ch4-contrast-view-materialized",
+      "type": "contrast",
+      "kind": "concept-contrast",
+      "pair": "View vs materialized view",
+      "prompt": "Which object physically stores a query result and may need refresh?",
+      "choices": ["A logical view", "A materialized view", "A foreign key", "A role"],
+      "answer": 1,
+      "explanation": "A materialized view stores the result physically, trading refresh/storage work for potentially faster reads.",
+      "estimatedSeconds": 45,
+      "difficulty": "easy",
+      "skill": "view-semantics",
+      "cognitiveLevel": "distinguish",
+      "misconception": "Assuming CREATE VIEW always copies and stores rows.",
+      "sourceRefs": [{ "sourceId": "DSA5104/chapter4.pdf", "page": 30, "sourceType": "lecture", "role": "materialized views", "status": "current" }]
+    },
+    {
+      "id": "dsa5104-ch4-contrast-commit-rollback",
+      "type": "contrast",
+      "kind": "concept-contrast",
+      "pair": "COMMIT vs ROLLBACK",
+      "prompt": "After an explicit transaction, which statement makes its uncommitted changes durable?",
+      "choices": ["ROLLBACK", "COMMIT", "REVOKE", "CHECK"],
+      "answer": 1,
+      "explanation": "COMMIT ends the transaction and makes its changes durable; ROLLBACK discards its uncommitted changes.",
+      "estimatedSeconds": 30,
+      "difficulty": "easy",
+      "skill": "transaction-control",
+      "cognitiveLevel": "distinguish",
+      "misconception": "Confusing undo with persistence.",
+      "sourceRefs": [{ "sourceId": "DSA5104/chapter4.pdf", "page": 37, "sourceType": "lecture", "role": "transaction control", "status": "current" }]
+    },
+    {
+      "id": "dsa5104-ch4-contrast-check-fk",
+      "type": "contrast",
+      "kind": "concept-contrast",
+      "pair": "CHECK vs FOREIGN KEY",
+      "prompt": "Which constraint compares a tuple's values against a predicate rather than requiring a matching parent key?",
+      "choices": ["CHECK", "FOREIGN KEY", "ON DELETE CASCADE", "INDEX"],
+      "answer": 0,
+      "explanation": "CHECK enforces a predicate over a tuple; a foreign key enforces a relationship to a referenced relation.",
+      "estimatedSeconds": 45,
+      "difficulty": "medium",
+      "skill": "constraint-semantics",
+      "cognitiveLevel": "distinguish",
+      "misconception": "Treating all integrity constraints as key relationships.",
+      "sourceRefs": [{ "sourceId": "DSA5104/chapter4.pdf", "page": 44, "sourceType": "lecture", "role": "CHECK constraint", "status": "current" }, { "sourceId": "DSA5104/chapter4.pdf", "page": 46, "sourceType": "lecture", "role": "foreign key", "status": "current" }]
+    },
+    {
+      "id": "dsa5104-ch4-contrast-unique-primary",
+      "type": "contrast",
+      "kind": "concept-contrast",
+      "pair": "UNIQUE vs PRIMARY KEY",
+      "prompt": "Which declaration identifies the relation's chosen primary identifier and also disallows NULL?",
+      "choices": ["UNIQUE", "PRIMARY KEY", "CHECK", "INDEX"],
+      "answer": 1,
+      "explanation": "PRIMARY KEY chooses the relation's primary identifier and carries non-null uniqueness semantics; UNIQUE declares another uniqueness rule.",
+      "estimatedSeconds": 45,
+      "difficulty": "medium",
+      "skill": "constraint-semantics",
+      "cognitiveLevel": "distinguish",
+      "misconception": "Assuming every UNIQUE constraint is the primary key.",
+      "sourceRefs": [{ "sourceId": "DSA5104/chapter4.pdf", "page": 41, "sourceType": "lecture", "role": "single-relation constraints", "status": "current" }, { "sourceId": "DSA5104/chapter4.pdf", "page": 43, "sourceType": "lecture", "role": "UNIQUE constraint", "status": "current" }]
+    },
+    {
+      "id": "dsa5104-ch4-contrast-cascade-restrict",
+      "type": "contrast",
+      "kind": "concept-contrast",
+      "pair": "CASCADE vs RESTRICT",
+      "prompt": "What does ON DELETE CASCADE do when a parent row is deleted?",
+      "choices": ["Reject the parent deletion in every case", "Delete matching referencing rows automatically", "Create an index on the child", "Grant DELETE to the child user"],
+      "answer": 1,
+      "explanation": "ON DELETE CASCADE propagates the parent deletion to matching child rows; a restrictive action instead blocks the deletion when references remain.",
+      "estimatedSeconds": 45,
+      "difficulty": "medium",
+      "skill": "referential-actions",
+      "cognitiveLevel": "apply",
+      "misconception": "Assuming a cascade only affects the parent relation.",
+      "sourceRefs": [{ "sourceId": "DSA5104/chapter4.pdf", "page": 48, "sourceType": "lecture", "role": "cascading actions", "status": "current" }]
+    },
+    {
+      "id": "dsa5104-ch4-contrast-index-constraint",
+      "type": "contrast",
+      "kind": "concept-contrast",
+      "pair": "Index vs integrity constraint",
+      "prompt": "Which object primarily changes the access path rather than the set of legal database states?",
+      "choices": ["An index", "A CHECK constraint", "A foreign key", "A PRIMARY KEY"],
+      "answer": 0,
+      "explanation": "An index is physical design for retrieval. Constraints define legal states and reject or transform invalid changes.",
+      "estimatedSeconds": 45,
+      "difficulty": "easy",
+      "skill": "physical-logical-boundary",
+      "cognitiveLevel": "distinguish",
+      "misconception": "Treating an index as proof that values satisfy an integrity rule.",
+      "sourceRefs": [{ "sourceId": "DSA5104/chapter4.pdf", "page": 60, "sourceType": "lecture", "role": "index creation", "status": "current" }]
+    },
+    {
+      "id": "dsa5104-ch4-contrast-grant-revoke",
+      "type": "contrast",
+      "kind": "concept-contrast",
+      "pair": "GRANT vs REVOKE",
+      "prompt": "Which statement removes a previously assigned privilege?",
+      "choices": ["GRANT", "REVOKE", "COMMIT", "DROP VIEW"],
+      "answer": 1,
+      "explanation": "GRANT assigns privileges; REVOKE removes them from a user or role according to the authorization chain.",
+      "estimatedSeconds": 30,
+      "difficulty": "easy",
+      "skill": "authorization",
+      "cognitiveLevel": "distinguish",
+      "misconception": "Confusing authorization changes with schema or data changes.",
+      "sourceRefs": [{ "sourceId": "DSA5104/chapter4.pdf", "page": 73, "sourceType": "lecture", "role": "GRANT", "status": "current" }, { "sourceId": "DSA5104/chapter4.pdf", "page": 75, "sourceType": "lecture", "role": "REVOKE", "status": "current" }]
+    },
+    {
+      "id": "dsa5104-ch4-contrast-user-role",
+      "type": "contrast",
+      "kind": "concept-contrast",
+      "pair": "User vs role",
+      "prompt": "Why create a database role instead of granting the same privilege separately to every user?",
+      "choices": ["A role groups privileges for a responsibility", "A role stores table rows", "A role replaces every foreign key", "A role forces full public access"],
+      "answer": 0,
+      "explanation": "A role groups privileges so access can be assigned and maintained by responsibility rather than by repeated per-user grants.",
+      "estimatedSeconds": 45,
+      "difficulty": "easy",
+      "skill": "authorization",
+      "cognitiveLevel": "understand",
+      "misconception": "Treating a role as a relation or a data container.",
+      "sourceRefs": [{ "sourceId": "DSA5104/chapter4.pdf", "page": 82, "sourceType": "lecture", "role": "roles", "status": "current" }]
+    },
+    {
+      "id": "dsa5104-ch4-contrast-view-base",
+      "type": "contrast",
+      "kind": "concept-contrast",
+      "pair": "View privilege vs base-table privilege",
+      "prompt": "What does granting SELECT on a view imply about the underlying base table privileges?",
+      "choices": ["It automatically grants every base-table privilege", "It implies no automatic grant of privileges on the underlying relations", "It drops the base tables", "It creates a materialized view"],
+      "answer": 1,
+      "explanation": "The lecture states that granting a privilege on a view does not imply granting privileges on its underlying relations.",
+      "estimatedSeconds": 45,
+      "difficulty": "medium",
+      "skill": "authorization",
+      "cognitiveLevel": "distinguish",
+      "misconception": "Assuming the view grant exposes the complete logical schema.",
+      "sourceRefs": [{ "sourceId": "DSA5104/chapter4.pdf", "page": 73, "sourceType": "lecture", "role": "privilege on view", "status": "current" }, { "sourceId": "DSA5104/chapter4.pdf", "page": 84, "sourceType": "lecture", "role": "authorization on views", "status": "current" }]
+    }
+  ],
   "schemaVersion": "nus.lesson.v1",
-  "questionIds": []
+  "questionIds": [
+    "dsa5104-ch4-q01",
+    "dsa5104-ch4-q02",
+    "dsa5104-ch4-q03",
+    "dsa5104-ch4-q04",
+    "dsa5104-ch4-q05",
+    "dsa5104-ch4-q06",
+    "dsa5104-ch4-q07",
+    "dsa5104-ch4-q08",
+    "dsa5104-ch4-q09",
+    "dsa5104-ch4-q10",
+    "dsa5104-ch4-q11",
+    "dsa5104-ch4-q12",
+    "dsa5104-ch4-q13",
+    "dsa5104-ch4-q14",
+    "dsa5104-ch4-q15",
+    "dsa5104-ch4-q16",
+    "dsa5104-ch4-q17",
+    "dsa5104-ch4-q18",
+    "dsa5104-ch4-q19",
+    "dsa5104-ch4-q20"
+  ]
 }

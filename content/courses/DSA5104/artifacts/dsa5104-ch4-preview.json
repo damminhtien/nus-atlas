@@ -2,46 +2,59 @@
   "lessonId": "dsa5104-ch4-preview",
   "schemaVersion": "nus.study-kit.v1",
   "flashcards": [
-    {
-      "front": "Ch4 · Intermediate SQL exercise preview",
-      "back": "This preview organizes the supplied Chapter 4 homework solutions around joins, views, outer joins, constraints, and authorization. No DSA5104 Chapter 4 lecture deck is currently supplied, so this remains exercise-only; only explicitly promoted bank questions enter default Exam Mode."
-    },
-    {
-      "front": "Current scope?",
-      "back": "Exercise-only preview; official lecture source pending."
-    },
-    {
-      "front": "Exam default?",
-      "back": "The lesson container stays excluded until a current lecture source is verified; explicitly promoted bank questions are the only exception."
-    }
+    { "front": "What does a join return?", "back": "A relation formed from two relations by retaining tuple pairs that satisfy a matching condition." },
+    { "front": "Why is NATURAL JOIN dangerous?", "back": "It equates every same-named attribute, including names that may not represent the intended relationship." },
+    { "front": "When does a LEFT OUTER JOIN preserve a row?", "back": "Every left-side row remains; if there is no match, right-side attributes are NULL." },
+    { "front": "How does MySQL emulate FULL OUTER JOIN in the deck?", "back": "Combine a left outer join and a right outer join with UNION after aligning their projected columns." },
+    { "front": "View vs materialized view?", "back": "A logical view exposes a query interface; a materialized view stores a result and may need refresh." },
+    { "front": "MySQL autocommit?", "back": "Autocommit is enabled by default, so each statement is committed unless an explicit transaction is opened." },
+    { "front": "CHECK vs foreign key?", "back": "CHECK tests a predicate over one tuple; a foreign key requires a matching key in another relation." },
+    { "front": "What does ON DELETE CASCADE do?", "back": "It automatically deletes matching referencing rows when the parent row is deleted." },
+    { "front": "What does an index change?", "back": "It changes a physical access path and can reduce retrieval cost; it does not change query semantics or enforce uniqueness by itself." },
+    { "front": "GRANT vs REVOKE?", "back": "GRANT assigns a privilege; REVOKE removes a previously assigned privilege." },
+    { "front": "Why use a role?", "back": "A role groups privileges for a responsibility so access can be managed without repeated per-user grants." }
   ],
   "homework": [
     {
-      "prompt": "Attempt the complete intermediate SQL solution set before reading the answers.",
-      "rubric": "Tag each item by skill and record unresolved assumptions.",
+      "prompt": "Run the Chapter 4 join examples on the University database. For each query, state which attributes form the intended relationship and whether unmatched rows should survive.",
+      "rubric": "Name the join type, predicate, preserved side, and one possible NULL result.",
       "sourceRefs": [
-        {
-          "sourceId": "DSA5104/Homework Solutions/Ch04_Intermediate_SQL/1.md",
-          "page": 1,
-          "sourceType": "exercise",
-          "role": "intermediate SQL exercise set",
-          "status": "current-context"
-        }
+        { "sourceId": "DSA5104/chapter4.pdf", "page": 3, "sourceType": "lecture", "role": "join semantics", "status": "current" },
+        { "sourceId": "DSA5104/chapter4.pdf", "page": 17, "sourceType": "lecture", "role": "full outer join", "status": "current" }
       ]
     },
     {
-      "prompt": "Write one question that the future official lecture deck must answer.",
-      "rubric": "Name the missing source evidence and the technical ambiguity.",
+      "prompt": "Write a MySQL transaction that performs one valid update and one CHECK-violating update, then compare the database state after COMMIT and ROLLBACK.",
+      "rubric": "Record autocommit state, transaction boundary, failing statement, and final persisted rows.",
       "sourceRefs": [
-        {
-          "sourceId": "DSA5104/Homework Solutions/Ch04_Intermediate_SQL/1.md",
-          "page": 1,
-          "sourceType": "exercise",
-          "role": "intermediate SQL exercise set",
-          "status": "current-context"
-        }
+        { "sourceId": "DSA5104/chapter4.pdf", "page": 37, "sourceType": "lecture", "role": "MySQL transaction behavior", "status": "current" },
+        { "sourceId": "DSA5104/chapter4.pdf", "page": 44, "sourceType": "lecture", "role": "CHECK constraint", "status": "current" }
       ]
+    },
+    {
+      "prompt": "For a view that exposes only instructor ID, name, and department, decide whether INSERT, UPDATE, and DELETE are unambiguous and explain why.",
+      "rubric": "Separate simple-view updates from updates that cannot be translated uniquely; cite the relevant page.",
+      "sourceRefs": [
+        { "sourceId": "DSA5104/chapter4.pdf", "page": 25, "sourceType": "lecture", "role": "view definition and use", "status": "current" },
+        { "sourceId": "DSA5104/chapter4.pdf", "page": 35, "sourceType": "lecture", "role": "view updates", "status": "current" }
+      ]
+    },
+    {
+      "prompt": "Create an index on a selective University relation attribute and explain which query cost it may reduce without changing the returned relation.",
+      "rubric": "Identify the access path, selective predicate, and why the index is not an integrity constraint.",
+      "sourceRefs": [{ "sourceId": "DSA5104/chapter4.pdf", "page": 60, "sourceType": "lecture", "role": "index creation", "status": "current" }]
     }
   ],
-  "codeExercises": []
+  "codeExercises": [
+    {
+      "title": "Explicit join audit",
+      "prompt": "Rewrite one NATURAL JOIN example using JOIN ... ON and one using JOIN ... USING. Compare the row count and explain every difference.",
+      "sourceRefs": [{ "sourceId": "DSA5104/chapter4.pdf", "page": 11, "sourceType": "lecture", "role": "USING clause", "status": "current" }]
+    },
+    {
+      "title": "Privilege least-necessary check",
+      "prompt": "Write a GRANT SELECT on a restricted view, then list which base-table privileges are and are not implied by that grant.",
+      "sourceRefs": [{ "sourceId": "DSA5104/chapter4.pdf", "page": 73, "sourceType": "lecture", "role": "GRANT syntax", "status": "current" }, { "sourceId": "DSA5104/chapter4.pdf", "page": 84, "sourceType": "lecture", "role": "authorization on views", "status": "current" }]
+    }
+  ]
 }

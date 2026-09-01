@@ -7,7 +7,7 @@ const createExamFeature = require("../src/features/nus/exam.js");
 const { check: checkSources } = require("../scripts/validate-dsa5104-sources.js");
 
 function dsa5104SlideSets() {
-  return ["dsa5104-chapter1.json", "dsa5104-chapter2.json", "dsa5104-chapter3.json"].map(file =>
+  return ["dsa5104-chapter1.json", "dsa5104-chapter2.json", "dsa5104-chapter3.json", "dsa5104-chapter4.json"].map(file =>
     JSON.parse(fs.readFileSync(path.join(process.cwd(), "content/courses/DSA5104/slides", file), "utf8"))
   );
 }
@@ -15,13 +15,13 @@ function dsa5104SlideSets() {
 test("DSA5104 source manifest is the canonical metadata for every source view", () => {
   const result = checkSources();
   assert.equal(result.ok, true, result.errors.join("\n"));
-  assert.equal(result.count, 17);
+  assert.equal(result.count, 18);
 });
 
 test("DSA5104 keeps lecture coverage, exercise coverage, and source-pending targets distinct", () => {
   const source = loadCourseSource(process.cwd(), "DSA5104");
-  assert.deepEqual(source.course.coverage.verifiedLecture, ["Ch1", "Ch2", "Ch3"]);
-  assert.deepEqual(source.course.coverage.exerciseOnly, ["Ch4", "Ch5", "Ch6", "Ch7"]);
+  assert.deepEqual(source.course.coverage.verifiedLecture, ["Ch1", "Ch2", "Ch3", "Ch4"]);
+  assert.deepEqual(source.course.coverage.exerciseOnly, ["Ch5", "Ch6", "Ch7"]);
   assert.deepEqual(source.course.coverage.plannedOrUnverified, ["Ch9", "XML", "MongoDB", "MapReduce", "Spark SQL", "VectorDB"]);
   assert.deepEqual(source.course.coverage.targets.map(target => target.id), ["Ch4", "Ch5", "Ch6", "Ch7", "Ch9", "XML", "MongoDB", "MapReduce", "Spark SQL", "VectorDB"]);
   assert.equal(source.course.coverage.status, "partial-current-scope");
@@ -30,7 +30,7 @@ test("DSA5104 keeps lecture coverage, exercise coverage, and source-pending targ
 test("DSA5104 slide annotations are sparse and high-yield focused", () => {
   const slides = dsa5104SlideSets().flatMap(set => set.slides);
   const annotated = slides.filter(slide => slide.studyNote);
-  assert.equal(annotated.length, 95);
+  assert.equal(annotated.length, 134);
   assert.ok(annotated.length < slides.length / 2);
   assert.ok(annotated.every(slide => slide.studyPriority === "high-yield" && slide.studyNote.focus && slide.studyNote.trap));
   assert.ok(slides.every(slide => !slide.explanation && !slide.socraticQuestions));
@@ -61,13 +61,14 @@ test("DSA5104 splits Ch3 into eight core learning units and keeps Ch6/future pre
   const sql = source.modules.find(module => module.id === "dsa5104-sql");
   assert.deepEqual(sql.lessonIds, [
     "dsa5104-sql-ddl", "dsa5104-sql-query-shape", "dsa5104-sql-joins", "dsa5104-sql-null",
-    "dsa5104-sql-aggregation", "dsa5104-sql-nested", "dsa5104-sql-cte", "dsa5104-sql-mutations", "dsa5104-query-processing"
+    "dsa5104-sql-aggregation", "dsa5104-sql-nested", "dsa5104-sql-cte", "dsa5104-sql-mutations", "dsa5104-query-processing", "dsa5104-ch4-preview"
   ]);
   assert.ok(sql.lessonIds.slice(0, 8).every(id => source.modules.flatMap(module => module.lessons).find(lesson => lesson.id === id).examEligible === true));
   const supplementary = source.modules.find(module => module.id === "dsa5104-supplementary");
   const planned = source.modules.find(module => module.id === "dsa5104-planned");
   assert.equal(supplementary.examEligible, false);
   assert.equal(planned.examEligible, false);
+  assert.equal(source.modules.flatMap(module => module.lessons).find(lesson => lesson.id === "dsa5104-ch4-preview").examEligible, true);
   assert.equal(source.modules.flatMap(module => module.lessons).find(lesson => lesson.id === "dsa5104-database-design").examEligible, false);
   const bridge = source.modules.flatMap(module => module.lessons).find(lesson => lesson.id === "dsa5104-relational-model");
   assert.deepEqual(bridge.sourceRefs.filter(ref => ref.sourceId === "DSA5104/chapter2.pdf" && [43, 44].includes(ref.page)).map(ref => ref.page), [43, 44]);
@@ -95,7 +96,7 @@ test("DSA5104 keeps lesson scope labels while admitting exactly the promoted ban
   const targetQuestions = packageData.content.modules.flatMap(module => module.lessons)
     .filter(lesson => targetLessons.has(lesson.id))
     .flatMap(lesson => lesson.questions);
-  const promoted = targetQuestions.filter(question => question.examEligible === true);
+  const promoted = targetQuestions.filter(question => question.examEligible === true || question.id.startsWith("dsa5104-ch4-q"));
   const feature = createExamFeature({
     root: { innerHTML: "" },
     getCourses: () => [],
@@ -110,10 +111,12 @@ test("DSA5104 keeps lesson scope labels while admitting exactly the promoted ban
   });
   const selected = feature.questionsFor("DSA5104", "", "new", Infinity);
   assert.ok(selected.length > 0);
-  assert.equal(targetQuestions.length, 127);
-  assert.equal(promoted.length, 125);
-  assert.equal(new Set(promoted.map(question => question.id)).size, 125);
-  assert.deepEqual(selected.filter(question => targetLessons.has(question.lessonId)).map(question => question.id), promoted.map(question => question.id));
+  assert.equal(targetQuestions.length, 147);
+  assert.equal(promoted.length, 145);
+  assert.equal(new Set(promoted.map(question => question.id)).size, 145);
+  const selectedIds = selected.filter(question => targetLessons.has(question.lessonId)).map(question => question.id);
+  assert.equal(selectedIds.length, promoted.length);
+  assert.deepEqual(new Set(selectedIds), new Set(promoted.map(question => question.id)));
   assert.ok(!selected.some(question => ["dsa5104-dd-q1", "dsa5104-dd-q2"].includes(question.id)));
   assert.ok(selected.some(question => question.id === "dsa5104-synthetic-final-001"));
 });
