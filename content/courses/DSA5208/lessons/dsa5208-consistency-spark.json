@@ -430,7 +430,16 @@
           "meaning": "order in the legal global sequence"
         }
       ],
-      "sourceType": "lecture"
+      "sourceType": "lecture",
+      "sourceRefs": [
+        {
+          "sourceId": "DSA5208/Lec3.pdf",
+          "page": 10,
+          "sourceType": "lecture",
+          "role": "linearizability definition",
+          "status": "current"
+        }
+      ]
     },
     {
       "name": "Causal-write visibility constraint",
@@ -451,7 +460,16 @@
           "meaning": "the observation order at process $p$"
         }
       ],
-      "sourceType": "lecture"
+      "sourceType": "lecture",
+      "sourceRefs": [
+        {
+          "sourceId": "DSA5208/Lec3.pdf",
+          "page": 22,
+          "sourceType": "lecture",
+          "role": "causal consistency",
+          "status": "current"
+        }
+      ]
     }
   ],
   "criticalQuestions": [
@@ -478,275 +496,6 @@
       ]
     },
     {
-      "prompt": "When is a total global order stronger than the application actually needs?",
-      "angle": "Compare a workload that only cares about one client or one causal dependency with a workload that truly needs one identical order for every process.",
-      "modelAnswer": "If the application only needs the same client to see its own writes or only needs causally related updates preserved, forcing one total order can add latency and coordination cost without buying a required guarantee.",
-      "focus": "over-serialization",
-      "sourceRefs": [
-        {
-          "sourceId": "DSA5208/Lec3.pdf",
-          "page": 10,
-          "sourceType": "lecture",
-          "role": "strict consistency (linearizability)",
-          "status": "current"
-        },
-        {
-          "sourceId": "DSA5208/Lec3.pdf",
-          "page": 22,
-          "sourceType": "lecture",
-          "role": "causal consistency",
-          "status": "current"
-        },
-        {
-          "sourceId": "DSA5208/Lec3.pdf",
-          "page": 36,
-          "sourceType": "lecture",
-          "role": "client-centric consistency models",
-          "status": "current"
-        }
-      ]
-    }
-  ],
-  "blocks": [
-    {
-      "id": "dsa5208-consistency-spark-section-1",
-      "type": "teaching-note",
-      "title": "Data-centric guarantees",
-      "body": "Linearizability preserves real-time order and the most recent write, sequential consistency keeps one common order without the same real-time constraint, causal consistency preserves only causally related writes, and eventual consistency promises convergence only after updates stop.",
-      "sourceType": "lecture",
-      "sourceRefs": [
-        {
-          "sourceId": "DSA5208/Lec3.pdf",
-          "page": 10,
-          "sourceType": "lecture",
-          "role": "strict consistency (linearizability)",
-          "status": "current"
-        },
-        {
-          "sourceId": "DSA5208/Lec3.pdf",
-          "page": 15,
-          "sourceType": "lecture",
-          "role": "sequential consistency",
-          "status": "current"
-        },
-        {
-          "sourceId": "DSA5208/Lec3.pdf",
-          "page": 22,
-          "sourceType": "lecture",
-          "role": "causal consistency",
-          "status": "current"
-        },
-        {
-          "sourceId": "DSA5208/Lec3.pdf",
-          "page": 29,
-          "sourceType": "lecture",
-          "role": "eventual consistency",
-          "status": "current"
-        }
-      ]
-    },
-    {
-      "id": "dsa5208-consistency-spark-section-2",
-      "type": "teaching-note",
-      "title": "Client-centric guarantees and deployed systems",
-      "body": "Read-your-writes, writes-follow-reads, monotonic reads, and monotonic writes describe what one client can safely observe across replicas. MongoDB and ScyllaDB expose these trade-offs through read/write concerns, coordinator logic, Lamport-clock session state, digest reads, and read repair.",
-      "sourceType": "lecture",
-      "sourceRefs": [
-        {
-          "sourceId": "DSA5208/Lec3.pdf",
-          "page": 36,
-          "sourceType": "lecture",
-          "role": "read-your-writes consistency",
-          "status": "current"
-        },
-        {
-          "sourceId": "DSA5208/Lec3.pdf",
-          "page": 38,
-          "sourceType": "lecture",
-          "role": "writes-follow-reads consistency",
-          "status": "current"
-        },
-        {
-          "sourceId": "DSA5208/Lec3.pdf",
-          "page": 40,
-          "sourceType": "lecture",
-          "role": "monotonic reads consistency",
-          "status": "current"
-        },
-        {
-          "sourceId": "DSA5208/Lec3.pdf",
-          "page": 42,
-          "sourceType": "lecture",
-          "role": "monotonic writes consistency",
-          "status": "current"
-        },
-        {
-          "sourceId": "DSA5208/Lec3.pdf",
-          "page": 48,
-          "sourceType": "lecture",
-          "role": "read and write concerns",
-          "status": "current"
-        },
-        {
-          "sourceId": "DSA5208/Lec3.pdf",
-          "page": 53,
-          "sourceType": "lecture",
-          "role": "MongoDB read-your-writes implementation with Lamport clocks",
-          "status": "current"
-        },
-        {
-          "sourceId": "DSA5208/Lec3.pdf",
-          "page": 59,
-          "sourceType": "lecture",
-          "role": "digest reads and read repair",
-          "status": "current"
-        }
-      ]
-    },
-    {
-      "id": "dsa5208-consistency-spark-formula-1",
-      "type": "formula",
-      "name": "Linearizability real-time constraint",
-      "purpose": "Use it to separate linearizability from weaker models that keep a legal sequence but not the same real-time ordering between non-overlapping operations.",
-      "latex": "\\operatorname{resp}(op_1) < \\operatorname{inv}(op_2) \\Longrightarrow op_1 \\prec op_2",
-      "explanation": "If operation $op_1$ finishes before $op_2$ begins, a linearizable history must place $op_1$ before $op_2$ in the global sequence.",
-      "symbols": [
-        {
-          "latex": "op_1,op_2",
-          "meaning": "two read or write operations"
-        },
-        {
-          "latex": "\\operatorname{resp},\\operatorname{inv}",
-          "meaning": "response and invocation times"
-        },
-        {
-          "latex": "\\prec",
-          "meaning": "order in the legal global sequence"
-        }
-      ],
-      "sourceType": "lecture",
-      "sourceRefs": [
-        {
-          "sourceId": "DSA5208/Lec3.pdf",
-          "page": 10,
-          "sourceType": "lecture",
-          "role": "linearizability definition",
-          "status": "current"
-        }
-      ]
-    },
-    {
-      "id": "dsa5208-consistency-spark-formula-2",
-      "type": "formula",
-      "name": "Causal-write visibility constraint",
-      "purpose": "Use it to express that causally related writes must be observed in the same order, while concurrent writes may still be seen differently under weaker models.",
-      "latex": "w_1 \\to w_2 \\Longrightarrow \\operatorname{see}_p(w_1) \\le \\operatorname{see}_p(w_2)",
-      "explanation": "If write $w_1$ causally precedes write $w_2$, any process $p$ that observes both must not observe $w_2$ before $w_1$.",
-      "symbols": [
-        {
-          "latex": "w_1,w_2",
-          "meaning": "write operations"
-        },
-        {
-          "latex": "\\to",
-          "meaning": "causal precedence"
-        },
-        {
-          "latex": "\\operatorname{see}_p",
-          "meaning": "the observation order at process $p$"
-        }
-      ],
-      "sourceType": "lecture",
-      "sourceRefs": [
-        {
-          "sourceId": "DSA5208/Lec3.pdf",
-          "page": 22,
-          "sourceType": "lecture",
-          "role": "causal consistency",
-          "status": "current"
-        }
-      ]
-    },
-    {
-      "id": "dsa5208-consistency-spark-example-1",
-      "type": "worked-example",
-      "title": "Diagnose a stale-read path",
-      "sourceType": "lecture",
-      "steps": [
-        "Classify the failure first: real-time order, causal dependency, eventual convergence, or one client's session view.",
-        "If the system uses MongoDB majority read/write concerns, ask whether the client still needs session or Lamport-clock state to preserve read-your-writes.",
-        "If the system uses tunable consistency, state the replication factor, chosen consistency level, and what stale or divergent read the coordinator may still permit.",
-        "Choose the weakest guarantee that rules out the observed anomaly instead of jumping immediately to the strongest global model."
-      ],
-      "answer": "A useful consistency diagnosis names the violated observation, the minimal guarantee that would prevent it, and the implementation mechanism that must carry that guarantee into the running database.",
-      "sourceRefs": [
-        {
-          "sourceId": "DSA5208/Lec3.pdf",
-          "page": 48,
-          "sourceType": "lecture",
-          "role": "read and write concerns",
-          "status": "current"
-        },
-        {
-          "sourceId": "DSA5208/Lec3.pdf",
-          "page": 53,
-          "sourceType": "lecture",
-          "role": "MongoDB read-your-writes implementation with Lamport clocks",
-          "status": "current"
-        },
-        {
-          "sourceId": "DSA5208/Lec3.pdf",
-          "page": 59,
-          "sourceType": "lecture",
-          "role": "digest reads and read repair",
-          "status": "current"
-        }
-      ]
-    },
-    {
-      "id": "dsa5208-consistency-spark-example-2",
-      "type": "worked-example",
-      "title": "History classifier and digest repair",
-      "sourceType": "lecture",
-      "steps": [
-        "Draw the causal chain $W(x{=}1) \\to W(y{=}2)$ before judging what another process reads.",
-        "If the observer sees $y{=}2$ and then $x{=}0$, the effect appeared without its cause, so causal consistency is violated.",
-        "For a separate replica read, compare compact digests first; a mismatch means the coordinator must fetch full versions.",
-        "Reconcile the full values, return the newest version, and repair stale replicas so future reads converge faster."
-      ],
-      "answer": "Consistency diagnosis has two distinct traces: preserve causal order in a history, then follow the digest-mismatch branch through full read, reconciliation, and repair.",
-      "sourceRefs": [
-        { "sourceId": "DSA5208/Lec3.pdf", "page": 22, "sourceType": "lecture", "role": "causal consistency", "status": "current" },
-        { "sourceId": "DSA5208/Lec3.pdf", "page": 59, "sourceType": "lecture", "role": "digest reads and read repair", "status": "current" }
-      ]
-    },
-    {
-      "id": "dsa5208-consistency-spark-critical-1",
-      "type": "critical-question",
-      "prompt": "Why are MongoDB read concern \"majority\" and write concern \"majority\" still not sufficient by themselves to guarantee read-your-writes consistency by definition?",
-      "angle": "Separate majority-committed visibility from one client's session-level guarantee.",
-      "modelAnswer": "A majority-committed snapshot can still lag the client's latest write on the node that serves the read. MongoDB therefore needs additional session or Lamport-clock state to block until the serving node has caught up to that client's write.",
-      "focus": "session visibility",
-      "sourceRefs": [
-        {
-          "sourceId": "DSA5208/Lec3.pdf",
-          "page": 48,
-          "sourceType": "lecture",
-          "role": "read and write concerns",
-          "status": "current"
-        },
-        {
-          "sourceId": "DSA5208/Lec3.pdf",
-          "page": 53,
-          "sourceType": "lecture",
-          "role": "MongoDB read-your-writes implementation with Lamport clocks",
-          "status": "current"
-        }
-      ]
-    },
-    {
-      "id": "dsa5208-consistency-spark-critical-2",
-      "type": "critical-question",
       "prompt": "When is a total global order stronger than the application actually needs?",
       "angle": "Compare a workload that only cares about one client or one causal dependency with a workload that truly needs one identical order for every process.",
       "modelAnswer": "If the application only needs the same client to see its own writes or only needs causally related updates preserved, forcing one total order can add latency and coordination cost without buying a required guarantee.",

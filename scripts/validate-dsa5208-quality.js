@@ -79,6 +79,16 @@ function validateQuestions() {
   return { errors, counts: { questions: questions.length, prompts: prompts.size } };
 }
 
+function validateLessonSources(courseRoot) {
+  const errors = [];
+  const directory = path.join(courseRoot, "lessons");
+  for (const file of fs.readdirSync(directory).filter(name => name.endsWith(".json")).sort()) {
+    const lesson = readJson(path.join(directory, file));
+    if (Object.prototype.hasOwnProperty.call(lesson, "blocks")) errors.push(`${file}: redundant blocks copy; use structured content`);
+  }
+  return errors;
+}
+
 function validateDsa5208Quality(root = ROOT) {
   const courseRoot = path.join(root, "content", "courses", "DSA5208");
   const slideChecks = [
@@ -104,7 +114,7 @@ function validateDsa5208Quality(root = ROOT) {
       if (GENERIC_TEXT.some(pattern => pattern.test(JSON.stringify(question)))) questionErrors.push(`${label}: generic quiz cue`);
     }
   }
-  const errors = slideChecks.flatMap(result => result.errors).concat(questionErrors);
+  const errors = slideChecks.flatMap(result => result.errors).concat(questionErrors, validateLessonSources(courseRoot));
   return {
     ok: errors.length === 0,
     errors,
@@ -128,4 +138,4 @@ if (require.main === module) {
   }
 }
 
-module.exports = { validateDsa5208Quality, validateSlides, validateQuestions, promptKey };
+module.exports = { validateDsa5208Quality, validateSlides, validateQuestions, validateLessonSources, promptKey };
