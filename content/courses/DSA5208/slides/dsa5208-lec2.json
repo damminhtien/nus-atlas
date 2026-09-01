@@ -151,25 +151,27 @@
       },
       "sourceText": "Lecture 2: Broadcast and Synchronizers\nDSA5208: Scalable Distributed Computing for Data Science\nLecture 2: Broadcast and Synchronizers\nZhenning Cai\nDepartment of Mathematics, National University of Singapore\nAY2026/2027, Semester 1",
       "explanation": {
-        "whatYouSee": "DSA5208 Lecture 2 · slide 1: Concept and worked notation. Read the source layer for the exact notation and diagram.",
-        "whyItMatters": "This is official lecture-core evidence for DSA5208 Lecture 2. Use it to anchor the concept before opening linked exercises or textbook depth.",
-        "intuition": "Read the page as one claim: identify the object, then its role in the algorithm or definition.",
-        "technicalDetail": "Use the exact notation and assumptions shown on this page before extending the result.",
-        "pitfall": "Do not infer a stronger guarantee than the page states; check the source layer and neighboring slides.",
-        "connection": "Connect this page to the next step in the lecture pipeline and to the linked lesson practice."
+        "whatYouSee": "Lecture 2 source overview shows the lecture identity and source boundary for the pages that follow.",
+        "whyItMatters": "the opening page tells the reader which lecture source is being studied This page is the source evidence for that distinction.",
+        "intuition": "anchor later claims to the named lecture instead of importing an unverified syllabus or summary",
+        "technicalDetail": "This page is provenance context; algorithmic details must be taken from the subsequent source pages.",
+        "pitfall": "Do not infer a complete algorithm or assessment rule from a title page.",
+        "connection": "Use the next content page to begin the source-backed derivation."
       },
       "textbookRefs": [],
       "referenceRefs": [],
       "socraticQuestions": [
         {
-          "type": "recall",
-          "prompt": "What is the main claim or object on this slide?",
-          "answer": "State the slide's main claim and name its symbols.",
-          "hint": "Name the object before explaining its consequence."
+          "type": "lecture source boundary",
+          "prompt": "What does \"Lecture 2 source overview\" establish before the technical pages begin?",
+          "answer": "It establishes the lecture source and topic boundary, not a technical algorithmic guarantee.",
+          "hint": "Separate provenance from the later definition."
         }
       ],
       "kind": "lecture-source",
-      "status": "reviewed"
+      "status": "reviewed",
+      "title": "Lecture 2 source overview",
+      "lecturePriority": "support"
     },
     {
       "slideId": "dsa5208-lec2-2",
@@ -365,25 +367,27 @@
       },
       "sourceText": "Lecture 2: Broadcast and Synchronizers\nBroadcast\n1\nBroadcast\n2\nShortest-path problem\n3\nSynchronizers\n4\nSummary",
       "explanation": {
-        "whatYouSee": "DSA5208 Lecture 2 · slide 2: Concept and worked notation. Read the source layer for the exact notation and diagram.",
-        "whyItMatters": "This is official lecture-core evidence for DSA5208 Lecture 2. Use it to anchor the concept before opening linked exercises or textbook depth.",
-        "intuition": "Read the page as one claim: identify the object, then its role in the algorithm or definition.",
-        "technicalDetail": "Use the exact notation and assumptions shown on this page before extending the result.",
-        "pitfall": "Do not infer a stronger guarantee than the page states; check the source layer and neighboring slides.",
-        "connection": "Connect this page to the next step in the lecture pipeline and to the linked lesson practice."
+        "whatYouSee": "Broadcast roadmap shows a navigation map separating the lecture's major sections.",
+        "whyItMatters": "the roadmap keeps overview pages from being mistaken for algorithm definitions This page is the source evidence for that distinction.",
+        "intuition": "use the map to locate the source section, then study the detailed page that follows",
+        "technicalDetail": "The page is an index of topics; it does not add a new ordering or consistency guarantee.",
+        "pitfall": "Do not cite a roadmap entry as if it were the detailed proof or implementation page.",
+        "connection": "Follow each entry to its source-backed definition and worked trace."
       },
       "textbookRefs": [],
       "referenceRefs": [],
       "socraticQuestions": [
         {
-          "type": "recall",
-          "prompt": "What is the main claim or object on this slide?",
-          "answer": "State the slide's main claim and name its symbols.",
-          "hint": "Name the object before explaining its consequence."
+          "type": "lecture roadmap",
+          "prompt": "What role does \"Broadcast roadmap\" play in the lecture structure?",
+          "answer": "It locates the major source sections; the detailed claims are established on the pages those entries point to.",
+          "hint": "Treat navigation as scope, not derivation."
         }
       ],
       "kind": "lecture-source",
-      "status": "reviewed"
+      "status": "reviewed",
+      "title": "Broadcast roadmap",
+      "lecturePriority": "support"
     },
     {
       "slideId": "dsa5208-lec2-3",
@@ -499,25 +503,27 @@
       },
       "sourceText": "Lecture 2: Broadcast and Synchronizers\nBroadcast\nBroadcast protocols\nBroadcast: A process pi sends the same message to all processes pj,\nj = 1, · · · , n.\nIf there are many messages being broadcast in the system, in which order\nwill they be delivered?",
       "explanation": {
-        "whatYouSee": "DSA5208 Lecture 2 · slide 3: Concept and worked notation. Read the source layer for the exact notation and diagram.",
-        "whyItMatters": "This is official lecture-core evidence for DSA5208 Lecture 2. Use it to anchor the concept before opening linked exercises or textbook depth.",
-        "intuition": "Read the page as one claim: identify the object, then its role in the algorithm or definition.",
-        "technicalDetail": "Use the exact notation and assumptions shown on this page before extending the result.",
-        "pitfall": "Do not infer a stronger guarantee than the page states; check the source layer and neighboring slides.",
-        "connection": "Connect this page to the next step in the lecture pipeline and to the linked lesson practice."
+        "whatYouSee": "Broadcast protocols shows one sender copying the same message to every process.",
+        "whyItMatters": "the fan-out operation is separate from the order in which receivers deliver messages This page is the source evidence for that distinction.",
+        "intuition": "separate the sender's one send from the many receiver-side delivery decisions",
+        "technicalDetail": "The sender emits one message to all processes; the ordering guarantee is defined over later delivery events.",
+        "pitfall": "Do not infer a delivery order merely because the sends occur in one source process.",
+        "connection": "The next pages turn this distinction into FIFO, causal, and total-order guarantees."
       },
       "textbookRefs": [],
       "referenceRefs": [],
       "socraticQuestions": [
         {
-          "type": "recall",
-          "prompt": "What is the main claim or object on this slide?",
-          "answer": "State the slide's main claim and name its symbols.",
-          "hint": "Name the object before explaining its consequence."
+          "type": "broadcast fan-out",
+          "prompt": "For \"Broadcast protocols\", what is broadcast responsible for and what is left to the delivery guarantee?",
+          "answer": "Broadcast defines the fan-out from one sender; the delivery protocol decides which receive-side order is allowed.",
+          "hint": "Separate send, receive, and deliver events."
         }
       ],
       "kind": "lecture-source",
-      "status": "reviewed"
+      "status": "reviewed",
+      "title": "Broadcast protocols",
+      "lecturePriority": "core"
     },
     {
       "slideId": "dsa5208-lec2-4",
@@ -649,25 +655,27 @@
       },
       "sourceText": "Lecture 2: Broadcast and Synchronizers\nBroadcast\nReceiving versus delivering\nbroadcast\ndeliver\nsend\nreceive\nsend\nreceive\nAfter the broadcast algorithm receives message from the network, it may\nhold it in the buffer for a while before delivering the message to the\napplication.",
       "explanation": {
-        "whatYouSee": "DSA5208 Lecture 2 · slide 4: Concept and worked notation. Read the source layer for the exact notation and diagram.",
-        "whyItMatters": "This is official lecture-core evidence for DSA5208 Lecture 2. Use it to anchor the concept before opening linked exercises or textbook depth.",
-        "intuition": "Read the page as one claim: identify the object, then its role in the algorithm or definition.",
-        "technicalDetail": "Use the exact notation and assumptions shown on this page before extending the result.",
-        "pitfall": "Do not infer a stronger guarantee than the page states; check the source layer and neighboring slides.",
-        "connection": "Connect this page to the next step in the lecture pipeline and to the linked lesson practice."
+        "whatYouSee": "Receiving versus delivering shows a message moving from the network into a buffer before the application delivers it.",
+        "whyItMatters": "buffering is the mechanism that lets a receiver wait for an ordering condition This page is the source evidence for that distinction.",
+        "intuition": "receiving is transport progress; delivery is an application-visible commitment",
+        "technicalDetail": "A receiver can hold a received message until FIFO or causal predecessors make delivery safe.",
+        "pitfall": "Do not treat arrival at a process as proof that the application should deliver immediately.",
+        "connection": "This buffer boundary explains why causal broadcast may delay a message."
       },
       "textbookRefs": [],
       "referenceRefs": [],
       "socraticQuestions": [
         {
-          "type": "recall",
-          "prompt": "What is the main claim or object on this slide?",
-          "answer": "State the slide's main claim and name its symbols.",
-          "hint": "Name the object before explaining its consequence."
+          "type": "receive versus deliver",
+          "prompt": "In \"Receiving versus delivering\", why can a receiver accept a message before it delivers it?",
+          "answer": "The receiver may need to wait for an ordering condition, so it stores the message while transport and application delivery remain separate.",
+          "hint": "Look for the buffer between receive and deliver."
         }
       ],
       "kind": "lecture-source",
-      "status": "reviewed"
+      "status": "reviewed",
+      "title": "Receiving versus delivering",
+      "lecturePriority": "support"
     },
     {
       "slideId": "dsa5208-lec2-5",
@@ -847,25 +855,27 @@
       },
       "sourceText": "Lecture 2: Broadcast and Synchronizers\nBroadcast\nBroadcast models\nAssume\n▶ex1\ni1 broadcasts the message m1, and ex2\ni2 broadcasts the message m2.\n▶m1 is delivered to process j in the event ey1j\nj\n, and m2 is delivered to\nprocess j in the event ey2j\nj\n.",
       "explanation": {
-        "whatYouSee": "DSA5208 Lecture 2 · slide 5: Concept and worked notation. Read the source layer for the exact notation and diagram.",
-        "whyItMatters": "This is official lecture-core evidence for DSA5208 Lecture 2. Use it to anchor the concept before opening linked exercises or textbook depth.",
-        "intuition": "Read the page as one claim: identify the object, then its role in the algorithm or definition.",
-        "technicalDetail": "Use the exact notation and assumptions shown on this page before extending the result.",
-        "pitfall": "Do not infer a stronger guarantee than the page states; check the source layer and neighboring slides.",
-        "connection": "Connect this page to the next step in the lecture pipeline and to the linked lesson practice."
+        "whatYouSee": "Broadcast models shows a small multi-process trace used to compare possible delivery orders.",
+        "whyItMatters": "the trace makes the difference between sender-local and cross-sender constraints observable This page is the source evidence for that distinction.",
+        "intuition": "keep one row per process and mark each send, receive, and delivery event",
+        "technicalDetail": "A legal execution is determined by the model's allowed order, not by the visual position of events alone.",
+        "pitfall": "Do not call every visually different trace a violation; first identify which guarantee is being tested.",
+        "connection": "The trace becomes concrete evidence for the FIFO and causal definitions that follow."
       },
       "textbookRefs": [],
       "referenceRefs": [],
       "socraticQuestions": [
         {
-          "type": "recall",
-          "prompt": "What is the main claim or object on this slide?",
-          "answer": "State the slide's main claim and name its symbols.",
-          "hint": "Name the object before explaining its consequence."
+          "type": "broadcast model trace",
+          "prompt": "When reading the \"Broadcast models\" trace, which delivery orders are ruled out by the stated model?",
+          "answer": "Only orders that contradict the model's explicit sender, channel, or causal constraints are ruled out.",
+          "hint": "Write the guarantee next to the trace before judging it."
         }
       ],
       "kind": "lecture-source",
-      "status": "reviewed"
+      "status": "reviewed",
+      "title": "Broadcast models",
+      "lecturePriority": "support"
     },
     {
       "slideId": "dsa5208-lec2-6",
@@ -1045,25 +1055,27 @@
       },
       "sourceText": "Lecture 2: Broadcast and Synchronizers\nBroadcast\nBroadcast models\nAssume\n▶ex1\ni1 broadcasts the message m1, and ex2\ni2 broadcasts the message m2.\n▶m1 is delivered to process j in the event ey1j\nj\n, and m2 is delivered to\nprocess j in the event ey2j\nj\n.",
       "explanation": {
-        "whatYouSee": "DSA5208 Lecture 2 · slide 6: Concept and worked notation. Read the source layer for the exact notation and diagram.",
-        "whyItMatters": "This is official lecture-core evidence for DSA5208 Lecture 2. Use it to anchor the concept before opening linked exercises or textbook depth.",
-        "intuition": "Read the page as one claim: identify the object, then its role in the algorithm or definition.",
-        "technicalDetail": "Use the exact notation and assumptions shown on this page before extending the result.",
-        "pitfall": "Do not infer a stronger guarantee than the page states; check the source layer and neighboring slides.",
-        "connection": "Connect this page to the next step in the lecture pipeline and to the linked lesson practice."
+        "whatYouSee": "Broadcast models · source page 6 shows a small multi-process trace used to compare possible delivery orders.",
+        "whyItMatters": "the trace makes the difference between sender-local and cross-sender constraints observable This page is the source evidence for that distinction.",
+        "intuition": "keep one row per process and mark each send, receive, and delivery event",
+        "technicalDetail": "A legal execution is determined by the model's allowed order, not by the visual position of events alone.",
+        "pitfall": "Do not call every visually different trace a violation; first identify which guarantee is being tested.",
+        "connection": "The trace becomes concrete evidence for the FIFO and causal definitions that follow."
       },
       "textbookRefs": [],
       "referenceRefs": [],
       "socraticQuestions": [
         {
-          "type": "recall",
-          "prompt": "What is the main claim or object on this slide?",
-          "answer": "State the slide's main claim and name its symbols.",
-          "hint": "Name the object before explaining its consequence."
+          "type": "broadcast model trace",
+          "prompt": "When reading the \"Broadcast models · source page 6\" trace, which delivery orders are ruled out by the stated model?",
+          "answer": "Only orders that contradict the model's explicit sender, channel, or causal constraints are ruled out.",
+          "hint": "Write the guarantee next to the trace before judging it."
         }
       ],
       "kind": "lecture-source",
-      "status": "reviewed"
+      "status": "reviewed",
+      "title": "Broadcast models · source page 6",
+      "lecturePriority": "support"
     },
     {
       "slideId": "dsa5208-lec2-7",
@@ -1339,25 +1351,27 @@
       },
       "sourceText": "Lecture 2: Broadcast and Synchronizers\nBroadcast\nBroadcast models\nAssume\n▶ex1\ni1 broadcasts the message m1, and ex2\ni2 broadcasts the message m2.\n▶m1 is delivered to process j in the event ey1j\nj\n, and m2 is delivered to\nprocess j in the event ey2j\nj\n.\nBroadcast models:\n▶FIFO broadcast: i1 = i2 and ex1\ni2\n=⇒\ney1j\nj\n→ey2j\ni1 →ex2\nj\n, ∀j.",
       "explanation": {
-        "whatYouSee": "DSA5208 Lecture 2 · slide 7: Concept and worked notation. Read the source layer for the exact notation and diagram.",
-        "whyItMatters": "This is official lecture-core evidence for DSA5208 Lecture 2. Use it to anchor the concept before opening linked exercises or textbook depth.",
-        "intuition": "Read the page as one claim: identify the object, then its role in the algorithm or definition.",
-        "technicalDetail": "Use the exact notation and assumptions shown on this page before extending the result.",
-        "pitfall": "Do not infer a stronger guarantee than the page states; check the source layer and neighboring slides.",
-        "connection": "Connect this page to the next step in the lecture pipeline and to the linked lesson practice."
+        "whatYouSee": "Broadcast models · source page 7 shows a small multi-process trace used to compare possible delivery orders.",
+        "whyItMatters": "the trace makes the difference between sender-local and cross-sender constraints observable This page is the source evidence for that distinction.",
+        "intuition": "keep one row per process and mark each send, receive, and delivery event",
+        "technicalDetail": "A legal execution is determined by the model's allowed order, not by the visual position of events alone.",
+        "pitfall": "Do not call every visually different trace a violation; first identify which guarantee is being tested.",
+        "connection": "The trace becomes concrete evidence for the FIFO and causal definitions that follow."
       },
       "textbookRefs": [],
       "referenceRefs": [],
       "socraticQuestions": [
         {
-          "type": "recall",
-          "prompt": "What is the main claim or object on this slide?",
-          "answer": "State the slide's main claim and name its symbols.",
-          "hint": "Name the object before explaining its consequence."
+          "type": "broadcast model trace",
+          "prompt": "When reading the \"Broadcast models · source page 7\" trace, which delivery orders are ruled out by the stated model?",
+          "answer": "Only orders that contradict the model's explicit sender, channel, or causal constraints are ruled out.",
+          "hint": "Write the guarantee next to the trace before judging it."
         }
       ],
       "kind": "lecture-source",
-      "status": "reviewed"
+      "status": "reviewed",
+      "title": "Broadcast models · source page 7",
+      "lecturePriority": "support"
     },
     {
       "slideId": "dsa5208-lec2-8",
@@ -1633,25 +1647,27 @@
       },
       "sourceText": "Lecture 2: Broadcast and Synchronizers\nBroadcast\nBroadcast models\nAssume\n▶ex1\ni1 broadcasts the message m1, and ex2\ni2 broadcasts the message m2.\n▶m1 is delivered to process j in the event ey1j\nj\n, and m2 is delivered to\nprocess j in the event ey2j\nj\n.\nBroadcast models:\n▶Causal broadcast: ex1\ni2\n=⇒\ney1j\nj\n→ey2j\ni1 →ex2\nj\n, ∀j.",
       "explanation": {
-        "whatYouSee": "DSA5208 Lecture 2 · slide 8: Concept and worked notation. Read the source layer for the exact notation and diagram.",
-        "whyItMatters": "This is official lecture-core evidence for DSA5208 Lecture 2. Use it to anchor the concept before opening linked exercises or textbook depth.",
-        "intuition": "Read the page as one claim: identify the object, then its role in the algorithm or definition.",
-        "technicalDetail": "Use the exact notation and assumptions shown on this page before extending the result.",
-        "pitfall": "Do not infer a stronger guarantee than the page states; check the source layer and neighboring slides.",
-        "connection": "Connect this page to the next step in the lecture pipeline and to the linked lesson practice."
+        "whatYouSee": "Broadcast models · source page 8 shows a small multi-process trace used to compare possible delivery orders.",
+        "whyItMatters": "the trace makes the difference between sender-local and cross-sender constraints observable This page is the source evidence for that distinction.",
+        "intuition": "keep one row per process and mark each send, receive, and delivery event",
+        "technicalDetail": "A legal execution is determined by the model's allowed order, not by the visual position of events alone.",
+        "pitfall": "Do not call every visually different trace a violation; first identify which guarantee is being tested.",
+        "connection": "The trace becomes concrete evidence for the FIFO and causal definitions that follow."
       },
       "textbookRefs": [],
       "referenceRefs": [],
       "socraticQuestions": [
         {
-          "type": "recall",
-          "prompt": "What is the main claim or object on this slide?",
-          "answer": "State the slide's main claim and name its symbols.",
-          "hint": "Name the object before explaining its consequence."
+          "type": "broadcast model trace",
+          "prompt": "When reading the \"Broadcast models · source page 8\" trace, which delivery orders are ruled out by the stated model?",
+          "answer": "Only orders that contradict the model's explicit sender, channel, or causal constraints are ruled out.",
+          "hint": "Write the guarantee next to the trace before judging it."
         }
       ],
       "kind": "lecture-source",
-      "status": "reviewed"
+      "status": "reviewed",
+      "title": "Broadcast models · source page 8",
+      "lecturePriority": "support"
     },
     {
       "slideId": "dsa5208-lec2-9",
@@ -1927,25 +1943,27 @@
       },
       "sourceText": "Lecture 2: Broadcast and Synchronizers\nBroadcast\nBroadcast models\nAssume\n▶ex1\ni1 broadcasts the message m1, and ex2\ni2 broadcasts the message m2.\n▶m1 is delivered to process j in the event ey1j\nj\n, and m2 is delivered to\nprocess j in the event ey2j\nj\n.\nBroadcast models:\n▶Total order broadcast: either ey1j\nj\n→ey2j\nj\n, ∀j or ey2j\nj\n→ey1j\nj\n, ∀j.",
       "explanation": {
-        "whatYouSee": "DSA5208 Lecture 2 · slide 9: Concept and worked notation. Read the source layer for the exact notation and diagram.",
-        "whyItMatters": "This is official lecture-core evidence for DSA5208 Lecture 2. Use it to anchor the concept before opening linked exercises or textbook depth.",
-        "intuition": "Read the page as one claim: identify the object, then its role in the algorithm or definition.",
-        "technicalDetail": "Use the exact notation and assumptions shown on this page before extending the result.",
-        "pitfall": "Do not infer a stronger guarantee than the page states; check the source layer and neighboring slides.",
-        "connection": "Connect this page to the next step in the lecture pipeline and to the linked lesson practice."
+        "whatYouSee": "Broadcast models · source page 9 shows a small multi-process trace used to compare possible delivery orders.",
+        "whyItMatters": "the trace makes the difference between sender-local and cross-sender constraints observable This page is the source evidence for that distinction.",
+        "intuition": "keep one row per process and mark each send, receive, and delivery event",
+        "technicalDetail": "A legal execution is determined by the model's allowed order, not by the visual position of events alone.",
+        "pitfall": "Do not call every visually different trace a violation; first identify which guarantee is being tested.",
+        "connection": "The trace becomes concrete evidence for the FIFO and causal definitions that follow."
       },
       "textbookRefs": [],
       "referenceRefs": [],
       "socraticQuestions": [
         {
-          "type": "recall",
-          "prompt": "What is the main claim or object on this slide?",
-          "answer": "State the slide's main claim and name its symbols.",
-          "hint": "Name the object before explaining its consequence."
+          "type": "broadcast model trace",
+          "prompt": "When reading the \"Broadcast models · source page 9\" trace, which delivery orders are ruled out by the stated model?",
+          "answer": "Only orders that contradict the model's explicit sender, channel, or causal constraints are ruled out.",
+          "hint": "Write the guarantee next to the trace before judging it."
         }
       ],
       "kind": "lecture-source",
-      "status": "reviewed"
+      "status": "reviewed",
+      "title": "Broadcast models · source page 9",
+      "lecturePriority": "support"
     },
     {
       "slideId": "dsa5208-lec2-10",
@@ -2173,25 +2191,27 @@
       },
       "sourceText": "Lecture 2: Broadcast and Synchronizers\nBroadcast\nBroadcast models\nAssume\n▶ex1\ni1 broadcasts the message m1, and ex2\ni2 broadcasts the message m2.\n▶m1 is delivered to process j in the event ey1j\nj\n, and m2 is delivered to\nprocess j in the event ey2j\nj\n.\nBroadcast models:\n▶FIFO-Total order broadcast: Combination of FIFO broadcast and\nTotal order broadcast.",
       "explanation": {
-        "whatYouSee": "DSA5208 Lecture 2 · slide 10: Concept and worked notation. Read the source layer for the exact notation and diagram.",
-        "whyItMatters": "This is official lecture-core evidence for DSA5208 Lecture 2. Use it to anchor the concept before opening linked exercises or textbook depth.",
-        "intuition": "Read the page as one claim: identify the object, then its role in the algorithm or definition.",
-        "technicalDetail": "Use the exact notation and assumptions shown on this page before extending the result.",
-        "pitfall": "Do not infer a stronger guarantee than the page states; check the source layer and neighboring slides.",
-        "connection": "Connect this page to the next step in the lecture pipeline and to the linked lesson practice."
+        "whatYouSee": "Broadcast models · source page 10 shows a small multi-process trace used to compare possible delivery orders.",
+        "whyItMatters": "the trace makes the difference between sender-local and cross-sender constraints observable This page is the source evidence for that distinction.",
+        "intuition": "keep one row per process and mark each send, receive, and delivery event",
+        "technicalDetail": "A legal execution is determined by the model's allowed order, not by the visual position of events alone.",
+        "pitfall": "Do not call every visually different trace a violation; first identify which guarantee is being tested.",
+        "connection": "The trace becomes concrete evidence for the FIFO and causal definitions that follow."
       },
       "textbookRefs": [],
       "referenceRefs": [],
       "socraticQuestions": [
         {
-          "type": "recall",
-          "prompt": "What is the main claim or object on this slide?",
-          "answer": "State the slide's main claim and name its symbols.",
-          "hint": "Name the object before explaining its consequence."
+          "type": "broadcast model trace",
+          "prompt": "When reading the \"Broadcast models · source page 10\" trace, which delivery orders are ruled out by the stated model?",
+          "answer": "Only orders that contradict the model's explicit sender, channel, or causal constraints are ruled out.",
+          "hint": "Write the guarantee next to the trace before judging it."
         }
       ],
       "kind": "lecture-source",
-      "status": "reviewed"
+      "status": "reviewed",
+      "title": "Broadcast models · source page 10",
+      "lecturePriority": "support"
     },
     {
       "slideId": "dsa5208-lec2-11",
@@ -2307,25 +2327,27 @@
       },
       "sourceText": "Lecture 2: Broadcast and Synchronizers\nBroadcast\nFIFO broadcast\nIf two messages m1 and m2 are broadcast by the same process, and m1\nis broadcast before m2, then on any process, m1 is delivered before m2.\n▶Messages sent by different processes can be delivered in any order.",
       "explanation": {
-        "whatYouSee": "DSA5208 Lecture 2 · slide 11: Concept and worked notation. Read the source layer for the exact notation and diagram.",
-        "whyItMatters": "This is official lecture-core evidence for DSA5208 Lecture 2. Use it to anchor the concept before opening linked exercises or textbook depth.",
-        "intuition": "Read the page as one claim: identify the object, then its role in the algorithm or definition.",
-        "technicalDetail": "Use the exact notation and assumptions shown on this page before extending the result.",
-        "pitfall": "Do not infer a stronger guarantee than the page states; check the source layer and neighboring slides.",
-        "connection": "Connect this page to the next step in the lecture pipeline and to the linked lesson practice."
+        "whatYouSee": "FIFO broadcast shows messages from one sender constrained to the sender's broadcast order.",
+        "whyItMatters": "FIFO is the weakest useful guarantee when a single producer's sequence must be preserved This page is the source evidence for that distinction.",
+        "intuition": "one sender's messages form a queue, while different senders can still interleave",
+        "technicalDetail": "If a process broadcasts m1 before m2, every process must deliver m1 before m2; cross-sender order is unconstrained.",
+        "pitfall": "Do not upgrade FIFO into causal order for messages emitted by different processes.",
+        "connection": "The causal broadcast pages add cross-process dependency tracking."
       },
       "textbookRefs": [],
       "referenceRefs": [],
       "socraticQuestions": [
         {
-          "type": "recall",
-          "prompt": "What is the main claim or object on this slide?",
-          "answer": "State the slide's main claim and name its symbols.",
-          "hint": "Name the object before explaining its consequence."
+          "type": "FIFO broadcast",
+          "prompt": "What ordering does \"FIFO broadcast\" guarantee, and what ordering does it deliberately leave open?",
+          "answer": "It preserves the order of broadcasts from each sender but does not constrain messages from different senders.",
+          "hint": "Compare same-sender and cross-sender pairs."
         }
       ],
       "kind": "lecture-source",
-      "status": "reviewed"
+      "status": "reviewed",
+      "title": "FIFO broadcast",
+      "lecturePriority": "core"
     },
     {
       "slideId": "dsa5208-lec2-12",
@@ -2473,25 +2495,27 @@
       },
       "sourceText": "Lecture 2: Broadcast and Synchronizers\nBroadcast\nImplementation of FIFO broadcast\nAlgorithm FIFO broadcast\n1: (Local variables)\n2: sendSeq ←0\n3: delivered[1 · · · n] ←0\n4: buffer ←{}\n5: function BroadcastSend(msg: message to be sent)\n6:\nSend (i, sendSeq, msg) to all processes (i: sender index)\n7:\nsendSeq := sendSeq + 1\n8: end function\n9: function BroadcastRecv((i, seq, msg): received message)\n10:\nbuffer := buffer ∪{(i, seq, msg)}\n11:\nwhile ∃sender, m such that (sender, delivered[sender], m) ∈buffer do\n12:\nDeliver the message m\n13:\nbuffer := buffer\\{(sender, delivered[sender], m)}\n14:\ndelivered[sender] := delivered[sender] + 1\n15:\nend while\n16: end function",
       "explanation": {
-        "whatYouSee": "DSA5208 Lecture 2 · slide 12: Concept and worked notation. Read the source layer for the exact notation and diagram.",
-        "whyItMatters": "This is official lecture-core evidence for DSA5208 Lecture 2. Use it to anchor the concept before opening linked exercises or textbook depth.",
-        "intuition": "Read the page as one claim: identify the object, then its role in the algorithm or definition.",
-        "technicalDetail": "Use the exact notation and assumptions shown on this page before extending the result.",
-        "pitfall": "Do not infer a stronger guarantee than the page states; check the source layer and neighboring slides.",
-        "connection": "Connect this page to the next step in the lecture pipeline and to the linked lesson practice."
+        "whatYouSee": "Implementation of FIFO broadcast shows messages from one sender constrained to the sender's broadcast order.",
+        "whyItMatters": "FIFO is the weakest useful guarantee when a single producer's sequence must be preserved This page is the source evidence for that distinction.",
+        "intuition": "one sender's messages form a queue, while different senders can still interleave",
+        "technicalDetail": "If a process broadcasts m1 before m2, every process must deliver m1 before m2; cross-sender order is unconstrained.",
+        "pitfall": "Do not upgrade FIFO into causal order for messages emitted by different processes.",
+        "connection": "The causal broadcast pages add cross-process dependency tracking."
       },
       "textbookRefs": [],
       "referenceRefs": [],
       "socraticQuestions": [
         {
-          "type": "recall",
-          "prompt": "What is the main claim or object on this slide?",
-          "answer": "State the slide's main claim and name its symbols.",
-          "hint": "Name the object before explaining its consequence."
+          "type": "FIFO broadcast",
+          "prompt": "What ordering does \"Implementation of FIFO broadcast\" guarantee, and what ordering does it deliberately leave open?",
+          "answer": "It preserves the order of broadcasts from each sender but does not constrain messages from different senders.",
+          "hint": "Compare same-sender and cross-sender pairs."
         }
       ],
       "kind": "lecture-source",
-      "status": "reviewed"
+      "status": "reviewed",
+      "title": "Implementation of FIFO broadcast",
+      "lecturePriority": "support"
     },
     {
       "slideId": "dsa5208-lec2-13",
@@ -2607,25 +2631,27 @@
       },
       "sourceText": "Lecture 2: Broadcast and Synchronizers\nBroadcast\nCausal broadcast\nIf the broadcast of m1 happens before the broadcast of m2, then m1 is\ndelivered before m2 on all processes.\n▶Concurrent messages can be delivered in any order.\n▶Causal broadcast =⇒FIFO broadcast.",
       "explanation": {
-        "whatYouSee": "DSA5208 Lecture 2 · slide 13: Concept and worked notation. Read the source layer for the exact notation and diagram.",
-        "whyItMatters": "This is official lecture-core evidence for DSA5208 Lecture 2. Use it to anchor the concept before opening linked exercises or textbook depth.",
-        "intuition": "Read the page as one claim: identify the object, then its role in the algorithm or definition.",
-        "technicalDetail": "Use the exact notation and assumptions shown on this page before extending the result.",
-        "pitfall": "Do not infer a stronger guarantee than the page states; check the source layer and neighboring slides.",
-        "connection": "Connect this page to the next step in the lecture pipeline and to the linked lesson practice."
+        "whatYouSee": "Causal broadcast shows a delivery rule that follows the happens-before relation between broadcasts.",
+        "whyItMatters": "causal delivery prevents an effect from appearing before the update that informed it This page is the source evidence for that distinction.",
+        "intuition": "a receiver waits until its known causal predecessors have been delivered",
+        "technicalDetail": "If broadcast(m1) happens before broadcast(m2), every process delivers m1 before m2; concurrent broadcasts may be reordered.",
+        "pitfall": "Do not require one global order for concurrent messages when the guarantee only preserves causality.",
+        "connection": "Vector or dependency metadata can provide the knowledge needed by the receiver buffer."
       },
       "textbookRefs": [],
       "referenceRefs": [],
       "socraticQuestions": [
         {
-          "type": "recall",
-          "prompt": "What is the main claim or object on this slide?",
-          "answer": "State the slide's main claim and name its symbols.",
-          "hint": "Name the object before explaining its consequence."
+          "type": "causal broadcast",
+          "prompt": "For \"Causal broadcast\", which pair must be ordered and which pair may remain concurrent?",
+          "answer": "A causally related pair must be delivered in causal order; concurrent broadcasts may be delivered in either order.",
+          "hint": "Find the message path before comparing delivery."
         }
       ],
       "kind": "lecture-source",
-      "status": "reviewed"
+      "status": "reviewed",
+      "title": "Causal broadcast",
+      "lecturePriority": "core"
     },
     {
       "slideId": "dsa5208-lec2-14",
@@ -2789,25 +2815,27 @@
       },
       "sourceText": "Lecture 2: Broadcast and Synchronizers\nBroadcast\nImplementation of causal broadcast\nAlgorithm Causal broadcast\n1: (Local variables)\n2: sendSeq ←0\n3: delivered[1 · · · n] ←0\n4: buffer ←{}\n5: function BroadcastSend(msg: message to be sent)\n6:\ndeps := delivered\n7:\ndeps[i] := sendSeq (i: sender index)\n8:\nSend (i, deps, msg) to all processes\n9:\nsendSeq := sendSeq + 1\n10: end function",
       "explanation": {
-        "whatYouSee": "DSA5208 Lecture 2 · slide 14: Concept and worked notation. Read the source layer for the exact notation and diagram.",
-        "whyItMatters": "This is official lecture-core evidence for DSA5208 Lecture 2. Use it to anchor the concept before opening linked exercises or textbook depth.",
-        "intuition": "Read the page as one claim: identify the object, then its role in the algorithm or definition.",
-        "technicalDetail": "Use the exact notation and assumptions shown on this page before extending the result.",
-        "pitfall": "Do not infer a stronger guarantee than the page states; check the source layer and neighboring slides.",
-        "connection": "Connect this page to the next step in the lecture pipeline and to the linked lesson practice."
+        "whatYouSee": "Implementation of causal broadcast shows a delivery rule that follows the happens-before relation between broadcasts.",
+        "whyItMatters": "causal delivery prevents an effect from appearing before the update that informed it This page is the source evidence for that distinction.",
+        "intuition": "a receiver waits until its known causal predecessors have been delivered",
+        "technicalDetail": "If broadcast(m1) happens before broadcast(m2), every process delivers m1 before m2; concurrent broadcasts may be reordered.",
+        "pitfall": "Do not require one global order for concurrent messages when the guarantee only preserves causality.",
+        "connection": "Vector or dependency metadata can provide the knowledge needed by the receiver buffer."
       },
       "textbookRefs": [],
       "referenceRefs": [],
       "socraticQuestions": [
         {
-          "type": "recall",
-          "prompt": "What is the main claim or object on this slide?",
-          "answer": "State the slide's main claim and name its symbols.",
-          "hint": "Name the object before explaining its consequence."
+          "type": "causal broadcast",
+          "prompt": "For \"Implementation of causal broadcast\", which pair must be ordered and which pair may remain concurrent?",
+          "answer": "A causally related pair must be delivered in causal order; concurrent broadcasts may be delivered in either order.",
+          "hint": "Find the message path before comparing delivery."
         }
       ],
       "kind": "lecture-source",
-      "status": "reviewed"
+      "status": "reviewed",
+      "title": "Implementation of causal broadcast",
+      "lecturePriority": "support"
     },
     {
       "slideId": "dsa5208-lec2-15",
@@ -2987,25 +3015,27 @@
       },
       "sourceText": "Lecture 2: Broadcast and Synchronizers\nBroadcast\nImplementation of causal broadcast\nAlgorithm Causal broadcast\n1: (Local variables)\n2: sendSeq ←0\n3: delivered[1 · · · n] ←0\n4: buffer ←{}\n11: function BroadcastRecv((i, dep, msg): received message)\n12:\nbuffer := buffer ∪{(i, dep, msg)}\n13:\nwhile ∃(sender, deps, m) ∈buffer such that deps ≤delivered do\n14:\nDeliver the message m\n15:\nbuffer := buffer\\{(sender, deps, m)}\n16:\ndelivered[sender] := delivered[sender] + 1\n17:\nend while\n18: end function",
       "explanation": {
-        "whatYouSee": "DSA5208 Lecture 2 · slide 15: Concept and worked notation. Read the source layer for the exact notation and diagram.",
-        "whyItMatters": "This is official lecture-core evidence for DSA5208 Lecture 2. Use it to anchor the concept before opening linked exercises or textbook depth.",
-        "intuition": "Read the page as one claim: identify the object, then its role in the algorithm or definition.",
-        "technicalDetail": "Use the exact notation and assumptions shown on this page before extending the result.",
-        "pitfall": "Do not infer a stronger guarantee than the page states; check the source layer and neighboring slides.",
-        "connection": "Connect this page to the next step in the lecture pipeline and to the linked lesson practice."
+        "whatYouSee": "Implementation of causal broadcast · source page 15 shows a delivery rule that follows the happens-before relation between broadcasts.",
+        "whyItMatters": "causal delivery prevents an effect from appearing before the update that informed it This page is the source evidence for that distinction.",
+        "intuition": "a receiver waits until its known causal predecessors have been delivered",
+        "technicalDetail": "If broadcast(m1) happens before broadcast(m2), every process delivers m1 before m2; concurrent broadcasts may be reordered.",
+        "pitfall": "Do not require one global order for concurrent messages when the guarantee only preserves causality.",
+        "connection": "Vector or dependency metadata can provide the knowledge needed by the receiver buffer."
       },
       "textbookRefs": [],
       "referenceRefs": [],
       "socraticQuestions": [
         {
-          "type": "recall",
-          "prompt": "What is the main claim or object on this slide?",
-          "answer": "State the slide's main claim and name its symbols.",
-          "hint": "Name the object before explaining its consequence."
+          "type": "causal broadcast",
+          "prompt": "For \"Implementation of causal broadcast · source page 15\", which pair must be ordered and which pair may remain concurrent?",
+          "answer": "A causally related pair must be delivered in causal order; concurrent broadcasts may be delivered in either order.",
+          "hint": "Find the message path before comparing delivery."
         }
       ],
       "kind": "lecture-source",
-      "status": "reviewed"
+      "status": "reviewed",
+      "title": "Implementation of causal broadcast · source page 15",
+      "lecturePriority": "support"
     },
     {
       "slideId": "dsa5208-lec2-16",
@@ -3153,25 +3183,27 @@
       },
       "sourceText": "Lecture 2: Broadcast and Synchronizers\nBroadcast\nTotal order broadcast\nAll processes deliver messages in the same order.\n▶If the message m2 depends on the message m1, meaning that m2 is\nbroadcast after m1 is received on the same process, then the total\norder broadcast indicates that m1 is delivered before m2 on all\nprocesses.\n▶When m1 and m2 are broadcast by the same process, the delivery\ncould be non-causal.",
       "explanation": {
-        "whatYouSee": "DSA5208 Lecture 2 · slide 16: Concept and worked notation. Read the source layer for the exact notation and diagram.",
-        "whyItMatters": "This is official lecture-core evidence for DSA5208 Lecture 2. Use it to anchor the concept before opening linked exercises or textbook depth.",
-        "intuition": "Read the page as one claim: identify the object, then its role in the algorithm or definition.",
-        "technicalDetail": "Use the exact notation and assumptions shown on this page before extending the result.",
-        "pitfall": "Do not infer a stronger guarantee than the page states; check the source layer and neighboring slides.",
-        "connection": "Connect this page to the next step in the lecture pipeline and to the linked lesson practice."
+        "whatYouSee": "Total order broadcast shows all processes agreeing on one order for delivered messages.",
+        "whyItMatters": "replicas that apply the same operations in the same order can converge on the same state This page is the source evidence for that distinction.",
+        "intuition": "the protocol removes receiver-specific choices by committing one shared sequence",
+        "technicalDetail": "Total order requires every process to deliver messages in the same order, even when the messages were concurrent.",
+        "pitfall": "Do not claim that total order alone preserves causal order unless the protocol adds that property.",
+        "connection": "FIFO-total order strengthens this rule with sender-local order."
       },
       "textbookRefs": [],
       "referenceRefs": [],
       "socraticQuestions": [
         {
-          "type": "recall",
-          "prompt": "What is the main claim or object on this slide?",
-          "answer": "State the slide's main claim and name its symbols.",
-          "hint": "Name the object before explaining its consequence."
+          "type": "total-order broadcast",
+          "prompt": "Why does \"Total order broadcast\" help replicas converge even for concurrent broadcasts?",
+          "answer": "Every process applies concurrent messages in the same agreed sequence, so their state transitions remain aligned.",
+          "hint": "Compare two receivers' delivery logs."
         }
       ],
       "kind": "lecture-source",
-      "status": "reviewed"
+      "status": "reviewed",
+      "title": "Total order broadcast",
+      "lecturePriority": "core"
     },
     {
       "slideId": "dsa5208-lec2-17",
@@ -3287,25 +3319,27 @@
       },
       "sourceText": "Lecture 2: Broadcast and Synchronizers\nBroadcast\nFIFO-total order broadcast\nAll messages are delivered in the same order, and messages broadcast by\nthe same process follows the FIFO order.\n▶FIFO-total order broadcast =⇒causal broadcast.",
       "explanation": {
-        "whatYouSee": "DSA5208 Lecture 2 · slide 17: Concept and worked notation. Read the source layer for the exact notation and diagram.",
-        "whyItMatters": "This is official lecture-core evidence for DSA5208 Lecture 2. Use it to anchor the concept before opening linked exercises or textbook depth.",
-        "intuition": "Read the page as one claim: identify the object, then its role in the algorithm or definition.",
-        "technicalDetail": "Use the exact notation and assumptions shown on this page before extending the result.",
-        "pitfall": "Do not infer a stronger guarantee than the page states; check the source layer and neighboring slides.",
-        "connection": "Connect this page to the next step in the lecture pipeline and to the linked lesson practice."
+        "whatYouSee": "FIFO-total order broadcast shows a global delivery sequence with the sender-local FIFO rule retained.",
+        "whyItMatters": "the combined guarantee gives deterministic replica state without losing per-sender order This page is the source evidence for that distinction.",
+        "intuition": "first choose one common sequence, then check each sender's messages still appear in order",
+        "technicalDetail": "All processes deliver the same sequence, and messages from a single process follow FIFO order; this implies causal delivery for the stated model.",
+        "pitfall": "Do not confuse a common total order with a proof that every ordered pair was causally related.",
+        "connection": "The implementation uses scalar timestamps and a coordination algorithm to agree on the sequence."
       },
       "textbookRefs": [],
       "referenceRefs": [],
       "socraticQuestions": [
         {
-          "type": "recall",
-          "prompt": "What is the main claim or object on this slide?",
-          "answer": "State the slide's main claim and name its symbols.",
-          "hint": "Name the object before explaining its consequence."
+          "type": "FIFO-total order",
+          "prompt": "What two constraints must a process verify on the \"FIFO-total order broadcast\" page?",
+          "answer": "It must use the same total delivery sequence as every process and preserve each sender's FIFO order inside that sequence.",
+          "hint": "Look for one global rule and one per-sender rule."
         }
       ],
       "kind": "lecture-source",
-      "status": "reviewed"
+      "status": "reviewed",
+      "title": "FIFO-total order broadcast",
+      "lecturePriority": "core"
     },
     {
       "slideId": "dsa5208-lec2-18",
@@ -3469,25 +3503,27 @@
       },
       "sourceText": "Lecture 2: Broadcast and Synchronizers\nBroadcast\nImplementation of FIFO-total order broadcast\nFIFO-total order broadcast can be implemented using Lamport’s scalar\ntime (Skeen’s algorithm):\n▶The sender broadcasts the message to all processes.\n▶Each recipient sends its local scalar time back to the sender and\nkeeps the message on hold.\n▶The sender collects all the received timestamps and broadcasts the\nlargest one to all recipients.\n▶Recipients order messages by this timestamp and deliver a message\nwhen it is first in the queue.",
       "explanation": {
-        "whatYouSee": "DSA5208 Lecture 2 · slide 18: Concept and worked notation. Read the source layer for the exact notation and diagram.",
-        "whyItMatters": "This is official lecture-core evidence for DSA5208 Lecture 2. Use it to anchor the concept before opening linked exercises or textbook depth.",
-        "intuition": "Read the page as one claim: identify the object, then its role in the algorithm or definition.",
-        "technicalDetail": "Use the exact notation and assumptions shown on this page before extending the result.",
-        "pitfall": "Do not infer a stronger guarantee than the page states; check the source layer and neighboring slides.",
-        "connection": "Connect this page to the next step in the lecture pipeline and to the linked lesson practice."
+        "whatYouSee": "Implementation of FIFO-total order broadcast shows a global delivery sequence with the sender-local FIFO rule retained.",
+        "whyItMatters": "the combined guarantee gives deterministic replica state without losing per-sender order This page is the source evidence for that distinction.",
+        "intuition": "first choose one common sequence, then check each sender's messages still appear in order",
+        "technicalDetail": "All processes deliver the same sequence, and messages from a single process follow FIFO order; this implies causal delivery for the stated model.",
+        "pitfall": "Do not confuse a common total order with a proof that every ordered pair was causally related.",
+        "connection": "The implementation uses scalar timestamps and a coordination algorithm to agree on the sequence."
       },
       "textbookRefs": [],
       "referenceRefs": [],
       "socraticQuestions": [
         {
-          "type": "recall",
-          "prompt": "What is the main claim or object on this slide?",
-          "answer": "State the slide's main claim and name its symbols.",
-          "hint": "Name the object before explaining its consequence."
+          "type": "FIFO-total order",
+          "prompt": "What two constraints must a process verify on the \"Implementation of FIFO-total order broadcast\" page?",
+          "answer": "It must use the same total delivery sequence as every process and preserve each sender's FIFO order inside that sequence.",
+          "hint": "Look for one global rule and one per-sender rule."
         }
       ],
       "kind": "lecture-source",
-      "status": "reviewed"
+      "status": "reviewed",
+      "title": "Implementation of FIFO-total order broadcast",
+      "lecturePriority": "support"
     },
     {
       "slideId": "dsa5208-lec2-19",
@@ -3683,25 +3719,27 @@
       },
       "sourceText": "Lecture 2: Broadcast and Synchronizers\nBroadcast\nImplementation of FIFO-total order broadcast\nFIFO-total order broadcast can be implemented using Lamport’s scalar\ntime (Skeen’s algorithm):\n▶The sender broadcasts the message to all processes.\n▶Each recipient sends its local scalar time back to the sender and\nkeeps the message on hold.\n▶The sender collects all the received timestamps and broadcasts the\nlargest one to all recipients.\n▶Recipients order messages by this timestamp and deliver a message\nwhen it is first in the queue.\nAlternatively, any process that wants to broadcast a message should send\nthe message to a leader, and the leader will perform a FIFO broadcast of\nthe message to all processes.\n▶The naive implementation of the algorithm is not fault tolerant.\n▶It needs to be supplemented by a leader-election algorithm.",
       "explanation": {
-        "whatYouSee": "DSA5208 Lecture 2 · slide 19: Concept and worked notation. Read the source layer for the exact notation and diagram.",
-        "whyItMatters": "This is official lecture-core evidence for DSA5208 Lecture 2. Use it to anchor the concept before opening linked exercises or textbook depth.",
-        "intuition": "Read the page as one claim: identify the object, then its role in the algorithm or definition.",
-        "technicalDetail": "Use the exact notation and assumptions shown on this page before extending the result.",
-        "pitfall": "Do not infer a stronger guarantee than the page states; check the source layer and neighboring slides.",
-        "connection": "Connect this page to the next step in the lecture pipeline and to the linked lesson practice."
+        "whatYouSee": "Implementation of FIFO-total order broadcast · source page 19 shows a global delivery sequence with the sender-local FIFO rule retained.",
+        "whyItMatters": "the combined guarantee gives deterministic replica state without losing per-sender order This page is the source evidence for that distinction.",
+        "intuition": "first choose one common sequence, then check each sender's messages still appear in order",
+        "technicalDetail": "All processes deliver the same sequence, and messages from a single process follow FIFO order; this implies causal delivery for the stated model.",
+        "pitfall": "Do not confuse a common total order with a proof that every ordered pair was causally related.",
+        "connection": "The implementation uses scalar timestamps and a coordination algorithm to agree on the sequence."
       },
       "textbookRefs": [],
       "referenceRefs": [],
       "socraticQuestions": [
         {
-          "type": "recall",
-          "prompt": "What is the main claim or object on this slide?",
-          "answer": "State the slide's main claim and name its symbols.",
-          "hint": "Name the object before explaining its consequence."
+          "type": "FIFO-total order",
+          "prompt": "What two constraints must a process verify on the \"Implementation of FIFO-total order broadcast · source page 19\" page?",
+          "answer": "It must use the same total delivery sequence as every process and preserve each sender's FIFO order inside that sequence.",
+          "hint": "Look for one global rule and one per-sender rule."
         }
       ],
       "kind": "lecture-source",
-      "status": "reviewed"
+      "status": "reviewed",
+      "title": "Implementation of FIFO-total order broadcast · source page 19",
+      "lecturePriority": "support"
     },
     {
       "slideId": "dsa5208-lec2-20",
@@ -3897,25 +3935,27 @@
       },
       "sourceText": "Lecture 2: Broadcast and Synchronizers\nShortest-path problem\n1\nBroadcast\n2\nShortest-path problem\n3\nSynchronizers\n4\nSummary",
       "explanation": {
-        "whatYouSee": "DSA5208 Lecture 2 · slide 20: Concept and worked notation. Read the source layer for the exact notation and diagram.",
-        "whyItMatters": "This is official lecture-core evidence for DSA5208 Lecture 2. Use it to anchor the concept before opening linked exercises or textbook depth.",
-        "intuition": "Read the page as one claim: identify the object, then its role in the algorithm or definition.",
-        "technicalDetail": "Use the exact notation and assumptions shown on this page before extending the result.",
-        "pitfall": "Do not infer a stronger guarantee than the page states; check the source layer and neighboring slides.",
-        "connection": "Connect this page to the next step in the lecture pipeline and to the linked lesson practice."
+        "whatYouSee": "Shortest-path problem roadmap shows a navigation map separating the lecture's major sections.",
+        "whyItMatters": "the roadmap keeps overview pages from being mistaken for algorithm definitions This page is the source evidence for that distinction.",
+        "intuition": "use the map to locate the source section, then study the detailed page that follows",
+        "technicalDetail": "The page is an index of topics; it does not add a new ordering or consistency guarantee.",
+        "pitfall": "Do not cite a roadmap entry as if it were the detailed proof or implementation page.",
+        "connection": "Follow each entry to its source-backed definition and worked trace."
       },
       "textbookRefs": [],
       "referenceRefs": [],
       "socraticQuestions": [
         {
-          "type": "recall",
-          "prompt": "What is the main claim or object on this slide?",
-          "answer": "State the slide's main claim and name its symbols.",
-          "hint": "Name the object before explaining its consequence."
+          "type": "lecture roadmap",
+          "prompt": "What role does \"Shortest-path problem roadmap\" play in the lecture structure?",
+          "answer": "It locates the major source sections; the detailed claims are established on the pages those entries point to.",
+          "hint": "Treat navigation as scope, not derivation."
         }
       ],
       "kind": "lecture-source",
-      "status": "reviewed"
+      "status": "reviewed",
+      "title": "Shortest-path problem roadmap",
+      "lecturePriority": "support"
     },
     {
       "slideId": "dsa5208-lec2-21",
@@ -4031,25 +4071,27 @@
       },
       "sourceText": "Lecture 2: Broadcast and Synchronizers\nShortest-path problem\nBroadcast on a tree\nHow is the message broadcast from the sender to all other processes?\nSender",
       "explanation": {
-        "whatYouSee": "DSA5208 Lecture 2 · slide 21: Concept and worked notation. Read the source layer for the exact notation and diagram.",
-        "whyItMatters": "This is official lecture-core evidence for DSA5208 Lecture 2. Use it to anchor the concept before opening linked exercises or textbook depth.",
-        "intuition": "Read the page as one claim: identify the object, then its role in the algorithm or definition.",
-        "technicalDetail": "Use the exact notation and assumptions shown on this page before extending the result.",
-        "pitfall": "Do not infer a stronger guarantee than the page states; check the source layer and neighboring slides.",
-        "connection": "Connect this page to the next step in the lecture pipeline and to the linked lesson practice."
+        "whatYouSee": "Broadcast on a tree shows a sender forwarding one message along a spanning tree.",
+        "whyItMatters": "the tree removes redundant fan-out links while retaining reachability to every process This page is the source evidence for that distinction.",
+        "intuition": "each process forwards once to its children after learning the message from its parent",
+        "technicalDetail": "A rooted tree gives each non-root process one upstream path and a bounded set of downstream forwarding edges.",
+        "pitfall": "Do not count every graph edge as a forwarding edge when the algorithm uses only the tree.",
+        "connection": "The next section changes the question from reachability to minimum-latency paths."
       },
       "textbookRefs": [],
       "referenceRefs": [],
       "socraticQuestions": [
         {
-          "type": "recall",
-          "prompt": "What is the main claim or object on this slide?",
-          "answer": "State the slide's main claim and name its symbols.",
-          "hint": "Name the object before explaining its consequence."
+          "type": "tree broadcast",
+          "prompt": "In \"Broadcast on a tree\", why does a spanning tree avoid duplicate forwarding?",
+          "answer": "Each process has one parent in the tree, so it receives the broadcast through one upstream path and forwards it only to its children.",
+          "hint": "Count parent and child edges, not all network edges."
         }
       ],
       "kind": "lecture-source",
-      "status": "reviewed"
+      "status": "reviewed",
+      "title": "Broadcast on a tree",
+      "lecturePriority": "support"
     },
     {
       "slideId": "dsa5208-lec2-22",
@@ -4165,25 +4207,27 @@
       },
       "sourceText": "Lecture 2: Broadcast and Synchronizers\nShortest-path problem\nSingle source shortest path problem\nProblem: Find the shortest path from the sender to all other processes.\nWeight = Network Latency",
       "explanation": {
-        "whatYouSee": "DSA5208 Lecture 2 · slide 22: Concept and worked notation. Read the source layer for the exact notation and diagram.",
-        "whyItMatters": "This is official lecture-core evidence for DSA5208 Lecture 2. Use it to anchor the concept before opening linked exercises or textbook depth.",
-        "intuition": "Read the page as one claim: identify the object, then its role in the algorithm or definition.",
-        "technicalDetail": "Use the exact notation and assumptions shown on this page before extending the result.",
-        "pitfall": "Do not infer a stronger guarantee than the page states; check the source layer and neighboring slides.",
-        "connection": "Connect this page to the next step in the lecture pipeline and to the linked lesson practice."
+        "whatYouSee": "Single source shortest path problem shows a weighted network with one sender acting as the source.",
+        "whyItMatters": "the distance estimate determines the fastest known route from the source to every process This page is the source evidence for that distinction.",
+        "intuition": "start with only the source known, then improve a neighbor's estimate through a shorter predecessor route",
+        "technicalDetail": "Each candidate distance is a predecessor estimate plus the edge latency; the minimum candidate becomes the new estimate.",
+        "pitfall": "Do not confuse a broadcast tree with a shortest-path tree when edge weights differ.",
+        "connection": "Bellman-Ford supplies synchronous and asynchronous update rules for these estimates."
       },
       "textbookRefs": [],
       "referenceRefs": [],
       "socraticQuestions": [
         {
-          "type": "recall",
-          "prompt": "What is the main claim or object on this slide?",
-          "answer": "State the slide's main claim and name its symbols.",
-          "hint": "Name the object before explaining its consequence."
+          "type": "single-source shortest path",
+          "prompt": "What is the optimization target on the \"Single source shortest path problem\" page?",
+          "answer": "For each process, find the minimum total edge latency of any path from the source sender.",
+          "hint": "The edge weights are network latencies."
         }
       ],
       "kind": "lecture-source",
-      "status": "reviewed"
+      "status": "reviewed",
+      "title": "Single source shortest path problem",
+      "lecturePriority": "core"
     },
     {
       "slideId": "dsa5208-lec2-23",
@@ -4395,25 +4439,27 @@
       },
       "sourceText": "Lecture 2: Broadcast and Synchronizers\nShortest-path problem\nSynchronous and asynchronous systems\n▶A synchronous system is a system that satisfies the following\nproperties:\n1\nThere is a known upper bound on the message communication\ndelay.\n2\nThere is a bounded drift rate for the local clock of each\nprocessor with respect to real time.\n3\nThere is a known upper bound on the time taken by a process\nto execute a logical step in the execution.",
       "explanation": {
-        "whatYouSee": "DSA5208 Lecture 2 · slide 23: Concept and worked notation. Read the source layer for the exact notation and diagram.",
-        "whyItMatters": "This is official lecture-core evidence for DSA5208 Lecture 2. Use it to anchor the concept before opening linked exercises or textbook depth.",
-        "intuition": "Read the page as one claim: identify the object, then its role in the algorithm or definition.",
-        "technicalDetail": "Use the exact notation and assumptions shown on this page before extending the result.",
-        "pitfall": "Do not infer a stronger guarantee than the page states; check the source layer and neighboring slides.",
-        "connection": "Connect this page to the next step in the lecture pipeline and to the linked lesson practice."
+        "whatYouSee": "Synchronous and asynchronous systems shows the timing assumptions that separate round-based from event-driven execution.",
+        "whyItMatters": "the timing model determines when an algorithm may use a neighbor's estimate and when termination can be detected This page is the source evidence for that distinction.",
+        "intuition": "synchronous rounds provide a shared pace; asynchronous processes react to messages at different times",
+        "technicalDetail": "A synchronous model bounds computation and communication delays; an asynchronous model cannot rely on a common round boundary.",
+        "pitfall": "Do not use a synchronous round argument to justify an asynchronous update schedule.",
+        "connection": "The two Bellman-Ford variants apply the same relaxation idea under different timing contracts."
       },
       "textbookRefs": [],
       "referenceRefs": [],
       "socraticQuestions": [
         {
-          "type": "recall",
-          "prompt": "What is the main claim or object on this slide?",
-          "answer": "State the slide's main claim and name its symbols.",
-          "hint": "Name the object before explaining its consequence."
+          "type": "system timing models",
+          "prompt": "Which assumption on \"Synchronous and asynchronous systems\" permits a process to reason in rounds?",
+          "answer": "Known bounds on computation and communication let processes use a shared round structure; asynchronous execution lacks that common boundary.",
+          "hint": "Separate delay bounds from algorithmic logic."
         }
       ],
       "kind": "lecture-source",
-      "status": "reviewed"
+      "status": "reviewed",
+      "title": "Synchronous and asynchronous systems",
+      "lecturePriority": "core"
     },
     {
       "slideId": "dsa5208-lec2-24",
@@ -4625,25 +4671,27 @@
       },
       "sourceText": "Lecture 2: Broadcast and Synchronizers\nShortest-path problem\nSynchronous and asynchronous systems\n▶A synchronous system is a system that satisfies the following\nproperties:\n1\nThere is a known upper bound on the message communication\ndelay.\n2\nThere is a bounded drift rate for the local clock of each\nprocessor with respect to real time.\n3\nThere is a known upper bound on the time taken by a process\nto execute a logical step in the execution.\nIn a synchronous system, every process knows when other processes\nwill complete certain executions.",
       "explanation": {
-        "whatYouSee": "DSA5208 Lecture 2 · slide 24: Concept and worked notation. Read the source layer for the exact notation and diagram.",
-        "whyItMatters": "This is official lecture-core evidence for DSA5208 Lecture 2. Use it to anchor the concept before opening linked exercises or textbook depth.",
-        "intuition": "Read the page as one claim: identify the object, then its role in the algorithm or definition.",
-        "technicalDetail": "Use the exact notation and assumptions shown on this page before extending the result.",
-        "pitfall": "Do not infer a stronger guarantee than the page states; check the source layer and neighboring slides.",
-        "connection": "Connect this page to the next step in the lecture pipeline and to the linked lesson practice."
+        "whatYouSee": "Synchronous and asynchronous systems · source page 24 shows the timing assumptions that separate round-based from event-driven execution.",
+        "whyItMatters": "the timing model determines when an algorithm may use a neighbor's estimate and when termination can be detected This page is the source evidence for that distinction.",
+        "intuition": "synchronous rounds provide a shared pace; asynchronous processes react to messages at different times",
+        "technicalDetail": "A synchronous model bounds computation and communication delays; an asynchronous model cannot rely on a common round boundary.",
+        "pitfall": "Do not use a synchronous round argument to justify an asynchronous update schedule.",
+        "connection": "The two Bellman-Ford variants apply the same relaxation idea under different timing contracts."
       },
       "textbookRefs": [],
       "referenceRefs": [],
       "socraticQuestions": [
         {
-          "type": "recall",
-          "prompt": "What is the main claim or object on this slide?",
-          "answer": "State the slide's main claim and name its symbols.",
-          "hint": "Name the object before explaining its consequence."
+          "type": "system timing models",
+          "prompt": "Which assumption on \"Synchronous and asynchronous systems · source page 24\" permits a process to reason in rounds?",
+          "answer": "Known bounds on computation and communication let processes use a shared round structure; asynchronous execution lacks that common boundary.",
+          "hint": "Separate delay bounds from algorithmic logic."
         }
       ],
       "kind": "lecture-source",
-      "status": "reviewed"
+      "status": "reviewed",
+      "title": "Synchronous and asynchronous systems · source page 24",
+      "lecturePriority": "support"
     },
     {
       "slideId": "dsa5208-lec2-25",
@@ -4871,25 +4919,27 @@
       },
       "sourceText": "Lecture 2: Broadcast and Synchronizers\nShortest-path problem\nSynchronous and asynchronous systems\n▶A synchronous system is a system that satisfies the following\nproperties:\n1\nThere is a known upper bound on the message communication\ndelay.\n2\nThere is a bounded drift rate for the local clock of each\nprocessor with respect to real time.\n3\nThere is a known upper bound on the time taken by a process\nto execute a logical step in the execution.\nIn a synchronous system, every process knows when other processes\nwill complete certain executions.\n▶An asynchronous system is a system in which none of the above\nproperties are satisfied. Distributed systems are inherently\nasynchronous.",
       "explanation": {
-        "whatYouSee": "DSA5208 Lecture 2 · slide 25: Concept and worked notation. Read the source layer for the exact notation and diagram.",
-        "whyItMatters": "This is official lecture-core evidence for DSA5208 Lecture 2. Use it to anchor the concept before opening linked exercises or textbook depth.",
-        "intuition": "Read the page as one claim: identify the object, then its role in the algorithm or definition.",
-        "technicalDetail": "Use the exact notation and assumptions shown on this page before extending the result.",
-        "pitfall": "Do not infer a stronger guarantee than the page states; check the source layer and neighboring slides.",
-        "connection": "Connect this page to the next step in the lecture pipeline and to the linked lesson practice."
+        "whatYouSee": "Synchronous and asynchronous systems · source page 25 shows the timing assumptions that separate round-based from event-driven execution.",
+        "whyItMatters": "the timing model determines when an algorithm may use a neighbor's estimate and when termination can be detected This page is the source evidence for that distinction.",
+        "intuition": "synchronous rounds provide a shared pace; asynchronous processes react to messages at different times",
+        "technicalDetail": "A synchronous model bounds computation and communication delays; an asynchronous model cannot rely on a common round boundary.",
+        "pitfall": "Do not use a synchronous round argument to justify an asynchronous update schedule.",
+        "connection": "The two Bellman-Ford variants apply the same relaxation idea under different timing contracts."
       },
       "textbookRefs": [],
       "referenceRefs": [],
       "socraticQuestions": [
         {
-          "type": "recall",
-          "prompt": "What is the main claim or object on this slide?",
-          "answer": "State the slide's main claim and name its symbols.",
-          "hint": "Name the object before explaining its consequence."
+          "type": "system timing models",
+          "prompt": "Which assumption on \"Synchronous and asynchronous systems · source page 25\" permits a process to reason in rounds?",
+          "answer": "Known bounds on computation and communication let processes use a shared round structure; asynchronous execution lacks that common boundary.",
+          "hint": "Separate delay bounds from algorithmic logic."
         }
       ],
       "kind": "lecture-source",
-      "status": "reviewed"
+      "status": "reviewed",
+      "title": "Synchronous and asynchronous systems · source page 25",
+      "lecturePriority": "support"
     },
     {
       "slideId": "dsa5208-lec2-26",
@@ -5213,25 +5263,27 @@
       },
       "sourceText": "Lecture 2: Broadcast and Synchronizers\nShortest-path problem\nSynchronous Bellman-Ford algorithm\nIn each round,\nj {(length of pj) + weightj,i}.\n(length of pi) = min\nThe shortest paths are found after n −1 rounds.\nRound 1:\np1: length = 0, parent = ⊥\np2: length = 5, parent = 1\np3: length = 8, parent = 1\np4: length = 2, parent = 1\np5: length = 7, parent = 1",
       "explanation": {
-        "whatYouSee": "DSA5208 Lecture 2 · slide 26: Concept and worked notation. Read the source layer for the exact notation and diagram.",
-        "whyItMatters": "This is official lecture-core evidence for DSA5208 Lecture 2. Use it to anchor the concept before opening linked exercises or textbook depth.",
-        "intuition": "Read the page as one claim: identify the object, then its role in the algorithm or definition.",
-        "technicalDetail": "Use the exact notation and assumptions shown on this page before extending the result.",
-        "pitfall": "Do not infer a stronger guarantee than the page states; check the source layer and neighboring slides.",
-        "connection": "Connect this page to the next step in the lecture pipeline and to the linked lesson practice."
+        "whatYouSee": "Synchronous Bellman-Ford algorithm shows round-by-round distance relaxation from predecessor estimates.",
+        "whyItMatters": "the round barrier makes every process use a consistent snapshot of the previous round This page is the source evidence for that distinction.",
+        "intuition": "each process asks all predecessors for candidates, keeps the smallest, and waits for the next round",
+        "technicalDetail": "The update is d_i <- min_j(d_j + w_{j,i}) using values from the prior round; after enough rounds, shortest paths are settled.",
+        "pitfall": "Do not feed a same-round update into the recurrence when the analysis assumes previous-round values.",
+        "connection": "The asynchronous variant removes the barrier and reacts immediately to improved estimates."
       },
       "textbookRefs": [],
       "referenceRefs": [],
       "socraticQuestions": [
         {
-          "type": "recall",
-          "prompt": "What is the main claim or object on this slide?",
-          "answer": "State the slide's main claim and name its symbols.",
-          "hint": "Name the object before explaining its consequence."
+          "type": "synchronous Bellman-Ford",
+          "prompt": "What does the round boundary protect in \"Synchronous Bellman-Ford algorithm\"?",
+          "answer": "It ensures that each update uses a consistent prior-round set of predecessor estimates rather than an arbitrary mix of fresh values.",
+          "hint": "Label the round in which each estimate was produced."
         }
       ],
       "kind": "lecture-source",
-      "status": "reviewed"
+      "status": "reviewed",
+      "title": "Synchronous Bellman-Ford algorithm",
+      "lecturePriority": "core"
     },
     {
       "slideId": "dsa5208-lec2-27",
@@ -5555,25 +5607,27 @@
       },
       "sourceText": "Lecture 2: Broadcast and Synchronizers\nShortest-path problem\nSynchronous Bellman-Ford algorithm\nIn each round,\nj {(length of pj) + weightj,i}.\n(length of pi) = min\nThe shortest paths are found after n −1 rounds.\nRound 2:\np1: length = 0, parent = ⊥\np2: length = 3, parent = 4\np3: length = 6, parent = 4\np4: length = 2, parent = 1\np5: length = 4, parent = 4",
       "explanation": {
-        "whatYouSee": "DSA5208 Lecture 2 · slide 27: Concept and worked notation. Read the source layer for the exact notation and diagram.",
-        "whyItMatters": "This is official lecture-core evidence for DSA5208 Lecture 2. Use it to anchor the concept before opening linked exercises or textbook depth.",
-        "intuition": "Read the page as one claim: identify the object, then its role in the algorithm or definition.",
-        "technicalDetail": "Use the exact notation and assumptions shown on this page before extending the result.",
-        "pitfall": "Do not infer a stronger guarantee than the page states; check the source layer and neighboring slides.",
-        "connection": "Connect this page to the next step in the lecture pipeline and to the linked lesson practice."
+        "whatYouSee": "Synchronous Bellman-Ford algorithm · source page 27 shows round-by-round distance relaxation from predecessor estimates.",
+        "whyItMatters": "the round barrier makes every process use a consistent snapshot of the previous round This page is the source evidence for that distinction.",
+        "intuition": "each process asks all predecessors for candidates, keeps the smallest, and waits for the next round",
+        "technicalDetail": "The update is d_i <- min_j(d_j + w_{j,i}) using values from the prior round; after enough rounds, shortest paths are settled.",
+        "pitfall": "Do not feed a same-round update into the recurrence when the analysis assumes previous-round values.",
+        "connection": "The asynchronous variant removes the barrier and reacts immediately to improved estimates."
       },
       "textbookRefs": [],
       "referenceRefs": [],
       "socraticQuestions": [
         {
-          "type": "recall",
-          "prompt": "What is the main claim or object on this slide?",
-          "answer": "State the slide's main claim and name its symbols.",
-          "hint": "Name the object before explaining its consequence."
+          "type": "synchronous Bellman-Ford",
+          "prompt": "What does the round boundary protect in \"Synchronous Bellman-Ford algorithm · source page 27\"?",
+          "answer": "It ensures that each update uses a consistent prior-round set of predecessor estimates rather than an arbitrary mix of fresh values.",
+          "hint": "Label the round in which each estimate was produced."
         }
       ],
       "kind": "lecture-source",
-      "status": "reviewed"
+      "status": "reviewed",
+      "title": "Synchronous Bellman-Ford algorithm · source page 27",
+      "lecturePriority": "support"
     },
     {
       "slideId": "dsa5208-lec2-28",
@@ -5897,25 +5951,27 @@
       },
       "sourceText": "Lecture 2: Broadcast and Synchronizers\nShortest-path problem\nSynchronous Bellman-Ford algorithm\nIn each round,\nj {(length of pj) + weightj,i}.\n(length of pi) = min\nThe shortest paths are found after n −1 rounds.\nRound 3:\np1: length = 0, parent = ⊥\np2: length = 3, parent = 4\np3: length = 5, parent = 5\np4: length = 2, parent = 1\np5: length = 4, parent = 4",
       "explanation": {
-        "whatYouSee": "DSA5208 Lecture 2 · slide 28: Concept and worked notation. Read the source layer for the exact notation and diagram.",
-        "whyItMatters": "This is official lecture-core evidence for DSA5208 Lecture 2. Use it to anchor the concept before opening linked exercises or textbook depth.",
-        "intuition": "Read the page as one claim: identify the object, then its role in the algorithm or definition.",
-        "technicalDetail": "Use the exact notation and assumptions shown on this page before extending the result.",
-        "pitfall": "Do not infer a stronger guarantee than the page states; check the source layer and neighboring slides.",
-        "connection": "Connect this page to the next step in the lecture pipeline and to the linked lesson practice."
+        "whatYouSee": "Synchronous Bellman-Ford algorithm · source page 28 shows round-by-round distance relaxation from predecessor estimates.",
+        "whyItMatters": "the round barrier makes every process use a consistent snapshot of the previous round This page is the source evidence for that distinction.",
+        "intuition": "each process asks all predecessors for candidates, keeps the smallest, and waits for the next round",
+        "technicalDetail": "The update is d_i <- min_j(d_j + w_{j,i}) using values from the prior round; after enough rounds, shortest paths are settled.",
+        "pitfall": "Do not feed a same-round update into the recurrence when the analysis assumes previous-round values.",
+        "connection": "The asynchronous variant removes the barrier and reacts immediately to improved estimates."
       },
       "textbookRefs": [],
       "referenceRefs": [],
       "socraticQuestions": [
         {
-          "type": "recall",
-          "prompt": "What is the main claim or object on this slide?",
-          "answer": "State the slide's main claim and name its symbols.",
-          "hint": "Name the object before explaining its consequence."
+          "type": "synchronous Bellman-Ford",
+          "prompt": "What does the round boundary protect in \"Synchronous Bellman-Ford algorithm · source page 28\"?",
+          "answer": "It ensures that each update uses a consistent prior-round set of predecessor estimates rather than an arbitrary mix of fresh values.",
+          "hint": "Label the round in which each estimate was produced."
         }
       ],
       "kind": "lecture-source",
-      "status": "reviewed"
+      "status": "reviewed",
+      "title": "Synchronous Bellman-Ford algorithm · source page 28",
+      "lecturePriority": "support"
     },
     {
       "slideId": "dsa5208-lec2-29",
@@ -6239,25 +6295,27 @@
       },
       "sourceText": "Lecture 2: Broadcast and Synchronizers\nShortest-path problem\nSynchronous Bellman-Ford algorithm\nIn each round,\nj {(length of pj) + weightj,i}.\n(length of pi) = min\nThe shortest paths are found after n −1 rounds.\nRound 4:\np1: length = 0, parent = ⊥\np2: length = 3, parent = 4\np3: length = 5, parent = 5\np4: length = 2, parent = 1\np5: length = 4, parent = 4",
       "explanation": {
-        "whatYouSee": "DSA5208 Lecture 2 · slide 29: Concept and worked notation. Read the source layer for the exact notation and diagram.",
-        "whyItMatters": "This is official lecture-core evidence for DSA5208 Lecture 2. Use it to anchor the concept before opening linked exercises or textbook depth.",
-        "intuition": "Read the page as one claim: identify the object, then its role in the algorithm or definition.",
-        "technicalDetail": "Use the exact notation and assumptions shown on this page before extending the result.",
-        "pitfall": "Do not infer a stronger guarantee than the page states; check the source layer and neighboring slides.",
-        "connection": "Connect this page to the next step in the lecture pipeline and to the linked lesson practice."
+        "whatYouSee": "Synchronous Bellman-Ford algorithm · source page 29 shows round-by-round distance relaxation from predecessor estimates.",
+        "whyItMatters": "the round barrier makes every process use a consistent snapshot of the previous round This page is the source evidence for that distinction.",
+        "intuition": "each process asks all predecessors for candidates, keeps the smallest, and waits for the next round",
+        "technicalDetail": "The update is d_i <- min_j(d_j + w_{j,i}) using values from the prior round; after enough rounds, shortest paths are settled.",
+        "pitfall": "Do not feed a same-round update into the recurrence when the analysis assumes previous-round values.",
+        "connection": "The asynchronous variant removes the barrier and reacts immediately to improved estimates."
       },
       "textbookRefs": [],
       "referenceRefs": [],
       "socraticQuestions": [
         {
-          "type": "recall",
-          "prompt": "What is the main claim or object on this slide?",
-          "answer": "State the slide's main claim and name its symbols.",
-          "hint": "Name the object before explaining its consequence."
+          "type": "synchronous Bellman-Ford",
+          "prompt": "What does the round boundary protect in \"Synchronous Bellman-Ford algorithm · source page 29\"?",
+          "answer": "It ensures that each update uses a consistent prior-round set of predecessor estimates rather than an arbitrary mix of fresh values.",
+          "hint": "Label the round in which each estimate was produced."
         }
       ],
       "kind": "lecture-source",
-      "status": "reviewed"
+      "status": "reviewed",
+      "title": "Synchronous Bellman-Ford algorithm · source page 29",
+      "lecturePriority": "support"
     },
     {
       "slideId": "dsa5208-lec2-30",
@@ -6389,25 +6447,27 @@
       },
       "sourceText": "Lecture 2: Broadcast and Synchronizers\nShortest-path problem\nSynchronous Bellman-Ford algorithm\nAlgorithm Single source shortest path: synchronous Bellman-Ford\n1: (Local variables)\n2: length ←∞\n3: parent ←⊥\n4: Neighbors ←set of neighbors\n5: {weighti,j, weightj,i | j ∈Neighbors} ←weights of incident links\n6: if i = i0 then length := 0\n7: for round := 1 to n −1 do\n8:\nSend (i, length) to all pj for j ∈Neighbors\n9:\nReceive (j, lengthj) from pj for each j ∈Neighbors\n10:\nfor each j ∈Neighbors do\n11:\nif length > lengthj + weightj,i then\n12:\nlength := lengthj + weightj,i\n13:\nparent := j\n14:\nend if\n15:\nend for\n16: end for",
       "explanation": {
-        "whatYouSee": "DSA5208 Lecture 2 · slide 30: Concept and worked notation. Read the source layer for the exact notation and diagram.",
-        "whyItMatters": "This is official lecture-core evidence for DSA5208 Lecture 2. Use it to anchor the concept before opening linked exercises or textbook depth.",
-        "intuition": "Read the page as one claim: identify the object, then its role in the algorithm or definition.",
-        "technicalDetail": "Use the exact notation and assumptions shown on this page before extending the result.",
-        "pitfall": "Do not infer a stronger guarantee than the page states; check the source layer and neighboring slides.",
-        "connection": "Connect this page to the next step in the lecture pipeline and to the linked lesson practice."
+        "whatYouSee": "Synchronous Bellman-Ford algorithm · source page 30 shows round-by-round distance relaxation from predecessor estimates.",
+        "whyItMatters": "the round barrier makes every process use a consistent snapshot of the previous round This page is the source evidence for that distinction.",
+        "intuition": "each process asks all predecessors for candidates, keeps the smallest, and waits for the next round",
+        "technicalDetail": "The update is d_i <- min_j(d_j + w_{j,i}) using values from the prior round; after enough rounds, shortest paths are settled.",
+        "pitfall": "Do not feed a same-round update into the recurrence when the analysis assumes previous-round values.",
+        "connection": "The asynchronous variant removes the barrier and reacts immediately to improved estimates."
       },
       "textbookRefs": [],
       "referenceRefs": [],
       "socraticQuestions": [
         {
-          "type": "recall",
-          "prompt": "What is the main claim or object on this slide?",
-          "answer": "State the slide's main claim and name its symbols.",
-          "hint": "Name the object before explaining its consequence."
+          "type": "synchronous Bellman-Ford",
+          "prompt": "What does the round boundary protect in \"Synchronous Bellman-Ford algorithm · source page 30\"?",
+          "answer": "It ensures that each update uses a consistent prior-round set of predecessor estimates rather than an arbitrary mix of fresh values.",
+          "hint": "Label the round in which each estimate was produced."
         }
       ],
       "kind": "lecture-source",
-      "status": "reviewed"
+      "status": "reviewed",
+      "title": "Synchronous Bellman-Ford algorithm · source page 30",
+      "lecturePriority": "core"
     },
     {
       "slideId": "dsa5208-lec2-31",
@@ -6603,25 +6663,27 @@
       },
       "sourceText": "Lecture 2: Broadcast and Synchronizers\nShortest-path problem\nAsynchronous Bellman-Ford algorithm\nMessages received:\n0−→p2, p3, p5\np1\nMessages not received:\n0−→p4.\np1\nProcess\np1\np2\np3\np4\np5\nlength\n0\n5\n8\n∞\n7\nparent\n⊥\n1\n1\n⊥\n1",
       "explanation": {
-        "whatYouSee": "DSA5208 Lecture 2 · slide 31: Concept and worked notation. Read the source layer for the exact notation and diagram.",
-        "whyItMatters": "This is official lecture-core evidence for DSA5208 Lecture 2. Use it to anchor the concept before opening linked exercises or textbook depth.",
-        "intuition": "Read the page as one claim: identify the object, then its role in the algorithm or definition.",
-        "technicalDetail": "Use the exact notation and assumptions shown on this page before extending the result.",
-        "pitfall": "Do not infer a stronger guarantee than the page states; check the source layer and neighboring slides.",
-        "connection": "Connect this page to the next step in the lecture pipeline and to the linked lesson practice."
+        "whatYouSee": "Asynchronous Bellman-Ford algorithm shows distance messages arriving in an interleaved, event-driven order.",
+        "whyItMatters": "an improved estimate can propagate without waiting for every process to finish a global round This page is the source evidence for that distinction.",
+        "intuition": "a better number wakes up only the neighbors that can benefit from it",
+        "technicalDetail": "When a process receives a lower candidate, it updates its local estimate and sends the improvement to relevant neighbors.",
+        "pitfall": "Do not assume message arrival order is a topological or shortest-path order.",
+        "connection": "Synchronizers later emulate round progress when a synchronous algorithm is needed over an asynchronous system."
       },
       "textbookRefs": [],
       "referenceRefs": [],
       "socraticQuestions": [
         {
-          "type": "recall",
-          "prompt": "What is the main claim or object on this slide?",
-          "answer": "State the slide's main claim and name its symbols.",
-          "hint": "Name the object before explaining its consequence."
+          "type": "asynchronous Bellman-Ford",
+          "prompt": "Why is the execution in \"Asynchronous Bellman-Ford algorithm\" event-driven rather than round-driven?",
+          "answer": "Processes act when messages arrive and an estimate improves; there is no global wait for a complete round.",
+          "hint": "Follow the first lower estimate that triggers another send."
         }
       ],
       "kind": "lecture-source",
-      "status": "reviewed"
+      "status": "reviewed",
+      "title": "Asynchronous Bellman-Ford algorithm",
+      "lecturePriority": "support"
     },
     {
       "slideId": "dsa5208-lec2-32",
@@ -6913,25 +6975,27 @@
       },
       "sourceText": "Lecture 2: Broadcast and Synchronizers\nShortest-path problem\nAsynchronous Bellman-Ford algorithm\nMessages received:\n5−→p1, p3, p5,\np2\n8−→p1, p2, p5,\np3\n7−→p1, p2, p3, p4.\np5\nMessages not received:\n0−→p4,\np2\n5−→p4,\np3\n8−→p4.\np1\nProcess\np1\np2\np3\np4\np5\nlength\n0\n5\n8\n9\n7\nparent\n⊥\n1\n1\n5\n1",
       "explanation": {
-        "whatYouSee": "DSA5208 Lecture 2 · slide 32: Concept and worked notation. Read the source layer for the exact notation and diagram.",
-        "whyItMatters": "This is official lecture-core evidence for DSA5208 Lecture 2. Use it to anchor the concept before opening linked exercises or textbook depth.",
-        "intuition": "Read the page as one claim: identify the object, then its role in the algorithm or definition.",
-        "technicalDetail": "Use the exact notation and assumptions shown on this page before extending the result.",
-        "pitfall": "Do not infer a stronger guarantee than the page states; check the source layer and neighboring slides.",
-        "connection": "Connect this page to the next step in the lecture pipeline and to the linked lesson practice."
+        "whatYouSee": "Asynchronous Bellman-Ford algorithm · source page 32 shows distance messages arriving in an interleaved, event-driven order.",
+        "whyItMatters": "an improved estimate can propagate without waiting for every process to finish a global round This page is the source evidence for that distinction.",
+        "intuition": "a better number wakes up only the neighbors that can benefit from it",
+        "technicalDetail": "When a process receives a lower candidate, it updates its local estimate and sends the improvement to relevant neighbors.",
+        "pitfall": "Do not assume message arrival order is a topological or shortest-path order.",
+        "connection": "Synchronizers later emulate round progress when a synchronous algorithm is needed over an asynchronous system."
       },
       "textbookRefs": [],
       "referenceRefs": [],
       "socraticQuestions": [
         {
-          "type": "recall",
-          "prompt": "What is the main claim or object on this slide?",
-          "answer": "State the slide's main claim and name its symbols.",
-          "hint": "Name the object before explaining its consequence."
+          "type": "asynchronous Bellman-Ford",
+          "prompt": "Why is the execution in \"Asynchronous Bellman-Ford algorithm · source page 32\" event-driven rather than round-driven?",
+          "answer": "Processes act when messages arrive and an estimate improves; there is no global wait for a complete round.",
+          "hint": "Follow the first lower estimate that triggers another send."
         }
       ],
       "kind": "lecture-source",
-      "status": "reviewed"
+      "status": "reviewed",
+      "title": "Asynchronous Bellman-Ford algorithm · source page 32",
+      "lecturePriority": "support"
     },
     {
       "slideId": "dsa5208-lec2-33",
@@ -7175,25 +7239,27 @@
       },
       "sourceText": "Lecture 2: Broadcast and Synchronizers\nShortest-path problem\nAsynchronous Bellman-Ford algorithm\nMessages received:\n9−→p1, p2, p3, p5,\np4\n8−→p4,\np2\n5−→p4.\np3\nMessages not received:\n0−→p4.\np1\nProcess\np1\np2\np3\np4\np5\nlength\n0\n5\n8\n6\n7\nparent\n⊥\n1\n1\n2\n1",
       "explanation": {
-        "whatYouSee": "DSA5208 Lecture 2 · slide 33: Concept and worked notation. Read the source layer for the exact notation and diagram.",
-        "whyItMatters": "This is official lecture-core evidence for DSA5208 Lecture 2. Use it to anchor the concept before opening linked exercises or textbook depth.",
-        "intuition": "Read the page as one claim: identify the object, then its role in the algorithm or definition.",
-        "technicalDetail": "Use the exact notation and assumptions shown on this page before extending the result.",
-        "pitfall": "Do not infer a stronger guarantee than the page states; check the source layer and neighboring slides.",
-        "connection": "Connect this page to the next step in the lecture pipeline and to the linked lesson practice."
+        "whatYouSee": "Asynchronous Bellman-Ford algorithm · source page 33 shows distance messages arriving in an interleaved, event-driven order.",
+        "whyItMatters": "an improved estimate can propagate without waiting for every process to finish a global round This page is the source evidence for that distinction.",
+        "intuition": "a better number wakes up only the neighbors that can benefit from it",
+        "technicalDetail": "When a process receives a lower candidate, it updates its local estimate and sends the improvement to relevant neighbors.",
+        "pitfall": "Do not assume message arrival order is a topological or shortest-path order.",
+        "connection": "Synchronizers later emulate round progress when a synchronous algorithm is needed over an asynchronous system."
       },
       "textbookRefs": [],
       "referenceRefs": [],
       "socraticQuestions": [
         {
-          "type": "recall",
-          "prompt": "What is the main claim or object on this slide?",
-          "answer": "State the slide's main claim and name its symbols.",
-          "hint": "Name the object before explaining its consequence."
+          "type": "asynchronous Bellman-Ford",
+          "prompt": "Why is the execution in \"Asynchronous Bellman-Ford algorithm · source page 33\" event-driven rather than round-driven?",
+          "answer": "Processes act when messages arrive and an estimate improves; there is no global wait for a complete round.",
+          "hint": "Follow the first lower estimate that triggers another send."
         }
       ],
       "kind": "lecture-source",
-      "status": "reviewed"
+      "status": "reviewed",
+      "title": "Asynchronous Bellman-Ford algorithm · source page 33",
+      "lecturePriority": "support"
     },
     {
       "slideId": "dsa5208-lec2-34",
@@ -7421,25 +7487,27 @@
       },
       "sourceText": "Lecture 2: Broadcast and Synchronizers\nShortest-path problem\nAsynchronous Bellman-Ford algorithm\nMessages received:\n6−→p1, p2, p3,\np4\n0−→p4.\np1\nMessages not received:\n6−→p5.\np4\nProcess\np1\np2\np3\np4\np5\nlength\n0\n5\n8\n2\n7\nparent\n⊥\n1\n1\n1\n1",
       "explanation": {
-        "whatYouSee": "DSA5208 Lecture 2 · slide 34: Concept and worked notation. Read the source layer for the exact notation and diagram.",
-        "whyItMatters": "This is official lecture-core evidence for DSA5208 Lecture 2. Use it to anchor the concept before opening linked exercises or textbook depth.",
-        "intuition": "Read the page as one claim: identify the object, then its role in the algorithm or definition.",
-        "technicalDetail": "Use the exact notation and assumptions shown on this page before extending the result.",
-        "pitfall": "Do not infer a stronger guarantee than the page states; check the source layer and neighboring slides.",
-        "connection": "Connect this page to the next step in the lecture pipeline and to the linked lesson practice."
+        "whatYouSee": "Asynchronous Bellman-Ford algorithm · source page 34 shows distance messages arriving in an interleaved, event-driven order.",
+        "whyItMatters": "an improved estimate can propagate without waiting for every process to finish a global round This page is the source evidence for that distinction.",
+        "intuition": "a better number wakes up only the neighbors that can benefit from it",
+        "technicalDetail": "When a process receives a lower candidate, it updates its local estimate and sends the improvement to relevant neighbors.",
+        "pitfall": "Do not assume message arrival order is a topological or shortest-path order.",
+        "connection": "Synchronizers later emulate round progress when a synchronous algorithm is needed over an asynchronous system."
       },
       "textbookRefs": [],
       "referenceRefs": [],
       "socraticQuestions": [
         {
-          "type": "recall",
-          "prompt": "What is the main claim or object on this slide?",
-          "answer": "State the slide's main claim and name its symbols.",
-          "hint": "Name the object before explaining its consequence."
+          "type": "asynchronous Bellman-Ford",
+          "prompt": "Why is the execution in \"Asynchronous Bellman-Ford algorithm · source page 34\" event-driven rather than round-driven?",
+          "answer": "Processes act when messages arrive and an estimate improves; there is no global wait for a complete round.",
+          "hint": "Follow the first lower estimate that triggers another send."
         }
       ],
       "kind": "lecture-source",
-      "status": "reviewed"
+      "status": "reviewed",
+      "title": "Asynchronous Bellman-Ford algorithm · source page 34",
+      "lecturePriority": "support"
     },
     {
       "slideId": "dsa5208-lec2-35",
@@ -7699,25 +7767,27 @@
       },
       "sourceText": "Lecture 2: Broadcast and Synchronizers\nShortest-path problem\nAsynchronous Bellman-Ford algorithm\nMessages received:\n6−→p5,\np4\n2−→p1, p2, p3,\np4\n0−→p4.\np1\nMessages not received:\n2−→p5\np4\nProcess\np1\np2\np3\np4\np5\nlength\n0\n3\n6\n2\n7\nparent\n⊥\n4\n4\n1\n1",
       "explanation": {
-        "whatYouSee": "DSA5208 Lecture 2 · slide 35: Concept and worked notation. Read the source layer for the exact notation and diagram.",
-        "whyItMatters": "This is official lecture-core evidence for DSA5208 Lecture 2. Use it to anchor the concept before opening linked exercises or textbook depth.",
-        "intuition": "Read the page as one claim: identify the object, then its role in the algorithm or definition.",
-        "technicalDetail": "Use the exact notation and assumptions shown on this page before extending the result.",
-        "pitfall": "Do not infer a stronger guarantee than the page states; check the source layer and neighboring slides.",
-        "connection": "Connect this page to the next step in the lecture pipeline and to the linked lesson practice."
+        "whatYouSee": "Asynchronous Bellman-Ford algorithm · source page 35 shows distance messages arriving in an interleaved, event-driven order.",
+        "whyItMatters": "an improved estimate can propagate without waiting for every process to finish a global round This page is the source evidence for that distinction.",
+        "intuition": "a better number wakes up only the neighbors that can benefit from it",
+        "technicalDetail": "When a process receives a lower candidate, it updates its local estimate and sends the improvement to relevant neighbors.",
+        "pitfall": "Do not assume message arrival order is a topological or shortest-path order.",
+        "connection": "Synchronizers later emulate round progress when a synchronous algorithm is needed over an asynchronous system."
       },
       "textbookRefs": [],
       "referenceRefs": [],
       "socraticQuestions": [
         {
-          "type": "recall",
-          "prompt": "What is the main claim or object on this slide?",
-          "answer": "State the slide's main claim and name its symbols.",
-          "hint": "Name the object before explaining its consequence."
+          "type": "asynchronous Bellman-Ford",
+          "prompt": "Why is the execution in \"Asynchronous Bellman-Ford algorithm · source page 35\" event-driven rather than round-driven?",
+          "answer": "Processes act when messages arrive and an estimate improves; there is no global wait for a complete round.",
+          "hint": "Follow the first lower estimate that triggers another send."
         }
       ],
       "kind": "lecture-source",
-      "status": "reviewed"
+      "status": "reviewed",
+      "title": "Asynchronous Bellman-Ford algorithm · source page 35",
+      "lecturePriority": "support"
     },
     {
       "slideId": "dsa5208-lec2-36",
@@ -7945,25 +8015,27 @@
       },
       "sourceText": "Lecture 2: Broadcast and Synchronizers\nShortest-path problem\nAsynchronous Bellman-Ford algorithm\nMessages received:\n3−→p1, p3, p4, p5,\np2\n2−→p1, p2, p4, p5.\np3\nMessages not received:\n2−→p5\np4\nProcess\np1\np2\np3\np4\np5\nlength\n0\n3\n6\n2\n5\nparent\n⊥\n4\n4\n1\n2",
       "explanation": {
-        "whatYouSee": "DSA5208 Lecture 2 · slide 36: Concept and worked notation. Read the source layer for the exact notation and diagram.",
-        "whyItMatters": "This is official lecture-core evidence for DSA5208 Lecture 2. Use it to anchor the concept before opening linked exercises or textbook depth.",
-        "intuition": "Read the page as one claim: identify the object, then its role in the algorithm or definition.",
-        "technicalDetail": "Use the exact notation and assumptions shown on this page before extending the result.",
-        "pitfall": "Do not infer a stronger guarantee than the page states; check the source layer and neighboring slides.",
-        "connection": "Connect this page to the next step in the lecture pipeline and to the linked lesson practice."
+        "whatYouSee": "Asynchronous Bellman-Ford algorithm · source page 36 shows distance messages arriving in an interleaved, event-driven order.",
+        "whyItMatters": "an improved estimate can propagate without waiting for every process to finish a global round This page is the source evidence for that distinction.",
+        "intuition": "a better number wakes up only the neighbors that can benefit from it",
+        "technicalDetail": "When a process receives a lower candidate, it updates its local estimate and sends the improvement to relevant neighbors.",
+        "pitfall": "Do not assume message arrival order is a topological or shortest-path order.",
+        "connection": "Synchronizers later emulate round progress when a synchronous algorithm is needed over an asynchronous system."
       },
       "textbookRefs": [],
       "referenceRefs": [],
       "socraticQuestions": [
         {
-          "type": "recall",
-          "prompt": "What is the main claim or object on this slide?",
-          "answer": "State the slide's main claim and name its symbols.",
-          "hint": "Name the object before explaining its consequence."
+          "type": "asynchronous Bellman-Ford",
+          "prompt": "Why is the execution in \"Asynchronous Bellman-Ford algorithm · source page 36\" event-driven rather than round-driven?",
+          "answer": "Processes act when messages arrive and an estimate improves; there is no global wait for a complete round.",
+          "hint": "Follow the first lower estimate that triggers another send."
         }
       ],
       "kind": "lecture-source",
-      "status": "reviewed"
+      "status": "reviewed",
+      "title": "Asynchronous Bellman-Ford algorithm · source page 36",
+      "lecturePriority": "support"
     },
     {
       "slideId": "dsa5208-lec2-37",
@@ -8191,25 +8263,27 @@
       },
       "sourceText": "Lecture 2: Broadcast and Synchronizers\nShortest-path problem\nAsynchronous Bellman-Ford algorithm\nMessages received:\n5−→p1, p2, p4,\np5\n2−→p5.\np4\nMessages not received:\n5−→p3\np5\nProcess\np1\np2\np3\np4\np5\nlength\n0\n3\n6\n2\n4\nparent\n⊥\n4\n4\n1\n4",
       "explanation": {
-        "whatYouSee": "DSA5208 Lecture 2 · slide 37: Concept and worked notation. Read the source layer for the exact notation and diagram.",
-        "whyItMatters": "This is official lecture-core evidence for DSA5208 Lecture 2. Use it to anchor the concept before opening linked exercises or textbook depth.",
-        "intuition": "Read the page as one claim: identify the object, then its role in the algorithm or definition.",
-        "technicalDetail": "Use the exact notation and assumptions shown on this page before extending the result.",
-        "pitfall": "Do not infer a stronger guarantee than the page states; check the source layer and neighboring slides.",
-        "connection": "Connect this page to the next step in the lecture pipeline and to the linked lesson practice."
+        "whatYouSee": "Asynchronous Bellman-Ford algorithm · source page 37 shows distance messages arriving in an interleaved, event-driven order.",
+        "whyItMatters": "an improved estimate can propagate without waiting for every process to finish a global round This page is the source evidence for that distinction.",
+        "intuition": "a better number wakes up only the neighbors that can benefit from it",
+        "technicalDetail": "When a process receives a lower candidate, it updates its local estimate and sends the improvement to relevant neighbors.",
+        "pitfall": "Do not assume message arrival order is a topological or shortest-path order.",
+        "connection": "Synchronizers later emulate round progress when a synchronous algorithm is needed over an asynchronous system."
       },
       "textbookRefs": [],
       "referenceRefs": [],
       "socraticQuestions": [
         {
-          "type": "recall",
-          "prompt": "What is the main claim or object on this slide?",
-          "answer": "State the slide's main claim and name its symbols.",
-          "hint": "Name the object before explaining its consequence."
+          "type": "asynchronous Bellman-Ford",
+          "prompt": "Why is the execution in \"Asynchronous Bellman-Ford algorithm · source page 37\" event-driven rather than round-driven?",
+          "answer": "Processes act when messages arrive and an estimate improves; there is no global wait for a complete round.",
+          "hint": "Follow the first lower estimate that triggers another send."
         }
       ],
       "kind": "lecture-source",
-      "status": "reviewed"
+      "status": "reviewed",
+      "title": "Asynchronous Bellman-Ford algorithm · source page 37",
+      "lecturePriority": "support"
     },
     {
       "slideId": "dsa5208-lec2-38",
@@ -8373,25 +8447,27 @@
       },
       "sourceText": "Lecture 2: Broadcast and Synchronizers\nShortest-path problem\nAsynchronous Bellman-Ford algorithm\nMessages received:\n5−→p3,\np5\n4−→p1, p2, p3, p4.\np5\nProcess\np1\np2\np3\np4\np5\nlength\n0\n3\n5\n2\n4\nparent\n⊥\n4\n5\n1\n4",
       "explanation": {
-        "whatYouSee": "DSA5208 Lecture 2 · slide 38: Concept and worked notation. Read the source layer for the exact notation and diagram.",
-        "whyItMatters": "This is official lecture-core evidence for DSA5208 Lecture 2. Use it to anchor the concept before opening linked exercises or textbook depth.",
-        "intuition": "Read the page as one claim: identify the object, then its role in the algorithm or definition.",
-        "technicalDetail": "Use the exact notation and assumptions shown on this page before extending the result.",
-        "pitfall": "Do not infer a stronger guarantee than the page states; check the source layer and neighboring slides.",
-        "connection": "Connect this page to the next step in the lecture pipeline and to the linked lesson practice."
+        "whatYouSee": "Asynchronous Bellman-Ford algorithm · source page 38 shows distance messages arriving in an interleaved, event-driven order.",
+        "whyItMatters": "an improved estimate can propagate without waiting for every process to finish a global round This page is the source evidence for that distinction.",
+        "intuition": "a better number wakes up only the neighbors that can benefit from it",
+        "technicalDetail": "When a process receives a lower candidate, it updates its local estimate and sends the improvement to relevant neighbors.",
+        "pitfall": "Do not assume message arrival order is a topological or shortest-path order.",
+        "connection": "Synchronizers later emulate round progress when a synchronous algorithm is needed over an asynchronous system."
       },
       "textbookRefs": [],
       "referenceRefs": [],
       "socraticQuestions": [
         {
-          "type": "recall",
-          "prompt": "What is the main claim or object on this slide?",
-          "answer": "State the slide's main claim and name its symbols.",
-          "hint": "Name the object before explaining its consequence."
+          "type": "asynchronous Bellman-Ford",
+          "prompt": "Why is the execution in \"Asynchronous Bellman-Ford algorithm · source page 38\" event-driven rather than round-driven?",
+          "answer": "Processes act when messages arrive and an estimate improves; there is no global wait for a complete round.",
+          "hint": "Follow the first lower estimate that triggers another send."
         }
       ],
       "kind": "lecture-source",
-      "status": "reviewed"
+      "status": "reviewed",
+      "title": "Asynchronous Bellman-Ford algorithm · source page 38",
+      "lecturePriority": "support"
     },
     {
       "slideId": "dsa5208-lec2-39",
@@ -8539,25 +8615,27 @@
       },
       "sourceText": "Lecture 2: Broadcast and Synchronizers\nShortest-path problem\nAsynchronous Bellman-Ford algorithm\nAlgorithm Single source shortest path: asynchronous Bellman-Ford\n1: (Local variables)\n2: length ←∞, parent ←⊥\n3: Neighbors ←set of neighbors\n4: {weighti,j, weightj,i | j ∈Neighbors} ←weights of incident links\n5: if i = i0 then\n6:\nlength := 0\n7:\nSend (i0, 0) to pj for all j ∈Neighbors\n8:\nTerminate\n9: end if\n10: on receiving (j, lengthj) do\n11:\nif length > lengthj + weightj,i then\n12:\nlength := lengthj + weightj,i\n13:\nparent := j\n14:\nSend (i, length) to pj for all j ∈Neighbors\n15:\nend if\n16: end on",
       "explanation": {
-        "whatYouSee": "DSA5208 Lecture 2 · slide 39: Concept and worked notation. Read the source layer for the exact notation and diagram.",
-        "whyItMatters": "This is official lecture-core evidence for DSA5208 Lecture 2. Use it to anchor the concept before opening linked exercises or textbook depth.",
-        "intuition": "Read the page as one claim: identify the object, then its role in the algorithm or definition.",
-        "technicalDetail": "Use the exact notation and assumptions shown on this page before extending the result.",
-        "pitfall": "Do not infer a stronger guarantee than the page states; check the source layer and neighboring slides.",
-        "connection": "Connect this page to the next step in the lecture pipeline and to the linked lesson practice."
+        "whatYouSee": "Asynchronous Bellman-Ford algorithm · source page 39 shows distance messages arriving in an interleaved, event-driven order.",
+        "whyItMatters": "an improved estimate can propagate without waiting for every process to finish a global round This page is the source evidence for that distinction.",
+        "intuition": "a better number wakes up only the neighbors that can benefit from it",
+        "technicalDetail": "When a process receives a lower candidate, it updates its local estimate and sends the improvement to relevant neighbors.",
+        "pitfall": "Do not assume message arrival order is a topological or shortest-path order.",
+        "connection": "Synchronizers later emulate round progress when a synchronous algorithm is needed over an asynchronous system."
       },
       "textbookRefs": [],
       "referenceRefs": [],
       "socraticQuestions": [
         {
-          "type": "recall",
-          "prompt": "What is the main claim or object on this slide?",
-          "answer": "State the slide's main claim and name its symbols.",
-          "hint": "Name the object before explaining its consequence."
+          "type": "asynchronous Bellman-Ford",
+          "prompt": "Why is the execution in \"Asynchronous Bellman-Ford algorithm · source page 39\" event-driven rather than round-driven?",
+          "answer": "Processes act when messages arrive and an estimate improves; there is no global wait for a complete round.",
+          "hint": "Follow the first lower estimate that triggers another send."
         }
       ],
       "kind": "lecture-source",
-      "status": "reviewed"
+      "status": "reviewed",
+      "title": "Asynchronous Bellman-Ford algorithm · source page 39",
+      "lecturePriority": "core"
     },
     {
       "slideId": "dsa5208-lec2-40",
@@ -8785,25 +8863,27 @@
       },
       "sourceText": "Lecture 2: Broadcast and Synchronizers\nShortest-path problem\nOn synchronous and asynchronous algorithms\nSynchronous Bellman-Ford\nAsynchronous Bellman-Ford\nTerminate after (n −1) rounds\nNo termination condition1\nMessage complexity: O(nl)\nWorse-case complexity: Ω(cn)\nNot fault-tolerant\nWorks when some nodes are faulty\nIn general,\n▶It is much easier to design synchronous algorithms.\n▶In failure-free asynchronous systems, we may want to transform\nsynchronous algorithms to asynchronous algorithms using\nsynchronizers.\n▶Primitive asynchronous algorithms are usually more efficient than\ntransformed algorithms.\n1For an improved version, see “K. M. Chandy and J. Misra, Distributed\nComputation on Graphs: Shortest Path Algorithms, Communications of the ACM,\n25(11), 1982, 833–838.”",
       "explanation": {
-        "whatYouSee": "DSA5208 Lecture 2 · slide 40: Concept and worked notation. Read the source layer for the exact notation and diagram.",
-        "whyItMatters": "This is official lecture-core evidence for DSA5208 Lecture 2. Use it to anchor the concept before opening linked exercises or textbook depth.",
-        "intuition": "Read the page as one claim: identify the object, then its role in the algorithm or definition.",
-        "technicalDetail": "Use the exact notation and assumptions shown on this page before extending the result.",
-        "pitfall": "Do not infer a stronger guarantee than the page states; check the source layer and neighboring slides.",
-        "connection": "Connect this page to the next step in the lecture pipeline and to the linked lesson practice."
+        "whatYouSee": "On synchronous and asynchronous algorithms shows the termination and communication trade-off between two relaxation schedules.",
+        "whyItMatters": "the choice affects latency, message timing, and the proof of convergence This page is the source evidence for that distinction.",
+        "intuition": "synchronous execution pays for barriers; asynchronous execution pays for more careful event reasoning",
+        "technicalDetail": "Synchronous Bellman-Ford terminates after a bounded number of rounds under its model, while asynchronous execution terminates after no further improvement is possible.",
+        "pitfall": "Do not compare only arithmetic work while ignoring barriers and network messages.",
+        "connection": "Synchronizers make the cost of imposing rounds explicit."
       },
       "textbookRefs": [],
       "referenceRefs": [],
       "socraticQuestions": [
         {
-          "type": "recall",
-          "prompt": "What is the main claim or object on this slide?",
-          "answer": "State the slide's main claim and name its symbols.",
-          "hint": "Name the object before explaining its consequence."
+          "type": "Bellman-Ford comparison",
+          "prompt": "What trade-off is summarized on \"On synchronous and asynchronous algorithms\"?",
+          "answer": "Synchronous execution simplifies reasoning with round barriers, while asynchronous execution can react sooner but needs event-driven convergence reasoning.",
+          "hint": "Compare progress trigger and termination condition."
         }
       ],
       "kind": "lecture-source",
-      "status": "reviewed"
+      "status": "reviewed",
+      "title": "On synchronous and asynchronous algorithms",
+      "lecturePriority": "core"
     },
     {
       "slideId": "dsa5208-lec2-41",
@@ -8999,25 +9079,27 @@
       },
       "sourceText": "Lecture 2: Broadcast and Synchronizers\nSynchronizers\n1\nBroadcast\n2\nShortest-path problem\n3\nSynchronizers\n4\nSummary",
       "explanation": {
-        "whatYouSee": "DSA5208 Lecture 2 · slide 41: Concept and worked notation. Read the source layer for the exact notation and diagram.",
-        "whyItMatters": "This is official lecture-core evidence for DSA5208 Lecture 2. Use it to anchor the concept before opening linked exercises or textbook depth.",
-        "intuition": "Read the page as one claim: identify the object, then its role in the algorithm or definition.",
-        "technicalDetail": "Use the exact notation and assumptions shown on this page before extending the result.",
-        "pitfall": "Do not infer a stronger guarantee than the page states; check the source layer and neighboring slides.",
-        "connection": "Connect this page to the next step in the lecture pipeline and to the linked lesson practice."
+        "whatYouSee": "Synchronizers roadmap shows a navigation map separating the lecture's major sections.",
+        "whyItMatters": "the roadmap keeps overview pages from being mistaken for algorithm definitions This page is the source evidence for that distinction.",
+        "intuition": "use the map to locate the source section, then study the detailed page that follows",
+        "technicalDetail": "The page is an index of topics; it does not add a new ordering or consistency guarantee.",
+        "pitfall": "Do not cite a roadmap entry as if it were the detailed proof or implementation page.",
+        "connection": "Follow each entry to its source-backed definition and worked trace."
       },
       "textbookRefs": [],
       "referenceRefs": [],
       "socraticQuestions": [
         {
-          "type": "recall",
-          "prompt": "What is the main claim or object on this slide?",
-          "answer": "State the slide's main claim and name its symbols.",
-          "hint": "Name the object before explaining its consequence."
+          "type": "lecture roadmap",
+          "prompt": "What role does \"Synchronizers roadmap\" play in the lecture structure?",
+          "answer": "It locates the major source sections; the detailed claims are established on the pages those entries point to.",
+          "hint": "Treat navigation as scope, not derivation."
         }
       ],
       "kind": "lecture-source",
-      "status": "reviewed"
+      "status": "reviewed",
+      "title": "Synchronizers roadmap",
+      "lecturePriority": "support"
     },
     {
       "slideId": "dsa5208-lec2-42",
@@ -9133,25 +9215,27 @@
       },
       "sourceText": "Lecture 2: Broadcast and Synchronizers\nSynchronizers\nSynchronizers\n▶In an asynchronous system, a synchronizer is a mechanism that\nindicates to each process when it is safe to proceed to the next\nround of execution of the “synchronous” algorithm.",
       "explanation": {
-        "whatYouSee": "DSA5208 Lecture 2 · slide 42: Concept and worked notation. Read the source layer for the exact notation and diagram.",
-        "whyItMatters": "This is official lecture-core evidence for DSA5208 Lecture 2. Use it to anchor the concept before opening linked exercises or textbook depth.",
-        "intuition": "Read the page as one claim: identify the object, then its role in the algorithm or definition.",
-        "technicalDetail": "Use the exact notation and assumptions shown on this page before extending the result.",
-        "pitfall": "Do not infer a stronger guarantee than the page states; check the source layer and neighboring slides.",
-        "connection": "Connect this page to the next step in the lecture pipeline and to the linked lesson practice."
+        "whatYouSee": "In an asynchronous system, a synchronizer is a mechanism that shows an asynchronous system exposing a safe simulated round boundary.",
+        "whyItMatters": "the abstraction lets a round-based algorithm run without pretending the network is synchronous This page is the source evidence for that distinction.",
+        "intuition": "the synchronizer is a proof-producing barrier built from messages",
+        "technicalDetail": "A process advances only when the protocol establishes that the current simulated round cannot receive a missing predecessor message.",
+        "pitfall": "Do not equate local idleness with global safety to advance.",
+        "connection": "The simple and alpha variants differ in the assumptions used to establish safety."
       },
       "textbookRefs": [],
       "referenceRefs": [],
       "socraticQuestions": [
         {
-          "type": "recall",
-          "prompt": "What is the main claim or object on this slide?",
-          "answer": "State the slide's main claim and name its symbols.",
-          "hint": "Name the object before explaining its consequence."
+          "type": "synchronizer contract",
+          "prompt": "What safety decision does \"In an asynchronous system, a synchronizer is a mechanism that\" let a process make?",
+          "answer": "It lets the process decide when it is safe to begin the next simulated round.",
+          "hint": "Ask what late message would make an early advance incorrect."
         }
       ],
       "kind": "lecture-source",
-      "status": "reviewed"
+      "status": "reviewed",
+      "title": "In an asynchronous system, a synchronizer is a mechanism that",
+      "lecturePriority": "core"
     },
     {
       "slideId": "dsa5208-lec2-43",
@@ -9299,25 +9383,27 @@
       },
       "sourceText": "Lecture 2: Broadcast and Synchronizers\nSynchronizers\nSynchronizers\n▶In an asynchronous system, a synchronizer is a mechanism that\nindicates to each process when it is safe to proceed to the next\nround of execution of the “synchronous” algorithm.\n▶To transform a synchronous algorithm to an asynchronous\nalgorithm, simply add a synchronizer after each round of execution.",
       "explanation": {
-        "whatYouSee": "DSA5208 Lecture 2 · slide 43: Concept and worked notation. Read the source layer for the exact notation and diagram.",
-        "whyItMatters": "This is official lecture-core evidence for DSA5208 Lecture 2. Use it to anchor the concept before opening linked exercises or textbook depth.",
-        "intuition": "Read the page as one claim: identify the object, then its role in the algorithm or definition.",
-        "technicalDetail": "Use the exact notation and assumptions shown on this page before extending the result.",
-        "pitfall": "Do not infer a stronger guarantee than the page states; check the source layer and neighboring slides.",
-        "connection": "Connect this page to the next step in the lecture pipeline and to the linked lesson practice."
+        "whatYouSee": "In an asynchronous system, a synchronizer is a mechanism that · source page 43 shows an asynchronous system exposing a safe simulated round boundary.",
+        "whyItMatters": "the abstraction lets a round-based algorithm run without pretending the network is synchronous This page is the source evidence for that distinction.",
+        "intuition": "the synchronizer is a proof-producing barrier built from messages",
+        "technicalDetail": "A process advances only when the protocol establishes that the current simulated round cannot receive a missing predecessor message.",
+        "pitfall": "Do not equate local idleness with global safety to advance.",
+        "connection": "The simple and alpha variants differ in the assumptions used to establish safety."
       },
       "textbookRefs": [],
       "referenceRefs": [],
       "socraticQuestions": [
         {
-          "type": "recall",
-          "prompt": "What is the main claim or object on this slide?",
-          "answer": "State the slide's main claim and name its symbols.",
-          "hint": "Name the object before explaining its consequence."
+          "type": "synchronizer contract",
+          "prompt": "What safety decision does \"In an asynchronous system, a synchronizer is a mechanism that · source page 43\" let a process make?",
+          "answer": "It lets the process decide when it is safe to begin the next simulated round.",
+          "hint": "Ask what late message would make an early advance incorrect."
         }
       ],
       "kind": "lecture-source",
-      "status": "reviewed"
+      "status": "reviewed",
+      "title": "In an asynchronous system, a synchronizer is a mechanism that · source page 43",
+      "lecturePriority": "support"
     },
     {
       "slideId": "dsa5208-lec2-44",
@@ -9497,25 +9583,27 @@
       },
       "sourceText": "Lecture 2: Broadcast and Synchronizers\nSynchronizers\nSynchronizers\n▶In an asynchronous system, a synchronizer is a mechanism that\nindicates to each process when it is safe to proceed to the next\nround of execution of the “synchronous” algorithm.\n▶To transform a synchronous algorithm to an asynchronous\nalgorithm, simply add a synchronizer after each round of execution.\n▶Using synchronizers might increase the message complexity and total\nexecution time, but can significantly simplify the design of\nalgorithms.",
       "explanation": {
-        "whatYouSee": "DSA5208 Lecture 2 · slide 44: Concept and worked notation. Read the source layer for the exact notation and diagram.",
-        "whyItMatters": "This is official lecture-core evidence for DSA5208 Lecture 2. Use it to anchor the concept before opening linked exercises or textbook depth.",
-        "intuition": "Read the page as one claim: identify the object, then its role in the algorithm or definition.",
-        "technicalDetail": "Use the exact notation and assumptions shown on this page before extending the result.",
-        "pitfall": "Do not infer a stronger guarantee than the page states; check the source layer and neighboring slides.",
-        "connection": "Connect this page to the next step in the lecture pipeline and to the linked lesson practice."
+        "whatYouSee": "In an asynchronous system, a synchronizer is a mechanism that · source page 44 shows an asynchronous system exposing a safe simulated round boundary.",
+        "whyItMatters": "the abstraction lets a round-based algorithm run without pretending the network is synchronous This page is the source evidence for that distinction.",
+        "intuition": "the synchronizer is a proof-producing barrier built from messages",
+        "technicalDetail": "A process advances only when the protocol establishes that the current simulated round cannot receive a missing predecessor message.",
+        "pitfall": "Do not equate local idleness with global safety to advance.",
+        "connection": "The simple and alpha variants differ in the assumptions used to establish safety."
       },
       "textbookRefs": [],
       "referenceRefs": [],
       "socraticQuestions": [
         {
-          "type": "recall",
-          "prompt": "What is the main claim or object on this slide?",
-          "answer": "State the slide's main claim and name its symbols.",
-          "hint": "Name the object before explaining its consequence."
+          "type": "synchronizer contract",
+          "prompt": "What safety decision does \"In an asynchronous system, a synchronizer is a mechanism that · source page 44\" let a process make?",
+          "answer": "It lets the process decide when it is safe to begin the next simulated round.",
+          "hint": "Ask what late message would make an early advance incorrect."
         }
       ],
       "kind": "lecture-source",
-      "status": "reviewed"
+      "status": "reviewed",
+      "title": "In an asynchronous system, a synchronizer is a mechanism that · source page 44",
+      "lecturePriority": "support"
     },
     {
       "slideId": "dsa5208-lec2-45",
@@ -9743,25 +9831,27 @@
       },
       "sourceText": "Lecture 2: Broadcast and Synchronizers\nSynchronizers\nThe simple synchronizer\n▶Assumption: In each round, each process sends one and only one\nmessage to all neighbors. If not, combine multiple messages into one\nor send a dummy message.\n▶Synchronizer: A process moves to the next round only after it\nreceives messages from all neighbors.\n▶Properties:\n1\nIn physical time, any two adjacent processes may be only one\nround apart.\n2\nWhen process i is in round roundi, it can receive messages only\nfrom rounds roundi or roundi + 1 from its neighbors.",
       "explanation": {
-        "whatYouSee": "DSA5208 Lecture 2 · slide 45: Concept and worked notation. Read the source layer for the exact notation and diagram.",
-        "whyItMatters": "This is official lecture-core evidence for DSA5208 Lecture 2. Use it to anchor the concept before opening linked exercises or textbook depth.",
-        "intuition": "Read the page as one claim: identify the object, then its role in the algorithm or definition.",
-        "technicalDetail": "Use the exact notation and assumptions shown on this page before extending the result.",
-        "pitfall": "Do not infer a stronger guarantee than the page states; check the source layer and neighboring slides.",
-        "connection": "Connect this page to the next step in the lecture pipeline and to the linked lesson practice."
+        "whatYouSee": "The simple synchronizer shows one payload or dummy message per neighbor per simulated round.",
+        "whyItMatters": "the fixed message count lets a process know when every neighbor has crossed the current round boundary This page is the source evidence for that distinction.",
+        "intuition": "a dummy message says 'no payload, but I have completed this round'",
+        "technicalDetail": "The simple synchronizer assumes each process sends exactly one message to each neighbor in every round.",
+        "pitfall": "Do not omit the dummy message when a process has no application payload.",
+        "connection": "The alpha synchronizer removes the fixed-message-count assumption."
       },
       "textbookRefs": [],
       "referenceRefs": [],
       "socraticQuestions": [
         {
-          "type": "recall",
-          "prompt": "What is the main claim or object on this slide?",
-          "answer": "State the slide's main claim and name its symbols.",
-          "hint": "Name the object before explaining its consequence."
+          "type": "simple synchronizer",
+          "prompt": "What assumption makes \"The simple synchronizer\" implementable with one marker per neighbor?",
+          "answer": "Every process sends exactly one payload or dummy message to each neighbor in the current round.",
+          "hint": "Count messages per neighbor, including empty payloads."
         }
       ],
       "kind": "lecture-source",
-      "status": "reviewed"
+      "status": "reviewed",
+      "title": "The simple synchronizer",
+      "lecturePriority": "core"
     },
     {
       "slideId": "dsa5208-lec2-46",
@@ -9893,25 +9983,27 @@
       },
       "sourceText": "Lecture 2: Broadcast and Synchronizers\nSynchronizers\nAlgorithm for the simple synchronizer\nAlgorithm Simple synchronizer\n1: (Local variables)\n2: Neighbors ←set of neighbors\n3: RecvCurrRound ←{}, RecvNextRound ←{}\n4: on receiving a message (round, msg) from pj in Round k do\n5:\nDo something\n6:\nif round = k then\n7:\nRecvCurrRound := RecvCurrRound ∪{j}\n8:\nelse\n9:\nRecvNextRound := RecvNextRound ∪{j}\n10:\nend if\n11:\nif RecvCurrRound = Neighbors then\n12:\nRecvCurrRound := RecvNextRound\n13:\nRecvNextRound := {}\n14:\nMove to the next round\n15:\nend if\n16: end on",
       "explanation": {
-        "whatYouSee": "DSA5208 Lecture 2 · slide 46: Concept and worked notation. Read the source layer for the exact notation and diagram.",
-        "whyItMatters": "This is official lecture-core evidence for DSA5208 Lecture 2. Use it to anchor the concept before opening linked exercises or textbook depth.",
-        "intuition": "Read the page as one claim: identify the object, then its role in the algorithm or definition.",
-        "technicalDetail": "Use the exact notation and assumptions shown on this page before extending the result.",
-        "pitfall": "Do not infer a stronger guarantee than the page states; check the source layer and neighboring slides.",
-        "connection": "Connect this page to the next step in the lecture pipeline and to the linked lesson practice."
+        "whatYouSee": "Algorithm for the simple synchronizer shows one payload or dummy message per neighbor per simulated round.",
+        "whyItMatters": "the fixed message count lets a process know when every neighbor has crossed the current round boundary This page is the source evidence for that distinction.",
+        "intuition": "a dummy message says 'no payload, but I have completed this round'",
+        "technicalDetail": "The simple synchronizer assumes each process sends exactly one message to each neighbor in every round.",
+        "pitfall": "Do not omit the dummy message when a process has no application payload.",
+        "connection": "The alpha synchronizer removes the fixed-message-count assumption."
       },
       "textbookRefs": [],
       "referenceRefs": [],
       "socraticQuestions": [
         {
-          "type": "recall",
-          "prompt": "What is the main claim or object on this slide?",
-          "answer": "State the slide's main claim and name its symbols.",
-          "hint": "Name the object before explaining its consequence."
+          "type": "simple synchronizer",
+          "prompt": "What assumption makes \"Algorithm for the simple synchronizer\" implementable with one marker per neighbor?",
+          "answer": "Every process sends exactly one payload or dummy message to each neighbor in the current round.",
+          "hint": "Count messages per neighbor, including empty payloads."
         }
       ],
       "kind": "lecture-source",
-      "status": "reviewed"
+      "status": "reviewed",
+      "title": "Algorithm for the simple synchronizer",
+      "lecturePriority": "support"
     },
     {
       "slideId": "dsa5208-lec2-47",
@@ -10011,25 +10103,27 @@
       },
       "sourceText": "Lecture 2: Broadcast and Synchronizers\nSynchronizers\nThe α Synchronizer\nWe now remove the assumption on the number of messages sent between\nneighbors in each round.",
       "explanation": {
-        "whatYouSee": "DSA5208 Lecture 2 · slide 47: Concept and worked notation. Read the source layer for the exact notation and diagram.",
-        "whyItMatters": "This is official lecture-core evidence for DSA5208 Lecture 2. Use it to anchor the concept before opening linked exercises or textbook depth.",
-        "intuition": "Read the page as one claim: identify the object, then its role in the algorithm or definition.",
-        "technicalDetail": "Use the exact notation and assumptions shown on this page before extending the result.",
-        "pitfall": "Do not infer a stronger guarantee than the page states; check the source layer and neighboring slides.",
-        "connection": "Connect this page to the next step in the lecture pipeline and to the linked lesson practice."
+        "whatYouSee": "The α Synchronizer shows acknowledgements and safe-to-proceed notifications replacing a fixed payload count.",
+        "whyItMatters": "the protocol still simulates rounds when a process may send an arbitrary number of messages This page is the source evidence for that distinction.",
+        "intuition": "a process advances only after it has evidence that local work and neighbor dependencies are safe",
+        "technicalDetail": "The alpha synchronizer tracks messages and acknowledgements so a process can establish a safe frontier without assuming one message per edge.",
+        "pitfall": "Do not advance after receiving one neighbor message when other dependencies remain unacknowledged.",
+        "connection": "This is the coordination cost of running a synchronous algorithm over asynchronous links."
       },
       "textbookRefs": [],
       "referenceRefs": [],
       "socraticQuestions": [
         {
-          "type": "recall",
-          "prompt": "What is the main claim or object on this slide?",
-          "answer": "State the slide's main claim and name its symbols.",
-          "hint": "Name the object before explaining its consequence."
+          "type": "alpha synchronizer",
+          "prompt": "What evidence must be present before advancing on \"The α Synchronizer\"?",
+          "answer": "The process needs completion evidence for its local round and the relevant neighbor traffic, not merely one received message.",
+          "hint": "Look for acknowledgements and the safe marker."
         }
       ],
       "kind": "lecture-source",
-      "status": "reviewed"
+      "status": "reviewed",
+      "title": "The α Synchronizer",
+      "lecturePriority": "core"
     },
     {
       "slideId": "dsa5208-lec2-48",
@@ -10145,25 +10239,27 @@
       },
       "sourceText": "Lecture 2: Broadcast and Synchronizers\nSynchronizers\nThe α Synchronizer\nWe now remove the assumption on the number of messages sent between\nneighbors in each round.\n▶Q: When can a process pi move to the next round?",
       "explanation": {
-        "whatYouSee": "DSA5208 Lecture 2 · slide 48: Concept and worked notation. Read the source layer for the exact notation and diagram.",
-        "whyItMatters": "This is official lecture-core evidence for DSA5208 Lecture 2. Use it to anchor the concept before opening linked exercises or textbook depth.",
-        "intuition": "Read the page as one claim: identify the object, then its role in the algorithm or definition.",
-        "technicalDetail": "Use the exact notation and assumptions shown on this page before extending the result.",
-        "pitfall": "Do not infer a stronger guarantee than the page states; check the source layer and neighboring slides.",
-        "connection": "Connect this page to the next step in the lecture pipeline and to the linked lesson practice."
+        "whatYouSee": "The α Synchronizer · source page 48 shows acknowledgements and safe-to-proceed notifications replacing a fixed payload count.",
+        "whyItMatters": "the protocol still simulates rounds when a process may send an arbitrary number of messages This page is the source evidence for that distinction.",
+        "intuition": "a process advances only after it has evidence that local work and neighbor dependencies are safe",
+        "technicalDetail": "The alpha synchronizer tracks messages and acknowledgements so a process can establish a safe frontier without assuming one message per edge.",
+        "pitfall": "Do not advance after receiving one neighbor message when other dependencies remain unacknowledged.",
+        "connection": "This is the coordination cost of running a synchronous algorithm over asynchronous links."
       },
       "textbookRefs": [],
       "referenceRefs": [],
       "socraticQuestions": [
         {
-          "type": "recall",
-          "prompt": "What is the main claim or object on this slide?",
-          "answer": "State the slide's main claim and name its symbols.",
-          "hint": "Name the object before explaining its consequence."
+          "type": "alpha synchronizer",
+          "prompt": "What evidence must be present before advancing on \"The α Synchronizer · source page 48\"?",
+          "answer": "The process needs completion evidence for its local round and the relevant neighbor traffic, not merely one received message.",
+          "hint": "Look for acknowledgements and the safe marker."
         }
       ],
       "kind": "lecture-source",
-      "status": "reviewed"
+      "status": "reviewed",
+      "title": "The α Synchronizer · source page 48",
+      "lecturePriority": "support"
     },
     {
       "slideId": "dsa5208-lec2-49",
@@ -10295,25 +10391,27 @@
       },
       "sourceText": "Lecture 2: Broadcast and Synchronizers\nSynchronizers\nThe α Synchronizer\nWe now remove the assumption on the number of messages sent between\nneighbors in each round.\n▶Q: When can a process pi move to the next round?\nA: After pi receives all messages sent to it.",
       "explanation": {
-        "whatYouSee": "DSA5208 Lecture 2 · slide 49: Concept and worked notation. Read the source layer for the exact notation and diagram.",
-        "whyItMatters": "This is official lecture-core evidence for DSA5208 Lecture 2. Use it to anchor the concept before opening linked exercises or textbook depth.",
-        "intuition": "Read the page as one claim: identify the object, then its role in the algorithm or definition.",
-        "technicalDetail": "Use the exact notation and assumptions shown on this page before extending the result.",
-        "pitfall": "Do not infer a stronger guarantee than the page states; check the source layer and neighboring slides.",
-        "connection": "Connect this page to the next step in the lecture pipeline and to the linked lesson practice."
+        "whatYouSee": "The α Synchronizer · source page 49 shows acknowledgements and safe-to-proceed notifications replacing a fixed payload count.",
+        "whyItMatters": "the protocol still simulates rounds when a process may send an arbitrary number of messages This page is the source evidence for that distinction.",
+        "intuition": "a process advances only after it has evidence that local work and neighbor dependencies are safe",
+        "technicalDetail": "The alpha synchronizer tracks messages and acknowledgements so a process can establish a safe frontier without assuming one message per edge.",
+        "pitfall": "Do not advance after receiving one neighbor message when other dependencies remain unacknowledged.",
+        "connection": "This is the coordination cost of running a synchronous algorithm over asynchronous links."
       },
       "textbookRefs": [],
       "referenceRefs": [],
       "socraticQuestions": [
         {
-          "type": "recall",
-          "prompt": "What is the main claim or object on this slide?",
-          "answer": "State the slide's main claim and name its symbols.",
-          "hint": "Name the object before explaining its consequence."
+          "type": "alpha synchronizer",
+          "prompt": "What evidence must be present before advancing on \"The α Synchronizer · source page 49\"?",
+          "answer": "The process needs completion evidence for its local round and the relevant neighbor traffic, not merely one received message.",
+          "hint": "Look for acknowledgements and the safe marker."
         }
       ],
       "kind": "lecture-source",
-      "status": "reviewed"
+      "status": "reviewed",
+      "title": "The α Synchronizer · source page 49",
+      "lecturePriority": "support"
     },
     {
       "slideId": "dsa5208-lec2-50",
@@ -10445,25 +10543,27 @@
       },
       "sourceText": "Lecture 2: Broadcast and Synchronizers\nSynchronizers\nThe α Synchronizer\nWe now remove the assumption on the number of messages sent between\nneighbors in each round.\n▶Q: When can a process pi move to the next round?\nA: After pi receives all messages sent to it.\n▶Q: How does pi know if it has received all messages?",
       "explanation": {
-        "whatYouSee": "DSA5208 Lecture 2 · slide 50: Concept and worked notation. Read the source layer for the exact notation and diagram.",
-        "whyItMatters": "This is official lecture-core evidence for DSA5208 Lecture 2. Use it to anchor the concept before opening linked exercises or textbook depth.",
-        "intuition": "Read the page as one claim: identify the object, then its role in the algorithm or definition.",
-        "technicalDetail": "Use the exact notation and assumptions shown on this page before extending the result.",
-        "pitfall": "Do not infer a stronger guarantee than the page states; check the source layer and neighboring slides.",
-        "connection": "Connect this page to the next step in the lecture pipeline and to the linked lesson practice."
+        "whatYouSee": "The α Synchronizer · source page 50 shows acknowledgements and safe-to-proceed notifications replacing a fixed payload count.",
+        "whyItMatters": "the protocol still simulates rounds when a process may send an arbitrary number of messages This page is the source evidence for that distinction.",
+        "intuition": "a process advances only after it has evidence that local work and neighbor dependencies are safe",
+        "technicalDetail": "The alpha synchronizer tracks messages and acknowledgements so a process can establish a safe frontier without assuming one message per edge.",
+        "pitfall": "Do not advance after receiving one neighbor message when other dependencies remain unacknowledged.",
+        "connection": "This is the coordination cost of running a synchronous algorithm over asynchronous links."
       },
       "textbookRefs": [],
       "referenceRefs": [],
       "socraticQuestions": [
         {
-          "type": "recall",
-          "prompt": "What is the main claim or object on this slide?",
-          "answer": "State the slide's main claim and name its symbols.",
-          "hint": "Name the object before explaining its consequence."
+          "type": "alpha synchronizer",
+          "prompt": "What evidence must be present before advancing on \"The α Synchronizer · source page 50\"?",
+          "answer": "The process needs completion evidence for its local round and the relevant neighbor traffic, not merely one received message.",
+          "hint": "Look for acknowledgements and the safe marker."
         }
       ],
       "kind": "lecture-source",
-      "status": "reviewed"
+      "status": "reviewed",
+      "title": "The α Synchronizer · source page 50",
+      "lecturePriority": "support"
     },
     {
       "slideId": "dsa5208-lec2-51",
@@ -10611,25 +10711,27 @@
       },
       "sourceText": "Lecture 2: Broadcast and Synchronizers\nSynchronizers\nThe α Synchronizer\nWe now remove the assumption on the number of messages sent between\nneighbors in each round.\n▶Q: When can a process pi move to the next round?\nA: After pi receives all messages sent to it.\n▶Q: How does pi know if it has received all messages?\nA: For each neighbor pj, it should send pi an extra message\nindicating that all messages that pj sent to pi have been received.",
       "explanation": {
-        "whatYouSee": "DSA5208 Lecture 2 · slide 51: Concept and worked notation. Read the source layer for the exact notation and diagram.",
-        "whyItMatters": "This is official lecture-core evidence for DSA5208 Lecture 2. Use it to anchor the concept before opening linked exercises or textbook depth.",
-        "intuition": "Read the page as one claim: identify the object, then its role in the algorithm or definition.",
-        "technicalDetail": "Use the exact notation and assumptions shown on this page before extending the result.",
-        "pitfall": "Do not infer a stronger guarantee than the page states; check the source layer and neighboring slides.",
-        "connection": "Connect this page to the next step in the lecture pipeline and to the linked lesson practice."
+        "whatYouSee": "The α Synchronizer · source page 51 shows acknowledgements and safe-to-proceed notifications replacing a fixed payload count.",
+        "whyItMatters": "the protocol still simulates rounds when a process may send an arbitrary number of messages This page is the source evidence for that distinction.",
+        "intuition": "a process advances only after it has evidence that local work and neighbor dependencies are safe",
+        "technicalDetail": "The alpha synchronizer tracks messages and acknowledgements so a process can establish a safe frontier without assuming one message per edge.",
+        "pitfall": "Do not advance after receiving one neighbor message when other dependencies remain unacknowledged.",
+        "connection": "This is the coordination cost of running a synchronous algorithm over asynchronous links."
       },
       "textbookRefs": [],
       "referenceRefs": [],
       "socraticQuestions": [
         {
-          "type": "recall",
-          "prompt": "What is the main claim or object on this slide?",
-          "answer": "State the slide's main claim and name its symbols.",
-          "hint": "Name the object before explaining its consequence."
+          "type": "alpha synchronizer",
+          "prompt": "What evidence must be present before advancing on \"The α Synchronizer · source page 51\"?",
+          "answer": "The process needs completion evidence for its local round and the relevant neighbor traffic, not merely one received message.",
+          "hint": "Look for acknowledgements and the safe marker."
         }
       ],
       "kind": "lecture-source",
-      "status": "reviewed"
+      "status": "reviewed",
+      "title": "The α Synchronizer · source page 51",
+      "lecturePriority": "support"
     },
     {
       "slideId": "dsa5208-lec2-52",
@@ -10777,25 +10879,27 @@
       },
       "sourceText": "Lecture 2: Broadcast and Synchronizers\nSynchronizers\nThe α Synchronizer\nWe now remove the assumption on the number of messages sent between\nneighbors in each round.\n▶Q: When can a process pi move to the next round?\nA: After pi receives all messages sent to it.\n▶Q: How does pi know if it has received all messages?\nA: For each neighbor pj, it should send pi an extra message\nindicating that all messages that pj sent to pi have been received.\n▶Q: How does pj know if pi has received a message that pj sent?",
       "explanation": {
-        "whatYouSee": "DSA5208 Lecture 2 · slide 52: Concept and worked notation. Read the source layer for the exact notation and diagram.",
-        "whyItMatters": "This is official lecture-core evidence for DSA5208 Lecture 2. Use it to anchor the concept before opening linked exercises or textbook depth.",
-        "intuition": "Read the page as one claim: identify the object, then its role in the algorithm or definition.",
-        "technicalDetail": "Use the exact notation and assumptions shown on this page before extending the result.",
-        "pitfall": "Do not infer a stronger guarantee than the page states; check the source layer and neighboring slides.",
-        "connection": "Connect this page to the next step in the lecture pipeline and to the linked lesson practice."
+        "whatYouSee": "The α Synchronizer · source page 52 shows acknowledgements and safe-to-proceed notifications replacing a fixed payload count.",
+        "whyItMatters": "the protocol still simulates rounds when a process may send an arbitrary number of messages This page is the source evidence for that distinction.",
+        "intuition": "a process advances only after it has evidence that local work and neighbor dependencies are safe",
+        "technicalDetail": "The alpha synchronizer tracks messages and acknowledgements so a process can establish a safe frontier without assuming one message per edge.",
+        "pitfall": "Do not advance after receiving one neighbor message when other dependencies remain unacknowledged.",
+        "connection": "This is the coordination cost of running a synchronous algorithm over asynchronous links."
       },
       "textbookRefs": [],
       "referenceRefs": [],
       "socraticQuestions": [
         {
-          "type": "recall",
-          "prompt": "What is the main claim or object on this slide?",
-          "answer": "State the slide's main claim and name its symbols.",
-          "hint": "Name the object before explaining its consequence."
+          "type": "alpha synchronizer",
+          "prompt": "What evidence must be present before advancing on \"The α Synchronizer · source page 52\"?",
+          "answer": "The process needs completion evidence for its local round and the relevant neighbor traffic, not merely one received message.",
+          "hint": "Look for acknowledgements and the safe marker."
         }
       ],
       "kind": "lecture-source",
-      "status": "reviewed"
+      "status": "reviewed",
+      "title": "The α Synchronizer · source page 52",
+      "lecturePriority": "support"
     },
     {
       "slideId": "dsa5208-lec2-53",
@@ -10959,25 +11063,27 @@
       },
       "sourceText": "Lecture 2: Broadcast and Synchronizers\nSynchronizers\nThe α Synchronizer\nWe now remove the assumption on the number of messages sent between\nneighbors in each round.\n▶Q: When can a process pi move to the next round?\nA: After pi receives all messages sent to it.\n▶Q: How does pi know if it has received all messages?\nA: For each neighbor pj, it should send pi an extra message\nindicating that all messages that pj sent to pi have been received.\n▶Q: How does pj know if pi has received a message that pj sent?\nA: pi needs to acknowledge each message sent by pj through an\n“ack” message sent back to pj.",
       "explanation": {
-        "whatYouSee": "DSA5208 Lecture 2 · slide 53: Concept and worked notation. Read the source layer for the exact notation and diagram.",
-        "whyItMatters": "This is official lecture-core evidence for DSA5208 Lecture 2. Use it to anchor the concept before opening linked exercises or textbook depth.",
-        "intuition": "Read the page as one claim: identify the object, then its role in the algorithm or definition.",
-        "technicalDetail": "Use the exact notation and assumptions shown on this page before extending the result.",
-        "pitfall": "Do not infer a stronger guarantee than the page states; check the source layer and neighboring slides.",
-        "connection": "Connect this page to the next step in the lecture pipeline and to the linked lesson practice."
+        "whatYouSee": "The α Synchronizer · source page 53 shows acknowledgements and safe-to-proceed notifications replacing a fixed payload count.",
+        "whyItMatters": "the protocol still simulates rounds when a process may send an arbitrary number of messages This page is the source evidence for that distinction.",
+        "intuition": "a process advances only after it has evidence that local work and neighbor dependencies are safe",
+        "technicalDetail": "The alpha synchronizer tracks messages and acknowledgements so a process can establish a safe frontier without assuming one message per edge.",
+        "pitfall": "Do not advance after receiving one neighbor message when other dependencies remain unacknowledged.",
+        "connection": "This is the coordination cost of running a synchronous algorithm over asynchronous links."
       },
       "textbookRefs": [],
       "referenceRefs": [],
       "socraticQuestions": [
         {
-          "type": "recall",
-          "prompt": "What is the main claim or object on this slide?",
-          "answer": "State the slide's main claim and name its symbols.",
-          "hint": "Name the object before explaining its consequence."
+          "type": "alpha synchronizer",
+          "prompt": "What evidence must be present before advancing on \"The α Synchronizer · source page 53\"?",
+          "answer": "The process needs completion evidence for its local round and the relevant neighbor traffic, not merely one received message.",
+          "hint": "Look for acknowledgements and the safe marker."
         }
       ],
       "kind": "lecture-source",
-      "status": "reviewed"
+      "status": "reviewed",
+      "title": "The α Synchronizer · source page 53",
+      "lecturePriority": "support"
     },
     {
       "slideId": "dsa5208-lec2-54",
@@ -11205,25 +11311,27 @@
       },
       "sourceText": "Lecture 2: Broadcast and Synchronizers\nSynchronizers\nThe α Synchronizer\nWe now remove the assumption on the number of messages sent between\nneighbors in each round.\n▶Q: When can a process pi move to the next round?\nA: After pi receives all messages sent to it.\n▶Q: How does pi know if it has received all messages?\nA: For each neighbor pj, it should send pi an extra message\nindicating that all messages that pj sent to pi have been received.\n▶Q: How does pj know if pi has received a message that pj sent?\nA: pi needs to acknowledge each message sent by pj through an\n“ack” message sent back to pj.\nSummary:\n▶A process pj is said to be safe in round r if all messages sent by pj\nin round r have been acknowledged.\n▶A process pi can proceed to Round r + 1 if all its neighbors are safe\nin round r.",
       "explanation": {
-        "whatYouSee": "DSA5208 Lecture 2 · slide 54: Concept and worked notation. Read the source layer for the exact notation and diagram.",
-        "whyItMatters": "This is official lecture-core evidence for DSA5208 Lecture 2. Use it to anchor the concept before opening linked exercises or textbook depth.",
-        "intuition": "Read the page as one claim: identify the object, then its role in the algorithm or definition.",
-        "technicalDetail": "Use the exact notation and assumptions shown on this page before extending the result.",
-        "pitfall": "Do not infer a stronger guarantee than the page states; check the source layer and neighboring slides.",
-        "connection": "Connect this page to the next step in the lecture pipeline and to the linked lesson practice."
+        "whatYouSee": "The α Synchronizer · source page 54 shows acknowledgements and safe-to-proceed notifications replacing a fixed payload count.",
+        "whyItMatters": "the protocol still simulates rounds when a process may send an arbitrary number of messages This page is the source evidence for that distinction.",
+        "intuition": "a process advances only after it has evidence that local work and neighbor dependencies are safe",
+        "technicalDetail": "The alpha synchronizer tracks messages and acknowledgements so a process can establish a safe frontier without assuming one message per edge.",
+        "pitfall": "Do not advance after receiving one neighbor message when other dependencies remain unacknowledged.",
+        "connection": "This is the coordination cost of running a synchronous algorithm over asynchronous links."
       },
       "textbookRefs": [],
       "referenceRefs": [],
       "socraticQuestions": [
         {
-          "type": "recall",
-          "prompt": "What is the main claim or object on this slide?",
-          "answer": "State the slide's main claim and name its symbols.",
-          "hint": "Name the object before explaining its consequence."
+          "type": "alpha synchronizer",
+          "prompt": "What evidence must be present before advancing on \"The α Synchronizer · source page 54\"?",
+          "answer": "The process needs completion evidence for its local round and the relevant neighbor traffic, not merely one received message.",
+          "hint": "Look for acknowledgements and the safe marker."
         }
       ],
       "kind": "lecture-source",
-      "status": "reviewed"
+      "status": "reviewed",
+      "title": "The α Synchronizer · source page 54",
+      "lecturePriority": "support"
     },
     {
       "slideId": "dsa5208-lec2-55",
@@ -11355,25 +11463,27 @@
       },
       "sourceText": "Lecture 2: Broadcast and Synchronizers\nSynchronizers\nExample of the α Synchronizer\n1\nSend messages and acknowledgements:\nacknowledgement\nmessage",
       "explanation": {
-        "whatYouSee": "DSA5208 Lecture 2 · slide 55: Concept and worked notation. Read the source layer for the exact notation and diagram.",
-        "whyItMatters": "This is official lecture-core evidence for DSA5208 Lecture 2. Use it to anchor the concept before opening linked exercises or textbook depth.",
-        "intuition": "Read the page as one claim: identify the object, then its role in the algorithm or definition.",
-        "technicalDetail": "Use the exact notation and assumptions shown on this page before extending the result.",
-        "pitfall": "Do not infer a stronger guarantee than the page states; check the source layer and neighboring slides.",
-        "connection": "Connect this page to the next step in the lecture pipeline and to the linked lesson practice."
+        "whatYouSee": "Example of the α Synchronizer shows acknowledgements and safe-to-proceed notifications replacing a fixed payload count.",
+        "whyItMatters": "the protocol still simulates rounds when a process may send an arbitrary number of messages This page is the source evidence for that distinction.",
+        "intuition": "a process advances only after it has evidence that local work and neighbor dependencies are safe",
+        "technicalDetail": "The alpha synchronizer tracks messages and acknowledgements so a process can establish a safe frontier without assuming one message per edge.",
+        "pitfall": "Do not advance after receiving one neighbor message when other dependencies remain unacknowledged.",
+        "connection": "This is the coordination cost of running a synchronous algorithm over asynchronous links."
       },
       "textbookRefs": [],
       "referenceRefs": [],
       "socraticQuestions": [
         {
-          "type": "recall",
-          "prompt": "What is the main claim or object on this slide?",
-          "answer": "State the slide's main claim and name its symbols.",
-          "hint": "Name the object before explaining its consequence."
+          "type": "alpha synchronizer",
+          "prompt": "What evidence must be present before advancing on \"Example of the α Synchronizer\"?",
+          "answer": "The process needs completion evidence for its local round and the relevant neighbor traffic, not merely one received message.",
+          "hint": "Look for acknowledgements and the safe marker."
         }
       ],
       "kind": "lecture-source",
-      "status": "reviewed"
+      "status": "reviewed",
+      "title": "Example of the α Synchronizer",
+      "lecturePriority": "support"
     },
     {
       "slideId": "dsa5208-lec2-56",
@@ -11505,25 +11615,27 @@
       },
       "sourceText": "Lecture 2: Broadcast and Synchronizers\nSynchronizers\nExample of the α Synchronizer\n2\nInform neighbors that “I’m safe”.\n\"safe\"",
       "explanation": {
-        "whatYouSee": "DSA5208 Lecture 2 · slide 56: Concept and worked notation. Read the source layer for the exact notation and diagram.",
-        "whyItMatters": "This is official lecture-core evidence for DSA5208 Lecture 2. Use it to anchor the concept before opening linked exercises or textbook depth.",
-        "intuition": "Read the page as one claim: identify the object, then its role in the algorithm or definition.",
-        "technicalDetail": "Use the exact notation and assumptions shown on this page before extending the result.",
-        "pitfall": "Do not infer a stronger guarantee than the page states; check the source layer and neighboring slides.",
-        "connection": "Connect this page to the next step in the lecture pipeline and to the linked lesson practice."
+        "whatYouSee": "Example of the α Synchronizer · source page 56 shows acknowledgements and safe-to-proceed notifications replacing a fixed payload count.",
+        "whyItMatters": "the protocol still simulates rounds when a process may send an arbitrary number of messages This page is the source evidence for that distinction.",
+        "intuition": "a process advances only after it has evidence that local work and neighbor dependencies are safe",
+        "technicalDetail": "The alpha synchronizer tracks messages and acknowledgements so a process can establish a safe frontier without assuming one message per edge.",
+        "pitfall": "Do not advance after receiving one neighbor message when other dependencies remain unacknowledged.",
+        "connection": "This is the coordination cost of running a synchronous algorithm over asynchronous links."
       },
       "textbookRefs": [],
       "referenceRefs": [],
       "socraticQuestions": [
         {
-          "type": "recall",
-          "prompt": "What is the main claim or object on this slide?",
-          "answer": "State the slide's main claim and name its symbols.",
-          "hint": "Name the object before explaining its consequence."
+          "type": "alpha synchronizer",
+          "prompt": "What evidence must be present before advancing on \"Example of the α Synchronizer · source page 56\"?",
+          "answer": "The process needs completion evidence for its local round and the relevant neighbor traffic, not merely one received message.",
+          "hint": "Look for acknowledgements and the safe marker."
         }
       ],
       "kind": "lecture-source",
-      "status": "reviewed"
+      "status": "reviewed",
+      "title": "Example of the α Synchronizer · source page 56",
+      "lecturePriority": "support"
     },
     {
       "slideId": "dsa5208-lec2-57",
@@ -11719,25 +11831,27 @@
       },
       "sourceText": "Lecture 2: Broadcast and Synchronizers\nSummary\n1\nBroadcast\n2\nShortest-path problem\n3\nSynchronizers\n4\nSummary",
       "explanation": {
-        "whatYouSee": "DSA5208 Lecture 2 · slide 57: Concept and worked notation. Read the source layer for the exact notation and diagram.",
-        "whyItMatters": "This is official lecture-core evidence for DSA5208 Lecture 2. Use it to anchor the concept before opening linked exercises or textbook depth.",
-        "intuition": "Read the page as one claim: identify the object, then its role in the algorithm or definition.",
-        "technicalDetail": "Use the exact notation and assumptions shown on this page before extending the result.",
-        "pitfall": "Do not infer a stronger guarantee than the page states; check the source layer and neighboring slides.",
-        "connection": "Connect this page to the next step in the lecture pipeline and to the linked lesson practice."
+        "whatYouSee": "Lecture 2 summary shows the lecture's chain from broadcast semantics to paths and synchronizers.",
+        "whyItMatters": "the summary connects the guarantees, algorithms, and timing assumptions into one revision map This page is the source evidence for that distinction.",
+        "intuition": "start with the system contract, select the algorithm, then check the coordination cost",
+        "technicalDetail": "Broadcast ordering, Bellman-Ford relaxation, and synchronizers each preserve a different invariant under a stated model.",
+        "pitfall": "Do not memorize the algorithm name without its timing and delivery assumptions.",
+        "connection": "These model-first distinctions prepare the consistency guarantees in Lecture 3."
       },
       "textbookRefs": [],
       "referenceRefs": [],
       "socraticQuestions": [
         {
-          "type": "recall",
-          "prompt": "What is the main claim or object on this slide?",
-          "answer": "State the slide's main claim and name its symbols.",
-          "hint": "Name the object before explaining its consequence."
+          "type": "Lecture 2 summary",
+          "prompt": "How does \"Lecture 2 summary\" connect the three algorithm families?",
+          "answer": "It moves from delivery semantics, to shortest-path computation, to the mechanisms that coordinate rounds in an asynchronous system.",
+          "hint": "Name the invariant and model for each family."
         }
       ],
       "kind": "lecture-source",
-      "status": "reviewed"
+      "status": "reviewed",
+      "title": "Lecture 2 summary",
+      "lecturePriority": "support"
     },
     {
       "slideId": "dsa5208-lec2-58",
@@ -11869,25 +11983,27 @@
       },
       "sourceText": "Lecture 2: Broadcast and Synchronizers\nSummary\nSummary\nSummary:\n▶Broadcast and four types of broadcasts. Implementation of FIFO\nand causal broadcasts.\n▶Synchronous and asynchronous Bellman-Ford algorithms.\n▶The simple and α synchronizers.",
       "explanation": {
-        "whatYouSee": "DSA5208 Lecture 2 · slide 58: Concept and worked notation. Read the source layer for the exact notation and diagram.",
-        "whyItMatters": "This is official lecture-core evidence for DSA5208 Lecture 2. Use it to anchor the concept before opening linked exercises or textbook depth.",
-        "intuition": "Read the page as one claim: identify the object, then its role in the algorithm or definition.",
-        "technicalDetail": "Use the exact notation and assumptions shown on this page before extending the result.",
-        "pitfall": "Do not infer a stronger guarantee than the page states; check the source layer and neighboring slides.",
-        "connection": "Connect this page to the next step in the lecture pipeline and to the linked lesson practice."
+        "whatYouSee": "Lecture 2 summary · source page 58 shows the lecture's chain from broadcast semantics to paths and synchronizers.",
+        "whyItMatters": "the summary connects the guarantees, algorithms, and timing assumptions into one revision map This page is the source evidence for that distinction.",
+        "intuition": "start with the system contract, select the algorithm, then check the coordination cost",
+        "technicalDetail": "Broadcast ordering, Bellman-Ford relaxation, and synchronizers each preserve a different invariant under a stated model.",
+        "pitfall": "Do not memorize the algorithm name without its timing and delivery assumptions.",
+        "connection": "These model-first distinctions prepare the consistency guarantees in Lecture 3."
       },
       "textbookRefs": [],
       "referenceRefs": [],
       "socraticQuestions": [
         {
-          "type": "recall",
-          "prompt": "What is the main claim or object on this slide?",
-          "answer": "State the slide's main claim and name its symbols.",
-          "hint": "Name the object before explaining its consequence."
+          "type": "Lecture 2 summary",
+          "prompt": "How does \"Lecture 2 summary · source page 58\" connect the three algorithm families?",
+          "answer": "It moves from delivery semantics, to shortest-path computation, to the mechanisms that coordinate rounds in an asynchronous system.",
+          "hint": "Name the invariant and model for each family."
         }
       ],
       "kind": "lecture-source",
-      "status": "reviewed"
+      "status": "reviewed",
+      "title": "Lecture 2 summary · source page 58",
+      "lecturePriority": "core"
     }
   ],
   "extraction": {

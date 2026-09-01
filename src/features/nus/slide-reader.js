@@ -100,7 +100,8 @@
 
   function isCoreSlide(slideSet, slide) {
     const coreSlideNumbers = Array.isArray(slideSet && slideSet.coreSlideNumbers) ? slideSet.coreSlideNumbers : [];
-    return coreSlideNumbers.includes(Number(slide.slideNumber)) || ["high-yield", "support"].includes(slideStudyPriority(slide)) || slide.priority === "core";
+    if (coreSlideNumbers.length) return coreSlideNumbers.includes(Number(slide.slideNumber));
+    return ["high-yield", "support"].includes(slideStudyPriority(slide)) || slide.priority === "core";
   }
 
   function studyStore() {

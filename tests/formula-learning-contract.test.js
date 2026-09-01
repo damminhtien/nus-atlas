@@ -76,7 +76,9 @@ test("all course slide readers use content-specific Socratic prompts", () => {
     "content/courses/DSA5104/slides/dsa5104-chapter1.json",
     "content/courses/DSA5105/slides/dsa5105-week1-annotated.json",
     "content/courses/DSA5208/slides/dsa5208-lec0.json",
-    "content/courses/DSA5208/slides/dsa5208-lec1.json"
+    "content/courses/DSA5208/slides/dsa5208-lec1.json",
+    "content/courses/DSA5208/slides/dsa5208-lec2.json",
+    "content/courses/DSA5208/slides/dsa5208-lec3.json"
   ];
   const generic = [];
   for (const file of files) {

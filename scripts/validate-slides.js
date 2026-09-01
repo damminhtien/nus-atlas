@@ -11,7 +11,11 @@ const GENERIC_SOCRATIC_PATTERNS = [
   /What invariant or metric makes the idea on/i,
   /How would the reasoning on .*change if the dataset no longer fit in memory/i,
   /Which boundary or invariant is the key idea on/i,
-  /How would the reasoning on .*change when the database becomes larger or more concurrent/i
+  /How would the reasoning on .*change when the database becomes larger or more concurrent/i,
+  /What is the main claim or object on this slide/i,
+  /Read the authored lecture note in the canonical lesson package/i,
+  /Concept and worked notation/i,
+  /source-backed consistency-model page/i
 ];
 
 const STUDY_PRIORITIES = new Set(["high-yield", "support", "context", "exercise"]);
