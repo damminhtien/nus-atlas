@@ -1,0 +1,23 @@
+{
+  "lessonId": "dsa5101-dimensionality-reduction",
+  "schemaVersion": "nus.study-kit.v1",
+  "flashcards": [
+    { "front": "What does each factor mean in truncated SVD?", "back": "$U$ contains left singular vectors, $\\Sigma$ contains non-negative singular values, and $V$ contains right singular vectors in $A\\approx U\\Sigma V^T$." },
+    { "front": "What is the rank-k squared Frobenius error?", "back": "$\\lVert A-A_k\\rVert_F^2=\\sum_{i>k}\\sigma_i^2$: square and sum only the discarded tail." },
+    { "front": "What is the power-iteration matrix for right singular vectors?", "back": "Use $A^TA$; its eigenvectors are the columns of $V$ and its eigenvalues are the squared singular values." },
+    { "front": "When does CUR beat SVD as a representation?", "back": "When actual sampled rows/columns, sparsity, and interpretability matter more than SVD's optimal dense latent basis." }
+  ],
+  "homework": [
+    {
+      "prompt": "Given an ordered singular-value list, choose the smallest rank retaining at least 90% of squared energy and compute the squared reconstruction error.",
+      "rubric": "Squares the singular values, separates retained energy from discarded tail, reports the rank and both quantities, and states the rank/resource trade-off.",
+      "source": { "sourceId": "DSA5101/DSA5101 Lecture 4 - Dimensionality Reduction.pdf", "page": 36, "sourceType": "lecture", "role": "rank selection", "status": "current" }
+    },
+    {
+      "prompt": "Compare SVD and CUR for a very sparse matrix whose explanation must name original authors and conferences.",
+      "rubric": "Names dense latent factors versus sampled rows/columns, sparsity, interpretation, randomized duplicates, and the accuracy trade-off.",
+      "source": { "sourceId": "DSA5101/DSA5101 Lecture 4 - Dimensionality Reduction.pdf", "page": 63, "sourceType": "lecture", "role": "SVD versus CUR", "status": "current" }
+    }
+  ],
+  "codeExercises": []
+}

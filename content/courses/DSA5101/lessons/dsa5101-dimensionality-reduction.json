@@ -1,0 +1,290 @@
+{
+  "id": "dsa5101-dimensionality-reduction",
+  "courseId": "DSA5101",
+  "moduleId": "dsa5101-dimensionality-reduction",
+  "title": "Dimension reduction: rank, SVD, and CUR",
+  "week": 4,
+  "contentStatus": "CURRENT LECTURE",
+  "minutes": 90,
+  "summary": "Use Lecture 4 to reduce a high-dimensional matrix with SVD, select rank from reconstruction error, and compare the dense latent representation with sparse, interpretable CUR.",
+  "objectives": [
+    "Relate effective rank and maximum-variance projection to low-dimensional representation",
+    "Read the roles, shapes, and constraints of U, Sigma, and V in SVD",
+    "Compute projection coordinates, retained energy, and rank-k Frobenius error",
+    "Explain power iteration and the A-transpose-A eigenvector connection",
+    "Choose between SVD and CUR using accuracy, sparsity, runtime, and interpretability"
+  ],
+  "sourceRefs": [
+    { "sourceId": "DSA5101/DSA5101 Lecture 4 - Dimensionality Reduction.pdf", "page": 9, "sourceType": "lecture", "role": "effective rank", "status": "current" },
+    { "sourceId": "DSA5101/DSA5101 Lecture 4 - Dimensionality Reduction.pdf", "page": 13, "sourceType": "lecture", "role": "SVD definition", "status": "current" },
+    { "sourceId": "DSA5101/DSA5101 Lecture 4 - Dimensionality Reduction.pdf", "page": 25, "sourceType": "lecture", "role": "reconstruction objective", "status": "current" },
+    { "sourceId": "DSA5101/DSA5101 Lecture 4 - Dimensionality Reduction.pdf", "page": 36, "sourceType": "lecture", "role": "latent-factor selection", "status": "current" },
+    { "sourceId": "DSA5101/DSA5101 Lecture 4 - Dimensionality Reduction.pdf", "page": 42, "sourceType": "lecture", "role": "computing SVD", "status": "current" },
+    { "sourceId": "DSA5101/DSA5101 Lecture 4 - Dimensionality Reduction.pdf", "page": 60, "sourceType": "lecture", "role": "CUR approximation", "status": "current" }
+  ],
+  "sourceLens": {
+    "status": "core DSA5101 study boundary",
+    "whyExaminable": "The supplied Lecture 4 is the official local source for rank, SVD, low-rank error, power iteration, concept-space queries, and CUR. Stanford CS246 and MMDS are supporting depth only.",
+    "lecture": [
+      { "sourceId": "DSA5101/DSA5101 Lecture 4 - Dimensionality Reduction.pdf", "page": 13, "sourceType": "lecture", "role": "SVD definition", "status": "current" },
+      { "sourceId": "DSA5101/DSA5101 Lecture 4 - Dimensionality Reduction.pdf", "page": 36, "sourceType": "lecture", "role": "rank selection", "status": "current" },
+      { "sourceId": "DSA5101/DSA5101 Lecture 4 - Dimensionality Reduction.pdf", "page": 42, "sourceType": "lecture", "role": "SVD computation", "status": "current" },
+      { "sourceId": "DSA5101/DSA5101 Lecture 4 - Dimensionality Reduction.pdf", "page": 60, "sourceType": "lecture", "role": "CUR bound", "status": "current" }
+    ],
+    "officialExercise": [],
+    "textbook": [
+      { "sourceId": "DSA5101/Reference textbook MMDS 3rd Edition.pdf", "page": 84, "sourceType": "textbook", "role": "matrix factorization depth", "status": "course-depth" }
+    ],
+    "reference": [
+      { "sourceId": "Stanford CS246/slides/06-dim_red.pdf", "page": 1, "sourceType": "ref", "role": "supporting SVD and CUR reference", "status": "supporting", "url": "https://web.stanford.edu/class/cs246/slides/06-dim_red.pdf" }
+    ]
+  },
+  "visualIds": ["dsa5101-dimensionality-reduction"],
+  "slideSetIds": ["dsa5101-lecture4"],
+  "schemaVersion": "nus.lesson.v1",
+  "sections": [
+    {
+      "title": "Reduce effective dimension, not meaning",
+      "body": "A high-dimensional matrix can have a much smaller effective rank. Dimension reduction searches for a few directions that capture the greatest variance, equivalently minimizing projection or reconstruction error. Start by naming the original rows, columns, and the downstream quantity that must survive.",
+      "sourceType": "lecture",
+      "sourceRefs": [
+        { "sourceId": "DSA5101/DSA5101 Lecture 4 - Dimensionality Reduction.pdf", "page": 7, "sourceType": "lecture", "role": "variance and projection error", "status": "current" },
+        { "sourceId": "DSA5101/DSA5101 Lecture 4 - Dimensionality Reduction.pdf", "page": 9, "sourceType": "lecture", "role": "rank", "status": "current" }
+      ]
+    },
+    {
+      "title": "Read the SVD factors by shape",
+      "body": "The truncated SVD writes $A\\approx U\\Sigma V^T$. $U$ maps rows to latent concepts, $V$ maps columns to latent concepts, and $\\Sigma$ weights the concepts by non-negative singular values. The columns of $U$ and $V$ are orthonormal, so the factors are constrained rather than arbitrary.",
+      "sourceType": "lecture",
+      "sourceRefs": [
+        { "sourceId": "DSA5101/DSA5101 Lecture 4 - Dimensionality Reduction.pdf", "page": 13, "sourceType": "lecture", "role": "SVD factors and shapes", "status": "current" },
+        { "sourceId": "DSA5101/DSA5101 Lecture 4 - Dimensionality Reduction.pdf", "page": 15, "sourceType": "lecture", "role": "orthonormality restrictions", "status": "current" }
+      ]
+    },
+    {
+      "title": "Project, reconstruct, and choose rank",
+      "body": "Projection uses the leading right singular directions, while reconstruction keeps only the largest singular values. For the best rank-$k$ approximation, the squared Frobenius error is the squared energy in the discarded tail. Increasing $k$ reduces error but keeps more dimensions and computation.",
+      "sourceType": "lecture",
+      "sourceRefs": [
+        { "sourceId": "DSA5101/DSA5101 Lecture 4 - Dimensionality Reduction.pdf", "page": 28, "sourceType": "lecture", "role": "projection coordinates", "status": "current" },
+        { "sourceId": "DSA5101/DSA5101 Lecture 4 - Dimensionality Reduction.pdf", "page": 34, "sourceType": "lecture", "role": "reconstruction loss", "status": "current" },
+        { "sourceId": "DSA5101/DSA5101 Lecture 4 - Dimensionality Reduction.pdf", "page": 36, "sourceType": "lecture", "role": "energy rule", "status": "current" }
+      ]
+    },
+    {
+      "title": "Compute directions through eigenvectors",
+      "body": "Power iteration normalizes repeated multiplication by a symmetric matrix to approach its principal eigenvector. From $A=U\\Sigma V^T$, we obtain $A^TA=V\\Sigma^2V^T$, so the eigenvectors of $A^TA$ are the right singular vectors and its eigenvalues are squared singular values. Deflation exposes later directions.",
+      "sourceType": "lecture",
+      "sourceRefs": [
+        { "sourceId": "DSA5101/DSA5101 Lecture 4 - Dimensionality Reduction.pdf", "page": 38, "sourceType": "lecture", "role": "power iteration", "status": "current" },
+        { "sourceId": "DSA5101/DSA5101 Lecture 4 - Dimensionality Reduction.pdf", "page": 41, "sourceType": "lecture", "role": "deflation", "status": "current" },
+        { "sourceId": "DSA5101/DSA5101 Lecture 4 - Dimensionality Reduction.pdf", "page": 42, "sourceType": "lecture", "role": "SVD from eigenvectors", "status": "current" }
+      ]
+    },
+    {
+      "title": "Query in one concept space",
+      "body": "SVD also changes retrieval: map a query and stored objects into the same latent coordinates, for example $q_{concept}=qV$. Two objects can then be similar because they share latent concepts even when they have no exact non-zero entry in the original sparse matrix.",
+      "sourceType": "lecture",
+      "sourceRefs": [
+        { "sourceId": "DSA5101/DSA5101 Lecture 4 - Dimensionality Reduction.pdf", "page": 45, "sourceType": "lecture", "role": "query mapping", "status": "current" },
+        { "sourceId": "DSA5101/DSA5101 Lecture 4 - Dimensionality Reduction.pdf", "page": 48, "sourceType": "lecture", "role": "concept-space query", "status": "current" }
+      ]
+    },
+    {
+      "title": "Use CUR when actual rows and columns matter",
+      "body": "CUR approximates $A$ with sampled columns $C$, sampled rows $R$, and an intersection factor $U$. The sampled basis can remain sparse and interpretable, but randomized sampling can duplicate rows or columns and does not inherit SVD's optimal low-rank guarantee. Compare accuracy, space, runtime, and interpretability together.",
+      "sourceType": "lecture",
+      "sourceRefs": [
+        { "sourceId": "DSA5101/DSA5101 Lecture 4 - Dimensionality Reduction.pdf", "page": 54, "sourceType": "lecture", "role": "CUR construction", "status": "current" },
+        { "sourceId": "DSA5101/DSA5101 Lecture 4 - Dimensionality Reduction.pdf", "page": 57, "sourceType": "lecture", "role": "importance sampling", "status": "current" },
+        { "sourceId": "DSA5101/DSA5101 Lecture 4 - Dimensionality Reduction.pdf", "page": 63, "sourceType": "lecture", "role": "SVD versus CUR", "status": "current" }
+      ]
+    }
+  ],
+  "math": [
+    {
+      "name": "Truncated SVD",
+      "purpose": "Represent a matrix using a small number of latent directions.",
+      "latex": "A\\approx U\\Sigma V^T",
+      "explanation": "The product $A\\approx U\\Sigma V^T$ uses $U$ and $V$ for orthonormal directions and $\\Sigma$ for their strengths.",
+      "symbols": [
+        { "latex": "A", "meaning": "input matrix" },
+        { "latex": "U", "meaning": "left singular vectors" },
+        { "latex": "\\Sigma", "meaning": "diagonal singular-value matrix" },
+        { "latex": "V", "meaning": "right singular vectors" }
+      ],
+      "sourceType": "lecture",
+      "sourceRefs": [{ "sourceId": "DSA5101/DSA5101 Lecture 4 - Dimensionality Reduction.pdf", "page": 13, "sourceType": "lecture", "role": "SVD definition", "status": "current" }]
+    },
+    {
+      "name": "Rank-k reconstruction error",
+      "purpose": "Compute the best rank-k approximation error from the discarded singular values.",
+      "latex": "\\lVert A-A_k\\rVert_F^2=\\sum_{i>k}\\sigma_i^2",
+      "explanation": "The squared Frobenius reconstruction error $\\lVert A-A_k\\rVert_F^2$ is the squared energy of singular directions removed after the rank-$k$ cutoff.",
+      "symbols": [
+        { "latex": "A_k", "meaning": "best rank-k approximation" },
+        { "latex": "\\sigma_i", "meaning": "i-th singular value in descending order" }
+      ],
+      "sourceType": "lecture",
+      "sourceRefs": [{ "sourceId": "DSA5101/DSA5101 Lecture 4 - Dimensionality Reduction.pdf", "page": 34, "sourceType": "lecture", "role": "reconstruction loss", "status": "current" }]
+    },
+    {
+      "name": "Power iteration",
+      "purpose": "Approximate the principal eigenvector of a symmetric matrix.",
+      "latex": "x_{t+1}=\\frac{Mx_t}{\\lVert Mx_t\\rVert_2}",
+      "explanation": "Power iteration repeatedly applies $M$ and normalizes the result; for $M=A^TA$, the leading direction is a right singular vector of $A$.",
+      "symbols": [
+        { "latex": "M", "meaning": "symmetric matrix being iterated" },
+        { "latex": "x_t", "meaning": "normalized iterate at step t" }
+      ],
+      "sourceType": "lecture",
+      "sourceRefs": [{ "sourceId": "DSA5101/DSA5101 Lecture 4 - Dimensionality Reduction.pdf", "page": 38, "sourceType": "lecture", "role": "power iteration update", "status": "current" }]
+    },
+    {
+      "name": "CUR approximation",
+      "purpose": "Approximate a matrix with sampled original rows and columns.",
+      "latex": "A\\approx CUR",
+      "explanation": "CUR keeps actual sampled columns $C$ and rows $R$ and uses $U$ from their intersection to form a compact approximation.",
+      "symbols": [
+        { "latex": "C", "meaning": "sampled columns of A" },
+        { "latex": "R", "meaning": "sampled rows of A" },
+        { "latex": "U", "meaning": "intersection pseudoinverse factor" }
+      ],
+      "sourceType": "lecture",
+      "sourceRefs": [{ "sourceId": "DSA5101/DSA5101 Lecture 4 - Dimensionality Reduction.pdf", "page": 54, "sourceType": "lecture", "role": "CUR construction", "status": "current" }]
+    }
+  ],
+  "examples": [
+    {
+      "title": "Choose rank from singular-value energy",
+      "steps": [
+        ["List", "$\\sigma=[12.4,9.5,1.3]$", "Keep singular values in descending order."],
+        ["Square", "$12.4^2+9.5^2=244.01$", "This is the retained energy if the last direction is dropped."],
+        ["Compare", "$244.01/(244.01+1.3^2)\\approx99.31\\%$", "Dropping 1.3 retains more than 99% of the total energy."],
+        ["Decide", "$k=2$", "Choose the smallest rank that meets the stated retention target, then state the cost of retaining more factors."]
+      ],
+      "sourceRefs": [{ "sourceId": "DSA5101/DSA5101 Lecture 4 - Dimensionality Reduction.pdf", "page": 36, "sourceType": "lecture", "role": "latent-factor selection example", "status": "current" }]
+    },
+    {
+      "title": "CUR importance sampling checkpoint",
+      "steps": [
+        ["Measure", "$\\lVert[3,4,5]\\rVert_2^2=50$", "The sampling importance is the squared norm."],
+        ["Measure", "$\\lVert[1,0,3]\\rVert_2^2=10$", "The second vector has one-fifth as much importance."],
+        ["Sample", "$50/10=5$", "Sample the first vector five times as often under the stated proportional rule."],
+        ["Audit", "duplicates are possible", "A randomized CUR draw may select the same row or column more than once."]
+      ],
+      "sourceRefs": [{ "sourceId": "DSA5101/DSA5101 Lecture 4 - Dimensionality Reduction.pdf", "page": 57, "sourceType": "lecture", "role": "CUR sampling importance", "status": "current" }]
+    }
+  ],
+  "algorithmNotes": [
+    {
+      "algorithm": "SVD low-rank approximation",
+      "problemDefinition": "Replace a high-dimensional matrix with a rank-k representation that preserves the most useful variation while minimizing reconstruction error.",
+      "assumptions": "The input matrix and Frobenius reconstruction loss are appropriate, singular values are ordered, and k is chosen from an explicit accuracy or resource target.",
+      "coreInvariant": "The leading singular directions give the best rank-k approximation in Frobenius norm, and increasing k cannot increase the discarded tail energy.",
+      "formulaAlgorithm": "Compute $A\\approx U\\Sigma V^T$, retain the first k singular directions, project with $V$, and reconstruct from $U_k\\Sigma_kV_k^T$.",
+      "failureModes": "Common mistakes: confusing $A^TA$ eigenvalues with singular values, summing retained rather than discarded energy, treating convergence as global semantic correctness, or ignoring the dense and less interpretable factors.",
+      "sourceRefs": [
+        { "sourceId": "DSA5101/DSA5101 Lecture 4 - Dimensionality Reduction.pdf", "page": 25, "sourceType": "lecture", "role": "SVD objective", "status": "current" },
+        { "sourceId": "DSA5101/DSA5101 Lecture 4 - Dimensionality Reduction.pdf", "page": 35, "sourceType": "lecture", "role": "best low-rank approximation", "status": "current" }
+      ]
+    },
+    {
+      "algorithm": "Power iteration",
+      "problemDefinition": "Recover a dominant eigenvector and eigenvalue of a symmetric matrix as a building block for SVD computation.",
+      "assumptions": "The starting vector has a non-zero component along the dominant eigenvector, the matrix is symmetric, and the dominant direction is sufficiently separated for convergence.",
+      "coreInvariant": "Each iterate is normalized after multiplication, so its direction is amplified toward the largest-eigenvalue component without unbounded scale growth.",
+      "formulaAlgorithm": "Initialize a random $x_0$, repeat $x_{t+1}=Mx_t/\\lVert Mx_t\\rVert_2$, estimate $\\lambda=x^TMx$ after normalization, then deflate before finding later directions.",
+      "failureModes": "Common mistakes: skipping normalization, iterating on the wrong matrix for the requested side, using $\\lambda_i$ as $\\sigma_i$ without a square root, or forgetting deflation for subsequent vectors.",
+      "sourceRefs": [
+        { "sourceId": "DSA5101/DSA5101 Lecture 4 - Dimensionality Reduction.pdf", "page": 38, "sourceType": "lecture", "role": "power iteration", "status": "current" },
+        { "sourceId": "DSA5101/DSA5101 Lecture 4 - Dimensionality Reduction.pdf", "page": 41, "sourceType": "lecture", "role": "deflation", "status": "current" }
+      ]
+    },
+    {
+      "algorithm": "CUR decomposition",
+      "problemDefinition": "Build a compact matrix approximation from actual sampled columns and rows when sparsity or interpretability matters.",
+      "assumptions": "Rows and columns can be sampled according to squared-norm importance, duplicate samples are handled deliberately, and an approximation with a stated probability/error contract is acceptable.",
+      "coreInvariant": "C and R remain original matrix columns and rows; U is computed from their intersection, so the representation stays tied to observed data rather than invented dense directions.",
+      "formulaAlgorithm": "Sample columns C and rows R with probability proportional to squared Frobenius norm, form their intersection W, compute its pseudoinverse U=W^+, and use $A\\approx CUR$.",
+      "failureModes": "Common mistakes: claiming CUR is the exact SVD, ignoring duplicate rows or columns, sampling uniformly when importance sampling is required, or quoting an error bound without its sample-size and probability conditions.",
+      "sourceRefs": [
+        { "sourceId": "DSA5101/DSA5101 Lecture 4 - Dimensionality Reduction.pdf", "page": 54, "sourceType": "lecture", "role": "CUR construction", "status": "current" },
+        { "sourceId": "DSA5101/DSA5101 Lecture 4 - Dimensionality Reduction.pdf", "page": 60, "sourceType": "lecture", "role": "CUR error bound", "status": "current" }
+      ]
+    }
+  ],
+  "contrastDrills": [
+    {
+      "id": "dsa5101-dimension-c1",
+      "type": "contrast",
+      "kind": "concept-contrast",
+      "pair": "eigenvalue of A^T A vs singular value",
+      "prompt": "If an eigenvalue of $A^TA$ is $49$, what is the corresponding singular value?",
+      "choices": ["7", "49", "-7", "$\\sqrt{49}+1$", "The value of the matching entry of U", "It cannot be determined because A is rectangular"],
+      "answer": 0,
+      "explanation": "The eigenvalue is $\\sigma_i^2$, so the non-negative singular value is $\\sigma_i=\\sqrt{49}=7$.",
+      "misconception": "Treating the eigenvalue of $A^TA$ as the singular value without taking the non-negative square root.",
+      "repair": "Label the number as an entry of $\\Sigma^2$ first, then take its square root to recover $\\Sigma$.",
+      "estimatedSeconds": 45,
+      "sourceRefs": [{ "sourceId": "DSA5101/DSA5101 Lecture 4 - Dimensionality Reduction.pdf", "page": 42, "sourceType": "lecture", "role": "SVD eigenvalue connection", "status": "current" }]
+    },
+    {
+      "id": "dsa5101-dimension-c2",
+      "type": "contrast",
+      "kind": "concept-contrast",
+      "pair": "retained energy vs reconstruction error",
+      "prompt": "For a rank-$k$ approximation, which singular values belong in the squared Frobenius reconstruction error?",
+      "choices": ["Only the discarded tail after $\\sigma_k$", "Only the retained prefix through $\\sigma_k$", "All singular values without squaring", "The entries of U", "The entries of V only", "The number of rows times the number of columns"],
+      "answer": 0,
+      "explanation": "The best rank-$k$ error is $\\sum_{i>k}\\sigma_i^2$, so only discarded singular directions contribute.",
+      "misconception": "Summing retained energy when the question asks for discarded reconstruction error.",
+      "repair": "Draw the rank cutoff after $\\sigma_k$ and square only the values on the right.",
+      "estimatedSeconds": 45,
+      "sourceRefs": [{ "sourceId": "DSA5101/DSA5101 Lecture 4 - Dimensionality Reduction.pdf", "page": 34, "sourceType": "lecture", "role": "reconstruction loss", "status": "current" }]
+    },
+    {
+      "id": "dsa5101-dimension-c3",
+      "type": "contrast",
+      "kind": "concept-contrast",
+      "pair": "SVD vs CUR basis",
+      "prompt": "Which requirement most strongly favors CUR over SVD?",
+      "choices": ["The basis must remain actual rows and columns from the input", "The approximation must be optimal in Frobenius norm", "The singular directions must be orthogonal", "The data must have no sparse entries", "The query must use teleportation", "The cluster count must be fixed"],
+      "answer": 0,
+      "explanation": "CUR uses sampled original rows and columns, while SVD uses latent singular directions and is the optimal low-rank approximation under the stated norm.",
+      "misconception": "Assuming the two decompositions have the same basis semantics because both use three factors.",
+      "repair": "Underline whether the task values optimal latent directions or interpretability as observed rows and columns.",
+      "estimatedSeconds": 45,
+      "sourceRefs": [{ "sourceId": "DSA5101/DSA5101 Lecture 4 - Dimensionality Reduction.pdf", "page": 63, "sourceType": "lecture", "role": "SVD versus CUR", "status": "current" }]
+    }
+  ],
+  "criticalQuestions": [
+    {
+      "prompt": "Why can dropping a small singular value change less than one percent of reconstruction energy but still change a downstream query?",
+      "angle": "Separate global Frobenius error from task-specific sensitivity to a latent direction.",
+      "modelAnswer": "Frobenius energy is a global aggregate, while a query may depend strongly on the dropped direction. A small global contribution does not prove that every downstream decision is unchanged.",
+      "focus": "rank-selection boundary",
+      "sourceRefs": [{ "sourceId": "DSA5101/DSA5101 Lecture 4 - Dimensionality Reduction.pdf", "page": 36, "sourceType": "lecture", "role": "energy selection", "status": "current" }]
+    },
+    {
+      "prompt": "When is CUR a better engineering choice even if SVD has lower reconstruction error?",
+      "angle": "Compare the objective with sparsity, interpretability, memory, and runtime constraints.",
+      "modelAnswer": "CUR can be preferable when the output must be explained as actual rows and columns or remain sparse and compact, even if it sacrifices some approximation optimality.",
+      "focus": "representation trade-off",
+      "sourceRefs": [{ "sourceId": "DSA5101/DSA5101 Lecture 4 - Dimensionality Reduction.pdf", "page": 61, "sourceType": "lecture", "role": "CUR pros and cons", "status": "current" }]
+    },
+    {
+      "prompt": "What must be checked before using a power-iteration eigenvalue as a singular value?",
+      "angle": "Trace the matrix, side of the factorization, normalization, and square-root step.",
+      "modelAnswer": "Confirm that the eigenvalue came from $A^TA$ or $AA^T$ for the requested singular side, then take its non-negative square root because the eigenvalue equals $\\sigma_i^2$.",
+      "focus": "matrix-orientation audit",
+      "sourceRefs": [{ "sourceId": "DSA5101/DSA5101 Lecture 4 - Dimensionality Reduction.pdf", "page": 42, "sourceType": "lecture", "role": "computing SVD", "status": "current" }]
+    }
+  ],
+  "questionIds": [
+    "dsa5101-stanford-001",
+    "dsa5101-tune-009",
+    "dsa5101-tune-010",
+    "dsa5101-tune-011"
+  ]
+}

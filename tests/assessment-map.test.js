@@ -61,7 +61,7 @@ test("assessment map feature renders lesson and evidence links", () => {
   assert.match(topics.innerHTML, /Homework/);
 });
 
-test("DSA5101 A+ filter exposes the verified assignment topics", () => {
+test("DSA5101 A+ filter exposes the verified assessment topics", () => {
   const map = loadDsa5101Map();
   const filter = { value: "all", addEventListener(_type, handler) { this.handler = handler; } };
   const topics = { innerHTML: "" };
@@ -89,7 +89,7 @@ test("DSA5101 A+ filter exposes the verified assignment topics", () => {
   assert.match(root.innerHTML, /verified assessment evidence/);
   filter.value = "a-plus";
   filter.handler({ target: filter });
-  assert.equal((topics.innerHTML.match(/class="nus-assessment-topic nus-assessment-topic-aplus"/g) || []).length, 7);
+  assert.equal((topics.innerHTML.match(/class="nus-assessment-topic nus-assessment-topic-aplus"/g) || []).length, 8);
 });
 
 test("assessment map exposes a runnable timed mixed checkpoint when present", () => {

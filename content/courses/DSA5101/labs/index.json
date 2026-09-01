@@ -1701,5 +1701,219 @@
       ],
       "frameDurationMs": 1400
     }
+  },
+  "dsa5101-dimensionality-reduction": {
+    "courseCode": "DSA5101",
+    "lessonId": "dsa5101-dimensionality-reduction",
+    "type": "deep-dive",
+    "stepValueMode": "mixed",
+    "title": "Lecture 4 · SVD and CUR reconstruction lab",
+    "learningGoal": "Follow the lecture's path from matrix factor shapes to rank selection, power iteration, and interpretable CUR samples.",
+    "sourceRefs": [
+      {
+        "sourceId": "DSA5101/DSA5101 Lecture 4 - Dimensionality Reduction.pdf",
+        "page": 13,
+        "sourceType": "lecture",
+        "role": "SVD factorization",
+        "status": "current"
+      },
+      {
+        "sourceId": "DSA5101/DSA5101 Lecture 4 - Dimensionality Reduction.pdf",
+        "page": 34,
+        "sourceType": "lecture",
+        "role": "rank selection and reconstruction error",
+        "status": "current"
+      },
+      {
+        "sourceId": "DSA5101/DSA5101 Lecture 4 - Dimensionality Reduction.pdf",
+        "page": 63,
+        "sourceType": "lecture",
+        "role": "CUR versus SVD",
+        "status": "current"
+      }
+    ],
+    "sourceLens": {
+      "status": "core DSA5101",
+      "whyExaminable": "Lecture 4 supplies the official factorization, error, and CUR workflow; the lab turns each slide-level decision into a worked checkpoint.",
+      "lecture": [
+        {
+          "sourceId": "DSA5101/DSA5101 Lecture 4 - Dimensionality Reduction.pdf",
+          "page": 34,
+          "sourceType": "lecture",
+          "role": "rank selection and reconstruction error",
+          "status": "current"
+        }
+      ],
+      "officialExercise": [],
+      "textbook": [
+        {
+          "sourceId": "DSA5101/Reference textbook MMDS 3rd Edition.pdf",
+          "page": 84,
+          "sourceType": "textbook",
+          "role": "dimensionality reduction depth",
+          "status": "course-depth"
+        }
+      ],
+      "reference": []
+    },
+    "exercises": [
+      {
+        "id": "svd-shapes",
+        "label": "SVD shapes",
+        "prompt": "Write the full SVD shapes before reasoning about a latent coordinate or a rank-k reconstruction.",
+        "takeaway": "Dimensions and orthogonality are the first invariant checks; a shape mismatch invalidates the later projection.",
+        "steps": [
+          [
+            "Factor",
+            "$A_{m\\times n}=U_{m\\times m}\\Sigma_{m\\times n}V^T_{n\\times n}$",
+            "Start with the rectangular matrix and keep the dimensions visible on every factor."
+          ],
+          [
+            "Orthogonality",
+            "$U^TU=I_m,\\qquad V^TV=I_n$",
+            "The singular-vector bases preserve inner products even though the diagonal factor changes scale."
+          ],
+          [
+            "Project",
+            "$z=U_k^Tx,\\qquad z\\in\\mathbb{R}^k$",
+            "The first k left singular directions map an input vector into k latent coordinates."
+          ],
+          [
+            "Reconstruct",
+            "$\\widehat{x}=U_kz=U_kU_k^Tx$",
+            "Use the same retained directions to map the latent coordinates back into the original space."
+          ],
+          [
+            "Rank check",
+            "$\\operatorname{rank}(U_kU_k^T)\\le k$",
+            "The projection cannot have rank larger than the number of retained directions."
+          ]
+        ]
+      },
+      {
+        "id": "rank-energy",
+        "label": "Rank and energy",
+        "prompt": "Use the singular-value spectrum to choose a compact rank and compute both retained energy and squared reconstruction error.",
+        "takeaway": "Retained energy is the head of the spectrum; Frobenius error is the squared tail after the rank cutoff.",
+        "steps": [
+          [
+            "Spectrum",
+            "$\\sigma=(12.4,9.5,1.3)$",
+            "The singular values are already ordered, so a rank-2 approximation keeps the first two."
+          ],
+          [
+            "Total energy",
+            "$E=12.4^2+9.5^2+1.3^2=245.70$",
+            "The squared Frobenius norm is the sum of all squared singular values."
+          ],
+          [
+            "Retained energy",
+            "$E_2=12.4^2+9.5^2=244.01$",
+            "A rank-2 representation keeps the head energy and discards only the final direction."
+          ],
+          [
+            "Energy ratio",
+            "$E_2/E\\approx99.31\\%$",
+            "Compare the retained energy with the total before claiming that the compression is faithful."
+          ],
+          [
+            "Tail error",
+            "$\\lVert A-A_2\\rVert_F^2=1.3^2=1.69$",
+            "For the squared Frobenius error, sum the squared singular values strictly after the rank boundary."
+          ]
+        ]
+      },
+      {
+        "id": "power-iteration",
+        "label": "Power iteration",
+        "prompt": "Trace one power-iteration loop and state what converges before using the result as a singular direction.",
+        "takeaway": "Each loop applies the operator, normalizes the vector, and checks direction change; scaling is not the target.",
+        "steps": [
+          [
+            "Initialize",
+            "$v^{(0)}\\ne 0$",
+            "Any non-zero starting vector with a component in the dominant direction can begin the iteration."
+          ],
+          [
+            "Multiply",
+            "$w^{(t+1)}=Av^{(t)}$",
+            "The matrix amplifies the component associated with the largest magnitude eigenvalue."
+          ],
+          [
+            "Normalize",
+            "$v^{(t+1)}=\\frac{w^{(t+1)}}{\\lVert w^{(t+1)}\\rVert_2}$",
+            "Normalization prevents the vector norm from growing without bound while preserving its direction."
+          ],
+          [
+            "Stop",
+            "$\\lVert v^{(t+1)}-v^{(t)}\\rVert_2<\\varepsilon$",
+            "Use a direction-change tolerance, not a fixed number of iterations alone, as the convergence check."
+          ],
+          [
+            "Interpret",
+            "$Av\\approx\\lambda_1v$",
+            "At convergence, the vector approximates the dominant eigenvector; apply the connection to $A^TA$ for a right singular vector."
+          ]
+        ]
+      },
+      {
+        "id": "cur-choice",
+        "label": "CUR choice",
+        "prompt": "Choose sampled columns and rows when the output must remain tied to observed matrix entries, then compare that choice with SVD.",
+        "takeaway": "CUR preserves actual rows and columns; SVD gives dense latent directions, so the objective decides the representation.",
+        "steps": [
+          [
+            "Score columns",
+            "$p_j=\\frac{\\lVert A_{:j}\\rVert_2^2}{\\lVert A\\rVert_F^2}$",
+            "Importance sampling gives larger probability to columns carrying more squared mass."
+          ],
+          [
+            "Sample",
+            "$C=A_{:,J},\\qquad R=A_{I,:}$",
+            "Select actual columns J and rows I, with replacement allowed by the sampling procedure."
+          ],
+          [
+            "Link",
+            "$U=C^+AR^+$",
+            "The pseudoinverse bridge links the sampled row and column spaces to the original matrix."
+          ],
+          [
+            "Approximate",
+            "$A\\approx CUR$",
+            "The reconstruction uses the selected original rows and columns rather than learned dense singular directions."
+          ],
+          [
+            "Choose",
+            "$\\mathrm{interpretable\\ samples}\\Rightarrow CUR,\\qquad\\mathrm{latent\\ coordinates}\\Rightarrow SVD$",
+            "State the representation requirement before comparing approximation error or storage cost."
+          ]
+        ]
+      }
+    ],
+    "reducedMotion": true,
+    "animation": {
+      "title": "The shrinking matrix",
+      "audience": "kid-friendly intuition",
+      "status": "intuition-only",
+      "analogy": "A large picture can be described by a few strong directions, while CUR keeps a few real rows and columns as recognizable samples.",
+      "frames": [
+        {
+          "label": "1 · Factor",
+          "scene": "Split the matrix into directions, strengths, and coordinates.",
+          "takeaway": "SVD makes hidden directions explicit."
+        },
+        {
+          "label": "2 · Compress",
+          "scene": "Keep the strong singular values and measure the discarded tail.",
+          "takeaway": "Rank is a trade-off between size and reconstruction error."
+        },
+        {
+          "label": "3 · Sample",
+          "scene": "Pick real rows and columns when the summary must stay interpretable.",
+          "takeaway": "CUR and SVD answer different representation needs."
+        }
+      ],
+      "frameDurationMs": 1400
+    }
   }
 }

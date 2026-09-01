@@ -116,11 +116,12 @@ function validateFormulaNames(errors) {
 function validateAssessmentMap(errors) {
   const map = read("assessment-map.json");
   const topics = Array.isArray(map.topics) ? map.topics : [];
-  if (topics.length !== 7) errors.push(`expected 7 DSA5101 assessment topics, got ${topics.length}`);
+  if (topics.length !== 8) errors.push(`expected 8 DSA5101 assessment topics, got ${topics.length}`);
   for (const topic of topics) {
     if (topic.priority !== "A+ focus") errors.push(`${topic.id}: not marked A+ focus`);
-    if (topic.priorityBasis !== "official-assignment" && topic.priorityBasis !== "official-lecture-and-assignment") errors.push(`${topic.id}: missing official priority basis`);
-    if (!Array.isArray(topic.assignmentRefs) || topic.assignmentRefs.length === 0) errors.push(`${topic.id}: missing assignment evidence`);
+    if (!["official-assignment", "official-lecture-and-assignment", "official-lecture"].includes(topic.priorityBasis)) errors.push(`${topic.id}: missing official priority basis`);
+    if (topic.priorityBasis !== "official-lecture" && (!Array.isArray(topic.assignmentRefs) || topic.assignmentRefs.length === 0)) errors.push(`${topic.id}: missing assignment evidence`);
+    if (topic.priorityBasis === "official-lecture" && (!Array.isArray(topic.lectureRefs) || topic.lectureRefs.length === 0)) errors.push(`${topic.id}: missing lecture evidence`);
   }
   if (!/not a promise about final-exam questions/i.test(map.disclaimer || "")) errors.push("assessment map must state that A+ focus is not a final-exam promise");
 }

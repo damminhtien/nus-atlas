@@ -24,6 +24,11 @@ const CONTRACTS = {
     exercises: ["hierarchical", "kmeans", "bfr", "cure", "evaluation"],
     required: ["769}{7}", "Mahalanobis", "0.75"]
   },
+  "dsa5101-dimensionality-reduction": {
+    type: "deep-dive",
+    exercises: ["svd-shapes", "rank-energy", "power-iteration", "cur-choice"],
+    required: ["245.70", "1.69", "CUR"]
+  },
   "dsa5101-recommenders": {
     type: "deep-dive",
     exercises: ["user-based", "latent-factor", "model-boundary"],

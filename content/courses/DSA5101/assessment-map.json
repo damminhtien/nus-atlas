@@ -2,7 +2,7 @@
   "schemaVersion": "nus.assessment-map.v1",
   "courseCode": "DSA5101",
   "title": "DSA5101 lecture → assignment → textbook exam map",
-  "summary": "An evidence-linked revision map. Lectures define the core theory; official Assignments 1–2 provide the current exercise signal for all seven mapped topics. MMDS is attached as textbook depth and never silently upgraded to lecture scope.",
+  "summary": "An evidence-linked revision map. Lectures define the core theory; official Assignments 1–2 provide the current exercise signal for seven applied tracks, while Lecture 4 supplies the official dimensionality-reduction lecture scope. MMDS is attached as textbook depth and never silently upgraded to lecture scope.",
   "disclaimer": "A+ focus marks topics with current official lecture or assignment evidence and is a study priority, not a promise about final-exam questions. The Canvas project brief/rubric and detailed final-exam scope remain unverified.",
   "studyOrder": [
     {
@@ -17,7 +17,8 @@
       "id": "clustering",
       "label": "Clustering and scalable summaries",
       "topicIds": [
-        "clustering"
+        "clustering",
+        "dimensionality-reduction"
       ]
     },
     {
@@ -37,6 +38,7 @@
         "frequent-itemsets",
         "similarity",
         "clustering",
+        "dimensionality-reduction",
         "recommenders",
         "pagerank",
         "streams",
@@ -47,10 +49,10 @@
   "evidence": [
     {
       "id": "dsa5101-lectures",
-      "label": "Local Lectures 1–3",
+      "label": "Local Lectures 1–4",
       "kind": "lecture",
       "evidenceLevel": "official-lecture",
-      "description": "The local lecture PDFs define the current study scope for frequent itemsets, MinHash/LSH, and clustering.",
+      "description": "The local lecture PDFs define the current study scope for frequent itemsets, MinHash/LSH, clustering, and dimensionality reduction.",
       "sourceRefs": [
         {
           "sourceId": "DSA5101/Lec1 - Assoc Rules, Frequent itemsets.pdf",
@@ -71,6 +73,13 @@
           "page": 37,
           "sourceType": "lecture",
           "role": "K-means",
+          "status": "current"
+        },
+        {
+          "sourceId": "DSA5101/DSA5101 Lecture 4 - Dimensionality Reduction.pdf",
+          "page": 36,
+          "sourceType": "lecture",
+          "role": "SVD rank selection",
           "status": "current"
         }
       ]
@@ -338,6 +347,51 @@
         "dsa5101-clustering"
       ],
       "gap": "The local MMDS index has no dedicated clustering chapter; this is an explicit textbook-depth gap, not missing lecture evidence."
+    },
+    {
+      "id": "dimensionality-reduction",
+      "title": "Dimensionality reduction",
+      "signal": "Lecture 4",
+      "priority": "A+ focus",
+      "priorityBasis": "official-lecture",
+      "practice": "Read the factor shapes, square the right tail, and compare SVD with CUR.",
+      "lectureScope": "Lecture 4 rank, SVD, projection, reconstruction error, power iteration, concept-space queries, and CUR.",
+      "examMove": "Separate eigenvalues from singular values, compute discarded tail energy, and state the accuracy/sparsity/interpretability trade-off.",
+      "lectureRefs": [
+        {
+          "sourceId": "DSA5101/DSA5101 Lecture 4 - Dimensionality Reduction.pdf",
+          "page": 13,
+          "sourceType": "lecture",
+          "role": "SVD definition",
+          "status": "current"
+        },
+        {
+          "sourceId": "DSA5101/DSA5101 Lecture 4 - Dimensionality Reduction.pdf",
+          "page": 34,
+          "sourceType": "lecture",
+          "role": "reconstruction loss",
+          "status": "current"
+        },
+        {
+          "sourceId": "DSA5101/DSA5101 Lecture 4 - Dimensionality Reduction.pdf",
+          "page": 63,
+          "sourceType": "lecture",
+          "role": "SVD versus CUR",
+          "status": "current"
+        }
+      ],
+      "assignmentRefs": [],
+      "textbookRefs": [
+        {
+          "sourceId": "DSA5101/Reference textbook MMDS 3rd Edition.pdf",
+          "page": 84,
+          "sourceType": "textbook",
+          "role": "matrix factorization depth",
+          "status": "course-depth"
+        }
+      ],
+      "evidenceIds": ["dsa5101-lectures"],
+      "lessonIds": ["dsa5101-dimensionality-reduction"]
     },
     {
       "id": "recommenders",
@@ -610,6 +664,34 @@
     },
     {
       "rank": 4,
+      "id": "svd-cur-reduction",
+      "title": "SVD rank selection and CUR",
+      "tier": "Must master conceptually",
+      "assessmentSignal": "Lecture 4",
+      "lessonId": "dsa5101-dimensionality-reduction",
+      "visualLabId": "dsa5101-dimensionality-reduction",
+      "why": "Lecture 4 explicitly develops factor shapes, retained singular-value energy, reconstruction error, power iteration, and the SVD/CUR representation choice.",
+      "examMove": "Write the factor shapes, square only the discarded singular values, and choose SVD or CUR from the representation requirement.",
+      "kidAnalogy": "Shrink a giant picture by keeping its strongest directions, or keep a few real rows and columns as recognizable samples.",
+      "sourceRefs": [
+        {
+          "sourceId": "DSA5101/DSA5101 Lecture 4 - Dimensionality Reduction.pdf",
+          "page": 34,
+          "sourceType": "lecture",
+          "role": "rank selection and reconstruction error",
+          "status": "current"
+        },
+        {
+          "sourceId": "DSA5101/DSA5101 Lecture 4 - Dimensionality Reduction.pdf",
+          "page": 63,
+          "sourceType": "lecture",
+          "role": "SVD versus CUR",
+          "status": "current"
+        }
+      ]
+    },
+    {
+      "rank": 5,
       "id": "bfr-cure",
       "title": "BFR and CURE summaries",
       "tier": "Must master conceptually",
@@ -637,7 +719,7 @@
       ]
     },
     {
-      "rank": 5,
+      "rank": 6,
       "id": "recommender-models",
       "title": "Recommender models",
       "tier": "Must master",
@@ -665,7 +747,7 @@
       ]
     },
     {
-      "rank": 6,
+      "rank": 7,
       "id": "pagerank-power-iteration",
       "title": "PageRank and power iteration",
       "tier": "Must master",
@@ -686,7 +768,7 @@
       ]
     },
     {
-      "rank": 7,
+      "rank": 8,
       "id": "streaming-sketches",
       "title": "DGIM, Flajolet–Martin, and AMS",
       "tier": "Must master",
@@ -714,7 +796,7 @@
       ]
     },
     {
-      "rank": 8,
+      "rank": 9,
       "id": "balance-budget-trace",
       "title": "BALANCE budget allocation",
       "tier": "Must master",
@@ -746,7 +828,7 @@
     "title": "DSA5101 timed mixed exam and mistake clinic",
     "durationMinutes": 90,
     "questionCount": 12,
-    "selectionPolicy": "One deterministic mixed set: two core lecture questions, two clustering questions, two recommender/PageRank questions, four stream/BALANCE questions, and two cross-track critiques.",
+    "selectionPolicy": "One deterministic mixed set: two core lecture questions, one dimensionality-reduction question, two clustering questions, two recommender/PageRank questions, four stream/BALANCE questions, and one cross-track critique.",
     "questionIds": [
       "dsa5101-bank-002",
       "dsa5101-mh-q2",
@@ -758,7 +840,7 @@
       "dsa5101-stream-q4",
       "dsa5101-balance-q2",
       "dsa5101-balance-q3",
-      "dsa5101-bank-010",
+      "dsa5101-tune-009",
       "dsa5101-bank-012"
     ],
     "timing": [
