@@ -146,21 +146,17 @@ FROM R [JOIN S ON condition]
 \topic{03}{JOIN / SET / SUBQUERY}
 
 \key{Example data}
-A(id,name): (1,Ana),(2,Bo); B(id,tag): (1,DB),(3,AI). Match on id; results are (A.name,B.tag).
-\begin{lstlisting}
-INNER: A INNER JOIN B ON A.id=B.id
-CROSS: A CROSS JOIN B
-LEFT:  A LEFT JOIN B ON A.id=B.id
-RIGHT: A RIGHT JOIN B ON A.id=B.id
-FULL:  A FULL OUTER JOIN B ON A.id=B.id
-\end{lstlisting}
-\begin{itemize}
-\item INNER: (Ana,DB).
-\item CROSS: all 4 pairs: (Ana,DB), (Ana,AI), (Bo,DB), (Bo,AI).
-\item LEFT: (Ana,DB), (Bo,NULL).
-\item RIGHT: (Ana,DB), (NULL,AI).
-\item FULL OUTER: (Ana,DB), (Bo,NULL), (NULL,AI).
-\end{itemize}
+A(id,name): (1,Ana),(2,Bo); B(id,tag): (1,DB),(3,AI). Match on id; output is (name,tag).
+\begin{center}
+\begin{tabular}{@{}l>{\raggedright\arraybackslash}p{.65\linewidth}@{}}
+JOIN & Output (name,tag)\\\hline
+\sql{INNER JOIN} & \sql{(Ana,DB)}\\
+\sql{CROSS JOIN} & \sql{(Ana,DB), (Ana,AI), (Bo,DB), (Bo,AI)}\\
+\sql{LEFT JOIN} & \sql{(Ana,DB), (Bo,NULL)}\\
+\sql{RIGHT JOIN} & \sql{(Ana,DB), (NULL,AI)}\\
+\sql{FULL OUTER} & \sql{(Ana,DB), (Bo,NULL), (NULL,AI)}
+\end{tabular}
+\end{center}
 \cond{Bare \sql{JOIN} defaults to \sql{INNER JOIN}; MySQL has no direct \sql{FULL OUTER JOIN} syntax.}
 \key{ON vs WHERE}
 \begin{lstlisting}
