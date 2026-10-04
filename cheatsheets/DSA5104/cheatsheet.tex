@@ -1,5 +1,5 @@
 % DSA5104 content adapted into the shared NUS Atlas cheatsheet layout.
-% Two A4 portrait pages, four fixed columns per page, no global header/footer.
+% Two A4 portrait pages, four left-to-right columns per page, no global header/footer.
 % Source text: user-provided DSA5104_A4_Helpsheet_v0.9_portrait_4col.tex.
 % The source is treated as content; its document-level layout is replaced here.
 \documentclass[a4paper]{article}
@@ -21,7 +21,7 @@
     \IfFontExistsTF{STIXTwoMath-Regular.otf}{\setmathfont{STIXTwoMath-Regular.otf}}{\setmathfont{latinmodern-math.otf}}}
   \IfFontExistsTF{JetBrains Mono}{\setmonofont{JetBrains Mono}[Scale=MatchLowercase]}{\setmonofont{lmmono10-regular.otf}[Scale=MatchLowercase]}
 \fi
-\usepackage{xcolor,array,enumitem,listings}
+\usepackage{xcolor,array,enumitem,listings,multicol}
 \definecolor{structure}{HTML}{10243A}
 \definecolor{condition}{HTML}{704500}
 \definecolor{conditionbg}{HTML}{FFF1CC}
@@ -70,7 +70,7 @@
 \setlist[itemize]{leftmargin=8pt,label=\textbullet,nosep,topsep=1pt}
 \setlength{\emergencystretch}{1em}
 \newlength{\gutter}\setlength{\gutter}{2mm}
-\newlength{\colwidth}\setlength{\colwidth}{\dimexpr(\textwidth-3\gutter)/4\relax}
+\setlength{\columnsep}{\gutter}\setlength{\multicolsep}{0pt}
 \newcommand{\bodystyle}{%
   \fontsize{6.8}{8.6}\selectfont\raggedright
   \setlength{\abovedisplayskip}{2pt}\setlength{\belowdisplayskip}{2pt}%
@@ -80,7 +80,11 @@
   \begingroup\setlength{\fboxsep}{0.8pt}%
   \noindent\colorbox{structure}{\parbox{\dimexpr\linewidth-2\fboxsep\relax}{%
     \color{white}\fontsize{8.1}{9.1}\selectfont\bfseries #1\enspace #2}}%
-  \endgroup\par\vspace{1pt}}
+  \endgroup\par\nobreak\vspace{1pt}}
+% Keep a topic together when the next column starts before its content ends.
+\newenvironment{topicblock}
+  {\par\begin{minipage}[t]{\linewidth}\bodystyle}
+  {\end{minipage}\par}
 \newcommand{\key}[1]{\par\textcolor{structure}{\textbf{#1}}\enspace}
 \newcommand{\note}[4]{\par\begingroup\setlength{\fboxsep}{0.7pt}%
   \noindent\colorbox{#1}{\parbox{\dimexpr\linewidth-2\fboxsep\relax}{%
@@ -94,14 +98,15 @@
   \noindent\colorbox{codebg}{\parbox{\dimexpr\linewidth-2\fboxsep\relax}{%
     \raggedright\color{structure}\ttfamily\fontsize{6.3}{7.7}\selectfont #1}}%
   \endgroup\par}
-\newenvironment{sheetcolumn}{\begin{minipage}[t]{\colwidth}\vspace{0pt}\bodystyle\colstarttrue}{\end{minipage}}
 
 \begin{document}
 \bodystyle
-% PAGE 1: read down each column, then move left to right.
-\noindent
-\begin{sheetcolumn}
+% PAGE 1: fill columns top-to-bottom, left-to-right; keep each topic intact.
+\colstarttrue
+\begin{multicols*}{4}
+\begin{topicblock}
 \topic{01}{QUERY STRUCTURE}
+
 \key{Skeleton}
 \begin{lstlisting}
 SELECT [DISTINCT] expressions
@@ -117,15 +122,21 @@ FROM R [JOIN S ON condition]
 \code{-> HAVING -> SELECT}
 \code{-> ORDER BY -> LIMIT}
 \trap{Window ORDER BY controls the window calculation, not the final output order. Add an outer ORDER BY when display order matters.}
+\end{topicblock}
 
+\begin{topicblock}
 \topic{02}{NULL / AGGREGATION}
+
 \sql{x = NULL} is wrong; use \sql{x IS NULL}. Comparisons with NULL yield UNKNOWN; \sql{WHERE} keeps only TRUE. Arithmetic with NULL usually returns NULL.
 \key{Counts}
 \sql{COUNT(*)} counts output rows; \sql{COUNT(x)} ignores NULL; \sql{COUNT(DISTINCT x)} counts unique non-NULL values.
 \cond{Every selected nonaggregate expression must be grouped in standard SQL. \sql{WHERE} filters rows before grouping; \sql{HAVING} filters groups after aggregation.}
 \trap{After a LEFT JOIN, COUNT(*) still counts a NULL-extended row; COUNT(B.id) ignores it.}
+\end{topicblock}
 
+\begin{topicblock}
 \topic{03}{JOIN / SET / SUBQUERY}
+
 \key{Which rows survive?}
 \begin{itemize}
 \item INNER: matched rows only.
@@ -152,9 +163,11 @@ WHERE NOT EXISTS (...)
 \end{lstlisting}
 Correlated subqueries refer to outer-row aliases. For “for all”, test that there is no missing requirement (e.g. required set EXCEPT possessed set is empty).
 \trap{NOT IN with any NULL in its subquery can yield UNKNOWN; NOT EXISTS is safer for anti-joins.}
-\end{sheetcolumn}\hspace{\gutter}%
-\begin{sheetcolumn}
+\end{topicblock}
+
+\begin{topicblock}
 \topic{04}{DDL / DML}
+
 \begin{lstlisting}
 CREATE TABLE R (
   id INT PRIMARY KEY,
@@ -173,8 +186,11 @@ DELETE FROM R WHERE ...;
 WITH X AS (SELECT ...)
 SELECT ... FROM X;
 \end{lstlisting}
+\end{topicblock}
 
+\begin{topicblock}
 \topic{05}{RANKING / WINDOWS}
+
 For scores 100, 100, 90:
 \begin{center}
 \begin{tabular}{@{}lccc@{}}
@@ -211,9 +227,11 @@ AVG(x) OVER (ORDER BY d ROWS BETWEEN
   1 PRECEDING AND 1 FOLLOWING)
 \end{lstlisting}
 \trap{ROWS counts physical rows. RANGE groups ORDER BY peers, so ties can enlarge the frame.}
-\end{sheetcolumn}\hspace{\gutter}%
-\begin{sheetcolumn}
+\end{topicblock}
+
+\begin{topicblock}
 \topic{06}{RECURSIVE CTE}
+
 Use for transitive closure, hierarchies, and paths.
 \begin{lstlisting}
 WITH RECURSIVE reach(a,b) AS (
@@ -228,8 +246,11 @@ SELECT * FROM reach;
 \end{lstlisting}
 The anchor seeds rows; the recursive term refers to the CTE and repeatedly extends it.
 \cond{UNION removes duplicates and can help closure/cycle control. UNION ALL avoids deduplication and needs a safe termination strategy.}
+\end{topicblock}
 
+\begin{topicblock}
 \topic{07}{PROCEDURES / TRIGGERS}
+
 \key{MySQL stored procedure}
 \begin{lstlisting}
 DELIMITER //
@@ -256,9 +277,11 @@ BEGIN
 END;
 \end{lstlisting}
 Row images: INSERT uses NEW; UPDATE uses OLD and NEW; DELETE uses OLD. SIGNAL raises a user error; a trigger error aborts the invoking statement.
-\end{sheetcolumn}\hspace{\gutter}%
-\begin{sheetcolumn}
+\end{topicblock}
+
+\begin{topicblock}
 \topic{08}{PIVOT / CUBE / ROLLUP}
+
 \key{Conditional aggregation}
 Rows become grouping keys; CASE values become output columns.
 \begin{lstlisting}
@@ -276,8 +299,11 @@ For dimensions (a,b,c):
 \item GROUPING(a)=1 when a is omitted in a subtotal/total; use it to distinguish generated NULL from data NULL.
 \end{itemize}
 MySQL supports ROLLUP. CUBE/general grouping-set syntax is commonly shown with PostgreSQL in course material.
+\end{topicblock}
 
+\begin{topicblock}
 \topic{09}{LAST-MINUTE TRAPS}
+
 \begin{itemize}
 \item Window functions preserve row count; GROUP BY collapses rows.
 \item RANK has gaps; \sql{DENSE_RANK} has none; \sql{ROW_NUMBER} is unique.
@@ -286,13 +312,15 @@ MySQL supports ROLLUP. CUBE/general grouping-set syntax is commonly shown with P
 \item Trigger row images: INSERT=NEW, DELETE=OLD, UPDATE=both.
 \item GROUPING() separates subtotal NULL from a real NULL value.
 \end{itemize}
-\end{sheetcolumn}
-\par
+\end{topicblock}
+\end{multicols*}
 \newpage
 % PAGE 2: continue in the same top-to-bottom, left-to-right order.
-\noindent
-\begin{sheetcolumn}
+\colstarttrue
+\begin{multicols*}{4}
+\begin{topicblock}
 \topic{10}{DBMS / RELATIONAL MODEL}
+
 \key{Why a DBMS?}
 Controls redundancy/inconsistency, difficult access, isolation, buried integrity rules, partial updates, concurrency, and authorization.
 \key{Abstraction}
@@ -302,9 +330,11 @@ Physical: how data is stored. Logical: which data and relationships exist. View:
 Schema is structure; instance is a snapshot of tuples. A relation is a set of tuples (order is irrelevant); a domain is a set of allowed atomic values. NULL denotes unknown/missing.
 \key{Keys}
 Superkey uniquely identifies tuples; candidate key is a minimal superkey; primary key is the selected candidate key. A foreign key references a key in another relation; NULL is allowed only if the column permits it.
-\end{sheetcolumn}\hspace{\gutter}%
-\begin{sheetcolumn}
+\end{topicblock}
+
+\begin{topicblock}
 \topic{11}{RELATIONAL ALGEBRA}
+
 \[
 \begin{array}{@{}ll@{}}
 \text{Rows} & \sigma_{condition}(R)\\
@@ -320,9 +350,11 @@ Superkey uniquely identifies tuples; candidate key is a minimal superkey; primar
 \key{RA to SQL}
 $\sigma$ = WHERE; $\pi$ = SELECT DISTINCT; $\bowtie$ = JOIN ... ON; $\cup$ = UNION; $-$ = EXCEPT/anti-join; $\rho$ = alias AS.
 \trap{RA projection removes duplicates. SQL SELECT preserves them unless DISTINCT is requested.}
-\end{sheetcolumn}\hspace{\gutter}%
-\begin{sheetcolumn}
+\end{topicblock}
+
+\begin{topicblock}
 \topic{12}{PHP / MYSQL SYNTAX}
+
 \key{PHP patterns}
 \begin{lstlisting}[language=PHPx]
 $x                 // variable
@@ -343,9 +375,11 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") { ... }
   </select>
 </form>
 \end{lstlisting}
-\end{sheetcolumn}\hspace{\gutter}%
-\begin{sheetcolumn}
+\end{topicblock}
+
+\begin{topicblock}
 \topic{13}{HTTP / MYSQL RESULTS}
+
 \key{Request flow}
 Browser request $\to$ web server $\to$ PHP interpreter $\to$ MySQL. The result returns to PHP, which creates HTML/text for the browser.
 \key{Query result}
@@ -355,6 +389,6 @@ Browser request $\to$ web server $\to$ PHP interpreter $\to$ MySQL. The result r
 \key{GET / POST}
 \sql{$_GET} comes from URL query parameters; \sql{$_POST} comes from the request body. \sql{$_SERVER["REQUEST_METHOD"]} identifies the method received by the page.
 \cond{Use POST for form-body submissions; reading a variable from \sql{$_GET}/\sql{$_POST} is separate from validating its value.}
-\end{sheetcolumn}
-\par
+\end{topicblock}
+\end{multicols*}
 \end{document}
