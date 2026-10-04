@@ -1,5 +1,6 @@
 # Documentation
 
+- [Cheatsheet template and course folders](../cheatsheets/README.md) — shared two-page A4 LaTeX template and per-course workspaces.
 - [NUS study guide](NUS_STUDY_GUIDE.md) — curriculum, source provenance, DSA5105 depth tracks, and content-authoring rules.
 - [DSA5101 study guide](DSA5101_STUDY_GUIDE.md) — normalized big-data package, source boundary, labs, contrast drills, and A+ study loop.
 - [DSA5104 study guide](DSA5104_STUDY_GUIDE.md) — normalized data-management package, 52-slide reader, SQL/ER labs, source lens, contrast drills, and retrieval loop.

@@ -1,0 +1,520 @@
+% Reusable A4 portrait cheatsheet: two pages, four columns, no header/footer.
+% Compile with LuaLaTeX (preferred), XeLaTeX, or pdfLaTeX.
+% No external images, styles, or data files are required.
+% SETTINGS: change body size, margins, gutter, or colors below.
+% CONTENT: replace each \topic and its local \cond / \trap / \ex notes.
+% LAYOUT: each \pair contains two independent columns plus an optional
+% two-column span. Keep spans rare; an empty third argument adds no space.
+% Each column is intentionally fixed in position; it does not auto-flow.
+% If content becomes too tall, move a whole topic to another column/page.
+% Samples demonstrate layout; they are not a syllabus-complete exam sheet.
+\documentclass[a4paper]{article}
+\usepackage[margin=4.5mm,left=5mm,right=5mm,noheadfoot]{geometry}
+\usepackage{iftex}
+\usepackage{amsmath,amssymb}
+\ifPDFTeX
+  \usepackage[T1]{fontenc}
+  \IfFileExists{stix2.sty}{\usepackage{stix2}}{}
+  \IfFileExists{sourcesanspro.sty}{\usepackage[default]{sourcesanspro}}{\usepackage{helvet}\renewcommand{\familydefault}{\sfdefault}}
+  \IfFileExists{inconsolata.sty}{\usepackage{inconsolata}}{}
+\else
+  \usepackage{fontspec}
+  \usepackage{unicode-math}
+  \IfFontExistsTF{Source Sans 3}{\setmainfont{Source Sans 3}}{%
+    \IfFontExistsTF{SourceSans3-Regular.otf}{\setmainfont{SourceSans3}[Extension=.otf,UprightFont=*-Regular,BoldFont=*-Bold,ItalicFont=*-It,BoldItalicFont=*-BoldIt]}{%
+      \IfFileExists{sourcesanspro.sty}{\usepackage[default]{sourcesanspro}}{\setmainfont{lmsans10-regular.otf}[BoldFont=lmsans10-bold.otf]}}}
+  \IfFontExistsTF{STIX Two Math}{\setmathfont{STIX Two Math}}{%
+    \IfFontExistsTF{STIXTwoMath-Regular.otf}{\setmathfont{STIXTwoMath-Regular.otf}}{\setmathfont{latinmodern-math.otf}}}
+  \IfFontExistsTF{JetBrains Mono}{\setmonofont{JetBrains Mono}[Scale=MatchLowercase]}{\setmonofont{lmmono10-regular.otf}[Scale=MatchLowercase]}
+\fi
+\usepackage{xcolor,array,enumitem}
+\definecolor{structure}{HTML}{17324D}
+\definecolor{condition}{HTML}{855C13}
+\definecolor{warning}{HTML}{A32929}
+\definecolor{example}{HTML}{505963}
+\pagestyle{empty}
+\setlength{\topskip}{0pt}
+\setlength{\parindent}{0pt}
+\setlength{\parskip}{1.3pt}
+\setlength{\tabcolsep}{2pt}
+\renewcommand{\arraystretch}{1.08}
+\setlist[itemize]{leftmargin=8pt,label=\textbullet,nosep,topsep=1pt}
+\setlength{\emergencystretch}{1em}
+\newlength{\gutter}\setlength{\gutter}{2mm}
+\newlength{\colwidth}\setlength{\colwidth}{\dimexpr(\textwidth-3\gutter)/4\relax}
+\newlength{\pairwidth}\setlength{\pairwidth}{\dimexpr2\colwidth+\gutter\relax}
+\newcommand{\bodystyle}{%
+  \fontsize{6.8}{8.6}\selectfont\raggedright
+  \setlength{\abovedisplayskip}{2pt}\setlength{\belowdisplayskip}{2pt}%
+  \setlength{\abovedisplayshortskip}{1pt}\setlength{\belowdisplayshortskip}{1pt}}
+\newif\ifcolstart
+\newcommand{\topic}[2]{\par\ifcolstart\colstartfalse\else\addvspace{5pt}\fi%
+  {\color{structure}\fontsize{8.1}{9.1}\selectfont\bfseries #1\enspace #2\par}%
+  \vspace{.6pt}{\color{structure!45}\hrule height .25pt}\vspace{1.7pt}}
+\newcommand{\key}[1]{\par\textbf{#1}\enspace}
+\newcommand{\note}[3]{\par\begingroup\color{#1}%
+  \textbf{#2}\enspace #3\par\endgroup}
+\newcommand{\cond}[1]{\note{condition}{COND}{#1}}
+\newcommand{\trap}[1]{\note{warning}{!}{#1}}
+\newcommand{\ex}[1]{\note{example}{EX}{#1}}
+\newcommand{\R}{\mathbb{R}}
+\newcommand{\E}{\mathbb{E}}
+\newcommand{\Var}{\operatorname{Var}}
+\newcommand{\argmin}{\operatorname*{arg\,min}}
+\newcommand{\norm}[1]{\lVert#1\rVert}
+\newcommand{\code}[1]{\par{\ttfamily\fontsize{6.3}{7.7}\selectfont #1\par}}
+\newcommand{\pair}[3]{%
+  \begin{minipage}[t]{\pairwidth}\vspace{0pt}\bodystyle
+    \begin{minipage}[t]{\colwidth}\vspace{0pt}\bodystyle\colstarttrue #1\end{minipage}%
+    \hspace{\gutter}%
+    \begin{minipage}[t]{\colwidth}\vspace{0pt}\bodystyle\colstarttrue #2\end{minipage}%
+    \if\relax\detokenize{#3}\relax\else\par\vspace{4pt}#3\fi
+  \end{minipage}}
+\newcommand{\sheet}[2]{\noindent\pair#1\hspace{\gutter}\pair#2\par}
+
+\begin{document}
+\bodystyle
+% PAGE 1: optimization / linear models / margins / ensembles.
+\sheet
+{{
+\topic{01}{OPTIMIZATION}
+\key{Gradient descent}
+\[w_{t+1}=w_t-\eta_t\nabla f(w_t).\]
+For quadratic $f(w)=\tfrac12w^THw-b^Tw$, $H\succ0$, let $L=\lambda_{\max}(H)$.
+\cond{$0<\eta<2/L$ gives convergence to the unique minimizer. $\eta=1/L$ is a safe choice.}
+\trap{For this quadratic, $0<\eta<2/L$ also decreases the objective; $1/L$ is a common sufficient bound for general smooth objectives.}
+\ex{$f(w)=2w^2$: $L=4$; $w_{t+1}=(1-4\eta)w_t$. At $\eta=1/2$, oscillation persists.}
+\key{Convexity}
+\[f(y)\ge f(x)+\nabla f(x)^T(y-x).\]
+$\nabla^2 f\succeq0$ implies convexity on a convex domain; $\nabla^2 f\succeq\mu I$, $\mu>0$, implies strong convexity.
+\cond{Differentiable convex $f$: $\nabla f(w)=0$ implies a global minimum.}
+\trap{Stationary point alone is insufficient for a nonconvex objective.}
+\key{Newton / stochastic update}
+\[w^+=w-[\nabla^2f(w)]^{-1}\nabla f(w).\]
+Solve $Hp=g$ then set $w^+=w-p$; avoid forming the inverse. SGD uses a sample or minibatch gradient.
+\trap{Newton needs a suitable Hessian and often damping; SGD gradients fluctuate.}
+
+\topic{02}{DERIVATIVE TOOLKIT}
+For column vectors and symmetric $A$:
+\[\begin{aligned}
+\nabla_w(a^Tw)&=a,\\
+\nabla_w(w^TAw)&=2Aw,\\
+\nabla_w\tfrac12\norm{Xw-y}^2&=X^T(Xw-y).
+\end{aligned}\]
+If $A$ is not symmetric, gradient is $(A+A^T)w$.
+\key{Chain rule}
+$z=Ax+b$, $L=L(z)$:
+\[\nabla_xL=A^T\nabla_zL.\]
+\cond{Check dimensions: $X\in\R^{n\times d}$, $w\in\R^d$, $y\in\R^n$.}
+\ex{$z=3w+1$, $L=z^2$: $dL/dw=6z$.}
+\trap{A sum loss and a mean loss differ by $n$ in the gradient and regularization scale.}
+
+\topic{03}{CONSTRAINED OPTIMIZATION}
+For $\min f(w)$ subject to $g_i(w)\le0$ and $h_j(w)=0$:
+\[\mathcal L=f+\sum_i\alpha_i g_i+\sum_j\nu_jh_j.\]
+\key{KKT checklist}
+Stationarity $\nabla_w\mathcal L=0$; primal feasibility; dual feasibility $\alpha_i\ge0$; complementary slackness $\alpha_i g_i=0$.
+\cond{Convex problem + suitable constraint qualification (e.g. Slater) gives the usual optimality/strong-duality result.}
+\trap{Active constraint does not force a strictly positive multiplier; $\alpha_i>0$ does force activity.}
+\ex{$\min x^2$ with $x\ge1$: $g=1-x$, $x^*=1$, $\alpha^*=2$.}
+
+\topic{04}{PROXIMAL / NUMERICAL CHECKS}
+\key{Soft threshold}
+For $\min_u\frac12\norm{u-v}^2+\tau\norm{u}_1$,
+\[u_j=\operatorname{sign}(v_j)\max(|v_j|-\tau,0).\]
+\cond{Proximal gradient for $g(w)+\lambda\norm{w}_1$ uses $v=w-\eta\nabla g(w)$ and $\tau=\eta\lambda$.}
+\ex{$v=(2,-.4)$, $\tau=.5$: $u=(1.5,0)$.}
+\trap{Threshold depends on the step size; do not use $\lambda$ alone.}
+\key{Gradient check}
+For a coordinate direction $e_j$:
+\[g_j\approx\frac{f(w+he_j)-f(w-he_j)}{2h}.\]
+Compare analytical and numerical gradients away from nondifferentiable points; use double precision and several step sizes.
+\trap{Too small $h$ amplifies rounding error; too large $h$ gives truncation error.}
+\key{Stopping rule}
+Monitor objective, gradient norm, and relative parameter change. Report tolerance and maximum iterations.
+\cond{Small steps alone can reflect a small learning rate rather than proximity to an optimum.}
+}
+{
+\topic{05}{LINEAR REGRESSION}
+\[J(w)=\tfrac1{2n}\norm{Xw-y}^2.\]
+\[\nabla J=\tfrac1nX^T(Xw-y).\]
+\key{Normal equation}
+$X^TXw=X^Ty$. Full column rank gives a unique least-squares solution. Otherwise use a pseudoinverse or regularization.
+\cond{An intercept is a column of ones; check whether it is penalized.}
+\ex{$X=(1,2)^T$, $y=(2,4)^T$: $w^*=2$.}
+\trap{In code, use least-squares/QR/SVD solvers instead of computing $(X^TX)^{-1}$.}
+\key{Residuals}
+$r=y-X\hat w$; at an unregularized least-squares optimum, $X^Tr=0$.
+
+\topic{06}{REGULARIZATION}
+\key{Ridge}
+\[J=\tfrac1{2n}\norm{Xw-y}^2+\tfrac\lambda2\norm{w}^2.\]
+\[(X^TX+n\lambda I)w=X^Ty.\]
+\cond{$\lambda>0$ makes this matrix positive definite. Standardize features before comparing penalty strength.}
+\trap{If data loss has no $1/n$, the normal equation has $\lambda I$ under the matching $1/2$ convention.}
+\key{Lasso}
+$J=\frac1{2n}\norm{Xw-y}^2+\lambda\norm{w}_1$.
+For $w_j=0$, the subgradient is $[-1,1]$; lasso can set coefficients exactly to zero.
+\key{Bias / variance}
+For squared prediction error at fixed $x$:
+\[\E[(Y-\hat f(x))^2]=\sigma^2+\mathrm{Bias}^2+\Var(\hat f(x)).\]
+\cond{Expectation is over training sets and independent test noise; $f(x)=\E[Y\mid x]$.}
+\trap{Stronger regularization often raises bias and lowers variance; this is a tendency, not a universal monotonic law.}
+
+\topic{07}{LOGISTIC REGRESSION}
+$y\in\{0,1\}$; $z=w^Tx+b$:
+\[p=\sigma(z)=\frac1{1+e^{-z}},\quad\sigma'=p(1-p).\]
+\[\ell=-y\log p-(1-y)\log(1-p).\]
+\[\partial\ell/\partial z=p-y,\quad\nabla_w\ell=(p-y)x.\]
+\key{Stable logit loss}
+\[\ell=\max(z,0)-yz+\log(1+e^{-|z|}).\]
+\cond{Decision threshold $p\ge\tau$ is $z\ge\log\frac\tau{1-\tau}$ for $0<\tau<1$.}
+\ex{$z=0$, $y=1$: $p=0.5$, logit gradient $=-0.5$.}
+\trap{Logits are unrestricted real numbers; probabilities lie in $[0,1]$. Threshold $0.5$ is a choice.}
+\key{Multiclass}
+$p_k=e^{z_k}/\sum_j e^{z_j}$, $\ell=-\sum_k y_k\log p_k$; $\partial\ell/\partial z_k=p_k-y_k$ for a target distribution with $\sum_k y_k=1$.
+\trap{Subtract $\max_j z_j$ before exponentiating.}
+
+\topic{08}{LINEAR MODEL DECISIONS}
+\key{Perceptron}
+If $y_i(w^Tx_i+b)\le0$, update
+\[w\gets w+\eta y_ix_i,\quad b\gets b+\eta y_i.\]
+\cond{Labels $\{-1,+1\}$. Classical finite-mistake convergence needs separability and bounded inputs.}
+\trap{A perceptron does not generally maximize the margin or produce calibrated probabilities.}
+\key{MAP interpretation}
+A Gaussian prior gives an $L_2$ penalty; a Laplace prior gives an $L_1$ penalty, with scale matched to the likelihood convention.
+\key{Feature transforms}
+Polynomial features allow nonlinear boundaries with a model still linear in its parameters. Add interactions only using training/validation evidence.
+\ex{Features $(1,x,x^2)$: prediction $w_0+w_1x+w_2x^2$.}
+\trap{Linear in parameters does not mean linear in the original input.}
+\key{Cost-sensitive threshold}
+For calibrated $p=P(y=1\mid x)$ and only false-positive/false-negative costs:
+\[\tau=\frac{C_{FP}}{C_{FP}+C_{FN}}.\]
+\cond{Both costs nonnegative with positive sum; predict positive when $p\ge\tau$.}
+\trap{A changed class prior can invalidate probability calibration and the chosen threshold.}
+}{}}
+{{
+\topic{09}{SVM / MARGINS}
+$y_i\in\{-1,+1\}$; $f_i=w^Tx_i+b$.
+\[\gamma_i=\frac{y_if_i}{\norm{w}}.\]
+\key{Hard margin}
+\[\min_{w,b}\tfrac12\norm{w}^2\quad\text{s.t. }y_if_i\ge1.\]
+Canonical margin width is $2/\norm{w}$.
+\cond{Hard margin requires linear separability in the chosen feature space.}
+\trap{Positive rescaling of $(w,b)$ changes functional margin, while geometric margin is unchanged.}
+\key{Soft margin}
+\[\min\tfrac12\norm{w}^2+C\sum_i\xi_i,\quad\xi_i\ge0,\]
+$y_if_i\ge1-\xi_i$. Equivalently use hinge loss $\max(0,1-y_if_i)$.
+\key{Dual / KKT}
+$0\le\alpha_i\le C$, $\sum_i\alpha_i y_i=0$;
+$w=\sum_i\alpha_i y_i\phi(x_i)$.
+\cond{$0<\alpha_i<C\Rightarrow y_if_i=1$; $\alpha_i=C$ allows points on/inside the margin.}
+\trap{$\alpha_i=C$ does not imply misclassification; $\alpha_i=0$ can occur on the margin in degenerate cases.}
+\ex{$y_if_i=0.3$: hinge loss $=0.7$; prediction has the correct sign but lies inside the margin.}
+
+\topic{10}{KERNELS}
+\[K(x,z)=\phi(x)^T\phi(z).\]
+\key{Validity}
+Symmetric kernel; every finite Gram matrix $G_{ij}=K(x_i,x_j)$ must be positive semidefinite:
+\[c^TGc\ge0\quad\text{for all }c.\]
+\key{Common forms}
+Linear $x^Tz$; polynomial $(x^Tz+c)^p$ for integer $p\ge1$, $c\ge0$; RBF $e^{-\gamma\norm{x-z}^2}$, $\gamma>0$.
+\cond{Nonnegative sums and pointwise products of PSD kernels remain PSD.}
+\trap{A symmetric similarity function alone need not be a valid kernel.}
+\ex{$G=\left[\begin{smallmatrix}1&2\\2&1\end{smallmatrix}\right]$ has eigenvalue $-1$: fails PSD.}
+\key{Prediction}
+\[f(x)=\sum_i\alpha_i y_iK(x_i,x)+b.\]
+Only nonzero coefficients contribute; no explicit $\phi$ is needed.
+
+\topic{11}{DISTANCE / CLUSTERING}
+\key{$k$-means}
+\[\min_{\mu,a}\sum_i\norm{x_i-\mu_{a_i}}^2.\]
+Alternate nearest-centroid assignment and mean updates; objective does not increase in either exact step.
+\cond{Squared Euclidean distance; fix the treatment of empty clusters. Use multiple initializations.}
+\trap{Convergence is to a local solution; cluster IDs have no intrinsic order.}
+\ex{Points $0,2,9,11$, $k=2$: groups $\{0,2\}$, $\{9,11\}$ have means $1,10$.}
+\key{Cosine similarity}
+\[s(x,z)=\frac{x^Tz}{\norm{x}\norm{z}}.\]
+\cond{Both vectors nonzero. Normalize first when direction rather than magnitude is relevant.}
+\trap{Cosine similarity is not Euclidean distance; a zero vector needs an explicit convention.}
+}
+{
+\topic{12}{DECISION TREES}
+Class fractions $p_k$ in a node:
+\[G=1-\sum_kp_k^2,\qquad H=-\sum_kp_k\log p_k.\]
+Use $0\log0=0$. For a split into $L,R$:
+\[\Delta I=I(P)-\tfrac{n_L}{n}I(L)-\tfrac{n_R}{n}I(R).\]
+\cond{Choose the split maximizing impurity reduction; for regression, minimize weighted squared error.}
+\ex{Binary node $(0.5,0.5)$: Gini $=0.5$; pure children give gain $0.5$.}
+\trap{Weight child impurities by their sample counts; averaging them equally is generally wrong.}
+\key{Capacity control}
+Depth limit, minimum leaf size, pruning. Deep trees fit interactions but may have high variance.
+\cond{Axis-aligned splits do not require feature standardization.}
+
+\topic{13}{BAGGING / RANDOM FORESTS}
+Train models on bootstrap samples; average regression predictions or vote for classification.
+\[\Var(\bar h)=\sigma^2\!\left(\rho+\frac{1-\rho}{B}\right).\]
+\cond{Formula assumes equal individual variance and pairwise correlation $\rho$.}
+Random forests additionally sample candidate features at each split to reduce correlation.
+\key{Out-of-bag}
+Evaluate each observation using only trees whose bootstrap samples excluded it.
+\trap{Many highly correlated trees retain a variance floor; $B$ alone cannot remove $\rho\sigma^2$.}
+\ex{$\rho=0$, $B=10$: variance $\sigma^2/10$; $\rho=0.5$: $0.55\sigma^2$.}
+
+\topic{14}{BOOSTING}
+\key{Gradient boosting}
+\[r_{im}=-\left.\frac{\partial\ell(y_i,F)}{\partial F}\right|_{F=F_{m-1}(x_i)}.\]
+Fit $h_m$ to pseudo-residuals; update $F_m=F_{m-1}+\eta\gamma_mh_m$.
+\ex{Squared loss $\ell=\tfrac12(y-F)^2$: pseudo-residual $=y-F$.}
+\key{AdaBoost}
+$\epsilon_m=\sum_iq_i\mathbf1[y_i\ne h_m(x_i)]$;
+$a_m=\tfrac12\log\frac{1-\epsilon_m}{\epsilon_m}$;
+$q_i^+\propto q_i e^{-a_my_ih_m(x_i)}$.
+\cond{Binary $h_m,y_i\in\{-1,+1\}$; the standard positive-weight step needs $0<\epsilon_m<1/2$.}
+\trap{Boosting fits models sequentially. Noisy labels can receive large weight.}
+
+\topic{15}{ENSEMBLE DECISIONS}
+\key{Aggregation}
+Regression: mean of predictions. Classification: vote or average aligned class probabilities, then apply the decision rule.
+\cond{Align class order before averaging probabilities from different models.}
+\trap{Averaging logits and averaging probabilities give different ensembles.}
+\key{Stacking}
+Train a second-level model on out-of-fold base-model predictions; refit base models on full training data for deployment.
+\cond{All folds and feature processing obey the same leakage constraints as ordinary CV.}
+\trap{Training the stacker on in-sample predictions gives it an overly optimistic view of base models.}
+\ex{Two binary probabilities $.2,.8$: probability average $=.5$. Agreement and confidence remain separate questions.}
+\key{Choose / check}
+Tune tree capacity and ensemble size with validation; record metric, split, seed, and hyperparameters.
+}
+{
+\topic{16}{SVM DUAL / WORKED CHECK}
+\[\max_{\alpha}\ \sum_i\alpha_i-\frac12\sum_{i,j}\alpha_i\alpha_jy_iy_jK(x_i,x_j),
+\qquad 0\le\alpha_i\le C,\quad\sum_i\alpha_i y_i=0.\]
+\cond{This form assumes an unpenalized bias. Recover $b=y_i-\sum_j\alpha_jy_jK(x_j,x_i)$ from any $0<\alpha_i<C$.}
+\ex{Linear hard-margin sample: $(x_1,y_1)=(-1,-1)$, $(x_2,y_2)=(1,+1)$. $w=1$, $b=0$, $\alpha_1=\alpha_2=1/2$; margin width $=2$.}
+\trap{If no coefficient is strictly between $0$ and $C$, a free support-vector formula cannot be used directly; use KKT bounds for $b$.}
+}}
+\newpage
+% PAGE 2: probability / neural nets / data structures / graph algorithms.
+\sheet
+{{
+\topic{17}{PROBABILITY / BAYES}
+\[P(A\mid B)=\frac{P(B\mid A)P(A)}{P(B)},\quad P(B)>0.\]
+\key{Total probability}
+For a disjoint, exhaustive partition $\{A_k\}$:
+\[P(B)=\sum_kP(B\mid A_k)P(A_k).\]
+\ex{Prevalence $0.01$, sensitivity $0.9$, false-positive rate $0.05$:}
+\[P(D\mid+)=\frac{.9(.01)}{.9(.01)+.05(.99)}\approx.154.\]
+\trap{Sensitivity $P(+\mid D)$ differs from the posterior $P(D\mid+)$. Include false positives in the denominator.}
+\key{Expectation / variance}
+$\E[aX+b]=a\E[X]+b$; $\Var(aX+b)=a^2\Var(X)$.
+\[\Var(X+Y)=\Var(X)+\Var(Y)+2\mathrm{Cov}(X,Y).\]
+\cond{Independence implies zero covariance when moments exist. The converse generally fails.}
+
+\topic{18}{CLASSIFICATION METRICS}
+\[\mathrm{Prec}=\frac{TP}{TP+FP},\quad\mathrm{Rec}=\frac{TP}{TP+FN}.\]
+\[F_1=\frac{2TP}{2TP+FP+FN}.\]
+Specificity $=TN/(TN+FP)$; accuracy $=(TP+TN)/N$.
+\cond{Specify the positive class and handle zero denominators explicitly.}
+\trap{Accuracy can hide failure on a rare class. Macro averaging weights classes equally; micro pooling weights counts.}
+\ex{$TP=8$, $FP=2$, $FN=4$: precision $=.8$, recall $=2/3$, $F_1=8/11$.}
+\key{Thresholds}
+Raising a score threshold cannot increase predicted positives; recall is nonincreasing. Precision need not increase monotonically.
+\trap{ROC uses $FPR=FP/(FP+TN)$; a precision-recall curve uses precision.}
+
+\topic{19}{VALIDATION / LEAKAGE}
+\key{Procedure}
+Split data $\to$ fit transforms on training data $\to$ tune on validation/CV $\to$ evaluate once on held-out test data.
+\cond{Refit preprocessing inside every CV fold. Split by time, person, or group when the task requires it.}
+\trap{Scaling, feature selection, imputation, and target encoding can all leak held-out information.}
+\key{Model selection}
+Validation chooses hyperparameters. Test estimates generalization after choices are fixed. Nested CV separates inner tuning from outer evaluation.
+\ex{Repeated patients: keep all records of a patient in the same fold.}
+\trap{Picking a threshold from test labels is also test-set tuning.}
+\key{Distance-based models}
+Standardize features when units differ; $k$-NN stores training data, and prediction depends on distance and $k$.
+\cond{Fit centering/scaling statistics on the training split only.}
+
+\topic{20}{ESTIMATION / UNCERTAINTY}
+\key{Sample mean}
+Independent identically distributed $X_i$ with finite variance $\sigma^2$:
+\[\E[\bar X]=\mu,\quad\Var(\bar X)=\sigma^2/n.\]
+Sample variance $s^2=\sum_i(X_i-\bar X)^2/(n-1)$ is unbiased for $n>1$.
+\cond{The $1/n$ variance result depends on independence; correlated observations add covariance terms.}
+\key{Gaussian mean interval}
+Known $\sigma$: $\bar X\pm z_{1-\alpha/2}\sigma/\sqrt n$; unknown $\sigma$: use $t_{n-1}$ and $s$ for normal samples.
+\trap{A frequentist confidence level describes repeated-sampling coverage.}
+\ex{Known $\sigma=2$, $n=100$: standard error $=.2$, approximate 95\% half-width $=.392$.}
+\key{Bootstrap}
+Resample observations with replacement; recompute the statistic. Respect groups or time dependence with an appropriate resampling scheme.
+\trap{A narrow interval cannot repair selection bias or a mismatched evaluation population.}
+}
+{
+\topic{21}{NEURAL NETS / BACKPROP}
+Layer $a_\ell=W_\ell h_{\ell-1}+b_\ell$, $h_\ell=\phi(a_\ell)$.
+\[\delta_\ell=(W_{\ell+1}^T\delta_{\ell+1})\odot\phi'(a_\ell).\]
+\[\nabla_{W_\ell}L=\delta_\ell h_{\ell-1}^T,\quad\nabla_{b_\ell}L=\delta_\ell.\]
+\cond{These expressions are per example with column activations. Sum/average consistently across a batch.}
+\key{Activations}
+ReLU $\max(0,a)$: derivative $1$ for $a>0$, $0$ for $a<0$; at $0$ choose a subgradient.
+Sigmoid derivative $p(1-p)$; tanh derivative $1-h^2$.
+\trap{Apply the activation derivative elementwise; transpose the downstream weight matrix.}
+\ex{$h=\operatorname{ReLU}(wx)$, $x=2$, $w=1$, $L=\tfrac12(h-3)^2$: $dL/dw=-2$.}
+\key{Training / inference}
+Dropout is stochastic during training; batch normalization uses batch statistics during training and stored statistics at inference.
+\trap{Switch to evaluation mode for inference.}
+
+\topic{22}{PCA / PROJECTIONS}
+Center $X\in\R^{n\times d}$ first. Let $X=U\Sigma V^T$ be an SVD.
+\[Z=XV_k,\quad\hat X=ZV_k^T.\]
+Top right singular vectors maximize projected variance and minimize rank-$k$ squared reconstruction error.
+\key{Explained variance ratio}
+\[\mathrm{EVR}_k=\frac{\sum_{j=1}^k\sigma_j^2}{\sum_j\sigma_j^2}.\]
+\cond{Sample covariance is $X^TX/(n-1)$ for centered observations. Scale first if units should receive comparable influence.}
+\trap{PCA is unsupervised. High variance need not predict the label; component signs are arbitrary.}
+\ex{$X^TX=\operatorname{diag}(9,1)$: first component along axis 1, EVR $=.9$.}
+
+\topic{23}{NAIVE BAYES / LIKELIHOOD}
+\[\hat y=\arg\max_c\left[\log P(c)+\sum_j\log P(x_j\mid c)\right].\]
+\cond{Assumes features are conditionally independent given the class. Choose a likelihood matching feature type.}
+\key{Multinomial smoothing}
+\[P(j\mid c)=\frac{N_{cj}+\alpha}{\sum_rN_{cr}+\alpha V}.\]
+$V$ is vocabulary size; $\alpha>0$ avoids zero token probabilities.
+\trap{Conditional independence is different from unconditional independence. Accumulate logs to avoid underflow.}
+\ex{One unseen token makes an unsmoothed product zero; additive smoothing preserves a finite log score.}
+
+\topic{24}{MODEL / LOSS MATCHING}
+\key{Regression losses}
+Squared error targets a conditional mean; absolute error targets a conditional median, when the relevant expectations exist.
+\key{Classification losses}
+Cross-entropy trains a probability model; hinge loss targets a margin. Their numerical values are not directly comparable.
+\cond{Compare models on the same held-out metric and data split.}
+\key{Learning rate / batch size}
+Larger batches reduce sampling noise under ordinary independent sampling. Learning rate, batch size, and schedule interact.
+\trap{More epochs need not improve held-out performance; select early stopping using validation data.}
+\ex{Train loss falls while validation loss rises: inspect capacity, regularization, leakage, and split mismatch.}
+\key{Reproducibility}
+Record preprocessing, seed, split identities, metric convention, and model settings; preserve a held-out test set.
+\trap{A fixed seed is not evidence that evaluation data represent deployment data.}
+}
+{}}
+{{
+\topic{25}{ASYMPTOTIC ANALYSIS}
+\key{Bounds}
+$f=O(g)$: eventual upper bound; $f=\Omega(g)$: lower bound; $f=\Theta(g)$: both. State what $n$ measures.
+\key{Common growth}
+$1<\log n<n<n\log n<n^2<2^n<n!$ asymptotically.
+\key{Loop patterns}
+Halving/doubling a positive index: $\Theta(\log n)$. Triangular loop $\sum_{i=1}^ni$: $\Theta(n^2)$.
+\ex{Outer loop doubles $i$; inner loop runs $i$ times: $1+2+4+\cdots\le2n$, hence $\Theta(n)$.}
+\trap{Multiply costs only when inner work has the claimed cost on every outer iteration.}
+\key{Master theorem}
+For $T(n)=aT(n/b)+f(n)$, $a\ge1$, $b>1$, compare $f$ to $n^{\log_ba}$.
+Polynomially smaller: $\Theta(n^{\log_ba})$; equal: $\Theta(n^{\log_ba}\log n)$; polynomially larger plus regularity: $\Theta(f(n))$.
+\cond{The third case needs $af(n/b)\le cf(n)$ eventually for some $c<1$.}
+\trap{These three basic cases do not cover every recurrence.}
+
+\topic{26}{SEARCH / SORT}
+\key{Binary search invariant}
+Search $[l,r)$; $m=l+\lfloor(r-l)/2\rfloor$. Lower bound finds the first $a[m]\ge x$.
+\begin{itemize}
+\item If $a[m]<x$, set $l=m+1$.
+\item Otherwise set $r=m$; stop at $l=r$.
+\end{itemize}
+\cond{Array sorted in the comparison order. Result may equal $n$.}
+\trap{For membership, also check $l<n$ and $a[l]=x$.}
+\key{Sort comparison}
+\begin{tabular}{@{}lll@{}}
+Method & Time & Stable?\\
+Merge & $\Theta(n\log n)$ & yes$^*$\\
+Heap & $O(n\log n)$ & no\\
+Quick & avg. $O(n\log n)$ & no\\
+Insertion & worst $O(n^2)$ & yes$^*$
+\end{tabular}
+\cond{$^*$Standard tie-preserving implementation. Quicksort worst case is $O(n^2)$.}
+\ex{Lower bound of 2 in $[1,2,2,4]$ is index 1, with zero-based indexing.}
+
+\topic{27}{DATA STRUCTURES}
+\key{Choose by operation}
+Stack: LIFO; queue: FIFO; hash map: expected constant-time lookup under suitable hashing/load; balanced BST: $O(\log n)$ lookup/update.
+\key{Binary heap}
+Peek $O(1)$; insert/extract $O(\log n)$; bottom-up heap construction $O(n)$.
+\trap{A heap is partially ordered; arbitrary-value search can take $O(n)$.}
+\key{Amortized cost}
+Dynamic array doubling gives amortized $O(1)$ append, although a resizing append costs $O(n)$.
+\ex{$n$ pushes with doubling copy $1+2+4+\cdots<n$ old elements in total.}
+\trap{Expected, amortized, and worst-case bounds describe different guarantees.}
+
+\topic{28}{UNION-FIND / PREFIX SUMS}
+\key{Disjoint sets}
+\texttt{find(x)} returns a representative; \texttt{union(x,y)} merges sets. Use path compression plus union by size/rank.
+\cond{A sequence of operations has near-constant amortized cost $O(\alpha(n))$ per operation under the standard implementation.}
+\trap{The representative is an implementation choice; it is not necessarily the smallest member.}
+\ex{Union $(0,1)$ and $(1,2)$ makes \texttt{find(0)==find(2)} true.}
+\key{Prefix sum}
+Define $P[0]=0$, $P[i+1]=P[i]+a[i]$.
+\[\sum_{i=l}^{r-1}a[i]=P[r]-P[l].\]
+\cond{Half-open range $[l,r)$; preprocessing $O(n)$, query $O(1)$ on an unchanged array.}
+\trap{Use a numeric type large enough for accumulated sums. Point updates invalidate later prefix values.}
+\ex{$a=[2,3,5]$, $P=[0,2,5,10]$; range $[1,3)$ has sum $10-2=8$.}
+}
+{
+\topic{29}{GRAPH TRAVERSAL}
+Let $V$ be vertex count and $E$ edge count; use adjacency lists.
+\key{BFS}
+Queue; mark a vertex discovered when enqueuing it. Finds minimum edge-count paths from a source in $O(V+E)$.
+\cond{Unweighted or equal-weight edges for shortest-path interpretation.}
+\trap{Marking only on dequeue may enqueue the same vertex repeatedly.}
+\key{DFS}
+Recursion/stack; discovery/finish states. Directed cycle exists when an edge points to a vertex on the active DFS stack.
+\cond{In an undirected simple graph, ignore the parent edge when checking for cycles.}
+\ex{$s\to a$, $s\to b$, $a\to t$: BFS gives distances $(0,1,1,2)$.}
+\key{Topological ordering}
+Kahn: enqueue zero-indegree vertices, remove them and decrement neighbor indegrees. Fewer than $V$ outputs implies a directed cycle.
+\trap{A topological ordering exists exactly for a directed acyclic graph.}
+
+\topic{30}{SHORTEST PATHS / MST}
+\key{Relaxation}
+\[d[v]\gets\min(d[v],d[u]+w(u,v)).\]
+Initialize source to $0$, others to $\infty$.
+\key{Dijkstra}
+Extract smallest tentative distance; relax outgoing edges. Binary heap: $O((V+E)\log V)$ with decrease-key.
+\cond{All edge weights nonnegative. A lazy heap variant skips stale entries and has an $E$-dependent heap bound.}
+\trap{Negative edges can invalidate settling a vertex. Do not add weights to an unreachable/infinite distance.}
+\key{Bellman--Ford / DAG}
+Bellman--Ford: $V-1$ passes, $O(VE)$; a further relaxation detects a reachable negative cycle. DAG: topological relaxation, $O(V+E)$, negative edges allowed.
+\key{Minimum spanning tree}
+Kruskal: sort edges, union endpoints from different components, $O(E\log E)$. Prim: grow a tree by the cheapest crossing edge.
+\cond{Undirected weighted graph; disconnected input gives a minimum spanning forest.}
+\trap{An MST minimizes total tree weight; it need not preserve shortest source-to-vertex paths.}
+
+\topic{31}{DYNAMIC PROGRAMMING}
+\key{Design steps}
+State meaning $\to$ base cases $\to$ transition $\to$ dependency order $\to$ answer location.
+Time $\approx$ states $\times$ work/state; memory depends on stored dependencies.
+\key{0/1 knapsack}
+\[D[i,c]=\max\{D[i-1,c],\ v_i+D[i-1,c-w_i]\}.\]
+Second term only when $c\ge w_i$; base $D[0,c]=0$ for optional selection and nonnegative capacity.
+\cond{Each item is usable at most once. One-array implementation updates capacity downward.}
+\trap{Ascending capacity reuses the current item, producing the unbounded version.}
+\ex{One item $(w,v)=(2,3)$, capacity 4: 0/1 answer $=3$; unbounded answer $=6$.}
+\key{Reconstruction}
+Store choices or compare predecessor states. Rolling arrays save space but may remove the trace needed to reconstruct a solution.
+
+\topic{32}{DP / CODE MICRO-EXAMPLE}
+\key{0/1 knapsack, one array}
+Initialize \texttt{dp[0..C]} to zero, then:
+\code{for (w, v) in items:\\
+\hspace*{5pt}for c = C down to w:\\
+\hspace*{10pt}dp[c] = max(dp[c],\\
+\hspace*{30pt}v + dp[c-w])}
+\cond{Integer nonnegative capacities; optional item selection. Time $O(nC)$, memory $O(C)$.}
+\trap{$O(nC)$ is pseudopolynomial because capacity is encoded with $O(\log C)$ bits.}
+\key{Longest common subsequence}
+Matching characters: $D[i,j]=1+D[i-1,j-1]$; otherwise $D[i,j]=\max(D[i-1,j],D[i,j-1])$.
+\cond{Base row/column zero; time $O(nm)$. A subsequence may skip positions.}
+\trap{Longest common substring uses a different recurrence and requires contiguous matches.}
+\ex{\texttt{ABC} and \texttt{AC}: LCS length 2, common substring length 1.}
+}
+{}}
+\end{document}
