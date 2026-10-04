@@ -1,0 +1,372 @@
+% DSA5104 content adapted into the shared NUS Atlas cheatsheet layout.
+% Two A4 portrait pages, four fixed columns per page, no global header/footer.
+% Source text: user-provided DSA5104_A4_Helpsheet_v0.9_portrait_4col.tex.
+% The source is treated as content; its document-level layout is replaced here.
+\documentclass[a4paper]{article}
+\usepackage[margin=4.5mm,left=5mm,right=5mm,noheadfoot]{geometry}
+\usepackage{iftex}
+\usepackage{amsmath,amssymb}
+\ifPDFTeX
+  \usepackage[T1]{fontenc}
+  \IfFileExists{stix2.sty}{\usepackage{stix2}}{}
+  \IfFileExists{sourcesanspro.sty}{\usepackage[default]{sourcesanspro}}{\usepackage{helvet}\renewcommand{\familydefault}{\sfdefault}}
+  \IfFileExists{inconsolata.sty}{\usepackage{inconsolata}}{}
+\else
+  \usepackage{fontspec}
+  \usepackage{unicode-math}
+  \IfFontExistsTF{Source Sans 3}{\setmainfont{Source Sans 3}}{%
+    \IfFontExistsTF{SourceSans3-Regular.otf}{\setmainfont{SourceSans3}[Extension=.otf,UprightFont=*-Regular,BoldFont=*-Bold,ItalicFont=*-It,BoldItalicFont=*-BoldIt]}{%
+      \IfFileExists{sourcesanspro.sty}{\usepackage[default]{sourcesanspro}}{\setmainfont{lmsans10-regular.otf}[BoldFont=lmsans10-bold.otf]}}}
+  \IfFontExistsTF{STIXTwoMath-Regular.otf}{\setmathfont{STIXTwoMath-Regular.otf}}{%
+    \IfFontExistsTF{STIXTwoMath-Regular.otf}{\setmathfont{STIXTwoMath-Regular.otf}}{\setmathfont{latinmodern-math.otf}}}
+  \IfFontExistsTF{JetBrains Mono}{\setmonofont{JetBrains Mono}[Scale=MatchLowercase]}{\setmonofont{lmmono10-regular.otf}[Scale=MatchLowercase]}
+\fi
+\usepackage{xcolor,array,enumitem,listings}
+\definecolor{structure}{HTML}{17324D}
+\definecolor{condition}{HTML}{855C13}
+\definecolor{warning}{HTML}{A32929}
+\definecolor{example}{HTML}{505963}
+\lstdefinelanguage{SQLx}{
+  morekeywords={SELECT,FROM,WHERE,GROUP,BY,HAVING,ORDER,ASC,DESC,DISTINCT,AS,JOIN,INNER,LEFT,RIGHT,FULL,OUTER,ON,USING,NATURAL,UNION,ALL,EXCEPT,INTERSECT,IN,NOT,EXISTS,WITH,RECURSIVE,INSERT,INTO,VALUES,UPDATE,SET,DELETE,CREATE,TABLE,VIEW,PROCEDURE,TRIGGER,BEFORE,AFTER,FOR,EACH,ROW,BEGIN,END,DECLARE,CALL,OUT,IF,THEN,ELSE,ELSEIF,SIGNAL,SQLSTATE,MESSAGE_TEXT,CASE,WHEN,NULL,IS,PRIMARY,KEY,FOREIGN,REFERENCES,CHECK,OVER,PARTITION,ROWS,RANGE,BETWEEN,PRECEDING,FOLLOWING,CURRENT,ROW,RANK,DENSE_RANK,ROW_NUMBER,SUM,COUNT,AVG,MIN,MAX,CUBE,ROLLUP,GROUPING,LIMIT},
+  sensitive=false,
+  morecomment=[l]{--},
+  morestring=[b]'
+}
+\lstdefinelanguage{PHPx}{
+  morekeywords={foreach,as,if,else,elseif,while,for,function,return,echo,true,false,null},
+  sensitive=true,
+  morecomment=[l]{//},
+  morecomment=[l]{\#},
+  morestring=[b]',
+  morestring=[b]"
+}
+\lstset{
+  language=SQLx,
+  basicstyle=\ttfamily\fontsize{5.9}{6.7}\selectfont,
+  keywordstyle=\color{structure},
+  commentstyle=\color{example},
+  stringstyle=\color{warning!80!black},
+  columns=fullflexible,
+  keepspaces=true,
+  showstringspaces=false,
+  breaklines=true,
+  breakatwhitespace=false,
+  frame=none,
+  aboveskip=1pt,
+  belowskip=1pt,
+  xleftmargin=1pt
+}
+\pagestyle{empty}
+\setlength{\topskip}{0pt}
+\setlength{\parindent}{0pt}
+\setlength{\parskip}{1.3pt}
+\setlength{\tabcolsep}{2pt}
+\renewcommand{\arraystretch}{1.08}
+\setlist[itemize]{leftmargin=8pt,label=\textbullet,nosep,topsep=1pt}
+\setlength{\emergencystretch}{1em}
+\newlength{\gutter}\setlength{\gutter}{2mm}
+\newlength{\colwidth}\setlength{\colwidth}{\dimexpr(\textwidth-3\gutter)/4\relax}
+\newlength{\pairwidth}\setlength{\pairwidth}{\dimexpr2\colwidth+\gutter\relax}
+\newcommand{\bodystyle}{%
+  \fontsize{6.8}{8.6}\selectfont\raggedright
+  \setlength{\abovedisplayskip}{2pt}\setlength{\belowdisplayskip}{2pt}%
+  \setlength{\abovedisplayshortskip}{1pt}\setlength{\belowdisplayshortskip}{1pt}}
+\newif\ifcolstart
+\newcommand{\topic}[2]{\par\ifcolstart\colstartfalse\else\addvspace{5pt}\fi%
+  {\color{structure}\fontsize{8.1}{9.1}\selectfont\bfseries #1\enspace #2\par}%
+  \vspace{.6pt}{\color{structure!45}\hrule height .25pt}\vspace{1.7pt}}
+\newcommand{\key}[1]{\par\textbf{#1}\enspace}
+\newcommand{\note}[3]{\par\begingroup\color{#1}%
+  \textbf{#2}\enspace #3\par\endgroup}
+\newcommand{\cond}[1]{\note{condition}{COND}{#1}}
+\newcommand{\trap}[1]{\note{warning}{!}{#1}}
+\newcommand{\ex}[1]{\note{example}{EX}{#1}}
+\newcommand{\sql}[1]{\texttt{\detokenize{#1}}}
+\newcommand{\code}[1]{\par{\ttfamily\fontsize{6.3}{7.7}\selectfont #1\par}}
+\newenvironment{sheetcolumn}{\begin{minipage}[t]{\colwidth}\vspace{0pt}\bodystyle\colstarttrue}{\end{minipage}}
+\newenvironment{sheetpair}{\begin{minipage}[t]{\pairwidth}\vspace{0pt}}{\end{minipage}}
+\newcommand{\pair}[3]{%
+  \begin{minipage}[t]{\pairwidth}\vspace{0pt}\bodystyle
+    \begin{minipage}[t]{\colwidth}\vspace{0pt}\bodystyle\colstarttrue #1\end{minipage}%
+    \hspace{\gutter}%
+    \begin{minipage}[t]{\colwidth}\vspace{0pt}\bodystyle\colstarttrue #2\end{minipage}%
+    \if\relax\detokenize{#3}\relax\else\par\vspace{4pt}#3\fi
+  \end{minipage}}
+\newcommand{\sheet}[2]{\noindent\pair#1\hspace{\gutter}\pair#2\par}
+
+\begin{document}
+\bodystyle
+% PAGE 1: SQL queries, joins, windows, stored code, and aggregation.
+\noindent
+\begin{sheetpair}
+\begin{sheetcolumn}
+\topic{01}{QUERY STRUCTURE}
+\key{Skeleton}
+\begin{lstlisting}
+SELECT [DISTINCT] expressions
+FROM R [JOIN S ON condition]
+[WHERE row_condition]
+[GROUP BY keys]
+[HAVING group_condition]
+[ORDER BY expression [ASC|DESC]]
+[LIMIT n];
+\end{lstlisting}
+\key{Logical processing order}
+\code{FROM/JOIN -> WHERE -> GROUP BY}
+\code{-> HAVING -> SELECT}
+\code{-> ORDER BY -> LIMIT}
+\trap{Window ORDER BY controls the window calculation, not the final output order. Add an outer ORDER BY when display order matters.}
+
+\topic{02}{NULL / AGGREGATION}
+\sql{x = NULL} is wrong; use \sql{x IS NULL}. Comparisons with NULL yield UNKNOWN; \sql{WHERE} keeps only TRUE. Arithmetic with NULL usually returns NULL.
+\key{Counts}
+\sql{COUNT(*)} counts output rows; \sql{COUNT(x)} ignores NULL; \sql{COUNT(DISTINCT x)} counts unique non-NULL values.
+\cond{Every selected nonaggregate expression must be grouped in standard SQL. \sql{WHERE} filters rows before grouping; \sql{HAVING} filters groups after aggregation.}
+\trap{After a LEFT JOIN, COUNT(*) still counts a NULL-extended row; COUNT(B.id) ignores it.}
+
+\topic{03}{JOIN / SET / SUBQUERY}
+\key{Which rows survive?}
+\begin{itemize}
+\item INNER: matched rows only.
+\item LEFT: every left row; missing right values become NULL.
+\item RIGHT: every right row.
+\item FULL OUTER: unmatched rows from both sides; MySQL has no direct FULL OUTER JOIN syntax.
+\end{itemize}
+\key{ON vs WHERE}
+ON decides which rows match; join type decides which unmatched rows survive; WHERE is the final row filter.
+\begin{lstlisting}
+SELECT A.* FROM A LEFT JOIN B
+  ON A.id=B.id AND B.flag=1;
+\end{lstlisting}
+Putting a right-side condition in WHERE can remove NULL-extended rows and lose LEFT preservation. Put match rules in ON.
+\key{Join traps}
+NATURAL JOIN matches every same-named column, which can join unrelated fields; \sql{USING(k)} names shared keys explicitly. Anti-join: LEFT JOIN, then WHERE the right key IS NULL.
+\key{Set operations}
+UNION / INTERSECT / EXCEPT require union-compatible columns. They remove duplicates by default; UNION ALL preserves duplicates.
+\key{Subqueries}
+\begin{lstlisting}
+WHERE x IN (SELECT ...)
+WHERE EXISTS (SELECT 1 FROM S WHERE ...)
+WHERE NOT EXISTS (...)
+\end{lstlisting}
+Correlated subqueries refer to outer-row aliases. For “for all”, test that there is no missing requirement (e.g. required set EXCEPT possessed set is empty).
+\trap{NOT IN with any NULL in its subquery can yield UNKNOWN; NOT EXISTS is safer for anti-joins.}
+\end{sheetcolumn}\hspace{\gutter}%
+\begin{sheetcolumn}
+\topic{04}{DDL / DML}
+\begin{lstlisting}
+CREATE TABLE R (
+  id INT PRIMARY KEY,
+  x VARCHAR(20) NOT NULL,
+  dept VARCHAR(20),
+  CHECK (...),
+  FOREIGN KEY (dept) REFERENCES D(dept)
+);
+INSERT INTO R(...) VALUES (...);
+UPDATE R SET x=... WHERE ...;
+DELETE FROM R WHERE ...;
+\end{lstlisting}
+\cond{Foreign-key actions include ON DELETE/UPDATE CASCADE, SET NULL, and RESTRICT/NO ACTION.}
+\key{CTE}
+\begin{lstlisting}
+WITH X AS (SELECT ...)
+SELECT ... FROM X;
+\end{lstlisting}
+\end{sheetcolumn}
+\par\vspace{4pt}
+\begin{minipage}[t]{\pairwidth}\vspace{0pt}\bodystyle\colstarttrue
+\topic{05}{RANKING / WINDOWS}
+For scores 100, 100, 90:
+\begin{center}
+\begin{tabular}{@{}lccc@{}}
+Function & 100 & 100 & 90\\\hline
+\sql{ROW_NUMBER} & 1 & 2 & 3\\
+RANK & 1 & 1 & 3\\
+\sql{DENSE_RANK} & 1 & 1 & 2
+\end{tabular}
+\end{center}
+\sql{ROW_NUMBER} is sequential and unique; ties need a deterministic tie-breaker. RANK leaves gaps after ties; \sql{DENSE_RANK} does not.
+\begin{lstlisting}
+RANK() OVER (
+  PARTITION BY dept
+  ORDER BY score DESC)
+\end{lstlisting}
+PARTITION BY restarts within each group; ORDER BY sets window order. Ranking on grouped results happens after grouping/aggregation.
+\key{Window form}
+\begin{lstlisting}
+window_fn(expr) OVER (
+  [PARTITION BY p] [ORDER BY o]
+  [ROWS frame])
+\end{lstlisting}
+Windows calculate per row without collapsing rows. Aggregate windows include SUM/AVG/COUNT/MIN/MAX; ranking functions are nonaggregate.
+\key{Frames}
+\begin{lstlisting}
+-- Running: first row through current
+SUM(x) OVER (ORDER BY d ROWS BETWEEN
+  UNBOUNDED PRECEDING AND CURRENT ROW)
+-- Moving: previous 2 plus current
+AVG(x) OVER (ORDER BY d ROWS BETWEEN
+  2 PRECEDING AND CURRENT ROW)
+-- Symmetric: previous, current, next
+AVG(x) OVER (ORDER BY d ROWS BETWEEN
+  1 PRECEDING AND 1 FOLLOWING)
+\end{lstlisting}
+\trap{ROWS counts physical rows. RANGE groups ORDER BY peers, so ties can enlarge the frame.}
+\end{minipage}
+\end{sheetpair}\hspace{\gutter}%
+\begin{sheetpair}
+\begin{sheetcolumn}
+\topic{06}{RECURSIVE CTE}
+Use for transitive closure, hierarchies, and paths.
+\begin{lstlisting}
+WITH RECURSIVE reach(a,b) AS (
+  -- Anchor: base edges
+  SELECT a,b FROM edge
+  UNION
+  -- Recursive term extends prior rows
+  SELECT r.a,e.b FROM reach r
+  JOIN edge e ON r.b=e.a
+)
+SELECT * FROM reach;
+\end{lstlisting}
+The anchor seeds rows; the recursive term refers to the CTE and repeatedly extends it.
+\cond{UNION removes duplicates and can help closure/cycle control. UNION ALL avoids deduplication and needs a safe termination strategy.}
+
+\topic{07}{PROCEDURES / TRIGGERS}
+\key{MySQL stored procedure}
+\begin{lstlisting}
+DELIMITER //
+CREATE PROCEDURE p(IN p_id INT, OUT p_cnt INT)
+BEGIN
+  DECLARE v INT DEFAULT 0;
+  SELECT COUNT(*) INTO v FROM T WHERE id=p_id;
+  SET p_cnt=v;
+END//
+DELIMITER ;
+CALL p(7,@n); SELECT @n;
+\end{lstlisting}
+IN receives a caller value; OUT returns one. Declare locals/conditions/handlers before executable statements. SELECT ... INTO stores a scalar result. DELIMITER is a client command so internal semicolons stay in the procedure body.
+\key{Triggers}
+Fire on INSERT, UPDATE, or DELETE. BEFORE validates or changes NEW; AFTER runs after success, e.g. for audit work.
+\begin{lstlisting}
+CREATE TRIGGER trg BEFORE UPDATE ON T
+FOR EACH ROW
+BEGIN
+  IF NEW.score < 0 THEN
+    SIGNAL SQLSTATE '45000'
+      SET MESSAGE_TEXT='bad score';
+  END IF;
+END;
+\end{lstlisting}
+Row images: INSERT uses NEW; UPDATE uses OLD and NEW; DELETE uses OLD. SIGNAL raises a user error; a trigger error aborts the invoking statement.
+\end{sheetcolumn}\hspace{\gutter}%
+\begin{sheetcolumn}
+\topic{08}{PIVOT / CUBE / ROLLUP}
+\key{Conditional aggregation}
+Rows become grouping keys; CASE values become output columns.
+\begin{lstlisting}
+SELECT location,
+ SUM(CASE WHEN type='THEFT' THEN 1 ELSE 0 END) theft,
+ SUM(CASE WHEN type='BATTERY' THEN 1 ELSE 0 END) battery
+FROM crime GROUP BY location;
+\end{lstlisting}
+For amounts, replace 1 with amount. COUNT(CASE WHEN condition THEN 1 END) also counts matches because COUNT ignores NULL.
+\key{Grouping sets}
+For dimensions (a,b,c):
+\begin{itemize}
+\item CUBE(a,b,c): every subset, $2^3=8$ sets.
+\item ROLLUP(a,b,c): prefix hierarchy (abc, ab, a, empty), detail to subtotals to total.
+\item GROUPING(a)=1 when a is omitted in a subtotal/total; use it to distinguish generated NULL from data NULL.
+\end{itemize}
+MySQL supports ROLLUP. CUBE/general grouping-set syntax is commonly shown with PostgreSQL in course material.
+\end{sheetcolumn}
+
+\par\vspace{4pt}
+\begin{minipage}[t]{\pairwidth}\vspace{0pt}\bodystyle\colstarttrue
+\topic{09}{LAST-MINUTE TRAPS}
+\begin{itemize}
+\item Window functions preserve row count; GROUP BY collapses rows.
+\item RANK has gaps; \sql{DENSE_RANK} has none; \sql{ROW_NUMBER} is unique.
+\item ROWS BETWEEN n PRECEDING AND CURRENT ROW covers at most $n+1$ physical rows at an interior row.
+\item Recursive CTE: anchor first; recursive term must reach a fixpoint or stop.
+\item Trigger row images: INSERT=NEW, DELETE=OLD, UPDATE=both.
+\item GROUPING() separates subtotal NULL from a real NULL value.
+\end{itemize}
+\end{minipage}
+\end{sheetpair}
+\par
+\newpage
+% PAGE 2: relational foundations, algebra, and PHP/MySQL web reference.
+\noindent
+\begin{sheetpair}
+\begin{sheetcolumn}
+\topic{10}{DBMS / RELATIONAL MODEL}
+\key{Why a DBMS?}
+Controls redundancy/inconsistency, difficult access, isolation, buried integrity rules, partial updates, concurrency, and authorization.
+\key{Abstraction}
+Physical: how data is stored. Logical: which data and relationships exist. View: a user-specific representation.
+\cond{Physical data independence means changing physical storage without changing the logical schema or applications.}
+\key{Schema / instance}
+Schema is structure; instance is a snapshot of tuples. A relation is a set of tuples (order is irrelevant); a domain is a set of allowed atomic values. NULL denotes unknown/missing.
+\key{Keys}
+Superkey uniquely identifies tuples; candidate key is a minimal superkey; primary key is the selected candidate key. A foreign key references a key in another relation; NULL is allowed only if the column permits it.
+\end{sheetcolumn}\hspace{\gutter}%
+\begin{sheetcolumn}
+\topic{11}{RELATIONAL ALGEBRA}
+\[
+\begin{array}{@{}ll@{}}
+\text{Rows} & \sigma_{condition}(R)\\
+\text{Columns} & \pi_{columns}(R)\\
+\text{All pairs} & R\times S\\
+\text{Matched pairs} & R\bowtie_{condition}S\\
+\text{Either set} & R\cup S\\
+\text{R but not S} & R-S\\
+\text{Rename} & \rho_X(R)\\
+\text{Assign result} & X\leftarrow E
+\end{array}
+\]
+\key{RA to SQL}
+$\sigma$ = WHERE; $\pi$ = SELECT DISTINCT; $\bowtie$ = JOIN ... ON; $\cup$ = UNION; $-$ = EXCEPT/anti-join; $\rho$ = alias AS.
+\trap{RA projection removes duplicates. SQL SELECT preserves them unless DISTINCT is requested.}
+\end{sheetcolumn}
+\end{sheetpair}\hspace{\gutter}%
+\begin{sheetpair}
+\begin{sheetcolumn}
+\topic{12}{PHP / MYSQL SYNTAX}
+\key{PHP patterns}
+\begin{lstlisting}[language=PHPx]
+$x                 // variable
+$s = $a . $b;      // concatenate strings
+foreach ($xs as $x) { ... }
+$row["column"]     // associative-array field
+$_GET["x"]; $_POST["x"];
+$conn = mysqli_connect(...);
+$r = mysqli_query($conn, $sql);
+$rows = mysqli_fetch_all($r, MYSQLI_ASSOC);
+if ($_SERVER["REQUEST_METHOD"] === "POST") { ... }
+\end{lstlisting}
+\key{HTML form / dropdown}
+\begin{lstlisting}[language=PHPx]
+<form method="post">
+  <select name="x">
+    <option value="...">...</option>
+  </select>
+</form>
+\end{lstlisting}
+\end{sheetcolumn}\hspace{\gutter}%
+\begin{sheetcolumn}
+\topic{13}{HTTP / MYSQL RESULTS}
+\key{Request flow}
+Browser request $\to$ web server $\to$ PHP interpreter $\to$ MySQL. The result returns to PHP, which creates HTML/text for the browser.
+\key{Query result}
+\sql{mysqli_query()} returns a result handle/object, not a PHP row array. Fetch rows with \sql{mysqli_fetch_all($r, MYSQLI_ASSOC)}.
+\key{Associative arrays}
+\sql{key => value}; with \sql{MYSQLI_ASSOC}, database column names become keys, e.g. \sql{$row["ID"]}.
+\key{GET / POST}
+\sql{$_GET} comes from URL query parameters; \sql{$_POST} comes from the request body. \sql{$_SERVER["REQUEST_METHOD"]} identifies the method received by the page.
+\cond{Use POST for form-body submissions; reading a variable from \sql{$_GET}/\sql{$_POST} is separate from validating its value.}
+\end{sheetcolumn}
+\end{sheetpair}
+\par
+
+\end{document}
