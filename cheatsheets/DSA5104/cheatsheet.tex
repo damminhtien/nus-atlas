@@ -213,6 +213,7 @@ RANK & 1 & 1 & 3\\
 \end{tabular}
 \end{center}
 \sql{ROW_NUMBER} is sequential and unique; ties need a deterministic tie-breaker. RANK leaves gaps after ties; \sql{DENSE_RANK} does not.
+\trap{NULL scores still get a rank and tie with each other. Their position varies by DBMS and sort direction; control NULL placement or filter them first.}
 \begin{lstlisting}
 RANK() OVER (
   PARTITION BY dept
