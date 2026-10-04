@@ -11,6 +11,7 @@
   \IfFileExists{stix2.sty}{\usepackage{stix2}}{}
   \IfFileExists{sourcesanspro.sty}{\usepackage[default]{sourcesanspro}}{\usepackage{helvet}\renewcommand{\familydefault}{\sfdefault}}
   \IfFileExists{inconsolata.sty}{\usepackage{inconsolata}}{}
+  \newcommand{\sqlfont}{\ttfamily}
 \else
   \usepackage{fontspec}
   \usepackage{unicode-math}
@@ -20,6 +21,11 @@
   \IfFontExistsTF{STIXTwoMath-Regular.otf}{\setmathfont{STIXTwoMath-Regular.otf}}{%
     \IfFontExistsTF{STIXTwoMath-Regular.otf}{\setmathfont{STIXTwoMath-Regular.otf}}{\setmathfont{latinmodern-math.otf}}}
   \IfFontExistsTF{JetBrains Mono}{\setmonofont{JetBrains Mono}[Scale=MatchLowercase]}{\setmonofont{lmmono10-regular.otf}[Scale=MatchLowercase]}
+  % Source Code Pro distinguishes SQL from PHP and surrounding prose.
+  \IfFontExistsTF{SourceCodePro-Regular.otf}{%
+    \newfontfamily\sqlfont{SourceCodePro}[Extension=.otf,UprightFont=*-Regular,BoldFont=*-Bold,Scale=MatchLowercase]}{%
+    \IfFontExistsTF{JetBrains Mono}{\newfontfamily\sqlfont{JetBrains Mono}[Scale=MatchLowercase]}{%
+      \newfontfamily\sqlfont{lmmono10-regular.otf}[Scale=MatchLowercase]}}
 \fi
 \usepackage{xcolor,array,enumitem,listings,multicol,fontawesome5}
 \definecolor{structure}{HTML}{10243A}
@@ -44,9 +50,10 @@
   morestring=[b]',
   morestring=[b]"
 }
+\lstdefinestyle{PHPcode}{basicstyle=\ttfamily\fontsize{5.9}{6.7}\selectfont}
 \lstset{
   language=SQLx,
-  basicstyle=\ttfamily\fontsize{5.9}{6.7}\selectfont,
+  basicstyle=\sqlfont\fontsize{5.9}{6.7}\selectfont,
   keywordstyle=\color{structure},
   commentstyle=\color{example},
   stringstyle=\color{warning},
@@ -94,10 +101,10 @@
 \newcommand{\trap}[1]{\note{warningbg}{warning}{!}{#1}}
 \newcommand{\ex}[1]{\note{examplebg}{example}{EX}{#1}}
 \newcommand{\remember}[1]{\note{conditionbg}{condition}{\faLightbulb}{#1}}
-\newcommand{\sql}[1]{\texttt{\detokenize{#1}}}
+\newcommand{\sql}[1]{{\sqlfont\detokenize{#1}}}
 \newcommand{\code}[1]{\par\begingroup\setlength{\fboxsep}{1.2pt}%
   \noindent\colorbox{codebg}{\parbox{\dimexpr\linewidth-2\fboxsep\relax}{%
-    \raggedright\color{structure}\ttfamily\fontsize{6.3}{7.7}\selectfont #1}}%
+    \raggedright\color{structure}\sqlfont\fontsize{6.3}{7.7}\selectfont #1}}%
   \endgroup\par}
 
 \begin{document}
@@ -377,7 +384,7 @@ $\sigma$ = WHERE; $\pi$ = SELECT DISTINCT; $\bowtie$ = JOIN ... ON; $\cup$ = UNI
 \topic{12}{PHP / MYSQL SYNTAX}
 
 \key{PHP patterns}
-\begin{lstlisting}[language=PHPx]
+\begin{lstlisting}[language=PHPx,style=PHPcode]
 $x                 // variable
 $s = $a . $b;      // concatenate strings
 foreach ($xs as $x) { ... }
@@ -389,7 +396,7 @@ $rows = mysqli_fetch_all($r, MYSQLI_ASSOC);
 if ($_SERVER["REQUEST_METHOD"] === "POST") { ... }
 \end{lstlisting}
 \key{HTML form / dropdown}
-\begin{lstlisting}[language=PHPx]
+\begin{lstlisting}[language=PHPx,style=PHPcode]
 <form method="post">
   <select name="x">
     <option value="...">...</option>
