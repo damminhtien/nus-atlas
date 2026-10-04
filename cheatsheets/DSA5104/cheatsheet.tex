@@ -300,10 +300,10 @@ Rows become grouping keys; CASE values become output columns.
 \key{General PIVOT pattern}
 \begin{lstlisting}
 SELECT row_dimension,
-  AGG(CASE WHEN pivot_column = 'value1'
-    THEN measure ELSE 0 END) AS value1,
-  AGG(CASE WHEN pivot_column = 'value2'
-    THEN measure ELSE 0 END) AS value2
+  AGG(CASE WHEN pivot_column = 'val1'
+    THEN measure ELSE 0 END) AS val1,
+  AGG(CASE WHEN pivot_column = 'val2'
+    THEN measure ELSE 0 END) AS val2
 FROM table_name
 GROUP BY row_dimension;
 \end{lstlisting}
