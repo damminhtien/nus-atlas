@@ -284,6 +284,17 @@ Row images: INSERT uses NEW; UPDATE uses OLD and NEW; DELETE uses OLD. SIGNAL ra
 
 \key{Conditional aggregation}
 Rows become grouping keys; CASE values become output columns.
+\key{General PIVOT pattern}
+\begin{lstlisting}
+SELECT row_dimension,
+  AGG(CASE WHEN pivot_column = 'value1'
+    THEN measure ELSE 0 END) AS value1,
+  AGG(CASE WHEN pivot_column = 'value2'
+    THEN measure ELSE 0 END) AS value2
+FROM table_name
+GROUP BY row_dimension;
+\end{lstlisting}
+\key{Example}
 \begin{lstlisting}
 SELECT location,
  SUM(CASE WHEN type='THEFT' THEN 1 ELSE 0 END) theft,
