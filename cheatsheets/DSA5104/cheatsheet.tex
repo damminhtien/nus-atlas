@@ -338,6 +338,15 @@ MySQL supports ROLLUP. CUBE/general grouping-set syntax is commonly shown with P
 \item Trigger row images: INSERT=NEW, DELETE=OLD, UPDATE=both.
 \item GROUPING() separates subtotal NULL from a real NULL value.
 \end{itemize}
+\key{SQL query check}
+\begin{itemize}
+\item SCHEMA: check type/NULL/PK/FK; \sql{VARCHAR} numbers sort as text.
+\item ROWS/JOIN: filter population before \sql{GROUP BY}/rank/window; verify join key and right-table filters in \sql{ON} vs \sql{WHERE}.
+\item AGG/GRAIN: define row grain; \sql{COUNT(*)} counts rows, \sql{COUNT(x)}/\sql{SUM(x)}/\sql{AVG(x)} ignore NULL; conditional \sql{COUNT} needs NULL for nonmatches.
+\item NULL/RANK: use \sql{IS NULL}, not \sql{= NULL}; MySQL \sql{<=>} is NULL-safe; Nth distinct value usually needs \sql{DENSE_RANK}.
+\item WINDOW/PHASE: \sql{WHERE} filters rows, \sql{HAVING} groups; check \sql{PARTITION}/\sql{ORDER}/frame; filter window results via CTE/subquery.
+\item FINAL: window \sql{ORDER} differs from display \sql{ORDER}; \sql{ASC} is default; compare before rounding; verify aliases, column order, \sql{LIMIT}.
+\end{itemize}
 \end{topicblock}
 \end{multicols*}
 \newpage
