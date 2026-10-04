@@ -142,6 +142,7 @@ FROM R [JOIN S ON condition]
 \cond{Bare \sql{JOIN} defaults to \sql{INNER JOIN}.}
 \begin{itemize}
 \item INNER: matched rows only.
+\item CROSS: all row pairs (Cartesian product); no \sql{ON} needed.
 \item LEFT: every left row; missing right values become NULL.
 \item RIGHT: every right row.
 \item FULL OUTER: unmatched rows from both sides; MySQL has no direct FULL OUTER JOIN syntax.
