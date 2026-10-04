@@ -21,7 +21,7 @@
     \IfFontExistsTF{STIXTwoMath-Regular.otf}{\setmathfont{STIXTwoMath-Regular.otf}}{\setmathfont{latinmodern-math.otf}}}
   \IfFontExistsTF{JetBrains Mono}{\setmonofont{JetBrains Mono}[Scale=MatchLowercase]}{\setmonofont{lmmono10-regular.otf}[Scale=MatchLowercase]}
 \fi
-\usepackage{xcolor,array,enumitem,listings,multicol}
+\usepackage{xcolor,array,enumitem,listings,multicol,fontawesome5}
 \definecolor{structure}{HTML}{10243A}
 \definecolor{condition}{HTML}{704500}
 \definecolor{conditionbg}{HTML}{FFF1CC}
@@ -93,6 +93,7 @@
 \newcommand{\cond}[1]{\note{conditionbg}{condition}{COND}{#1}}
 \newcommand{\trap}[1]{\note{warningbg}{warning}{!}{#1}}
 \newcommand{\ex}[1]{\note{examplebg}{example}{EX}{#1}}
+\newcommand{\remember}[1]{\note{conditionbg}{condition}{\faLightbulb}{#1}}
 \newcommand{\sql}[1]{\texttt{\detokenize{#1}}}
 \newcommand{\code}[1]{\par\begingroup\setlength{\fboxsep}{1.2pt}%
   \noindent\colorbox{codebg}{\parbox{\dimexpr\linewidth-2\fboxsep\relax}{%
@@ -294,6 +295,7 @@ SELECT row_dimension,
 FROM table_name
 GROUP BY row_dimension;
 \end{lstlisting}
+\remember{PIVOT = \sql{GROUP BY} rows + \sql{CASE WHEN} columns + \sql{AGG} cells.}
 \key{Example}
 \begin{lstlisting}
 SELECT location,
