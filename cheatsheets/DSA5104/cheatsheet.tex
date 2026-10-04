@@ -147,6 +147,13 @@ FROM R [JOIN S ON condition]
 \item RIGHT: every right row.
 \item FULL OUTER: unmatched rows from both sides; MySQL has no direct FULL OUTER JOIN syntax.
 \end{itemize}
+\key{Example: Student + Enrolment}
+\begin{lstlisting}
+SELECT s.name, e.course
+FROM Student s JOIN Enrolment e
+  ON s.sid=e.sid;
+\end{lstlisting}
+\ex{Student(1,Ana) + Enrolment(1,DB) -> (Ana,DB); an unmatched student is omitted.}
 \key{ON vs WHERE}
 ON decides which rows match; join type decides which unmatched rows survive; WHERE is the final row filter.
 \begin{lstlisting}
