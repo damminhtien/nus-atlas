@@ -239,6 +239,7 @@ AVG(x) OVER (ORDER BY d ROWS BETWEEN
 AVG(x) OVER (ORDER BY d ROWS BETWEEN
   1 PRECEDING AND 1 FOLLOWING)
 \end{lstlisting}
+\remember{\sql{UNBOUNDED PRECEDING/FOLLOWING} anchors the frame at the partition start/end; finite \sql{n PRECEDING/FOLLOWING} bounds move with the current row.}
 \trap{ROWS counts physical rows. RANGE groups ORDER BY peers, so ties can enlarge the frame.}
 \end{topicblock}
 
