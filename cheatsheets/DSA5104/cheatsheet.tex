@@ -22,10 +22,14 @@
   \IfFontExistsTF{JetBrains Mono}{\setmonofont{JetBrains Mono}[Scale=MatchLowercase]}{\setmonofont{lmmono10-regular.otf}[Scale=MatchLowercase]}
 \fi
 \usepackage{xcolor,array,enumitem,listings}
-\definecolor{structure}{HTML}{17324D}
-\definecolor{condition}{HTML}{855C13}
-\definecolor{warning}{HTML}{A32929}
-\definecolor{example}{HTML}{505963}
+\definecolor{structure}{HTML}{10243A}
+\definecolor{condition}{HTML}{704500}
+\definecolor{conditionbg}{HTML}{FFF1CC}
+\definecolor{warning}{HTML}{8A1C1C}
+\definecolor{warningbg}{HTML}{FCE8E6}
+\definecolor{example}{HTML}{174A6E}
+\definecolor{examplebg}{HTML}{E8F1F8}
+\definecolor{codebg}{HTML}{EFF3F7}
 \lstdefinelanguage{SQLx}{
   morekeywords={SELECT,FROM,WHERE,GROUP,BY,HAVING,ORDER,ASC,DESC,DISTINCT,AS,JOIN,INNER,LEFT,RIGHT,FULL,OUTER,ON,USING,NATURAL,UNION,ALL,EXCEPT,INTERSECT,IN,NOT,EXISTS,WITH,RECURSIVE,INSERT,INTO,VALUES,UPDATE,SET,DELETE,CREATE,TABLE,VIEW,PROCEDURE,TRIGGER,BEFORE,AFTER,FOR,EACH,ROW,BEGIN,END,DECLARE,CALL,OUT,IF,THEN,ELSE,ELSEIF,SIGNAL,SQLSTATE,MESSAGE_TEXT,CASE,WHEN,NULL,IS,PRIMARY,KEY,FOREIGN,REFERENCES,CHECK,OVER,PARTITION,ROWS,RANGE,BETWEEN,PRECEDING,FOLLOWING,CURRENT,ROW,RANK,DENSE_RANK,ROW_NUMBER,SUM,COUNT,AVG,MIN,MAX,CUBE,ROLLUP,GROUPING,LIMIT},
   sensitive=false,
@@ -45,7 +49,8 @@
   basicstyle=\ttfamily\fontsize{5.9}{6.7}\selectfont,
   keywordstyle=\color{structure},
   commentstyle=\color{example},
-  stringstyle=\color{warning!80!black},
+  stringstyle=\color{warning},
+  backgroundcolor=\color{codebg},
   columns=fullflexible,
   keepspaces=true,
   showstringspaces=false,
@@ -66,33 +71,30 @@
 \setlength{\emergencystretch}{1em}
 \newlength{\gutter}\setlength{\gutter}{2mm}
 \newlength{\colwidth}\setlength{\colwidth}{\dimexpr(\textwidth-3\gutter)/4\relax}
-\newlength{\pairwidth}\setlength{\pairwidth}{\dimexpr2\colwidth+\gutter\relax}
 \newcommand{\bodystyle}{%
   \fontsize{6.8}{8.6}\selectfont\raggedright
   \setlength{\abovedisplayskip}{2pt}\setlength{\belowdisplayskip}{2pt}%
   \setlength{\abovedisplayshortskip}{1pt}\setlength{\belowdisplayshortskip}{1pt}}
 \newif\ifcolstart
 \newcommand{\topic}[2]{\par\ifcolstart\colstartfalse\else\addvspace{5pt}\fi%
-  {\color{structure}\fontsize{8.1}{9.1}\selectfont\bfseries #1\enspace #2\par}%
-  \vspace{.6pt}{\color{structure!45}\hrule height .25pt}\vspace{1.7pt}}
-\newcommand{\key}[1]{\par\textbf{#1}\enspace}
-\newcommand{\note}[3]{\par\begingroup\color{#1}%
-  \textbf{#2}\enspace #3\par\endgroup}
-\newcommand{\cond}[1]{\note{condition}{COND}{#1}}
-\newcommand{\trap}[1]{\note{warning}{!}{#1}}
-\newcommand{\ex}[1]{\note{example}{EX}{#1}}
+  \begingroup\setlength{\fboxsep}{0.8pt}%
+  \noindent\colorbox{structure}{\parbox{\dimexpr\linewidth-2\fboxsep\relax}{%
+    \color{white}\fontsize{8.1}{9.1}\selectfont\bfseries #1\enspace #2}}%
+  \endgroup\par\vspace{1pt}}
+\newcommand{\key}[1]{\par\textcolor{structure}{\textbf{#1}}\enspace}
+\newcommand{\note}[4]{\par\begingroup\setlength{\fboxsep}{0.7pt}%
+  \noindent\colorbox{#1}{\parbox{\dimexpr\linewidth-2\fboxsep\relax}{%
+    \textcolor{#2}{\textbf{#3}}\enspace #4}}%
+  \endgroup\par}
+\newcommand{\cond}[1]{\note{conditionbg}{condition}{COND}{#1}}
+\newcommand{\trap}[1]{\note{warningbg}{warning}{!}{#1}}
+\newcommand{\ex}[1]{\note{examplebg}{example}{EX}{#1}}
 \newcommand{\sql}[1]{\texttt{\detokenize{#1}}}
-\newcommand{\code}[1]{\par{\ttfamily\fontsize{6.3}{7.7}\selectfont #1\par}}
+\newcommand{\code}[1]{\par\begingroup\setlength{\fboxsep}{1.2pt}%
+  \noindent\colorbox{codebg}{\parbox{\dimexpr\linewidth-2\fboxsep\relax}{%
+    \raggedright\color{structure}\ttfamily\fontsize{6.3}{7.7}\selectfont #1}}%
+  \endgroup\par}
 \newenvironment{sheetcolumn}{\begin{minipage}[t]{\colwidth}\vspace{0pt}\bodystyle\colstarttrue}{\end{minipage}}
-\newenvironment{sheetpair}{\begin{minipage}[t]{\pairwidth}\vspace{0pt}}{\end{minipage}}
-\newcommand{\pair}[3]{%
-  \begin{minipage}[t]{\pairwidth}\vspace{0pt}\bodystyle
-    \begin{minipage}[t]{\colwidth}\vspace{0pt}\bodystyle\colstarttrue #1\end{minipage}%
-    \hspace{\gutter}%
-    \begin{minipage}[t]{\colwidth}\vspace{0pt}\bodystyle\colstarttrue #2\end{minipage}%
-    \if\relax\detokenize{#3}\relax\else\par\vspace{4pt}#3\fi
-  \end{minipage}}
-\newcommand{\sheet}[2]{\noindent\pair#1\hspace{\gutter}\pair#2\par}
 
 \begin{document}
 \bodystyle

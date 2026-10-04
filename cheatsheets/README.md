@@ -14,6 +14,8 @@ The sample content demonstrates the layout; it is not a complete sheet for any
 course. Keep each finished course sheet and its PDF in the matching folder.
 
 The template uses four fixed columns on each of two A4 portrait pages, with no
-global header or footer. Each topic keeps its conditions, examples, and traps
-together. Compile with LuaLaTeX to use Source Sans 3, STIX Two Math, and JetBrains
-Mono when installed. The source includes TeX-safe font fallbacks.
+global header or footer. Read down each column, then move left to right; content
+stays within one column. Topic headers and local condition, trap, and example
+callouts use high-contrast colors. Compile with LuaLaTeX to use Source Sans 3,
+STIX Two Math, and JetBrains Mono when installed. The source includes TeX-safe
+font fallbacks.

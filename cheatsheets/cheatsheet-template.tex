@@ -3,8 +3,7 @@
 % No external images, styles, or data files are required.
 % SETTINGS: change body size, margins, gutter, or colors below.
 % CONTENT: replace each \topic and its local \cond / \trap / \ex notes.
-% LAYOUT: each \pair contains two independent columns plus an optional
-% two-column span. Keep spans rare; an empty third argument adds no space.
+% LAYOUT: read down each column, then move left to right. Content stays in one column.
 % Each column is intentionally fixed in position; it does not auto-flow.
 % If content becomes too tall, move a whole topic to another column/page.
 % Samples demonstrate layout; they are not a syllabus-complete exam sheet.
@@ -28,10 +27,14 @@
   \IfFontExistsTF{JetBrains Mono}{\setmonofont{JetBrains Mono}[Scale=MatchLowercase]}{\setmonofont{lmmono10-regular.otf}[Scale=MatchLowercase]}
 \fi
 \usepackage{xcolor,array,enumitem}
-\definecolor{structure}{HTML}{17324D}
-\definecolor{condition}{HTML}{855C13}
-\definecolor{warning}{HTML}{A32929}
-\definecolor{example}{HTML}{505963}
+\definecolor{structure}{HTML}{10243A}
+\definecolor{condition}{HTML}{704500}
+\definecolor{conditionbg}{HTML}{FFF1CC}
+\definecolor{warning}{HTML}{8A1C1C}
+\definecolor{warningbg}{HTML}{FCE8E6}
+\definecolor{example}{HTML}{174A6E}
+\definecolor{examplebg}{HTML}{E8F1F8}
+\definecolor{codebg}{HTML}{EFF3F7}
 \pagestyle{empty}
 \setlength{\topskip}{0pt}
 \setlength{\parindent}{0pt}
@@ -42,35 +45,41 @@
 \setlength{\emergencystretch}{1em}
 \newlength{\gutter}\setlength{\gutter}{2mm}
 \newlength{\colwidth}\setlength{\colwidth}{\dimexpr(\textwidth-3\gutter)/4\relax}
-\newlength{\pairwidth}\setlength{\pairwidth}{\dimexpr2\colwidth+\gutter\relax}
+\newlength{\pairwidth}\setlength{\pairwidth}{\dimexpr(\textwidth-\gutter)/2\relax}
 \newcommand{\bodystyle}{%
   \fontsize{6.8}{8.6}\selectfont\raggedright
   \setlength{\abovedisplayskip}{2pt}\setlength{\belowdisplayskip}{2pt}%
   \setlength{\abovedisplayshortskip}{1pt}\setlength{\belowdisplayshortskip}{1pt}}
 \newif\ifcolstart
 \newcommand{\topic}[2]{\par\ifcolstart\colstartfalse\else\addvspace{5pt}\fi%
-  {\color{structure}\fontsize{8.1}{9.1}\selectfont\bfseries #1\enspace #2\par}%
-  \vspace{.6pt}{\color{structure!45}\hrule height .25pt}\vspace{1.7pt}}
-\newcommand{\key}[1]{\par\textbf{#1}\enspace}
-\newcommand{\note}[3]{\par\begingroup\color{#1}%
-  \textbf{#2}\enspace #3\par\endgroup}
-\newcommand{\cond}[1]{\note{condition}{COND}{#1}}
-\newcommand{\trap}[1]{\note{warning}{!}{#1}}
-\newcommand{\ex}[1]{\note{example}{EX}{#1}}
+  \begingroup\setlength{\fboxsep}{0.8pt}%
+  \noindent\colorbox{structure}{\parbox{\dimexpr\linewidth-2\fboxsep\relax}{%
+    \color{white}\fontsize{8.1}{9.1}\selectfont\bfseries #1\enspace #2}}%
+  \endgroup\par\vspace{1pt}}
+\newcommand{\key}[1]{\par\textcolor{structure}{\textbf{#1}}\enspace}
+\newcommand{\note}[4]{\par\begingroup\setlength{\fboxsep}{0.7pt}%
+  \noindent\colorbox{#1}{\parbox{\dimexpr\linewidth-2\fboxsep\relax}{%
+    \textcolor{#2}{\textbf{#3}}\enspace #4}}%
+  \endgroup\par}
+\newcommand{\cond}[1]{\note{conditionbg}{condition}{COND}{#1}}
+\newcommand{\trap}[1]{\note{warningbg}{warning}{!}{#1}}
+\newcommand{\ex}[1]{\note{examplebg}{example}{EX}{#1}}
 \newcommand{\R}{\mathbb{R}}
 \newcommand{\E}{\mathbb{E}}
 \newcommand{\Var}{\operatorname{Var}}
 \newcommand{\argmin}{\operatorname*{arg\,min}}
 \newcommand{\norm}[1]{\lVert#1\rVert}
-\newcommand{\code}[1]{\par{\ttfamily\fontsize{6.3}{7.7}\selectfont #1\par}}
-\newcommand{\pair}[3]{%
+\newcommand{\code}[1]{\par\begingroup\setlength{\fboxsep}{1.2pt}%
+  \noindent\colorbox{codebg}{\parbox{\dimexpr\linewidth-2\fboxsep\relax}{%
+    \raggedright\color{structure}\ttfamily\fontsize{6.3}{7.7}\selectfont #1}}%
+  \endgroup\par}
+\newcommand{\pair}[2]{%
   \begin{minipage}[t]{\pairwidth}\vspace{0pt}\bodystyle
     \begin{minipage}[t]{\colwidth}\vspace{0pt}\bodystyle\colstarttrue #1\end{minipage}%
     \hspace{\gutter}%
     \begin{minipage}[t]{\colwidth}\vspace{0pt}\bodystyle\colstarttrue #2\end{minipage}%
-    \if\relax\detokenize{#3}\relax\else\par\vspace{4pt}#3\fi
   \end{minipage}}
-\newcommand{\sheet}[2]{\noindent\pair#1\hspace{\gutter}\pair#2\par}
+\newcommand{\sheet}[2]{\noindent\makebox[\textwidth][l]{\pair#1\hspace{\gutter}\pair#2}\par}
 
 \begin{document}
 \bodystyle
@@ -192,7 +201,7 @@ For calibrated $p=P(y=1\mid x)$ and only false-positive/false-negative costs:
 \[\tau=\frac{C_{FP}}{C_{FP}+C_{FN}}.\]
 \cond{Both costs nonnegative with positive sum; predict positive when $p\ge\tau$.}
 \trap{A changed class prior can invalidate probability calibration and the chosen threshold.}
-}{}}
+}}
 {{
 \topic{09}{SVM / MARGINS}
 $y_i\in\{-1,+1\}$; $f_i=w^Tx_i+b$.
@@ -285,15 +294,20 @@ Train a second-level model on out-of-fold base-model predictions; refit base mod
 \ex{Two binary probabilities $.2,.8$: probability average $=.5$. Agreement and confidence remain separate questions.}
 \key{Choose / check}
 Tune tree capacity and ensemble size with validation; record metric, split, seed, and hyperparameters.
-}
-{
 \topic{16}{SVM DUAL / WORKED CHECK}
-\[\max_{\alpha}\ \sum_i\alpha_i-\frac12\sum_{i,j}\alpha_i\alpha_jy_iy_jK(x_i,x_j),
-\qquad 0\le\alpha_i\le C,\quad\sum_i\alpha_i y_i=0.\]
+\[\begin{aligned}
+\max_{\alpha}\quad&\sum_i\alpha_i\\
+&-\frac12\sum_{i,j}\alpha_i\alpha_jy_iy_j\\
+&\qquad\cdot K(x_i,x_j)\\
+\text{s.t.}\quad&0\le\alpha_i\le C,\\
+&\sum_i\alpha_i y_i=0.
+\end{aligned}\]
 \cond{This form assumes an unpenalized bias. Recover $b=y_i-\sum_j\alpha_jy_jK(x_j,x_i)$ from any $0<\alpha_i<C$.}
 \ex{Linear hard-margin sample: $(x_1,y_1)=(-1,-1)$, $(x_2,y_2)=(1,+1)$. $w=1$, $b=0$, $\alpha_1=\alpha_2=1/2$; margin width $=2$.}
 \trap{If no coefficient is strictly between $0$ and $C$, a free support-vector formula cannot be used directly; use KKT bounds for $b$.}
-}}
+}
+
+}
 \newpage
 % PAGE 2: probability / neural nets / data structures / graph algorithms.
 \sheet
@@ -397,7 +411,7 @@ Larger batches reduce sampling noise under ordinary independent sampling. Learni
 Record preprocessing, seed, split identities, metric convention, and model settings; preserve a held-out test set.
 \trap{A fixed seed is not evidence that evaluation data represent deployment data.}
 }
-{}}
+}
 {{
 \topic{25}{ASYMPTOTIC ANALYSIS}
 \key{Bounds}
@@ -516,5 +530,5 @@ Matching characters: $D[i,j]=1+D[i-1,j-1]$; otherwise $D[i,j]=\max(D[i-1,j],D[i,
 \trap{Longest common substring uses a different recurrence and requires contiguous matches.}
 \ex{\texttt{ABC} and \texttt{AC}: LCS length 2, common substring length 1.}
 }
-{}}
+}
 \end{document}
