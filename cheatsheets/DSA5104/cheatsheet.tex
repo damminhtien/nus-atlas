@@ -96,9 +96,8 @@
 
 \begin{document}
 \bodystyle
-% PAGE 1: SQL queries, joins, windows, stored code, and aggregation.
+% PAGE 1: read down each column, then move left to right.
 \noindent
-\begin{sheetpair}
 \begin{sheetcolumn}
 \topic{01}{QUERY STRUCTURE}
 \key{Skeleton}
@@ -172,9 +171,7 @@ DELETE FROM R WHERE ...;
 WITH X AS (SELECT ...)
 SELECT ... FROM X;
 \end{lstlisting}
-\end{sheetcolumn}
-\par\vspace{4pt}
-\begin{minipage}[t]{\pairwidth}\vspace{0pt}\bodystyle\colstarttrue
+
 \topic{05}{RANKING / WINDOWS}
 For scores 100, 100, 90:
 \begin{center}
@@ -212,9 +209,7 @@ AVG(x) OVER (ORDER BY d ROWS BETWEEN
   1 PRECEDING AND 1 FOLLOWING)
 \end{lstlisting}
 \trap{ROWS counts physical rows. RANGE groups ORDER BY peers, so ties can enlarge the frame.}
-\end{minipage}
-\end{sheetpair}\hspace{\gutter}%
-\begin{sheetpair}
+\end{sheetcolumn}\hspace{\gutter}%
 \begin{sheetcolumn}
 \topic{06}{RECURSIVE CTE}
 Use for transitive closure, hierarchies, and paths.
@@ -279,10 +274,7 @@ For dimensions (a,b,c):
 \item GROUPING(a)=1 when a is omitted in a subtotal/total; use it to distinguish generated NULL from data NULL.
 \end{itemize}
 MySQL supports ROLLUP. CUBE/general grouping-set syntax is commonly shown with PostgreSQL in course material.
-\end{sheetcolumn}
 
-\par\vspace{4pt}
-\begin{minipage}[t]{\pairwidth}\vspace{0pt}\bodystyle\colstarttrue
 \topic{09}{LAST-MINUTE TRAPS}
 \begin{itemize}
 \item Window functions preserve row count; GROUP BY collapses rows.
@@ -292,13 +284,11 @@ MySQL supports ROLLUP. CUBE/general grouping-set syntax is commonly shown with P
 \item Trigger row images: INSERT=NEW, DELETE=OLD, UPDATE=both.
 \item GROUPING() separates subtotal NULL from a real NULL value.
 \end{itemize}
-\end{minipage}
-\end{sheetpair}
+\end{sheetcolumn}
 \par
 \newpage
-% PAGE 2: relational foundations, algebra, and PHP/MySQL web reference.
+% PAGE 2: continue in the same top-to-bottom, left-to-right order.
 \noindent
-\begin{sheetpair}
 \begin{sheetcolumn}
 \topic{10}{DBMS / RELATIONAL MODEL}
 \key{Why a DBMS?}
@@ -328,9 +318,7 @@ Superkey uniquely identifies tuples; candidate key is a minimal superkey; primar
 \key{RA to SQL}
 $\sigma$ = WHERE; $\pi$ = SELECT DISTINCT; $\bowtie$ = JOIN ... ON; $\cup$ = UNION; $-$ = EXCEPT/anti-join; $\rho$ = alias AS.
 \trap{RA projection removes duplicates. SQL SELECT preserves them unless DISTINCT is requested.}
-\end{sheetcolumn}
-\end{sheetpair}\hspace{\gutter}%
-\begin{sheetpair}
+\end{sheetcolumn}\hspace{\gutter}%
 \begin{sheetcolumn}
 \topic{12}{PHP / MYSQL SYNTAX}
 \key{PHP patterns}
@@ -366,7 +354,5 @@ Browser request $\to$ web server $\to$ PHP interpreter $\to$ MySQL. The result r
 \sql{$_GET} comes from URL query parameters; \sql{$_POST} comes from the request body. \sql{$_SERVER["REQUEST_METHOD"]} identifies the method received by the page.
 \cond{Use POST for form-body submissions; reading a variable from \sql{$_GET}/\sql{$_POST} is separate from validating its value.}
 \end{sheetcolumn}
-\end{sheetpair}
 \par
-
 \end{document}
