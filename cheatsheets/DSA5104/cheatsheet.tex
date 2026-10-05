@@ -36,8 +36,16 @@
 \definecolor{example}{HTML}{174A6E}
 \definecolor{examplebg}{HTML}{E8F1F8}
 \definecolor{codebg}{HTML}{EFF3F7}
+\definecolor{sqltext}{HTML}{263238}
+\definecolor{sqlkeyword}{HTML}{0057B8}
+\definecolor{sqltype}{HTML}{087E8B}
+\definecolor{sqlfunction}{HTML}{6F42C1}
+\definecolor{sqlstring}{HTML}{B42318}
+\definecolor{sqlcomment}{HTML}{2E6B45}
 \lstdefinelanguage{SQLx}{
-  morekeywords={SELECT,FROM,WHERE,GROUP,BY,HAVING,ORDER,ASC,DESC,DISTINCT,AS,JOIN,INNER,LEFT,RIGHT,FULL,OUTER,ON,USING,NATURAL,UNION,ALL,EXCEPT,INTERSECT,IN,NOT,EXISTS,WITH,RECURSIVE,INSERT,INTO,VALUES,UPDATE,SET,DELETE,CREATE,TABLE,VIEW,PROCEDURE,TRIGGER,BEFORE,AFTER,FOR,EACH,ROW,BEGIN,END,DECLARE,CALL,OUT,IF,THEN,ELSE,ELSEIF,SIGNAL,SQLSTATE,MESSAGE_TEXT,CASE,WHEN,NULL,IS,PRIMARY,KEY,FOREIGN,REFERENCES,CHECK,OVER,PARTITION,ROWS,RANGE,BETWEEN,PRECEDING,FOLLOWING,CURRENT,ROW,RANK,DENSE_RANK,ROW_NUMBER,SUM,COUNT,AVG,MIN,MAX,CUBE,ROLLUP,GROUPING,CONCAT,UPPER,LOWER,CHAR_LENGTH,LENGTH,SUBSTRING,CURDATE,CURRENT_DATE,CURTIME,CURRENT_TIME,NOW,CURRENT_TIMESTAMP,UTC_TIMESTAMP,YEAR,QUARTER,MONTH,DAY,DAYOFYEAR,DAYNAME,MONTHNAME,LAST_DAY,DAYOFWEEK,WEEKDAY,HOUR,MINUTE,SECOND,EXTRACT,DATE,TIME,DATETIME,TIMESTAMP,DATE_ADD,DATE_SUB,TIMESTAMPADD,DATEDIFF,TIMESTAMPDIFF,ADDTIME,SUBTIME,TIMEDIFF,TIME_TO_SEC,SEC_TO_TIME,DATE_FORMAT,STR_TO_DATE,TINYINT,SMALLINT,MEDIUMINT,INT,INTEGER,BIGINT,UNSIGNED,DECIMAL,NUMERIC,FLOAT,DOUBLE,CHAR,VARCHAR,TEXT,BINARY,VARBINARY,BLOB,BOOLEAN,BOOL,JSON,ENUM,SET,LIMIT},
+  morekeywords=[1]{SELECT,FROM,WHERE,GROUP,BY,HAVING,ORDER,ASC,DESC,DISTINCT,AS,JOIN,INNER,LEFT,RIGHT,FULL,OUTER,ON,USING,NATURAL,UNION,ALL,EXCEPT,INTERSECT,IN,NOT,EXISTS,WITH,RECURSIVE,INSERT,INTO,VALUES,UPDATE,SET,DELETE,CREATE,TABLE,VIEW,PROCEDURE,TRIGGER,BEFORE,AFTER,FOR,EACH,ROW,BEGIN,END,DECLARE,CALL,OUT,IF,THEN,ELSE,ELSEIF,SIGNAL,SQLSTATE,MESSAGE_TEXT,CASE,WHEN,NULL,IS,PRIMARY,KEY,FOREIGN,REFERENCES,CHECK,OVER,PARTITION,ROWS,RANGE,BETWEEN,PRECEDING,FOLLOWING,CURRENT,CUBE,ROLLUP,LIMIT,AND,OR,LIKE,TRUE,FALSE,UNKNOWN,INTERVAL,DELIMITER,DEFAULT},
+  morekeywords=[2]{TINYINT,SMALLINT,MEDIUMINT,INT,INTEGER,BIGINT,UNSIGNED,DECIMAL,NUMERIC,FLOAT,DOUBLE,CHAR,VARCHAR,TEXT,BINARY,VARBINARY,BLOB,BOOLEAN,BOOL,JSON,ENUM,SET,DATE,TIME,DATETIME,TIMESTAMP,YEAR},
+  morekeywords=[3]{RANK,DENSE_RANK,ROW_NUMBER,SUM,COUNT,AVG,MIN,MAX,GROUPING,CONCAT,UPPER,LOWER,CHAR_LENGTH,LENGTH,SUBSTRING,CURDATE,CURRENT_DATE,CURTIME,CURRENT_TIME,NOW,CURRENT_TIMESTAMP,UTC_TIMESTAMP,QUARTER,MONTH,DAY,DAYOFYEAR,DAYNAME,MONTHNAME,LAST_DAY,DAYOFWEEK,WEEKDAY,HOUR,MINUTE,SECOND,EXTRACT,DATE_ADD,DATE_SUB,TIMESTAMPADD,DATEDIFF,TIMESTAMPDIFF,ADDTIME,SUBTIME,TIMEDIFF,TIME_TO_SEC,SEC_TO_TIME,DATE_FORMAT,STR_TO_DATE,RADIANS,ASIN,SQRT,POW,SIN,COS,ROUND},
   sensitive=false,
   morecomment=[l]{--},
   morestring=[b]'
@@ -50,13 +58,22 @@
   morestring=[b]',
   morestring=[b]"
 }
-\lstdefinestyle{PHPcode}{basicstyle=\ttfamily\fontsize{5.9}{6.7}\selectfont}
+\lstdefinestyle{PHPcode}{
+  basicstyle=\ttfamily\fontsize{5.9}{6.7}\selectfont\color{sqltext},
+  keywordstyle=[1]\color{sqlkeyword},
+  keywordstyle=[2]\color{sqltype},
+  keywordstyle=[3]\color{sqlfunction},
+  commentstyle=\color{sqlcomment},
+  stringstyle=\color{sqlstring}
+}
 \lstset{
   language=SQLx,
-  basicstyle=\sqlfont\fontsize{5.9}{6.7}\selectfont,
-  keywordstyle=\color{structure},
-  commentstyle=\color{example},
-  stringstyle=\color{warning},
+  basicstyle=\sqlfont\fontsize{5.9}{6.7}\selectfont\color{sqltext},
+  keywordstyle=[1]\color{sqlkeyword}\bfseries,
+  keywordstyle=[2]\color{sqltype}\bfseries,
+  keywordstyle=[3]\color{sqlfunction}\bfseries,
+  commentstyle=\color{sqlcomment},
+  stringstyle=\color{sqlstring},
   backgroundcolor=\color{codebg},
   columns=fullflexible,
   keepspaces=true,
@@ -542,7 +559,7 @@ B+ tree typically supports equality, ranges, and ordered scans; hash typically s
 Function returns one value for an expression; procedure uses \sql{CALL} and may take \sql{IN}/\sql{OUT} parameters. Declare variables, cursors, and handlers before executable SQL; \sql{DECLARE ... HANDLER FOR NOT FOUND} handles cursor exhaustion. Use \sql{IF/CASE} for branches and \sql{WHILE}, \sql{REPEAT}, or \sql{LOOP} for repetition.
 \key{Example: nearby crime records}
 This procedure uses \sql{IN} inputs and \sql{SELECT ... INTO}, then a CTE computes distance for radius filtering and ordered output.
-\begin{lstlisting}[basicstyle=\sqlfont\fontsize{5.3}{6.1}\selectfont]
+\begin{lstlisting}[basicstyle=\sqlfont\fontsize{5.5}{6.4}\selectfont\color{sqltext}]
 DROP PROCEDURE IF EXISTS find_nearby_crime_records;
 DELIMITER //
 CREATE PROCEDURE find_nearby_crime_records(
