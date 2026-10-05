@@ -37,7 +37,7 @@
 \definecolor{examplebg}{HTML}{E8F1F8}
 \definecolor{codebg}{HTML}{EFF3F7}
 \lstdefinelanguage{SQLx}{
-  morekeywords={SELECT,FROM,WHERE,GROUP,BY,HAVING,ORDER,ASC,DESC,DISTINCT,AS,JOIN,INNER,LEFT,RIGHT,FULL,OUTER,ON,USING,NATURAL,UNION,ALL,EXCEPT,INTERSECT,IN,NOT,EXISTS,WITH,RECURSIVE,INSERT,INTO,VALUES,UPDATE,SET,DELETE,CREATE,TABLE,VIEW,PROCEDURE,TRIGGER,BEFORE,AFTER,FOR,EACH,ROW,BEGIN,END,DECLARE,CALL,OUT,IF,THEN,ELSE,ELSEIF,SIGNAL,SQLSTATE,MESSAGE_TEXT,CASE,WHEN,NULL,IS,PRIMARY,KEY,FOREIGN,REFERENCES,CHECK,OVER,PARTITION,ROWS,RANGE,BETWEEN,PRECEDING,FOLLOWING,CURRENT,ROW,RANK,DENSE_RANK,ROW_NUMBER,SUM,COUNT,AVG,MIN,MAX,CUBE,ROLLUP,GROUPING,CONCAT,UPPER,LOWER,CHAR_LENGTH,LENGTH,SUBSTRING,CURDATE,CURTIME,NOW,YEAR,MONTH,DAY,HOUR,MINUTE,SECOND,DATE_ADD,DATE_SUB,DATEDIFF,TIMESTAMPDIFF,DATE_FORMAT,STR_TO_DATE,LIMIT},
+  morekeywords={SELECT,FROM,WHERE,GROUP,BY,HAVING,ORDER,ASC,DESC,DISTINCT,AS,JOIN,INNER,LEFT,RIGHT,FULL,OUTER,ON,USING,NATURAL,UNION,ALL,EXCEPT,INTERSECT,IN,NOT,EXISTS,WITH,RECURSIVE,INSERT,INTO,VALUES,UPDATE,SET,DELETE,CREATE,TABLE,VIEW,PROCEDURE,TRIGGER,BEFORE,AFTER,FOR,EACH,ROW,BEGIN,END,DECLARE,CALL,OUT,IF,THEN,ELSE,ELSEIF,SIGNAL,SQLSTATE,MESSAGE_TEXT,CASE,WHEN,NULL,IS,PRIMARY,KEY,FOREIGN,REFERENCES,CHECK,OVER,PARTITION,ROWS,RANGE,BETWEEN,PRECEDING,FOLLOWING,CURRENT,ROW,RANK,DENSE_RANK,ROW_NUMBER,SUM,COUNT,AVG,MIN,MAX,CUBE,ROLLUP,GROUPING,CONCAT,UPPER,LOWER,CHAR_LENGTH,LENGTH,SUBSTRING,CURDATE,CURRENT_DATE,CURTIME,CURRENT_TIME,NOW,CURRENT_TIMESTAMP,UTC_TIMESTAMP,YEAR,QUARTER,MONTH,DAY,DAYOFYEAR,DAYNAME,MONTHNAME,LAST_DAY,DAYOFWEEK,WEEKDAY,HOUR,MINUTE,SECOND,EXTRACT,DATE,TIME,DATETIME,TIMESTAMP,DATE_ADD,DATE_SUB,TIMESTAMPADD,DATEDIFF,TIMESTAMPDIFF,ADDTIME,SUBTIME,TIMEDIFF,TIME_TO_SEC,SEC_TO_TIME,DATE_FORMAT,STR_TO_DATE,LIMIT},
   sensitive=false,
   morecomment=[l]{--},
   morestring=[b]'
@@ -133,7 +133,42 @@ FROM R [JOIN S ON condition]
 \end{topicblock}
 
 \begin{topicblock}
-\topic{02}{NULL / AGGREGATION}
+\topic{02}{MYSQL SYNTAX}
+
+\key{String operations}
+\begin{lstlisting}
+LIKE '%abc%'       -- %: any length; _: one character
+CONCAT(a,b)        -- || is logical OR by default in MySQL
+UPPER(s); LOWER(s);
+CHAR_LENGTH(s); LENGTH(s); -- characters vs bytes
+SUBSTRING(s,pos,len);
+\end{lstlisting}
+\cond{\sql{LIKE} case sensitivity depends on collation; MySQL is commonly case-insensitive.}
+\trap{String positions start at 1: \sql{SUBSTRING(s,0,1)} returns empty; use \sql{SUBSTRING(s,1,1)} for the first character.}
+\key{Date/time types}
+\begin{lstlisting}
+DATE 'YYYY-MM-DD'; TIME 'HH:MM:SS';
+DATETIME/TIMESTAMP = date + time;
+CURDATE()/CURRENT_DATE(); CURTIME()/CURRENT_TIME();
+NOW()/CURRENT_TIMESTAMP(); UTC_TIMESTAMP();
+YEAR(d); QUARTER(d); MONTH(d); DAY(d); DAYOFYEAR(d);
+DAYNAME(d); MONTHNAME(d); LAST_DAY(d);
+DAYOFWEEK(d) Sun=1; WEEKDAY(d) Mon=0;
+HOUR(t); MINUTE(t); SECOND(t); EXTRACT(unit FROM dt);
+DATE(dt); TIME(dt);
+DATE_ADD(d, INTERVAL n DAY); DATE_SUB(d, INTERVAL n MONTH);
+TIMESTAMPADD(unit,n,dt); DATEDIFF(end,start);
+TIMESTAMPDIFF(unit,start,end);
+ADDTIME(t,'00:30:00'); SUBTIME(t,'00:30:00');
+TIMEDIFF(end,start); TIME_TO_SEC(t); SEC_TO_TIME(n);
+DATE_FORMAT(dt,'%Y-%m-%d'); STR_TO_DATE(s,'%d/%m/%Y');
+\end{lstlisting}
+\cond{\sql{DATEDIFF(end,start)} returns days and ignores time; \sql{TIMESTAMPDIFF} returns the chosen unit. \sql{INTERVAL} supports date/time arithmetic.}
+\trap{MySQL \sql{TIMESTAMP} converts by session time zone; \sql{DATETIME} preserves the stored date/time value.}
+\end{topicblock}
+
+\begin{topicblock}
+\topic{03}{NULL / AGGREGATION}
 
 \sql{x = NULL} is wrong; use \sql{x IS NULL}. Comparisons with NULL yield UNKNOWN; \sql{WHERE} keeps only TRUE. Arithmetic with NULL usually returns NULL.
 \key{Counts}
@@ -143,7 +178,7 @@ FROM R [JOIN S ON condition]
 \end{topicblock}
 
 \begin{topicblock}
-\topic{03}{JOIN / SET / SUBQUERY}
+\topic{04}{JOIN / SET / SUBQUERY}
 
 \key{Example data}
 A(id,name): (1,Ana),(2,Bo); B(id,tag): (1,DB),(3,AI). Match on id; output is (name,tag).
@@ -178,7 +213,7 @@ Correlated subqueries refer to outer-row aliases. For “for all”, test that t
 \end{topicblock}
 
 \begin{topicblock}
-\topic{04}{DDL / DML}
+\topic{05}{DDL / DML}
 
 \begin{lstlisting}
 CREATE TABLE R (
@@ -201,7 +236,7 @@ SELECT ... FROM X;
 \end{topicblock}
 
 \begin{topicblock}
-\topic{05}{RANKING / WINDOWS}
+\topic{06}{RANKING / WINDOWS}
 
 For scores 100, 100, 90:
 \begin{center}
@@ -244,7 +279,7 @@ AVG(x) OVER (ORDER BY d ROWS BETWEEN
 \end{topicblock}
 
 \begin{topicblock}
-\topic{06}{RECURSIVE CTE}
+\topic{07}{RECURSIVE CTE}
 
 Use for transitive closure, hierarchies, and paths.
 \begin{lstlisting}
@@ -263,7 +298,7 @@ The anchor seeds rows; the recursive term refers to the CTE and repeatedly exten
 \end{topicblock}
 
 \begin{topicblock}
-\topic{07}{PROCEDURES / TRIGGERS}
+\topic{08}{PROCEDURES / TRIGGERS}
 
 \key{MySQL stored procedure}
 \begin{lstlisting}
@@ -294,7 +329,7 @@ Row images: INSERT uses NEW; UPDATE uses OLD and NEW; DELETE uses OLD. SIGNAL ra
 \end{topicblock}
 
 \begin{topicblock}
-\topic{08}{PIVOT / CUBE / ROLLUP}
+\topic{09}{PIVOT / CUBE / ROLLUP}
 
 \key{Conditional aggregation}
 Rows become grouping keys; CASE values become output columns.
@@ -328,7 +363,7 @@ MySQL supports ROLLUP. CUBE/general grouping-set syntax is commonly shown with P
 \end{topicblock}
 
 \begin{topicblock}
-\topic{09}{LAST-MINUTE TRAPS}
+\topic{10}{LAST-MINUTE TRAPS}
 
 \begin{itemize}
 \item Window functions preserve row count; GROUP BY collapses rows.
@@ -354,7 +389,7 @@ MySQL supports ROLLUP. CUBE/general grouping-set syntax is commonly shown with P
 \colstarttrue
 \begin{multicols*}{4}
 \begin{topicblock}
-\topic{10}{DBMS / RELATIONAL MODEL}
+\topic{11}{DBMS / RELATIONAL MODEL}
 
 \key{Why a DBMS?}
 Controls redundancy/inconsistency, difficult access, isolation, buried integrity rules, partial updates, concurrency, and authorization.
@@ -368,7 +403,7 @@ Superkey uniquely identifies tuples; candidate key is a minimal superkey; primar
 \end{topicblock}
 
 \begin{topicblock}
-\topic{11}{RELATIONAL ALGEBRA}
+\topic{12}{RELATIONAL ALGEBRA}
 
 \[
 \begin{array}{@{}ll@{}}
@@ -388,7 +423,7 @@ $\sigma$ = WHERE; $\pi$ = SELECT DISTINCT; $\bowtie$ = JOIN ... ON; $\cup$ = UNI
 \end{topicblock}
 
 \begin{topicblock}
-\topic{12}{PHP / MYSQL SYNTAX}
+\topic{13}{PHP / HTML SYNTAX}
 
 \key{PHP patterns}
 \begin{lstlisting}[language=PHPx,style=PHPcode]
@@ -410,31 +445,10 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") { ... }
   </select>
 </form>
 \end{lstlisting}
-\key{String operations (MySQL)}
-\begin{lstlisting}
-LIKE '%abc%'       -- %: any length; _: one character
-CONCAT(a,b)        -- || is logical OR by default in MySQL
-UPPER(s); LOWER(s);
-CHAR_LENGTH(s); LENGTH(s);  -- characters vs bytes
-SUBSTRING(s,pos,len);
-\end{lstlisting}
-\cond{\sql{LIKE} case sensitivity depends on collation; MySQL is commonly case-insensitive.}
-\trap{String positions start at 1: \sql{SUBSTRING(s,0,1)} returns empty; use \sql{SUBSTRING(s,1,1)} for the first character.}
-\key{Date/time types and common MySQL functions}
-\begin{lstlisting}
-DATE 'YYYY-MM-DD'; TIME 'HH:MM:SS';
-DATETIME/TIMESTAMP = date + time;
-CURDATE(); CURTIME(); NOW();
-YEAR(d); MONTH(d); DAY(d); HOUR(t); MINUTE(t); SECOND(t);
-DATE_ADD(d, INTERVAL n DAY); DATE_SUB(d, INTERVAL n DAY);
-DATEDIFF(end,start); TIMESTAMPDIFF(unit,start,end);
-DATE_FORMAT(d,'%Y-%m-%d'); STR_TO_DATE(s,'%d/%m/%Y');
-\end{lstlisting}
-\cond{Slides use \sql{DATE}, \sql{TIME}, \sql{TIMESTAMP} and interval arithmetic. In MySQL, use \sql{DATE_ADD}/\sql{DATE_SUB}; \sql{DATEDIFF} ignores time and returns days.}
 \end{topicblock}
 
 \begin{topicblock}
-\topic{13}{HTTP / MYSQL RESULTS}
+\topic{14}{HTTP / MYSQL RESULTS}
 
 \key{Request flow}
 Browser request $\to$ web server $\to$ PHP interpreter $\to$ MySQL. The result returns to PHP, which creates HTML/text for the browser.
