@@ -88,10 +88,10 @@
   \noindent\colorbox{structure}{\parbox{\dimexpr\linewidth-2\fboxsep\relax}{%
     \color{white}\fontsize{8.1}{9.1}\selectfont\bfseries #1\enspace #2}}%
   \endgroup\par\nobreak\vspace{1pt}}
-% Keep a topic together when the next column starts before its content ends.
+% Let topic content use the remaining column space; keep each header with its first line.
 \newenvironment{topicblock}
-  {\par\begin{minipage}[t]{\linewidth}\bodystyle}
-  {\end{minipage}\par}
+  {\par\bodystyle}
+  {\par}
 \newcommand{\key}[1]{\par\textcolor{structure}{\textbf{#1}}\enspace}
 \newcommand{\note}[4]{\par\begingroup\setlength{\fboxsep}{0.7pt}%
   \noindent\colorbox{#1}{\parbox{\dimexpr\linewidth-2\fboxsep\relax}{%
@@ -193,6 +193,8 @@ DATE_FORMAT(dt,'%Y-%m-%d'); STR_TO_DATE(s,'%d/%m/%Y');
 
 \key{Example data}
 A(id,name): (1,Ana),(2,Bo); B(id,tag): (1,DB),(3,AI). Match on id; output is (name,tag).
+\columnbreak\colstarttrue
+\topic{04}{JOIN / SET / SUBQUERY (CONT.)}
 \begin{center}
 \begin{tabular}{@{}l>{\raggedright\arraybackslash}p{.65\linewidth}@{}}
 JOIN & Output (name,tag)\\\hline
@@ -281,6 +283,10 @@ Windows calculate per row without collapsing rows. Aggregate windows include SUM
 -- Running: first row through current
 SUM(x) OVER (ORDER BY d ROWS BETWEEN
   UNBOUNDED PRECEDING AND CURRENT ROW)
+\end{lstlisting}
+\columnbreak\colstarttrue
+\topic{06}{RANKING / WINDOWS (CONT.)}
+\begin{lstlisting}
 -- Moving: previous 2 plus current
 AVG(x) OVER (ORDER BY d ROWS BETWEEN
   2 PRECEDING AND CURRENT ROW)
@@ -340,6 +346,7 @@ BEGIN
 END;
 \end{lstlisting}
 Row images: INSERT uses NEW; UPDATE uses OLD and NEW; DELETE uses OLD. SIGNAL raises a user error; a trigger error aborts the invoking statement.
+\trap{Audit only changed values: test \sql{NOT (OLD.v <=> NEW.v)} in an UPDATE trigger. NULL-safe equality avoids logging two NULLs as a change; rollback removes the audit row too.}
 \end{topicblock}
 
 \begin{topicblock}
@@ -379,23 +386,10 @@ MySQL supports ROLLUP. CUBE/general grouping-set syntax is commonly shown with P
 \begin{topicblock}
 \topic{10}{LAST-MINUTE TRAPS}
 
-\begin{itemize}
-\item Window functions preserve row count; GROUP BY collapses rows.
-\item RANK has gaps; \sql{DENSE_RANK} has none; \sql{ROW_NUMBER} is unique.
-\item ROWS BETWEEN n PRECEDING AND CURRENT ROW covers at most $n+1$ physical rows at an interior row.
-\item Recursive CTE: anchor first; recursive term must reach a fixpoint or stop.
-\item Trigger row images: INSERT=NEW, DELETE=OLD, UPDATE=both.
-\item GROUPING() separates subtotal NULL from a real NULL value.
-\end{itemize}
-\key{SQL query check}
-\begin{itemize}
-\item SCHEMA: check type/NULL/PK/FK; \sql{VARCHAR} numbers sort as text.
-\item ROWS/JOIN: filter population before \sql{GROUP BY}/rank/window; verify join key and right-table filters in \sql{ON} vs \sql{WHERE}.
-\item AGG/GRAIN: define row grain; \sql{COUNT(*)} counts rows, \sql{COUNT(x)}/\sql{SUM(x)}/\sql{AVG(x)} ignore NULL; conditional \sql{COUNT} needs NULL for nonmatches.
-\item NULL/RANK: use \sql{IS NULL}, not \sql{= NULL}; MySQL \sql{<=>} is NULL-safe; Nth distinct value usually needs \sql{DENSE_RANK}.
-\item WINDOW/PHASE: \sql{WHERE} filters rows, \sql{HAVING} groups; check \sql{PARTITION}/\sql{ORDER}/frame; filter window results via CTE/subquery.
-\item FINAL: window \sql{ORDER} differs from display \sql{ORDER}; \sql{ASC} is default; compare before rounding; verify aliases, column order, \sql{LIMIT}.
-\end{itemize}
+\trap{Window functions preserve rows; GROUP BY collapses them. RANK leaves gaps; DENSE\_RANK does not. ROWS counts physical rows; RANGE can include peers.}
+\trap{Recursive CTE needs an anchor and termination. Trigger images: INSERT=NEW, DELETE=OLD, UPDATE=both. GROUPING() distinguishes subtotal NULL.}
+\key{Query check}
+Verify types/NULL/keys; row grain, join keys, and ON vs WHERE; grouping and WHERE/HAVING; window partition/order/frame and outer filter; final sort, rounding, aliases, column order, and LIMIT.
 \end{topicblock}
 \end{multicols*}
 \newpage
@@ -487,6 +481,8 @@ Browser request $\to$ web server $\to$ PHP interpreter $\to$ MySQL. The result r
 Repeated facts cause update anomalies; missing facts can block inserts; deletes can erase unrelated facts.
 \key{3NF / BCNF / 4NF}
 For each nontrivial FD \sql{X -> A}: 3NF if \sql{X} is a superkey OR \sql{A} is prime (in some candidate key). BCNF requires every determinant \sql{X} to be a superkey. 4NF requires every nontrivial MVD \sql{X ->> Y} to have a superkey determinant.
+\columnbreak\colstarttrue
+\topic{15}{SCHEMA REFINEMENT (CONT.)}
 \trap{BCNF is stricter than 3NF; decomposing to BCNF can lose dependency preservation.}
 \end{topicblock}
 
@@ -536,7 +532,6 @@ B+ tree typically supports equality, ranges, and ordered scans; hash typically s
 \key{Privileges}
 \code{GRANT SELECT ON db.t TO 'u'@'host';}
 \code{REVOKE SELECT ON db.t FROM 'u'@'host';}
-Grant only the needed actions on the needed objects.
 \end{topicblock}
 
 \begin{topicblock}
@@ -547,23 +542,8 @@ Function returns one value for use in an expression; procedure is invoked with \
 \key{Block order}
 Inside \sql{BEGIN ... END}: declare variables, cursors, and handlers before executable statements. Use \sql{IF/CASE} for branches; \sql{WHILE}, \sql{REPEAT}, or \sql{LOOP} for repetition.
 \key{Handler}
-\sql{DECLARE ... HANDLER} handles a condition (e.g. \sql{NOT FOUND} for cursor exhaustion); define it before statements and avoid swallowing unexpected SQL errors.
+\sql{DECLARE ... HANDLER}: declare before executable SQL; \sql{NOT FOUND} marks cursor exhaustion.
 \end{topicblock}
 
-\begin{topicblock}
-\topic{21}{PROJECT PATTERNS}
-
-\key{Distance (Haversine)}
-\[
-\begin{aligned}
-a &= \sin^2(\Delta\phi/2)\\
-  &\quad+\cos\phi_1\cos\phi_2\sin^2(\Delta\lambda/2)\\
-d &= 2R\arcsin\sqrt{a}
-\end{aligned}
-\]
-Convert latitude/longitude to radians first; use \sql{R = 6371 km} (or \sql{3959 mi}).
-\key{Audit only changed values}
-In a row-level UPDATE trigger, test \code{IF NOT (OLD.v <=> NEW.v) THEN ...}; \sql{<=>} treats two NULLs as equal. Keep the audit insert and update in one transaction.
-\end{topicblock}
 \end{multicols*}
 \end{document}
