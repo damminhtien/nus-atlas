@@ -362,16 +362,48 @@ CALL p(7,@n); SELECT @n;
 \end{lstlisting}
 IN receives a caller value; OUT returns one. Declare locals/conditions/handlers before executable statements. SELECT ... INTO stores a scalar result. DELIMITER is a client command so internal semicolons stay in the procedure body.
 \key{Triggers}
-Fire on INSERT, UPDATE, or DELETE. BEFORE validates or changes NEW; AFTER runs after success, e.g. for audit work.
-\begin{lstlisting}
-CREATE TRIGGER trg BEFORE UPDATE ON T
+Fire on INSERT, UPDATE, or DELETE. BEFORE validates or changes NEW; AFTER runs after the row operation. This BEFORE UPDATE example validates a score, derives its label, and audits changes.
+\begin{lstlisting}[style=SQLblock,basicstyle=\sqlfont\fontsize{5.5}{6.4}\selectfont\color{sqltext}]
+DROP TRIGGER IF EXISTS trigger_before_update_safety_score;
+DELIMITER //
+CREATE TRIGGER trigger_before_update_safety_score
+BEFORE UPDATE ON chicago_school
 FOR EACH ROW
 BEGIN
-  IF NEW.score < 0 THEN
-    SIGNAL SQLSTATE '45000'
-      SET MESSAGE_TEXT='bad score';
-  END IF;
-END;
+    IF NEW.safety_score IS NOT NULL
+       AND (NEW.safety_score < 1 OR NEW.safety_score > 99) THEN
+        SIGNAL SQLSTATE '45000'
+            SET MESSAGE_TEXT = 'safety_score must be between 1 and 99 or NULL';
+    END IF;
+
+    IF NEW.safety_score IS NULL THEN
+        SET NEW.safety_icon = NULL;
+    ELSEIF NEW.safety_score < 20 THEN
+        SET NEW.safety_icon = 'Very Weak';
+    ELSEIF NEW.safety_score < 40 THEN
+        SET NEW.safety_icon = 'Weak';
+    ELSEIF NEW.safety_score < 60 THEN
+        SET NEW.safety_icon = 'Average';
+    ELSEIF NEW.safety_score < 80 THEN
+        SET NEW.safety_icon = 'Strong';
+    ELSE
+        SET NEW.safety_icon = 'Very Strong';
+    END IF;
+
+    IF NOT (OLD.safety_score <=> NEW.safety_score) THEN
+        INSERT INTO school_safety_audit (
+            school_id,
+            old_safety_score,
+            new_safety_score
+        )
+        VALUES (
+            OLD.school_id,
+            OLD.safety_score,
+            NEW.safety_score
+        );
+    END IF;
+END //
+DELIMITER ;
 \end{lstlisting}
 Row images: INSERT uses NEW; UPDATE uses OLD and NEW; DELETE uses OLD. SIGNAL raises a user error; a trigger error aborts the invoking statement.
 \trap{Audit only changed values: test \sql{NOT (OLD.v <=> NEW.v)} in an UPDATE trigger. NULL-safe equality avoids logging two NULLs as a change; rollback removes the audit row too.}
