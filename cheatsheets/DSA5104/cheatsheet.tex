@@ -43,9 +43,9 @@
 \definecolor{sqlstring}{HTML}{B42318}
 \definecolor{sqlcomment}{HTML}{2E6B45}
 \lstdefinelanguage{SQLx}{
-  morekeywords=[1]{SELECT,FROM,WHERE,GROUP,BY,HAVING,ORDER,ASC,DESC,DISTINCT,AS,JOIN,INNER,LEFT,RIGHT,FULL,OUTER,ON,USING,NATURAL,UNION,ALL,EXCEPT,INTERSECT,IN,NOT,EXISTS,WITH,RECURSIVE,INSERT,INTO,VALUES,UPDATE,SET,DELETE,CREATE,TABLE,VIEW,PROCEDURE,TRIGGER,BEFORE,AFTER,FOR,EACH,ROW,BEGIN,END,DECLARE,CALL,OUT,IF,THEN,ELSE,ELSEIF,SIGNAL,SQLSTATE,MESSAGE_TEXT,CASE,WHEN,NULL,IS,PRIMARY,KEY,FOREIGN,REFERENCES,CHECK,OVER,PARTITION,ROWS,RANGE,BETWEEN,PRECEDING,FOLLOWING,CURRENT,CUBE,ROLLUP,LIMIT,AND,OR,LIKE,TRUE,FALSE,UNKNOWN,INTERVAL,DELIMITER,DEFAULT},
+  morekeywords=[1]{SELECT,FROM,WHERE,GROUP,BY,HAVING,ORDER,ASC,DESC,DISTINCT,AS,JOIN,INNER,LEFT,RIGHT,FULL,OUTER,ON,USING,NATURAL,UNION,ALL,EXCEPT,INTERSECT,IN,NOT,EXISTS,WITH,RECURSIVE,INSERT,INTO,VALUES,UPDATE,SET,DELETE,CREATE,TABLE,VIEW,PROCEDURE,TRIGGER,BEFORE,AFTER,FOR,EACH,ROW,BEGIN,END,DECLARE,CALL,OUT,IF,THEN,ELSE,ELSEIF,SIGNAL,SQLSTATE,MESSAGE_TEXT,CASE,WHEN,NULL,IS,PRIMARY,KEY,FOREIGN,REFERENCES,CHECK,OVER,PARTITION,ROWS,RANGE,BETWEEN,PRECEDING,FOLLOWING,CURRENT,CUBE,ROLLUP,LIMIT,AND,OR,LIKE,TRUE,FALSE,UNKNOWN,INTERVAL,DELIMITER,DEFAULT,START,TRANSACTION,COMMIT,ROLLBACK,GRANT,REVOKE,TO},
   morekeywords=[2]{TINYINT,SMALLINT,MEDIUMINT,INT,INTEGER,BIGINT,UNSIGNED,DECIMAL,NUMERIC,FLOAT,DOUBLE,CHAR,VARCHAR,TEXT,BINARY,VARBINARY,BLOB,BOOLEAN,BOOL,JSON,ENUM,SET,DATE,TIME,DATETIME,TIMESTAMP,YEAR},
-  morekeywords=[3]{RANK,DENSE_RANK,ROW_NUMBER,SUM,COUNT,AVG,MIN,MAX,GROUPING,CONCAT,UPPER,LOWER,CHAR_LENGTH,LENGTH,SUBSTRING,CURDATE,CURRENT_DATE,CURTIME,CURRENT_TIME,NOW,CURRENT_TIMESTAMP,UTC_TIMESTAMP,QUARTER,MONTH,DAY,DAYOFYEAR,DAYNAME,MONTHNAME,LAST_DAY,DAYOFWEEK,WEEKDAY,HOUR,MINUTE,SECOND,EXTRACT,DATE_ADD,DATE_SUB,TIMESTAMPADD,DATEDIFF,TIMESTAMPDIFF,ADDTIME,SUBTIME,TIMEDIFF,TIME_TO_SEC,SEC_TO_TIME,DATE_FORMAT,STR_TO_DATE,RADIANS,ASIN,SQRT,POW,SIN,COS,ROUND},
+  morekeywords=[3]{RANK,DENSE_RANK,ROW_NUMBER,SUM,COUNT,AVG,MIN,MAX,GROUPING,CONCAT,UPPER,LOWER,CHAR_LENGTH,LENGTH,SUBSTRING,CAST,COALESCE,NULLIF,CURDATE,CURRENT_DATE,CURTIME,CURRENT_TIME,NOW,CURRENT_TIMESTAMP,UTC_TIMESTAMP,QUARTER,MONTH,DAY,DAYOFYEAR,DAYNAME,MONTHNAME,LAST_DAY,DAYOFWEEK,WEEKDAY,HOUR,MINUTE,SECOND,EXTRACT,DATE_ADD,DATE_SUB,TIMESTAMPADD,DATEDIFF,TIMESTAMPDIFF,ADDTIME,SUBTIME,TIMEDIFF,TIME_TO_SEC,SEC_TO_TIME,DATE_FORMAT,STR_TO_DATE,RADIANS,ASIN,SQRT,POW,SIN,COS,ROUND},
   sensitive=false,
   morecomment=[l]{--},
   morestring=[b]'
@@ -58,15 +58,7 @@
   morestring=[b]',
   morestring=[b]"
 }
-\lstdefinestyle{PHPcode}{
-  basicstyle=\ttfamily\fontsize{5.9}{6.7}\selectfont\color{sqltext},
-  keywordstyle=[1]\color{sqlkeyword},
-  keywordstyle=[2]\color{sqltype},
-  keywordstyle=[3]\color{sqlfunction},
-  commentstyle=\color{sqlcomment},
-  stringstyle=\color{sqlstring}
-}
-\lstset{
+\lstdefinestyle{SQLbase}{
   language=SQLx,
   basicstyle=\sqlfont\fontsize{5.9}{6.7}\selectfont\color{sqltext},
   keywordstyle=[1]\color{sqlkeyword}\bfseries,
@@ -74,21 +66,42 @@
   keywordstyle=[3]\color{sqlfunction}\bfseries,
   commentstyle=\color{sqlcomment},
   stringstyle=\color{sqlstring},
+  columns=fullflexible,
+  keepspaces=true,
+  showstringspaces=false,
+  breakatwhitespace=false,
+  frame=none,
+  xleftmargin=1pt
+}
+\lstdefinestyle{SQLblock}{
+  style=SQLbase,
+  backgroundcolor=\color{codebg},
+  breaklines=true,
+  aboveskip=.3pt,
+  belowskip=.3pt
+}
+\lstdefinestyle{SQLinline}{
+  style=SQLbase,
+  basicstyle=\sqlfont\fontsize{6.3}{7.4}\selectfont\color{sqltext}
+}
+\lstdefinestyle{PHPcode}{
+  basicstyle=\ttfamily\fontsize{5.9}{6.7}\selectfont\color{sqltext},
+  keywordstyle=[1]\color{sqlkeyword},
+  commentstyle=\color{sqlcomment},
+  stringstyle=\color{sqlstring},
   backgroundcolor=\color{codebg},
   columns=fullflexible,
   keepspaces=true,
   showstringspaces=false,
   breaklines=true,
-  breakatwhitespace=false,
-  frame=none,
   aboveskip=1pt,
-  belowskip=1pt,
-  xleftmargin=1pt
+  belowskip=1pt
 }
+\lstset{style=SQLblock}
 \pagestyle{empty}
 \setlength{\topskip}{0pt}
 \setlength{\parindent}{0pt}
-\setlength{\parskip}{1.3pt}
+\setlength{\parskip}{1pt}
 \setlength{\tabcolsep}{2pt}
 \renewcommand{\arraystretch}{1.08}
 \setlist[itemize]{leftmargin=8pt,label=\textbullet,nosep,topsep=1pt}
@@ -100,7 +113,7 @@
   \setlength{\abovedisplayskip}{2pt}\setlength{\belowdisplayskip}{2pt}%
   \setlength{\abovedisplayshortskip}{1pt}\setlength{\belowdisplayshortskip}{1pt}}
 \newif\ifcolstart
-\newcommand{\topic}[2]{\par\ifcolstart\colstartfalse\else\addvspace{5pt}\fi%
+\newcommand{\topic}[2]{\par\ifcolstart\colstartfalse\else\addvspace{4pt}\fi%
   \begingroup\setlength{\fboxsep}{0.8pt}%
   \noindent\colorbox{structure}{\parbox{\dimexpr\linewidth-2\fboxsep\relax}{%
     \color{white}\fontsize{8.1}{9.1}\selectfont\bfseries #1\enspace #2}}%
@@ -118,11 +131,7 @@
 \newcommand{\trap}[1]{\note{warningbg}{warning}{!}{#1}}
 \newcommand{\ex}[1]{\note{examplebg}{example}{EX}{#1}}
 \newcommand{\remember}[1]{\note{conditionbg}{condition}{\faLightbulb}{#1}}
-\newcommand{\sql}[1]{{\sqlfont\detokenize{#1}}}
-\newcommand{\code}[1]{\par\begingroup\setlength{\fboxsep}{1.2pt}%
-  \noindent\colorbox{codebg}{\parbox{\dimexpr\linewidth-2\fboxsep\relax}{%
-    \raggedright\color{structure}\sqlfont\fontsize{6.3}{7.7}\selectfont #1}}%
-  \endgroup\par}
+\newcommand{\sql}[1]{{\sqlfont\color{sqltext}\detokenize{#1}}}
 
 \begin{document}
 \bodystyle
@@ -143,9 +152,11 @@ FROM R [JOIN S ON condition]
 [LIMIT n];
 \end{lstlisting}
 \key{Logical processing order}
-\code{FROM/JOIN -> WHERE -> GROUP BY}
-\code{-> HAVING -> SELECT}
-\code{-> ORDER BY -> LIMIT}
+\begin{lstlisting}
+FROM/JOIN -> WHERE -> GROUP BY
+-> HAVING -> SELECT
+-> ORDER BY -> LIMIT
+\end{lstlisting}
 \trap{Window ORDER BY controls the window calculation, not the final output order. Add an outer ORDER BY when display order matters.}
 \end{topicblock}
 
@@ -518,11 +529,15 @@ Projected FDs on the parts must jointly imply the original FDs, so constraints c
 \topic{17}{VIEWS / TRANSACTIONS}
 
 \key{View}
-\code{CREATE VIEW v AS SELECT ...;}
+\begin{lstlisting}
+CREATE VIEW v AS SELECT ...;
+\end{lstlisting}
 Simple single-table views without grouping, aggregates, or \sql{DISTINCT} are usually updatable. \sql{WITH CHECK OPTION} rejects updates that would make a row disappear from the view. A materialized view stores results and can become stale; MySQL emulates one with a table plus refresh logic.
 \key{Transaction}
-\code{START TRANSACTION; ... COMMIT;}
-\code{ROLLBACK;}
+\begin{lstlisting}
+START TRANSACTION; ... COMMIT;
+ROLLBACK;
+\end{lstlisting}
 \cond{MySQL autocommit is ON by default. Use a transactional engine such as InnoDB; rollback only undoes work not already committed.}
 \trap{Trigger writes share the caller's transaction: rolling back the data change also removes its audit row.}
 \end{topicblock}
@@ -531,12 +546,19 @@ Simple single-table views without grouping, aggregates, or \sql{DISTINCT} are us
 \topic{18}{SQL EDGE PATTERNS}
 
 \key{Conditional / NULL tools}
-\code{CASE WHEN c THEN x ELSE y END}
-\code{COALESCE(a,b)} returns first non-NULL; \code{NULLIF(a,b)} returns NULL when equal. Use \code{CAST(score AS UNSIGNED)} before numeric comparison of digit strings.
+\begin{lstlisting}
+CASE WHEN c THEN x ELSE y END
+COALESCE(a,b); NULLIF(a,b); CAST(score AS UNSIGNED)
+\end{lstlisting}
+\sql{COALESCE} returns first non-NULL; \sql{NULLIF} returns NULL when equal. Use \sql{CAST} before numeric comparison of digit strings.
 \key{Subquery cardinality}
-Scalar subquery: one column, at most one row. \code{x > ANY (subquery)} needs one match; \code{x > ALL (subquery)} needs every comparison true. \code{= ANY} is equivalent to \code{IN}. For an empty set, ANY is false and ALL is true.
+Scalar subquery: one column, at most one row. \lstinline[style=SQLinline]|x > ANY (subquery)| needs one match; \lstinline[style=SQLinline]|x > ALL (subquery)| needs every comparison true. \lstinline[style=SQLinline]|= ANY| is equivalent to \lstinline[style=SQLinline]|IN|. For an empty set, ANY is false and ALL is true.
 \key{Symmetric difference}
-Rows present in exactly one set: \code{(A EXCEPT B) UNION (B EXCEPT A)}; both inputs need compatible columns.
+Rows present in exactly one set:
+\begin{lstlisting}
+(A EXCEPT B) UNION (B EXCEPT A)
+\end{lstlisting}
+Both inputs need compatible columns.
 \end{topicblock}
 
 \begin{topicblock}
@@ -547,8 +569,10 @@ Query processor parses, optimizes, and executes SQL; storage manager handles fil
 \key{Index}
 B+ tree typically supports equality, ranges, and ordered scans; hash typically supports equality only. Indexes speed reads/joins/order but use space and slow writes.
 \key{Privileges}
-\code{GRANT SELECT ON db.t TO 'u'@'host';}
-\code{REVOKE SELECT ON db.t FROM 'u'@'host';}
+\begin{lstlisting}
+GRANT SELECT ON db.t TO 'u'@'host';
+REVOKE SELECT ON db.t FROM 'u'@'host';
+\end{lstlisting}
 \end{topicblock}
 
 \columnbreak\colstarttrue
@@ -559,33 +583,44 @@ B+ tree typically supports equality, ranges, and ordered scans; hash typically s
 Function returns one value for an expression; procedure uses \sql{CALL} and may take \sql{IN}/\sql{OUT} parameters. Declare variables, cursors, and handlers before executable SQL; \sql{DECLARE ... HANDLER FOR NOT FOUND} handles cursor exhaustion. Use \sql{IF/CASE} for branches and \sql{WHILE}, \sql{REPEAT}, or \sql{LOOP} for repetition.
 \key{Example: nearby crime records}
 This procedure uses \sql{IN} inputs and \sql{SELECT ... INTO}, then a CTE computes distance for radius filtering and ordered output.
-\begin{lstlisting}[basicstyle=\sqlfont\fontsize{5.5}{6.4}\selectfont\color{sqltext}]
+\begin{lstlisting}[style=SQLblock,basicstyle=\sqlfont\fontsize{5.5}{6.4}\selectfont\color{sqltext}]
 DROP PROCEDURE IF EXISTS find_nearby_crime_records;
 DELIMITER //
 CREATE PROCEDURE find_nearby_crime_records(
-    IN input_school_id INT, IN input_r DOUBLE)
+    IN input_school_id INT,
+    IN input_r DOUBLE
+)
 BEGIN
-    DECLARE school_lat DOUBLE;
-    DECLARE school_lon DOUBLE;
-    SELECT latitude, longitude
-      INTO school_lat, school_lon
-      FROM chicago_school
-      WHERE school_id = input_school_id;
-    WITH crime_distance AS (
-      SELECT id, primary_description, crime_time,
-             latitude, longitude,
-             ROUND(2 * 6371 * ASIN(SQRT(
-               POW(SIN((RADIANS(school_lat)
-                 - RADIANS(latitude))/2), 2)
-               + COS(RADIANS(school_lat)) * COS(RADIANS(latitude))
-                 * POW(SIN((RADIANS(school_lon)
-                   - RADIANS(longitude))/2), 2)
-             )), 8) AS distance
-      FROM chicago_crime
-      WHERE latitude IS NOT NULL AND longitude IS NOT NULL
+    DECLARE school_lat_rad DOUBLE;
+    DECLARE school_lon_rad DOUBLE;
+    SELECT RADIANS(latitude),
+           RADIANS(longitude)
+    INTO school_lat_rad,
+         school_lon_rad
+    FROM chicago_school
+    WHERE school_id = input_school_id;
+    WITH crime_rad AS (
+        SELECT id, primary_description, crime_time,
+               latitude, longitude,
+               RADIANS(latitude) AS crime_lat_rad,
+               RADIANS(longitude) AS crime_lon_rad
+        FROM chicago_crime
+        WHERE latitude IS NOT NULL AND longitude IS NOT NULL
+    ),
+    haversine_a AS (
+        SELECT *,
+               POW(SIN((school_lat_rad - crime_lat_rad)/2), 2)
+             + COS(school_lat_rad) * COS(crime_lat_rad)
+             * POW(SIN((school_lon_rad - crime_lon_rad)/2), 2) AS a
+        FROM crime_rad
+    ),
+    crime_distance AS (
+        SELECT id, primary_description, crime_time,
+               latitude, longitude,
+               ROUND(2 * 6371 * ASIN(SQRT(a)), 8) AS distance
+        FROM haversine_a
     )
-    SELECT id, primary_description, crime_time,
-           latitude, longitude, distance
+    SELECT id, primary_description, crime_time, latitude, longitude, distance
     FROM crime_distance
     WHERE distance <= input_r
     ORDER BY crime_time DESC, distance ASC, id ASC;
