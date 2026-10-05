@@ -16,7 +16,7 @@
   \usepackage{fontspec}
   \usepackage{unicode-math}
   \IfFontExistsTF{Source Sans 3}{\setmainfont{Source Sans 3}}{%
-    \IfFontExistsTF{SourceSans3-Regular.otf}{\setmainfont{SourceSans3}[Extension=.otf,UprightFont=*-Regular,BoldFont=*-Bold,ItalicFont=*-It,BoldItalicFont=*-BoldIt]}{%
+    \IfFontExistsTF{SourceSans3-Regular.otf}{\setmainfont{SourceSans3}[Extension=.otf,UprightFont=*-Regular,BoldFont=*-Bold,ItalicFont=*-RegularIt,BoldItalicFont=*-BoldIt]}{%
       \IfFileExists{sourcesanspro.sty}{\usepackage[default]{sourcesanspro}}{\setmainfont{lmsans10-regular.otf}[BoldFont=lmsans10-bold.otf]}}}
   \IfFontExistsTF{STIXTwoMath-Regular.otf}{\setmathfont{STIXTwoMath-Regular.otf}}{%
     \IfFontExistsTF{STIXTwoMath-Regular.otf}{\setmathfont{STIXTwoMath-Regular.otf}}{\setmathfont{latinmodern-math.otf}}}
@@ -426,6 +426,7 @@ Superkey uniquely identifies tuples; candidate key is a minimal superkey; primar
 \text{All pairs} & R\times S\\
 \text{Matched pairs} & R\bowtie_{condition}S\\
 \text{Either set} & R\cup S\\
+\text{Both sets} & R\cap S\\
 \text{R but not S} & R-S\\
 \text{Rename} & \rho_X(R)\\
 \text{Assign result} & X\leftarrow E
@@ -473,6 +474,96 @@ Browser request $\to$ web server $\to$ PHP interpreter $\to$ MySQL. The result r
 \key{GET / POST}
 \sql{$_GET} comes from URL query parameters; \sql{$_POST} comes from the request body. \sql{$_SERVER["REQUEST_METHOD"]} identifies the method received by the page.
 \cond{Use POST for form-body submissions; reading a variable from \sql{$_GET}/\sql{$_POST} is separate from validating its value.}
+\end{topicblock}
+
+\begin{topicblock}
+\topic{15}{SCHEMA REFINEMENT}
+
+\key{Functional dependency}
+\sql{X -> Y}: rows with the same \sql{X} must have the same \sql{Y}. Compute closure \sql{X+}: start at \sql{X}; repeatedly add \sql{Y} when an FD's left side is already in \sql{X+}.
+\key{Key test}
+\sql{X} is a superkey iff \sql{X+} contains every attribute. It is a candidate key iff no proper subset is a superkey.
+\key{Why normalize?}
+Repeated facts cause update anomalies; missing facts can block inserts; deletes can erase unrelated facts.
+\key{3NF / BCNF / 4NF}
+For each nontrivial FD \sql{X -> A}: 3NF if \sql{X} is a superkey OR \sql{A} is prime (in some candidate key). BCNF requires every determinant \sql{X} to be a superkey. 4NF requires every nontrivial MVD \sql{X ->> Y} to have a superkey determinant.
+\trap{BCNF is stricter than 3NF; decomposing to BCNF can lose dependency preservation.}
+\end{topicblock}
+
+\begin{topicblock}
+\topic{16}{DECOMPOSITION / ER}
+
+\key{Lossless join}
+Decompose \sql{R} into \sql{R1,R2} without spurious rows if \sql{(R1 intersect R2) -> R1} OR \sql{(R1 intersect R2) -> R2} follows from the FDs.
+\key{Dependency preserving}
+Projected FDs on the parts must jointly imply the original FDs, so constraints can be checked without joining. 3NF synthesis usually preserves dependencies; BCNF may not.
+\key{ER to relations}
+1:1: FK on either side with UNIQUE (and NOT NULL if mandatory). 1:N: FK on the N side. M:N: bridge table with both FKs (often composite PK) plus relationship attributes. Weak entity: PK = owner's PK + partial key.
+\end{topicblock}
+
+\begin{topicblock}
+\topic{17}{VIEWS / TRANSACTIONS}
+
+\key{View}
+\code{CREATE VIEW v AS SELECT ...;}
+Simple single-table views without grouping, aggregates, or \sql{DISTINCT} are usually updatable. \sql{WITH CHECK OPTION} rejects updates that would make a row disappear from the view. A materialized view stores results and can become stale; MySQL emulates one with a table plus refresh logic.
+\key{Transaction}
+\code{START TRANSACTION; ... COMMIT;}
+\code{ROLLBACK;}
+\cond{MySQL autocommit is ON by default. Use a transactional engine such as InnoDB; rollback only undoes work not already committed.}
+\trap{Trigger writes share the caller's transaction: rolling back the data change also removes its audit row.}
+\end{topicblock}
+
+\begin{topicblock}
+\topic{18}{SQL EDGE PATTERNS}
+
+\key{Conditional / NULL tools}
+\code{CASE WHEN c THEN x ELSE y END}
+\code{COALESCE(a,b)} returns first non-NULL; \code{NULLIF(a,b)} returns NULL when equal. Use \code{CAST(score AS UNSIGNED)} before numeric comparison of digit strings.
+\key{Subquery cardinality}
+Scalar subquery: one column, at most one row. \code{x > ANY (subquery)} needs one match; \code{x > ALL (subquery)} needs every comparison true. \code{= ANY} is equivalent to \code{IN}. For an empty set, ANY is false and ALL is true.
+\key{Symmetric difference}
+Rows present in exactly one set: \code{(A EXCEPT B) UNION (B EXCEPT A)}; both inputs need compatible columns.
+\end{topicblock}
+
+\begin{topicblock}
+\topic{19}{ENGINE / INDEX / ACCESS}
+
+\key{DBMS path}
+Query processor parses, optimizes, and executes SQL; storage manager handles files, buffers, indexes, and transactions; catalog stores schema and statistics.
+\key{Index}
+B+ tree typically supports equality, ranges, and ordered scans; hash typically supports equality only. Indexes speed reads/joins/order but use space and slow writes.
+\key{Privileges}
+\code{GRANT SELECT ON db.t TO 'u'@'host';}
+\code{REVOKE SELECT ON db.t FROM 'u'@'host';}
+Grant only the needed actions on the needed objects.
+\end{topicblock}
+
+\begin{topicblock}
+\topic{20}{STORED PROGRAMS}
+
+\key{Function vs procedure}
+Function returns one value for use in an expression; procedure is invoked with \sql{CALL} and may use \sql{IN}/\sql{OUT} parameters.
+\key{Block order}
+Inside \sql{BEGIN ... END}: declare variables, cursors, and handlers before executable statements. Use \sql{IF/CASE} for branches; \sql{WHILE}, \sql{REPEAT}, or \sql{LOOP} for repetition.
+\key{Handler}
+\sql{DECLARE ... HANDLER} handles a condition (e.g. \sql{NOT FOUND} for cursor exhaustion); define it before statements and avoid swallowing unexpected SQL errors.
+\end{topicblock}
+
+\begin{topicblock}
+\topic{21}{PROJECT PATTERNS}
+
+\key{Distance (Haversine)}
+\[
+\begin{aligned}
+a &= \sin^2(\Delta\phi/2)\\
+  &\quad+\cos\phi_1\cos\phi_2\sin^2(\Delta\lambda/2)\\
+d &= 2R\arcsin\sqrt{a}
+\end{aligned}
+\]
+Convert latitude/longitude to radians first; use \sql{R = 6371 km} (or \sql{3959 mi}).
+\key{Audit only changed values}
+In a row-level UPDATE trigger, test \code{IF NOT (OLD.v <=> NEW.v) THEN ...}; \sql{<=>} treats two NULLs as equal. Keep the audit insert and update in one transaction.
 \end{topicblock}
 \end{multicols*}
 \end{document}
