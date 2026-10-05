@@ -226,6 +226,7 @@ Correlated subqueries refer to outer-row aliases. For “for all”, test that t
 \begin{topicblock}
 \topic{05}{DDL / DML}
 
+\key{CREATE / UPDATE / DELETE}
 \begin{lstlisting}
 CREATE TABLE R (
   id INT PRIMARY KEY,
@@ -235,9 +236,11 @@ CREATE TABLE R (
   FOREIGN KEY (dept) REFERENCES D(dept)
 );
 INSERT INTO R(...) VALUES (...);
-UPDATE R SET x=... WHERE ...;
-DELETE FROM R WHERE ...;
+UPDATE R SET x = expr [, y = expr]
+WHERE condition;
+DELETE FROM R WHERE condition;
 \end{lstlisting}
+\trap{UPDATE/DELETE without WHERE affects every row. Preview target rows with SELECT ... WHERE ... first.}
 \cond{Foreign-key actions include ON DELETE/UPDATE CASCADE, SET NULL, and RESTRICT/NO ACTION.}
 \key{CTE}
 \begin{lstlisting}
