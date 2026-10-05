@@ -534,15 +534,48 @@ B+ tree typically supports equality, ranges, and ordered scans; hash typically s
 \code{REVOKE SELECT ON db.t FROM 'u'@'host';}
 \end{topicblock}
 
+\columnbreak\colstarttrue
 \begin{topicblock}
 \topic{20}{STORED PROGRAMS}
 
-\key{Function vs procedure}
-Function returns one value for use in an expression; procedure is invoked with \sql{CALL} and may use \sql{IN}/\sql{OUT} parameters.
-\key{Block order}
-Inside \sql{BEGIN ... END}: declare variables, cursors, and handlers before executable statements. Use \sql{IF/CASE} for branches; \sql{WHILE}, \sql{REPEAT}, or \sql{LOOP} for repetition.
-\key{Handler}
-\sql{DECLARE ... HANDLER}: declare before executable SQL; \sql{NOT FOUND} marks cursor exhaustion.
+\key{Function / procedure}
+Function returns one value for an expression; procedure uses \sql{CALL} and may take \sql{IN}/\sql{OUT} parameters. Declare variables, cursors, and handlers before executable SQL; \sql{DECLARE ... HANDLER FOR NOT FOUND} handles cursor exhaustion. Use \sql{IF/CASE} for branches and \sql{WHILE}, \sql{REPEAT}, or \sql{LOOP} for repetition.
+\key{Example: nearby crime records}
+This procedure uses \sql{IN} inputs and \sql{SELECT ... INTO}, then a CTE computes distance for radius filtering and ordered output.
+\begin{lstlisting}[basicstyle=\sqlfont\fontsize{5.3}{6.1}\selectfont]
+DROP PROCEDURE IF EXISTS find_nearby_crime_records;
+DELIMITER //
+CREATE PROCEDURE find_nearby_crime_records(
+    IN input_school_id INT, IN input_r DOUBLE)
+BEGIN
+    DECLARE school_lat DOUBLE;
+    DECLARE school_lon DOUBLE;
+    SELECT latitude, longitude
+      INTO school_lat, school_lon
+      FROM chicago_school
+      WHERE school_id = input_school_id;
+    WITH crime_distance AS (
+      SELECT id, primary_description, crime_time,
+             latitude, longitude,
+             ROUND(2 * 6371 * ASIN(SQRT(
+               POW(SIN((RADIANS(school_lat)
+                 - RADIANS(latitude))/2), 2)
+               + COS(RADIANS(school_lat)) * COS(RADIANS(latitude))
+                 * POW(SIN((RADIANS(school_lon)
+                   - RADIANS(longitude))/2), 2)
+             )), 8) AS distance
+      FROM chicago_crime
+      WHERE latitude IS NOT NULL AND longitude IS NOT NULL
+    )
+    SELECT id, primary_description, crime_time,
+           latitude, longitude, distance
+    FROM crime_distance
+    WHERE distance <= input_r
+    ORDER BY crime_time DESC, distance ASC, id ASC;
+END //
+DELIMITER ;
+\end{lstlisting}
+\remember{6371 means distance and \sql{input_r} are in km; exclude rows with missing coordinates.}
 \end{topicblock}
 
 \end{multicols*}
