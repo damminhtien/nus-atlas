@@ -296,14 +296,17 @@ $X_{raw}\in\R^{n\times d}$; $\bar x=n^{-1}\sum_ix_i$;
 $X=X_{raw}-\ind\bar x^\top$;
 $S=X^\top X/n$ (centered rows).
 \[Su_j=\lambda_ju_j,\quad\lambda_1\ge\cdots\ge\lambda_d\ge0.\]
-$S=S^\top\succeq0$; chọn orthonormal $u_j$.
+$S=S^\top\succeq0$; projected variance với $\norm u=1$:
+\[V(u)=\Var(u^\top x)=u^\top Su.\]
 \[\max_{\norm u=1}u^\top Su\ \Rightarrow\ Su=\lambda u.\]
 Lagrangian $u^\top Su-\lambda(u^\top u-1)$; leading eigenvalue cho maximum variance. Với $U_m=[u_1,\ldots,u_m]$:
+\[U_m^\top U_m=I_m,\qquad\hat x=U_mU_m^\top x.\]
 \[Z=XU_m,\quad \hat X=XU_mU_m^\top.\]
-Scores $Z\in\R^{n\times m}$ khác reconstruction $\hat X\in\R^{n\times d}$. Cộng mean để về raw coordinates.
+Scores $Z\in\R^{n\times m}$ khác reconstruction $\hat X\in\R^{n\times d}$. $x$ đã center; cộng mean để về raw coordinates.
 \key{Variance / optimal reconstruction}
-\[\frac1n\norm{X-\hat X}_F^2=\sum_{j>m}\lambda_j.\]
-\[EVR=\frac{\sum_{j\le m}\lambda_j}{\sum_j\lambda_j}.\]
+\[E_m=\frac1n\norm{X-\hat X}_F^2=\sum_{j>m}\lambda_j.\]
+\[R(m)=EVR=\frac{\sum_{j\le m}\lambda_j}{\sum_j\lambda_j}.\]
+$R(m)$ xác định khi $\operatorname{tr}(S)>0$.
 Proof cue: $x_i=\sum_j\alpha_{ij}u_j$; approximation trong first $m$ directions dùng coefficients $\beta_{ij}$:
 \[\norm{x_i-\hat x_i}^2=\sum_{j\le m}(\alpha_{ij}-\beta_{ij})^2+\sum_{j>m}\alpha_{ij}^2.\]
 Chọn $\beta_{ij}=\alpha_{ij}=u_j^\top x_i$; giữ directions có eigenvalues lớn nhất.
