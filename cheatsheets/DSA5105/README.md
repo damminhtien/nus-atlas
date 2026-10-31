@@ -2,9 +2,10 @@
 
 `cheatsheet.tex` is the editable Vietnamese revision sheet; `cheatsheet.pdf` is
 the compiled deliverable. It combines the user-supplied midterm content with
-the shared `../cheatsheet-template.tex` layout: two A4 portrait pages, four
-fixed columns per page, read down each column and then left to right. Print
-duplex at 100% / actual size.
+the shared `../cheatsheet-template.tex` visual style: two A4 portrait pages,
+four columns per page. Fill each column top to bottom before moving right;
+unused space stays at the end. Paragraph and section spacing do not stretch.
+Print duplex at 100% / actual size.
 
 ## Scope
 
@@ -13,9 +14,9 @@ base and add only subjects supported by the current local lecture slides.
 Do not use past papers to infer the current syllabus or add reference-only
 subjects. The supplied original remains outside the repository.
 
-- Page 1: learning/linear models, optimization, kernels/SVM, trees/ensembles,
+- Topics 01–12: learning/linear models, optimization, kernels/SVM, trees/ensembles,
   neural networks, CNNs, and RNNs.
-- Page 2: PCA/whitening/feature-space PCA/autoencoders, K-means/GMM, finite
+- Topics 13–26: PCA/whitening/feature-space PCA/autoencoders, K-means/GMM, finite
   discounted MDPs, value/policy iteration, MC/TD/Q-learning, and DQN.
   Topic 15 keeps autoencoder MLP architecture, loss, and training together.
 - Power iteration covers PCA's dense numerical method and the PageRank topic
@@ -42,9 +43,13 @@ cp tmp/pdfs/dsa5105/build/cheatsheet.pdf cheatsheets/DSA5105/cheatsheet.pdf
 ```
 
 The source uses the template's Source Sans 3 / STIX Two Math font choices and
-fallbacks, with 7.5 pt body text. The build checks all eight column heights
-and fails if a column exceeds the printable page height. Auxiliary files and
-previews belong in ignored `tmp/pdfs/`. The course PDF is intentionally
+fallbacks, with 7.5 pt body text and 9.3 pt line spacing. Short formulas use
+inline math; matrices, long fractions, and multi-line derivations retain
+display math. The `multicols*` environment with `raggedcolumns` fills columns
+sequentially without balancing or stretching the last page. Topics can
+continue into the next column; the complete autoencoder block stays together.
+Require no overfull boxes or missing glyphs in the build log. Auxiliary files
+and previews belong in ignored `tmp/pdfs/`. The course PDF is intentionally
 tracked, following the convention of `cheatsheets/DSA5104/`.
 
 ## Source map

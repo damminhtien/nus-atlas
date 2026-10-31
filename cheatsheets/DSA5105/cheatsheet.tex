@@ -1,14 +1,14 @@
 % DSA5105 final revision: adapted from the shared template and user-provided midterm notes.
 % Current lecture slides only; no past-paper/reference-only expansion.
 % Source IDs and page ranges: README.md. Build with LuaLaTeX.
-% Two A4 portrait pages, four fixed columns; read down then left to right.
+% Two A4 portrait pages; four flowing columns, filled left to right.
 % Compile with LuaLaTeX for Vietnamese text and OpenType math fonts.
 % No external images, styles, or data files are required.
 % SETTINGS: change body size, margins, gutter, or colors below.
 % CONTENT: replace each \topic and its local \cond / \trap / \ex notes.
-% LAYOUT: read down each column, then move left to right. Content stays in one column.
-% Each column is intentionally fixed in position; it does not auto-flow.
-% If content becomes too tall, move a whole topic to another column/page.
+% LAYOUT: fill each column from top to bottom before starting the next.
+% Use fixed paragraph spacing; leave unused space only at the end.
+% Keep the complete autoencoder block together.
 \documentclass[a4paper]{article}
 \usepackage[margin=4.5mm,left=5mm,right=5mm,noheadfoot]{geometry}
 \usepackage{iftex}
@@ -28,7 +28,7 @@
     \IfFontExistsTF{STIXTwoMath-Regular.otf}{\setmathfont{STIXTwoMath-Regular.otf}}{\setmathfont{latinmodern-math.otf}}}
   \IfFontExistsTF{JetBrains Mono}{\setmonofont{JetBrains Mono}[Scale=MatchLowercase]}{\setmonofont{lmmono10-regular.otf}[Scale=MatchLowercase]}
 \fi
-\usepackage{xcolor,array,enumitem}
+\usepackage{xcolor,array,enumitem,multicol}
 \definecolor{structure}{HTML}{10243A}
 \definecolor{condition}{HTML}{704500}
 \definecolor{conditionbg}{HTML}{FFF1CC}
@@ -45,19 +45,19 @@
 \renewcommand{\arraystretch}{1.08}
 \setlist[itemize]{leftmargin=8pt,label=\textbullet,nosep,topsep=1pt}
 \setlength{\emergencystretch}{1em}
-\newlength{\gutter}\setlength{\gutter}{2mm}
-\newlength{\colwidth}\setlength{\colwidth}{\dimexpr(\textwidth-3\gutter)/4\relax}
-\newlength{\pairwidth}\setlength{\pairwidth}{\dimexpr(\textwidth-\gutter)/2\relax}
+\setlength{\columnsep}{2mm}
+\setlength{\multicolsep}{0pt}
+\raggedbottom
+\raggedcolumns
 \newcommand{\bodystyle}{%
   \fontsize{7.5}{9.3}\selectfont\raggedright
   \setlength{\abovedisplayskip}{2pt}\setlength{\belowdisplayskip}{2pt}%
   \setlength{\abovedisplayshortskip}{1pt}\setlength{\belowdisplayshortskip}{1pt}}
-\newif\ifcolstart
-\newcommand{\topic}[2]{\par\ifcolstart\colstartfalse\else\addvspace{5pt}\fi%
+\newcommand{\topic}[2]{\par\addvspace{5pt}%
   \begingroup\setlength{\fboxsep}{0.8pt}%
   \noindent\colorbox{structure}{\parbox{\dimexpr\linewidth-2\fboxsep\relax}{%
     \color{white}\fontsize{8.1}{9.1}\selectfont\bfseries #1\enspace #2}}%
-  \endgroup\par\vspace{1pt}}
+  \endgroup\par\nobreak\vspace{1pt}\nobreak}
 \newcommand{\key}[1]{\par\textcolor{structure}{\textbf{#1}}\enspace}
 \newcommand{\note}[4]{\par\begingroup\setlength{\fboxsep}{0.7pt}%
   \noindent\colorbox{#1}{\parbox{\dimexpr\linewidth-2\fboxsep\relax}{%
@@ -75,39 +75,12 @@
   \noindent\colorbox{codebg}{\parbox{\dimexpr\linewidth-2\fboxsep\relax}{%
     \raggedright\color{structure}\ttfamily\fontsize{6.3}{7.7}\selectfont #1}}%
   \endgroup\par}
-\newcommand{\pair}[2]{%
-  \begin{minipage}[t]{\pairwidth}\vspace{0pt}\bodystyle
-    \begin{minipage}[t]{\colwidth}\vspace{0pt}\bodystyle\colstarttrue #1\end{minipage}%
-    \hspace{\gutter}%
-    \begin{minipage}[t]{\colwidth}\vspace{0pt}\bodystyle\colstarttrue #2\end{minipage}%
-  \end{minipage}}
-\newcommand{\sheet}[2]{\noindent\makebox[\textwidth][l]{\pair#1\hspace{\gutter}\pair#2}\par}
-
-
 \newcommand{\argmax}{\operatorname*{arg\,max}}
 \newcommand{\ind}{\mathbf1}
 \newcommand{\diag}{\operatorname{diag}}
-% Fail the build if any fixed column exceeds the printable height.
-\newsavebox{\columnbox}
-\newcount\columncount
-\newcommand{\checkedcol}[1]{\begingroup
-  \sbox{\columnbox}{\begin{minipage}[t]{\colwidth}\vspace{0pt}\bodystyle\colstarttrue #1\end{minipage}}%
-  \global\advance\columncount by 1
-  \typeout{DSA5105 COLUMN \the\columncount: \the\dimexpr\ht\columnbox+\dp\columnbox\relax / \the\textheight}%
-  \ifdim\dimexpr\ht\columnbox+\dp\columnbox\relax>\textheight
-    \PackageError{DSA5105}{Column \the\columncount\space exceeds page height}{Shorten this column; do not clip or scale it.}%
-  \fi
-  \usebox{\columnbox}\endgroup}
-\renewcommand{\pair}[2]{%
-  \begin{minipage}[t]{\pairwidth}\vspace{0pt}\bodystyle
-  \checkedcol{#1}\hspace{\gutter}\checkedcol{#2}%
-  \end{minipage}}
-
-
 \begin{document}
 \bodystyle
-\sheet
-{{
+\begin{multicols*}{4}
 \topic{01}{DSA5105 / SLIDES: ERM}
 \key{Risk / generalization}
 $D=\{(x_i,y_i)\}_{i=1}^n$, $x_i\in\R^d$; samples là rows của $X$.
@@ -125,8 +98,8 @@ $f_w(x)=w^\top\phi(x)$; $\Phi_{ij}=\phi_j(x_i)$. Linear theo parameters, có th�
 \[J=\tfrac1{2n}\norm{\Phi w-y}^2,\quad \nabla J=\tfrac1n\Phi^\top(\Phi w-y).\]
 Normal equation $\Phi^\top\Phi w=\Phi^\top y$. Unique iff full column rank; nếu không, min-norm $w=\Phi^+y$.
 \key{Ridge / feature scaling}
-\[J_\lambda=\tfrac1{2n}\norm{\Phi w-y}^2+\tfrac\lambda2\norm w^2.\]
-\[\hat w=(\Phi^\top\Phi+n\lambda I)^{-1}\Phi^\top y.\]
+$J_\lambda=\tfrac1{2n}\norm{\Phi w-y}^2+\tfrac\lambda2\norm w^2.$
+$\hat w=(\Phi^\top\Phi+n\lambda I)^{-1}\Phi^\top y.$
 $\lambda>0$ cho unique ridge khi penalize mọi coefficient. Với $A=\Phi^\top\Phi/n$, eigenvalue $\mu_j$ và OLS $w_0$ khi tồn tại:
 \[\langle\hat w_\lambda,u_j\rangle=\frac{\mu_j}{\mu_j+\lambda}\langle w_0,u_j\rangle.\]
 Directions có eigenvalue nhỏ shrink mạnh hơn. Scaling features đổi effective penalty. Lasso dùng $\lambda\norm w_1$: nonsmooth, có thể tạo exact zeros.
@@ -142,7 +115,7 @@ Binary sigmoid $p=1/(1+e^{-z})$, $p'=p(1-p)$. Với $y\in\{0,1\}$, binary CE log
 
 \topic{03}{GD / SGD / CONVEXITY}
 $\theta^+=\theta-\eta\nabla F(\theta)$. SGD dùng minibatch average; uniform sampling cho unbiased estimate. Convex differentiable:
-\[F(y)\ge F(x)+\nabla F(x)^\top(y-x).\]
+$F(y)\ge F(x)+\nabla F(x)^\top(y-x).$
 $\nabla^2F\succeq0\Rightarrow$ convex; stationary point là global min. NN nói chung nonconvex.
 \key{Smooth-GD proof / quadratic}
 $L$-smooth: $F(x-\eta g)\le F(x)-\eta(1-L\eta/2)\norm g^2$.
@@ -151,8 +124,7 @@ Với $\eta=1/L$, bounded-below $F$:
 Quadratic case từ midterm: SPD Hessian $H$, $\mu=\lambda_{min}$, $L=\lambda_{max}$:
 $e_{t+1}=(I-\eta H)e_t$; convergence mọi start iff $0<\eta<2/L$.
 $\eta^*=2/(L+\mu)$; contraction factor $(\kappa-1)/(\kappa+1)$, $\kappa=L/\mu$.
-}
-{
+
 \topic{04}{KERNEL / REPRESENTER}
 $k(x,z)=\langle\phi(x),\phi(z)\rangle$. Valid iff mọi finite Gram $K$ symmetric PSD: $c^\top Kc\ge0$.
 \key{Proof / counterexample}
@@ -160,14 +132,14 @@ Feature map: $c^\top Kc=\norm{\sum_ic_i\phi(x_i)}^2$. Invalid: một Gram có ne
 Closure: nonnegative sums, products, $g(x)g(z)k(x,z)$, composition $k(Tx,Tz)$, polynomials với nonnegative coefficients. RBF $e^{-\norm{x-z}^2/(2s^2)}$ valid, $s>0$.
 \key{Representer proof}
 $w=w_\parallel+w_\perp$ với $w_\perp\perp\phi_i$: predictions không đổi, norm tăng bởi $\norm{w_\perp}^2$. Strict $L_2$ penalty cho $w_\perp^*=0$:
-\[w^*=\Phi^\top\alpha,\quad f(x)=k_x^\top\alpha.\]
+$w^*=\Phi^\top\alpha,\quad f(x)=k_x^\top\alpha.$
 $\dim\operatorname{span}\{\phi_i\}=\operatorname{rank}\Phi\le\min(n,M)$; representer không có nghĩa sparse.
 
 \topic{05}{KERNEL RIDGE / GEOMETRY}
 Mean-loss ridge dùng $K=\Phi\Phi^\top$, $K_{ij}=k(x_i,x_j)$:
-\[\alpha=(K+n\lambda I)^{-1}y.\]
-\[f(x)=\sum_i\alpha_i k(x_i,x).\]
-\[\hat y=K\alpha,\qquad\norm w^2=\alpha^\top K\alpha.\]
+$\alpha=(K+n\lambda I)^{-1}y.$
+$f(x)=\sum_i\alpha_i k(x_i,x).$
+$\hat y=K\alpha,\qquad\norm w^2=\alpha^\top K\alpha.$
 Derive: $w^*=\Phi^\top\alpha$ rồi dùng
 $(\Phi^\top\Phi+cI)^{-1}\Phi^\top=\Phi^\top(K+cI)^{-1}$.
 \key{Cost / dimensions}
@@ -186,31 +158,29 @@ $(1+x^\top z)^2$ có features $1$, $\sqrt2x_j$, $x_j^2$, $\sqrt2x_jx_\ell$ với
 Slide dùng $f(x)=w^\top\phi(x)$, \emph{không intercept}. $y_i\in\{\pm1\}$; geometric margin $y_if(x_i)/\norm w$. Normalize min functional margin $=1$:
 \[\min_w\tfrac12\norm w^2\quad\text{s.t. }y_iw^\top\phi_i\ge1.\]
 Half-width $1/\norm w$; full width $2/\norm w$.
-\[\mathcal L=\tfrac12\norm w^2+\sum_i\alpha_i(1-y_iw^\top\phi_i).\]
+$\mathcal L=\tfrac12\norm w^2+\sum_i\alpha_i(1-y_iw^\top\phi_i).$
 KKT: primal feasible; $\alpha_i\ge0$; stationarity; complementary slackness:
-\[w=\sum_i\alpha_i y_i\phi_i,\quad
-\alpha_i(1-y_iw^\top\phi_i)=0.\]
+$w=\sum_i\alpha_i y_i\phi_i,\quad \alpha_i(1-y_iw^\top\phi_i)=0.$
 Substitute $w$ vào Lagrangian, dùng Gram:
 \[\max_{\alpha\ge0}\;\sum_i\alpha_i-\tfrac12\sum_{ij}\alpha_i\alpha_jy_iy_jk_{ij}.\]
-\[\hat y=\operatorname{sign}\sum_i\alpha_iy_i k(x_i,x).\]
+$\hat y=\operatorname{sign}\sum_i\alpha_iy_i k(x_i,x).$
 $\alpha_i>0\Rightarrow$ point nằm trên margin;
 strictly outside margin $\Rightarrow\alpha_i=0$.
 \trap{Active constraint không bắt buộc multiplier dương. Không thêm $\sum_i\alpha_iy_i=0$ khi objective không có intercept; equality đó chỉ xuất hiện nếu optimize thêm $b$.}
 \key{Hinge link}
 $\min_w n^{-1}\sum_i(1-y_iw^\top\phi_i)_++\lambda\norm w^2/2$. Separable data + sufficiently small penalty cho zero-hinge optimum: rút về min-norm feasible separator. Logistic vẫn dương tại mọi finite margin.
 
-}}
-{{
+
 \topic{07}{DECISION TREES / SPLITS}
 Leaf optimum: squared loss $\to$ mean; absolute loss $\to$ median; classification error $\to$ mode. Greedy split tối đa hóa
-\[\Delta I=I_P-\sum_c\frac{n_c}{n}I_c.\]
+$\Delta I=I_P-\sum_c\frac{n_c}{n}I_c.$
 Entropy $H=-\sum_kp_k\log_2p_k$; Gini $G=1-\sum_kp_k^2$. Regression dùng child SSE. Deeper tree mở rộng class: optimal train error không tăng; test error không bảo đảm giảm. Pruning/min-leaf/depth kiểm soát variance.
 
 
 \topic{08}{BAGGING / RANDOM FOREST}
 \key{Bagging / random forest}
 Bootstrap samples $\to$ fit trees $\to$ average/vote. RF thêm random feature subset tại mỗi split.
-\[\Var(\bar T_B)=\sigma^2\left[\rho_c+\frac{1-\rho_c}{B}\right].\]
+$\Var(\bar T_B)=\sigma^2\left[\rho_c+\frac{1-\rho_c}{B}\right].$
 Giả sử equal variances và common pairwise correlation $\rho_c$; limit $\rho_c\sigma^2$. Tăng $B$ không loại phần correlated. Bagging chủ yếu giảm variance.
 \key{Bias--variance}
 Với squared prediction error ở fixed input và independent zero-mean test noise:
@@ -224,23 +194,22 @@ Với mỗi candidate depth/min-leaf: fit trên $K-1$ folds, evaluate remaining 
 
 \topic{09}{ADABOOST / TRAIN BOUND}
 $D_1(i)=1/n$, weighted error và learner weight:
-\[\epsilon_t=\sum_iD_t(i)\ind[h_t(x_i)\ne y_i].\]
-\[\alpha_t=\tfrac12\log\frac{1-\epsilon_t}{\epsilon_t}.\]
+$\epsilon_t=\sum_iD_t(i)\ind[h_t(x_i)\ne y_i].$
+$\alpha_t=\tfrac12\log\frac{1-\epsilon_t}{\epsilon_t}.$
 \[D_{t+1}(i)=\frac{D_t(i)e^{-\alpha_ty_ih_t(x_i)}}{Z_t}.\]
-\[H(x)=\operatorname{sign}\sum_t\alpha_th_t(x).\]
+$H(x)=\operatorname{sign}\sum_t\alpha_th_t(x).$
 $Z_t=(1-\epsilon_t)e^{-\alpha_t}+\epsilon_te^{\alpha_t}
 =2\sqrt{\epsilon_t(1-\epsilon_t)}$.
 Nếu $\epsilon_t=1/2-\gamma_t$:
-\[\widehat R_T\le\prod_tZ_t\le e^{-2\sum_t\gamma_t^2}.\]
+$\widehat R_T\le\prod_tZ_t\le e^{-2\sum_t\gamma_t^2}.$
 \ex{$\epsilon=.2\Rightarrow\alpha=\log2$, $Z=.8$; mistake/correct relative multiplier $=4$.}
 \trap{Weighted error và weighted final vote. Công thức finite weight cần $0<\epsilon_t<1$; perfect learner xử lý riêng. Train bound không là test guarantee.}
 \key{Derive learner weight}
 Exponential loss $L(F)=n^{-1}\sum_i e^{-y_iF(x_i)}$; $F_t=F_{t-1}+\alpha h_t$. Split weighted loss thành correct/mistake:
-\[Z(\alpha)=(1-\epsilon)e^{-\alpha}+\epsilon e^\alpha.\]
+$Z(\alpha)=(1-\epsilon)e^{-\alpha}+\epsilon e^\alpha.$
 Đặt $Z'(\alpha)=0$ cho formula $\alpha$. Nếu $\epsilon<1/2$, weight dương; $\epsilon=1/2$ cho $0$; $\epsilon>1/2$ có thể flip learner.
 
-}
-{
+
 \topic{10}{NN / BACKPROPAGATION}
 $z^\ell=W^\ell h^{\ell-1}+b^\ell$, $h^\ell=\sigma_\ell(z^\ell)$.
 $\sigma'=\sigma(1-\sigma)$; $\tanh'=1-\tanh^2$; ReLU$'=\ind[z>0]$ khi $z\ne0$ (tại $0$ chọn subgradient).
@@ -256,8 +225,8 @@ $L_2$ penalty $\lambda\norm W_F^2/2$ thêm $\lambda W$.
 \trap{Forward $\to$ loss $\to$ backward $\to$ update. Shared parameters cộng mọi path. Linear layers chồng nhau vẫn affine; UAT là existence, không là training guarantee.}
 \key{Matrix backward / shape check}
 $h=Ax$, $A\in\R^{m\times d}$, upstream $\delta\in\R^m$:
-\[\nabla_xL=A^\top\delta\in\R^d.\]
-\[\nabla_AL=\delta x^\top\in\R^{m\times d}.\]
+$\nabla_xL=A^\top\delta\in\R^d.$
+$\nabla_AL=\delta x^\top\in\R^{m\times d}.$
 Input gradient propagates backward; weight gradient là outer product. Chia gradient cho batch size nếu objective là mean loss.
 \key{Approximation vs optimization}
 Shallow network $f(x)=\sum_{j=1}^M v_j\sigma(w_j^\top x+b_j)$ học features theo data. Nonpolynomial activation + width đủ lớn cho uniform approximation của continuous functions trên compact domain.
@@ -266,9 +235,9 @@ Shallow network $f(x)=\sum_{j=1}^M v_j\sigma(w_j^\top x+b_j)$ học features the
 
 \topic{11}{CNN / WEIGHT SHARING}
 Convolution $\sum_iw_ix_{k-i}$; ML thường dùng cross-correlation $\sum_iw_ix_{k+i}$.
-\[d_{out}=\left\lfloor\frac{d+2p-m}{s}\right\rfloor+1.\]
+$d_{out}=\left\lfloor\frac{d+2p-m}{s}\right\rfloor+1.$
 Input length $d$, filter $m$, padding $p$, stride $s$; dilation $=1$. Valid stride 1: $d-m+1$.
-\[\#params=C_{out}(C_{in}h_kw_k+1).\]
+$\#params=C_{out}(C_{in}h_kw_k+1).$
 Một filter nhìn mọi input channels; cùng weights tại mọi vị trí. Locality $\ne$ sharing. Equivariant: $g(Tx)=Tg(x)$; invariant: $f(Tx)=f(x)$. Convolution hỗ trợ equivariance; pooling/aggregation hỗ trợ approximate invariance.
 \ex{Valid length-3 filter trên length-5 input: output 3, chỉ 3 filter weights; không phải 9 nonzero matrix entries là 9 parameters.}
 \key{Tied-weight matrix}
@@ -281,27 +250,24 @@ Convolution là sparse structured matrix: locality tạo zeros; sharing tie coef
 \topic{12}{RNN / BPTT}
 $h_t=g(h_{t-1},x_t;\theta)$, $L=\sum_t\ell_t(h_t)$; cùng $\theta$ qua time. Đặt $\delta_t=\nabla_{h_t}L$:
 \[\delta_t=\nabla_{h_t}\ell_t+(J_{h_t}g_{t+1})^\top\delta_{t+1},\]
-\[\nabla_\theta L=\sum_t(J_\theta g_t)^\top\delta_t.\]
+$\nabla_\theta L=\sum_t(J_\theta g_t)^\top\delta_t.$
 Linear cell $h_t=Ah_{t-1}+Bx_t$:
 $\nabla_AL=\sum_t\delta_t h_{t-1}^\top$;
 $\nabla_BL=\sum_t\delta_t x_t^\top$.
 \ex{$h_t=ah_{t-1}+x_t$, $h_0=0$, final MSE: $h_3=a^2x_1+ax_2+x_3$, $dL/da=(h_3-y)(2ax_1+x_2)$.}
 Repeated Jacobian products gây vanishing/exploding gradients; LSTM/GRU dùng gates.
-}}
-\newpage
-\sheet
-{{
+
 \topic{13}{PCA: CENTER / EIGENPAIRS}
 Raw columns $x_i\in\R^d$; $\bar x=n^{-1}\sum_ix_i$, $\tilde x_i=x_i-\bar x$. $X\in\R^{n\times d}$ có rows $\tilde x_i^\top$; $S=X^\top X/n$.
-\[Su_j=\lambda_ju_j,\quad\lambda_1\ge\cdots\ge\lambda_d\ge0.\]
+$Su_j=\lambda_ju_j,\quad\lambda_1\ge\cdots\ge\lambda_d\ge0.$
 $S=S^\top\succeq0$; $U_m=[u_1,\ldots,u_m]\in\R^{d\times m}$ có orthonormal columns, $1\le m\le d$:
-\[U_m^\top U_m=I_m.\]
+$U_m^\top U_m=I_m.$
 \key{Variance / direction} $\norm u=1$:
-\[V(u)=\frac1n\sum_i(u^\top\tilde x_i)^2=u^\top Su.\]
+$V(u)=\frac1n\sum_i(u^\top\tilde x_i)^2=u^\top Su.$
 Lagrangian $u^\top Su-\lambda(u^\top u-1)$ cho $Su=\lambda u$; maximize variance bằng top eigenvalues.
 \key{Scores / reconstruction}
-\[z_i=U_m^\top\tilde x_i,\qquad Z=XU_m\in\R^{n\times m}.\]
-\[\hat{\tilde x}_i=U_mU_m^\top\tilde x_i,\quad\hat X=ZU_m^\top.\]
+$z_i=U_m^\top\tilde x_i,\qquad Z=XU_m\in\R^{n\times m}.$
+$\hat{\tilde x}_i=U_mU_m^\top\tilde x_i,\quad\hat X=ZU_m^\top.$
 Raw reconstruction $\hat x_i=\bar x+\hat{\tilde x}_i$; $\hat X\in\R^{n\times d}$ chứa centered reconstructions.
 \key{Variance / optimal reconstruction}
 \[E_m=\frac1n\norm{X-\hat X}_F^2=\sum_{j>m}\lambda_j.\]
@@ -313,8 +279,8 @@ $E_m$: mean squared Euclidean error; $R(m)$: retained variance ratio. Closest-po
 
 \topic{14}{WHITENING / RECONSTRUCTION}
 Đặt $\Lambda_m=\diag(\lambda_1,\ldots,\lambda_m)$; $Z^\top Z/n=\Lambda_m$. Với $\lambda_m>0$:
-\[w_i=\Lambda_m^{-1/2}z_i,\quad W=Z\Lambda_m^{-1/2}.\]
-\[W^\top W/n=I_m,\quad\hat X=W\Lambda_m^{1/2}U_m^\top.\]
+$w_i=\Lambda_m^{-1/2}z_i,\quad W=Z\Lambda_m^{-1/2}.$
+$W^\top W/n=I_m,\quad\hat X=W\Lambda_m^{1/2}U_m^\top.$
 Whitening = PCA scores / standard deviations.
 \key{Rank / invertibility}
 Giữ $m=d$: $\hat X=X$. $E_m=0$ iff mọi discarded eigenvalue bằng $0$; $m<\operatorname{rank}(X)\Rightarrow E_m>0$.
@@ -323,32 +289,32 @@ Giữ $m=d$: $\hat X=X$. $E_m=0$ iff mọi discarded eigenvalue bằng $0$; $m<\
 
 \topic{15}{FEATURE PCA / AUTOENCODER}
 Map $\phi:\R^d\to\R^M$; $\Phi_{raw}\in\R^{n\times M}$ có row $i$ là $\phi(x_i)^\top$. Center \emph{sau} mapping:
-\[\bar\phi=\tfrac1n\sum_i\phi(x_i),\quad
-\Phi=\Phi_{raw}-\ind_n\bar\phi^\top.\]
+$\bar\phi=\tfrac1n\sum_i\phi(x_i),\quad \Phi=\Phi_{raw}-\ind_n\bar\phi^\top.$
 Center input chưa đủ với nonlinear $\phi$.
-\[S_\phi=\Phi^\top\Phi/n\in\R^{M\times M}.\]
-\[S_\phi U_m^\phi=U_m^\phi\Lambda_m^\phi.\]
+$S_\phi=\Phi^\top\Phi/n\in\R^{M\times M}.$
+$S_\phi U_m^\phi=U_m^\phi\Lambda_m^\phi.$
 Top orthonormal $U_m^\phi=[u_1^\phi,\ldots,u_m^\phi]\in\R^{M\times m}$ (largest eigenvalues).
-\[Z^\phi=\Phi U_m^\phi\in\R^{n\times m}.\]
+$Z^\phi=\Phi U_m^\phi\in\R^{n\times m}.$
 Reconstruction $\hat\Phi=Z^\phi(U_m^\phi)^\top$; cộng $\bar\phi$ để về raw features.
 \trap{Good feature reconstruction $\not\Rightarrow$ good input reconstruction; $\phi$ có thể noninvertible.}
+\par\noindent\begin{minipage}[t]{\linewidth}\bodystyle
 \key{Autoencoder / MLP (sl. 58--59)}
 Input $d$, latent bottleneck $m$, hidden $q$; elementwise $\sigma$. Encoder:
-\[z_i=E_\theta(x_i)=A\sigma(W_e x_i+b).\]
+$z_i=E_\theta(x_i)=A\sigma(W_e x_i+b).$
 $W_e\in\R^{q\times d}$, $b\in\R^q$, $A\in\R^{m\times q}$. Decoder:
-\[\hat x_i=D_\psi(z_i)=B\sigma(V_d z_i+c).\]
+$\hat x_i=D_\psi(z_i)=B\sigma(V_d z_i+c).$
 $V_d\in\R^{q\times m}$, $c\in\R^q$, $B\in\R^{d\times q}$. Output $\in\R^d$; reconstruction loss:
 \[\min_{\theta,\psi}\frac1n\sum_i\norm{x_i-\hat x_i}^2.\]
 Target $=x_i$, không cần $y_i$. Joint minibatch SGD cập nhật $\theta,\psi$ bằng backprop qua decoder rồi encoder.
+\end{minipage}\par
 
-}
-{
+
 \topic{16}{K-MEANS / HARD ASSIGNMENT}
 Chọn $K$ trước; $z_i\in\{1,\ldots,K\}$:
-\[J(z,\mu)=\sum_i\norm{x_i-\mu_{z_i}}^2.\]
+$J(z,\mu)=\sum_i\norm{x_i-\mu_{z_i}}^2.$
 Lloyd: initialize centers $\to$ assign nearest center $\to$ update mean $\to$ repeat.
-\[z_i\gets\argmin_k\norm{x_i-\mu_k}^2.\]
-\[\mu_k\gets\frac1{|C_k|}\sum_{i\in C_k}x_i.\]
+$z_i\gets\argmin_k\norm{x_i-\mu_k}^2.$
+$\mu_k\gets\frac1{|C_k|}\sum_{i\in C_k}x_i.$
 Mỗi step không tăng $J$; local optimum phụ thuộc init. Empty cluster phải có rule (vd. reseed). Khởi tạo khác nhau có thể dẫn tới các local optima khác nhau.
 \ex{1D $x=(0,2,8,10)$, centers $(0,8)$: assignments $\{0,2\}$, $\{8,10\}$; means $(1,9)$; $J=4$.}
 \key{Assumptions / geometry}
@@ -360,7 +326,7 @@ $d$-dimensional Gaussian ($\Sigma\succ0$):
 \[\mathcal N(x\mid\mu,\Sigma)=\frac{e^{-\frac12(x-\mu)^\top\Sigma^{-1}(x-\mu)}}{(2\pi)^{d/2}|\Sigma|^{1/2}}.\]
 Mahalanobis distance dùng $\Sigma^{-1}$; determinant chuẩn hóa density. Diagonal $\Sigma$ cho independent coordinates \emph{trong Gaussian component}.
 \key{Mixture model}
-\[p(x)=\sum_{k=1}^K\pi_k\mathcal N(x\mid\mu_k,\Sigma_k).\]
+$p(x)=\sum_{k=1}^K\pi_k\mathcal N(x\mid\mu_k,\Sigma_k).$
 $\pi_k\ge0$, $\sum_k\pi_k=1$.
 Latent label $z$: $P(z=k)=\pi_k$;
 $p(x\mid z=k)=\mathcal N_k(x)$.
@@ -388,15 +354,14 @@ Initialize $\pi_k,\mu_k,\Sigma_k$ $\to$ compute normalized responsibilities $\to
 \key{Hard vs soft}
 K-means: one-hot assignment theo Euclidean distance. GMM: probability assignment theo prior, covariance shape và density. Equal isotropic covariance + equal priors cho nearest-mean posterior maximizer.
 
-}}
-{{
+
 \topic{19}{MDP / RETURNS / POLICY}
 MDP $(\mathcal S,\mathcal A,p,r,\gamma)$; $p(s',r\mid s,a)$ là joint next-state/reward distribution. Markov: next outcome phụ thuộc current state/action, không cần toàn history.
-\[G_t=\sum_{k\ge0}\gamma^kR_{t+k+1},\quad0\le\gamma<1.\]
+$G_t=\sum_{k\ge0}\gamma^kR_{t+k+1},\quad0\le\gamma<1.$
 Stochastic policy $\pi(a\mid s)$; deterministic $\mu:\mathcal S\to\mathcal A$.
-\[V^\pi(s)=\E_\pi[G_t\mid S_t=s].\]
-\[Q^\pi(s,a)=\E_\pi[G_t\mid S_t=s,A_t=a].\]
-\[V^\pi(s)=\sum_a\pi(a\mid s)Q^\pi(s,a).\]
+$V^\pi(s)=\E_\pi[G_t\mid S_t=s].$
+$Q^\pi(s,a)=\E_\pi[G_t\mid S_t=s,A_t=a].$
+$V^\pi(s)=\sum_a\pi(a\mid s)Q^\pi(s,a).$
 
 \cond{Finite discounted results dưới đây dùng finite states/actions và bounded rewards. Episodic $\gamma=1$ cần thêm assumptions; không áp dụng contraction một cách máy móc.}
 
@@ -409,8 +374,7 @@ V^\pi(s)&=\sum_a\pi(a\mid s)Q^\pi(s,a).
 \end{aligned}\]
 $P^\pi_{ss'}=\sum_a\pi(a\mid s)P(s'\mid s,a)$,
 $r^\pi_s=\sum_a\pi(a\mid s)r(s,a)$:
-\[V^\pi=r^\pi+\gamma P^\pi V^\pi,\quad
-V^\pi=(I-\gamma P^\pi)^{-1}r^\pi.\]
+$V^\pi=r^\pi+\gamma P^\pi V^\pi,\quad V^\pi=(I-\gamma P^\pi)^{-1}r^\pi.$
 Optimality:
 \[\begin{aligned}
 Q^*(s,a)&=r(s,a)+\gamma\E[V^*(S')\mid s,a],\\
@@ -443,21 +407,20 @@ Nếu $\Delta_k=\norm{V_{k+1}-V_k}_\infty$:
 4. Repeat đến policy stable.
 Policy improvement: nếu $Q^\pi(s,\pi'(s))\ge V^\pi(s)$ mọi $s$, thì $V^{\pi'}\ge V^\pi$.
 \cond{Finite MDP + exact evaluation: finite termination với consistent tie handling (giữ old action nếu đang maximizer). Value iteration khác: backup values, không solve full policy mỗi sweep.}
-}
-{
+
 \topic{23}{MONTE CARLO / TD(0)}
 Model-based biết $p,r$; model-free dùng sampled transitions. MC estimates $V^\pi(s)$ bằng average observed returns $G_t$; cần completed return, không bootstrap.
 \key{TD target / error}
-\[\delta_t=r_{t+1}+\gamma V(s_{t+1})-V(s_t).\]
-\[V(s_t)\gets V(s_t)+\alpha\delta_t.\]
+$\delta_t=r_{t+1}+\gamma V(s_{t+1})-V(s_t).$
+$V(s_t)\gets V(s_t)+\alpha\delta_t.$
 TD dùng one-step sample + current value estimate; update trước episode end. Nếu true terminal, bootstrap term $0$.
 
 \trap{$V(s')>V(s)$ không đủ để update tăng; phải xét reward \emph{và} discount. TD bootstrap có bias từ estimate, MC thường variance cao hơn.}
 
 \topic{24}{Q-LEARNING / EXPLORATION}
 Learn $Q^*$ trực tiếp từ transition sample $(s,a,r,s')$:
-\[y=r+\gamma\max_{a'}Q(s',a').\]
-\[Q(s,a)\gets Q(s,a)+\alpha[y-Q(s,a)].\]
+$y=r+\gamma\max_{a'}Q(s',a').$
+$Q(s,a)\gets Q(s,a)+\alpha[y-Q(s,a)].$
 Target theo Bellman optimality, khác TD evaluation của fixed policy. Current transition chỉ update visited state-action entry.
 \key{Behavior vs target}
 $\varepsilon$-greedy: probability $\varepsilon$ chọn random action, otherwise chọn $\argmax_aQ(s,a)$. Exploration tạo samples; target vẫn dùng greedy max ở next state.
@@ -467,7 +430,7 @@ $\varepsilon$-greedy: probability $\varepsilon$ chọn random action, otherwise 
 \topic{25}{DQN / REPLAY / TARGET NET}
 Approximate $Q(s,a;\theta)$ bằng neural net.
 Store $(s,a,r,s',d)$ trong replay buffer; sample random minibatch. $d=1$ khi true terminal.
-\[y=r+\gamma(1-d)\max_{a'}Q(s',a';\theta^-).\]
+$y=r+\gamma(1-d)\max_{a'}Q(s',a';\theta^-).$
 \[L(\theta)=\frac1B\sum_{j=1}^B[y_j-Q(s_j,a_j;\theta)]^2.\]
 Giữ target $y$ fixed khi differentiate; optimizer update $\theta$; định kỳ copy $\theta^-\gets\theta$.
 \key{Why two mechanisms?}
@@ -478,7 +441,7 @@ Replay giảm sequential correlation và tái sử dụng data; target net làm 
 \key{PCA covariance $S\succeq0$ (mục 13)}
 \[v_{t+1}=\frac{Sv_t}{\norm{Sv_t}_2}.\]
 Với $\lambda_1>\lambda_2$, $\alpha_1=u_1^\top v_0\ne0$: normalized iterates hội tụ về $\pm u_1$.
-\[\rho=\frac{\lambda_2}{\lambda_1}<1,\quad\text{direction error }O(\rho^t).\]
+$\rho=\frac{\lambda_2}{\lambda_1}<1,\quad\text{direction error }O(\rho^t).$
 Dense covariance, slide 39:
 \[\begin{aligned}
 \text{Full EVD}:&\ O(d^3),\\
@@ -486,13 +449,13 @@ m\text{ PCs (iter.)}:&\ O(md^2)/\text{iteration}.
 \end{aligned}\]
 \key{PageRank}
 Với importance truyền theo outgoing links, chọn column-stochastic matrix $A$: $A_{ij}=1/d_j^{out}$ nếu $j\to i$. Stationary importance thỏa $Ar=r$.
-\[r_{t+1}=Ar_t.\]
+$r_{t+1}=Ar_t.$
 Eigenvalue $1$; normalize giúp ổn định số và giữ probability interpretation.
 \key{Teleportation}
 Repair dangling columns bằng probability vector $v$. Với $0\le\alpha<1$:
-\[r_{t+1}=\alpha Ar_t+(1-\alpha)v.\]
+$r_{t+1}=\alpha Ar_t+(1-\alpha)v.$
 $\ind^\top v=1$, $v>0$ cho positive Google matrix và unique stationary distribution.
 \trap{Row-stochastic $A$ + column vector: cần transpose. Undamped iteration có thể không converge dù có eigenvalue $1$.}
 
-}}
+\end{multicols*}
 \end{document}
