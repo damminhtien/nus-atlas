@@ -17,7 +17,7 @@ subjects. The supplied original remains outside the repository.
   neural networks, CNNs, and RNNs.
 - Page 2: PCA/whitening/feature-space PCA/autoencoders, K-means/GMM, finite
   discounted MDPs, value/policy iteration, MC/TD/Q-learning, and DQN.
-  Topic 15 contains autoencoder training; topic 27 gives its MLP architecture.
+  Topic 15 keeps autoencoder MLP architecture, loss, and training together.
 - Power iteration/PageRank is limited to the topic introduced in the Deep RL
   slides; no past-paper graph-kernel, spectral-clustering, GNN, LS-SVM,
   leave-one-out, or shortest-path exercises are included. Kernel PCA and
@@ -59,7 +59,7 @@ into this repository. Page numbers are 1-based PDF pages.
 | 07–09 | `DSA5105/Lec3_SL_DecisionTree.pdf`, pp. 3–34 | Greedy tree splits, bagging/random forests, bias–variance, and sequential boosting. |
 | 03, 10 | `DSA5105/Lec4_SL_NN_GD.pdf`, pp. 3–25, 27–52 | Separate approximation, optimization, and efficient chain-rule differentiation. |
 | 11–12 | `DSA5105/Lec5_SL_CNN_RNN.pdf`, pp. 13–32, 35–40 | Distinguish weight sharing/locality and equivariance/invariance; sum recurrent gradient contributions. |
-| 13–15, 27 | `DSA5105/Lec6_UL_PCA.pdf`, pp. 15–31, 34–60 | Center before PCA; separate scores/reconstruction; use the explicitly taught feature matrix, whitening, autoencoder loss, shallow MLP dimensions, and joint minibatch SGD. |
+| 13–15 | `DSA5105/Lec6_UL_PCA.pdf`, pp. 15–31, 34–60 | Center before PCA; separate scores/reconstruction; use the explicitly taught feature matrix, whitening, autoencoder loss, shallow MLP dimensions, and joint minibatch SGD. |
 | 16–18 | `DSA5105/Lec9_UL_K-means_GMM.pdf`, pp. 4–22, 23–39 | Contrast hard assignments with Gaussian posterior responsibilities and weighted parameter updates. |
 | 19–20 | `DSA5105/Lec10_RL_MDP_DP.pdf`, pp. 13–44 | Separate policy expectation from optimality maximization under discounted-MDP assumptions. |
 | 21–24 | `DSA5105/Lec11_RL.pdf`, pp. 8–20, 25–39 | Distinguish exact model-based backups, sampled returns, TD evaluation, and Q-learning. |

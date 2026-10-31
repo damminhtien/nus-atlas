@@ -292,12 +292,11 @@ Repeated Jacobian products gây vanishing/exploding gradients; LSTM/GRU dùng ga
 \sheet
 {{
 \topic{13}{PCA: CENTER / EIGENPAIRS}
-Raw $x_i\in\R^d$ là column vector; $\bar x=n^{-1}\sum_ix_i$, $\tilde x_i=x_i-\bar x$. $X\in\R^{n\times d}$ có row $i$ là $\tilde x_i^\top$; $S=X^\top X/n$.
+Raw columns $x_i\in\R^d$; $\bar x=n^{-1}\sum_ix_i$, $\tilde x_i=x_i-\bar x$. $X\in\R^{n\times d}$ có rows $\tilde x_i^\top$; $S=X^\top X/n$.
 \[Su_j=\lambda_ju_j,\quad\lambda_1\ge\cdots\ge\lambda_d\ge0.\]
 $S=S^\top\succeq0$; $U_m=[u_1,\ldots,u_m]\in\R^{d\times m}$ có orthonormal columns, $1\le m\le d$:
 \[U_m^\top U_m=I_m.\]
-\key{Projected variance / optimal direction}
-Empirical projected variance, $\norm u=1$:
+\key{Variance / direction} $\norm u=1$:
 \[V(u)=\frac1n\sum_i(u^\top\tilde x_i)^2=u^\top Su.\]
 Lagrangian $u^\top Su-\lambda(u^\top u-1)$ cho $Su=\lambda u$; maximize variance bằng top eigenvalues.
 \key{Scores / reconstruction}
@@ -307,9 +306,8 @@ Raw reconstruction $\hat x_i=\bar x+\hat{\tilde x}_i$; $\hat X\in\R^{n\times d}$
 \key{Variance / optimal reconstruction}
 \[E_m=\frac1n\norm{X-\hat X}_F^2=\sum_{j>m}\lambda_j.\]
 \[R(m)=\frac{\sum_{j\le m}\lambda_j}{\sum_j\lambda_j},\quad\operatorname{tr}(S)>0.\]
-$E_m$: mean squared Euclidean error; $R(m)$: retained variance ratio. Projection là closest point trong subspace; Pythagoras:
+$E_m$: mean squared Euclidean error; $R(m)$: retained variance ratio. Closest-point projection + Pythagoras:
 \[\norm{\tilde x_i-\hat{\tilde x}_i}^2=\sum_{j>m}(u_j^\top\tilde x_i)^2.\]
-Average cho $E_m$; top eigenvalues minimize error.
 \ex{$S=\left[\begin{smallmatrix}2.5&2\\2&2.5\end{smallmatrix}\right]$: $\lambda=(4.5,.5)$, $u_1=(1,1)^\top/\sqrt2$. Giữ 1 PC: 90\% variance; mean squared Euclidean error $.5$.}
 \trap{Dùng train mean; sign tùy ý, repeated eigenvalues cho nonunique basis. Đổi sang $1/(n-1)$ scale eigenvalues, không đổi directions.}
 
@@ -317,7 +315,7 @@ Average cho $E_m$; top eigenvalues minimize error.
 Đặt $\Lambda_m=\diag(\lambda_1,\ldots,\lambda_m)$; $Z^\top Z/n=\Lambda_m$. Với $\lambda_m>0$:
 \[w_i=\Lambda_m^{-1/2}z_i,\quad W=Z\Lambda_m^{-1/2}.\]
 \[W^\top W/n=I_m,\quad\hat X=W\Lambda_m^{1/2}U_m^\top.\]
-PCA rotate; whitening thêm rescale từng PC bằng standard deviation.
+Whitening = PCA scores / standard deviations.
 \key{Rank / invertibility}
 Giữ $m=d$: $\hat X=X$. $E_m=0$ iff mọi discarded eigenvalue bằng $0$; $m<\operatorname{rank}(X)\Rightarrow E_m>0$.
 \trap{Không chia cho zero eigenvalues. Unit covariance không suy ra independent/Gaussian. Sau full whitening mọi unit direction có variance bằng nhau.}
@@ -331,12 +329,15 @@ Features $\phi(x_i)\in\R^M$ là columns; $\Phi_{raw}$ chứa rows $\phi(x_i)^\to
 $U_m^\phi\in\R^{M\times m}$: top orthonormal eigenvectors của $S_\phi$, khác input basis $U_m$.
 \[Z^\phi=\Phi U_m^\phi,\quad\hat\Phi=Z^\phi(U_m^\phi)^\top.\]
 $\hat\Phi$ reconstructs centered features; cộng $\bar\phi$ để về raw features.
-\key{Encoder / decoder}
-PCA: linear maps (mục 13). Autoencoder (MLP: mục 27):
-\[z_i=E_\theta(x_i),\quad\hat x_i=D_\psi(z_i).\]
+\trap{Good feature-space reconstruction không tự là good input-space reconstruction; nonlinear feature map có thể không invertible.}
+\key{Autoencoder / MLP (sl. 58--59)}
+$d$: input, $m$: latent bottleneck, $q$: hidden units; $\sigma$ elementwise. Encoder:
+\[z_i=E_\theta(x_i)=A\sigma(W_e x_i+b).\]
+$W_e\in\R^{q\times d}$, $b\in\R^q$, $A\in\R^{m\times q}$. Decoder:
+\[\hat x_i=D_\psi(z_i)=B\sigma(V_d z_i+c).\]
+$V_d\in\R^{q\times m}$, $c\in\R^q$, $B\in\R^{d\times q}$. Output trở về $\R^d$. Reconstruction loss:
 \[\min_{\theta,\psi}\frac1n\sum_i\norm{x_i-\hat x_i}^2.\]
 Input $x_i$ cũng là target, không cần nhãn $y_i$. Optimize $\theta,\psi$ jointly: backprop qua decoder rồi encoder; minibatch SGD cập nhật cả hai.
-\trap{Good feature-space reconstruction không tự là good input-space reconstruction; nonlinear feature map có thể không invertible.}
 
 }
 {
@@ -480,13 +481,6 @@ Repair dangling columns bằng probability vector $v$. Với $0\le\alpha<1$:
 \[r_{t+1}=\alpha Ar_t+(1-\alpha)v.\]
 $\ind^\top v=1$, $v>0$ cho positive Google matrix và unique stationary distribution.
 \trap{Nếu dùng row-stochastic transition matrix và column vector, cần transpose. Undamped iteration không luôn converge chỉ vì eigenvalue $1$ tồn tại.}
-
-\topic{27}{AUTOENCODER MLP / SL. 58--59}
-$d$: input, $m$: latent bottleneck, $q$: hidden units; $\sigma$ elementwise. Encoder:
-\[E_\theta(x)=A\sigma(W_e x+b).\]
-$W_e\in\R^{q\times d}$, $b\in\R^q$, $A\in\R^{m\times q}$. Decoder:
-\[D_\psi(z)=B\sigma(V_d z+c).\]
-$V_d\in\R^{q\times m}$, $c\in\R^q$, $B\in\R^{d\times q}$. Output trở về $\R^d$; loss và training ở mục 15.
 
 }}
 \end{document}
