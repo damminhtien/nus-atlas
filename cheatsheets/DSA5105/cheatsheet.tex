@@ -332,10 +332,10 @@ $U_m^\phi\in\R^{M\times m}$: top orthonormal eigenvectors của $S_\phi$, khác 
 \[Z^\phi=\Phi U_m^\phi,\quad\hat\Phi=Z^\phi(U_m^\phi)^\top.\]
 $\hat\Phi$ reconstructs centered features; cộng $\bar\phi$ để về raw features.
 \key{Encoder / decoder}
-PCA: linear encoder/decoder (mục 13). Nonlinear autoencoder trên raw samples:
-\[z_i=f_\theta(x_i),\quad\hat x_i=g_\psi(z_i).\]
+PCA: linear maps (mục 13). Autoencoder (MLP: mục 27):
+\[z_i=E_\theta(x_i),\quad\hat x_i=D_\psi(z_i).\]
 \[\min_{\theta,\psi}\frac1n\sum_i\norm{x_i-\hat x_i}^2.\]
-Latent dimension tạo bottleneck. Train encoder/decoder jointly; output có original dimension.
+Input $x_i$ cũng là target, không cần nhãn $y_i$. Optimize $\theta,\psi$ jointly: backprop qua decoder rồi encoder; minibatch SGD cập nhật cả hai.
 \trap{Good feature-space reconstruction không tự là good input-space reconstruction; nonlinear feature map có thể không invertible.}
 
 }
@@ -480,6 +480,13 @@ Repair dangling columns bằng probability vector $v$. Với $0\le\alpha<1$:
 \[r_{t+1}=\alpha Ar_t+(1-\alpha)v.\]
 $\ind^\top v=1$, $v>0$ cho positive Google matrix và unique stationary distribution.
 \trap{Nếu dùng row-stochastic transition matrix và column vector, cần transpose. Undamped iteration không luôn converge chỉ vì eigenvalue $1$ tồn tại.}
+
+\topic{27}{AUTOENCODER MLP / SL. 58--59}
+$d$: input, $m$: latent bottleneck, $q$: hidden units; $\sigma$ elementwise. Encoder:
+\[E_\theta(x)=A\sigma(W_e x+b).\]
+$W_e\in\R^{q\times d}$, $b\in\R^q$, $A\in\R^{m\times q}$. Decoder:
+\[D_\psi(z)=B\sigma(V_d z+c).\]
+$V_d\in\R^{q\times m}$, $c\in\R^q$, $B\in\R^{d\times q}$. Output trở về $\R^d$; loss và training ở mục 15.
 
 }}
 \end{document}
