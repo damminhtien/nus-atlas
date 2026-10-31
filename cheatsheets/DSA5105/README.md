@@ -71,6 +71,13 @@ normal equations. SVM primarily has no intercept, matching Lecture 2.
 Small arithmetic examples illustrate these taught methods rather than
 reproducing past-paper questions.
 
+PCA topics 13–15 use raw column samples $x_i$, centered samples
+$\tilde x_i=x_i-\bar x$, and a matrix $X$ of centered rows throughout.
+Covariance and mean reconstruction error both use the divisor $n$.
+$Z$ denotes PCA scores, $\hat X$ centered reconstructions, and $W$ whitened
+scores. Feature-space quantities use $\Phi$, $S_\phi$, $U_m^\phi$,
+$\Lambda_m^\phi$, and $Z^\phi$ to distinguish them from input-space PCA.
+
 Before accepting a rebuilt PDF, require no missing glyphs or overfull boxes,
 verify exactly two A4 pages, and inspect both rendered pages. Repository
 LaTeX validators cover the app's JSON content; compiling and visually

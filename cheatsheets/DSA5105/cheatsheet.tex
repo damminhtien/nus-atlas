@@ -292,48 +292,50 @@ Repeated Jacobian products gây vanishing/exploding gradients; LSTM/GRU dùng ga
 \sheet
 {{
 \topic{13}{PCA: CENTER / EIGENPAIRS}
-$X_{raw}\in\R^{n\times d}$; $\bar x=n^{-1}\sum_ix_i$;
-$X=X_{raw}-\ind\bar x^\top$;
-$S=X^\top X/n$ (centered rows).
+Raw $x_i\in\R^d$ là column vector; $\bar x=n^{-1}\sum_ix_i$, $\tilde x_i=x_i-\bar x$. $X\in\R^{n\times d}$ có row $i$ là $\tilde x_i^\top$; $S=X^\top X/n$.
 \[Su_j=\lambda_ju_j,\quad\lambda_1\ge\cdots\ge\lambda_d\ge0.\]
-$S=S^\top\succeq0$; projected variance với $\norm u=1$:
-\[V(u)=\Var(u^\top x)=u^\top Su.\]
-\[\max_{\norm u=1}u^\top Su\ \Rightarrow\ Su=\lambda u.\]
-Lagrangian $u^\top Su-\lambda(u^\top u-1)$; leading eigenvalue cho maximum variance. Với $U_m=[u_1,\ldots,u_m]$:
-\[U_m^\top U_m=I_m,\qquad\hat x=U_mU_m^\top x.\]
-\[Z=XU_m,\quad \hat X=XU_mU_m^\top.\]
-Scores $Z\in\R^{n\times m}$ khác reconstruction $\hat X\in\R^{n\times d}$. $x$ đã center; cộng mean để về raw coordinates.
+$S=S^\top\succeq0$; $U_m=[u_1,\ldots,u_m]\in\R^{d\times m}$ có orthonormal columns, $1\le m\le d$:
+\[U_m^\top U_m=I_m.\]
+\key{Projected variance / optimal direction}
+Empirical projected variance, $\norm u=1$:
+\[V(u)=\frac1n\sum_i(u^\top\tilde x_i)^2=u^\top Su.\]
+Lagrangian $u^\top Su-\lambda(u^\top u-1)$ cho $Su=\lambda u$; maximize variance bằng top eigenvalues.
+\key{Scores / reconstruction}
+\[z_i=U_m^\top\tilde x_i,\qquad Z=XU_m\in\R^{n\times m}.\]
+\[\hat{\tilde x}_i=U_mU_m^\top\tilde x_i,\quad\hat X=ZU_m^\top.\]
+Raw reconstruction $\hat x_i=\bar x+\hat{\tilde x}_i$; $\hat X\in\R^{n\times d}$ chứa centered reconstructions.
 \key{Variance / optimal reconstruction}
 \[E_m=\frac1n\norm{X-\hat X}_F^2=\sum_{j>m}\lambda_j.\]
-\[R(m)=EVR=\frac{\sum_{j\le m}\lambda_j}{\sum_j\lambda_j}.\]
-$R(m)$ xác định khi $\operatorname{tr}(S)>0$.
-Proof cue: $x_i=\sum_j\alpha_{ij}u_j$; approximation trong first $m$ directions dùng coefficients $\beta_{ij}$:
-\[\norm{x_i-\hat x_i}^2=\sum_{j\le m}(\alpha_{ij}-\beta_{ij})^2+\sum_{j>m}\alpha_{ij}^2.\]
-Chọn $\beta_{ij}=\alpha_{ij}=u_j^\top x_i$; giữ directions có eigenvalues lớn nhất.
+\[R(m)=\frac{\sum_{j\le m}\lambda_j}{\sum_j\lambda_j},\quad\operatorname{tr}(S)>0.\]
+$E_m$: mean squared Euclidean error; $R(m)$: retained variance ratio. Projection là closest point trong subspace; Pythagoras:
+\[\norm{\tilde x_i-\hat{\tilde x}_i}^2=\sum_{j>m}(u_j^\top\tilde x_i)^2.\]
+Average cho $E_m$; top eigenvalues minimize error.
 \ex{$S=\left[\begin{smallmatrix}2.5&2\\2&2.5\end{smallmatrix}\right]$: $\lambda=(4.5,.5)$, $u_1=(1,1)^\top/\sqrt2$. Giữ 1 PC: 90\% variance; mean squared Euclidean error $.5$.}
-\trap{Center bằng train mean; eigenvector sign tùy ý. Nếu repeated eigenvalues, basis trong eigenspace không unique. $1/(n-1)$ đổi eigenvalues, không đổi directions.}
+\trap{Dùng train mean; sign tùy ý, repeated eigenvalues cho nonunique basis. Đổi sang $1/(n-1)$ scale eigenvalues, không đổi directions.}
 
 \topic{14}{WHITENING / RECONSTRUCTION}
-Với positive covariance eigenvalues:
-\[X_{white}=XU_m\Lambda_m^{-1/2}.\]
-\[X_{white}^\top X_{white}/n=I_m.\]
-PCA chỉ rotate sang principal coordinates; whitening rotate \emph{và} rescale từng coordinate bằng standard deviation.
+Đặt $\Lambda_m=\diag(\lambda_1,\ldots,\lambda_m)$; $Z^\top Z/n=\Lambda_m$. Với $\lambda_m>0$:
+\[w_i=\Lambda_m^{-1/2}z_i,\quad W=Z\Lambda_m^{-1/2}.\]
+\[W^\top W/n=I_m,\quad\hat X=W\Lambda_m^{1/2}U_m^\top.\]
+PCA rotate; whitening thêm rescale từng PC bằng standard deviation.
 \key{Rank / invertibility}
-Giữ toàn bộ orthonormal basis $U$: $Z=XU$, $X=ZU^\top$. Nếu giữ $m<\operatorname{rank}(X)$, reconstruction mất phần discarded eigenspace.
-\trap{Không chia cho zero eigenvalues. Unit covariance không suy ra independent hay Gaussian. Sau full whitening mọi unit direction có variance bằng nhau; không còn unique largest-variance axis.}
+Giữ $m=d$: $\hat X=X$. $E_m=0$ iff mọi discarded eigenvalue bằng $0$; $m<\operatorname{rank}(X)\Rightarrow E_m>0$.
+\trap{Không chia cho zero eigenvalues. Unit covariance không suy ra independent/Gaussian. Sau full whitening mọi unit direction có variance bằng nhau.}
 
 
 \topic{15}{FEATURE PCA / AUTOENCODER}
-Nonlinear features $\phi(x)=(\phi_1(x),\ldots,\phi_M(x))^\top$; $\Phi_{raw}\in\R^{n\times M}$. Center \emph{sau} feature mapping:
+Features $\phi(x_i)\in\R^M$ là columns; $\Phi_{raw}$ chứa rows $\phi(x_i)^\top$. Center \emph{sau} mapping:
 \[\bar\phi=\tfrac1n\sum_i\phi(x_i),\quad
 \Phi=\Phi_{raw}-\ind\bar\phi^\top.\]
-\[S_\phi=\Phi^\top\Phi/n,\quad Z=\Phi U_m.\]
-Chọn top eigenvectors của $S_\phi$, không của input covariance nếu đang làm feature-space PCA.
+\[S_\phi=\Phi^\top\Phi/n,\quad S_\phi U_m^\phi=U_m^\phi\Lambda_m^\phi.\]
+$U_m^\phi\in\R^{M\times m}$: top orthonormal eigenvectors của $S_\phi$, khác input basis $U_m$.
+\[Z^\phi=\Phi U_m^\phi,\quad\hat\Phi=Z^\phi(U_m^\phi)^\top.\]
+$\hat\Phi$ reconstructs centered features; cộng $\bar\phi$ để về raw features.
 \key{Encoder / decoder}
-PCA encoder $z=U_m^\top x$; decoder $\hat x=U_mz$ cho centered input. Nonlinear autoencoder:
-\[z=f_\theta(x),\quad\hat x=g_\psi(z).\]
+PCA: linear encoder/decoder (mục 13). Nonlinear autoencoder trên raw samples:
+\[z_i=f_\theta(x_i),\quad\hat x_i=g_\psi(z_i).\]
 \[\min_{\theta,\psi}\frac1n\sum_i\norm{x_i-\hat x_i}^2.\]
-Latent dimension tạo bottleneck. Train encoder/decoder jointly; reconstruction dùng original dimension. PCA là linear encoder/decoder theo chosen principal subspace.
+Latent dimension tạo bottleneck. Train encoder/decoder jointly; output có original dimension.
 \trap{Good feature-space reconstruction không tự là good input-space reconstruction; nonlinear feature map có thể không invertible.}
 
 }
