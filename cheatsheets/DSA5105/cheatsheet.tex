@@ -474,15 +474,25 @@ Giữ target $y$ fixed khi differentiate; optimizer update $\theta$; định k�
 Replay giảm sequential correlation và tái sử dụng data; target net làm target thay đổi chậm hơn. Behavior policy tạo data có thể khác greedy target policy.
 \trap{Replay không bắt buộc từ current policy. Terminal target $=r$. Neural approximation + bootstrap + off-policy có thể bất ổn; target/replay không chứng minh global convergence.}
 
-\topic{26}{POWER ITERATION / PAGERANK}
+\topic{26}{POWER METHOD / PAGERANK}
+\key{PCA covariance $S\succeq0$ (mục 13)}
+\[v_{t+1}=\frac{Sv_t}{\norm{Sv_t}_2}.\]
+Với $\lambda_1>\lambda_2$, $\alpha_1=u_1^\top v_0\ne0$: normalized iterates hội tụ về $\pm u_1$.
+\[\rho=\frac{\lambda_2}{\lambda_1}<1,\quad\text{direction error }O(\rho^t).\]
+Dense covariance, slide 39:
+\[\begin{aligned}
+\text{Full EVD}:&\ O(d^3),\\
+m\text{ PCs (iter.)}:&\ O(md^2)/\text{iteration}.
+\end{aligned}\]
+\key{PageRank}
 Với importance truyền theo outgoing links, chọn column-stochastic matrix $A$: $A_{ij}=1/d_j^{out}$ nếu $j\to i$. Stationary importance thỏa $Ar=r$.
 \[r_{t+1}=Ar_t.\]
-Slide Deep RL: eigenvalue lớn nhất là $1$, nên có thể bỏ normalization trong mathematical iteration; thực tế vẫn thường normalize để ổn định và giữ probability interpretation.
+Eigenvalue $1$; normalize giúp ổn định số và giữ probability interpretation.
 \key{Teleportation}
 Repair dangling columns bằng probability vector $v$. Với $0\le\alpha<1$:
 \[r_{t+1}=\alpha Ar_t+(1-\alpha)v.\]
 $\ind^\top v=1$, $v>0$ cho positive Google matrix và unique stationary distribution.
-\trap{Nếu dùng row-stochastic transition matrix và column vector, cần transpose. Undamped iteration không luôn converge chỉ vì eigenvalue $1$ tồn tại.}
+\trap{Row-stochastic $A$ + column vector: cần transpose. Undamped iteration có thể không converge dù có eigenvalue $1$.}
 
 }}
 \end{document}
