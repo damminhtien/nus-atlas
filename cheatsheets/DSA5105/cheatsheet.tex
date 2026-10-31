@@ -322,22 +322,24 @@ Giữ $m=d$: $\hat X=X$. $E_m=0$ iff mọi discarded eigenvalue bằng $0$; $m<\
 
 
 \topic{15}{FEATURE PCA / AUTOENCODER}
-Features $\phi(x_i)\in\R^M$ là columns; $\Phi_{raw}$ chứa rows $\phi(x_i)^\top$. Center \emph{sau} mapping:
+Map $\phi:\R^d\to\R^M$; $\Phi_{raw}\in\R^{n\times M}$ có row $i$ là $\phi(x_i)^\top$. Center \emph{sau} mapping:
 \[\bar\phi=\tfrac1n\sum_i\phi(x_i),\quad
-\Phi=\Phi_{raw}-\ind\bar\phi^\top.\]
-\[S_\phi=\Phi^\top\Phi/n,\quad S_\phi U_m^\phi=U_m^\phi\Lambda_m^\phi.\]
-$U_m^\phi\in\R^{M\times m}$: top orthonormal eigenvectors của $S_\phi$, khác input basis $U_m$.
-\[Z^\phi=\Phi U_m^\phi,\quad\hat\Phi=Z^\phi(U_m^\phi)^\top.\]
-$\hat\Phi$ reconstructs centered features; cộng $\bar\phi$ để về raw features.
-\trap{Good feature-space reconstruction không tự là good input-space reconstruction; nonlinear feature map có thể không invertible.}
+\Phi=\Phi_{raw}-\ind_n\bar\phi^\top.\]
+Center input chưa đủ với nonlinear $\phi$.
+\[S_\phi=\Phi^\top\Phi/n\in\R^{M\times M}.\]
+\[S_\phi U_m^\phi=U_m^\phi\Lambda_m^\phi.\]
+Top orthonormal $U_m^\phi=[u_1^\phi,\ldots,u_m^\phi]\in\R^{M\times m}$ (largest eigenvalues).
+\[Z^\phi=\Phi U_m^\phi\in\R^{n\times m}.\]
+Reconstruction $\hat\Phi=Z^\phi(U_m^\phi)^\top$; cộng $\bar\phi$ để về raw features.
+\trap{Good feature reconstruction $\not\Rightarrow$ good input reconstruction; $\phi$ có thể noninvertible.}
 \key{Autoencoder / MLP (sl. 58--59)}
-$d$: input, $m$: latent bottleneck, $q$: hidden units; $\sigma$ elementwise. Encoder:
+Input $d$, latent bottleneck $m$, hidden $q$; elementwise $\sigma$. Encoder:
 \[z_i=E_\theta(x_i)=A\sigma(W_e x_i+b).\]
 $W_e\in\R^{q\times d}$, $b\in\R^q$, $A\in\R^{m\times q}$. Decoder:
 \[\hat x_i=D_\psi(z_i)=B\sigma(V_d z_i+c).\]
-$V_d\in\R^{q\times m}$, $c\in\R^q$, $B\in\R^{d\times q}$. Output trở về $\R^d$. Reconstruction loss:
+$V_d\in\R^{q\times m}$, $c\in\R^q$, $B\in\R^{d\times q}$. Output $\in\R^d$; reconstruction loss:
 \[\min_{\theta,\psi}\frac1n\sum_i\norm{x_i-\hat x_i}^2.\]
-Input $x_i$ cũng là target, không cần nhãn $y_i$. Optimize $\theta,\psi$ jointly: backprop qua decoder rồi encoder; minibatch SGD cập nhật cả hai.
+Target $=x_i$, không cần $y_i$. Joint minibatch SGD cập nhật $\theta,\psi$ bằng backprop qua decoder rồi encoder.
 
 }
 {
