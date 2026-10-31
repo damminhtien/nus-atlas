@@ -11,7 +11,7 @@ const { compileCourse } = require("./tools/content-compiler");
 const BASE = (process.env.SITE_URL || "https://atlascodex.io").replace(/\/+$/, "");
 const OUT = path.join(__dirname, "dist");
 const VERSION = fs.readFileSync(path.join(__dirname, "VERSION"), "utf8").trim();
-const KATEX = '0.16.21';
+const KATEX = '0.18.2';
 const FONTS = "https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300..900;1,9..144,300..900&family=Spectral:ital,wght@0,300;0,400;0,500;0,600;1,400&family=JetBrains+Mono:wght@400;500;700&display=swap";
 
 function esc(value) {
