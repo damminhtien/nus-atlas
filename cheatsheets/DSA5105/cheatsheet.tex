@@ -40,7 +40,7 @@
 \pagestyle{empty}
 \setlength{\topskip}{0pt}
 \setlength{\parindent}{0pt}
-\setlength{\parskip}{1.3pt}
+\setlength{\parskip}{.7pt}
 \setlength{\tabcolsep}{2pt}
 \renewcommand{\arraystretch}{1.08}
 \setlist[itemize]{leftmargin=8pt,label=\textbullet,nosep,topsep=1pt}
@@ -50,16 +50,17 @@
 \raggedbottom
 \raggedcolumns
 \newcommand{\bodystyle}{%
-  \fontsize{7.5}{9.3}\selectfont\raggedright
+  \fontsize{6.5}{7.4}\selectfont\raggedright
   \setlength{\abovedisplayskip}{2pt}\setlength{\belowdisplayskip}{2pt}%
   \setlength{\abovedisplayshortskip}{1pt}\setlength{\belowdisplayshortskip}{1pt}}
-\newcommand{\topic}[2]{\par\addvspace{5pt}%
+\newcommand{\topic}[2]{\par\addvspace{3pt}%
   \begingroup\setlength{\fboxsep}{0.8pt}%
   \noindent\colorbox{structure}{\parbox{\dimexpr\linewidth-2\fboxsep\relax}{%
-    \color{white}\fontsize{8.1}{9.1}\selectfont\bfseries #1\enspace #2}}%
+    \color{white}\fontsize{7.1}{8}\selectfont\bfseries #1\enspace #2}}%
   \endgroup\par\nobreak\vspace{1pt}\nobreak}
+\newcommand{\run}[1]{\key{CHẠY}#1}
 \newcommand{\key}[1]{\par\textcolor{structure}{\textbf{#1}}\enspace}
-\newcommand{\note}[4]{\par\begingroup\setlength{\fboxsep}{0.7pt}%
+\newcommand{\note}[4]{\par\begingroup\setlength{\fboxsep}{0.5pt}%
   \noindent\colorbox{#1}{\parbox{\dimexpr\linewidth-2\fboxsep\relax}{%
     \textcolor{#2}{\textbf{#3}}\enspace #4}}%
   \endgroup\par}
@@ -82,26 +83,28 @@
 \bodystyle
 \begin{multicols*}{4}
 \topic{01}{DSA5105 / SLIDES: ERM}
+\key{Cách dùng} CHẠY = thứ tự thao tác; EX = ví dụ số tự đặt. Mọi update trong một bước dùng old parameters, trừ khi ghi khác. $\log$ tự nhiên; entropy dùng $\log_2$.
 \key{Risk / generalization}
 $D=\{(x_i,y_i)\}_{i=1}^n$, $x_i\in\R^d$; samples là rows của $X$.
-\[\begin{aligned}
-\widehat R(f)&=\frac1n\sum_i\ell(f(x_i),y_i),\\
-R(f)&=\E\ell(f(X),Y).
-\end{aligned}\]
+$\widehat R(f)=\frac1n\sum_i\ell(f(x_i),y_i),$ $ R(f)=\E\ell(f(X),Y).$
 ERM: $\min_{f\in\mathcal H}\widehat R(f)$; regularized ERM thêm $\lambda\Omega(f)$. Ba nguồn error: approximation, estimation, optimization. $\mathcal H_1\subseteq\mathcal H_2$ làm infimum train objective không tăng; không suy ra test risk giảm.
 \key{Data split / CV}
 Train fit parameters; validation/CV chọn hyperparameters; test đánh giá cuối. Mỗi CV fold phải fit preprocessing/PCA trên training fold.
 \trap{Low train error không bảo đảm generalization; tránh leakage. Ôn theo nội dung midterm và slide đã có; phạm vi thi chính thức theo thông báo giảng viên.}
+\run{ERM: (1) tính loss từng sample cho mỗi candidate; (2) lấy mean, cộng penalty nếu có; (3) chọn objective nhỏ nhất.}
+\ex{$y=(0,2)$, constant $c\in\{0,1\}$, loss $(c-y)^2$: $\widehat R(0)=(0+4)/2=2$, $\widehat R(1)=(1+1)/2=1$; chọn $c=1$.}
+\run{CV: (1) cố định folds và candidates; (2) mỗi fold fit preprocessing + model trên phần train; (3) average validation loss; (4) chọn min rồi refit full train.}
+\ex{2-fold losses: depth 1 có $(2,4)\Rightarrow3$; depth 2 có $(1,3)\Rightarrow2$. Chọn depth 2, refit; không dùng test để chọn.}
 
 \topic{02}{LINEAR / LOSSES / RIDGE}
 $f_w(x)=w^\top\phi(x)$; $\Phi_{ij}=\phi_j(x_i)$. Linear theo parameters, có thể nonlinear theo input. Với samples là rows:
-\[J=\tfrac1{2n}\norm{\Phi w-y}^2,\quad \nabla J=\tfrac1n\Phi^\top(\Phi w-y).\]
+$J=\tfrac1{2n}\norm{\Phi w-y}^2,\quad \nabla J=\tfrac1n\Phi^\top(\Phi w-y).$
 Normal equation $\Phi^\top\Phi w=\Phi^\top y$. Unique iff full column rank; nếu không, min-norm $w=\Phi^+y$.
 \key{Ridge / feature scaling}
 $J_\lambda=\tfrac1{2n}\norm{\Phi w-y}^2+\tfrac\lambda2\norm w^2.$
 $\hat w=(\Phi^\top\Phi+n\lambda I)^{-1}\Phi^\top y.$
 $\lambda>0$ cho unique ridge khi penalize mọi coefficient. Với $A=\Phi^\top\Phi/n$, eigenvalue $\mu_j$ và OLS $w_0$ khi tồn tại:
-\[\langle\hat w_\lambda,u_j\rangle=\frac{\mu_j}{\mu_j+\lambda}\langle w_0,u_j\rangle.\]
+$\langle\hat w_\lambda,u_j\rangle=\frac{\mu_j}{\mu_j+\lambda}\langle w_0,u_j\rangle.$
 Directions có eigenvalue nhỏ shrink mạnh hơn. Scaling features đổi effective penalty. Lasso dùng $\lambda\norm w_1$: nonsmooth, có thể tạo exact zeros.
 \cond{Với unaveraged loss $\norm{\Phi w-y}^2/2$ và penalty $\lambda\norm w^2/2$, inverse chứa $\lambda I$. Kiểm tra convention và có penalize intercept hay không.}
 \key{Robust / classification loss}
@@ -112,6 +115,14 @@ Softmax $p_k=e^{z_k}/\sum_je^{z_j}$;
 CE $=-\sum_ky_k\log p_k$; $\nabla_z\ell=p-y$.
 Binary sigmoid $p=1/(1+e^{-z})$, $p'=p(1-p)$. Với $y\in\{0,1\}$, binary CE logit gradient $p-y$.
 \trap{Cộng cùng constant vào mọi logits không đổi softmax. Square loss nhạy outliers; zero train loss không suy ra zero population risk.}
+\run{OLS/ridge: (1) lập $\Phi,y$; (2) tính $G=\Phi^\top\Phi$, $b=\Phi^\top y$; (3) giải $Gw=b$ hoặc $(G+n\lambda I)w=b$; (4) dự đoán $\phi(x)^\top w$.}
+\ex{Không intercept, $x=(1,2)$, $y=(1,3)$: $G=5$, $b=7$; OLS $w=7/5=1.4$. Ridge $n=2,\lambda=.5$: $w=7/(5+1)=7/6$. Tại $x=3$: predictions $4.2$ và $3.5$.}
+\run{Huber constant: (1) chia intervals tại $y_i\pm\delta$; (2) giải $\sum_i\operatorname{clip}(m-y_i,-\delta,\delta)=0$ trên từng interval; (3) giữ root hợp interval.}
+\ex{$y=(0,0,9)$, $\delta=1$: trên $m\in[0,1]$, equation $m+m-1=0$ cho $m=.5$; clipped residuals $(.5,.5,-1)$ tổng $0$.}
+\run{Lasso: lập $g=\Phi^\top(\Phi w-y)/n$. Optimum cần $g_j+\lambda\operatorname{sign}(w_j)=0$ nếu $w_j\ne0$; $|g_j|\le\lambda$ nếu $w_j=0$. Bài nhỏ: thử dấu/zero rồi kiểm tra.}
+\ex{$J(w)=(w-2)^2/2+|w|$: thử $w>0$, $w-2+1=0\Rightarrow w=1$ hợp dấu; $w=0$ có $|g|=2>1$ nên loại.}
+\run{Logistic/softmax: (1) forward logits; (2) probability; (3) residual $p-y$; (4) chain rule về weights, update bằng GD (mục 03).}
+\ex{Binary: $x=2,y=1,w=0$: $z=0,p=.5$, gradient $(.5-1)2=-1$; $\eta=.1\Rightarrow w^+=.1$. Softmax: logits $(\log2,0)$, class 2: $p=(2/3,1/3)$; logit gradient $(2/3,-2/3)$.}
 
 \topic{03}{GD / SGD / CONVEXITY}
 $\theta^+=\theta-\eta\nabla F(\theta)$. SGD dùng minibatch average; uniform sampling cho unbiased estimate. Convex differentiable:
@@ -120,10 +131,12 @@ $\nabla^2F\succeq0\Rightarrow$ convex; stationary point là global min. NN nói 
 \key{Smooth-GD proof / quadratic}
 $L$-smooth: $F(x-\eta g)\le F(x)-\eta(1-L\eta/2)\norm g^2$.
 Với $\eta=1/L$, bounded-below $F$:
-\[\min_{t<T}\norm{g_t}^2\le\frac{2L(F(x_0)-F_{inf})}{T}.\]
+$\min_{t<T}\norm{g_t}^2\le\frac{2L(F(x_0)-F_{inf})}{T}.$
 Quadratic case từ midterm: SPD Hessian $H$, $\mu=\lambda_{min}$, $L=\lambda_{max}$:
 $e_{t+1}=(I-\eta H)e_t$; convergence mọi start iff $0<\eta<2/L$.
 $\eta^*=2/(L+\mu)$; contraction factor $(\kappa-1)/(\kappa+1)$, $\kappa=L/\mu$.
+\run{GD/SGD: (1) chọn $\theta_0,\eta,T$; (2) tính gradient tại parameters cũ, full data hoặc minibatch; (3) cập nhật đồng thời; (4) lặp đủ $T$ steps; GD có thể dừng sớm khi $\norm{\nabla F}\le\epsilon$. Batch mean gradient trước khi update.}
+\ex{GD $F(w)=(w-3)^2/2$, $w_0=0,\eta=.5$: $g_0=-3\Rightarrow w_1=1.5$; $g_1=-1.5\Rightarrow w_2=2.25$. SGD với data mục 02, $w=0$: sample gradients $-1,-6$; full mean $-3.5$. $\eta=.1$: sample 1 cho $.1$, sample 2 cho $.6$, full batch cho $.35$ (đều từ $w=0$).}
 
 \topic{04}{KERNEL / REPRESENTER}
 $k(x,z)=\langle\phi(x),\phi(z)\rangle$. Valid iff mọi finite Gram $K$ symmetric PSD: $c^\top Kc\ge0$.
@@ -134,6 +147,8 @@ Closure: nonnegative sums, products, $g(x)g(z)k(x,z)$, composition $k(Tx,Tz)$, p
 $w=w_\parallel+w_\perp$ với $w_\perp\perp\phi_i$: predictions không đổi, norm tăng bởi $\norm{w_\perp}^2$. Strict $L_2$ penalty cho $w_\perp^*=0$:
 $w^*=\Phi^\top\alpha,\quad f(x)=k_x^\top\alpha.$
 $\dim\operatorname{span}\{\phi_i\}=\operatorname{rank}\Phi\le\min(n,M)$; representer không có nghĩa sparse.
+\run{Kiểm kernel: (1) kiểm symmetry; (2) chứng minh bằng feature map/closure, hoặc tìm Gram phản ví dụ; (3) với Gram nhỏ, tính eigenvalues/quadratic form.}
+\ex{$K=\left[\begin{smallmatrix}1&2\\2&1\end{smallmatrix}\right]$, $c=(1,-1)^\top$: $Kc=(-1,1)^\top$, $c^\top Kc=-2<0$; invalid dù diagonal dương.}
 
 \topic{05}{KERNEL RIDGE / GEOMETRY}
 Mean-loss ridge dùng $K=\Phi\Phi^\top$, $K_{ij}=k(x_i,x_j)$:
@@ -145,37 +160,42 @@ $(\Phi^\top\Phi+cI)^{-1}\Phi^\top=\Phi^\top(K+cI)^{-1}$.
 \key{Cost / dimensions}
 $\Phi\in\R^{n\times M}$: feature solve dùng $M\times M$ matrix; kernel solve dùng $n\times n$ matrix. Prediction kernel dùng similarities tới training samples. Chọn formulation theo $M,n$ và cost tính kernel.
 \key{Distance in feature space}
-\[\begin{aligned}
-\norm{\phi(x)-\phi(z)}^2&=k(x,x)+k(z,z)\\
-&\quad-2k(x,z).
-\end{aligned}\]
+$\norm{\phi(x)-\phi(z)}^2=k(x,x)+k(z,z)-2k(x,z).$
 Kernelization: viết quantity hoàn toàn bằng inner products trước, rồi thay bằng $k$. Không thay nonlinear operations tùy ý.
 \key{Polynomial map}
 $(1+x^\top z)^2$ có features $1$, $\sqrt2x_j$, $x_j^2$, $\sqrt2x_jx_\ell$ với $j<\ell$. Cross-term coefficients phải khớp expansion.
 \trap{Một vài PSD Gram matrices không chứng minh kernel valid cho mọi finite dataset; một negative Gram đủ để bác bỏ. Nonnegative diagonal một mình chưa đủ.}
+\run{KRR: (1) tính toàn bộ $K_{ij}$; (2) giải $(K+n\lambda I)\alpha=y$; (3) lập $k_x=(k(x_i,x))_i$; (4) dot product $f(x)=k_x^\top\alpha$.}
+\ex{$n=2$, $K=I_2$, $\lambda=.5$, $y=(2,4)^\top$: $(2I)\alpha=y\Rightarrow\alpha=(1,2)^\top$; $k_x=(.5,1)^\top\Rightarrow f(x)=.5+2=2.5$. Feature distance: $k(x,x)=4$, $k(z,z)=9$, $k(x,z)=3\Rightarrow d_\phi^2=4+9-6=7$.}
+\run{Polynomial features: (1) expand kernel; (2) đặt hệ số cross term thành square-root trong features; (3) kiểm dot product.}
+\ex{1D $k(x,z)=(1+xz)^2$: $\phi(x)=(1,\sqrt2x,x^2)^\top$. $x=2,z=3$: dot product $1+12+36=49=(1+6)^2$.}
 
 \topic{06}{SVM / KKT: SLIDE CONVENTION}
 Slide dùng $f(x)=w^\top\phi(x)$, \emph{không intercept}. $y_i\in\{\pm1\}$; geometric margin $y_if(x_i)/\norm w$. Normalize min functional margin $=1$:
-\[\min_w\tfrac12\norm w^2\quad\text{s.t. }y_iw^\top\phi_i\ge1.\]
+$\min_w\tfrac12\norm w^2\quad\text{s.t. }y_iw^\top\phi_i\ge1.$
 Half-width $1/\norm w$; full width $2/\norm w$.
 $\mathcal L=\tfrac12\norm w^2+\sum_i\alpha_i(1-y_iw^\top\phi_i).$
 KKT: primal feasible; $\alpha_i\ge0$; stationarity; complementary slackness:
 $w=\sum_i\alpha_i y_i\phi_i,\quad \alpha_i(1-y_iw^\top\phi_i)=0.$
 Substitute $w$ vào Lagrangian, dùng Gram:
-\[\max_{\alpha\ge0}\;\sum_i\alpha_i-\tfrac12\sum_{ij}\alpha_i\alpha_jy_iy_jk_{ij}.\]
+$\max_{\alpha\ge0}\;\sum_i\alpha_i-\tfrac12\sum_{ij}\alpha_i\alpha_jy_iy_jk_{ij}.$
 $\hat y=\operatorname{sign}\sum_i\alpha_iy_i k(x_i,x).$
 $\alpha_i>0\Rightarrow$ point nằm trên margin;
 strictly outside margin $\Rightarrow\alpha_i=0$.
 \trap{Active constraint không bắt buộc multiplier dương. Không thêm $\sum_i\alpha_iy_i=0$ khi objective không có intercept; equality đó chỉ xuất hiện nếu optimize thêm $b$.}
 \key{Hinge link}
 $\min_w n^{-1}\sum_i(1-y_iw^\top\phi_i)_++\lambda\norm w^2/2$. Separable data + sufficiently small penalty cho zero-hinge optimum: rút về min-norm feasible separator. Logistic vẫn dương tại mọi finite margin.
-
+\run{Hard SVM bài nhỏ: (1) viết từng inequality; (2) thử từng tập active constraints, giải equalities; (3) tìm $\alpha\ge0$ từ stationarity; (4) loại candidate vi phạm inequality/complementarity; (5) tính margin/prediction của candidate hợp KKT. KKT feasible là optimal cho convex problem.}
+\ex{1D $x=(-1,1)$, $y=(-1,1)$: cả hai constraints là $w\ge1$; min $w^2/2$ cho $w=1$. Chọn $\alpha=(.5,.5)$: $\sum_i\alpha_i y_ix_i=1$, KKT đúng. Half-margin $1$, full width $2$; $x=-2\Rightarrow\hat y=-1$.}
+\run{Hinge training: tính margins; mỗi sample $m_i<1$ góp $-y_i\phi_i/n$ vào subgradient; $m_i>1$ góp $0$; cộng $\lambda w$, GD update. Tại $m_i=1$ chọn valid subgradient.}
+\ex{Một point $x=2,y=1$, $w=0$, $\lambda=1$: margin $0$, gradient $-2+0=-2$; $\eta=.1\Rightarrow w^+=.2$, margin mới $.4$.}
 
 \topic{07}{DECISION TREES / SPLITS}
 Leaf optimum: squared loss $\to$ mean; absolute loss $\to$ median; classification error $\to$ mode. Greedy split tối đa hóa
 $\Delta I=I_P-\sum_c\frac{n_c}{n}I_c.$
 Entropy $H=-\sum_kp_k\log_2p_k$; Gini $G=1-\sum_kp_k^2$. Regression dùng child SSE. Deeper tree mở rộng class: optimal train error không tăng; test error không bảo đảm giảm. Pruning/min-leaf/depth kiểm soát variance.
-
+\run{Grow tree: (1) sort từng feature, thử midpoints giữa distinct values; (2) chia left/right; (3) tính weighted child impurity/SSE; (4) chọn best split; (5) recurse đến depth/min-leaf/pure/no gain; leaf dự đoán mean/mode.}
+\ex{Classification: $x=(1,2,3,4)$, $y=(0,0,1,1)$, parent Gini $.5$. Cut $2.5$: children pure, gain $.5$. Cut $1.5$: weighted Gini $(3/4)(4/9)=1/3$, gain $1/6$; chọn $2.5$. Regression $y=(0,2,8,10)$: parent mean $5$, SSE $68$; cut $2.5$, means $(1,9)$, SSE $4$, giảm $64$.}
 
 \topic{08}{BAGGING / RANDOM FOREST}
 \key{Bagging / random forest}
@@ -184,41 +204,40 @@ $\Var(\bar T_B)=\sigma^2\left[\rho_c+\frac{1-\rho_c}{B}\right].$
 Giả sử equal variances và common pairwise correlation $\rho_c$; limit $\rho_c\sigma^2$. Tăng $B$ không loại phần correlated. Bagging chủ yếu giảm variance.
 \key{Bias--variance}
 Với squared prediction error ở fixed input và independent zero-mean test noise:
-\[\E[(Y-\hat f)^2]=\sigma_\epsilon^2+\operatorname{Bias}(\hat f)^2+\Var(\hat f).\]
+$\E[(Y-\hat f)^2]=\sigma_\epsilon^2+\operatorname{Bias}(\hat f)^2+\Var(\hat f).$
 Deep tree thường low approximation bias nhưng high variance. Bagging average nhiều unstable learners để giảm variance; RF giảm correlation bằng random feature subsets.
 \ex{$B=25$, $\rho_c=.1$: variance factor $.1+.9/25=.136$; limit khi $B\to\infty$ là $.1$.}
 \trap{Random forest không chỉ là khởi tạo khác nhau: bootstrap training rows và random candidate features tại từng split. Averaging không tự xóa bias.}
 \key{CV / capacity control}
 Với mỗi candidate depth/min-leaf: fit trên $K-1$ folds, evaluate remaining fold, average scores. Chọn candidate rồi retrain full train; test dùng một lần ở cuối.
-
+\run{Bagging/RF: (1) bootstrap $n$ rows có hoàn lại cho mỗi tree; (2) grow tree, RF thử random feature subset ở \emph{mỗi} node; (3) lặp $B$ trees; (4) regression average, classification majority vote.}
+\ex{Data rows $1,2,3$: bootstrap có thể $(1,1,3)$ và $(2,3,3)$. Tại test point, regression outputs $(2,4,3)$ cho mean $3$; class outputs $(1,0,1)$ cho class $1$. RF node với candidates $\{x_1,x_3\}$ chỉ so sánh splits của hai features đó.}
 
 \topic{09}{ADABOOST / TRAIN BOUND}
 $D_1(i)=1/n$, weighted error và learner weight:
 $\epsilon_t=\sum_iD_t(i)\ind[h_t(x_i)\ne y_i].$
 $\alpha_t=\tfrac12\log\frac{1-\epsilon_t}{\epsilon_t}.$
-\[D_{t+1}(i)=\frac{D_t(i)e^{-\alpha_ty_ih_t(x_i)}}{Z_t}.\]
+$D_{t+1}(i)=\frac{D_t(i)e^{-\alpha_ty_ih_t(x_i)}}{Z_t}.$
 $H(x)=\operatorname{sign}\sum_t\alpha_th_t(x).$
 $Z_t=(1-\epsilon_t)e^{-\alpha_t}+\epsilon_te^{\alpha_t}
 =2\sqrt{\epsilon_t(1-\epsilon_t)}$.
 Nếu $\epsilon_t=1/2-\gamma_t$:
 $\widehat R_T\le\prod_tZ_t\le e^{-2\sum_t\gamma_t^2}.$
-\ex{$\epsilon=.2\Rightarrow\alpha=\log2$, $Z=.8$; mistake/correct relative multiplier $=4$.}
+
 \trap{Weighted error và weighted final vote. Công thức finite weight cần $0<\epsilon_t<1$; perfect learner xử lý riêng. Train bound không là test guarantee.}
 \key{Derive learner weight}
 Exponential loss $L(F)=n^{-1}\sum_i e^{-y_iF(x_i)}$; $F_t=F_{t-1}+\alpha h_t$. Split weighted loss thành correct/mistake:
 $Z(\alpha)=(1-\epsilon)e^{-\alpha}+\epsilon e^\alpha.$
 Đặt $Z'(\alpha)=0$ cho formula $\alpha$. Nếu $\epsilon<1/2$, weight dương; $\epsilon=1/2$ cho $0$; $\epsilon>1/2$ có thể flip learner.
-
+\run{(1) Init uniform $D$; (2) fit weak learner bằng weighted loss; (3) tính $\epsilon$, flip nếu $>1/2$, bỏ nếu $=1/2$, xử lý perfect riêng; (4) tính $\alpha$; (5) nhân weights rồi normalize; (6) lặp, cuối cùng weighted sign vote.}
+\ex{$n=5,D_i=.2$, chỉ sample 1 sai: $\epsilon=.2$, $\alpha=\log2$. Unnormalized: sai $.2\cdot2=.4$, mỗi đúng $.2/2=.1$; $Z=.8$. New weights $(.5,.125,.125,.125,.125)$, tổng $1$; lượt sau fit trên weights mới. Vote hai learners có $\alpha=(\log2,\log3)$, predictions $(+1,-1)$: sign$(\log2-\log3)=-1$.}
 
 \topic{10}{NN / BACKPROPAGATION}
 $z^\ell=W^\ell h^{\ell-1}+b^\ell$, $h^\ell=\sigma_\ell(z^\ell)$.
 $\sigma'=\sigma(1-\sigma)$; $\tanh'=1-\tanh^2$; ReLU$'=\ind[z>0]$ khi $z\ne0$ (tại $0$ chọn subgradient).
 \key{Backward recurrence}
 Với $\delta^\ell=\nabla_{z^\ell}L$:
-\[\begin{aligned}
-\delta^\ell&=((W^{\ell+1})^\top\delta^{\ell+1})\odot\sigma_\ell'(z^\ell),\\
-\nabla_{W^\ell}L&=\delta^\ell(h^{\ell-1})^\top,\quad\nabla_{b^\ell}L=\delta^\ell.
-\end{aligned}\]
+$\delta^\ell=((W^{\ell+1})^\top\delta^{\ell+1})\odot\sigma_\ell'(z^\ell),$ $ \nabla_{W^\ell}L=\delta^\ell(h^{\ell-1})^\top,\quad\nabla_{b^\ell}L=\delta^\ell.$
 MSE output: $L=(\hat y-y)^2/2$, $\delta_{out}=\hat y-y$ nếu linear output; thêm output-activation derivative nếu có. Softmax+CE: $\delta_{out}=p-y$.
 $L_2$ penalty $\lambda\norm W_F^2/2$ thêm $\lambda W$.
 \ex{$z=wx+b$, $h=\sigma(z)$, $\hat y=vh+c$: $\partial_vL=(\hat y-y)h$, $\partial_wL=(\hat y-y)v\sigma'(z)x$.}
@@ -231,7 +250,8 @@ Input gradient propagates backward; weight gradient là outer product. Chia grad
 \key{Approximation vs optimization}
 Shallow network $f(x)=\sum_{j=1}^M v_j\sigma(w_j^\top x+b_j)$ học features theo data. Nonpolynomial activation + width đủ lớn cho uniform approximation của continuous functions trên compact domain.
 \trap{UAT không hứa finite-width exact fit, GD success hay generalization. Backprop là chain rule + reuse, không là global optimizer.}
-
+\run{Backprop: (1) forward, lưu $z,h$; (2) loss + output $\delta$; (3) đi layers từ cuối về đầu, tính mọi gradient bằng weights cũ; (4) average batch, thêm penalty; (5) update đồng thời.}
+\ex{Scalar ReLU net $h=\max(0,wx+b)$, $\hat y=vh+c$; $x=2,y=1,(w,b,v,c)=(1,0,1,0)$. Forward $h=2,\hat y=2,L=.5$. $\delta_{out}=1$; gradients $(g_w,g_b,g_v,g_c)=(2,1,2,1)$. $\eta=.1\Rightarrow(w,b,v,c)=(.8,-.1,.8,-.1)$.}
 
 \topic{11}{CNN / WEIGHT SHARING}
 Convolution $\sum_iw_ix_{k-i}$; ML thường dùng cross-correlation $\sum_iw_ix_{k+i}$.
@@ -242,20 +262,23 @@ Một filter nhìn mọi input channels; cùng weights tại mọi vị trí. Lo
 \ex{Valid length-3 filter trên length-5 input: output 3, chỉ 3 filter weights; không phải 9 nonzero matrix entries là 9 parameters.}
 \key{Tied-weight matrix}
 Valid length-3 cross-correlation trên $x\in\R^5$ có matrix
-\[A_w=\begin{bmatrix}w_0&w_1&w_2&0&0\\0&w_0&w_1&w_2&0\\0&0&w_0&w_1&w_2\end{bmatrix}.\]
+$A_w=\left[\begin{smallmatrix}w_0&w_1&w_2&0&0\\0&w_0&w_1&w_2&0\\0&0&w_0&w_1&w_2\end{smallmatrix}\right].$
 \key{Matrix intuition / channels}
 Convolution là sparse structured matrix: locality tạo zeros; sharing tie coefficients. Với nhiều channels, mỗi output channel sum filtered contributions từ \emph{mọi} input channel, rồi thêm một bias và activation.
-
+\run{CNN: (1) pad input; (2) tính output size; (3) dịch window theo stride, dot với filter trên mọi channels; (4) cộng bias, activation/pool; (5) backward cộng gradient của mọi vị trí dùng chung weight.}
+\ex{1D valid cross-correlation, $x=(1,2,3,4,5)$, $w=(1,0,-1)$, bias $0$, stride 1: outputs $(1-3,2-4,3-5)=(-2,-2,-2)$. Max-pool width 2/stride 1 cho $(-2,-2)$. Upstream $(1,1,1)$ trước pooling: $\nabla_wL=(1+2+3,2+3+4,3+4+5)=(6,9,12)$; $\nabla_bL=3$.}
 
 \topic{12}{RNN / BPTT}
 $h_t=g(h_{t-1},x_t;\theta)$, $L=\sum_t\ell_t(h_t)$; cùng $\theta$ qua time. Đặt $\delta_t=\nabla_{h_t}L$:
-\[\delta_t=\nabla_{h_t}\ell_t+(J_{h_t}g_{t+1})^\top\delta_{t+1},\]
+$\delta_t=\nabla_{h_t}\ell_t+(J_{h_t}g_{t+1})^\top\delta_{t+1},$
 $\nabla_\theta L=\sum_t(J_\theta g_t)^\top\delta_t.$
 Linear cell $h_t=Ah_{t-1}+Bx_t$:
 $\nabla_AL=\sum_t\delta_t h_{t-1}^\top$;
 $\nabla_BL=\sum_t\delta_t x_t^\top$.
 \ex{$h_t=ah_{t-1}+x_t$, $h_0=0$, final MSE: $h_3=a^2x_1+ax_2+x_3$, $dL/da=(h_3-y)(2ax_1+x_2)$.}
 Repeated Jacobian products gây vanishing/exploding gradients; LSTM/GRU dùng gates.
+\run{BPTT: (1) unroll, forward $t=1\ldots T$; (2) tính losses; (3) backward $t=T\ldots1$, cộng local + future gradient; (4) sum shared-parameter gradients qua time; (5) update một lần.}
+\ex{$h_t=ah_{t-1}+bx_t$, $h_0=0$, $a=.5,b=1$, $x=(2,0)$, chỉ final loss $h_2^2/2$. Forward $(h_1,h_2)=(2,1)$, $L=.5$; backward $\delta_2=1$, $\delta_1=.5$. $g_a=\delta_1h_0+\delta_2h_1=2$, $g_b=\delta_1x_1+\delta_2x_2=1$. $\eta=.1\Rightarrow(a,b)=(.3,.9)$.}
 
 \topic{13}{PCA: CENTER / EIGENPAIRS}
 Raw columns $x_i\in\R^d$; $\bar x=n^{-1}\sum_ix_i$, $\tilde x_i=x_i-\bar x$. $X\in\R^{n\times d}$ có rows $\tilde x_i^\top$; $S=X^\top X/n$.
@@ -270,12 +293,14 @@ $z_i=U_m^\top\tilde x_i,\qquad Z=XU_m\in\R^{n\times m}.$
 $\hat{\tilde x}_i=U_mU_m^\top\tilde x_i,\quad\hat X=ZU_m^\top.$
 Raw reconstruction $\hat x_i=\bar x+\hat{\tilde x}_i$; $\hat X\in\R^{n\times d}$ chứa centered reconstructions.
 \key{Variance / optimal reconstruction}
-\[E_m=\frac1n\norm{X-\hat X}_F^2=\sum_{j>m}\lambda_j.\]
-\[R(m)=\frac{\sum_{j\le m}\lambda_j}{\sum_j\lambda_j},\quad\operatorname{tr}(S)>0.\]
+$E_m=\frac1n\norm{X-\hat X}_F^2=\sum_{j>m}\lambda_j.$
+$R(m)=\frac{\sum_{j\le m}\lambda_j}{\sum_j\lambda_j},\quad\operatorname{tr}(S)>0.$
 $E_m$: mean squared Euclidean error; $R(m)$: retained variance ratio. Closest-point projection + Pythagoras:
-\[\norm{\tilde x_i-\hat{\tilde x}_i}^2=\sum_{j>m}(u_j^\top\tilde x_i)^2.\]
+$\norm{\tilde x_i-\hat{\tilde x}_i}^2=\sum_{j>m}(u_j^\top\tilde x_i)^2.$
 \ex{$S=\left[\begin{smallmatrix}2.5&2\\2&2.5\end{smallmatrix}\right]$: $\lambda=(4.5,.5)$, $u_1=(1,1)^\top/\sqrt2$. Giữ 1 PC: 90\% variance; mean squared Euclidean error $.5$.}
 \trap{Dùng train mean; sign tùy ý, repeated eigenvalues cho nonunique basis. Đổi sang $1/(n-1)$ scale eigenvalues, không đổi directions.}
+\run{(1) Train mean, center rows; (2) $S=X^\top X/n$; (3) giải $\det(S-\lambda I)=0$, sort giảm dần; (4) giải $(S-\lambda I)u=0$, normalize/orthogonalize; (5) chọn $m$, tính scores, reconstruct + mean; (6) tính $E_m,R(m)$.}
+\ex{$x_1=(3,3)^\top,x_2=(1,1)^\top$: $\bar x=(2,2)^\top$, centered rows $(1,1),(-1,-1)$. $S=\left[\begin{smallmatrix}1&1\\1&1\end{smallmatrix}\right]$; $\det(S-\lambda I)=\lambda(\lambda-2)$, $\lambda=(2,0)$. $u_1=(1,1)^\top/\sqrt2$, scores $Z=(\sqrt2,-\sqrt2)^\top$. $m=1$: reconstruct raw đúng hai inputs; $E_1=0$, $R(1)=1$.}
 
 \topic{14}{WHITENING / RECONSTRUCTION}
 Đặt $\Lambda_m=\diag(\lambda_1,\ldots,\lambda_m)$; $Z^\top Z/n=\Lambda_m$. Với $\lambda_m>0$:
@@ -285,7 +310,8 @@ Whitening = PCA scores / standard deviations.
 \key{Rank / invertibility}
 Giữ $m=d$: $\hat X=X$. $E_m=0$ iff mọi discarded eigenvalue bằng $0$; $m<\operatorname{rank}(X)\Rightarrow E_m>0$.
 \trap{Không chia cho zero eigenvalues. Unit covariance không suy ra independent/Gaussian. Sau full whitening mọi unit direction có variance bằng nhau.}
-
+\run{(1) PCA như mục 13; (2) chỉ giữ $\lambda_j>0$; (3) chia score column $j$ cho $\sqrt{\lambda_j}$; (4) reconstruct bằng nhân lại $\sqrt{\lambda_j}$, $U_m^\top$, rồi cộng train mean.}
+\ex{Data mục 13: $\lambda_1=2$, $Z=(\sqrt2,-\sqrt2)^\top$ nên $W=(1,-1)^\top$; $W^\top W/2=(1+1)/2=1$. Hàng 1 inverse: $1\sqrt2(1,1)/\sqrt2+(2,2)=(3,3)$. Bỏ eigenvalue $0$, không chia cho $0$.}
 
 \topic{15}{FEATURE PCA / AUTOENCODER}
 Map $\phi:\R^d\to\R^M$; $\Phi_{raw}\in\R^{n\times M}$ có row $i$ là $\phi(x_i)^\top$. Center \emph{sau} mapping:
@@ -297,6 +323,8 @@ Top orthonormal $U_m^\phi=[u_1^\phi,\ldots,u_m^\phi]\in\R^{M\times m}$ (largest 
 $Z^\phi=\Phi U_m^\phi\in\R^{n\times m}.$
 Reconstruction $\hat\Phi=Z^\phi(U_m^\phi)^\top$; cộng $\bar\phi$ để về raw features.
 \trap{Good feature reconstruction $\not\Rightarrow$ good input reconstruction; $\phi$ có thể noninvertible.}
+\run{Feature PCA: (1) map từng raw input; (2) mean/center mapped rows; (3) covariance trong feature space; (4) top eigenvectors; (5) scores và feature reconstruction.}
+\ex{$x=(-1,1)$, $\phi(x)=(x,x^2)^\top$: raw rows $(-1,1),(1,1)$; $\bar\phi=(0,1)^\top$; centered rows $(-1,0),(1,0)$. $S_\phi=\diag(1,0)$, $u_1^\phi=(1,0)^\top$, $Z^\phi=(-1,1)^\top$. Centered input mean $0$ vẫn không làm mapped feature thứ hai có mean $0$.}
 \par\noindent\begin{minipage}[t]{\linewidth}\bodystyle
 \key{Autoencoder / MLP (sl. 58--59)}
 Input $d$, latent bottleneck $m$, hidden $q$; elementwise $\sigma$. Encoder:
@@ -304,26 +332,28 @@ $z_i=E_\theta(x_i)=A\sigma(W_e x_i+b).$
 $W_e\in\R^{q\times d}$, $b\in\R^q$, $A\in\R^{m\times q}$. Decoder:
 $\hat x_i=D_\psi(z_i)=B\sigma(V_d z_i+c).$
 $V_d\in\R^{q\times m}$, $c\in\R^q$, $B\in\R^{d\times q}$. Output $\in\R^d$; reconstruction loss:
-\[\min_{\theta,\psi}\frac1n\sum_i\norm{x_i-\hat x_i}^2.\]
+$\min_{\theta,\psi}\frac1n\sum_i\norm{x_i-\hat x_i}^2.$
 Target $=x_i$, không cần $y_i$. Joint minibatch SGD cập nhật $\theta,\psi$ bằng backprop qua decoder rồi encoder.
+\run{AE: (1) chọn batch, target chính là inputs; (2) encoder $\to$ decoder; (3) mean squared reconstruction loss; (4) backprop decoder $\to$ encoder; (5) cùng update cả hai, repeat đến tolerance/budget.}
+\ex{Scalar linear special case $E_a(x)=ax$, $D_b(z)=bz$, $x=2,a=1,b=.5$. $z=2$, $\hat x=1$, $L=(2-1)^2=1$. $g_b=2(\hat x-x)z=-4$, $g_a=2(\hat x-x)bx=-2$. $\eta=.1$, dùng cùng old weights: $(a^+,b^+)=(1.2,.9)$. MLP nonlinear dùng thêm activation derivatives (mục 10).}
 \end{minipage}\par
 
 
 \topic{16}{K-MEANS / HARD ASSIGNMENT}
 Chọn $K$ trước; $z_i\in\{1,\ldots,K\}$:
 $J(z,\mu)=\sum_i\norm{x_i-\mu_{z_i}}^2.$
-Lloyd: initialize centers $\to$ assign nearest center $\to$ update mean $\to$ repeat.
+\run{Lloyd: (1) init $K$ centers; (2) tính distance tới mọi center, assign nearest; (3) update từng mean; (4) lặp đến assignments không đổi hoặc objective giảm dưới tolerance. Fix tie/empty-cluster rule.}
 $z_i\gets\argmin_k\norm{x_i-\mu_k}^2.$
 $\mu_k\gets\frac1{|C_k|}\sum_{i\in C_k}x_i.$
 Mỗi step không tăng $J$; local optimum phụ thuộc init. Empty cluster phải có rule (vd. reseed). Khởi tạo khác nhau có thể dẫn tới các local optima khác nhau.
-\ex{1D $x=(0,2,8,10)$, centers $(0,8)$: assignments $\{0,2\}$, $\{8,10\}$; means $(1,9)$; $J=4$.}
+\ex{1D $x=(0,2,8,10)$, centers $(0,8)$. Squared-distance pairs: $(0,64),(4,36),(64,0),(100,4)$; assign $\{0,2\},\{8,10\}$. New means $(1,9)$; $J=1+1+1+1=4$ (old $J=8$). Reassign với centers mới: giữ nguyên, dừng.}
 \key{Assumptions / geometry}
 Squared Euclidean thích clusters gần spherical, scale tương tự. Scaling features đổi assignment. Hard boundary là Voronoi partition.
 \trap{Không tự chọn $K$; không bảo đảm global minimum. Monotone objective không suy ra clustering đúng về ý nghĩa.}
 
 \topic{17}{GAUSSIAN / MIXTURE DENSITY}
 $d$-dimensional Gaussian ($\Sigma\succ0$):
-\[\mathcal N(x\mid\mu,\Sigma)=\frac{e^{-\frac12(x-\mu)^\top\Sigma^{-1}(x-\mu)}}{(2\pi)^{d/2}|\Sigma|^{1/2}}.\]
+$\mathcal N(x\mid\mu,\Sigma)=\frac{e^{-\frac12(x-\mu)^\top\Sigma^{-1}(x-\mu)}}{(2\pi)^{d/2}|\Sigma|^{1/2}}.$
 Mahalanobis distance dùng $\Sigma^{-1}$; determinant chuẩn hóa density. Diagonal $\Sigma$ cho independent coordinates \emph{trong Gaussian component}.
 \key{Mixture model}
 $p(x)=\sum_{k=1}^K\pi_k\mathcal N(x\mid\mu_k,\Sigma_k).$
@@ -336,24 +366,22 @@ $\hat\Sigma=n^{-1}\sum_i(x_i-\hat\mu)(x_i-\hat\mu)^\top$.
 \trap{Density có thể $>1$; posterior responsibility luôn trong $[0,1]$. Mixture Gaussian không nhất thiết Gaussian.}
 \key{Bayes rule / latent labels}
 $P(A\mid B)=P(B\mid A)P(A)/P(B)$. Posterior = likelihood $\times$ prior, rồi normalize qua mọi components. Không bỏ prior khi mixture weights khác nhau.
-
+\run{Gaussian MLE: (1) mean; (2) residuals; (3) average outer products, divisor $n$. Mixture/Bayes: (1) tính từng density; (2) $a_k=\pi_k\mathcal N_k(x)$; (3) sum cho density, chia sum cho posterior.}
+\ex{MLE 1D $x=(0,2)$: $\hat\mu=1$, $\hat\sigma^2=(1+1)/2=1$. Density tại $x=1$: $e^0/\sqrt{2\pi}\approx.399$; tại $x=3$: $e^{-2}/\sqrt{2\pi}\approx.054$. Mixture tại một point: priors $(.25,.75)$, densities $(.4,.2)$: $a=(.1,.15)$, $p(x)=.25$; posteriors $(.4,.6)$, không phải $(2/3,1/3)$.}
 
 \topic{18}{EM: E-STEP / M-STEP}
 E-step dùng \emph{old} parameters, Bayes rule:
-\[r_{ik}=P(z_i=k\mid x_i)=\frac{\pi_k\mathcal N_k(x_i)}{\sum_j\pi_j\mathcal N_j(x_i)}.\]
+$r_{ik}=P(z_i=k\mid x_i)=\frac{\pi_k\mathcal N_k(x_i)}{\sum_j\pi_j\mathcal N_j(x_i)}.$
 $\sum_kr_{ik}=1$ với mỗi sample. Đặt $N_k=\sum_ir_{ik}$; M-step:
-\[\begin{aligned}
-\pi_k^+&=N_k/n,\qquad \mu_k^+=\frac{\sum_i r_{ik}x_i}{N_k},\\
-\Sigma_k^+&=\frac1{N_k}\sum_i r_{ik}(x_i-\mu_k^+)(x_i-\mu_k^+)^\top.
-\end{aligned}\]
+$\pi_k^+=N_k/n,\qquad \mu_k^+=\frac{\sum_i r_{ik}x_i}{N_k},$ $ \Sigma_k^+=\frac1{N_k}\sum_i r_{ik}(x_i-\mu_k^+)(x_i-\mu_k^+)^\top.$
 Compute mọi responsibility trước, rồi update mọi parameter; covariance dùng \emph{new} mean.
 
 \key{Algorithm loop}
-Initialize $\pi_k,\mu_k,\Sigma_k$ $\to$ compute normalized responsibilities $\to$ weighted parameter updates $\to$ evaluate log-likelihood $\to$ repeat đến tolerance / iteration budget.
+\run{(1) Init valid $\pi,\mu,\Sigma$; (2) E: tính toàn bộ $r_{ik}$ bằng old parameters; (3) M: $N_k$, rồi $\pi_k^+,\mu_k^+$, cuối cùng $\Sigma_k^+$ dùng new mean; (4) evaluate log-likelihood; (5) dừng khi $|\ell^+-\ell|\le\epsilon$ hoặc đủ $T$ iterations.}
 \trap{Không bảo đảm global optimum. Covariance phải valid; collapse quanh một point có thể làm likelihood tăng vô hạn. Tránh divide-by-zero khi component effective count quá nhỏ.}
 \key{Hard vs soft}
 K-means: one-hot assignment theo Euclidean distance. GMM: probability assignment theo prior, covariance shape và density. Equal isotropic covariance + equal priors cho nearest-mean posterior maximizer.
-
+\ex{GMM 1D $x=(0,2)$; init $\pi=(.5,.5)$, $\mu=(0,2)$, cả hai variances $2/\log3$. Ở $x=0$, density ratio $\mathcal N_1/\mathcal N_2=e^{2/(2/\log3)}=3$; ở $x=2$ ratio $1/3$. E: rows $r=(.75,.25),(.25,.75)$. M: $N=(1,1)$, $\pi^+=(.5,.5)$; $\mu_1^+=.75(0)+.25(2)=.5$, $\mu_2^+=1.5$. $\sigma_1^{2+}=.75(.5)^2+.25(1.5)^2=.75$; tương tự $\sigma_2^{2+}=.75$. Lượt sau dùng parameters mới.}
 
 \topic{19}{MDP / RETURNS / POLICY}
 MDP $(\mathcal S,\mathcal A,p,r,\gamma)$; $p(s',r\mid s,a)$ là joint next-state/reward distribution. Markov: next outcome phụ thuộc current state/action, không cần toàn history.
@@ -364,49 +392,48 @@ $Q^\pi(s,a)=\E_\pi[G_t\mid S_t=s,A_t=a].$
 $V^\pi(s)=\sum_a\pi(a\mid s)Q^\pi(s,a).$
 
 \cond{Finite discounted results dưới đây dùng finite states/actions và bounded rewards. Episodic $\gamma=1$ cần thêm assumptions; không áp dụng contraction một cách máy móc.}
+\run{Return hữu hạn: (1) terminal continuation $G_T=0$; (2) đi ngược $G_t=R_{t+1}+\gamma G_{t+1}$; (3) với stochastic policy lấy weighted mean các $Q$.}
+\ex{Rewards $(1,2,4)$, $\gamma=.5$: $G_2=4$, $G_1=2+.5(4)=4$, $G_0=1+.5(4)=3$. Nếu $Q(s,\cdot)=(2,6)$, $\pi=(.25,.75)$ thì $V(s)=.25(2)+.75(6)=5$.}
 
 \topic{20}{BELLMAN: EXPECTATION / MAX}
 Với $r(s,a)=\E[R_{t+1}\mid s,a]$:
 Policy evaluation:
-\[\begin{aligned}
-Q^\pi(s,a)&=r(s,a)+\gamma\E[V^\pi(S')\mid s,a],\\
-V^\pi(s)&=\sum_a\pi(a\mid s)Q^\pi(s,a).
-\end{aligned}\]
+$Q^\pi(s,a)=r(s,a)+\gamma\E[V^\pi(S')\mid s,a],$ $ V^\pi(s)=\sum_a\pi(a\mid s)Q^\pi(s,a).$
 $P^\pi_{ss'}=\sum_a\pi(a\mid s)P(s'\mid s,a)$,
 $r^\pi_s=\sum_a\pi(a\mid s)r(s,a)$:
 $V^\pi=r^\pi+\gamma P^\pi V^\pi,\quad V^\pi=(I-\gamma P^\pi)^{-1}r^\pi.$
 Optimality:
-\[\begin{aligned}
-Q^*(s,a)&=r(s,a)+\gamma\E[V^*(S')\mid s,a],\\
-V^*(s)&=\max_a Q^*(s,a).
-\end{aligned}\]
+$Q^*(s,a)=r(s,a)+\gamma\E[V^*(S')\mid s,a],$ $ V^*(s)=\max_a Q^*(s,a).$
 Thay $V^*(s')=\max_{a'}Q^*(s',a')$ cho action-value optimality equation.
 Greedy policy $\mu^*(s)\in\argmax_aQ^*(s,a)$.
 \trap{Fixed $\pi$: average theo $\pi$, không max. $Q^\pi$ lấy action $a$ trước rồi theo $\pi$; optimal $V,Q$ unique, optimal policy có thể không unique.}
+\run{Exact policy evaluation: (1) tính $r^\pi,P^\pi$ theo action probabilities; (2) viết mỗi state một equation $V_s=r_s^\pi+\gamma\sum_{s'}P^\pi_{ss'}V_{s'}$; (3) giải hệ tuyến tính; (4) tính $Q^\pi$ cho từng action nếu cần.}
+\ex{Hai states, một action: $s_1\to s_2$ reward $1$, $s_2\to s_2$ reward $2$, $\gamma=.5$. $V_2=2+.5V_2\Rightarrow V_2=4$; $V_1=1+.5(4)=3$.}
+\run{Một Bellman backup: (1) với từng action, weighted sum next-state values; (2) nhân $\gamma$ + reward; (3) fixed policy: average theo $\pi$; optimality: max.}
+\ex{Next values $(2,6)$, $\gamma=.5$. Action $a$: reward 1, transition $(.5,.5)$ cho $q_a=1+.5(.5\cdot2+.5\cdot6)=3$. Action $b$: reward 0, luôn tới state value 6, $q_b=3$. Uniform-policy backup $3$; optimal backup $3$, tie cả hai actions.}
 
 \topic{21}{VALUE ITERATION / ERROR}
 Khởi tạo $V_0$ (thường $0$). Mỗi sweep:
-\[\begin{aligned}
-q_k(s,a)&=r(s,a)\\
-&\quad+\gamma\sum_{s'}P(s'\mid s,a)V_k(s'),\\
-V_{k+1}(s)&=\max_a q_k(s,a).
-\end{aligned}\]
+$q_k(s,a)=r(s,a)+\gamma\sum_{s'}P(s'\mid s,a)V_k(s'),$ $ V_{k+1}(s)=\max_a q_k(s,a).$
 Synchronous: mọi state dùng \emph{old} $V_k$. Viết action candidates trước khi lấy max; terminal continuation $=0$ nếu terminal không có future rewards.
 \key{Contraction / stopping}
 $\norm{T^*V-T^*U}_\infty\le\gamma\norm{V-U}_\infty$;
 $\norm{V_k-V^*}_\infty\le\gamma^k\norm{V_0-V^*}_\infty$.
 Nếu $\Delta_k=\norm{V_{k+1}-V_k}_\infty$:
-\[\norm{V_{k+1}-V^*}_\infty\le\frac\gamma{1-\gamma}\Delta_k.\]
+$\norm{V_{k+1}-V^*}_\infty\le\frac\gamma{1-\gamma}\Delta_k.$
 \ex{One-state self-loop, reward $r(a)$: $V^*=\max_ar(a)/(1-\gamma)$. Với $r=2$, $\gamma=.5$: $V^*=4$; $V_0=0\to2\to3\to3.5\to\cdots$.}
 \trap{Convergence asymptotic không có nghĩa exact optimum trong finite sweeps. Greedy action cần $r+\gamma PV$, không chỉ largest immediate reward.}
+\run{(1) Chọn $V_0$; (2) lập bảng $q_k(s,a)$ từ \emph{cùng old} $V_k$; (3) lấy max từng row thành $V_{k+1}$; (4) tính $\Delta_k$; (5) dừng nếu $\gamma\Delta_k/(1-\gamma)\le\epsilon$ cho value-error tolerance $\epsilon$, rồi greedy extract policy từ final values.}
+\ex{Hai states $s,t$, $t\to$ terminal reward 2; tại $s$: action $a\to t$ reward 0, $b\to$ terminal reward $.5$; $\gamma=.5$, $V_0=(0,0)$. Sweep 1: $q(s)=(0,.5)$ nên $V_1=(.5,2)$. Sweep 2: $q(s)=(1,.5)$ nên $V_2=(1,2)$. Sweep 3 không đổi; chọn $a$. Không dùng $V_1(t)=2$ ngay trong sweep 1.}
 
 \topic{22}{POLICY ITERATION / IMPROVE}
-1. Chọn deterministic $\mu$.
-2. Evaluate $(I-\gamma P^\mu)V^\mu=r^\mu$.
-3. $\mu^+(s)\in\argmax_a[r(s,a)+\gamma\sum_{s'}P(s'\mid s,a)V^\mu(s')]$.
-4. Repeat đến policy stable.
+\run{(1) Chọn deterministic $\mu$;
+(2) evaluate $(I-\gamma P^\mu)V^\mu=r^\mu$;
+(3) $\mu^+(s)\in\argmax_a[r(s,a)+\gamma\sum_{s'}P(s'\mid s,a)V^\mu(s')]$;
+(4) repeat đến policy stable.}
 Policy improvement: nếu $Q^\pi(s,\pi'(s))\ge V^\pi(s)$ mọi $s$, thì $V^{\pi'}\ge V^\pi$.
 \cond{Finite MDP + exact evaluation: finite termination với consistent tie handling (giữ old action nếu đang maximizer). Value iteration khác: backup values, không solve full policy mỗi sweep.}
+\ex{Dùng MDP hai states mục 21, init $\mu(s)=b$. Evaluate: $V^\mu(t)=2$, $V^\mu(s)=.5$. Improve: $q(s,a)=0+.5(2)=1>.5=q(s,b)$ nên đổi sang $a$. Evaluate lại: $V(s)=1$, $V(t)=2$; improve giữ nguyên, dừng.}
 
 \topic{23}{MONTE CARLO / TD(0)}
 Model-based biết $p,r$; model-free dùng sampled transitions. MC estimates $V^\pi(s)$ bằng average observed returns $G_t$; cần completed return, không bootstrap.
@@ -416,6 +443,10 @@ $V(s_t)\gets V(s_t)+\alpha\delta_t.$
 TD dùng one-step sample + current value estimate; update trước episode end. Nếu true terminal, bootstrap term $0$.
 
 \trap{$V(s')>V(s)$ không đủ để update tăng; phải xét reward \emph{và} discount. TD bootstrap có bias từ estimate, MC thường variance cao hơn.}
+\run{MC: (1) chạy episode theo $\pi$ đến terminal; (2) backward tính returns; (3) first-visit: chỉ lấy $t$ nhỏ nhất của mỗi state trong episode; every-visit: lấy mọi visit; (4) mỗi selected visit: $N(s)\gets N(s)+1$, $V(s)\gets V(s)+(G-V(s))/N(s)$.}
+\ex{Episode có states $(s,s,t)$, rewards $(1,2,4)$, $\gamma=.5$; returns $(3,4,4)$ (mục 19). Init $N(s)=0$: first-visit cho $V(s)=3$; every-visit: $3\to3+(4-3)/2=3.5$. Episode sau first-visit return $5$: first-visit running mean $3+(5-3)/2=4$.}
+\run{TD(0): (1) sample $(s,r,s')$ theo $\pi$; (2) target $y=r+\gamma V(s')$ (terminal: $y=r$); (3) $\delta=y-V(s)$; (4) update visited $V(s)$, tiếp tục episode.}
+\ex{$V(s)=2$, $V(s')=4$, $r=1$, $\gamma=.5$, $\alpha=.1$: $y=3$, $\delta=1$, $V^+(s)=2.1$. Nếu $s'$ terminal: $y=1$, $\delta=-1$, $V^+(s)=1.9$.}
 
 \topic{24}{Q-LEARNING / EXPLORATION}
 Learn $Q^*$ trực tiếp từ transition sample $(s,a,r,s')$:
@@ -425,28 +456,28 @@ Target theo Bellman optimality, khác TD evaluation của fixed policy. Current 
 \key{Behavior vs target}
 $\varepsilon$-greedy: probability $\varepsilon$ chọn random action, otherwise chọn $\argmax_aQ(s,a)$. Exploration tạo samples; target vẫn dùng greedy max ở next state.
 \trap{Không thay $\max_{a'}Q(s',a')$ bằng $\max_{a'}Q(s,a')$. True terminal không bootstrap. Function approximation không tự kế thừa convergence của tabular updates.}
-
+\run{(1) Init $Q$; (2) chọn action $\varepsilon$-greedy; (3) observe $(r,s',d)$; (4) target $y=r+\gamma(1-d)\max_{a'}Q(s',a')$; (5) update \emph{chỉ} $Q(s,a)$; (6) chuyển state/reset terminal, repeat.}
+\ex{$Q(s,a)=2$, next row $(3,5)$, $r=1$, $\gamma=.5$, $\alpha=.2$: $y=1+.5(5)=3.5$; $Q^+(s,a)=2+.2(3.5-2)=2.3$. Terminal: $y=1\Rightarrow Q^+=1.8$. $\varepsilon=.2$, 2 actions, unique greedy: greedy probability $.8+.2/2=.9$, other $.1$.}
 
 \topic{25}{DQN / REPLAY / TARGET NET}
 Approximate $Q(s,a;\theta)$ bằng neural net.
 Store $(s,a,r,s',d)$ trong replay buffer; sample random minibatch. $d=1$ khi true terminal.
 $y=r+\gamma(1-d)\max_{a'}Q(s',a';\theta^-).$
-\[L(\theta)=\frac1B\sum_{j=1}^B[y_j-Q(s_j,a_j;\theta)]^2.\]
+$L(\theta)=\frac1B\sum_{j=1}^B[y_j-Q(s_j,a_j;\theta)]^2.$
 Giữ target $y$ fixed khi differentiate; optimizer update $\theta$; định kỳ copy $\theta^-\gets\theta$.
 \key{Why two mechanisms?}
 Replay giảm sequential correlation và tái sử dụng data; target net làm target thay đổi chậm hơn. Behavior policy tạo data có thể khác greedy target policy.
 \trap{Replay không bắt buộc từ current policy. Terminal target $=r$. Neural approximation + bootstrap + off-policy có thể bất ổn; target/replay không chứng minh global convergence.}
+\run{(1) Init online $\theta$, copy target $\theta^-$; (2) $\varepsilon$-greedy action, store transition; (3) sample replay batch; (4) tính frozen targets bằng $\theta^-$; (5) backprop loss chỉ qua online net, update $\theta$; (6) mỗi $C$ steps copy target, repeat.}
+\ex{Batch size 1, toy online output $Q=\theta=2$; target-net next outputs $(3,5)$, $r=1$, $\gamma=.5$, $d=0$. $y=3.5$, $L=(3.5-2)^2=2.25$, $g_\theta=2(2-3.5)=-3$. $\eta=.1\Rightarrow\theta^+=2.3$; $\theta^-$ chưa đổi. Với $d=1$: $y=1$, $g=2$, $\theta^+=1.8$ từ cùng old $\theta=2$.}
 
 \topic{26}{POWER METHOD / PAGERANK}
 \key{PCA covariance $S\succeq0$ (mục 13)}
-\[v_{t+1}=\frac{Sv_t}{\norm{Sv_t}_2}.\]
+$v_{t+1}=\frac{Sv_t}{\norm{Sv_t}_2}.$
 Với $\lambda_1>\lambda_2$, $\alpha_1=u_1^\top v_0\ne0$: normalized iterates hội tụ về $\pm u_1$.
 $\rho=\frac{\lambda_2}{\lambda_1}<1,\quad\text{direction error }O(\rho^t).$
 Dense covariance, slide 39:
-\[\begin{aligned}
-\text{Full EVD}:&\ O(d^3),\\
-m\text{ PCs (iter.)}:&\ O(md^2)/\text{iteration}.
-\end{aligned}\]
+$\text{Full EVD}:\ O(d^3),$ $ m\text{ PCs (iter.)}:\ O(md^2)/\text{iteration}.$
 \key{PageRank}
 Với importance truyền theo outgoing links, chọn column-stochastic matrix $A$: $A_{ij}=1/d_j^{out}$ nếu $j\to i$. Stationary importance thỏa $Ar=r$.
 $r_{t+1}=Ar_t.$
@@ -456,6 +487,10 @@ Repair dangling columns bằng probability vector $v$. Với $0\le\alpha<1$:
 $r_{t+1}=\alpha Ar_t+(1-\alpha)v.$
 $\ind^\top v=1$, $v>0$ cho positive Google matrix và unique stationary distribution.
 \trap{Row-stochastic $A$ + column vector: cần transpose. Undamped iteration có thể không converge dù có eigenvalue $1$.}
+\run{Power method: (1) chọn unit $v_0$ với leading component khác $0$; (2) $w=Sv_t$; (3) chia $\norm w$; (4) lặp, dừng khi $\min(\norm{v_{t+1}-v_t},\norm{v_{t+1}+v_t})\le\epsilon$ hoặc budget; (5) $\hat\lambda=v^\top Sv$. $w=0$ thì đổi init.}
+\ex{$S=\diag(2,1)$, $v_0=(1,1)^\top/\sqrt2$. Multiply/normalize: $v_1=(2,1)^\top/\sqrt5$, $v_2=(4,1)^\top/\sqrt{17}$. Component ratio $1\to1/2\to1/4$; $\rho=1/2$. $v_2^\top Sv_2=(32+1)/17=33/17\to2$.}
+\run{PageRank: (1) từ mỗi node $j$, điền outgoing column $j$; (2) dangling column $\gets v$; (3) init probability $r_0$; (4) multiply $Ar_t$, damping + teleport; (5) lặp đến $\norm{r_{t+1}-r_t}_1\le\epsilon$ hoặc budget, rank theo scores.}
+\ex{Nodes $A\to B$, $B\to B$: matrix $A=\left[\begin{smallmatrix}0&0\\1&1\end{smallmatrix}\right]$. $v=r_0=(.5,.5)^\top$, $\alpha=.8$: $Ar_0=(0,1)^\top$; $r_1=.8(0,1)+.2(.5,.5)=(.1,.9)^\top$. Lượt 2 vẫn $(.1,.9)$; rank $B>A$, tổng $1$. Nếu $B$ dangling, column $B$ phải thay bằng $(.5,.5)^\top$ trước khi multiply.}
 
 \end{multicols*}
 \end{document}

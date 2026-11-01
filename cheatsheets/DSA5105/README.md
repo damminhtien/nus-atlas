@@ -43,14 +43,57 @@ cp tmp/pdfs/dsa5105/build/cheatsheet.pdf cheatsheets/DSA5105/cheatsheet.pdf
 ```
 
 The source uses the template's Source Sans 3 / STIX Two Math font choices and
-fallbacks, with 7.5 pt body text and 9.3 pt line spacing. Short formulas use
-inline math; matrices, long fractions, and multi-line derivations retain
-display math. The `multicols*` environment with `raggedcolumns` fills columns
+fallbacks, with 6.5 pt body text and 7.4 pt line spacing. All formulas use
+inline math, including compact matrices; former aligned displays are split
+into inline expressions. Fixed paragraph spacing is 0.7 pt and topic spacing
+is 3 pt. The `multicols*` environment with `raggedcolumns` fills columns
 sequentially without balancing or stretching the last page. Topics can
 continue into the next column; the complete autoencoder block stays together.
 Require no overfull boxes or missing glyphs in the build log. Auxiliary files
 and previews belong in ignored `tmp/pdfs/`. The course PDF is intentionally
 tracked, following the convention of `cheatsheets/DSA5104/`.
+
+## Hand-calculation coverage
+
+Every numbered topic has a `CHẠY` procedure and an `EX` example. The sheet
+contains 36 procedure blocks and 42 example boxes; procedures that share the
+same operations can cover related methods together. New numerical examples
+are authored arithmetic illustrations, not past-paper questions. Keep their
+intermediate calculations, update order, and loss normalization when editing.
+
+| Topic | Sequential procedure and example coverage |
+| --- | --- |
+| 01 | Compare empirical objectives; select hyperparameters with fold losses and refit. |
+| 02 | Solve OLS/ridge; solve a clipped Huber equation; check lasso signs/zero coordinates; forward probabilities and update logistic/softmax parameters. |
+| 03 | Full-batch GD iterations and sample/minibatch SGD gradients. |
+| 04 | Kernel validity checks and an explicit negative quadratic form. |
+| 05 | Gram construction, KRR solve and prediction; feature distance and polynomial-map expansion. |
+| 06 | Active-constraint/KKT calculation for a small hard SVM; a hinge subgradient update. |
+| 07 | Enumerate split thresholds, compare classification Gini and regression SSE, then recurse. |
+| 08 | Bootstrap, grow trees with RF feature selection, average or vote. |
+| 09 | One complete AdaBoost error/weight/normalization round and a weighted final vote. |
+| 10 | Forward pass, loss, reverse-layer gradients, simultaneous parameter update. |
+| 11 | Sliding cross-correlation, pooling, and summed gradients for shared weights. |
+| 12 | Unrolled RNN forward/backward passes and shared-parameter updates. |
+| 13 | Center raw observations, form covariance, solve/order eigenpairs, score and reconstruct. |
+| 14 | Scale PCA scores, verify unit covariance, invert whitening and restore the mean. |
+| 15 | Map then center features and run PCA; jointly train one combined encoder/decoder block. |
+| 16 | Distance table, hard assignments, means, objective comparison, and stable-assignment stopping. |
+| 17 | Gaussian MLE and density substitution; prior-weighted mixture density and Bayes normalization. |
+| 18 | Complete GMM E-step and M-step from explicit old means, variances, and priors. |
+| 19 | Compute returns backward and average action values under a stochastic policy. |
+| 20 | Solve exact policy-evaluation equations; compute action candidates before policy average or max. |
+| 21 | Synchronous value-iteration sweeps, error-based stopping, and final greedy policy. |
+| 22 | Evaluate a policy, compare actions, improve, and repeat until stable. |
+| 23 | First-visit versus every-visit MC with repeated states; TD updates with and without terminal continuation. |
+| 24 | Epsilon-greedy sampling probabilities; nonterminal and terminal Q-learning updates. |
+| 25 | Replay/target-network loop, frozen-target loss gradient, online update, and delayed copy. |
+| 26 | Power multiplication/normalization and Rayleigh quotient; PageRank construction, damping, iteration, and dangling-column repair. |
+
+For gradient examples, calculate every gradient using the same old weights
+before applying the update. EM explicitly uses the new weighted mean in the
+covariance update. Synchronous value iteration uses the old value table for
+the entire sweep. True terminal transitions have zero continuation value.
 
 ## Source map
 
@@ -92,4 +135,6 @@ $W_e$ and $V_d$ distinguish encoder/decoder weights from whitened scores $W$.
 Before accepting a rebuilt PDF, require no missing glyphs or overfull boxes,
 verify exactly two A4 pages, and inspect both rendered pages. Repository
 LaTeX validators cover the app's JSON content; compiling and visually
-checking this standalone document remain necessary.
+checking this standalone document remain necessary. Also render every inline
+expression with the document's macros, check that all 26 topics retain a
+procedure and example, and independently recompute changed numerical examples.
