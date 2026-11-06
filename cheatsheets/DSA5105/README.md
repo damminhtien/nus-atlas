@@ -78,7 +78,7 @@ intermediate calculations, update order, and loss normalization when editing.
 | 13 | Center raw observations, form covariance, solve/order eigenpairs, score and reconstruct. |
 | 14 | Scale PCA scores, verify unit covariance, invert whitening and restore the mean. |
 | 15 | Map then center features and run PCA; jointly train one combined encoder/decoder block. |
-| 16 | Distance table, hard assignments, means, objective comparison, and stable-assignment stopping. |
+| 16 | Coordinate-wise squared distances, hard assignments, coordinate means, direct/shortcut SSE, mean distortion, and stopping; a full 2D distance table before and after the update. |
 | 17 | Gaussian MLE and density substitution; prior-weighted mixture density and Bayes normalization. |
 | 18 | Complete GMM E-step and M-step from explicit old means, variances, and priors. |
 | 19 | Compute returns backward and average action values under a stochastic policy. |

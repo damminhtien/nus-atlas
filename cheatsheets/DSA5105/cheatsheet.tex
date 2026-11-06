@@ -340,16 +340,23 @@ Target $=x_i$, không cần $y_i$. Joint minibatch SGD cập nhật $\theta,\psi
 
 
 \topic{16}{K-MEANS / HARD ASSIGNMENT}
-Chọn $K$ trước; $z_i\in\{1,\ldots,K\}$:
-$J(z,\mu)=\sum_i\norm{x_i-\mu_{z_i}}^2.$
-\run{Lloyd: (1) init $K$ centers; (2) tính distance tới mọi center, assign nearest; (3) update từng mean; (4) lặp đến assignments không đổi hoặc objective giảm dưới tolerance. Fix tie/empty-cluster rule.}
-$z_i\gets\argmin_k\norm{x_i-\mu_k}^2.$
-$\mu_k\gets\frac1{|C_k|}\sum_{i\in C_k}x_i.$
-Mỗi step không tăng $J$; local optimum phụ thuộc init. Empty cluster phải có rule (vd. reseed). Khởi tạo khác nhau có thể dẫn tới các local optima khác nhau.
-\ex{1D $x=(0,2,8,10)$, centers $(0,8)$. Squared-distance pairs: $(0,64),(4,36),(64,0),(100,4)$; assign $\{0,2\},\{8,10\}$. New means $(1,9)$; $J=1+1+1+1=4$ (old $J=8$). Reassign với centers mới: giữ nguyên, dừng.}
-\key{Assumptions / geometry}
-Squared Euclidean thích clusters gần spherical, scale tương tự. Scaling features đổi assignment. Hard boundary là Voronoi partition.
-\trap{Không tự chọn $K$; không bảo đảm global minimum. Monotone objective không suy ra clustering đúng về ý nghĩa.}
+Chọn $K$ trước; $x_i\in\R^d$, $z_i\in\{1,\ldots,K\}$. Minimize within-cluster SSE:
+$J(z,\mu)=\sum_i\norm{x_i-\mu_{z_i}}_2^2=\sum_{k=1}^K J_k.$
+\key{1. Distance / assign}
+$D_{ik}=\norm{x_i-\mu_k}_2^2=\sum_{j=1}^d(x_{ij}-\mu_{kj})^2.$
+$z_i\gets\argmin_k D_{ik}$; $C_k=\{i:z_i=k\}$, $n_k=|C_k|$. Lập bảng distances, chọn min mỗi row; không cần căn. Fix tie rule.
+\key{2. Update từng tọa độ}
+$\mu_k^+=n_k^{-1}\sum_{i\in C_k}x_i$;
+$\mu_{kj}^+=n_k^{-1}\sum_{i\in C_k}x_{ij}$, $n_k>0$.
+\key{3. Tính SSE / kiểm nhanh}
+$J_k=\sum_{i\in C_k}\sum_j(x_{ij}-\mu_{kj})^2$.
+Nếu $\mu_k$ là mean của cluster hiện tại:
+$J_k=\sum_{i\in C_k}\norm{x_i}_2^2-n_k\norm{\mu_k}_2^2$.
+$J=\sum_kJ_k$; mean squared distance $=J/n$. SSE dùng squared distances.
+\run{Lloyd: (1) init centers; (2) tính mọi $D_{ik}$ từ old centers, assign; (3) update means; (4) tính new SSE; (5) lặp đến $z$ không đổi, $0\le J_{old}-J_{new}\le\epsilon$, hoặc đủ $T$ iterations. Empty cluster: reseed, không chia $0$.}
+\ex{2D $x_1=(0,0)$, $x_2=(2,0)$, $x_3=(8,2)$, $x_4=(10,2)$; init $\mu_1=(0,0)$, $\mu_2=(8,2)$. Squared-distance rows $(D_{i1},D_{i2})$: $(0,68),(4,40),(68,0),(104,4)$; vd. $D_{22}=(2-8)^2+(0-2)^2=40$. Assign $C_1=\{1,2\}$, $C_2=\{3,4\}$. Means $\mu_1^+=((0+2)/2,0)=(1,0)$, $\mu_2^+=(9,2)$. New SSE $J_1=1+1=2$, $J_2=1+1=2$, $J=4$ (old $J=0+4+0+4=8$). Check $J_1=(0+4)-2(1^2+0^2)=2$; $J/n=1$. Reassign: distance rows $(1,85),(1,53),(53,1),(85,1)$, assignments giữ nguyên, dừng.}
+Mỗi assign/update không tăng $J$. Euclidean nhạy scale, hợp spherical clusters; boundary là Voronoi.
+\trap{Chọn $K$, fix tie/empty rule. Init ảnh hưởng local optimum; không bảo đảm global min. SSE shortcut chỉ đúng tại cluster mean.}
 
 \topic{17}{GAUSSIAN / MIXTURE DENSITY}
 $d$-dimensional Gaussian ($\Sigma\succ0$):
