@@ -50,7 +50,7 @@
 \raggedbottom
 \raggedcolumns
 \newcommand{\bodystyle}{%
-  \fontsize{6.5}{7.4}\selectfont\raggedright
+  \fontsize{6.4}{7.3}\selectfont\raggedright
   \setlength{\abovedisplayskip}{2pt}\setlength{\belowdisplayskip}{2pt}%
   \setlength{\abovedisplayshortskip}{1pt}\setlength{\belowdisplayshortskip}{1pt}}
 \newcommand{\topic}[2]{\par\addvspace{3pt}%
@@ -466,38 +466,39 @@ $\varepsilon$-greedy: probability $\varepsilon$ chọn random action, otherwise 
 \run{(1) Init $Q$; (2) chọn action $\varepsilon$-greedy; (3) observe $(r,s',d)$; (4) target $y=r+\gamma(1-d)\max_{a'}Q(s',a')$; (5) update \emph{chỉ} $Q(s,a)$; (6) chuyển state/reset terminal, repeat.}
 \ex{$Q(s,a)=2$, next row $(3,5)$, $r=1$, $\gamma=.5$, $\alpha=.2$: $y=1+.5(5)=3.5$; $Q^+(s,a)=2+.2(3.5-2)=2.3$. Terminal: $y=1\Rightarrow Q^+=1.8$. $\varepsilon=.2$, 2 actions, unique greedy: greedy probability $.8+.2/2=.9$, other $.1$.}
 
-\topic{25}{DQN / REPLAY / TARGET NET}
-Approximate $Q(s,a;\theta)$ bằng neural net.
-Store $(s,a,r,s',d)$ trong replay buffer; sample random minibatch. $d=1$ khi true terminal.
-$y=r+\gamma(1-d)\max_{a'}Q(s',a';\theta^-).$
-$L(\theta)=\frac1B\sum_{j=1}^B[y_j-Q(s_j,a_j;\theta)]^2.$
-Giữ target $y$ fixed khi differentiate; optimizer update $\theta$; định kỳ copy $\theta^-\gets\theta$.
-\key{Why two mechanisms?}
-Replay giảm sequential correlation và tái sử dụng data; target net làm target thay đổi chậm hơn. Behavior policy tạo data có thể khác greedy target policy.
-\trap{Replay không bắt buộc từ current policy. Terminal target $=r$. Neural approximation + bootstrap + off-policy có thể bất ổn; target/replay không chứng minh global convergence.}
-\run{(1) Init online $\theta$, copy target $\theta^-$; (2) $\varepsilon$-greedy action, store transition; (3) sample replay batch; (4) tính frozen targets bằng $\theta^-$; (5) backprop loss chỉ qua online net, update $\theta$; (6) mỗi $C$ steps copy target, repeat.}
-\ex{Batch size 1, toy online output $Q=\theta=2$; target-net next outputs $(3,5)$, $r=1$, $\gamma=.5$, $d=0$. $y=3.5$, $L=(3.5-2)^2=2.25$, $g_\theta=2(2-3.5)=-3$. $\eta=.1\Rightarrow\theta^+=2.3$; $\theta^-$ chưa đổi. Với $d=1$: $y=1$, $g=2$, $\theta^+=1.8$ từ cùng old $\theta=2$.}
+\topic{25}{GNN / INVARIANT VS EQUIVARIANT}
+\key{Relabel nodes (sl. 6--9)}
+$X\in\R^{N\times d}$: node features theo rows; $A\in\R^{N\times N}$: adjacency. Permutation $P$: mỗi row/column một số $1$, còn lại $0$; $P^{-1}=P^\top$.
+$X'=PX$, $A'=PAP^\top$: đổi feature rows và cả rows/columns của $A$. $P_{ij}=1$: old node $j$ tới new row $i$; graph không đổi.
+\key{Node task: equivariant}
+$F(PX,PAP^\top)=PF(X,A)$, output $F\in\R^{N\times q}$: predictions reorder giống nodes, vẫn gắn đúng node.
+\key{Graph task: invariant}
+$g(PX,PAP^\top)=g(X,A)$, output $g\in\R^q$: graph property giữ nguyên khi renumber nodes.
+\key{Shared layer / proof}
+Với undirected $A_{ij}=1$ iff $j\in\mathcal N(i)$, $H$ chứa row embeddings:
+$F(H,A)=\sigma(HW_s+AHW_n+\ind_Nb^\top)$.
+Shared weights, elementwise $\sigma$; $P\ind_N=\ind_N$, $P^\top P=I$ cho
+$(PAP^\top)(PH)=PAH$;
+$F(PH,PAP^\top)=P\sigma(HW_s+AHW_n+\ind_Nb^\top)=PF(H,A)$.
+Stack equivariant layers + shared row classifier vẫn equivariant. Invariant pooling + graph MLP cho invariant graph prediction.
+\run{(1) Xác định node/graph output; (2) lập $X',A'$ với cùng $P$; (3) tính output mới; (4) so với $PF$ (node) hoặc $g$ (graph). Proof cần mọi $P$; một counterexample đủ bác bỏ.}
+\ex{$H=(1,2)^\top$, swap cho $PH=(2,1)^\top$. Sum $=3$ cả hai. $g(H)=h_1+2h_2$: $5\to4$, không invariant. $F(H)=\diag(1,2)H$: $PF(H)=(4,1)^\top$ nhưng $F(PH)=(2,2)^\top$, không equivariant (weights theo row index).}
+\trap{Chỉ đổi $X$, giữ $A$ thường đổi feature-node association. Neighbor aggregation invariant với thứ tự neighbors; toàn bộ node outputs phải equivariant. Flatten theo node order + arbitrary MLP không bảo đảm symmetry.}
 
-\topic{26}{POWER METHOD / PAGERANK}
-\key{PCA covariance $S\succeq0$ (mục 13)}
-$v_{t+1}=\frac{Sv_t}{\norm{Sv_t}_2}.$
-Với $\lambda_1>\lambda_2$, $\alpha_1=u_1^\top v_0\ne0$: normalized iterates hội tụ về $\pm u_1$.
-$\rho=\frac{\lambda_2}{\lambda_1}<1,\quad\text{direction error }O(\rho^t).$
-Dense covariance, slide 39:
-$\text{Full EVD}:\ O(d^3),$ $ m\text{ PCs (iter.)}:\ O(md^2)/\text{iteration}.$
-\key{PageRank}
-Với importance truyền theo outgoing links, chọn column-stochastic matrix $A$: $A_{ij}=1/d_j^{out}$ nếu $j\to i$. Stationary importance thỏa $Ar=r$.
-$r_{t+1}=Ar_t.$
-Eigenvalue $1$; normalize giúp ổn định số và giữ probability interpretation.
-\key{Teleportation}
-Repair dangling columns bằng probability vector $v$. Với $0\le\alpha<1$:
-$r_{t+1}=\alpha Ar_t+(1-\alpha)v.$
-$\ind^\top v=1$, $v>0$ cho positive Google matrix và unique stationary distribution.
-\trap{Row-stochastic $A$ + column vector: cần transpose. Undamped iteration có thể không converge dù có eigenvalue $1$.}
-\run{Power method: (1) chọn unit $v_0$ với leading component khác $0$; (2) $w=Sv_t$; (3) chia $\norm w$; (4) lặp, dừng khi $\min(\norm{v_{t+1}-v_t},\norm{v_{t+1}+v_t})\le\epsilon$ hoặc budget; (5) $\hat\lambda=v^\top Sv$. $w=0$ thì đổi init.}
-\ex{$S=\diag(2,1)$, $v_0=(1,1)^\top/\sqrt2$. Multiply/normalize: $v_1=(2,1)^\top/\sqrt5$, $v_2=(4,1)^\top/\sqrt{17}$. Component ratio $1\to1/2\to1/4$; $\rho=1/2$. $v_2^\top Sv_2=(32+1)/17=33/17\to2$.}
-\run{PageRank: (1) từ mỗi node $j$, điền outgoing column $j$; (2) dangling column $\gets v$; (3) init probability $r_0$; (4) multiply $Ar_t$, damping + teleport; (5) lặp đến $\norm{r_{t+1}-r_t}_1\le\epsilon$ hoặc budget, rank theo scores.}
-\ex{Nodes $A\to B$, $B\to B$: matrix $A=\left[\begin{smallmatrix}0&0\\1&1\end{smallmatrix}\right]$. $v=r_0=(.5,.5)^\top$, $\alpha=.8$: $Ar_0=(0,1)^\top$; $r_1=.8(0,1)+.2(.5,.5)=(.1,.9)^\top$. Lượt 2 vẫn $(.1,.9)$; rank $B>A$, tổng $1$. Nếu $B$ dangling, column $B$ phải thay bằng $(.5,.5)^\top$ trước khi multiply.}
+\topic{26}{GNN / MESSAGE PASSING / READOUT}
+\key{Aggregate + update (sl. 13--18)}
+Dùng row embeddings $h_i^{(0)}=x_i^\top$ trong $H^{(0)}=X$:
+$m_i^{(\ell)}=\operatorname{AGG}\{h_j^{(\ell)}:j\in\mathcal N(i)\}$;
+$h_i^{(\ell+1)}=\sigma(h_i^{(\ell)}W_s^{(\ell)}+m_i^{(\ell)}W_n^{(\ell)}+b^{(\ell)\top})$.
+AGG order-invariant trên multiset: sum, mean, elementwise max. Mean $=\sum_jh_j/|\mathcal N(i)|$; isolated node cần rule (vd. zero aggregate).
+\key{Invariant readout (sl. 22)}
+Sum $r(H)=\sum_i h_i=\ind_N^\top H$;
+$r(PH)=\ind_N^\top PH=\ind_N^\top H=r(H)$.
+Mean/max cũng invariant; graph MLP $\rho(r(H))$ giữ invariance.
+\run{(1) Liệt kê neighbors, init $H=X$; (2) mỗi layer tính mọi aggregate từ cùng old $H$; (3) shared update + activation; (4) lặp $L$ layers; (5) node task giữ rows, graph task pooling; (6) permute và kiểm mục 25. $L$ local layers reach tối đa $L$ hops.}
+\ex{Sl. 32--33: chain $a-b-c-d$, $H^{(0)}=(1,2,0,3)^\top$; $h_i^+=\operatorname{ReLU}(h_i+\tfrac12\sum_{j\in\mathcal N(i)}h_j)$. Layer 1 neighbor sums $(2,1,5,0)$; $H^{(1)}=(2,2.5,2.5,3)^\top$, vd. $h_c^+=0+.5(2+3)=2.5$. Layer 2: $h_a^{(2)}=2+.5(2.5)=3.25$; tương tự $H^{(2)}=(3.25,4.75,5.25,4.25)^\top$. Sum readouts $10$, $17.5$.}
+\ex{Order mới $(b,a,d,c)$: $X'=(2,1,3,0)^\top$, neighbor-index sets $(\{2,4\},\{1\},\{4\},\{1,3\})$. First new row: $2+.5(1+0)=2.5$; tính tiếp cho $H'^{(1)}=(2.5,2,3,2.5)^\top=PH^{(1)}$. Layer 2 reorder $(4.75,3.25,4.25,5.25)^\top$; sums vẫn $10$, $17.5$. Node outputs equivariant; graph readout invariant.}
+\trap{$\{1,1\}$ và $\{1,1,1\}$ có sum $2,3$ nhưng cùng mean/max $1$: mean/max mất multiplicity. Invariant không bảo đảm phân biệt mọi graph. CNN translation-equivariant, không với arbitrary node permutations.}
 
 \end{multicols*}
 \end{document}

@@ -17,13 +17,13 @@ subjects. The supplied original remains outside the repository.
 - Topics 01–12: learning/linear models, optimization, kernels/SVM, trees/ensembles,
   neural networks, CNNs, and RNNs.
 - Topics 13–26: PCA/whitening/feature-space PCA/autoencoders, K-means/GMM, finite
-  discounted MDPs, value/policy iteration, MC/TD/Q-learning, and DQN.
+  discounted MDPs, value/policy iteration, MC/TD/Q-learning, and GNN permutation symmetry.
   Topic 15 keeps autoencoder MLP architecture, loss, and training together.
-- Power iteration covers PCA's dense numerical method and the PageRank topic
-  introduced in the Deep RL slides; no past-paper graph-kernel,
-  spectral-clustering, GNN, LS-SVM,
-  leave-one-out, or shortest-path exercises are included. Kernel PCA and
-  SARSA are also omitted because they are not in the available slides.
+- Topics 25–26 replace the previous DQN and Power Method/PageRank blocks at
+  the user's request. They use the current Week 12 GNN slides, focusing on
+  permutation invariance/equivariance, shared message passing, and graph readout.
+  No past-paper graph-kernel, spectral-clustering, LS-SVM, leave-one-out, or
+  shortest-path exercises are included. Kernel PCA and SARSA remain omitted.
 
 The syllabus explicitly excludes the Tuesday Group 2 Week 8 special lecture
 from the final and quizzes. The LLM-as-optimizer special topic is omitted.
@@ -43,7 +43,7 @@ cp tmp/pdfs/dsa5105/build/cheatsheet.pdf cheatsheets/DSA5105/cheatsheet.pdf
 ```
 
 The source uses the template's Source Sans 3 / STIX Two Math font choices and
-fallbacks, with 6.5 pt body text and 7.4 pt line spacing. All formulas use
+fallbacks, with 6.4 pt body text and 7.3 pt line spacing. All formulas use
 inline math, including compact matrices; former aligned displays are split
 into inline expressions. Fixed paragraph spacing is 0.7 pt and topic spacing
 is 3 pt. The `multicols*` environment with `raggedcolumns` fills columns
@@ -56,7 +56,7 @@ tracked, following the convention of `cheatsheets/DSA5104/`.
 ## Hand-calculation coverage
 
 Every numbered topic has a `CHẠY` procedure and an `EX` example. The sheet
-contains 36 procedure blocks and 42 example boxes; procedures that share the
+contains 35 procedure blocks and 42 example boxes; procedures that share the
 same operations can cover related methods together. New numerical examples
 are authored arithmetic illustrations, not past-paper questions. Keep their
 intermediate calculations, update order, and loss normalization when editing.
@@ -87,8 +87,8 @@ intermediate calculations, update order, and loss normalization when editing.
 | 22 | Evaluate a policy, compare actions, improve, and repeat until stable. |
 | 23 | First-visit versus every-visit MC with repeated states; TD updates with and without terminal continuation. |
 | 24 | Epsilon-greedy sampling probabilities; nonterminal and terminal Q-learning updates. |
-| 25 | Replay/target-network loop, frozen-target loss gradient, online update, and delayed copy. |
-| 26 | Power multiplication/normalization and Rayleigh quotient; PageRank construction, damping, iteration, and dangling-column repair. |
+| 25 | Relabel features and adjacency consistently; prove equivariance/invariance or disprove them with numerical counterexamples. |
+| 26 | Synchronous message passing on a four-node chain, two layers, relabelled outputs, and invariant sum readouts. |
 
 For gradient examples, calculate every gradient using the same old weights
 before applying the update. EM explicitly uses the new weighted mean in the
@@ -109,11 +109,10 @@ into this repository. Page numbers are 1-based PDF pages.
 | 03, 10 | `DSA5105/Lec4_SL_NN_GD.pdf`, pp. 3–25, 27–52 | Separate approximation, optimization, and efficient chain-rule differentiation. |
 | 11–12 | `DSA5105/Lec5_SL_CNN_RNN.pdf`, pp. 13–32, 35–40 | Distinguish weight sharing/locality and equivariance/invariance; sum recurrent gradient contributions. |
 | 13–15 | `DSA5105/Lec6_UL_PCA.pdf`, pp. 15–31, 34–60 | Center before PCA; separate scores/reconstruction; use the explicitly taught feature matrix, whitening, autoencoder loss, shallow MLP dimensions, and joint minibatch SGD. |
-| 26 | `DSA5105/Lec6_UL_PCA.pdf`, p. 39; user-supplied power-method formulas | Dense full EVD costs cubic time; iterative leading-PC updates cost quadratic time per direction per iteration. State the supplied convergence condition and direction-rate bound for PSD covariance with a strict leading eigengap and nonzero initial leading component. |
 | 16–18 | `DSA5105/Lec9_UL_K-means_GMM.pdf`, pp. 4–22, 23–39 | Contrast hard assignments with Gaussian posterior responsibilities and weighted parameter updates. |
 | 19–20 | `DSA5105/Lec10_RL_MDP_DP.pdf`, pp. 13–44 | Separate policy expectation from optimality maximization under discounted-MDP assumptions. |
 | 21–24 | `DSA5105/Lec11_RL.pdf`, pp. 8–20, 25–39 | Distinguish exact model-based backups, sampled returns, TD evaluation, and Q-learning. |
-| 25–26 | `DSA5105/DSA5105_Week11_DeepRL.pdf`, pp. 5, 7 | Use the displayed DQN replay/target-network algorithm and the slide's power-iteration/PageRank remarks. |
+| 25–26 | `DSA5105/DSA5105_Week12_GNN.pptx`, slides 5–18, 22, 32–33 | Relabel both feature rows and adjacency rows/columns; distinguish node equivariance from graph invariance; derive shared-layer symmetry and use the two-layer chain example with sum readout. |
 | Scope | `DSA5105/syllabus.pdf`, p. 1 | Preserve the special-lecture exclusion; do not infer a second-half-only final. |
 
 Ridge primarily uses mean half-squared loss, matching the supplied notes and
