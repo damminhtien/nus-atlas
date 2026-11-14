@@ -2420,7 +2420,7 @@ Bộ nhớ & $O(d)$ & $O(k)$ \\
 Kết quả & $F_2$ chính xác, tất định & $\widehat F_2$ ngẫu nhiên, không chệch \\
 \bottomrule
 \end{examtable}
-\key{Một mẫu (slide 76)} Chọn đều một vị trí $t$ trong luồng. Lưu $\mathsf{X.el}=a_t$ và $\mathsf{X.val}=c$, số lần item đó xuất hiện từ vị trí $t$ đến cuối, tính cả $a_t$. Ước lượng là $Y=n(2c-1)$. Với $k$ mẫu, lấy trung bình các $Y$ để được $\widehat F_2$.
+\key{Một mẫu (slide 76)} Chọn đều một vị trí $t$ trong luồng. Lưu $\mathsf{X.el}=a_t$ và $\mathsf{X.val}=c_t$, số lần item đó xuất hiện từ vị trí $t$ đến cuối, tính cả $a_t$. Ước lượng là $Y=n(2c_t-1)$. Với $k$ mẫu, lấy trung bình các $Y$ để được $\widehat F_2$.
 
 \key{Chi phí} Một mẫu dùng một lượt quét $O(n)$ thời gian và $O(1)$ bộ nhớ. Với $k$ mẫu, lưu $O(k)$ item và bộ đếm. Khi chưa biết $n$, dùng \hyperref[topic:reservoir]{reservoir sampling} để duy trì mẫu đều theo vị trí (slide 81). Khi nhận vị trí mới, tăng các bộ đếm đang giữ nếu item khớp; nếu vị trí mới được chọn, thay ô tương ứng bằng item mới và bộ đếm 1.
 
@@ -2439,7 +2439,7 @@ $t$ & $a_t$ & $c_t$ & $Y_t=6(2c_t-1)$ & Cập nhật khi chọn $t=3$ \\
 \end{examtable}
 Mẫu ở $t=3$ cho $Y=6(2\cdot2-1)=18$, còn giá trị chính xác là $3^2+2^2+1^2=14$. Trung bình qua cả sáu điểm bắt đầu là $(30+18+18+6+6+6)/6=14$.
 
-\key{Vì sao không chệch (slides 77--78)} Nếu item $i$ xuất hiện $m_i$ lần, chọn từ lần đầu đến lần cuối cho các giá trị $c=m_i,m_i-1,\ldots,1$. Vì $2c-1=c^2-(c-1)^2$, tổng $1+3+\cdots+(2m_i-1)$ bằng $m_i^2$. Gom các vị trí theo item:
+\key{Vì sao đếm theo hậu tố? (slides 77--78)} Nếu item $i$ xuất hiện $m_i$ lần, mỗi lần xuất hiện cho một giá trị $c_t$ khác nhau: $m_i,m_i-1,\ldots,1$. Vì $2c-1=c^2-(c-1)^2$, tổng $1+3+\cdots+(2m_i-1)$ bằng $m_i^2$. Gom các vị trí theo item:
 \[
 \begin{aligned}
 \mathbb E[Y]
@@ -2448,7 +2448,14 @@ Mẫu ở $t=3$ cho $Y=6(2\cdot2-1)=18$, còn giá trị chính xác là $3^2+2^
    =\sum_i m_i^2=F_2.
 \end{aligned}
 \]
-Cùng lập luận cho moment bậc $r$: dùng $Y_r=n[c^r-(c-1)^r]$ để ước lượng $F_r=\sum_i m_i^r$. Bậc $1$ cho $F_1=n$.
+\key{Nếu dùng tần suất toàn luồng} Mỗi item $i$ có $m_i$ vị trí để được chọn, và ở cả $m_i$ vị trí đó ta sẽ dùng cùng giá trị $m_i$ thay cho $c_t$. Khi đó:
+\[
+\mathbb E[Y_{\mathrm{sai}}]
+  =\sum_i m_i(2m_i-1)=2F_2-n .
+\]
+Cách thay này làm ước lượng lệch lên $F_2-n$, trừ khi mọi item chỉ xuất hiện một lần. Với luồng trên, kỳ vọng sẽ là $2\cdot14-6=22$ thay vì $14$. Đếm hậu tố cũng phù hợp với một lượt quét: đặt bộ đếm bằng 1 tại vị trí chọn và chỉ cập nhật với các phần tử đến sau.
+
+Cùng lập luận theo hậu tố cho moment bậc $r$: dùng $Y_r=n[c^r-(c-1)^r]$ để ước lượng $F_r=\sum_i m_i^r$. Bậc $1$ cho $F_1=n$.
 
 \key{Tự kiểm trước khi thi}
 \par\nopagebreak
@@ -2458,7 +2465,7 @@ Phát biểu & Đúng/Sai \\
 \midrule
 AMS luôn trả đúng $F_2$. & Sai \\
 $\mathbb E[\widehat F_2]=F_2$. & Đúng \\
-$c$ luôn bằng tần suất của item trong cả luồng. & Sai \\
+$c_t$ luôn bằng tần suất của item trong cả luồng. & Sai \\
 Chọn đều item phân biệt luôn tương đương chọn đều vị trí. & Sai \\
 Mẫu tại vị trí đầu có thể cho $Y>F_2$. & Đúng \\
 \bottomrule
