@@ -2510,14 +2510,22 @@ khi hỏi $k$: lấy các bucket có timestamp $>t-k$\\
 nếu không có bucket: trả 0; nếu có: trả tổng cỡ trừ nửa cỡ bucket cũ nhất
 \end{algpseudo}
 
-\key{Khi dùng} Đếm xấp xỉ số bit 1 trong $N$ vị trí gần nhất. Bucket cỡ $2^j$ chứa $2^j$ bit 1; timestamp là vị trí bit 1 mới nhất trong bucket.
+\key{Bài toán và lựa chọn} Với luồng bit $x_1,\ldots,x_t\in\{0,1\}$, cửa sổ tối đa $N$ và truy vấn $1\le k\le N$, cần ước lượng
+\[
+C_{t,k}=\sum_{i=t-k+1}^{t}x_i.
+\]
+Lưu thẳng $N$ bit cho kết quả chính xác nhưng tốn $O(N)$ bit. Ước lượng theo tỷ lệ toàn luồng, $N S/(S+Z)$ với $S,Z$ là tổng số bit 1 và 0, chỉ phù hợp khi tỷ lệ ổn định và không có bảo đảm xấu nhất. DGIM dùng $O(\log^2N)$ bit, không giả định phân bố ổn định.
+\key{Biểu diễn} Bucket $B=(s,t_{\mathrm{end}})$ đại diện $s$ bit 1; $t_{\mathrm{end}}$ là timestamp của bit 1 mới nhất. Cỡ $s$ là lũy thừa của 2. Buckets không chồng lấn, cỡ không tăng từ cũ sang mới và có tối đa hai bucket mỗi cỡ. Có thể lưu timestamp modulo $N$, nhưng phải xét tuổi qua phép tính modulo, không so sánh trực tiếp timestamp đã cuộn vòng.
 \steps{
 \item Khi đến vị trí $t$, xóa bucket có timestamp $\le t-N$.
 \item Nếu bit đến là 1, thêm bucket cỡ 1. Khi có ba bucket cùng cỡ, gộp hai bucket cũ nhất và giữ timestamp mới hơn trong hai bucket. Lặp nếu tràn ở cỡ lớn hơn.
-\item Khi hỏi $k$ vị trí cuối, bỏ bucket kết thúc trước cửa sổ truy vấn. Cộng đủ các bucket mới hơn và nửa bucket cũ nhất còn lại. Nếu không còn bucket, trả 0.
+\item Khi hỏi $k$ vị trí cuối, đặt $L=t-k+1$ và chọn bucket có $t_{\mathrm{end}}\ge L$. Cộng đủ các bucket mới hơn và nửa bucket cũ nhất còn lại. Nếu không còn bucket, trả 0.
 }
-\key{Sai số} Nếu bucket cũ nhất có $2^j$ bit 1, phần sai lệch tối đa là $2^{j-1}$. Có ít nhất một bit 1 từ bucket này và ít nhất $2^j-1$ bit 1 từ các cỡ nhỏ hơn, nên sai số tương đối tối đa $50\%$ trong mô hình chuẩn. Lưu $O(\log^2N)$ bit cho $O(\log N)$ bucket và timestamp.
-\key{Cỡ bucket lớn nhất} Mọi bucket có cỡ là lũy thừa của 2 và không thể lớn hơn lũy thừa lớn nhất không vượt quá $N-1$: để tạo cỡ $2b$, hai bucket mới hơn cần ít nhất $2b$ bit 1 trong khi bucket cũ nhất còn sống. Cận nửa bucket là cận tổng quát, có thể chưa chặt cho cửa sổ cụ thể.
+\key{Sai số} Nếu bucket cũ nhất được chọn có cỡ $B=2^j$, ước lượng thay phần giao của bucket đó với cửa sổ bằng $B/2$, nên $|\hat C-C|\le B/2$. Có ít nhất một bit 1 từ bucket biên và ít nhất $1+2+\cdots+2^{j-1}=B-1$ bit 1 từ các bucket mới hơn; do đó $C\ge B$ và sai số tương đối không quá $50\%$ khi $C>0$. Cận này có thể chưa chặt cho một cửa sổ cụ thể.
+\key{Giảm sai số} Biến thể với tham số $r>2$ giữ nhiều bucket hơn và dùng quy tắc truy vấn tương ứng, đạt $E_{\mathrm{rel}}\le1/(r-1)$: $r=3$ cho $50\%$, $r=4$ cho $33.3\%$, $r=5$ cho $25\%$, $r=11$ cho $10\%$. Tham số $r$ này khác số mũ $j$ trong $B=2^j$.
+\key{Cỡ bucket cực trị} Với $N>1$, bucket lớn nhất có cỡ $B_{\max}=2^{\lfloor\log_2(N-1)\rfloor}$. Để tạo bucket cỡ $B$, cần ba bucket cỡ $B/2$; khoảng cách từ bit mới nhất của bucket cũ nhất đến bit mới nhất của bucket thứ ba ít nhất $B$ vị trí. Nếu $B\ge N$, bucket cũ nhất hết hạn trước khi merge. Khi cả $N$ bit đều là 1, nếu cỡ bucket lớn nhất là $B$, tổng sức chứa tối đa là $2(1+2+\cdots+B)=4B-2$. Vì vậy cỡ nhỏ nhất có thể là lũy thừa của 2 nhỏ nhất thỏa $4B-2\ge N$; với $N=500$, cỡ đó là $128$.
+\key{Luồng số nguyên} Với số nguyên không âm tối đa $m$ bit, viết $x_q=\sum_{i=0}^{m-1}b_{q,i}2^i$ và duy trì một DGIM cho mỗi vị trí bit. Nếu $\hat c_i$ là số bit 1 ước lượng ở vị trí $i$, thì $\widehat{\sum_qx_q}=\sum_{i=0}^{m-1}2^i\hat c_i$; chia cho số phần tử để ước lượng trung bình. Bộ nhớ là $O(m\log^2N)$ bit.
+\key{Độ phức tạp} Có $O(\log N)$ bucket, mỗi timestamp cần $O(\log N)$ bit nên tổng bộ nhớ là $O(\log^2N)$ bit. Cập nhật tốn $O(\log N)$ trong trường hợp xấu nhất do gộp dây chuyền; truy vấn tốn $O(\log N)$ để duyệt buckets.
 
 \begin{example}{Pr22}{Pr22(a,b) · DGIM: xóa, thêm, gộp rồi truy vấn}
 \begin{examtable}{@{}c l l@{}}
