@@ -55,12 +55,18 @@
 
 \newcommand{\blocklabel}[1]{\par\noindent#1\par\nobreak}
 \newcommand{\answer}[1]{%
+  \setcounter{solutionstep}{0}%
   \par\addvspace{4pt}%
   \blocklabel{#1Hướng dẫn giải}}
 \newcommand{\guidepart}[1]{#1\enspace}
-\newlist{guidesteps}{enumerate}{1}
-\setlist[guidesteps]{label=\arabic*.,leftmargin=1.65em,topsep=0pt,
-  itemsep=1pt,parsep=0pt,partopsep=0pt}
+\newcounter{solutionstep}
+\newenvironment{guidesteps}[1][]{%
+  \begin{enumerate}[label=\arabic*.,start=\numexpr\value{solutionstep}+1\relax,
+    leftmargin=1.65em,topsep=0pt,itemsep=1pt,parsep=0pt,partopsep=0pt,#1]%
+}{%
+  \setcounter{solutionstep}{\value{enumi}}%
+  \end{enumerate}%
+}
 \NewDocumentCommand{\ask}{o m m m}{%
   \par\addvspace{7pt}%
   \blocklabel{\maptag{question:#2}\IfValueT{#1}{\maptag{question:#1}}%
