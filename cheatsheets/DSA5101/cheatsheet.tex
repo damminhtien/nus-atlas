@@ -26,9 +26,17 @@
 \raggedbottom
 
 \newcommand{\headingfont}{\fontsize{12pt}{14pt}\selectfont\bfseries}
-\titleformat{\section}{\headingfont\raggedright}{}{0pt}{}
-\titleformat{\subsection}{\normalsize\bfseries\raggedright}{}{0pt}{}
-\titlespacing*{\section}{0pt}{12pt}{4pt}
+\newcommand{\algorithmfont}{\fontsize{11pt}{13pt}\selectfont\bfseries}
+\newcommand{\lectureband}[1]{%
+  \begingroup
+  \setlength{\fboxsep}{4pt}%
+  \colorbox{black!8}{%
+    \parbox{\dimexpr\linewidth-2\fboxsep\relax}{\raggedright\strut#1\strut}}%
+  \endgroup}
+\titleformat{\section}[block]{\headingfont}{}{0pt}{\lectureband}
+\titleformat{\subsection}[block]{\algorithmfont\raggedright}{}{0pt}{%
+  \rule[-.2ex]{1pt}{1.35ex}\hspace{5pt}}
+\titlespacing*{\section}{0pt}{10pt}{4pt}
 \titlespacing*{\subsection}{0pt}{9pt}{2pt}
 
 
@@ -36,8 +44,7 @@
 \newcommand{\maptag}[1]{\phantomsection\@bsphack\protected@write\@auxout{}{\string\newlabel{#1}{{}{\thepage}{}{\@currentHref}{}}}\@esphack}
 \makeatother
 \newcommand{\lecture}[2]{%
-  \par\addvspace{6pt}\needspace{42pt}%
-  \hrule height .4pt\relax\nobreak
+  \par\needspace{48pt}%
   \section{L#1. #2}\label{lecture:#1}}
 \newcommand{\topic}[2]{\subsection{#2}\label{topic:#1}}
 \newcommand{\key}[1]{#1:\enspace}
