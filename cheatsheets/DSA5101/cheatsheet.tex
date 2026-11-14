@@ -2760,25 +2760,77 @@ A size-3 reservoir stores record positions. At arrival $n>3$, draw $J_n$ uniform
 \end{guidesteps}
 
 \topic{decay}{Decaying windows}
-\algsummary{Theo dõi tần suất gần đây trong luồng, ưu tiên sự kiện mới.}
-{Mỗi bước chia đôi trọng số cũ; có thể bỏ mục có điểm quá thấp.}
-{Luồng có một sự kiện mỗi bước; ngưỡng $\tau$ nếu bật pruning.}
-{Điểm hiện tại cho từng loại còn lưu.}
-{Giảm điểm, cộng 1 cho loại vừa đến, rồi xóa mục dưới ngưỡng nếu cần.}
+\algsummary{Tìm item đang thịnh hành trong luồng, chẳng hạn phim đang được xem nhiều trên Netflix.}
+{Lượt xem càng cũ thì trọng số càng nhỏ. Có thể bỏ những item có điểm quá thấp để tiết kiệm bộ nhớ.}
+{Một sự kiện mỗi bước; decay rate $0<c<1$, hệ số $\lambda=1-c$, ngưỡng $\tau>0$ nếu bật pruning.}
+{Điểm hiện tại của từng item; khi pruning, chỉ lưu các mục còn đạt ngưỡng.}
+{Nhân điểm cũ với $\lambda$, cộng 1 cho item vừa đến, rồi xóa các mục có điểm $<\tau$ nếu bật pruning.}
 \begin{algpseudo}
-$S\gets$ bảng rỗng\\
-với mỗi sự kiện $x$: chia đôi mọi giá trị trong $S$\\
-\quad $S[x]\gets S[x]+1$ (mặc định bằng 0 nếu thiếu)\\
-\quad nếu bật pruning: xóa các mục có điểm $<\tau$ hoặc theo dấu đề cho\\
-trả $S$
+$D\gets$ bảng rỗng\\
+khi nhận item $x$: với mỗi khóa $y\in D$, đặt $D[y]\gets\lambda D[y]$\\
+\quad $D[x]\gets D[x]+1$ (mặc định bằng 0 nếu chưa có)\\
+\quad nếu bật pruning: xóa mọi khóa $y$ có $D[y]<\tau$\\
+\quad trả điểm hiện tại nếu được hỏi
 \end{algpseudo}
 
-\key{Khi dùng} Đếm mức độ gần đây; mỗi bước thời gian làm điểm cũ giảm một nửa. Sự kiện loại $x$ ở bước $i$ đóng góp $2^{-(t-i)}$ vào điểm ở bước $t$.
-\steps{
-\item Chia đôi mọi điểm đang lưu, rồi cộng 1 cho loại vừa xuất hiện.
-\item Nếu đề dùng pruning, xóa các loại có điểm dưới $\tau$ theo đúng dấu bất đẳng thức đề cho. Khi loại đó xuất hiện lại, cộng vào điểm đang lưu (hoặc 0 nếu đã xóa).
-}
-\key{Bẫy} Pruning mất phần lịch sử đã xóa nên có thể bỏ lỡ cảnh báo. Tổng trọng số không vượt 2; nếu giữ điểm $\ge\tau>0$, số mục không vượt $2/\tau$.
+\key{So với sliding window} Với tuổi $j=t-i$, cửa sổ cố định dài $N$ giữ trọng số 1 cho $0\le j<N$ và cho 0 từ $j=N$. Decay theo hàm mũ cho trọng số $\lambda^j$ ở mọi tuổi: mỗi bước nhân thêm $\lambda$, không có mốc tuổi mà trọng số đột ngột về 0.
+\begin{diagram}
+\begin{tikzpicture}[x=.92cm,y=1.23cm,>=Stealth]
+  \draw[->] (-.18,-.12)--(6.58,-.12) node[right] {Tuổi $j$};
+  \draw[->] (0,-.12)--(0,1.26) node[above right] {Trọng số};
+  \foreach \j in {0,...,6}{\draw (\j,-.12)--(\j,-.19) node[below] {\j};}
+  \draw (0,0)--(-.10,0) node[left] {$0$};
+  \draw (0,.5)--(-.10,.5) node[left] {$0.5$};
+  \draw (0,1)--(-.10,1) node[left] {$1$};
+  \draw[dashed,thick] (0,1)--(4,1)--(4,0)--(6,0);
+  \foreach \j in {0,...,3}{\draw[fill=white] (\j,1) circle[radius=1.75pt];}
+  \foreach \j in {4,...,6}{\draw[fill=white] (\j,0) circle[radius=1.75pt];}
+  \draw[thick] plot coordinates {(0,1) (1,.5) (2,.25) (3,.125) (4,.0625) (5,.03125) (6,.015625)};
+  \foreach \j in {0,...,6}{\fill (\j,{.5^\j}) circle[radius=1.2pt];}
+  \draw[thick] (0,-.65)--(.62,-.65) node[right] {Decay $\lambda=0.5$};
+  \draw[dashed,thick] (3.55,-.65)--(4.17,-.65) node[right] {Sliding window $N=4$};
+\end{tikzpicture}
+\end{diagram}
+
+\key{Công thức} Gọi $a_t$ là vectơ one-hot có giá trị 1 ở item đến lúc $t$, còn $S_t$ là vectơ điểm chính xác của mọi item. Với $S_0=0$:
+\[
+S_t=\sum_{i=1}^{t}\lambda^{t-i}a_i,\qquad
+S_{t+1}=\lambda S_t+a_{t+1}.
+\]
+Khi sang bước mới, mọi đóng góp cũ cùng nhân với $\lambda=1-c$, nên không cần quét lại lịch sử.
+\begin{examtable}{@{}ll@{}}
+\toprule
+Tham số tăng & Tác động\\
+\midrule
+$c$ (decay rate) & Quên lịch sử nhanh hơn.\\
+$\lambda=1-c$ & Giữ ảnh hưởng của lịch sử lâu hơn.\\
+$\tau$ (ngưỡng pruning) & Giữ ít mục hơn; mất nhiều thông tin hơn.\\
+\bottomrule
+\end{examtable}
+
+\begin{example}{Pr26}{Tính điểm và pruning trước khi làm Pr26}
+Cho $\lambda=\tau=0.5$ và luồng $A,B,A,C$. Ở mỗi bước, nhân điểm cũ với $\lambda$, cộng 1 cho item mới, rồi xóa nếu điểm $<\tau$.
+\begin{examtable}{@{}ccll@{}}
+\toprule
+$t$ & Item & Điểm trước khi xóa & Bảng sau khi xóa\\
+\midrule
+1 & $A$ & $A{:}1$ & $A{:}1$\\
+2 & $B$ & $A{:}0.5,\ B{:}1$ & $A{:}0.5,\ B{:}1$\\
+3 & $A$ & $A{:}1.25,\ B{:}0.5$ & $A{:}1.25,\ B{:}0.5$\\
+4 & $C$ & $A{:}0.625,\ B{:}0.25,\ C{:}1$ & $A{:}0.625,\ C{:}1$\\
+\bottomrule
+\end{examtable}
+$B$ còn ở bước 3 vì $0.5=\tau$, nhưng bị xóa ở bước 4 vì $0.25<\tau$. Nếu $B$ đến ở bước 5, bảng đặt lại $B$ ở điểm 1; điểm chính xác vẫn tính thêm $0.125$ từ lượt cũ.
+\end{example}
+
+\key{Cận bộ nhớ} Với đúng một sự kiện mỗi bước, tổng điểm chính xác ở bước $t$ là
+\[
+\sum_x S_t[x]=\sum_{j=0}^{t-1}\lambda^j
+    \le \sum_{j=0}^{\infty}\lambda^j=\frac{1}{c}.
+\]
+Pruning chỉ làm giảm tổng. Nếu mỗi mục được giữ có điểm ít nhất $\tau$, thì $K\tau\le 1/c$, nên $K\le\lfloor 1/(c\tau)\rfloor$. Với $c=\tau=0.5$, cận là 4 mục. Lưu $O(K)$ mục. Mỗi sự kiện quét $K$ mục và có thể thêm một mục tạm thời: thời gian $O(K+1)$, tức tuyến tính theo kích thước bảng.
+
+\key{Bẫy thi} Sliding window cắt hẳn theo tuổi; decay thuần giảm dần. Pruning chỉ xóa điểm $<\tau$, giữ điểm $=\tau$. Điểm sau pruning có thể thấp hơn điểm chính xác và làm mất cảnh báo (Pr26(b)).
 
 % DSA5101 Exam Practice Questions.pdf, PDF page(s) 27.
 \ask{Pr26}{Pr26}{}
@@ -2802,6 +2854,8 @@ The first seven plays are $A,B,A,C,B,A,D$. The resulting pruned dictionary is su
 \item Decay giảm dần trọng số theo tuổi; cửa sổ cố định giữ trọng số của các lượt trong cửa sổ rồi loại hẳn khi ra ngoài.
 \end{guidesteps}
 
+% Keep the lecture heading with its first algorithm after Pr26.
+\needspace{155pt}
 \lecture{9}{Online matching, BALANCE \& bandits}
 
 \topic{matching}{Online bipartite matching}
