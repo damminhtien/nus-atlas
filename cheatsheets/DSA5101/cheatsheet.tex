@@ -55,18 +55,14 @@
 
 \newcommand{\blocklabel}[1]{\par\noindent#1\par\nobreak}
 \newcommand{\answer}[1]{%
-  \setcounter{solutionstep}{0}%
   \par\addvspace{4pt}%
   \blocklabel{#1Hướng dẫn giải}}
-\newcommand{\guidepart}[1]{#1\enspace}
-\newcounter{solutionstep}
-\newenvironment{guidesteps}[1][]{%
-  \begin{enumerate}[label=\arabic*.,start=\numexpr\value{solutionstep}+1\relax,
-    leftmargin=1.65em,topsep=0pt,itemsep=1pt,parsep=0pt,partopsep=0pt,#1]%
-}{%
-  \setcounter{solutionstep}{\value{enumi}}%
-  \end{enumerate}%
-}
+\newcommand{\guidepart}[1]{%
+  \par\addvspace{2pt}\needspace{4\baselineskip}%
+  \noindent\textbf{Phần #1}\par\nobreak}
+\newlist{guidesteps}{enumerate}{1}
+\setlist[guidesteps]{label=\arabic*.,leftmargin=1.65em,topsep=0pt,
+  itemsep=1pt,parsep=0pt,partopsep=0pt}
 \NewDocumentCommand{\ask}{o m m m}{%
   \par\addvspace{7pt}%
   \blocklabel{\maptag{question:#2}\IfValueT{#1}{\maptag{question:#1}}%
@@ -289,12 +285,14 @@ Let $L_k$ be the frequent $k$-itemsets and $C_k$ the candidates after subset pru
 \qpart{c} If every kit record is copied once, what happens to support counts and confidences? If one kit contains three compasses, how many times does that kit contribute to the support of $C$ under the set model?
 
 \answer{\maptag{answer:Pr1}}
+\guidepart{(a)}
 \begin{guidesteps}[beginpenalty=10000]
-\item \guidepart{(a)}Đếm giỏ chứa toàn bộ bộ ba: $ABC$ có ở giỏ 1, 2 nên support 2; $BCD$ chỉ có ở giỏ 2 nên support 1.
+\item Đếm giỏ chứa toàn bộ bộ ba: $ABC$ có ở giỏ 1, 2 nên support 2; $BCD$ chỉ có ở giỏ 2 nên support 1.
 \item So với $s=2$ và dùng hai support đã cho: $L_3=\{ABC,ABD,ACD\}$. Cắt $ABCD$ ngay vì tập con $BCD\notin L_3$.
 \end{guidesteps}
+\guidepart{(c)}
 \begin{guidesteps}
-\item \guidepart{(c)}Nhân đôi dữ liệu: tử và mẫu trong confidence đều nhân 2, nên support count gấp đôi còn confidence giữ nguyên.
+\item Nhân đôi dữ liệu: tử và mẫu trong confidence đều nhân 2, nên support count gấp đôi còn confidence giữ nguyên.
 \item Xem mỗi giỏ là một tập: ba la bàn trong một giỏ vẫn chỉ đóng góp 1 vào support của $C$.
 \end{guidesteps}
 
@@ -309,8 +307,9 @@ Basket 4 & $B,C,D,E$\\ Basket 5 & $A,B,D,E$\\ Basket 6 & $A,B,C,D$
 \qpart{b} In the setting where the number of baskets is too big to fit all baskets in memory, recall that baskets are kept in disk, and only read into memory when required. This results in communication cost which is measured in terms of the number of passes (one pass = transferring all baskets from disk to memory). With the assumptions above, what is the communication cost of the Apriori algorithm for finding all frequent itemsets up to size $k$? Explain your answer by indicating the step in Apriori algorithm that requires baskets to reside in memory.
 
 \answer{\maptag{answer:P25-Q1}\maptag{answer:P25-Q1ab}}
+\guidepart{(a)}
 \begin{guidesteps}[beginpenalty=10000]
-\item \guidepart{(a)}Quét các giỏ để đếm singleton, giữ những item có support ít nhất 3. Dùng $L_1$ để sinh các cặp trong $C_2$ rồi đếm lại.
+\item Quét các giỏ để đếm singleton, giữ những item có support ít nhất 3. Dùng $L_1$ để sinh các cặp trong $C_2$ rồi đếm lại.
 \item Chỉ giữ bộ ba có mọi cặp thuộc $L_2$: $ABD$. Đếm được 3 nên giữ. Không còn ứng viên cỡ 4.
 \begin{examtable}{@{}c l l@{}}
 \toprule
@@ -324,8 +323,9 @@ $k$ & $C_k$ và support tương ứng & $L_k$ \\
 \end{examtable}
 \item Đọc kết quả từ các cột $L_k$: tập frequent là $L_1\cup L_2\cup L_3$.
 \end{guidesteps}
+\guidepart{(b)}
 \begin{guidesteps}
-\item \guidepart{(b)}Tách hai việc: sinh và cắt ứng viên dùng kết quả trong bộ nhớ; đếm support mới cần quét giỏ trên đĩa.
+\item Tách hai việc: sinh và cắt ứng viên dùng kết quả trong bộ nhớ; đếm support mới cần quét giỏ trên đĩa.
 \item Có ba mức cần đếm, nên quét 3 lượt. Vì $C_4$ rỗng, không quét thêm.
 \end{guidesteps}
 
@@ -341,8 +341,9 @@ Hint: You only need to add one step in the candidate generation/pruning step in 
 
 \examnote{Nếu $R(X)\ge T$, loại $X$ và mọi siêu tập; dấu bằng đã vi phạm điều kiện xuất $R<T$. Không thể cắt tương tự bằng điều kiện tổng giá có cận dưới.}
 \answer{\maptag{answer:P25-Q1g}}
+\guidepart{(g)}
 \begin{guidesteps}[beginpenalty=10000]
-\item \guidepart{(g)}Tính khoảng giá $R(X)=\max_{i\in X}p_i-\min_{i\in X}p_i$ ngay khi sinh $X$.
+\item Tính khoảng giá $R(X)=\max_{i\in X}p_i-\min_{i\in X}p_i$ ngay khi sinh $X$.
 \item Nếu $R(X)\ge T$, bỏ $X$ và các tập chứa nó vì thêm item không thể làm giảm khoảng giá. Giữ các ứng viên còn lại rồi đếm support.
 \end{guidesteps}
 
@@ -428,16 +429,19 @@ Use support threshold 3. Pass 1 has already found that only items 1, 2, 4 are fr
 \qpart{c} In a small implementation, Apriori stores three 4-byte counters. PCY stores two 12-byte pair records and a 1-byte bitmap. Compare these storage totals. Does pruning more pairs guarantee less memory in every implementation?
 
 \answer{\maptag{answer:Pr2}}
+\guidepart{(a)}
 \begin{guidesteps}[beginpenalty=10000]
-\item \guidepart{(a)}So số đếm bucket $(1,2,3,4,2)$ với $s=3$: bitmap là $(0,0,1,1,0)$.
+\item So số đếm bucket $(1,2,3,4,2)$ với $s=3$: bitmap là $(0,0,1,1,0)$.
 \item Chỉ xét cặp từ $\{1,2,4\}$. Các cặp $12,14,24$ băm vào bucket $2,4,3$; giữ $12,24$ và bỏ $14$, cặp mà Apriori vẫn đếm.
 \end{guidesteps}
+\guidepart{(b)}
 \begin{guidesteps}
-\item \guidepart{(b)}Đếm giỏ chứa $12$ (giỏ 1, 2, 3) và $24$ (giỏ 3, 5): support là 3 và 2; chỉ $12$ đạt ngưỡng.
+\item Đếm giỏ chứa $12$ (giỏ 1, 2, 3) và $24$ (giỏ 3, 5): support là 3 và 2; chỉ $12$ đạt ngưỡng.
 \item Một bucket cộng lượt của nhiều cặp khác nhau, nên bản thân bucket đạt ngưỡng chưa đủ để kết luận cặp nào frequent.
 \end{guidesteps}
+\guidepart{(c)}
 \begin{guidesteps}
-\item \guidepart{(c)}Apriori cần $3\cdot4=12$ byte; PCY cần $2\cdot12+1=25$ byte.
+\item Apriori cần $3\cdot4=12$ byte; PCY cần $2\cdot12+1=25$ byte.
 \item So tổng bộ nhớ: trong cách lưu này, phần ghi ID và bitmap khiến PCY tốn hơn dù đếm ít cặp hơn.
 \end{guidesteps}
 
@@ -509,16 +513,19 @@ Ten documents contain sentence-pattern sets $ABC,ABD,BC,AD,CD,ABC,ABC,ABC,ABC,AB
 \qpart{c} Why is testing the negative border sufficient to detect that some globally frequent itemset is missing from $F$? Give a short argument using a smallest subset missing from $F$.
 
 \answer{\maptag{answer:Pr3}}
+\guidepart{(a)}
 \begin{guidesteps}[beginpenalty=10000]
-\item \guidepart{(a)}Các singleton đều thuộc $F$. Liệt kê cặp chưa có: $AC,BD,CD$; cả ba vào negative border.
+\item Các singleton đều thuộc $F$. Liệt kê cặp chưa có: $AC,BD,CD$; cả ba vào negative border.
 \item Thử $ABC$: tập con $AC$ vắng trong $F$, nên $ABC$ không vào border. Mọi bộ ba khác cũng chứa một cặp vắng.
 \end{guidesteps}
+\guidepart{(b)}
 \begin{guidesteps}
-\item \guidepart{(b)}Quét toàn bộ: $AC$ và $ABC$ cùng xuất hiện trong tài liệu 1, 6, 7, 8, 9; cả hai có support 5.
+\item Quét toàn bộ: $AC$ và $ABC$ cùng xuất hiện trong tài liệu 1, 6, 7, 8, 9; cả hai có support 5.
 \item Vì $AC$ thuộc border và đạt ngưỡng 5, phải lấy mẫu lại. Bỏ qua phép thử sẽ bỏ sót bộ ba frequent $ABC$.
 \end{guidesteps}
+\guidepart{(c)}
 \begin{guidesteps}
-\item \guidepart{(c)}Giả sử $S$ globally frequent nhưng vắng trong $F$. Chọn tập con $T\subseteq S$ nhỏ nhất vẫn vắng trong $F$.
+\item Giả sử $S$ globally frequent nhưng vắng trong $F$. Chọn tập con $T\subseteq S$ nhỏ nhất vẫn vắng trong $F$.
 \item Mọi tập con thực sự không rỗng của $T$ đều có trong $F$, nên $T$ thuộc border. Hơn nữa $\operatorname{supp}(T)\ge\operatorname{supp}(S)$, nên quét border sẽ phát hiện.
 \end{guidesteps}
 
@@ -533,19 +540,23 @@ Hint: Your answer in part (a) should be useful here.
 
 \examnote{Dựng border theo từng kích thước: loại $ACD$ vì $AC$ đã nằm ngoài $F$. Nếu một tập trong border đạt support toàn cục $s$, bỏ mẫu này và chạy lại.}
 \answer{\maptag{answer:P25-Q1cdf}}
+\guidepart{(c)}
 \begin{guidesteps}[beginpenalty=10000]
-\item \guidepart{(c)}Đào trên mẫu nhỏ để tìm họ frequent và border. Sau đó quét toàn dữ liệu một lượt để xác nhận, thay vì một lượt cho từng mức như Apriori.
+\item Đào trên mẫu nhỏ để tìm họ frequent và border. Sau đó quét toàn dữ liệu một lượt để xác nhận, thay vì một lượt cho từng mức như Apriori.
 \end{guidesteps}
+\guidepart{(d)}
 \begin{guidesteps}
-\item \guidepart{(d)}Kiểm tra singleton trước: $E$ không frequent nên thuộc border. Kiểm tra cặp: $AC,CD$ trượt nhưng cả hai singleton của từng cặp đều đạt.
+\item Kiểm tra singleton trước: $E$ không frequent nên thuộc border. Kiểm tra cặp: $AC,CD$ trượt nhưng cả hai singleton của từng cặp đều đạt.
 \item Mỗi bộ ba trượt có một cặp trượt, nên không thuộc border. Kết quả $\{E,AC,CD\}$.
 \end{guidesteps}
+\guidepart{(e)}
 \begin{guidesteps}
-\item \guidepart{(e)}Đếm support toàn cục của border. Nếu một tập đạt ngưỡng toàn cục, bỏ mẫu và lấy lại.
+\item Đếm support toàn cục của border. Nếu một tập đạt ngưỡng toàn cục, bỏ mẫu và lấy lại.
 \item Giảm ngưỡng mẫu để giảm khả năng bỏ sót, đổi lại phải xác nhận nhiều ứng viên hơn.
 \end{guidesteps}
+\guidepart{(f)}
 \begin{guidesteps}
-\item \guidepart{(f)}Giả sử vẫn bỏ sót tập globally frequent và chọn tập con nhỏ nhất bị bỏ sót. Tập con này thuộc border và cũng globally frequent.
+\item Giả sử vẫn bỏ sót tập globally frequent và chọn tập con nhỏ nhất bị bỏ sót. Tập con này thuộc border và cũng globally frequent.
 \item Điều đó trái với việc xác nhận thành công, nên xác suất bỏ sót khi đã xác nhận là $0\%$.
 \end{guidesteps}
 
@@ -599,8 +610,9 @@ với mỗi tập frequent $F$ có ít nhất hai item:\\
 \qpart{b} Use the supplied counts $\operatorname{supp}(ABD)=\operatorname{supp}(ACD)=\operatorname{supp}(BD)=2$, $\operatorname{supp}(AC)=3$, $\operatorname{supp}(A)=5$, and $\operatorname{supp}(D)=4$. For $BD\to A$ and $AC\to D$, give confidence and signed interest, where $\operatorname{interest}(X\to y)=\operatorname{conf}(X\to y)-\operatorname{supp}(y)/7$. Which rules meet both support count 2 and confidence $4/5$?
 
 \answer{\maptag{answer:Pr1b}}
+\guidepart{(b)}
 \begin{guidesteps}[beginpenalty=10000]
-\item \guidepart{(b)}Lấy support của hợp chia support vế trái: $\operatorname{conf}(BD\to A)=2/2=1$, $\operatorname{conf}(AC\to D)=2/3$.
+\item Lấy support của hợp chia support vế trái: $\operatorname{conf}(BD\to A)=2/2=1$, $\operatorname{conf}(AC\to D)=2/3$.
 \item Trừ tần suất tương đối của vế phải: hai signed interest là $1-5/7=2/7$ và $2/3-4/7=2/21$.
 \item Hai luật đều có support count 2, nhưng chỉ $BD\to A$ đạt confidence $4/5$.
 \end{guidesteps}
@@ -642,8 +654,9 @@ You are given $S_1=\{1,2,3,4\}$ and $S_2=\{1,2,5,6\}$.
 \qpart{a} Form $S_3$ and calculate the exact Jaccard similarity of $D_1,D_3$.
 
 \answer{\maptag{answer:Pr4}}
+\guidepart{(a)}
 \begin{guidesteps}[beginpenalty=10000]
-\item \guidepart{(a)}Trượt cửa sổ 3 ký tự trên $D_3$: $ATG,TGA,GAC,ACA$ ứng với ID $7,8,3,4$.
+\item Trượt cửa sổ 3 ký tự trên $D_3$: $ATG,TGA,GAC,ACA$ ứng với ID $7,8,3,4$.
 \item So $S_3=\{3,4,7,8\}$ với $S_1=\{1,2,3,4\}$. Giao là $\{3,4\}$ và hợp có 6 phần tử, nên $J=2/6=1/3$.
 \end{guidesteps}
 
@@ -659,8 +672,9 @@ $D_2=$ this exam is not difficult
 What is the Jaccard similarity of documents $D_1$ and $D_2$ on 2-shingles?
 
 \answer{\maptag{answer:A1-Q2}\maptag{answer:A1-Q2a}\maptag{answer:P24-Q2}\maptag{answer:P24-Q2a}}
+\guidepart{(a)}
 \begin{guidesteps}[beginpenalty=10000]
-\item \guidepart{(a)}Trượt hai từ mỗi lần. $D_1$: \literal{expected this}, \literal{this exam}, \literal{exam to}, \literal{to be}, \literal{be very}, \literal{very difficult}.
+\item Trượt hai từ mỗi lần. $D_1$: \literal{expected this}, \literal{this exam}, \literal{exam to}, \literal{to be}, \literal{be very}, \literal{very difficult}.
 \item Làm tương tự với $D_2$: \literal{this exam}, \literal{exam is}, \literal{is not}, \literal{not difficult}.
 \item Chỉ \literal{this exam} thuộc giao. Hợp có $6+4-1=9$ phần tử, nên $J=1/9$.
 \end{guidesteps}
@@ -672,8 +686,9 @@ Consider two documents $A$ and $B$, containing 400 and 800 unique $k$-shingles r
 \qpart{i} What is the Jaccard Similarity between $S_A$ and $S_B$?
 
 \answer{\maptag{answer:P25-Q2}\maptag{answer:P25-Q2a}}
+\guidepart{(a)(i)}
 \begin{guidesteps}[beginpenalty=10000]
-\item \guidepart{(a)(i)}Lấy 200 shingle chung làm tử số. Tính hợp $400+800-200=1000$ để không đếm giao hai lần.
+\item Lấy 200 shingle chung làm tử số. Tính hợp $400+800-200=1000$ để không đếm giao hai lần.
 \item Chia giao cho hợp: $J=200/1000=0.2$.
 \end{guidesteps}
 
@@ -703,12 +718,14 @@ trả $M$ và $\widehat J(A,B)=|\{j:M[j,A]=M[j,B]\}|/t$
 \qpart{c} Why must the same permutations be used for all documents? Does the estimate $1/2$ contradict the exact similarity $1/3$?
 
 \answer{\maptag{answer:Pr4bc}}
+\guidepart{(b)}
 \begin{guidesteps}[beginpenalty=10000]
-\item \guidepart{(b)}Duyệt theo mỗi hoán vị, ghi hàng đầu tiên có mặt trong từng tập. Với $\pi_1$, $5$ chỉ có trong $S_2$, còn $3$ gặp trước trong $S_1,S_3$: hàng chữ ký $(3,5,3)$.
+\item Duyệt theo mỗi hoán vị, ghi hàng đầu tiên có mặt trong từng tập. Với $\pi_1$, $5$ chỉ có trong $S_2$, còn $3$ gặp trước trong $S_1,S_3$: hàng chữ ký $(3,5,3)$.
 \item Với $\pi_2$, $2$ gặp trước trong $S_1,S_2$, còn $7$ gặp trước trong $S_3$: hàng $(2,2,7)$. Cột 1 và 3 trùng 1 trong 2 hàng, nên ước lượng là $1/2$.
 \end{guidesteps}
+\guidepart{(c)}
 \begin{guidesteps}
-\item \guidepart{(c)}Dùng cùng hoán vị để hai tập nhìn thấy cùng phần tử đến trước trong hợp. Hai chữ ký bằng nhau đúng khi phần tử đó thuộc giao.
+\item Dùng cùng hoán vị để hai tập nhìn thấy cùng phần tử đến trước trong hợp. Hai chữ ký bằng nhau đúng khi phần tử đó thuộc giao.
 \item Xác suất bằng nhau là $J=1/3$; hai lần thử vẫn có thể cho tần suất quan sát $1/2$.
 \end{guidesteps}
 
@@ -740,8 +757,9 @@ We generate 3 permutations of the shingles via the following permutation matrix:
 Each column corresponds to a permutation of shingles, specifying the order in which to iterate through the rows of the input matrix $A$ (i.e., defined in the same way as in lectures). Fill out all the entries of the signature matrix $M$ that we should obtain after running Min-Hashing using $A$ and $\pi$.
 
 \answer{\maptag{answer:A1-Q2b}\maptag{answer:P24-Q2b}}
+\guidepart{(b)}
 \begin{guidesteps}[beginpenalty=10000]
-\item \guidepart{(b)}Đọc mỗi cột của $\pi$ như thứ tự thăm hàng. Với cột đầu, duyệt $3,5,1,4,2,6$.
+\item Đọc mỗi cột của $\pi$ như thứ tự thăm hàng. Với cột đầu, duyệt $3,5,1,4,2,6$.
 \item Trong mỗi tài liệu, dừng tại hàng đầu có 1 và ghi ID hàng. Với $D_1$, hàng 5 được thăm thứ hai nhưng chữ ký là 5. Với $D_2,D_3,D_4$, ghi $4,3,4$.
 \item Lặp lại với hai cột còn lại để được:
 \[
@@ -808,16 +826,19 @@ The target exact Jaccard threshold is $3/5$.
 \qpart{c} For a pair of true similarity $s=1/2$, give its candidate probability with three bands of two independent MinHash rows. Is a similarity threshold a deterministic boundary for LSH?
 
 \answer{\maptag{answer:Pr5}}
+\guidepart{(a)}
 \begin{guidesteps}[beginpenalty=10000]
-\item \guidepart{(a)}Ghép hàng $(1,2),(3,4),(5,6)$ thành ba band. So từng tuple: các cặp trùng theo thứ tự là $AB,BD,AB$.
+\item Ghép hàng $(1,2),(3,4),(5,6)$ thành ba band. So từng tuple: các cặp trùng theo thứ tự là $AB,BD,AB$.
 \item Gộp và bỏ trùng, còn $\{AB,BD\}$: cần 2 lần so chính xác thay vì 6.
 \end{guidesteps}
+\guidepart{(b)}
 \begin{guidesteps}
-\item \guidepart{(b)}Đếm giao và hợp: $J(A,B)=3/5$ đạt ngưỡng; $J(B,D)=2/5$ bị loại. $BD$ là ứng viên dương giả.
+\item Đếm giao và hợp: $J(A,B)=3/5$ đạt ngưỡng; $J(B,D)=2/5$ bị loại. $BD$ là ứng viên dương giả.
 \item $J(A,C)=3/5$ nhưng $AC$ không vào tập ứng viên, nên là âm giả. Bước xác nhận không khôi phục cặp đã bỏ sót.
 \end{guidesteps}
+\guidepart{(c)}
 \begin{guidesteps}
-\item \guidepart{(c)}Một band khớp với xác suất $(1/2)^2=1/4$. Lấy bù của sự kiện cả ba band đều trượt: $1-(3/4)^3=37/64$.
+\item Một band khớp với xác suất $(1/2)^2=1/4$. Lấy bù của sự kiện cả ba band đều trượt: $1-(3/4)^3=37/64$.
 \item Xác suất này nằm giữa 0 và 1; ngưỡng Jaccard không phải ranh giới tất định cho bước sinh ứng viên.
 \end{guidesteps}
 
@@ -835,14 +856,17 @@ The target exact Jaccard threshold is $3/5$.
 
 \examnote{Với $m=32$, $(8,4)$ cho $(P(0.2),P(0.6))\approx(0.01273,0.6706)$; $(4,8)$ cho $(0.00001024,0.06551)$. Cấu hình sau giảm dương giả nhưng bỏ sót nhiều cặp giống hơn.}
 \answer{\maptag{answer:A1-Q2cd}\maptag{answer:P24-Q2cd}}
+\guidepart{(c)(i)}
 \begin{guidesteps}[beginpenalty=10000]
-\item \guidepart{(c)(i)}Một band cần bốn hàng cùng khớp nên xác suất là $0.6^4$. Lấy bù của tám band đều trượt: $1-(1-0.6^4)^8\approx0.6706$.
+\item Một band cần bốn hàng cùng khớp nên xác suất là $0.6^4$. Lấy bù của tám band đều trượt: $1-(1-0.6^4)^8\approx0.6706$.
 \end{guidesteps}
+\guidepart{(c)(ii)}
 \begin{guidesteps}
-\item \guidepart{(c)(ii)}Thay $s=0.2$ vào cùng hai bước: band khớp với xác suất $0.2^4$; ít nhất một band khớp với xác suất $1-(1-0.2^4)^8\approx0.01273$.
+\item Thay $s=0.2$ vào cùng hai bước: band khớp với xác suất $0.2^4$; ít nhất một band khớp với xác suất $1-(1-0.2^4)^8\approx0.01273$.
 \end{guidesteps}
+\guidepart{(d)}
 \begin{guidesteps}
-\item \guidepart{(d)}Giữ $m=br$ không đổi. Giảm $b$ làm $r$ tăng và còn ít band hơn để thử.
+\item Giữ $m=br$ không đổi. Giảm $b$ làm $r$ tăng và còn ít band hơn để thử.
 \item Chọn B: giảm $b$ để bớt ứng viên dương giả; đổi lại có thể bỏ sót nhiều cặp thật hơn.
 \end{guidesteps}
 
@@ -852,11 +876,13 @@ The target exact Jaccard threshold is $3/5$.
 \qpart{iii} If we want to increase the probability of $A$ and $B$ becoming candidates, should we increase $b$ or decrease $b$?
 
 \answer{\maptag{answer:P25-Q2aii}}
+\guidepart{(a)(ii)}
 \begin{guidesteps}[beginpenalty=10000]
-\item \guidepart{(a)(ii)}Một band 10 hàng khớp với xác suất $0.2^{10}$. Lấy bù của 12 band độc lập đều trượt: $1-(1-0.2^{10})^{12}\approx1.229\times10^{-6}$.
+\item Một band 10 hàng khớp với xác suất $0.2^{10}$. Lấy bù của 12 band độc lập đều trượt: $1-(1-0.2^{10})^{12}\approx1.229\times10^{-6}$.
 \end{guidesteps}
+\guidepart{(a)(iii)}
 \begin{guidesteps}
-\item \guidepart{(a)(iii)}Tăng $b$ để có thêm cơ hội khớp. Nếu tổng số hash cố định, $r$ giảm nên mỗi band cũng dễ khớp hơn.
+\item Tăng $b$ để có thêm cơ hội khớp. Nếu tổng số hash cố định, $r$ giảm nên mỗi band cũng dễ khớp hơn.
 \end{guidesteps}
 
 \topic{families}{LSH families, AND/OR amplification \& cascades}
@@ -891,12 +917,14 @@ trả $p,m$
 
 \examnote{Tính từ trong ra: $p_1=0.9^5=0.59049$, $p_2=1-(1-p_1)^6\approx0.9953$, rồi $p_3=p_2^7\approx0.9675$. Cần $5\cdot6\cdot7=210$ hash, sau đó $210\cdot3\cdot4=2520$; chỉ nhân số lượng khi các hash độc lập.}
 \answer{\maptag{answer:P24-Q2ef}\maptag{answer:A1-Q2ef}}
+\guidepart{(e)}
 \begin{guidesteps}[beginpenalty=10000]
-\item \guidepart{(e)}Tính từ tầng trong ra: AND 5 cho $p_1=0.9^5$; OR 6 cho $p_2=1-(1-p_1)^6$.
+\item Tính từ tầng trong ra: AND 5 cho $p_1=0.9^5$; OR 6 cho $p_2=1-(1-p_1)^6$.
 \item AND 7 yêu cầu cả bảy nhánh cùng qua, nên xác suất là $p_2^7\approx0.9675$.
 \end{guidesteps}
+\guidepart{(f)}
 \begin{guidesteps}
-\item \guidepart{(f)}Đếm lá thay vì cộng số tầng. Mỗi tầng nhân tiếp số nhánh, kể cả hai tầng mới 3 và 4: cần $5\cdot6\cdot7\cdot3\cdot4=2520$ hash gốc.
+\item Đếm lá thay vì cộng số tầng. Mỗi tầng nhân tiếp số nhánh, kể cả hai tầng mới 3 và 4: cần $5\cdot6\cdot7\cdot3\cdot4=2520$ hash gốc.
 \end{guidesteps}
 
 \topic{hyperplanes}{Random hyperplanes (cosine LSH)}
@@ -945,16 +973,19 @@ Give each scheme's final collision probability.
 \qpart{c} Would repeating the same hyperplane four times justify these probability formulas? Would replacing $Q$ by $10Q$ change its signature? Explain briefly.
 
 \answer{\maptag{answer:Pr6}}
+\guidepart{(a)}
 \begin{guidesteps}[beginpenalty=10000]
-\item \guidepart{(a)}Tính $v_i\cdot Q$ cho bốn pháp tuyến: $(2,2,-2,6)$. Lấy dấu được $(+,+,-,+)$.
+\item Tính $v_i\cdot Q$ cho bốn pháp tuyến: $(2,2,-2,6)$. Lấy dấu được $(+,+,-,+)$.
 \item So với chữ ký của $P$: trùng ở vị trí 1, 2, 4 nên tỉ lệ là $3/4$.
 \end{guidesteps}
+\guidepart{(b)}
 \begin{guidesteps}
-\item \guidepart{(b)}AND rồi OR: xác suất mỗi cặp qua AND là $p^2=1/4$; ít nhất một cặp qua với xác suất $1-(3/4)^2=7/16$.
+\item AND rồi OR: xác suất mỗi cặp qua AND là $p^2=1/4$; ít nhất một cặp qua với xác suất $1-(3/4)^2=7/16$.
 \item OR rồi AND: mỗi cặp qua OR với xác suất $1-(1-p)^2=3/4$; cả hai qua với xác suất $(3/4)^2=9/16$.
 \end{guidesteps}
+\guidepart{(c)}
 \begin{guidesteps}
-\item \guidepart{(c)}Dùng lại cùng mặt phẳng làm các bit phụ thuộc, nên không nhân xác suất như với bốn mặt phẳng độc lập.
+\item Dùng lại cùng mặt phẳng làm các bit phụ thuộc, nên không nhân xác suất như với bốn mặt phẳng độc lập.
 \item Thay $Q$ bằng $10Q$ nhân mọi tích vô hướng với 10, không đổi dấu hay chữ ký.
 \end{guidesteps}
 
@@ -963,8 +994,9 @@ Give each scheme's final collision probability.
 \qpart{b} Now, consider representing the shingle sets of $A$ and $B$ as Boolean vectors $x_A$ and $x_B$. That is, if the universal set of $k$-shingles has size $m$, then $x_A$ and $x_B$ are length $m$ Boolean vectors, with a 1 in every position corresponding to the shingle that they contain. Using the cosine similarity and random hyperplanes technique from lectures, calculate the probability that $x_A$ and $x_B$ end up on the same side of a random hyperplane.
 
 \answer{\maptag{answer:P25-Q2b}}
+\guidepart{(b)}
 \begin{guidesteps}[beginpenalty=10000]
-\item \guidepart{(b)}Dùng vectơ hiện diện: tích vô hướng là 200, bình phương chuẩn là 400 và 800. Suy ra $\cos\theta=200/\sqrt{400\cdot800}=1/\sqrt8$.
+\item Dùng vectơ hiện diện: tích vô hướng là 200, bình phương chuẩn là 400 và 800. Suy ra $\cos\theta=200/\sqrt{400\cdot800}=1/\sqrt8$.
 \item Đổi góc sang xác suất hai vectơ cùng phía: $1-\arccos(1/\sqrt8)/\pi\approx0.6150$.
 \end{guidesteps}
 
@@ -1053,16 +1085,19 @@ Begin from clusters $AB,C,D,E$, immediately after merging $A,B$. For single link
 \qpart{c} Why is a clustroid suitable when the objects are strings and only their pairwise edit distances are available?
 
 \answer{\maptag{answer:Pr7}}
+\guidepart{(a)}
 \begin{guidesteps}[beginpenalty=10000]
-\item \guidepart{(a)}Single lấy $\min(5,3)=3$ cho khoảng cách $AB$ đến $C$. Vì $3<d(D,E)=4$ và các cặp còn lại lớn hơn 3, gộp $AB$ với $C$.
+\item Single lấy $\min(5,3)=3$ cho khoảng cách $AB$ đến $C$. Vì $3<d(D,E)=4$ và các cặp còn lại lớn hơn 3, gộp $AB$ với $C$.
 \item Clustroid của $AB$ là $A$ nên khoảng cách đến $C$ là 5. Cặp gần nhất lúc này là $D,E$ ở 4.
 \end{guidesteps}
+\guidepart{(b)}
 \begin{guidesteps}
-\item \guidepart{(b)}Cộng khoảng cách đến các thành viên trong $ABC$: $A:7,B:5,C:8$. Chọn $B$ có tổng nhỏ nhất.
+\item Cộng khoảng cách đến các thành viên trong $ABC$: $A:7,B:5,C:8$. Chọn $B$ có tổng nhỏ nhất.
 \item Lấy khoảng cách cặp lớn nhất, $d(A,C)=5$. Diameter có thể lớn hơn độ cao single linkage 3 khi $C$ nhập cụm.
 \end{guidesteps}
+\guidepart{(c)}
 \begin{guidesteps}
-\item \guidepart{(c)}Tính tổng khoảng cách chỉnh sửa cho từng chuỗi có thật rồi chọn chuỗi nhỏ nhất theo tổng. Không cần định nghĩa trung bình của các chuỗi.
+\item Tính tổng khoảng cách chỉnh sửa cho từng chuỗi có thật rồi chọn chuỗi nhỏ nhất theo tổng. Không cần định nghĩa trung bình của các chuỗi.
 \end{guidesteps}
 
 % 2425Sem1-DSA5101.pdf, PDF page(s) 12, 13, 14.
@@ -1081,8 +1116,9 @@ Break ties in the following way: Define the rank of a point $2^i$ as $i+1$, and 
 
 \examnote{Với $\{1,2,4\}$ và $8$, khoảng cách Euclid theo single, complete, average lần lượt là $4,7,17/3$. Với khoảng cách tỉ số, tính lại theo định nghĩa rồi phá hòa theo rank nhỏ nhất.}
 \answer{\maptag{answer:A1-Q3}\maptag{answer:P24-Q3}}
+\guidepart{(a)(i)--(iii)}
 \begin{guidesteps}[beginpenalty=10000]
-\item \guidepart{(a)(i)--(iii)}Bắt đầu với cặp gần nhất $1,2$. Khi đã gộp đến $2^{j-1}$, khoảng cách complete tới $2^j$ bằng $2^j-1$, nhỏ hơn khoảng cách $2^j$ của cặp singleton gần nhất còn lại. Single và average không lớn hơn complete, nên cả ba cùng ghép lần lượt $4,8,16,32,64,128$.
+\item Bắt đầu với cặp gần nhất $1,2$. Khi đã gộp đến $2^{j-1}$, khoảng cách complete tới $2^j$ bằng $2^j-1$, nhỏ hơn khoảng cách $2^j$ của cặp singleton gần nhất còn lại. Single và average không lớn hơn complete, nên cả ba cùng ghép lần lượt $4,8,16,32,64,128$.
 \item Tại nút $j$, lấy min, max hoặc trung bình khoảng cách chéo: $2^j-2^{j-1}$, $2^j-1$ hoặc $2^j-(2^j-1)/j$. Dùng bảng để đặt độ cao trên cây:
 \begin{diagram}
 \begin{tikzpicture}[x=.91cm,y=.23cm,every node/.style={font=\normalsize}]
@@ -1105,8 +1141,9 @@ Nút $j$ & 1 & 2 & 3 & 4 & 5 & 6 & 7 \\
 \bottomrule
 \end{examtable}
 \end{guidesteps}
+\guidepart{(b)}
 \begin{guidesteps}
-\item \guidepart{(b)}Đổi sang khoảng cách tỉ số và dùng complete: khoảng cách hai cụm là điểm lớn nhất chia điểm nhỏ nhất của cặp xa nhất.
+\item Đổi sang khoảng cách tỉ số và dùng complete: khoảng cách hai cụm là điểm lớn nhất chia điểm nhỏ nhất của cặp xa nhất.
 \item Ở độ cao 2, phá hòa theo rank để gộp lần lượt $(1,2),(4,8),(16,32),(64,128)$. Gộp hai cặp đầu và hai cặp cuối ở 8, rồi hai cụm còn lại ở 128. Đối chiếu cây ở ví dụ ngay trước đề.
 \end{guidesteps}
 
@@ -1161,15 +1198,18 @@ Six locations are $A=(0,0)$, $B=(0,2)$, $C=(0,4)$, $D=(6,0)$, $E=(6,2)$, $F=(6,4
 
 \examnote{Phân hoạch đã cho có SSE $58$, còn hai cột có SSE $16$. Chỉ cần một phân hoạch khả thi có SSE thấp hơn để bác bỏ tối ưu toàn cục; không cần chứng minh $16$ là nhỏ nhất.}
 \answer{\maptag{answer:Pr8}}
+\guidepart{(a)}
 \begin{guidesteps}[beginpenalty=10000]
-\item \guidepart{(a)}Lấy trung bình tọa độ của $A,B,D,E$: tâm thứ nhất là $(3,1)$. Lấy trung bình của $C,F$: tâm thứ hai là $(3,4)$.
+\item Lấy trung bình tọa độ của $A,B,D,E$: tâm thứ nhất là $(3,1)$. Lấy trung bình của $C,F$: tâm thứ hai là $(3,4)$.
 \end{guidesteps}
+\guidepart{(b)}
 \begin{guidesteps}
-\item \guidepart{(b)}Với $B=(0,2)$, tính bình phương khoảng cách tới hai tâm: $9+1=10$ và $9+4=13$. Giữ $B$ ở cụm 1.
+\item Với $B=(0,2)$, tính bình phương khoảng cách tới hai tâm: $9+1=10$ và $9+4=13$. Giữ $B$ ở cụm 1.
 \item Các điểm khác giữ cụm theo giả thiết. Thành viên không đổi nên lần cập nhật kế tiếp giữ nguyên hai tâm: đây là điểm dừng.
 \end{guidesteps}
+\guidepart{(c)}
 \begin{guidesteps}
-\item \guidepart{(c)}So SSE của hai phân hoạch: $16<58$, nên điểm dừng không tối ưu toàn cục.
+\item So SSE của hai phân hoạch: $16<58$, nên điểm dừng không tối ưu toàn cục.
 \item Thử nhiều khởi tạo rồi giữ nghiệm có SSE nhỏ nhất, hoặc dùng khởi tạo k-means++.
 \end{guidesteps}
 
@@ -1237,16 +1277,19 @@ Assign a point to the closest discard-set cluster if its squared distance is at 
 
 \examnote{Phương sai gộp ở chiều hai là $1/4+(1/4)(8.5-6.5)^2=5/4>1$, nên không gộp hai CS theo ngưỡng đã cho.}
 \answer{\maptag{answer:Pr9}}
+\guidepart{(a)}
 \begin{guidesteps}[beginpenalty=10000]
-\item \guidepart{(a)}Chia SUM cho 4 để có $\mu=(0,0)$; lấy $\mathrm{SUMSQ}/4-\mu^2$ theo tọa độ để có phương sai $(1,4)$.
+\item Chia SUM cho 4 để có $\mu=(0,0)$; lấy $\mathrm{SUMSQ}/4-\mu^2$ theo tọa độ để có phương sai $(1,4)$.
 \item Tính $D_M^2(P)=1^2/1+2^2/4=2$. Giá trị này $\le4$ và nhỏ hơn $85/9$, nên đưa $P$ vào DS đã cho.
 \end{guidesteps}
+\guidepart{(b)}
 \begin{guidesteps}
-\item \guidepart{(b)}Gộp cặp duy nhất đạt ngưỡng khoảng cách là $R,S$. Cộng tọa độ và bình phương tọa độ: CS có $(N,\mathrm{SUM},\mathrm{SUMSQ})=(2,(0,13),(0,85))$.
+\item Gộp cặp duy nhất đạt ngưỡng khoảng cách là $R,S$. Cộng tọa độ và bình phương tọa độ: CS có $(N,\mathrm{SUM},\mathrm{SUMSQ})=(2,(0,13),(0,85))$.
 \item Giữ riêng $T=(15,8)$ trong RS.
 \end{guidesteps}
+\guidepart{(c)}
 \begin{guidesteps}
-\item \guidepart{(c)}Cộng hai bộ thống kê: $N=4$, tổng tọa độ 2 là 30 và tổng bình phương là 230.
+\item Cộng hai bộ thống kê: $N=4$, tổng tọa độ 2 là 30 và tổng bình phương là 230.
 \item Tính $230/4-(30/4)^2=5/4>1$, nên không gộp. Các thống kê đã đủ để tính phương sai.
 \end{guidesteps}
 
@@ -1256,8 +1299,9 @@ Read the statements below and state whether they are True or False. You do not n
 \qpart{a} The main advantage of the BFR algorithm over K-means is that it can handle non-convex shapes, such as groups of points belonging in concentric circles.
 
 \answer{\maptag{answer:P25-Q7}\maptag{answer:P25-Q7a}}
+\guidepart{(a)}
 \begin{guidesteps}[beginpenalty=10000]
-\item \guidepart{(a)}Xác định BFR dùng thống kê tóm tắt theo cụm và mở rộng k-means để xử lý dữ liệu theo lô.
+\item Xác định BFR dùng thống kê tóm tắt theo cụm và mở rộng k-means để xử lý dữ liệu theo lô.
 \item Hai vòng đồng tâm có cùng tâm; tiêu chí dựa trên khoảng cách đến tâm không cung cấp cách tách theo vòng như phát biểu yêu cầu. Kết luận: False.
 \end{guidesteps}
 
@@ -1359,16 +1403,19 @@ Give the two singular values of $A$ and calculate only the first left singular v
 
 \examnote{Khởi tạo đúng tại $v_2$ nghĩa là hệ số theo $v_1$ bằng 0; lặp trên $M$ vẫn ở $v_2$ dù $\lambda_1>\lambda_2$. Deflation loại hướng đã tìm để tìm hướng tiếp theo.}
 \answer{\maptag{answer:Pr10}}
+\guidepart{(a)}
 \begin{guidesteps}[beginpenalty=10000]
-\item \guidepart{(a)}Nhân $A^TA$ được $M=\bigl(\begin{smallmatrix}5&4\\4&5\end{smallmatrix}\bigr)$; nhân với $(1,0)^T$ được $(5,4)^T$.
+\item Nhân $A^TA$ được $M=\bigl(\begin{smallmatrix}5&4\\4&5\end{smallmatrix}\bigr)$; nhân với $(1,0)^T$ được $(5,4)^T$.
 \item Chia cho chuẩn $\sqrt{41}$: $x^{(1)}=(5,4)^T/\sqrt{41}$.
 \end{guidesteps}
+\guidepart{(b)}
 \begin{guidesteps}
-\item \guidepart{(b)}Lấy căn các trị riêng $9,1$: $\sigma_1=3$, $\sigma_2=1$.
+\item Lấy căn các trị riêng $9,1$: $\sigma_1=3$, $\sigma_2=1$.
 \item Nhân $Av_1=(4,1,1)^T/\sqrt2$ rồi chia cho 3: $u_1=(4,1,1)^T/(3\sqrt2)$.
 \end{guidesteps}
+\guidepart{(c)}
 \begin{guidesteps}
-\item \guidepart{(c)}Trừ $9v_1v_1^T$: $M^*=\frac12\bigl(\begin{smallmatrix}1&-1\\-1&1\end{smallmatrix}\bigr)$.
+\item Trừ $9v_1v_1^T$: $M^*=\frac12\bigl(\begin{smallmatrix}1&-1\\-1&1\end{smallmatrix}\bigr)$.
 \item Nếu bắt đầu tại $v_2$, $Mv_2=v_2$. Chuẩn hóa vẫn cho $v_2$ vì hướng $v_1$ không có trong vectơ ban đầu.
 \end{guidesteps}
 
@@ -1411,16 +1458,19 @@ For a row vector $x$, use reduced representation $z_x=xV_2$ and reconstruction $
 
 \examnote{Năng lượng toàn ma trận $45/49$ không cho biết lỗi của truy vấn này: sai số chiếu bình phương là $1/2$ và thứ hạng cosine đổi từ $d_3$ sang $d_1$.}
 \answer{\maptag{answer:Pr11}}
+\guidepart{(a)}
 \begin{guidesteps}[beginpenalty=10000]
-\item \guidepart{(a)}Bình phương các singular value, được tổng năng lượng $36+9+4=49$. So $36/49<90\%$ và $45/49>90\%$.
+\item Bình phương các singular value, được tổng năng lượng $36+9+4=49$. So $36/49<90\%$ và $45/49>90\%$.
 \item Chọn rank nhỏ nhất $r=2$; năng lượng bỏ đi là $2^2=4$, tức sai số Frobenius bình phương.
 \end{guidesteps}
+\guidepart{(b)}
 \begin{guidesteps}
-\item \guidepart{(b)}Cộng hàng 1 và 3 của $V_2$ để được $z_{d_3}=(1,0)$. So với $z_q=(1/2,1/2)$: cosine của $d_1,d_3$ lần lượt là $1,1/\sqrt2$.
+\item Cộng hàng 1 và 3 của $V_2$ để được $z_{d_3}=(1,0)$. So với $z_q=(1/2,1/2)$: cosine của $d_1,d_3$ lần lượt là $1,1/\sqrt2$.
 \item Không gian gốc cho $0,1/\sqrt2$, nên hàng xóm gần nhất đổi từ $d_3$ sang $d_1$.
 \end{guidesteps}
+\guidepart{(c)}
 \begin{guidesteps}
-\item \guidepart{(c)}Nhân $z_qV_2^T=(1/2,1/2,0,0)$. Lấy hiệu với $q$ rồi bình phương chuẩn: $1/4+1/4=1/2$.
+\item Nhân $z_qV_2^T=(1/2,1/2,0,0)$. Lấy hiệu với $q$ rồi bình phương chuẩn: $1/4+1/4=1/2$.
 \item Năng lượng giữ lại đo lỗi toàn ma trận; phép chiếu vẫn có thể thay đổi khoảng cách và thứ hạng của một truy vấn.
 \end{guidesteps}
 
@@ -1465,19 +1515,22 @@ Use the last product to obtain $\hat A$ and its squared Frobenius error. Explain
 
 \examnote{Hai cột được lấy đều là $(3,3,0)^T$, nên hàng cuối của ma trận tái tạo bằng 0; riêng ô $(3,3)$ đã tạo sai số bình phương $4$. Lấy hàng 3 không khôi phục được hướng cột bị thiếu.}
 \answer{\maptag{answer:Pr12}}
+\guidepart{(a)}
 \begin{guidesteps}[beginpenalty=10000]
-\item \guidepart{(a)}Chia bình phương chuẩn cột 3 cho tổng: $4/40=1/10$. Lấy mẫu có hoàn lại nên một cột có thể được chọn hai lần.
+\item Chia bình phương chuẩn cột 3 cho tổng: $4/40=1/10$. Lấy mẫu có hoàn lại nên một cột có thể được chọn hai lần.
 \end{guidesteps}
+\guidepart{(b)}
 \begin{guidesteps}
-\item \guidepart{(b)}Lấy cột 1 hai lần cho $C$, hàng 1 và 3 cho $R$, rồi lấy các giao điểm theo cùng thứ tự cho $W$:
+\item Lấy cột 1 hai lần cho $C$, hàng 1 và 3 cho $R$, rồi lấy các giao điểm theo cùng thứ tự cho $W$:
 \[
 C=\begin{pmatrix}3&3\\3&3\\0&0\end{pmatrix},\quad
 R=\begin{pmatrix}3&3&0\\0&0&2\end{pmatrix},\quad
 W=\begin{pmatrix}3&3\\0&0\end{pmatrix}.
 \]
 \end{guidesteps}
+\guidepart{(c)}
 \begin{guidesteps}
-\item \guidepart{(c)}Nhân $CW^+$ đã cho với $R$: lấy hàng đầu của $R$ cho hai hàng đầu, hàng cuối toàn 0.
+\item Nhân $CW^+$ đã cho với $R$: lấy hàng đầu của $R$ cho hai hàng đầu, hàng cuối toàn 0.
 \item Chỉ ô $(3,3)$ lệch 2, nên $\|A-\widehat A\|_F^2=4$. Hai cột lặp không sinh được hướng $(0,0,1)^T$ dù đã lấy hàng 3.
 \end{guidesteps}
 
@@ -1550,15 +1603,18 @@ r&=(-1,-1,0,1,1), &t&=(0,-1,1,-1,1).
 Why can this prediction be below both neighbour ratings 3 and 5?
 
 \answer{\maptag{answer:Pr14}}
+\guidepart{(a)}
 \begin{guidesteps}[beginpenalty=10000]
-\item \guidepart{(a)}Lấy tích vô hướng của các vectơ đã trừ trung bình: $t\cdot p=3$, $t\cdot r=1$. Chia mỗi giá trị cho $2\cdot2=4$.
+\item Lấy tích vô hướng của các vectơ đã trừ trung bình: $t\cdot p=3$, $t\cdot r=1$. Chia mỗi giá trị cho $2\cdot2=4$.
 \item Giữ hai cosine dương $s_{TP}=3/4$, $s_{TR}=1/4$; bỏ $Q$ vì $s_{TQ}=-3/4$.
 \end{guidesteps}
+\guidepart{(b)}
 \begin{guidesteps}
-\item \guidepart{(b)}Dùng rating gốc $5,3$ và tổng trọng số 1: $\hat r_{uT}=(3/4)5+(1/4)3=9/2$.
+\item Dùng rating gốc $5,3$ và tổng trọng số 1: $\hat r_{uT}=(3/4)5+(1/4)3=9/2$.
 \end{guidesteps}
+\guidepart{(c)}
 \begin{guidesteps}
-\item \guidepart{(c)}Trừ baseline 4 khỏi hai rating, được residual $1,-1$. Lấy trung bình có trọng số rồi cộng baseline đích 2.
+\item Trừ baseline 4 khỏi hai rating, được residual $1,-1$. Lấy trung bình có trọng số rồi cộng baseline đích 2.
 \item Kết quả $2+(3/4)(1)+(1/4)(-1)=5/2$. Đây là baseline cộng residual, nên có thể thấp hơn cả hai rating gốc.
 \end{guidesteps}
 
@@ -1571,8 +1627,9 @@ The table below represents the utility matrix which shows the ratings for three 
 \qpart{ii} Using your answer from part (i), fill in the missing entries of the utility matrix with user-based collaborative filtering. Give the completed utility matrix.
 
 \answer{\maptag{answer:A2-Q1}\maptag{answer:A2-Q1a}}
+\guidepart{(a)(i)}
 \begin{guidesteps}[beginpenalty=10000]
-\item \guidepart{(a)(i)}Tính trung bình từng hàng trên rating đã biết: $(7.5,11,9.5)$. Trừ trung bình rồi mới điền 0 cho ô thiếu.
+\item Tính trung bình từng hàng trên rating đã biết: $(7.5,11,9.5)$. Trừ trung bình rồi mới điền 0 cho ô thiếu.
 \item Tính chuẩn các hàng $\sqrt{12.5},\sqrt{38},\sqrt{24.5}$, và tích vô hướng $20,8.75,3.5$ theo cặp $AB,AC,BC$. Chia cho tích hai chuẩn được ma trận theo thứ tự Alice, Bob, Cathy:
 \[
 S_{\rm cosine}=\begin{pmatrix}
@@ -1582,8 +1639,9 @@ S_{\rm cosine}=\begin{pmatrix}
 \end{pmatrix}.
 \]
 \end{guidesteps}
+\guidepart{(a)(ii)}
 \begin{guidesteps}
-\item \guidepart{(a)(ii)}Chọn người đã chấm phim đích, dùng rating gốc và chuẩn hóa theo tổng similarity. Alice--Matrix: $(9s_{AB}+13s_{AC})/(s_{AB}+s_{AC})\approx10.4108$.
+\item Chọn người đã chấm phim đích, dùng rating gốc và chuẩn hóa theo tổng similarity. Alice--Matrix: $(9s_{AB}+13s_{AC})/(s_{AB}+s_{AC})\approx10.4108$.
 \item Cathy--Inception: $(10s_{AC}+16s_{BC})/(s_{AC}+s_{BC})\approx11.1196$. Giữ nguyên ô đã biết; cột là Matrix, Inception, Star Wars:
 \[
 \begin{pmatrix}10.4108&10&5\\9&16&8\\13&11.1196&6\end{pmatrix}.
@@ -1600,15 +1658,17 @@ The table below represents the utility matrix which shows the ratings for three 
 
 \examnote{Pearson chỉ dùng rating chung: Alice/Bob có tương quan $1$, còn Alice/Cathy chỉ có một rating chung nên Pearson không xác định. A2-Q1 dùng centered cosine trên mọi rating đã biết.}
 \answer{\maptag{answer:P24-Q4}\maptag{answer:P24-Q4a}}
+\guidepart{(a)(i)}
 \begin{guidesteps}[beginpenalty=10000]
-\item \guidepart{(a)(i)}Với từng cặp, lấy các phim cả hai đã chấm và tính lại hai trung bình trên phần giao. Alice--Bob và Bob--Cathy có các vectơ đã trừ trung bình cùng hướng nên Pearson bằng 1.
+\item Với từng cặp, lấy các phim cả hai đã chấm và tính lại hai trung bình trên phần giao. Alice--Bob và Bob--Cathy có các vectơ đã trừ trung bình cùng hướng nên Pearson bằng 1.
 \item Alice--Cathy chỉ chung một phim nên chuẩn sau trừ trung bình bằng 0. Ghi KXĐ thay vì 0; ma trận theo thứ tự Alice, Bob, Cathy:
 \[
 S_{\rm Pearson}=\begin{pmatrix}1&1&\text{KXĐ}\\1&1&1\\\text{KXĐ}&1&1\end{pmatrix}.
 \]
 \end{guidesteps}
+\guidepart{(a)(ii)}
 \begin{guidesteps}
-\item \guidepart{(a)(ii)}Loại hàng xóm có tương quan không xác định. Bob là người duy nhất còn lại cho mỗi ô thiếu nên có trọng số chuẩn hóa 1.
+\item Loại hàng xóm có tương quan không xác định. Bob là người duy nhất còn lại cho mỗi ô thiếu nên có trọng số chuẩn hóa 1.
 \item Chép rating Bob đã cho: Matrix là 9, Inception là 16. Centered cosine có điền 0 trong A2-Q1(a) là quy ước khác.
 \[
 \begin{pmatrix}9&10&5\\9&16&8\\13&16&6\end{pmatrix}.
@@ -1651,16 +1711,19 @@ With $e=r_{uA}-\hat r_{uA}$, the gradients are $g_p=-eq_A+\lambda p_u$, $g_q=-ep
 
 \examnote{Trong một bước SGD, cả hai vectơ cập nhật dùng giá trị cũ. Chỉ $q_A$ được cập nhật; dự đoán của các item test vẫn có thể đổi theo $p'_u$, nhưng rating test không được dùng để fit.}
 \answer{\maptag{answer:Pr15}}
+\guidepart{(a)}
 \begin{guidesteps}[beginpenalty=10000]
-\item \guidepart{(a)}Tính dự đoán $3+(1,0)\cdot(1,1)=4$ và residual $e=5-4=1$.
+\item Tính dự đoán $3+(1,0)\cdot(1,1)=4$ và residual $e=5-4=1$.
 \item Dùng hai vectơ cũ trong cả hai gradient: $g_p=(-1/2,-1)$, $g_q=(-1/2,1/2)$. Trừ $\eta=1/2$ lần gradient được $p'=(5/4,1/2)$, $q'=(5/4,3/4)$.
 \end{guidesteps}
+\guidepart{(b)}
 \begin{guidesteps}
-\item \guidepart{(b)}Tính $3+p'^Tq$ cho hai item kiểm tra: dự đoán $15/4,7/2$, residual thực trừ dự đoán là $1/4,-1/2$.
+\item Tính $3+p'^Tq$ cho hai item kiểm tra: dự đoán $15/4,7/2$, residual thực trừ dự đoán là $1/4,-1/2$.
 \item Bình phương, lấy trung bình rồi căn: $\mathrm{RMSE}=\sqrt{[(1/4)^2+(-1/2)^2]/2}=\sqrt{5/32}$.
 \end{guidesteps}
+\guidepart{(c)}
 \begin{guidesteps}
-\item \guidepart{(c)}Chỉ cập nhật $p_u,q_A$. Những $q_i$ khác giữ nguyên nhưng dự đoán có thể đổi vì dùng $p_u$ mới.
+\item Chỉ cập nhật $p_u,q_A$. Những $q_i$ khác giữ nguyên nhưng dự đoán có thể đổi vì dùng $p_u$ mới.
 \item Giữ các rating kiểm tra ngoài bước huấn luyện để RMSE đo khả năng dự đoán dữ liệu chưa dùng.
 \end{guidesteps}
 
@@ -1680,16 +1743,18 @@ Hint: $\hat r_{xi}=q_x\cdot p_i$, and we want to fill in $Q$ and $P^T$ such that
 
 \examnote{Giải ô chỉ có một ẩn trước: Alice--Star Wars cho $a=1$, Alice--Inception cho $c=2$, Bob--Matrix cho $b=3$; sau đó kiểm tra các ô quan sát còn lại.}
 \answer{\maptag{answer:A2-Q1b}\maptag{answer:P24-Q4b}}
+\guidepart{(b)(i)}
 \begin{guidesteps}[beginpenalty=10000]
-\item \guidepart{(b)(i)}Bắt đầu bằng ô chỉ chứa một ẩn: Alice--Star Wars cho $4+a=5$, suy ra $a=1$.
+\item Bắt đầu bằng ô chỉ chứa một ẩn: Alice--Star Wars cho $4+a=5$, suy ra $a=1$.
 \item Thế vào Alice--Inception: $8+ac=10$ cho $c=2$. Bob--Matrix: $b+6=9$ cho $b=3$. Thử các ô đã biết còn lại: lỗi bình phương bằng 0.
 \[
 Q=\begin{pmatrix}2&1\\3&2\\1&4\end{pmatrix},\qquad
 P^T=\begin{pmatrix}1&4&2\\3&2&1\end{pmatrix}.
 \]
 \end{guidesteps}
+\guidepart{(b)(ii)}
 \begin{guidesteps}
-\item \guidepart{(b)(ii)}Lấy tích hàng người dùng với cột phim: Alice--Matrix $2\cdot1+1\cdot3=5$, Cathy--Inception $1\cdot4+4\cdot2=12$.
+\item Lấy tích hàng người dùng với cột phim: Alice--Matrix $2\cdot1+1\cdot3=5$, Cathy--Inception $1\cdot4+4\cdot2=12$.
 \item Điền hai ô vào $QP^T=\bigl(\begin{smallmatrix}5&10&5\\9&16&8\\13&12&6\end{smallmatrix}\bigr)$.
 \end{guidesteps}
 
@@ -1750,16 +1815,19 @@ A reader rates article 1 as 1 and article 2 as 5.
 \qpart{c} Interpret the negative sport component in $p_c$. Does the centred model's preference for article 4 show evidence that the reader likes stocks?
 
 \answer{\maptag{answer:Pr13}}
+\guidepart{(a)}
 \begin{guidesteps}[beginpenalty=10000]
-\item \guidepart{(a)}Tính TF cho stocks bằng $2/4$; IDF là $\log_2(4/1)=2$, nên TF-IDF bằng 1.
+\item Tính TF cho stocks bằng $2/4$; IDF là $\log_2(4/1)=2$, nên TF-IDF bằng 1.
 \item News có trong cả bốn bài, nên $\log_2(4/4)=0$ và trọng số bằng 0 trong mọi profile.
 \end{guidesteps}
+\guidepart{(b)}
 \begin{guidesteps}
-\item \guidepart{(b)}Tính $p=(g_1+5g_2)/2=(3,1/4,0,0)$. Hai ứng viên có chuẩn 1, nên so tích vô hướng $1/4$ với 0: chọn bài 3.
+\item Tính $p=(g_1+5g_2)/2=(3,1/4,0,0)$. Hai ứng viên có chuẩn 1, nên so tích vô hướng $1/4$ với 0: chọn bài 3.
 \item Trừ rating trung bình 3: $p_c=(-2g_1+2g_2)/2=(0,-1/2,0,0)$. So $-1/2$ với 0: chọn bài 4.
 \end{guidesteps}
+\guidepart{(c)}
 \begin{guidesteps}
-\item \guidepart{(c)}Điểm sport âm phản ánh bài có sport được chấm dưới trung bình. Điểm stocks bằng 0, nên chọn bài 4 chỉ cho thấy mô hình tránh sport, chưa cho thấy thích stocks.
+\item Điểm sport âm phản ánh bài có sport được chấm dưới trung bình. Điểm stocks bằng 0, nên chọn bài 4 chỉ cho thấy mô hình tránh sport, chưa cho thấy thích stocks.
 \end{guidesteps}
 
 % 2526Sem1-DSA5101.pdf, PDF page(s) 18.
@@ -1767,8 +1835,9 @@ A reader rates article 1 as 1 and article 2 as 5.
 \qpart{b} The TF-IDF score of a term in a document is proportional to the frequency of the term in the document and inversely proportional to the number of documents that mention the term.
 
 \answer{\maptag{answer:P25-Q7b}}
+\guidepart{(b)}
 \begin{guidesteps}[beginpenalty=10000]
-\item \guidepart{(b)}Giữ TF cố định và viết IDF là $\log(N/\mathrm{df})$. Khi $\mathrm{df}$ tăng, IDF giảm.
+\item Giữ TF cố định và viết IDF là $\log(N/\mathrm{df})$. Khi $\mathrm{df}$ tăng, IDF giảm.
 \item So với dạng tỉ lệ nghịch $c/\mathrm{df}$: công thức log không có dạng đó. Theo nghĩa toán học chặt, chọn False; nếu chỉ hỏi xu hướng giảm thì xu hướng đó đúng.
 \end{guidesteps}
 
@@ -1895,16 +1964,19 @@ Use damping $\beta=1/2$, uniform teleportation, and uniform redistribution of de
 \qpart{c} What is the column for $S$ in the repaired Google transition matrix? Does a vector summing to 1 necessarily mean the PageRank iteration has converged?
 
 \answer{\maptag{answer:Pr16}}
+\guidepart{(a)}
 \begin{guidesteps}[beginpenalty=10000]
-\item \guidepart{(a)}Nhân ma trận theo thứ tự $H,L,R,S$: $M_0r=(1/5,2/5,1/5,0)^T$. Tổng chỉ $4/5$ vì cột $S$ bằng 0.
+\item Nhân ma trận theo thứ tự $H,L,R,S$: $M_0r=(1/5,2/5,1/5,0)^T$. Tổng chỉ $4/5$ vì cột $S$ bằng 0.
 \item Nhân $\beta=1/2$ được $u=(1/10,1/5,1/10,0)^T$.
 \end{guidesteps}
+\guidepart{(b)}
 \begin{guidesteps}
-\item \guidepart{(b)}Cộng các phần tử của $u$ được $2/5$. Chia phần hụt đều: mỗi nút nhận $(1-2/5)/4=3/20$.
+\item Cộng các phần tử của $u$ được $2/5$. Chia phần hụt đều: mỗi nút nhận $(1-2/5)/4=3/20$.
 \item Vậy $r'=(1/4,7/20,1/4,3/20)^T$, tổng bằng 1.
 \end{guidesteps}
+\guidepart{(c)}
 \begin{guidesteps}
-\item \guidepart{(c)}Thay cột của nút cụt $S$ bằng $(1/4,1/4,1/4,1/4)^T$. Cộng teleport đều vẫn giữ nguyên cột này.
+\item Thay cột của nút cụt $S$ bằng $(1/4,1/4,1/4,1/4)^T$. Cộng teleport đều vẫn giữ nguyên cột này.
 \item Tổng 1 chỉ kiểm tra bảo toàn khối lượng; để kiểm tra hội tụ, so $r'$ với $r$ hoặc kiểm tra phương trình điểm bất động.
 \end{guidesteps}
 
@@ -1917,15 +1989,17 @@ Use damping $\beta=1/2$, uniform teleportation, and uniform redistribution of de
 
 \examnote{Khi cột nút cụt bằng 0 và cùng $v$ xử lý teleport lẫn khối lượng hụt, tính $u=\beta M_0r$ rồi $r'=u+(S-\sum_i u_i)v$. Trong đề, $S=5$, $\beta=0.9$, $v=(1/2,1/2,0,0,0)^T$; $A$ nhận $0.70$ thay vì $0.50$ nếu không teleport, dù vẫn thấp hơn mức ban đầu $1$.}
 \answer{\maptag{answer:A2-Q2}\maptag{answer:P24-Q5}}
+\guidepart{(a)}
 \begin{guidesteps}[beginpenalty=10000]
-\item \guidepart{(a)}Đặt cột là nguồn và hàng là đích theo thứ tự $A,B,C,D,E$. Mỗi nguồn chia đều 1 cho các cạnh ra: $A,E$ chia đôi, $B,C,D$ truyền toàn bộ cho đích duy nhất.
+\item Đặt cột là nguồn và hàng là đích theo thứ tự $A,B,C,D,E$. Mỗi nguồn chia đều 1 cho các cạnh ra: $A,E$ chia đôi, $B,C,D$ truyền toàn bộ cho đích duy nhất.
 \item Ghi các trọng số ở ô tương ứng và điền 0 ở các ô còn lại:
 \[
 M=\begin{pmatrix}0&0&0&0&1/2\\1/2&0&0&0&0\\1/2&1&0&0&0\\0&0&1&0&1/2\\0&0&0&1&0\end{pmatrix}.
 \]
 \end{guidesteps}
+\guidepart{(b)}
 \begin{guidesteps}
-\item \guidepart{(b)}Bắt đầu với $r^{(0)}=(1,1,1,1,1)^T$. Nhân $M$ một lần để được $r^{(1)}$, rồi dùng $r^{(1)}$ để tính $r^{(2)}$:
+\item Bắt đầu với $r^{(0)}=(1,1,1,1,1)^T$. Nhân $M$ một lần để được $r^{(1)}$, rồi dùng $r^{(1)}$ để tính $r^{(2)}$:
 \[
 \begin{aligned}
 r^{(1)}&=(1/2,1/2,3/2,3/2,1)^T,\\
@@ -1933,8 +2007,9 @@ r^{(2)}&=(1/2,1/4,3/4,2,3/2)^T.
 \end{aligned}
 \]
 \end{guidesteps}
+\guidepart{(c)}
 \begin{guidesteps}
-\item \guidepart{(c)}Giữ tổng điểm 5: nhân $r^{(1)}$ với 0.9 rồi cộng $0.1(5)(1/2,1/2,0,0,0)^T$. Được $(0.70,0.70,1.35,1.35,0.90)^T$.
+\item Giữ tổng điểm 5: nhân $r^{(1)}$ với 0.9 rồi cộng $0.1(5)(1/2,1/2,0,0,0)^T$. Được $(0.70,0.70,1.35,1.35,0.90)^T$.
 \item Nêu mốc so sánh: so với vòng 1 không teleport, $A,B$ tăng; so với vectơ ban đầu, $C,D$ tăng.
 \end{guidesteps}
 
@@ -1967,15 +2042,18 @@ A directed graph has links $G\to H$, $H\to G,T$, $T\to F$, and $F\to T$. Use dam
 \qpart{c} For ordinary PageRank, elimination of $r_F$ gives $r_T=x+\tfrac14r_T+\tfrac3{16}$, where $x=r_H/4$ is the direct rank contribution from outside the two-page farm $\{T,F\}$. Solve for $r_T$ as a function of $x$. Which term shows amplification of that external contribution?
 
 \answer{\maptag{answer:Pr18}}
+\guidepart{(a)}
 \begin{guidesteps}[beginpenalty=10000]
-\item \guidepart{(a)}Liệt kê nguồn vào $T$: $H$ có 2 cạnh ra, $F$ có 1. Cộng $\tfrac12(t_H/2+t_F)=2/21$.
+\item Liệt kê nguồn vào $T$: $H$ có 2 cạnh ra, $F$ có 1. Cộng $\tfrac12(t_H/2+t_F)=2/21$.
 \item $T$ không nhận teleport trực tiếp nhưng nhận điểm truyền qua các cạnh vào.
 \end{guidesteps}
+\guidepart{(b)}
 \begin{guidesteps}
-\item \guidepart{(b)}Tính spam mass của $F$: $1-t_F/r_F=1-(1/21)/(2/7)=5/6>3/4$. Gắn cờ để kiểm tra; cờ không chứng minh spam.
+\item Tính spam mass của $F$: $1-t_F/r_F=1-(1/21)/(2/7)=5/6>3/4$. Gắn cờ để kiểm tra; cờ không chứng minh spam.
 \end{guidesteps}
+\guidepart{(c)}
 \begin{guidesteps}
-\item \guidepart{(c)}Chuyển $\tfrac14 r_T$ sang trái: $\tfrac34r_T=x+\tfrac3{16}$. Chia cho $3/4$ được $r_T=\tfrac43x+\tfrac14$.
+\item Chuyển $\tfrac14 r_T$ sang trái: $\tfrac34r_T=x+\tfrac3{16}$. Chia cho $3/4$ được $r_T=\tfrac43x+\tfrac14$.
 \item Hệ số $4/3>1$ trước $x$ đo khuếch đại do điểm quay lại trong farm.
 \end{guidesteps}
 
@@ -1991,23 +2069,28 @@ Consider the web graph below. Let $a,b$ and $c$ denote the ranks of nodes $A,B$ 
 
 \examnote{Trên chu trình 3 nút, teleport về $A$: $r_A=(1-\beta)/(1-\beta^3)$, $r_B=\beta r_A$, $r_C=\beta^2r_A$. Với $\beta=3/5$, $r_A=25/49$. Khi $\beta=1$, vector quay vòng và chỉ hội tụ nếu bắt đầu đều.}
 \answer{\maptag{answer:P25-Q5}}
+\guidepart{(a)}
 \begin{guidesteps}[beginpenalty=10000]
-\item \guidepart{(a)}Theo cạnh có hướng, mỗi vòng chuyển $(a,b,c)$ thành $(c,a,b)$. Sau ba vòng trở lại điểm đầu.
+\item Theo cạnh có hướng, mỗi vòng chuyển $(a,b,c)$ thành $(c,a,b)$. Sau ba vòng trở lại điểm đầu.
 \item Chu kỳ chỉ co thành điểm bất động khi $a=b=c$. Tổng bằng 1 nên chỉ hội tụ nếu bắt đầu tại $(1/3,1/3,1/3)$.
 \end{guidesteps}
+\guidepart{(b)}
 \begin{guidesteps}
-\item \guidepart{(b)}Viết điểm vào mỗi nút bằng 0.6 lần điểm nút trước; chỉ $A$ nhận thêm teleport 0.4. Được $a=0.6c+0.4$, $b=0.6a$, $c=0.6b$.
+\item Viết điểm vào mỗi nút bằng 0.6 lần điểm nút trước; chỉ $A$ nhận thêm teleport 0.4. Được $a=0.6c+0.4$, $b=0.6a$, $c=0.6b$.
 \end{guidesteps}
+\guidepart{(c)}
 \begin{guidesteps}
-\item \guidepart{(c)}Thế từ $b$ vào $c$ được $c=0.36a$, rồi thế vào phương trình đầu: $a=0.216a+0.4$.
+\item Thế từ $b$ vào $c$ được $c=0.36a$, rồi thế vào phương trình đầu: $a=0.216a+0.4$.
 \item Giải và thế ngược: $(a,b,c)=(25/49,15/49,9/49)$; kiểm tra tổng bằng 1.
 \end{guidesteps}
+\guidepart{(d)}
 \begin{guidesteps}
-\item \guidepart{(d)}Do chu trình đối xứng, PageRank dừng thường là $r_i=1/3$. Thế điểm tin cậy $t_i$ vào $1-t_i/r_i$.
+\item Do chu trình đối xứng, PageRank dừng thường là $r_i=1/3$. Thế điểm tin cậy $t_i$ vào $1-t_i/r_i$.
 \item Kết quả theo thứ tự $A,B,C$: $(-26/49,4/49,22/49)$. $A$ âm vì $t_A>1/3$.
 \end{guidesteps}
+\guidepart{(e)}
 \begin{guidesteps}
-\item \guidepart{(e)}Chuẩn hóa phần điểm thiếu tin cậy theo tổng điểm của chính trang qua spam mass. Sau đó đặt ngưỡng để gắn cờ giá trị cao.
+\item Chuẩn hóa phần điểm thiếu tin cậy theo tổng điểm của chính trang qua spam mass. Sau đó đặt ngưỡng để gắn cờ giá trị cao.
 \item PageRank thấp riêng lẻ không nói trang có đáng tin hay không.
 \end{guidesteps}
 
@@ -2037,15 +2120,18 @@ Directory $H_1$ links to resources $R_1,R_2,R_3$; $H_2$ links to $R_1,R_2$; $H_3
 \qpart{c} All three resources have indegree 2. Why do their authority scores differ after this update? How does a hub's contribution differ from a PageRank page's contribution through its outgoing links?
 
 \answer{\maptag{answer:Pr17}}
+\guidepart{(a)}
 \begin{guidesteps}[beginpenalty=10000]
-\item \guidepart{(a)}Điền 1 ở mỗi liên kết từ hàng hub tới cột resource: $B=\bigl(\begin{smallmatrix}1&1&1\\1&1&0\\0&0&1\end{smallmatrix}\bigr)$.
+\item Điền 1 ở mỗi liên kết từ hàng hub tới cột resource: $B=\bigl(\begin{smallmatrix}1&1&1\\1&1&0\\0&0&1\end{smallmatrix}\bigr)$.
 \item Nhân $Ba^{(0)}$ với $a^{(0)}=(1,1,1)^T$, được $h=(3,2,1)^T$.
 \end{guidesteps}
+\guidepart{(b)}
 \begin{guidesteps}
-\item \guidepart{(b)}Cộng điểm hub vào từng resource: $a'=B^Th=(3+2,3+2,3+1)^T=(5,5,4)^T$. Xếp $R_1=R_2>R_3$.
+\item Cộng điểm hub vào từng resource: $a'=B^Th=(3+2,3+2,3+1)^T=(5,5,4)^T$. Xếp $R_1=R_2>R_3$.
 \end{guidesteps}
+\guidepart{(c)}
 \begin{guidesteps}
-\item \guidepart{(c)}Cùng indegree nhưng $R_1,R_2$ nhận từ $H_2$ có điểm cao hơn $H_3$ của $R_3$. HITS cộng cả điểm hub ở mỗi liên kết; PageRank chia điểm nguồn theo bậc ra.
+\item Cùng indegree nhưng $R_1,R_2$ nhận từ $H_2$ có điểm cao hơn $H_3$ của $R_3$. HITS cộng cả điểm hub ở mỗi liên kết; PageRank chia điểm nguồn theo bậc ra.
 \end{guidesteps}
 
 \lecture{7}{Communities / graph clustering}
@@ -2096,16 +2182,19 @@ where the diagonal stores twice the internal edge weight. Find the weighted degr
 
 \examnote{Với hai nước chuyển nút 3 được nêu, gain lần lượt là $3/25$ và $2/25$; chọn nước có gain lớn hơn. Khi co cụm, đường chéo 2 của siêu nút giữ bậc nội bộ.}
 \answer{\maptag{answer:Pr20}}
+\guidepart{(a)}
 \begin{guidesteps}[beginpenalty=10000]
-\item \guidepart{(a)}Sau khi ghép 3 vào cụm của 4, các cặp $(e,\mathrm{vol})$ là $(1,3),(1,4),(1,3)$. Thế vào $Q$: $2(1/5-9/100)+(1/5-16/100)=13/50$.
+\item Sau khi ghép 3 vào cụm của 4, các cặp $(e,\mathrm{vol})$ là $(1,3),(1,4),(1,3)$. Thế vào $Q$: $2(1/5-9/100)+(1/5-16/100)=13/50$.
 \item Trừ $7/50$ được gain $3/25>2/25$. Chọn ghép vào cụm 4.
 \end{guidesteps}
+\guidepart{(b)}
 \begin{guidesteps}
-\item \guidepart{(b)}Cộng các hàng của ma trận gộp để có bậc $(3,4,3)$; chia tổng cho 2 được $m=5$.
+\item Cộng các hàng của ma trận gộp để có bậc $(3,4,3)$; chia tổng cho 2 được $m=5$.
 \item Giữ đường chéo vì nó chứa hai lần trọng số cạnh nội bộ; bỏ nó sẽ làm sai bậc và modularity.
 \end{guidesteps}
+\guidepart{(c)}
 \begin{guidesteps}
-\item \guidepart{(c)}Cả hai phép gộp kế tiếp đều giảm $Q$, nên thuật toán dừng. Nhưng $123|456$ có $Q=3/10>13/50$: điểm dừng không tối ưu toàn cục.
+\item Cả hai phép gộp kế tiếp đều giảm $Q$, nên thuật toán dừng. Nhưng $123|456$ có $Q=3/10>13/50$: điểm dừng không tối ưu toàn cục.
 \end{guidesteps}
 
 % 2526Sem1-DSA5101.pdf, PDF page(s) 12, 13, 14.
@@ -2128,8 +2217,9 @@ Let $G$ denote the entire connected graph for each of the cases, and $H_i$, $i=1
 
 \examnote{Với vòng gồm các cụm bằng nhau, $m=K(e+1)$ và $Q=e/(e+1)-1/K$; thay $e=N$ hoặc $e=\binom N2$ theo đề. Giữ self-loop khi co cụm vì nó lưu gấp đôi số cạnh nội bộ.}
 \answer{\maptag{answer:P25-Q4}}
+\guidepart{(a), (b)(i)}
 \begin{guidesteps}[beginpenalty=10000]
-\item \guidepart{(a), (b)(i)}Đếm $e$ cạnh nội bộ mỗi cụm: $e=N$ cho chu trình, $e=N(N-1)/2$ cho clique. Có $K$ cầu nên $m=K(e+1)$.
+\item Đếm $e$ cạnh nội bộ mỗi cụm: $e=N$ cho chu trình, $e=N(N-1)/2$ cho clique. Có $K$ cầu nên $m=K(e+1)$.
 \item Đếm cạnh nội bộ hai lần trong $\Sigma_{\rm in}=2e$; thêm hai đầu cầu được $\Sigma_{\rm tot}=2e+2$:
 \begin{examtable}{@{}l c c c@{}}
 \toprule
@@ -2140,8 +2230,9 @@ Clique & $K[N(N-1)+2]$ & $N(N-1)$ & $N(N-1)+2$ \\
 \bottomrule
 \end{examtable}
 \end{guidesteps}
+\guidepart{(b)(ii)}
 \begin{guidesteps}
-\item \guidepart{(b)(ii)}Thế $\Sigma_{\rm tot}/(2m)=1/K$. Mỗi cụm góp $e/[K(e+1)]-1/K^2$ vào modularity. Cộng $K$ cụm rồi thế $e$:
+\item Thế $\Sigma_{\rm tot}/(2m)=1/K$. Mỗi cụm góp $e/[K(e+1)]-1/K^2$ vào modularity. Cộng $K$ cụm rồi thế $e$:
 \[
 \begin{aligned}
 Q_{\rm cycle}&=1-\frac{2}{2N+2}-\frac1K,\\
@@ -2150,12 +2241,14 @@ Q_{\rm clique}&=1-\frac{2}{N(N-1)+2}-\frac1K.
 \]
 \item So hai trường hợp: $N=3$ cho cùng cấu trúc; $N>3$ cho clique nhiều cạnh nội bộ hơn nhưng cùng số cầu, nên modularity cao hơn với phân hoạch đã cho.
 \end{guidesteps}
+\guidepart{(c)}
 \begin{guidesteps}
-\item \guidepart{(c)}Đếm tất cả cạnh kề $A$: hai cạnh trong cụm gốc, một sang $H_1$. Vậy $(k_A,k_{A,\rm in})=(3,1)$ khi xét chuyển sang $H_1$.
+\item Đếm tất cả cạnh kề $A$: hai cạnh trong cụm gốc, một sang $H_1$. Vậy $(k_A,k_{A,\rm in})=(3,1)$ khi xét chuyển sang $H_1$.
 \item Lặp lại cho $B$: có $N-1$ cạnh trong clique gốc và một sang $H_1$, nên $(k_B,k_{B,\rm in})=(N,1)$.
 \end{guidesteps}
+\guidepart{(d)}
 \begin{guidesteps}
-\item \guidepart{(d)}Xác định phạm vi: cần phân hoạch toàn đồ thị, không có seed, thì chọn Louvain. Nếu tìm một cộng đồng quanh seed đã biết, chọn Local PPR.
+\item Xác định phạm vi: cần phân hoạch toàn đồ thị, không có seed, thì chọn Louvain. Nếu tìm một cộng đồng quanh seed đã biết, chọn Local PPR.
 \end{guidesteps}
 
 \topic{ppr}{Local approximate PPR + conductance sweep}
@@ -2220,16 +2313,19 @@ for $v$ adjacent to $u$.
 
 \examnote{Khi thêm $B$ vào $\{A,C\}$, $d_B=h=2$: cut giảm $3\to1$, volume tăng $5\to7$, conductance là $1/7$. Bỏ qua tiền tố rỗng và toàn đồ thị.}
 \answer{\maptag{answer:Pr19}}
+\guidepart{(a)}
 \begin{guidesteps}[beginpenalty=10000]
-\item \guidepart{(a)}Lấy $x=q_A=1$. Chuyển $(1-\beta)x=1/2$ vào $r_A$; giữ $\beta x/2=1/4$ ở $q_A$ và gửi $1/8$ cho mỗi láng giềng $B,C$.
+\item Lấy $x=q_A=1$. Chuyển $(1-\beta)x=1/2$ vào $r_A$; giữ $\beta x/2=1/4$ ở $q_A$ và gửi $1/8$ cho mỗi láng giềng $B,C$.
 \item Chia residual cho bậc: $1/8,1/16,1/24$. So với $1/20$: $A,B$ đủ điều kiện; chọn $A$ có tỉ số lớn nhất.
 \end{guidesteps}
+\guidepart{(b)}
 \begin{guidesteps}
-\item \guidepart{(b)}Với $AC$, cạnh cắt là $AB,BC,CD$; volume $2+3=5$, nên $\phi=3/5$.
+\item Với $AC$, cạnh cắt là $AB,BC,CD$; volume $2+3=5$, nên $\phi=3/5$.
 \item Với $ACB$, chỉ $CD$ cắt; volume 7, nên $\phi=1/7$. So cả singleton $A$ có $\phi=1$: chọn $ACB$.
 \end{guidesteps}
+\guidepart{(c)}
 \begin{guidesteps}
-\item \guidepart{(c)}Cộng cả điểm và residual: $\sum_u(r_u+q_u)=1$. Một push chỉ đọc nút đang xử lý và các láng giềng, nên không cần quét đồ thị.
+\item Cộng cả điểm và residual: $\sum_u(r_u+q_u)=1$. Một push chỉ đọc nút đang xử lý và các láng giềng, nên không cần quét đồ thị.
 \end{guidesteps}
 
 \topic{embedding}{Node embeddings: shallow encoding \& random walks}
@@ -2404,16 +2500,19 @@ A stream is $A,B,A,C,D,B,E,A$. For each hash $h_j$, maintain $R_j$, the maximum 
 \qpart{c} Two monitors using the same six hash functions produce registers $(2,3,2,1,1,1)$ and $(1,2,2,2,1,6)$. Merge their summaries for the union of their observed IDs. Why is overlap between the two monitors not counted twice?
 
 \answer{\maptag{answer:Pr24}}
+\guidepart{(a)}
 \begin{guidesteps}[beginpenalty=10000]
-\item \guidepart{(a)}Đếm bit 0 cuối của $12,10,7,6,3$: $(2,1,0,1,0)$. Lấy max $R_1=2$, nên $Z_1=4$; thực tế có 5 ID.
+\item Đếm bit 0 cuối của $12,10,7,6,3$: $(2,1,0,1,0)$. Lấy max $R_1=2$, nên $Z_1=4$; thực tế có 5 ID.
 \item Gặp lại $A$ vẫn dùng hash 12, nên không tăng thanh ghi.
 \end{guidesteps}
+\guidepart{(b)}
 \begin{guidesteps}
-\item \guidepart{(b)}Đổi từng thanh ghi sang $2^{R_j}$ được $(4,8,4,4,2,64)$. Trung bình theo cặp: $(6,4,33)$.
+\item Đổi từng thanh ghi sang $2^{R_j}$ được $(4,8,4,4,2,64)$. Trung bình theo cặp: $(6,4,33)$.
 \item Lấy trung vị bằng 6; giá trị 64 chỉ kéo lệch một nhóm.
 \end{guidesteps}
+\guidepart{(c)}
 \begin{guidesteps}
-\item \guidepart{(c)}Lấy max từng tọa độ của hai monitor, được $(2,3,2,2,1,6)$. Cùng ID cho cùng hash nên lấy max không đếm trùng.
+\item Lấy max từng tọa độ của hai monitor, được $(2,3,2,2,1,6)$. Cùng ID cho cùng hash nên lấy max không đếm trùng.
 \end{guidesteps}
 
 % 2425Sem1-DSA5101.pdf, PDF page(s) 19.
@@ -2423,11 +2522,13 @@ A stream of integers consists of one 1, two 2's, three 3's, and so on, up to ten
 \qpart{b} Let's apply the Flajolet-Martin algorithm with a single hash function being the identity function. That is, $h(i)$ is simply $i$ written as a 32-bit binary number (e.g., $h(1)=00\ldots001$, $h(2)=00\ldots010$). What estimate does $h$ give for the number of distinct elements in this stream?
 
 \answer{\maptag{answer:A2-Q4}\maptag{answer:A2-Q4ab}\maptag{answer:P24-Q7}\maptag{answer:P24-Q7ab}}
+\guidepart{(a)}
 \begin{guidesteps}[beginpenalty=10000]
-\item \guidepart{(a)}Liệt kê các giá trị khác nhau $1,\ldots,10$; tần suất khác nhau không ảnh hưởng $F_0$. Kết quả $F_0=10$.
+\item Liệt kê các giá trị khác nhau $1,\ldots,10$; tần suất khác nhau không ảnh hưởng $F_0$. Kết quả $F_0=10$.
 \end{guidesteps}
+\guidepart{(b)}
 \begin{guidesteps}
-\item \guidepart{(b)}Với identity hash, đếm bit 0 ở cuối của $1,\ldots,10$: $(0,1,0,2,0,1,0,3,0,1)$.
+\item Với identity hash, đếm bit 0 ở cuối của $1,\ldots,10$: $(0,1,0,2,0,1,0,3,0,1)$.
 \item Giá trị lớn nhất đến từ $8=1000_2$, nên $R=3$ và ước lượng $2^3=8$.
 \end{guidesteps}
 
@@ -2444,18 +2545,22 @@ h_i(x)=x+i\bmod 2^{16}.
 
 \examnote{Mọi hash giữ hoặc đảo tính chẵn lẻ cùng nhau; trong hai đầu vào $1,10$ luôn có một giá trị hash chẵn, nên $R\ge1$. $h_0$ đạt $R=1$, vậy ước lượng nhỏ nhất là $2$.}
 \answer{\maptag{answer:P25-Q3}}
+\guidepart{(a)}
 \begin{guidesteps}[beginpenalty=10000]
-\item \guidepart{(a)}Tính $h_0$ cho ba đầu vào, được $(1,5,10)$. Số bit 0 cuối là $(0,0,1)$; lấy max 1 rồi trả $2^1=2$.
+\item Tính $h_0$ cho ba đầu vào, được $(1,5,10)$. Số bit 0 cuối là $(0,0,1)$; lấy max 1 rồi trả $2^1=2$.
 \end{guidesteps}
+\guidepart{(b)}
 \begin{guidesteps}
-\item \guidepart{(b)}Tính $h_1$, được $(2,6,11)$. Số bit 0 cuối là $(1,1,0)$; lấy max 1 rồi trả $2^1=2$.
+\item Tính $h_1$, được $(2,6,11)$. Số bit 0 cuối là $(1,1,0)$; lấy max 1 rồi trả $2^1=2$.
 \end{guidesteps}
+\guidepart{(c)}
 \begin{guidesteps}
-\item \guidepart{(c)}Hai đầu vào 1 và 10 trái tính chẵn lẻ. Cộng cùng $i$ và lấy modulo chẵn vẫn có một mã chẵn, nên $R\ge1$.
+\item Hai đầu vào 1 và 10 trái tính chẵn lẻ. Cộng cùng $i$ và lấy modulo chẵn vẫn có một mã chẵn, nên $R\ge1$.
 \item Ở (a), $h_0$ cho $R=1$. Cận dưới đạt được, nên ước lượng nhỏ nhất là 2.
 \end{guidesteps}
+\guidepart{(d)}
 \begin{guidesteps}
-\item \guidepart{(d)}Đổi từng thanh ghi thành $2^R$. Vì một $R$ lớn có thể kéo lệch trung bình chung, chia các ước lượng thành nhóm.
+\item Đổi từng thanh ghi thành $2^R$. Vì một $R$ lớn có thể kéo lệch trung bình chung, chia các ước lượng thành nhóm.
 \item Lấy trung bình từng nhóm rồi lấy trung vị các trung bình đó.
 \end{guidesteps}
 
@@ -2560,16 +2665,19 @@ Start positions are maintained by a two-slot reservoir, so each stream position 
 \qpart{c} For the third moment, use $Y_3=n[c^3-(c-1)^3]$. For a separate sample with $n=10,c=2$, calculate $Y_3$. Why must AMS count from the sampled occurrence rather than use the sampled type's whole-stream frequency?
 
 \answer{\maptag{answer:Pr25}}
+\guidepart{(a)}
 \begin{guidesteps}[beginpenalty=10000]
-\item \guidepart{(a)}Thế hai suffix count 4 và 2 vào $Y_2=9(2c-1)$: lần lượt được 63 và 27.
+\item Thế hai suffix count 4 và 2 vào $Y_2=9(2c-1)$: lần lượt được 63 và 27.
 \item Lấy trung bình $(63+27)/2=45$. Một lần lấy mẫu có thể lệch khỏi $F_2=16+4+4+1=25$.
 \end{guidesteps}
+\guidepart{(b)}
 \begin{guidesteps}
-\item \guidepart{(b)}Phát hiện thứ 10 là $R$: tăng bộ đếm ở ô 1 lên 5. $J_{10}=2$ thay ô 2 bằng $(10,R,1)$.
+\item Phát hiện thứ 10 là $R$: tăng bộ đếm ở ô 1 lên 5. $J_{10}=2$ thay ô 2 bằng $(10,R,1)$.
 \item Hai ô cuối là $(1,R,5)$ và $(10,R,1)$; lấy trung bình $[10(9)+10(1)]/2=50$. Giữ hai bộ đếm vì chúng bắt đầu ở hai vị trí khác nhau.
 \end{guidesteps}
+\guidepart{(c)}
 \begin{guidesteps}
-\item \guidepart{(c)}Thế $n=10,c=2$: $Y_3=10(2^3-1^3)=70$.
+\item Thế $n=10,c=2$: $Y_3=10(2^3-1^3)=70$.
 \item Dùng suffix count để các lần xuất hiện của một item lần lượt cho $m,m-1,\ldots,1$. Dùng tần suất toàn luồng sẽ lặp cùng $m$ và mất tổng triệt tiêu.
 \end{guidesteps}
 
@@ -2582,15 +2690,18 @@ Start positions are maintained by a two-slot reservoir, so each stream position 
 
 \examnote{Mẫu ở vị trí đầu có thể cho $55$, nhưng trung bình trên cả $55$ vị trí bằng chính xác $F_2=385$. Một mẫu không phải là giá trị trung bình đó.}
 \answer{\maptag{answer:A2-Q4cd}\maptag{answer:P24-Q7cd}}
+\guidepart{(c)}
 \begin{guidesteps}[beginpenalty=10000]
-\item \guidepart{(c)}Bình phương tần suất của từng giá trị rồi cộng: $F_2=1^2+\cdots+10^2=385$.
+\item Bình phương tần suất của từng giá trị rồi cộng: $F_2=1^2+\cdots+10^2=385$.
 \end{guidesteps}
+\guidepart{(d)(i)}
 \begin{guidesteps}
-\item \guidepart{(d)(i)}Tính độ dài $n=1+\cdots+10=55$. Theo thứ tự liệt kê, item đầu là 1 và chỉ xuất hiện một lần nên $c=1$.
+\item Tính độ dài $n=1+\cdots+10=55$. Theo thứ tự liệt kê, item đầu là 1 và chỉ xuất hiện một lần nên $c=1$.
 \item Thế $Y=55(2c-1)=55$. Nếu không cố định thứ tự và luồng bắt đầu bằng $j$, dùng $c=j$, cho $55(2j-1)$.
 \end{guidesteps}
+\guidepart{(d)(ii)}
 \begin{guidesteps}
-\item \guidepart{(d)(ii)}Gom các vị trí theo giá trị $j$. Các suffix count là $j,j-1,\ldots,1$, nên tổng $2c-1$ của nhóm là $j^2$.
+\item Gom các vị trí theo giá trị $j$. Các suffix count là $j,j-1,\ldots,1$, nên tổng $2c-1$ của nhóm là $j^2$.
 \item Trong trung bình qua 55 vị trí, hệ số 55 triệt với phép chia 55. Cộng $j^2$ cho tất cả nhóm được 385 với mọi thứ tự.
 \end{guidesteps}
 
@@ -2649,16 +2760,19 @@ After position 13 the buckets, oldest first, are $(4,4),(2,10),(1,11),(1,13)$. T
 \qpart{c} For nonnegative three-bit integers, maintain one DGIM summary per bit position. Suppose the estimated recent bit counts are $\hat c_0=4,\hat c_1=\hat c_2=3/2$. Estimate the recent integer sum. The actual integers are $1,5,2,3,4,1$, with sum 16. Explain how the bit-count estimates are combined.
 
 \answer{\maptag{answer:Pr22}}
+\guidepart{(a)}
 \begin{guidesteps}[beginpenalty=10000]
-\item \guidepart{(a)}Ở $n=14$, loại $(4,4)$ vì $4\le14-10$; bit mới là 0. Còn $(2,10),(1,11),(1,13)$.
+\item Ở $n=14$, loại $(4,4)$ vì $4\le14-10$; bit mới là 0. Còn $(2,10),(1,11),(1,13)$.
 \item Ở $n=15$, thêm $(1,15)$. Gộp hai bucket cỡ 1 cũ nhất thành $(2,13)$, được $(2,10),(2,13),(1,15)$.
 \end{guidesteps}
+\guidepart{(b)}
 \begin{guidesteps}
-\item \guidepart{(b)}Chọn bucket có timestamp từ 10 đến 15. Lấy nửa bucket cũ nhất và cộng nguyên các bucket mới hơn: $2/2+2+1=4$.
+\item Chọn bucket có timestamp từ 10 đến 15. Lấy nửa bucket cũ nhất và cộng nguyên các bucket mới hơn: $2/2+2+1=4$.
 \item Đếm trực tiếp sáu bit cũng được 4; sự trùng nhau ở đây không bảo đảm DGIM luôn đúng.
 \end{guidesteps}
+\guidepart{(c)}
 \begin{guidesteps}
-\item \guidepart{(c)}Nhân số đếm với trọng số bit $2^j$ rồi cộng: $\hat S=4+2(3/2)+4(3/2)=13$.
+\item Nhân số đếm với trọng số bit $2^j$ rồi cộng: $\hat S=4+2(3/2)+4(3/2)=13$.
 \item So với tổng đúng 16: sai số đến từ các ước lượng từng vị trí bit.
 \end{guidesteps}
 
@@ -2671,17 +2785,20 @@ Suppose that we are executing the DGIM algorithm to approximately count the numb
 
 \examnote{Với $N=500$, bucket lớn nhất có thể là $256$; cận nửa bucket là $128$, còn sai số lớn nhất chặt ở đây là $127$. Luồng 500 bit 1 tạo hai bucket cỡ 128 và không có bucket 256.}
 \answer{\maptag{answer:A2-Q3}\maptag{answer:P24-Q6}}
+\guidepart{(a)}
 \begin{guidesteps}[beginpenalty=10000]
-\item \guidepart{(a)}Thử tạo bucket 512: cần ba bucket 256. Chỉ hai bucket mới đã có 512 bit 1 sau timestamp của bucket cũ nhất, nên bucket cũ đã hết hạn trong cửa sổ 500.
+\item Thử tạo bucket 512: cần ba bucket 256. Chỉ hai bucket mới đã có 512 bit 1 sau timestamp của bucket cũ nhất, nên bucket cũ đã hết hạn trong cửa sổ 500.
 \item Chạy 511 bit 1 liên tiếp có bucket cỡ 256. Kết luận: cỡ lớn nhất là 256.
 \end{guidesteps}
+\guidepart{(b)}
 \begin{guidesteps}
-\item \guidepart{(b)}Khi bucket biên cỡ 256, các bucket mới hơn có ít nhất một bucket mỗi cỡ $1,2,4,\ldots,128$, tổng ít nhất 255. Vì còn ít nhất 1 bit của bucket biên, số bit thực $x$ nằm trong $[1,245]$.
+\item Khi bucket biên cỡ 256, các bucket mới hơn có ít nhất một bucket mỗi cỡ $1,2,4,\ldots,128$, tổng ít nhất 255. Vì còn ít nhất 1 bit của bucket biên, số bit thực $x$ nằm trong $[1,245]$.
 \item DGIM dùng 128 thay cho $x$. Sai số lớn nhất trên đoạn là $\max(128-1,245-128)=127$. Bucket nhỏ hơn có cận nửa bucket tối đa 64.
 \item Dùng 511 bit 1 rồi 244 bit 0: đầu cửa sổ trùng timestamp của bucket 256, nên $x=1$ và đạt 127. Cận tổng quát 128 vẫn đúng nhưng không chặt.
 \end{guidesteps}
+\guidepart{(c)}
 \begin{guidesteps}
-\item \guidepart{(c)}Nếu cỡ lớn nhất chỉ là 64, hai bucket mỗi cỡ chứa tối đa $2(1+2+\cdots+64)=254$ bit 1, không đủ cho 500 bit 1.
+\item Nếu cỡ lớn nhất chỉ là 64, hai bucket mỗi cỡ chứa tối đa $2(1+2+\cdots+64)=254$ bit 1, không đủ cho 500 bit 1.
 \item Từ rỗng chèn đúng 500 bit 1: có hai bucket cỡ 128, không có bucket lớn hơn. Kết luận: cỡ lớn nhất tối thiểu là 128.
 \end{guidesteps}
 
@@ -2808,15 +2925,18 @@ $(h_1(x),h_2(x))$ & $(1,8)$ & $(4,1)$ & $(7,10)$ & $(10,3)$\\
 \qpart{c} For a separate filter with 5000 bits and 2500 inserted IDs, use the approximate false-positive rates $f(1)=0.3935$ and $f(2)=0.3996$. The continuous optimum is $k^*=(5000/2500)\ln2\approx1.386$. Choose between one and two hashes. Estimate false positives among 200 nonmember queries. Why should $k^*$ not simply be rounded up?
 
 \answer{\maptag{answer:Pr23}}
+\guidepart{(a)}
 \begin{guidesteps}[beginpenalty=10000]
-\item \guidepart{(a)}Lấy hợp các vị trí hash đã cho: $\{1,3,4,7,8,10\}$. Đặt lại một bit đang là 1 không đổi trạng thái.
+\item Lấy hợp các vị trí hash đã cho: $\{1,3,4,7,8,10\}$. Đặt lại một bit đang là 1 không đổi trạng thái.
 \end{guidesteps}
+\guidepart{(b)}
 \begin{guidesteps}
-\item \guidepart{(b)}ID 17 đọc $(1,8)$ đều là 1: báo có thể có, nhưng 17 chưa chèn nên dương giả.
+\item ID 17 đọc $(1,8)$ đều là 1: báo có thể có, nhưng 17 chưa chèn nên dương giả.
 \item ID 3 đọc $(3,14)$ có bit 14 bằng 0: báo không có. ID 3 thật sự vắng nên âm đúng.
 \end{guidesteps}
+\guidepart{(c)}
 \begin{guidesteps}
-\item \guidepart{(c)}So hai số nguyên khả thi: $0.3935<0.3996$, chọn 1 hash. Điểm cực tiểu liên tục $1.386$ không bắt buộc làm tròn lên.
+\item So hai số nguyên khả thi: $0.3935<0.3996$, chọn 1 hash. Điểm cực tiểu liên tục $1.386$ không bắt buộc làm tròn lên.
 \item Nhân xác suất với 200 truy vấn vắng: số dương giả kỳ vọng $78.7$, khoảng 79.
 \end{guidesteps}
 
@@ -2829,15 +2949,18 @@ Consider using a Bloom Filter to filter spam emails. We are given a list of 5000
 
 \examnote{Với $m=5000$ key, giải $n\ge5000/[-\ln(0.9)]$ rồi làm tròn lên được $n=47457$ bit. So sánh $k=6,7$: $f(6)\approx0.01058$, $f(7)\approx0.01052$, nên chọn $k=7$.}
 \answer{\maptag{answer:P25-Q6}}
+\guidepart{(a)}
 \begin{guidesteps}[beginpenalty=10000]
-\item \guidepart{(a)}Với một hash, áp dụng xấp xỉ $p_{\rm FP}\approx1-e^{-5000/n}$. Đặt giá trị này $\le0.1$ rồi giải $n\ge-5000/\ln(0.9)\approx47456.108$.
+\item Với một hash, áp dụng xấp xỉ $p_{\rm FP}\approx1-e^{-5000/n}$. Đặt giá trị này $\le0.1$ rồi giải $n\ge-5000/\ln(0.9)\approx47456.108$.
 \item Làm tròn lên theo xấp xỉ của đề: 47457 bit.
 \end{guidesteps}
+\guidepart{(b)}
 \begin{guidesteps}
-\item \guidepart{(b)}Chèn: dùng $k$ hash độc lập và bật tất cả vị trí trong cùng mảng. Truy vấn: nếu có bit 0 thì báo vắng; chỉ khi cả $k$ bit bằng 1 mới báo có thể có.
+\item Chèn: dùng $k$ hash độc lập và bật tất cả vị trí trong cùng mảng. Truy vấn: nếu có bit 0 thì báo vắng; chỉ khi cả $k$ bit bằng 1 mới báo có thể có.
 \end{guidesteps}
+\guidepart{(c)}
 \begin{guidesteps}
-\item \guidepart{(c)}Tính cực tiểu liên tục $k^*\approx(n/5000)\ln2\approx6.58$. Thử hai số nguyên kề $6,7$ trong $(1-e^{-5000k/n})^k$.
+\item Tính cực tiểu liên tục $k^*\approx(n/5000)\ln2\approx6.58$. Thử hai số nguyên kề $6,7$ trong $(1-e^{-5000k/n})^k$.
 \item So $0.01058$ với $0.01052$: chọn 7 hash, xác suất dương giả khoảng $1.052\%$.
 \end{guidesteps}
 
@@ -2906,15 +3029,18 @@ A size-3 reservoir stores record positions. At arrival $n>3$, draw $J_n$ uniform
 \qpart{c} Instead hash by user, retaining every record whose user's hash is 0 or 1. The hashes are $h(A)=1,h(B)=3,h(C)=0,h(D)=1$. Which records of user $A$ are retained, and what are their query counts? Compare with the supplied realised reservoir $(6,8,7)$. Why is user-based sampling useful here, and does it give a fixed memory bound?
 
 \answer{\maptag{answer:Pr21}}
+\guidepart{(a)}
 \begin{guidesteps}[beginpenalty=10000]
-\item \guidepart{(a)}Từ $(6,4,3)$, $J_7=3$ thay ô 3 bằng 7: $(6,4,7)$. $J_8=2$ thay ô 2 bằng 8: $(6,8,7)$.
+\item Từ $(6,4,3)$, $J_7=3$ thay ô 3 bằng 7: $(6,4,7)$. $J_8=2$ thay ô 2 bằng 8: $(6,8,7)$.
 \end{guidesteps}
+\guidepart{(b)}
 \begin{guidesteps}
-\item \guidepart{(b)}Bản ghi đã lưu chỉ mất nếu bốc đúng ô của nó: xác suất sống $7/8$. Vậy xác suất có mặt sau lượt 8 là $(3/7)(7/8)=3/8$.
+\item Bản ghi đã lưu chỉ mất nếu bốc đúng ô của nó: xác suất sống $7/8$. Vậy xác suất có mặt sau lượt 8 là $(3/7)(7/8)=3/8$.
 \item Bản ghi mới được nhận nếu bốc 1, 2 hoặc 3, cũng có xác suất $3/8$.
 \end{guidesteps}
+\guidepart{(c)}
 \begin{guidesteps}
-\item \guidepart{(c)}Vì $h(A)=1$, giữ các vị trí $1,3,5,8$. Theo hàng query của đề: ba $x$, một $w$. Reservoir $(6,8,7)$ chỉ giữ vị trí 8 của $A$.
+\item Vì $h(A)=1$, giữ các vị trí $1,3,5,8$. Theo hàng query của đề: ba $x$, một $w$. Reservoir $(6,8,7)$ chỉ giữ vị trí 8 của $A$.
 \item Hash theo user giữ trọn lịch sử của user được chọn, nhưng số bản ghi có thể tăng theo luồng.
 \end{guidesteps}
 
@@ -3001,15 +3127,18 @@ The first seven plays are $A,B,A,C,B,A,D$. The resulting pruned dictionary is su
 \qpart{c} The exact total score is at most the infinite geometric sum 2. Use this to give an upper bound on the number of stored dictionary entries when each retained score is at least $1/2$. How does exponential decay differ from a fixed-length sliding window?
 
 \answer{\maptag{answer:Pr26}}
+\guidepart{(a)}
 \begin{guidesteps}[beginpenalty=10000]
-\item \guidepart{(a)}Khi $E$ đến, chia đôi thành $\{A:1/4,D:1/2\}$, thêm $E:1$ rồi xóa $A$. Còn $\{D:1/2,E:1\}$.
+\item Khi $E$ đến, chia đôi thành $\{A:1/4,D:1/2\}$, thêm $E:1$ rồi xóa $A$. Còn $\{D:1/2,E:1\}$.
 \item Khi $A$ đến, chia đôi, thêm $A:1$ rồi xóa $D$ có điểm $1/4$. Còn $\{E:1/2,A:1\}$.
 \end{guidesteps}
+\guidepart{(b)}
 \begin{guidesteps}
-\item \guidepart{(b)}So với ngưỡng $9/8$: điểm lưu $1$ không báo, còn $293/256>9/8$ có báo. Xóa sớm làm mất đóng góp quá khứ của $A$, gây âm giả.
+\item So với ngưỡng $9/8$: điểm lưu $1$ không báo, còn $293/256>9/8$ có báo. Xóa sớm làm mất đóng góp quá khứ của $A$, gây âm giả.
 \end{guidesteps}
+\guidepart{(c)}
 \begin{guidesteps}
-\item \guidepart{(c)}Tổng điểm tối đa 2, mỗi mục còn lại ít nhất $1/2$, nên số mục tối đa $2/(1/2)=4$.
+\item Tổng điểm tối đa 2, mỗi mục còn lại ít nhất $1/2$, nên số mục tối đa $2/(1/2)=4$.
 \item Decay giảm dần trọng số theo tuổi; cửa sổ cố định giữ trọng số của các lượt trong cửa sổ rồi loại hẳn khi ra ngoài.
 \end{guidesteps}
 
@@ -3052,16 +3181,19 @@ Greedy assigns each arriving job to its lowest-index free compatible server, rej
 \qpart{c} When $J_3$ arrives, why can this online algorithm not move $J_1$ to another server to make room? Does the ratio $3/4$ on this instance prove a $3/4$ worst-case guarantee?
 
 \answer{\maptag{answer:Pr27}}
+\guidepart{(a)}
 \begin{guidesteps}[beginpenalty=10000]
-\item \guidepart{(a)}Chọn server khả dụng có chỉ số nhỏ nhất: $J_1\to S_1$, $J_2\to S_2$. $J_3$ bị loại vì chỉ dùng được $S_1$.
+\item Chọn server khả dụng có chỉ số nhỏ nhất: $J_1\to S_1$, $J_2\to S_2$. $J_3$ bị loại vì chỉ dùng được $S_1$.
 \item $J_4\to S_3$. Tổng cộng ghép 3 job.
 \end{guidesteps}
+\guidepart{(b)}
 \begin{guidesteps}
-\item \guidepart{(b)}Ghép offline $J_1\to S_2,J_2\to S_3,J_3\to S_1,J_4\to S_4$. Cả bốn job đều hợp lệ và mỗi server dùng một lần, nên OPT bằng 4.
+\item Ghép offline $J_1\to S_2,J_2\to S_3,J_3\to S_1,J_4\to S_4$. Cả bốn job đều hợp lệ và mỗi server dùng một lần, nên OPT bằng 4.
 \item Tỉ lệ trên dữ liệu này là $3/4$.
 \end{guidesteps}
+\guidepart{(c)}
 \begin{guidesteps}
-\item \guidepart{(c)}Quyết định online không thể hủy, nên không dời $J_1$ để nhường chỗ. Tỉ lệ một trường hợp không chứng minh cận cho mọi thứ tự đến.
+\item Quyết định online không thể hủy, nên không dời $J_1$ để nhường chỗ. Tỉ lệ một trường hợp không chứng minh cận cho mọi thứ tự đến.
 \end{guidesteps}
 
 \topic{balance}{BALANCE (unit bids / budgets)}
@@ -3119,15 +3251,18 @@ BALANCE chooses the bidder with the largest positive remaining budget, breaking 
 \qpart{c} An offline allocation for the eight queries is $B,C,C,B,D,D,A,A$. Check its feasibility and prove that its revenue is optimal. Using BALANCE revenue 7, give the instance ratio. What prevents BALANCE from revising its earlier $u$ placements to imitate this allocation at the end?
 
 \answer{\maptag{answer:Pr28}}
+\guidepart{(a)}
 \begin{guidesteps}[beginpenalty=10000]
-\item \guidepart{(a)}So ngân sách của $B,D$ ở lượt $v$ đầu: $D$ còn 2, nên chọn $D$. Còn $(1,1,1,1)$, doanh thu 4.
+\item So ngân sách của $B,D$ ở lượt $v$ đầu: $D$ còn 2, nên chọn $D$. Còn $(1,1,1,1)$, doanh thu 4.
 \item Lượt $v$ sau hòa giữa $B,D$; chọn $B$ theo bảng chữ cái. Còn $(1,0,1,1)$, doanh thu 5.
 \end{guidesteps}
+\guidepart{(b)}
 \begin{guidesteps}
-\item \guidepart{(b)}Từ $(1,0,1,0)$, lượt $w$ đầu tiêu đơn vị cuối của $A$; doanh thu lên 7. Bỏ qua $w$ sau vì $C$ còn tiền nhưng không đấu $w$.
+\item Từ $(1,0,1,0)$, lượt $w$ đầu tiêu đơn vị cuối của $A$; doanh thu lên 7. Bỏ qua $w$ sau vì $C$ còn tiền nhưng không đấu $w$.
 \end{guidesteps}
+\guidepart{(c)}
 \begin{guidesteps}
-\item \guidepart{(c)}Đối chiếu lịch $B,C,C,B,D,D,A,A$ với các bidder: đều hợp lệ, mỗi bên dùng đúng hai đơn vị.
+\item Đối chiếu lịch $B,C,C,B,D,D,A,A$ với các bidder: đều hợp lệ, mỗi bên dùng đúng hai đơn vị.
 \item Phục vụ đủ 8 query nên tối ưu, tỉ lệ $7/8$. BALANCE không thể đổi lại các lượt $u$ đã gán.
 \end{guidesteps}
 
@@ -3143,19 +3278,23 @@ For each of the sequences of queries below, identify which ones are guaranteed t
 
 \examnote{Với $yzyy$, tối đa hai $y$ vào $A$ và một $z$ vào $B$, nên $OPT\le3$; một lịch khả thi đạt 3. Muốn chứng minh luôn tối ưu, kiểm tra mọi nhánh phá hòa hợp lệ.}
 \answer{\maptag{answer:A2-Q5}\maptag{answer:P24-Q8}}
+\guidepart{(a)}
 \begin{guidesteps}[beginpenalty=10000]
-\item \guidepart{(a)}Theo dõi ngân sách sau lượt $x$ đầu. Nếu chọn $A$, lịch là $A,A,B,B$; nếu chọn $B$, lịch là $B,A,B,A$. Cả hai cho 4, nên Yes.
+\item Theo dõi ngân sách sau lượt $x$ đầu. Nếu chọn $A$, lịch là $A,A,B,B$; nếu chọn $B$, lịch là $B,A,B,A$. Cả hai cho 4, nên Yes.
 \end{guidesteps}
+\guidepart{(b)}
 \begin{guidesteps}
-\item \guidepart{(b)}Phá hòa lượt $x$ theo $A$ chỉ để lại chỗ cho một $y$: BALANCE có thể cho 2.
+\item Phá hòa lượt $x$ theo $A$ chỉ để lại chỗ cho một $y$: BALANCE có thể cho 2.
 \item Đưa $x$ sang $B$ và hai $y$ sang $A$ để đạt 3; không thể phục vụ ba $y$ vì $A$ chỉ có hai đơn vị. Kết luận: No.
 \end{guidesteps}
+\guidepart{(c)}
 \begin{guidesteps}
-\item \guidepart{(c)}Cho $x$ đầu vào $B$. Sau $y$ ngân sách còn $(1,1)$; nếu phá hòa lượt $x$ sau theo $B$ thì không còn tiền phục vụ $z$.
+\item Cho $x$ đầu vào $B$. Sau $y$ ngân sách còn $(1,1)$; nếu phá hòa lượt $x$ sau theo $B$ thì không còn tiền phục vụ $z$.
 \item So với lịch $A,A,B,B$ phục vụ đủ 4. Một nhánh BALANCE cho 3 là đủ kết luận No.
 \end{guidesteps}
+\guidepart{(d)}
 \begin{guidesteps}
-\item \guidepart{(d)}Chỉ $A$ nhận $y$, nên OPT tối đa hai $y$ và một $z$. BALANCE luôn phục vụ đủ cả ba lượt đó, nên Yes.
+\item Chỉ $A$ nhận $y$, nên OPT tối đa hai $y$ và một $z$. BALANCE luôn phục vụ đủ cả ba lượt đó, nên Yes.
 \begin{examtable}{@{}l l c c@{}}
 \toprule
 Ý & Chuỗi & Luôn tối ưu? & BALANCE tối thiểu / OPT \\
@@ -3200,18 +3339,22 @@ Three variants $A,B,C$ yield Bernoulli rewards. After one forced trial of each, 
 
 \examnote{Hoeffding cho $n\ge\ln(2/\alpha)/(2\delta^2)=8\ln16\approx22.18$, nên cần $23$ mẫu. Đây là số mẫu cố định cho một biến thể, tách biệt với số vòng UCB.}
 \answer{\maptag{answer:Pr29}}
+\guidepart{(a)}
 \begin{guidesteps}[beginpenalty=10000]
-\item \guidepart{(a)}Vòng 4, $A,C$ cùng lớn nhất ở $2.6651$. Chọn $A$ theo bảng chữ cái; reward 0 cho số lượt $(2,1,1)$ và trung bình $(1/2,0,1)$.
+\item Vòng 4, $A,C$ cùng lớn nhất ở $2.6651$. Chọn $A$ theo bảng chữ cái; reward 0 cho số lượt $(2,1,1)$ và trung bình $(1/2,0,1)$.
 \end{guidesteps}
+\guidepart{(b)}
 \begin{guidesteps}
-\item \guidepart{(b)}Vòng 5, cộng bonus vào trung bình: $(1.77,1.79,2.79)$. Chọn $C$; reward 0 cho số lượt $(2,1,2)$ và trung bình $(1/2,0,1/2)$.
+\item Vòng 5, cộng bonus vào trung bình: $(1.77,1.79,2.79)$. Chọn $C$; reward 0 cho số lượt $(2,1,2)$ và trung bình $(1/2,0,1/2)$.
 \end{guidesteps}
+\guidepart{(c)}
 \begin{guidesteps}
-\item \guidepart{(c)}Lấy $\mu^*=0.7$. Pseudo-regret là $2(0.7-0.4)+1(0)+2(0.7-0.5)=1$.
+\item Lấy $\mu^*=0.7$. Pseudo-regret là $2(0.7-0.4)+1(0)+2(0.7-0.5)=1$.
 \item Thay reward quan sát vào shortfall: $5(0.7)-2=1.5$. Hai số khác nhau vì reward quan sát có dao động quanh kỳ vọng.
 \end{guidesteps}
+\guidepart{(d)}
 \begin{guidesteps}
-\item \guidepart{(d)}Thế sai số $1/4$ vào Hoeffding: $2e^{-m/8}\le1/8$.
+\item Thế sai số $1/4$ vào Hoeffding: $2e^{-m/8}\le1/8$.
 \item Giải $m\ge8\ln16\approx22.18$; làm tròn lên: 23 lượt thử.
 \end{guidesteps}
 
@@ -3220,8 +3363,9 @@ Three variants $A,B,C$ yield Bernoulli rewards. After one forced trial of each, 
 \qpart{d} In the multi-armed bandits problem, the key advantage of the Epsilon-Greedy algorithm as compared to the Greedy algorithm is that it ensures sufficient exploration in the early iterations.
 
 \answer{\maptag{answer:P25-Q7d}}
+\guidepart{(d)}
 \begin{guidesteps}[beginpenalty=10000]
-\item \guidepart{(d)}So cơ chế chọn: pure greedy có thể bỏ qua các arm khác mãi; $\varepsilon$-greedy dành xác suất dương để thử chúng.
+\item So cơ chế chọn: pure greedy có thể bỏ qua các arm khác mãi; $\varepsilon$-greedy dành xác suất dương để thử chúng.
 \item Theo ý bài giảng chọn True. Trong hữu hạn vòng, xác suất dương không bảo đảm tất định rằng tất cả arm đều đã được thử đủ.
 \end{guidesteps}
 
@@ -3312,8 +3456,9 @@ Use $F(S)=\sum_c w_c[1-\prod_{d\in S}(1-p_{dc})]$ and marginal gain $\Delta(d\mi
 \qpart{a} Singleton gains for $A,B,C,D$ are supplied as $11/2,5,7/2,3/2$. Choose the first article. After selecting $A$, calculate only $\Delta(C\mid\{A\})$; the other gains are $\Delta(B\mid\{A\})=1$ and $\Delta(D\mid\{A\})=3/4$. Choose the second article and give the final objective value.
 
 \answer{\maptag{answer:Pr30}}
+\guidepart{(a)}
 \begin{guidesteps}[beginpenalty=10000]
-\item \guidepart{(a)}So bốn gain singleton $11/2,5,7/2,3/2$: chọn $A$.
+\item So bốn gain singleton $11/2,5,7/2,3/2$: chọn $A$.
 \item Sau $A$, phần chưa phủ của climate, health, culture là $(0,1/2,1)$. Với $C$, gain bằng $3(1/2)(1/2)+2=11/4$.
 \item Vì $11/4>1>3/4$, chọn $C$; tổng mục tiêu $11/2+11/4=33/4$.
 \end{guidesteps}
@@ -3345,8 +3490,9 @@ trả $S,F(S)$
 
 \examnote{Sau khi làm mới $B$ được gain $1$, tiếp tục làm mới $C$ được $11/4$; giá trị này lớn hơn các cận còn lại $1$ và $3/2$, nên chọn $C$ mà chưa cần làm mới $D$.}
 \answer{\maptag{answer:Pr30b}}
+\guidepart{(b)}
 \begin{guidesteps}[beginpenalty=10000]
-\item \guidepart{(b)}Lấy $B$ có key 5, tính lại còn 1. Chưa chọn vì key của $C$ vẫn là $7/2>1$.
+\item Lấy $B$ có key 5, tính lại còn 1. Chưa chọn vì key của $C$ vẫn là $7/2>1$.
 \item Tính lại $C$ được $11/4>\max(1,3/2)$, nên chọn được ngay. Diminishing returns bảo đảm key cũ là cận trên.
 \item Lazy greedy giữ lựa chọn greedy với cùng cách phá hòa, nên giữ cận $1-1/e$ cho bài toán này.
 \end{guidesteps}
@@ -3357,8 +3503,9 @@ trả $S,F(S)$
 
 \examnote{Cùng quy tắc phá hòa, Lazy Greedy vẫn chọn như Greedy vì chỉ chốt phần tử sau khi gain thật thắng mọi cận còn lại.}
 \answer{\maptag{answer:P25-Q7c}}
+\guidepart{(c)}
 \begin{guidesteps}[beginpenalty=10000]
-\item \guidepart{(c)}Xem key cũ là cận trên nhờ diminishing returns. Tính lại ứng viên dẫn đầu và chỉ chọn khi gain thật không kém mọi cận còn lại.
+\item Xem key cũ là cận trên nhờ diminishing returns. Tính lại ứng viên dẫn đầu và chỉ chọn khi gain thật không kém mọi cận còn lại.
 \item Với cùng quy tắc phá hòa, lazy greedy vẫn chọn cùng phần tử như greedy; nó tiết kiệm số lần tính gain. Kết luận: False theo quy ước này.
 \end{guidesteps}
 
@@ -3387,8 +3534,9 @@ trả trọng số cập nhật và lựa chọn nếu đã tính
 \qpart{c} Independently, the reader sees only $A$ and gives feedback $r=-1$. Multiply each weight whose concept has $p_{Ac}>0$ by $4^r$, leaving the other weight unchanged. Give the updated unnormalised weights and compare the singleton scores of $B,C$ in a fresh selection round. Must the weights be normalised to determine which article wins?
 
 \answer{\maptag{answer:Pr30c}}
+\guidepart{(c)}
 \begin{guidesteps}[beginpenalty=10000]
-\item \guidepart{(c)}$A$ phủ climate, health với xác suất dương. Nhân hai trọng số đó với $4^{-1}$, giữ culture: $(1,3/4,2)$.
+\item $A$ phủ climate, health với xác suất dương. Nhân hai trọng số đó với $4^{-1}$, giữ culture: $(1,3/4,2)$.
 \item Vòng mới: tính singleton $B=1+2(1/2)=2$, $C=(3/4)(1/2)+2=19/8$, nên chọn $C$.
 \item Không cần chuẩn hóa: chia cả hai điểm cho cùng tổng dương không đổi thứ tự.
 \end{guidesteps}
