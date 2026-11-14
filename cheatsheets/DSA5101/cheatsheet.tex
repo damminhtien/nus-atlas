@@ -1776,24 +1776,91 @@ A reader rates article 1 as 1 and article 2 as 5.
 
 \topic{pagerank}{PageRank}
 \algsummary{Xếp hạng nút theo mức độ được một người đi ngẫu nhiên ghé thăm.}
-{Mỗi nút chia điểm theo cạnh đi ra; teleport đưa người đi về các nút khác.}
-{Đồ thị có hướng, $\beta$, phân phối teleport $v$, $r^{(0)}$ và quy tắc dừng.}
+{Mỗi nút chia điểm qua cạnh đi ra; teleport tạo đường thoát khỏi bẫy.}
+{Đồ thị có hướng, $\beta$, phân phối teleport $s$, quy tắc sửa nút cụt và $r^{(0)}$.}
 {Vectơ điểm sau số vòng yêu cầu hoặc khi hội tụ.}
-{Dựng ma trận chuyển theo cột, điền cột nút cụt theo quy ước, lặp truyền điểm và teleport.}
+{Dựng phép chuyển theo cột, xử lý nút cụt theo đề, rồi lặp truyền điểm và teleport.}
+\key{Ma trận chuyển} Cột là nút nguồn, hàng là nút đích. Với $d_i=\operatorname{outdeg}(i)>0$:
+\[
+M_{ji}=P(X_{t+1}=j\mid X_t=i)=
+\begin{cases}1/d_i,&i\to j,\\0,&\text{ngược lại.}\end{cases}
+\]
+Mỗi cột nguồn có cạnh ra tổng bằng 1; cột nút cụt ban đầu bằng 0. Vì thế, trong ma trận hợp lệ, điểm ở cột $i$ được chia theo out-degree của nguồn, không theo indegree của đích.
+
+\key{PageRank cơ bản} Không có nút cụt và chưa teleport, luật xác suất toàn phần cho:
+\[
+r_j^{(t+1)}=\sum_{i\to j}\frac{r_i^{(t)}}{d_i},\qquad
+\mathbf r^{(t+1)}=M\mathbf r^{(t)},\qquad M\mathbf r^*=\mathbf r^*.
+\]
+Vectơ dừng là eigenvector ứng với trị riêng 1, chuẩn hóa theo tổng khối lượng điểm.
+
+\key{Vì sao cần Google PageRank} Dead end không có cạnh ra nên làm mất điểm; spider trap giữ điểm bên trong một nhóm không có cạnh đi ra; chu trình tuần hoàn có thể làm vectơ luân phiên thay vì hội tụ. \textbf{Sửa nút cụt} định nghĩa nơi đi tiếp khi đang ở dead end. \textbf{Teleport} là bước nhảy ngẫu nhiên với xác suất $1-\beta$, có thể xảy ra ở mọi vòng dù nút hiện tại vẫn có cạnh ra.
+
+\key{Ma trận Google} Thay mỗi cột nút cụt bằng phân phối sửa $w$ để có ma trận $\widetilde M$ column-stochastic. Với phân phối teleport $s$:
+\[
+G=\beta\widetilde M+(1-\beta)s\mathbf1^T,\qquad
+\mathbf r^{(t+1)}=G\mathbf r^{(t)}.
+\]
+Teleport đều có $s=\mathbf1/N$. Dựng $G$ tường minh dễ theo dõi nhưng thường tốn $O(N^2)$ bộ nhớ.
+
+\key{Cập nhật thưa, không dựng ma trận sửa} Giữ ma trận liên kết gốc $M_0$ với cột nút cụt bằng 0. Đặt $S=\sum_i r_i$, $\delta=\sum_{i:d_i=0}r_i$, $u=\beta M_0r$. Nếu $w$ là phân phối sửa dead end và $s$ là phân phối teleport:
+\[
+\boxed{r'=u+\beta\delta w+(1-\beta)S s.}
+\]
+Nếu dùng cùng phân phối $v$ cho cả hai, $S_u=\sum_j u_j=\beta(S-\delta)$ nên:
+\[
+\boxed{r'=u+(S-S_u)v.}
+\]
+Với $v=\mathbf1/N$ và $S=1$, cộng $(1-S_u)/N$ vào mỗi nút. Với vector chưa chuẩn hóa, phải dùng $(S-S_u)/N$. Phần hụt gồm $(1-\beta)S$ do teleport và $\beta\delta$ do dead ends; không chia $u$ cho $S_u$. Nếu $s\ne w$, giữ riêng hai phần khối lượng.
+
 \begin{algpseudo}
-$M\gets$ ma trận chuyển đã xử lý nút cụt; $r\gets r^{(0)}$; $S\gets\sum_i r_i$\\
-lặp đến điều kiện dừng: $r\gets\beta Mr+(1-\beta)Sv$\\
+$r\gets r^{(0)}$; $S\gets\sum_i r_i$\\
+ lặp: $u\gets0$, $\delta\gets0$\\
+ với mỗi nút $i$: nếu $d_i=0$ thì $\delta\gets\delta+r_i$\\
+ \quad nếu không, với mỗi cạnh $i\to j$: $u_j\gets u_j+\beta r_i/d_i$\\
+ $r_{\mathrm{next}}\gets u+\beta\delta w+(1-\beta)S s$\\
+ $e\gets\|r_{\mathrm{next}}-r\|_1$; $r\gets r_{\mathrm{next}}$\\
+ nếu $e<\epsilon$ thì dừng\\
 trả $r$
 \end{algpseudo}
 
 \key{Khi dùng} Đề cho đồ thị có hướng và yêu cầu lập ma trận hoặc tính điểm sau vài vòng.
 \steps{
-\item Mỗi cột $j$ là nút nguồn: chia đều $1/\operatorname{outdeg}(j)$ lên hàng của các nút đích. Thay cột của nút cụt bằng phân phối xác suất mà đề chỉ định.
-\item Tính tổng điểm ban đầu $S=\sum_i r_i$. Với phân phối teleport $v$ có tổng 1, cập nhật $r'=\beta Mr+(1-\beta)Sv$.
-\item Ghi rõ $r^{(0)}$, $r^{(1)}$, $r^{(2)}$ khi đề hỏi nhiều vòng. Kiểm tra tổng điểm vẫn bằng $S$.
+\item Dùng cột là nguồn, hàng là đích; chia điểm cho out-degree và ghi riêng các cột nút cụt.
+\item Chọn đúng mô hình của đề: ma trận đã sửa hoặc cập nhật thưa với đúng $s,w$; không cộng phần hụt lần hai.
+\item Tính đồng thời từ vector cũ. Giữ tổng $S$; nếu đề yêu cầu số vòng cố định thì chạy đúng số vòng đó.
 }
-\key{Lối tắt} Nếu giữ cột cụt bằng 0 và cả xử lý nút cụt lẫn teleport đều dùng đều, tính $u=\beta M_0r$ rồi cộng $(S-\sum_i u_i)/n$ vào mỗi tọa độ. Tổng đúng không có nghĩa đã hội tụ.
-\key{Khối lượng bị hụt} Nếu cột nút cụt được giữ bằng 0 và cùng phân phối $v$ xử lý teleport lẫn khối lượng hụt, dùng $u=\beta M_0r$ rồi $r'=u+(S-\sum_i u_i)v$, với $S=\sum_i r_i$. Khi hỏi tác động của teleport, so với cùng bước cập nhật không teleport.
+\key{Chi phí} Dùng adjacency lists cần $O(N+|E|)$ thời gian và $O(N)$ bộ nhớ phụ mỗi vòng; $T$ vòng tốn $O(T(N+|E|))$. Nếu lưu ma trận Google dày, riêng ma trận cần $O(N^2)$ bộ nhớ.
+\key{Đọc đúng yêu cầu} Nếu đề hỏi $M_0r$, nhân ma trận gốc trước khi sửa. $\beta=1$ không có teleport thường. Tổng điểm được bảo toàn không chứng minh đã hội tụ; kiểm tra sai khác giữa hai vòng hoặc điều kiện dừng.
+
+\topic{teleport}{PageRank: teleport distributions \& convergence}
+\algsummary{Chọn PageRank toàn cục, theo chủ đề hoặc theo một seed.}
+{Phân phối teleport chọn nơi khởi động lại; cạnh vẫn có thể truyền điểm ra ngoài tập đó.}
+{$G$, $\beta$, phân phối teleport, $r^{(0)}$ và điều kiện dừng.}
+{Phân phối điểm theo mô hình PageRank đã chọn.}
+{Chuẩn hóa phân phối teleport, cập nhật theo cạnh và cộng khối lượng teleport.}
+\begin{algpseudo}
+$T\gets$ mọi nút, tập chủ đề khác rỗng hoặc tập seed khác rỗng\\
+$s_i\gets1/|T|$ nếu $i\in T$, ngược lại $0$\\
+$r\gets r^{(0)}$; $S\gets\sum_i r_i$\\
+lặp: $r_{\mathrm{next}}\gets\beta Mr+(1-\beta)S s$\\
+$e\gets\|r_{\mathrm{next}}-r\|_1$; $r\gets r_{\mathrm{next}}$\\
+nếu $e<\epsilon$ thì dừng; nếu không, tiếp tục\\
+trả $r$
+\end{algpseudo}
+\key{Personalized PageRank} Với ma trận $M$ đã column-stochastic:
+\[
+\boxed{r'=\beta Mr+(1-\beta)S s},\qquad
+s_i\ge0,\quad\sum_i s_i=1.
+\]
+\needspace{3\baselineskip}
+PageRank chuẩn dùng teleport đều; topic-sensitive dùng tập chủ đề; Random Walk with Restarts dồn $s$ vào một seed. Nút có $s_i=0$ vẫn có thể nhận điểm qua cạnh đi vào.
+\par
+\key{Ba trạng thái cần phân biệt} Chuẩn hóa: $r\ge0$ và tổng điểm bằng $S$; stationary: $Gr=r$; đã hội tụ: $\|r^{(t+1)}-r^{(t)}\|_1<\epsilon$. Chuẩn hóa không đồng nghĩa stationary hoặc hội tụ.
+\key{Khi hội tụ được bảo đảm} Nếu $0<\beta<1$ và $s_i>0$ cho mọi nút, ma trận Google dương, có phân phối dừng duy nhất và phép lặp hội tụ từ mọi vector khởi tạo chuẩn hóa. Teleport chỉ vào một tập con thì không tự động có bảo đảm này.
+\key{Chu trình hai nút} Với $M=\left(\begin{smallmatrix}0&1\\1&0\end{smallmatrix}\right)$, $(1,0)^T\to(0,1)^T\to(1,0)^T\to\cdots$, dù $(1/2,1/2)^T$ là điểm dừng. Có điểm dừng không đảm bảo mọi khởi tạo đều hội tụ.
+\key{Ảnh hưởng của $\beta$} $\beta$ lớn làm kết quả phụ thuộc nhiều hơn vào cạnh và có thể cần nhiều vòng hơn; $\beta=0$ trả theo $s$; $\beta=1$ không teleport, nên spider trap hoặc chu kỳ có thể còn.
+\key{Xử lý dead end trong PPR} Dùng phân phối sửa nút cụt theo đúng đề. Chỉ gộp phần hụt vào $s$ khi phân phối sửa cũng chính là $s$; nếu khác, giữ hai hạng riêng trong cập nhật.
 
 \begin{example}{A2-Q2}{A2-Q2(a,b) · PageRank: từ cạnh sang cột ma trận}
 \begin{diagram}
@@ -1870,30 +1937,6 @@ r^{(2)}&=(1/2,1/4,3/4,2,3/2)^T.
 \item \guidepart{(c)}Giữ tổng điểm 5: nhân $r^{(1)}$ với 0.9 rồi cộng $0.1(5)(1/2,1/2,0,0,0)^T$. Được $(0.70,0.70,1.35,1.35,0.90)^T$.
 \item Nêu mốc so sánh: so với vòng 1 không teleport, $A,B$ tăng; so với vectơ ban đầu, $C,D$ tăng.
 \end{guidesteps}
-
-\topic{teleport}{PageRank: teleport distributions \& convergence}
-\algsummary{Chọn PageRank toàn cục, theo chủ đề hoặc theo một seed.}
-{Phân phối teleport xác định nơi khởi động lại và giúp người đi thoát khỏi bẫy.}
-{$G$, $\beta$, chế độ teleport, tập chủ đề hoặc seed nếu có.}
-{Phân phối $v$ và vectơ PageRank theo chế độ.}
-{Đặt $v$ đều trên toàn đồ thị, đều trên tập chủ đề, hoặc dồn tại seed.}
-\begin{algpseudo}
-$T\gets$ mọi nút, tập chủ đề khác rỗng, hoặc tập chỉ gồm seed\\
-$v_i\gets 1/|T|$ nếu $i\in T$, ngược lại $0$\\
-trả $v$ và $\operatorname{PageRank}(G,\beta,v)$ với điều kiện dừng đã chọn
-\end{algpseudo}
-
-\key{Chọn phân phối $v$} PageRank thường dùng đều trên mọi nút. Topic-sensitive dùng đều trên tập chủ đề. Personalized có thể dồn toàn bộ xác suất vào một seed.
-
-\key{Ba hiện tượng}
-\begin{itemize}
-\item Dead end: nút không có cạnh ra; nếu không sửa cột, tổng điểm bị hụt.
-\item Spider trap: tập nút giữ điểm bên trong vì không có cạnh thoát. Teleport tới bên ngoài giúp điểm thoát.
-\item Periodic walk: chẳng hạn chu trình hai nút có thể đổi chỗ điểm ở mỗi vòng dù vẫn có phân phối dừng.
-\end{itemize}
-\key{Hội tụ} Với $0<\beta<1$ và teleport dương trên mọi nút, ma trận chuyển sau sửa nút cụt có phân phối dừng duy nhất và lặp hội tụ. Nếu chỉ teleport vào một tập con, không mặc định mọi nút đều thông nhau.
-
-
 
 \topic{trust}{TrustRank / spam mass}
 \algsummary{Xác định các trang nhận nhiều điểm nhưng ít liên hệ với trang tin cậy.}
