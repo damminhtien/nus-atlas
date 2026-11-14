@@ -41,7 +41,7 @@
 \newcommand{\steps}[1]{\begin{enumerate}[label=\arabic*.,leftmargin=1.5em,itemsep=1pt,topsep=2pt]#1\end{enumerate}}
 \newcommand{\outline}[2]{\hyperref[lecture:#1]{\makebox[2.3em][l]{L#1}#2\hfill\pageref*{lecture:#1}}\par}
 \newcommand{\answer}[2]{\par\smallskip\noindent#1\textbf{Lời giải.}\enspace{\small\textit{#2}}\par\nopagebreak\noindent\ignorespaces}
-\newcommand{\ask}[3]{\par\smallskip\noindent\maptag{question:#1}\textbf{Câu hỏi: #2}\enspace{\small #3}\par\nobreak}
+\NewDocumentCommand{\ask}{o m m m}{\par\smallskip\noindent\maptag{question:#2}\IfValueT{#1}{\maptag{question:#1}}\textbf{Câu hỏi: #3}\enspace{\small #4}\par\nobreak}
 \newcommand{\original}[3]{%
   \par\noindent\includegraphics[page=#2,viewport=#3,clip,width=\linewidth]{#1}\par}
 
@@ -135,11 +135,9 @@ Ngưỡng $s=2$. Ba bộ ba đạt ngưỡng, riêng $BCD$ chỉ có trong giỏ
 
 
 
-\ask{P24-Q1}{P24-Q1}{}
+\ask[A1-Q1]{P24-Q1}{P24-Q1 / A1-Q1}{}
 \original{2425Sem1-DSA5101.pdf}{2}{53 425.890 542 749.890}
-\ask{A1-Q1}{A1-Q1}{}
-\original{Assignments/DSA5101_Assignment_1.pdf}{2}{53 425.890 542 749.890}
-\answer{\maptag{answer:A1-Q1}\maptag{answer:P24-Q1}}{A1-Q1 = P24-Q1 (duplicate) - classification from partial supports.} \(s=5\), \(\operatorname{supp}(bc)=2\), \(\operatorname{supp}(bd)=7\): \(ac\) \textbf{unknown}; \(cd\) \textbf{unknown}; \(bde\) \textbf{unknown}; \(bcd\) \textbf{infrequent} since \(bcd\supseteq bc\); \(abcd\) \textbf{infrequent} by same argument. Do \textbf{not} conclude that a pair is frequent merely because both singletons are frequent.
+\answer{\maptag{answer:A1-Q1}\maptag{answer:P24-Q1}}{A1-Q1 = P24-Q1 - classification from partial supports.} \(s=5\), \(\operatorname{supp}(bc)=2\), \(\operatorname{supp}(bd)=7\): \(ac\) \textbf{unknown}; \(cd\) \textbf{unknown}; \(bde\) \textbf{unknown}; \(bcd\) \textbf{infrequent} since \(bcd\supseteq bc\); \(abcd\) \textbf{infrequent} by same argument. Do \textbf{not} conclude that a pair is frequent merely because both singletons are frequent.
 
 \topic{pairs}{Pair counters: triangular matrix vs triples}
 \key{Khi dùng} So bộ nhớ để lưu số đếm của các cặp. Với $n$ item và $q$ cặp thực sự xuất hiện:
@@ -253,10 +251,8 @@ J(A,B)=\frac{|S_A\cap S_B|}{|S_A|+|S_B|-|S_A\cap S_B|}.
 Intersection \(=\{GAC,ACA\}\) (2 elements); union size \(4+4-2=6\), so \(J(S_1,S_3)=\boxed{1/3}\).
 
 
-\ask{P24-Q2}{P24-Q2(a)}{}
+\ask[A1-Q2]{P24-Q2}{P24-Q2(a) / A1-Q2(a)}{}
 \original{2425Sem1-DSA5101.pdf}{6}{53 597.890 542 747.890}
-\ask{A1-Q2}{A1-Q2(a)}{}
-\original{Assignments/DSA5101_Assignment_1.pdf}{3}{53 573.890 542 723.890}
 \answer{\maptag{answer:A1-Q2}\maptag{answer:A1-Q2a}\maptag{answer:P24-Q2}\maptag{answer:P24-Q2a}}{A1-Q2(a)=P24-Q2(a).} Word 2-shingles: \emph{expected this exam to be very difficult} has 6 adjacent pairs; \emph{this exam is not difficult} has 4. Common shingle only \texttt{this\ exam}, union \(6+4-1=9\), hence \(J=1/9\) (single word overlap is not a common \textbf{2-shingle}).
 
 
@@ -291,12 +287,9 @@ Hàng chữ ký & 5 & 4 & 3 & 4 \\
 \end{examtable}
 \end{example}
 
-\ask{P24-Q2b}{P24-Q2(b)}{}
+\ask[A1-Q2b]{P24-Q2b}{P24-Q2(b) / A1-Q2(b)}{}
 \original{2425Sem1-DSA5101.pdf}{6}{53 288.890 542 450.890}
 \original{2425Sem1-DSA5101.pdf}{6}{53 64.890 542 278.890}
-\ask{A1-Q2b}{A1-Q2(b)}{}
-\original{Assignments/DSA5101_Assignment_1.pdf}{3}{53 264.890 542 426.890}
-\original{Assignments/DSA5101_Assignment_1.pdf}{3}{53 42.890 542 254.890}
 \answer{\maptag{answer:A1-Q2b}\maptag{answer:P24-Q2b}}{A1-Q2(b)=P24-Q2(b).} In the provided \(6\times4\) matrix, columns\textquotesingle{} present-row sets are \(D_1=\{1,2,5\}\), \(D_2=\{2,4\}\), \(D_3=\{3,6\}\), \(D_4=\{4\}\). Permutation visitation columns are \((3,5,1,4,2,6)\), \((2,1,4,3,6,5)\), \((1,4,3,2,5,6)\). First-present row matrix:
 
 \[\begin{pmatrix}5&4&3&4\\2&2&3&4\\1&4&3&4\end{pmatrix}.\]
@@ -334,14 +327,10 @@ Gộp và bỏ trùng sau khi băm: chỉ so chính xác $AB$ và $BD$ (2 trên 
 \answer{\maptag{answer:Pr5}}{Pr5(a-c).} Three two-row bands give collisions: band 1 \(AB\), band 2 \(BD\), band 3 \(AB\); unique candidates \(\{AB,BD\}\) \(\to\) two exact comparisons (vs six). Exact Jaccards: \(J(A,B)=3/5\) accepted, \(J(B,D)=2/5\) rejected (\textbf{false positive candidate}); \(J(A,C)=3/5\) but no collision (\textbf{false negative candidate}). Candidate verification removes false positives but cannot restore a missed pair.
 
 
-\ask{P24-Q2cd}{P24-Q2(c,d)}{}
+\ask[A1-Q2cd]{P24-Q2cd}{P24-Q2(c,d) / A1-Q2(c,d)}{}
 \original{2425Sem1-DSA5101.pdf}{7}{53 515.890 542 596.890}
 \original{2425Sem1-DSA5101.pdf}{7}{53 397.890 542 443.890}
 \original{2425Sem1-DSA5101.pdf}{7}{53 111.890 542 312.890}
-\ask{A1-Q2cd}{A1-Q2(c,d)}{}
-\original{Assignments/DSA5101_Assignment_1.pdf}{4}{53 515.890 542 596.890}
-\original{Assignments/DSA5101_Assignment_1.pdf}{4}{53 397.890 542 443.890}
-\original{Assignments/DSA5101_Assignment_1.pdf}{4}{53 111.890 542 312.890}
 \answer{\maptag{answer:A1-Q2cd}\maptag{answer:P24-Q2cd}}{A1-Q2(c,d)=P24-Q2(c,d).} \(b=8,r=4\): if \(s=0.6\), \(P=1-(1-0.6^4)^8\approx0.670\); if \(s=0.2\), \(P=1-(1-0.2^4)^8\approx0.0127\). At \textbf{fixed number of hashes} \(m=br\), prioritize \textbf{precision} by reducing \(b\) (more rows per band); recall tends to decrease.
 
 
@@ -360,12 +349,9 @@ Gộp và bỏ trùng sau khi băm: chỉ so chính xác $AB$ và $BD$ (2 trên 
 \end{itemize}
 \key{Ví dụ} Với $p=1/2$, dùng 2 nhánh mỗi tầng: AND rồi OR cho $7/16$; OR rồi AND cho $9/16$. Điểm bất động $f(s)=s$ khác mốc $f(s)=1/2$.
 
-\ask{P24-Q2ef}{P24-Q2(e,f)}{}
+\ask[A1-Q2ef]{P24-Q2ef}{P24-Q2(e,f) / A1-Q2(e,f)}{}
 \original{2425Sem1-DSA5101.pdf}{8}{53 636.890 542 741.890}
 \original{2425Sem1-DSA5101.pdf}{8}{53 326.890 542 397.890}
-\ask{A1-Q2ef}{A1-Q2(e,f)}{}
-\original{Assignments/DSA5101_Assignment_1.pdf}{5}{53 636.890 542 741.890}
-\original{Assignments/DSA5101_Assignment_1.pdf}{5}{53 326.890 542 397.890}
 \answer{\maptag{answer:P24-Q2ef}\maptag{answer:A1-Q2ef}}{A1-Q2(e,f) / P24-Q2(e,f).}
 (e) Apply AND of 5, OR of 6, then AND of 7: $[1-(1-0.9^5)^6]^7\approx 0.9675$.
 (f) Each extra OR of 3 and AND of 4 multiplies the base hash count: $5\cdot6\cdot7\cdot3\cdot4=2520$.
@@ -447,16 +433,11 @@ Chiều cao ghi theo $d(x,y)=\max(x,y)/\min(x,y)$, cách đều để dễ đọ
 \answer{\maptag{answer:Pr7}}{Pr7(a-c).} Given \(d(A,C)=5,d(B,C)=3,d(D,E)=4\) and clustroid of \(AB\) is \(A\): single linkage merges \(AB\) with \(C\) at 3; clustroid linkage compares \(d(A,C)=5\) and merges \(D,E\) at 4. For \(ABC\), sums to members: \(A:7,B:5,C:8\) \(\to\) clustroid \(B\); diameter \(=d(A,C)=5\) even though \(C\) joined at distance 3. A clustroid is an \textbf{actual string/record}, unlike a centroid of strings.
 
 
-\ask{P24-Q3}{P24-Q3}{}
+\ask[A1-Q3]{P24-Q3}{P24-Q3 / A1-Q3}{}
 \original{2425Sem1-DSA5101.pdf}{12}{53 642.890 542 747.890}
 \original{2425Sem1-DSA5101.pdf}{13}{53 718.890 542 748.890}
 \original{2425Sem1-DSA5101.pdf}{13}{53 413.890 542 434.890}
 \original{2425Sem1-DSA5101.pdf}{14}{53 576.890 542 738.890}
-\ask{A1-Q3}{A1-Q3}{}
-\original{Assignments/DSA5101_Assignment_1.pdf}{6}{53 617.890 542 723.890}
-\original{Assignments/DSA5101_Assignment_1.pdf}{7}{53 718.890 542 748.890}
-\original{Assignments/DSA5101_Assignment_1.pdf}{7}{53 413.890 542 434.890}
-\original{Assignments/DSA5101_Assignment_1.pdf}{8}{53 576.890 542 738.890}
 \answer{\maptag{answer:A1-Q3}\maptag{answer:P24-Q3}}{A1-Q3=P24-Q3 - 8 powers of two, \emph{not} 20-27.} Data are \(2^0,2^1,\ldots,2^7=(1,2,4,8,16,32,64,128)\). This exponent is easy to miss in PDF extraction. For ordinary Euclidean \(|x-y|\), \textbf{all three linkages build a left-to-right chain}, merging current \(\{1,2,4,\ldots,2^{j-1}\}\) with the next \(2^j\). The \textbf{merge heights differ}:
 
 \begin{itemize}
@@ -671,12 +652,9 @@ p'=p+\eta(eq-\lambda p),\qquad q'=q+\eta(ep-\lambda q).
 \answer{\maptag{answer:Pr15}}{Pr15(a-c).} \(\eta=\lambda=1/2\), \(p=(1,0)\), \(q=(1,1)\), \(e=1\). Gradients \(g_p=(-1/2,-1)\) and \(g_q=(-1/2,1/2)\); updated \(p'=(5/4,1/2)\), \(q'=(5/4,3/4)\). Held-out item vectors \((1,-1),(0,1)\) give predictions \(15/4,7/2\), errors \(1/4,-1/2\), \(\mathrm{RMSE}=\sqrt{5/32}\). Other item factors stay unchanged, \textbf{but their predictions for this user change} because \(p_u\) changed. Never train on held-out entries before calculating test RMSE.
 
 
-\ask{P24-Q4b}{P24-Q4(b)}{Dữ kiện chung: \hyperref[question:P24-Q4]{[P24-Q4]}}
+\ask[A2-Q1b]{P24-Q4b}{P24-Q4(b) / A2-Q1(b)}{Dữ kiện chung: \hyperref[question:P24-Q4]{[P24-Q4]} \hyperref[question:A2-Q1]{[A2-Q1]}}
 \original{2425Sem1-DSA5101.pdf}{16}{53 519.890 542 738.890}
 \original{2425Sem1-DSA5101.pdf}{16}{53 247.890 542 363.890}
-\ask{A2-Q1b}{A2-Q1(b)}{Dữ kiện chung: \hyperref[question:A2-Q1]{[A2-Q1]}}
-\original{Assignments/DSA5101_Assignment_2.pdf}{3}{53 519.890 542 738.890}
-\original{Assignments/DSA5101_Assignment_2.pdf}{3}{53 247.890 542 363.890}
 \answer{\maptag{answer:A2-Q1b}\maptag{answer:P24-Q4b}}{A2-Q1(b)=P24-Q4(b) - solve every unknown explicitly.} Given \(Q=\begin{pmatrix}2&a\\b&2\\1&4\end{pmatrix}\) and \(P^T=\begin{pmatrix}1&4&2\\3&c&1\end{pmatrix}\), with columns \texttt{(Matrix,\ Inception,\ Star\ Wars)}, use \textbf{known} ratings only. Alice-Star Wars: \(2(2)+a(1)=5\Rightarrow a=1\). Alice-Inception: \(2(4)+ac=10\Rightarrow c=2\). Bob-Matrix: \(b(1)+2(3)=9\Rightarrow b=3\). Hence \(Q=\begin{pmatrix}2&1\\3&2\\1&4\end{pmatrix}\), \(P^T=\begin{pmatrix}1&4&2\\3&2&1\end{pmatrix}\). Check Bob-Inception: \(3(4)+2(2)=16\), Cathy-Matrix: \(1+4(3)=13\). \textbf{Missing predictions:} Alice-Matrix \(=2(1)+1(3)=\boxed{5}\); Cathy-Inception \(=1(4)+4(2)=\boxed{12}\). \textbf{Do not copy CF estimates}: these are two different methods.
 
 \topic{biases}{Learnable \& temporal biases (latent factors extension)}
@@ -743,18 +721,12 @@ Nhãn cạnh là phần điểm truyền đi. Cột $A$ có $1/2$ ở hàng $B,C
 \answer{\maptag{answer:Pr16}}{Pr16(a-c).} Graph links \(H\to L,L\to H,R,R\to L\), \(S\) dead end; \(r=(1/5,2/5,1/5,1/5)\), \(\beta=1/2\). \(M_0r=(1/5,2/5,1/5,0)\); \(u=\beta M_0r=(1/10,1/5,1/10,0)\), sum \(2/5\); add uniform correction \((1-2/5)/4=3/20\) each. \(r'=(1/4,7/20,1/4,3/20)\), sum 1. Repaired dead-end column for \(S\) is uniform \((1/4,1/4,1/4,1/4)\). Sum 1 alone is \textbf{not convergence}.
 
 
-\ask{P24-Q5}{P24-Q5}{}
+\ask[A2-Q2]{P24-Q5}{P24-Q5 / A2-Q2}{}
 \original{2425Sem1-DSA5101.pdf}{17}{53 466.890 542 750.890}
 \original{2425Sem1-DSA5101.pdf}{17}{53 387.890 542 433.890}
 \original{2425Sem1-DSA5101.pdf}{17}{53 347.890 542 375.890}
 \original{2425Sem1-DSA5101.pdf}{17}{53 270.890 542 325.890}
 \original{2425Sem1-DSA5101.pdf}{17}{53 165.890 542 237.890}
-\ask{A2-Q2}{A2-Q2}{}
-\original{Assignments/DSA5101_Assignment_2.pdf}{4}{53 466.890 542 750.890}
-\original{Assignments/DSA5101_Assignment_2.pdf}{4}{53 387.890 542 433.890}
-\original{Assignments/DSA5101_Assignment_2.pdf}{4}{53 347.890 542 375.890}
-\original{Assignments/DSA5101_Assignment_2.pdf}{4}{53 270.890 542 325.890}
-\original{Assignments/DSA5101_Assignment_2.pdf}{4}{53 165.890 542 237.890}
 \answer{\maptag{answer:A2-Q2}\maptag{answer:P24-Q5}}{A2-Q2=P24-Q5 (same graph; teacher clarification).} Graph \(A\to B,C\); \(B\to C\); \(C\to D\); \(D\to E\); \(E\to A,D\). In order \((A,B,C,D,E)\):
 
 \[M=\begin{pmatrix}0&0&0&0&1/2\\1/2&0&0&0&0\\1/2&1&0&0&0\\0&0&1&0&1/2\\0&0&0&1&0\end{pmatrix}.\]
@@ -954,12 +926,9 @@ Chỉ viết 4 bit thấp vì đủ để thấy bit 1 cuối trong các giá tr
 \answer{\maptag{answer:Pr24}}{Pr24(a-c).} Distinct true count 5; the given hashes above estimate 4. Six registers \((2,3,2,2,1,6)\) \(\to\) estimates \((4,8,4,4,2,64)\) \(\to\) group pair-means \((6,4,33)\) \(\to\) median \textbf{6} (not mean dominated by 64). Merge monitor registers \((2,3,2,1,1,1)\) and \((1,2,2,2,1,6)\) \(\to\) coordinatewise maxima \((2,3,2,2,1,6)\); overlapping IDs are not double-counted.
 
 
-\ask{P24-Q7}{P24-Q7(a,b)}{}
+\ask[A2-Q4]{P24-Q7}{P24-Q7(a,b) / A2-Q4(a,b)}{}
 \original{2425Sem1-DSA5101.pdf}{19}{53 668.890 542 747.890}
 \original{2425Sem1-DSA5101.pdf}{19}{53 567.890 542 649.890}
-\ask{A2-Q4}{A2-Q4(a,b)}{}
-\original{Assignments/DSA5101_Assignment_2.pdf}{6}{53 668.890 542 747.890}
-\original{Assignments/DSA5101_Assignment_2.pdf}{6}{53 567.890 542 649.890}
 \answer{\maptag{answer:A2-Q4}\maptag{answer:A2-Q4ab}\maptag{answer:P24-Q7}\maptag{answer:P24-Q7ab}}{A2-Q4(a,b)=P24-Q7(a,b).} Stream has one \texttt{1}, two \texttt{2}s, ..., ten \texttt{10}s; \(F_0=10\). Identity hash over 32 bits: \(\rho(1),\ldots,\rho(10)=(0,1,0,2,0,1,0,3,0,1)\), max 3, raw FM estimate \(2^3=8\).
 
 
@@ -995,14 +964,10 @@ Lấy trung bình hai ước lượng được 45. Moment thực là $4^2+2^2+2^
 \answer{\maptag{answer:Pr25}}{Pr25(a-c).} Stream length 9, frequencies \((4,2,2,1)\): exact \(F_2=16+4+4+1=25\). Sample positions \((1,R,4)\) and \((2,F,2)\) give \(Y_2=9(7)=63\) and \(9(3)=27\) \(\to\) mean \textbf{45}, not necessarily 25. On new \texttt{R} at position 10, first sample counter becomes 5; reservoir draw replaces second slot with \((10,R,1)\) \(\to\) estimates 90 and 10, mean 50; counters differ because start times differ. Third moment with \(n=10,c=2\): \(Y_3=10(8-1)=70\).
 
 
-\ask{P24-Q7cd}{P24-Q7(c,d)}{Dữ kiện chung: \hyperref[question:P24-Q7]{[P24-Q7]}}
+\ask[A2-Q4cd]{P24-Q7cd}{P24-Q7(c,d) / A2-Q4(c,d)}{Dữ kiện chung: \hyperref[question:P24-Q7]{[P24-Q7]}}
 \original{2425Sem1-DSA5101.pdf}{19}{53 433.890 542 489.890}
 \original{2425Sem1-DSA5101.pdf}{19}{53 267.890 542 354.890}
 \original{2425Sem1-DSA5101.pdf}{19}{53 127.890 542 194.890}
-\ask{A2-Q4cd}{A2-Q4(c,d)}{Dữ kiện chung: \hyperref[question:A2-Q4]{[A2-Q4]}}
-\original{Assignments/DSA5101_Assignment_2.pdf}{6}{53 433.890 542 489.890}
-\original{Assignments/DSA5101_Assignment_2.pdf}{6}{53 267.890 542 354.890}
-\original{Assignments/DSA5101_Assignment_2.pdf}{6}{53 127.890 542 194.890}
 \answer{\maptag{answer:A2-Q4cd}\maptag{answer:P24-Q7cd}}{A2-Q4(c,d)=P24-Q7(c,d).} Exact \(F_2=\sum_{i=1}^{10}i^2=385\). If sampled position is \textbf{first}, its type is 1 and suffix count 1 \(\to\) \(Y_2=55(2\cdot1-1)=55\) since total length \(n=55\). If use one sample \textbf{for every position}, average estimates = exactly \(F_2=385\) by telescoping for each type. Beware: \(n=55\) is total stream length, not 10 distinct items.
 
 \topic{dgim}{DGIM: sliding-window bit counts}
@@ -1033,14 +998,10 @@ Hỏi 6 vị trí cuối ($10$ đến $15$): tính nửa bucket $(2,10)$, cộng
 \answer{\maptag{answer:Pr22}}{Pr22(a-c).} At \(n=13\), buckets \texttt{{[}(4,4),(2,10),(1,11),(1,13){]}}, \(N=10\). At \(n=14\) bit 0: oldest \texttt{(4,4)} expires (end time \(4\le14-10\)). At \(n=15\) bit 1: create \texttt{(1,15)}, merge oldest size-1 buckets \texttt{(1,11),(1,13)} into \texttt{(2,13)}. Final \texttt{{[}(2,10),(2,13),(1,15){]}}. Last 6 positions: half oldest + newer full \(=1+2+1=4\), equals exact count 4 \textbf{by coincidence}. For integer sum from estimated bit counts \(\hat c_0=4,\hat c_1=\hat c_2=3/2\), \(\hat S=4+2(3/2)+4(3/2)=13\) vs true 16.
 
 
-\ask{P24-Q6}{P24-Q6}{}
+\ask[A2-Q3]{P24-Q6}{P24-Q6 / A2-Q3}{}
 \original{2425Sem1-DSA5101.pdf}{18}{53 692.890 542 747.890}
 \original{2425Sem1-DSA5101.pdf}{18}{53 428.890 542 544.890}
 \original{2425Sem1-DSA5101.pdf}{18}{53 198.890 542 268.890}
-\ask{A2-Q3}{A2-Q3}{}
-\original{Assignments/DSA5101_Assignment_2.pdf}{5}{53 692.890 542 747.890}
-\original{Assignments/DSA5101_Assignment_2.pdf}{5}{53 428.890 542 544.890}
-\original{Assignments/DSA5101_Assignment_2.pdf}{5}{53 198.890 542 268.890}
 \answer{\maptag{answer:A2-Q3}\maptag{answer:P24-Q6}}{A2-Q3=P24-Q6 - extremal buckets, \(N=500\).} (a) Maximum possible \textbf{stored} bucket size is \textbf{256}. To create a 512-bucket would require three size-256 buckets simultaneously; between the newest 1 of the oldest and newest such bucket there must be at least \(2\cdot256=512\) subsequent 1s / time steps, so the oldest bucket expires before that third bucket can trigger a merge. A size-256 bucket is achievable (e.g., 511 consecutive 1s). (b) With oldest selected bucket size 256, estimate counts \textbf{half} of it, so absolute error \(\le256/2=\boxed{128}\) bits under the specified approximation. (c) If the \textbf{last 500 bits are all 1}, the largest bucket must be at least \textbf{128}: at most two buckets of each size \(1,2,\ldots,64\) account for only \(2(1+2+4+8+16+32+64)=254<500\) ones. This lower bound is achievable: starting from an empty history and inserting exactly 500 consecutive 1s gives two buckets of size 128, plus smaller buckets. Thus the minimum largest bucket size is \(\boxed{128}\).
 
 \topic{bloom}{Bloom filter: approximate membership}
@@ -1155,16 +1116,11 @@ Nhánh trên phục vụ đủ 4 query. Nếu $x$ đầu tiên sang $B$, sau $y$
 \answer{\maptag{answer:Pr28}}{Pr28(a-c).} Four advertisers budgets \((2,2,2,2)\); first three \(u\) queries leave \((1,1,1,2)\) and revenue 3. First \(v\) goes D \(\to\) \((1,1,1,1)\), revenue 4; second \(v\) goes B by alphabetical tie \(\to\) \((1,0,1,1)\), revenue 5. Before last \texttt{w,w}, given \((1,0,1,0)\) and revenue 6: first w consumes A, second skipped; final revenue \textbf{7}. Offline assignment \texttt{B,C,C,B,D,D,A,A} uses each twice, handles all 8 queries, OPT 8; ratio \textbf{7/8}, not optimal.
 
 
-\ask{P24-Q8}{P24-Q8}{}
+\ask[A2-Q5]{P24-Q8}{P24-Q8 / A2-Q5}{}
 \original{2425Sem1-DSA5101.pdf}{20}{53 590.890 542 749.890}
 \original{2425Sem1-DSA5101.pdf}{20}{53 441.890 542 498.890}
 \original{2425Sem1-DSA5101.pdf}{20}{53 291.890 542 348.890}
 \original{2425Sem1-DSA5101.pdf}{20}{53 141.890 542 199.890}
-\ask{A2-Q5}{A2-Q5}{}
-\original{Assignments/DSA5101_Assignment_2.pdf}{7}{53 588.890 542 747.890}
-\original{Assignments/DSA5101_Assignment_2.pdf}{7}{53 438.890 542 495.890}
-\original{Assignments/DSA5101_Assignment_2.pdf}{7}{53 287.890 542 345.890}
-\original{Assignments/DSA5101_Assignment_2.pdf}{7}{53 137.890 542 194.890}
 \answer{\maptag{answer:A2-Q5}\maptag{answer:P24-Q8}}{A2-Q5=P24-Q8 - guaranteed optimality with ties.} A bids on \(x,y\), B on \(x,z\), each budget 2. Query \texttt{xy\ zx} (meaning \texttt{x,y,z,x}) \(\to\) \textbf{Yes}, all tie outcomes serve 4; \texttt{xyyy} \(\to\) \textbf{No}, first x might consume A and strand later y; \texttt{xyxz} \(\to\) \textbf{No}, a tie on the third x can exhaust B before z; \texttt{yzyy} \(\to\) \textbf{Yes}, only A can serve y, at most two y plus one z, both achieved. \emph{``Guaranteed''} quantifies over \textbf{every allowed tie-breaking choice}, not merely a favourable run.
 
 \topic{bandits}{Multi-armed bandits: epsilon-greedy / UCB}

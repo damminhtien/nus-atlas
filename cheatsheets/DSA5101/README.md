@@ -4,13 +4,15 @@
 - [LaTeX source](cheatsheet.tex) — theory, worked examples and verbatim questions
   grouped by topic.
 
+When the exam and an assignment ask the same question, one verbatim copy
+is shown under both source IDs. Both versions are kept if the task differs.
+
 The LaTeX source uses vector excerpts of the original questions. Keep these
 inputs in the local DSA5101 course folder:
 
 - `DSA5101 Exam Practice Questions.pdf`
 - `2425Sem1-DSA5101.pdf`
 - `2526Sem1-DSA5101.pdf`
-- `Assignments/DSA5101_Assignment_1.pdf`
 - `Assignments/DSA5101_Assignment_2.pdf`
 
 To rebuild, run from that course folder with a current TeX Live installation
