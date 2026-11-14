@@ -1,13 +1,13 @@
 % !TeX program = xelatex
-% Compile from the DSA5101 folder: latexmk -xelatex DSA5101_Cheatsheet.tex
-% Questions are vector excerpts from the five course PDFs, grouped by topic.
+% Compile with latexmk -xelatex on this file.
+% Questions are typeset from the source PDFs, grouped by topic.
 \documentclass[10pt,a4paper]{article}
 \usepackage[a4paper,landscape,left=10mm,right=10mm,top=9mm,bottom=11mm,nohead,footskip=6mm]{geometry}
 \usepackage{amsmath}
 \usepackage{fontspec,unicode-math}
 \setmainfont{STIXTwoText}[Extension=.otf,UprightFont=*-Regular,BoldFont=*-Bold,ItalicFont=*-Italic,BoldItalicFont=*-BoldItalic]
 \setmathfont{STIXTwoMath-Regular.otf}
-\usepackage{graphicx,enumitem,multicol,titlesec,needspace}
+\usepackage{enumitem,multicol,titlesec,needspace}
 \usepackage[protrusion=true,expansion=false]{microtype}
 \usepackage[unicode,hidelinks,bookmarksopen,bookmarksdepth=2]{hyperref}
 \usepackage{bookmark,booktabs,tikz}
@@ -63,10 +63,8 @@
 \NewDocumentCommand{\ask}{o m m m}{%
   \par\addvspace{7pt}%
   \blocklabel{\maptag{question:#2}\IfValueT{#1}{\maptag{question:#1}}%
-    \rule[.55ex]{14pt}{.4pt}\enspace Câu hỏi: #3%
+    Câu hỏi: #3%
     \if\relax\detokenize{#4}\relax\else\hfill #4\fi}}
-\newcommand{\original}[3]{%
-  \par\noindent\includegraphics[page=#2,viewport=#3,clip,width=\linewidth]{#1}\par}
 \newcommand{\qlink}[2]{\hyperref[question:#1]{#2}}
 \newcommand{\hard}[2]{%
   \par\addvspace{5pt}%
@@ -87,6 +85,84 @@
 \newenvironment{diagram}{%
   \par\addvspace{3pt}\noindent\hbox to \linewidth\bgroup\hfil
 }{\hfil\egroup\par\addvspace{3pt}}
+
+\NewDocumentCommand{\qpart}{s m}{%
+  \par\noindent\IfBooleanTF{#1}{#2}{(#2)}\enspace\ignorespaces}
+\newcommand{\qrating}{%
+  \begin{examtable}{@{}lccc@{}}
+  \toprule
+  & Matrix & Inception & Star Wars\\
+  \midrule
+  Alice & ? & 10 & 5\\
+  Bob & 9 & 16 & 8\\
+  Cathy & 13 & ? & 6\\
+  \bottomrule
+  \end{examtable}}
+\newcommand{\qgraphOne}{%
+  \begin{diagram}
+  \begin{tikzpicture}[>=Stealth,every node/.style={draw,circle,inner sep=0pt,minimum size=5.5mm}]
+    \node (a) at (0,1.6) {$A$};
+    \node (b) at (-1,.8) {$B$};
+    \node (c) at (0,0) {$C$};
+    \node (d) at (1.35,0) {$D$};
+    \node (e) at (1.35,1.6) {$E$};
+    \draw[->] (e)--(a);
+    \draw[->] (a)--(b);
+    \draw[->] (a)--(c);
+    \draw[->] (b)--(c);
+    \draw[->] (c)--(d);
+    \draw[->] (d) to[bend left=25] (e);
+    \draw[->] (e) to[bend left=25] (d);
+  \end{tikzpicture}
+  \end{diagram}}
+\newcommand{\qgraphTwo}{%
+  \begin{diagram}
+  \begin{tikzpicture}[>=Stealth,every node/.style={draw,circle,inner sep=0pt,minimum size=5.5mm}]
+    \node (a) at (0,1.15) {$A$};
+    \node (b) at (1,0) {$B$};
+    \node (c) at (-1,0) {$C$};
+    \draw[->] (a)--(b);
+    \draw[->] (b)--(c);
+    \draw[->] (c)--(a);
+  \end{tikzpicture}
+  \end{diagram}}
+% Both panels show three components of the ring. The two free ends continue
+% to the components indicated by the ellipsis.
+\newcommand{\qringpanel}[2]{%
+  \foreach \name/\cx/\cy in {h/1.4/1.55,r/2.8/.3,l/0/.3}{
+    \draw[densely dashed] (\cx,\cy) circle[radius=.64];
+    \foreach \n in {0,...,5}{
+      \coordinate (\name\n) at ({\cx+.49*cos(15+60*\n)},{\cy+.49*sin(15+60*\n)});
+    }
+    \ifnum#1=1
+      \foreach \i in {0,...,4}{
+        \pgfmathtruncatemacro{\next}{\i+1}
+        \foreach \j in {\next,...,5}{\draw (\name\i)--(\name\j);}
+      }
+    \else
+      \draw (\name0)--(\name1)--(\name2)--(\name3)--(\name4)--(\name5)--cycle;
+    \fi
+  }
+  \draw (l1)--(h3) (h5)--(r1);
+  \draw (l5)--(.65,-.56) (r3)--(2.12,-.52);
+  \foreach \name in {h,r,l}{
+    \foreach \n in {0,...,5}{\fill (\name\n) circle[radius=1.3pt];}
+  }
+  \node at (1.04,2.32) {$H_1$};
+  \node at (3.29,-.35) {$H_2$};
+  \node at (1.42,-.56) {$\cdots$};
+  \node (target) at (3.05,1.24) {$#2$};
+  \draw[->] (target.south)--(r1);
+}
+\newcommand{\qgraphThree}{%
+  \begin{diagram}
+  \begin{tikzpicture}[x=.92cm,y=.92cm,>=Stealth]
+    \qringpanel{0}{A}
+    \begin{scope}[xshift=4.65cm]
+      \qringpanel{1}{B}
+    \end{scope}
+  \end{tikzpicture}
+  \end{diagram}}
 
 \AtBeginDocument{\raggedright\allowdisplaybreaks[1]}
 
@@ -149,9 +225,24 @@ Muốn cắt $X$ trước khi quét, chứng minh mọi $Y\supseteq X$ cũng b�
 Ngưỡng $s=2$. Ba bộ ba đạt ngưỡng, riêng $BCD$ chỉ có trong giỏ $ABCD$. Một tập con trượt ngưỡng là đủ để bỏ $ABCD$ trước lần quét tiếp theo.
 \end{example}
 
+% DSA5101 Exam Practice Questions.pdf, PDF page(s) 2.
 \ask{Pr1}{Pr1(a,c)}{}
-\original{DSA5101 Exam Practice Questions.pdf}{2}{53 536.890 542 756.890}
-\original{DSA5101 Exam Practice Questions.pdf}{2}{53 430.890 542 476.890}
+A field station records seven kits. The items are atlas ($A$), binoculars ($B$), compass ($C$), dry bag ($D$), and emergency beacon ($E$). The kits are
+\[
+ABC,\quad ABCD,\quad ABD,\quad ACD,\quad BC,\quad AD,\quad BE.
+\]
+Use minimum support count $s=2$. The singleton supports are $(5,5,4,4,1)$ in order $A,B,C,D,E$. All six pairs on $A,B,C,D$ are frequent:
+\begin{examtable}{@{}lrrrrrr@{}}
+\toprule
+Pair & $AB$ & $AC$ & $AD$ & $BC$ & $BD$ & $CD$\\
+\midrule
+supp & 3 & 3 & 4 & 3 & 2 & 2\\
+\bottomrule
+\end{examtable}
+Let $L_k$ be the frequent $k$-itemsets and $C_k$ the candidates after subset pruning.
+\qpart{a} Count the supports of $ABC$ and $BCD$. You are given $\operatorname{supp}(ABD)=\operatorname{supp}(ACD)=2$. Give $L_3$. Joining its members produces $ABCD$; does this union survive Apriori's pruning step? Explain without counting its support.
+\qpart{c} If every kit record is copied once, what happens to support counts and confidences? If one kit contains three compasses, how many times does that kit contribute to the support of $C$ under the set model?
+
 \answer{\maptag{answer:Pr1}}
 \begin{guidesteps}[beginpenalty=10000]
 \item \guidepart{(a)}Đếm giỏ chứa toàn bộ bộ ba: $ABC$ có ở giỏ 1, 2 nên support 2; $BCD$ chỉ có ở giỏ 2 nên support 1.
@@ -162,9 +253,16 @@ Ngưỡng $s=2$. Ba bộ ba đạt ngưỡng, riêng $BCD$ chỉ có trong giỏ
 \item Xem mỗi giỏ là một tập: ba la bàn trong một giỏ vẫn chỉ đóng góp 1 vào support của $C$.
 \end{guidesteps}
 
+% 2526Sem1-DSA5101.pdf, PDF page(s) 2.
 \ask{P25-Q1}{P25-Q1(a,b)}{}
-\original{2526Sem1-DSA5101.pdf}{2}{53 543.890 542 749.890}
-\original{2526Sem1-DSA5101.pdf}{2}{53 223.890 542 322.890}
+Suppose that we have items $A,B,C,D,E$ and the following 6 baskets:
+\begin{examtable}{@{}ll@{}}
+Basket 1 & $A,B,C$\\ Basket 2 & $A,B$\\ Basket 3 & $A,B,D$\\
+Basket 4 & $B,C,D,E$\\ Basket 5 & $A,B,D,E$\\ Basket 6 & $A,B,C,D$
+\end{examtable}
+\qpart{a} Let the support threshold be $s=3$. Run the Apriori algorithm to find all frequent itemsets. For each iteration, state $C_k$ (candidate frequent itemsets of size $k$) and $L_k$ (truly frequent itemsets of size $k$).
+\qpart{b} In the setting where the number of baskets is too big to fit all baskets in memory, recall that baskets are kept in disk, and only read into memory when required. This results in communication cost which is measured in terms of the number of passes (one pass = transferring all baskets from disk to memory). With the assumptions above, what is the communication cost of the Apriori algorithm for finding all frequent itemsets up to size $k$? Explain your answer by indicating the step in Apriori algorithm that requires baskets to reside in memory.
+
 \answer{\maptag{answer:P25-Q1}\maptag{answer:P25-Q1ab}}
 \begin{guidesteps}[beginpenalty=10000]
 \item \guidepart{(a)}Quét các giỏ để đếm singleton, giữ những item có support ít nhất 3. Dùng $L_1$ để sinh các cặp trong $C_2$ rồi đếm lại.
@@ -186,16 +284,34 @@ $k$ & $C_k$ và support tương ứng & $L_k$ \\
 \item Có ba mức cần đếm, nên quét 3 lượt. Vì $C_4$ rỗng, không quét thêm.
 \end{guidesteps}
 
+% 2526Sem1-DSA5101.pdf, PDF page(s) 3.
 \ask{P25-Q1g}{P25-Q1(g)}{Dữ kiện chung: \hyperref[question:P25-Q1]{[P25-Q1]}}
-\original{2526Sem1-DSA5101.pdf}{3}{53 284.890 542 425.890}
+\qpart{g} Now, suppose that each item has an associated price $\mathrm{item.price}$, and we want an additional constraint to the output of Apriori algorithm, so that only frequent itemsets whose price range is below some threshold $T$ is output. Given an itemset $I$, we only output $I$ if it is frequent and
+\[
+\max_{\mathrm{item}\in I}(\mathrm{item.price})-\min_{\mathrm{item}\in I}(\mathrm{item.price})<T.
+\]
+Assume that the price of all items and $T$ are all positive. Moreover, we have enough memory to store the price of all items in memory. Describe a modified algorithm that can achieve this objective and explain why it works.
+
+Hint: You only need to add one step in the candidate generation/pruning step in the Apriori algorithm.
+
 \answer{\maptag{answer:P25-Q1g}}
 \begin{guidesteps}[beginpenalty=10000]
 \item \guidepart{(g)}Tính khoảng giá $R(X)=\max_{i\in X}p_i-\min_{i\in X}p_i$ ngay khi sinh $X$.
 \item Nếu $R(X)\ge T$, bỏ $X$ và các tập chứa nó vì thêm item không thể làm giảm khoảng giá. Giữ các ứng viên còn lại rồi đếm support.
 \end{guidesteps}
 
+% 2425Sem1-DSA5101.pdf, PDF page(s) 2.
 \ask[A1-Q1]{P24-Q1}{P24-Q1 / A1-Q1}{}
-\original{2425Sem1-DSA5101.pdf}{2}{53 425.890 542 749.890}
+Suppose that we have five items $(a,b,c,d,e)$, and we are only given information on the first four items in the table below.
+\begin{examtable}{@{}lrrrrrrr@{}}
+\toprule
+Itemset & $\{a\}$ & $\{b\}$ & $\{c\}$ & $\{d\}$ & $\{a,b\}$ & $\{b,c\}$ & $\{b,d\}$\\
+\midrule
+Frequency & 17 & 10 & 13 & 7 & 6 & 2 & 7\\
+\bottomrule
+\end{examtable}
+Using a support threshold $s=5$, categorize each of the following itemsets as guaranteed frequent, guaranteed infrequent, or not enough information to decide. Give exactly one category for each: $\{a,c\}$, $\{c,d\}$, $\{b,d,e\}$, $\{b,c,d\}$, $\{a,b,c,d\}$.
+
 \answer{\maptag{answer:A1-Q1}\maptag{answer:P24-Q1}}
 \begin{guidesteps}[beginpenalty=10000]
 \item Với mỗi tập $X$, so support của các tập con đã biết với $s=5$. Nếu một tập con có support dưới 5, $X$ chắc chắn không frequent.
@@ -233,8 +349,15 @@ $abcd$ & Chắc chắn không frequent & Chứa $bc$ có support $2<5$. \\
 }
 \key{Bẫy} Nhiều cặp có thể rơi vào cùng bucket. Bucket đủ ngưỡng chỉ cho phép giữ ứng viên; kết luận frequent cần số đếm của riêng cặp đó.
 
+% DSA5101 Exam Practice Questions.pdf, PDF page(s) 3.
 \ask{Pr2}{Pr2}{}
-\original{DSA5101 Exam Practice Questions.pdf}{3}{53 550.890 542 784.890}
+Six reports contain fault codes 123, 123, 124, 14, 24, 15.
+
+Use support threshold 3. Pass 1 has already found that only items 1, 2, 4 are frequent, and has produced bucket counts $(1,2,3,4,2)$ for buckets $0,1,2,3,4$. The pair hash is $h(i,j)=ij\bmod5$; the relevant values are $h(1,2)=2$, $h(1,4)=4$, and $h(2,4)=3$.
+\qpart{a} Give PCY's bucket bitmap and the pairs whose individual counters are needed in pass 2. Which pair would Apriori count but PCY avoid counting?
+\qpart{b} Independently, suppose pass 2 counts the candidates 12 and 24. Count just these two pairs in the six reports and identify the frequent pair. Explain why a frequent bucket need not contain a frequent pair.
+\qpart{c} In a small implementation, Apriori stores three 4-byte counters. PCY stores two 12-byte pair records and a 1-byte bitmap. Compare these storage totals. Does pruning more pairs guarantee less memory in every implementation?
+
 \answer{\maptag{answer:Pr2}}
 \begin{guidesteps}[beginpenalty=10000]
 \item \guidepart{(a)}So số đếm bucket $(1,2,3,4,2)$ với $s=3$: bitmap là $(0,0,1,1,0)$.
@@ -284,8 +407,13 @@ $ABC$ & $AC$ không frequent & Không thuộc border \\
 Quét đủ 10 tài liệu: $\operatorname{supp}(AC)=5$, đạt ngưỡng toàn cục. Bỏ lượt chạy và lấy mẫu lại; nếu không kiểm tra border, còn bỏ sót cả $ABC$ (support $5$).
 \end{example}
 
+% DSA5101 Exam Practice Questions.pdf, PDF page(s) 4.
 \ask{Pr3}{Pr3}{}
-\original{DSA5101 Exam Practice Questions.pdf}{4}{53 515.890 542 784.890}
+Ten documents contain sentence-pattern sets $ABC,ABD,BC,AD,CD,ABC,ABC,ABC,ABC,AB$. The full-data support threshold is 5. A sample consisting of documents 1--5 is mined with sample threshold 2. Its frequent itemsets are already known: $F=\{A,B,C,D,AB,AD,BC\}$. The negative border contains the itemsets not in $F$ whose every proper nonempty subset is in $F$. Consider nonempty itemsets over $A,B,C,D$ only.
+\qpart{a} Find the negative border. Is $ABC$ in it? Give the subset test that determines your answer; do not rerun Apriori on the sample.
+\qpart{b} In the full data, count only $AC$ and $ABC$. You are given that the other two negative-border pairs have support 1. Does Toivonen accept this sample or restart? Which frequent triple would be missed if the negative-border test were ignored?
+\qpart{c} Why is testing the negative border sufficient to detect that some globally frequent itemset is missing from $F$? Give a short argument using a smallest subset missing from $F$.
+
 \answer{\maptag{answer:Pr3}}
 \begin{guidesteps}[beginpenalty=10000]
 \item \guidepart{(a)}Các singleton đều thuộc $F$. Liệt kê cặp chưa có: $AC,BD,CD$; cả ba vào negative border.
@@ -300,11 +428,15 @@ Quét đủ 10 tài liệu: $\operatorname{supp}(AC)=5$, đạt ngưỡng toàn 
 \item Mọi tập con thực sự không rỗng của $T$ đều có trong $F$, nên $T$ thuộc border. Hơn nữa $\operatorname{supp}(T)\ge\operatorname{supp}(S)$, nên quét border sẽ phát hiện.
 \end{guidesteps}
 
+% 2526Sem1-DSA5101.pdf, PDF page(s) 2, 3.
 \ask{P25-Q1cdf}{P25-Q1(c-f)}{Dữ kiện chung: \hyperref[question:P25-Q1]{[P25-Q1]}}
-\original{2526Sem1-DSA5101.pdf}{2}{53 126.890 542 145.890}
-\original{2526Sem1-DSA5101.pdf}{3}{53 661.890 542 738.890}
-\original{2526Sem1-DSA5101.pdf}{3}{53 554.890 542 603.890}
-\original{2526Sem1-DSA5101.pdf}{3}{53 465.890 542 496.890}
+\qpart{c} What is the major advantage of Toivonen's algorithm over the Apriori algorithm?
+\qpart{d} Recall that the negative border in Toivonen's algorithm is the collection of itemsets that are not frequent in sample, but all its subsets are frequent in sample. Suppose that the sample consists exactly of the 6 baskets in the previous part and we use a support threshold of $s=3$ for the sample. Write down the itemsets belonging to the negative border in this case.
+
+Hint: Your answer in part (a) should be useful here.
+\qpart{e} Recall that one issue with Toivonen's algorithm is that it might fail and need to be restarted. Describe the condition under which the algorithm would fail, and state how we can reduce the probability of failure.
+\qpart{f} If Toivonen's algorithm does NOT fail and successfully terminates, what is the false negative rate?
+
 \answer{\maptag{answer:P25-Q1cdf}}
 \begin{guidesteps}[beginpenalty=10000]
 \item \guidepart{(c)}Đào trên mẫu nhỏ để tìm họ frequent và border. Sau đó quét toàn dữ liệu một lượt để xác nhận, thay vì một lượt cho từng mức như Apriori.
@@ -343,8 +475,10 @@ Quét đủ 10 tài liệu: $\operatorname{supp}(AC)=5$, đạt ngưỡng toàn 
 \]
 \key{Bẫy} Support của luật là $c$, không phải $a$. Công thức interest ở trên là dạng có dấu; dùng đúng định nghĩa đề cho. Lift cần $p_y>0$.
 
+% DSA5101 Exam Practice Questions.pdf, PDF page(s) 2.
 \ask{Pr1b}{Pr1(b)}{Dữ kiện chung: \hyperref[question:Pr1]{[Pr1]}}
-\original{DSA5101 Exam Practice Questions.pdf}{2}{53 476.890 542 536.890}
+\qpart{b} Use the supplied counts $\operatorname{supp}(ABD)=\operatorname{supp}(ACD)=\operatorname{supp}(BD)=2$, $\operatorname{supp}(AC)=3$, $\operatorname{supp}(A)=5$, and $\operatorname{supp}(D)=4$. For $BD\to A$ and $AC\to D$, give confidence and signed interest, where $\operatorname{interest}(X\to y)=\operatorname{conf}(X\to y)-\operatorname{supp}(y)/7$. Which rules meet both support count 2 and confidence $4/5$?
+
 \answer{\maptag{answer:Pr1b}}
 \begin{guidesteps}[beginpenalty=10000]
 \item \guidepart{(b)}Lấy support của hợp chia support vế trái: $\operatorname{conf}(BD\to A)=2/2=1$, $\operatorname{conf}(AC\to D)=2/3$.
@@ -365,16 +499,36 @@ J(A,B)=\frac{|S_A\cap S_B|}{|S_A|+|S_B|-|S_A\cap S_B|}.
 \]
 \key{Ví dụ} \literal{ABCAB} với $k=2$ cho $\{AB,BC,CA\}$. $AB$ lặp nhưng chỉ đếm một lần.
 
+% DSA5101 Exam Practice Questions.pdf, PDF page(s) 5.
 \ask{Pr4}{Pr4(a)}{}
-\original{DSA5101 Exam Practice Questions.pdf}{5}{53 624.890 542 756.890}
+Three DNA strings are $D_1=\mathrm{ACGACA}$, $D_2=\mathrm{ACGATA}$, and $D_3=\mathrm{ATGACA}$. Use sets of contiguous 3-character shingles with these IDs:
+\begin{examtable}{@{}lcccccccc@{}}
+\toprule
+ID & 1 & 2 & 3 & 4 & 5 & 6 & 7 & 8\\
+\midrule
+Shingle & ACG & CGA & GAC & ACA & GAT & ATA & ATG & TGA\\
+\bottomrule
+\end{examtable}
+You are given $S_1=\{1,2,3,4\}$ and $S_2=\{1,2,5,6\}$.
+\qpart{a} Form $S_3$ and calculate the exact Jaccard similarity of $D_1,D_3$.
+
 \answer{\maptag{answer:Pr4}}
 \begin{guidesteps}[beginpenalty=10000]
 \item \guidepart{(a)}Trượt cửa sổ 3 ký tự trên $D_3$: $ATG,TGA,GAC,ACA$ ứng với ID $7,8,3,4$.
 \item So $S_3=\{3,4,7,8\}$ với $S_1=\{1,2,3,4\}$. Giao là $\{3,4\}$ và hợp có 6 phần tử, nên $J=2/6=1/3$.
 \end{guidesteps}
 
+% 2425Sem1-DSA5101.pdf, PDF page(s) 6.
 \ask[A1-Q2]{P24-Q2}{P24-Q2(a) / A1-Q2(a)}{}
-\original{2425Sem1-DSA5101.pdf}{6}{53 597.890 542 747.890}
+Recall that we learnt to apply Locality-Sensitive Hashing in order to efficiently find candidate pairs of documents that are likely to be similar.
+\qpart{a} Suppose that we use single words as tokens, and we convert documents into sets of 2-shingles. Consider the following two documents:
+
+$D_1=$ expected this exam to be very difficult
+
+$D_2=$ this exam is not difficult
+
+What is the Jaccard similarity of documents $D_1$ and $D_2$ on 2-shingles?
+
 \answer{\maptag{answer:A1-Q2}\maptag{answer:A1-Q2a}\maptag{answer:P24-Q2}\maptag{answer:P24-Q2a}}
 \begin{guidesteps}[beginpenalty=10000]
 \item \guidepart{(a)}Trượt hai từ mỗi lần. $D_1$: \literal{expected this}, \literal{this exam}, \literal{exam to}, \literal{to be}, \literal{be very}, \literal{very difficult}.
@@ -382,8 +536,12 @@ J(A,B)=\frac{|S_A\cap S_B|}{|S_A|+|S_B|-|S_A\cap S_B|}.
 \item Chỉ \literal{this exam} thuộc giao. Hợp có $6+4-1=9$ phần tử, nên $J=1/9$.
 \end{guidesteps}
 
+% 2526Sem1-DSA5101.pdf, PDF page(s) 4.
 \ask{P25-Q2}{P25-Q2(a)(i)}{}
-\original{2526Sem1-DSA5101.pdf}{4}{53 643.890 542 750.890}
+Consider two documents $A$ and $B$, containing 400 and 800 unique $k$-shingles respectively. Additionally, assume that they have 200 $k$-shingles in common.
+\qpart{a} Let $S_A$ and $S_B$ be the shingle sets of $A$ and $B$. Therefore, $|S_A|=400$, $|S_B|=800$ and $|S_A\cap S_B|=200$.
+\qpart{i} What is the Jaccard Similarity between $S_A$ and $S_B$?
+
 \answer{\maptag{answer:P25-Q2}\maptag{answer:P25-Q2a}}
 \begin{guidesteps}[beginpenalty=10000]
 \item \guidepart{(a)(i)}Lấy 200 shingle chung làm tử số. Tính hợp $400+800-200=1000$ để không đếm giao hai lần.
@@ -399,8 +557,11 @@ J(A,B)=\frac{|S_A\cap S_B|}{|S_A|+|S_B|-|S_A\cap S_B|}.
 }
 \key{Vì sao được} Hàng đầu tiên trong hợp rơi vào giao với xác suất $J(A,B)$; đúng lúc đó MinHash trùng. Ví dụ thứ tự $(1,4,3,2)$ trên tập $\{2,4\}$ trả ID 4, không phải vị trí 2. Chữ ký của $n$ tài liệu lưu $O(tn)$ giá trị.
 
+% DSA5101 Exam Practice Questions.pdf, PDF page(s) 5.
 \ask{Pr4bc}{Pr4(b,c)}{Dữ kiện chung: \hyperref[question:Pr4]{[Pr4]}}
-\original{DSA5101 Exam Practice Questions.pdf}{5}{53 511.890 542 624.890}
+\qpart{b} Independently use $S_3=\{3,4,7,8\}$. Two permutations list row IDs in visitation order: $\pi_1=(5,3,1,8,2,6,4,7)$, $\pi_2=(2,7,6,4,8,1,3,5)$. For each permutation, record the first visited row present in each set. Give the resulting two-row signature matrix and the signature-agreement estimate for the similarity of $D_1,D_3$.
+\qpart{c} Why must the same permutations be used for all documents? Does the estimate $1/2$ contradict the exact similarity $1/3$?
+
 \answer{\maptag{answer:Pr4bc}}
 \begin{guidesteps}[beginpenalty=10000]
 \item \guidepart{(b)}Duyệt theo mỗi hoán vị, ghi hàng đầu tiên có mặt trong từng tập. Với $\pi_1$, $5$ chỉ có trong $S_2$, còn $3$ gặp trước trong $S_1,S_3$: hàng chữ ký $(3,5,3)$.
@@ -424,9 +585,20 @@ Hàng chữ ký & 5 & 4 & 3 & 4 \\
 \end{examtable}
 \end{example}
 
+% 2425Sem1-DSA5101.pdf, PDF page(s) 6.
 \ask[A1-Q2b]{P24-Q2b}{P24-Q2(b) / A1-Q2(b)}{}
-\original{2425Sem1-DSA5101.pdf}{6}{53 288.890 542 450.890}
-\original{2425Sem1-DSA5101.pdf}{6}{53 64.890 542 278.890}
+\qpart{b} Recall the min-hashing algorithm in lectures. We may represent a document using a Boolean column vector, with each row corresponding to a shingle. Suppose we have such a representation of 4 documents in the matrix $A$ below:
+\[
+A=\begin{bmatrix}1&0&0&0\\1&1&0&0\\0&0&1&0\\0&1&0&1\\1&0&0&0\\0&0&1&0\end{bmatrix},
+\quad
+A_{ij}=\begin{cases}1,&\text{if document }j\text{ contains shingle }i,\\0,&\text{otherwise.}\end{cases}
+\]
+We generate 3 permutations of the shingles via the following permutation matrix:
+\[
+\pi=\begin{bmatrix}3&2&1\\5&1&4\\1&4&3\\4&3&2\\2&6&5\\6&5&6\end{bmatrix}.
+\]
+Each column corresponds to a permutation of shingles, specifying the order in which to iterate through the rows of the input matrix $A$ (i.e., defined in the same way as in lectures). Fill out all the entries of the signature matrix $M$ that we should obtain after running Min-Hashing using $A$ and $\pi$.
+
 \answer{\maptag{answer:A1-Q2b}\maptag{answer:P24-Q2b}}
 \begin{guidesteps}[beginpenalty=10000]
 \item \guidepart{(b)}Đọc mỗi cột của $\pi$ như thứ tự thăm hàng. Với cột đầu, duyệt $3,5,1,4,2,6$.
@@ -466,8 +638,26 @@ $AC$ & -- & -- & -- & $3/5$: bị bỏ sót \\
 Gộp và bỏ trùng sau khi băm: chỉ so chính xác $AB$ và $BD$ (2 trên 6 cặp). $J(A,C)=3/5$ là kết quả kiểm tra lại; LSH không gửi cặp này sang bước xác nhận.
 \end{example}
 
+% DSA5101 Exam Practice Questions.pdf, PDF page(s) 6.
 \ask{Pr5}{Pr5}{}
-\original{DSA5101 Exam Practice Questions.pdf}{6}{53 472.890 542 784.890}
+Viewer histories are sets $A=\{1,2,3,4\}$, $B=\{1,2,3,5\}$, $C=\{1,2,4,6\}$, $D=\{3,5,7\}$. Use three bands of two consecutive rows in the following signatures. Two viewers are candidates if they agree in every row of at least one band. Assume no additional hash collisions between different band tuples.
+\begin{examtable}{@{}ccccc@{}}
+\toprule
+Row & $A$ & $B$ & $C$ & $D$\\
+\midrule
+1 & 2 & 2 & 1 & 4\\
+2 & 2 & 2 & 1 & 4\\
+3 & 2 & 1 & 2 & 1\\
+4 & 3 & 1 & 2 & 1\\
+5 & 2 & 2 & 1 & 2\\
+6 & 2 & 2 & 1 & 3\\
+\bottomrule
+\end{examtable}
+The target exact Jaccard threshold is $3/5$.
+\qpart{a} Identify the pairs colliding in each band, and the unique candidate pairs. How many exact pair comparisons are needed?
+\qpart{b} Independently use candidate set $\{AB,BD\}$. Calculate their exact similarities and decide which survives verification. You are also given $\operatorname{Jac}(A,C)=3/5$. Identify a false positive and a false negative of the candidate-generation stage.
+\qpart{c} For a pair of true similarity $s=1/2$, give its candidate probability with three bands of two independent MinHash rows. Is a similarity threshold a deterministic boundary for LSH?
+
 \answer{\maptag{answer:Pr5}}
 \begin{guidesteps}[beginpenalty=10000]
 \item \guidepart{(a)}Ghép hàng $(1,2),(3,4),(5,6)$ thành ba band. So từng tuple: các cặp trùng theo thứ tự là $AB,BD,AB$.
@@ -482,10 +672,18 @@ Gộp và bỏ trùng sau khi băm: chỉ so chính xác $AB$ và $BD$ (2 trên 
 \item Xác suất này nằm giữa 0 và 1; ngưỡng Jaccard không phải ranh giới tất định cho bước sinh ứng viên.
 \end{guidesteps}
 
+% 2425Sem1-DSA5101.pdf, PDF page(s) 7.
 \ask[A1-Q2cd]{P24-Q2cd}{P24-Q2(c,d) / A1-Q2(c,d)}{}
-\original{2425Sem1-DSA5101.pdf}{7}{53 515.890 542 596.890}
-\original{2425Sem1-DSA5101.pdf}{7}{53 397.890 542 443.890}
-\original{2425Sem1-DSA5101.pdf}{7}{53 111.890 542 312.890}
+\qpart{c} Suppose that we apply the LSH algorithm with $b=8$ bands and $r=4$ rows per band.
+\qpart{i} If a pair of documents $D_3$ and $D_4$ have Jaccard similarity $\operatorname{sim}(D_3,D_4)=0.6$, what is the probability that they have identical hash values in at least 1 band?
+\qpart{ii} If a pair of documents $D_5$ and $D_6$ have Jaccard similarity $\operatorname{sim}(D_5,D_6)=0.2$, what is the probability that they have identical hash values in at least 1 band?
+
+(If you have a calculator, please give your answer up to 4 significant figures. Otherwise, you may just leave exponents in your answer without calculating them.)
+\qpart{d} Suppose that we have a fixed number of $m$ Min-Hash functions and we divide them using LSH into $b$ bands containing $r$ rows each ($m=b\times r$). If we prioritize higher precision (fewer false positives) while keeping the similarity threshold $s$ constant, choose exactly one option:
+\qpart*{A.} Use a higher value of $b$.
+\qpart*{B.} Use a lower value of $b$.
+\qpart*{C.} It does not matter since $m$ and $s$ are constant.
+
 \answer{\maptag{answer:A1-Q2cd}\maptag{answer:P24-Q2cd}}
 \begin{guidesteps}[beginpenalty=10000]
 \item \guidepart{(c)(i)}Một band cần bốn hàng cùng khớp nên xác suất là $0.6^4$. Lấy bù của tám band đều trượt: $1-(1-0.6^4)^8\approx0.6706$.
@@ -498,9 +696,11 @@ Gộp và bỏ trùng sau khi băm: chỉ so chính xác $AB$ và $BD$ (2 trên 
 \item Chọn B: giảm $b$ để bớt ứng viên dương giả; đổi lại có thể bỏ sót nhiều cặp thật hơn.
 \end{guidesteps}
 
+% 2526Sem1-DSA5101.pdf, PDF page(s) 4.
 \ask{P25-Q2aii}{P25-Q2(a)(ii,iii)}{Dữ kiện chung: \hyperref[question:P25-Q2]{[P25-Q2]}}
-\original{2526Sem1-DSA5101.pdf}{4}{53 527.890 542 574.890}
-\original{2526Sem1-DSA5101.pdf}{4}{53 424.890 542 471.890}
+\qpart{ii} Consider applying Minhash and the LSH bands and rows technique with $r=10$ rows per band and $b=12$ bands. What is the probability that $A$ and $B$ become candidate similar documents (identical in at least one band)?
+\qpart{iii} If we want to increase the probability of $A$ and $B$ becoming candidates, should we increase $b$ or decrease $b$?
+
 \answer{\maptag{answer:P25-Q2aii}}
 \begin{guidesteps}[beginpenalty=10000]
 \item \guidepart{(a)(ii)}Một band 10 hàng khớp với xác suất $0.2^{10}$. Lấy bù của 12 band độc lập đều trượt: $1-(1-0.2^{10})^{12}\approx1.229\times10^{-6}$.
@@ -522,9 +722,13 @@ Gộp và bỏ trùng sau khi băm: chỉ so chính xác $AB$ và $BD$ (2 trên 
 \hard{P24-Q2ef}{Tính cascade từ trong ra ngoài}
 Mỗi tầng nhận xác suất đầu ra của tầng trước; đặt $p_1=0.9^5=0.59049$, $p_2=1-(1-p_1)^6\approx0.9953$ rồi $p_3=p_2^7\approx0.9675$. Mỗi nút OR chứa 6 nhánh AND độc lập, và có 7 bản sao của nút OR, nên cần $5\cdot6\cdot7=210$ hash gốc. Gắn thêm OR 3 rồi AND 4 nhân tiếp $12$, ra $2520$. Nếu dùng lại một hash, không được nhân xác suất như với các biến độc lập.
 
+% 2425Sem1-DSA5101.pdf, PDF page(s) 8.
 \ask[A1-Q2ef]{P24-Q2ef}{P24-Q2(e,f) / A1-Q2(e,f)}{}
-\original{2425Sem1-DSA5101.pdf}{8}{53 636.890 542 741.890}
-\original{2425Sem1-DSA5101.pdf}{8}{53 326.890 542 397.890}
+\qpart{e} Given a hash family $H$ such that $\forall h\in H$, $h(x=y)=\operatorname{Similarity}(x,y)$. We construct a $(5,6,7)$ way AND-OR-AND hash family $G$ from $H$. If a pair of documents have similarity $s=0.9$, what is the probability that they get hashed into the same bucket for each $g\in G$?
+
+(If you have a calculator, please give your answer up to 4 significant figures. Otherwise, you may just leave exponents in your answer without calculating them.)
+\qpart{f} How many hash functions from $H$ are needed to construct a hash family composed of $(5,6,7)$ AND-OR-AND construction followed by $(3,4)$ OR-AND construction? (You may leave your answer as a product of integers.)
+
 \answer{\maptag{answer:P24-Q2ef}\maptag{answer:A1-Q2ef}}
 \begin{guidesteps}[beginpenalty=10000]
 \item \guidepart{(e)}Tính từ tầng trong ra: AND 5 cho $p_1=0.9^5$; OR 6 cho $p_2=1-(1-p_1)^6$.
@@ -557,8 +761,17 @@ Mỗi tầng nhận xác suất đầu ra của tầng trước; đặt $p_1=0.9
 Hai vectơ có 200 vị trí cùng bằng 1, nên $\cos\theta=200/\sqrt{400\cdot800}=1/\sqrt8$ và $\theta\approx69.3^\circ$. Trong mặt phẳng chứa hai vectơ, giao tuyến đi qua gốc và tách chúng khi hướng của nó nằm trong góc $\theta$ (hướng xét theo modulo $180^\circ$). Vì vậy xác suất cùng phía là $1-\theta/180^\circ\approx0.615$.
 \end{example}
 
+% DSA5101 Exam Practice Questions.pdf, PDF page(s) 7.
 \ask{Pr6}{Pr6}{}
-\original{DSA5101 Exam Practice Questions.pdf}{7}{53 589.890 542 784.890}
+Use the sign of $v\cdot x$ as a hash bit, with zero assigned $+$. The hyperplane normals are $v_1=(1,0)$, $v_2=(0,1)$, $v_3=(1,-2)$, $v_4=(2,1)$. Image descriptors include $P=(3,1)$ and $Q=(2,2)$. You are given that $P$ has sign signature $(+,+,+,+)$.
+\qpart{a} Calculate the four dot products for $Q$, its sign signature, and its observed agreement fraction with $P$.
+\qpart{b} Independently consider an orthogonal pair, for which one random hyperplane gives agreement probability $p=1/2$. Compare these two schemes, each using four independent hyperplanes:
+\qpart{i} AND within each of two pairs, then OR the two results.
+\qpart{ii} OR within each of two pairs, then AND the two results.
+
+Give each scheme's final collision probability.
+\qpart{c} Would repeating the same hyperplane four times justify these probability formulas? Would replacing $Q$ by $10Q$ change its signature? Explain briefly.
+
 \answer{\maptag{answer:Pr6}}
 \begin{guidesteps}[beginpenalty=10000]
 \item \guidepart{(a)}Tính $v_i\cdot Q$ cho bốn pháp tuyến: $(2,2,-2,6)$. Lấy dấu được $(+,+,-,+)$.
@@ -573,8 +786,10 @@ Hai vectơ có 200 vị trí cùng bằng 1, nên $\cos\theta=200/\sqrt{400\cdot
 \item Thay $Q$ bằng $10Q$ nhân mọi tích vô hướng với 10, không đổi dấu hay chữ ký.
 \end{guidesteps}
 
+% 2526Sem1-DSA5101.pdf, PDF page(s) 4.
 \ask{P25-Q2b}{P25-Q2(b)}{Dữ kiện chung: \hyperref[question:P25-Q2]{[P25-Q2]}}
-\original{2526Sem1-DSA5101.pdf}{4}{53 326.890 542 400.890}
+\qpart{b} Now, consider representing the shingle sets of $A$ and $B$ as Boolean vectors $x_A$ and $x_B$. That is, if the universal set of $k$-shingles has size $m$, then $x_A$ and $x_B$ are length $m$ Boolean vectors, with a 1 in every position corresponding to the shingle that they contain. Using the cosine similarity and random hyperplanes technique from lectures, calculate the probability that $x_A$ and $x_B$ end up on the same side of a random hyperplane.
+
 \answer{\maptag{answer:P25-Q2b}}
 \begin{guidesteps}[beginpenalty=10000]
 \item \guidepart{(b)}Dùng vectơ hiện diện: tích vô hướng là 200, bình phương chuẩn là 400 và 800. Suy ra $\cos\theta=200/\sqrt{400\cdot800}=1/\sqrt8$.
@@ -628,8 +843,25 @@ Trong A1-Q3 với khoảng cách Euclid, từ $\{1,2,4\}$ tới $8$: single $=8-
 Chiều cao ghi theo $d(x,y)=\max(x,y)/\min(x,y)$, cách đều để dễ đọc. Khi gộp $\{1,2\}$ với $\{4,8\}$, cặp xa nhất là $(1,8)$ nên chiều cao là $8$.
 \end{example}
 
+% DSA5101 Exam Practice Questions.pdf, PDF page(s) 8.
 \ask{Pr7}{Pr7}{}
-\original{DSA5101 Exam Practice Questions.pdf}{8}{53 459.890 542 756.890}
+Five text fragments have the following dissimilarities.
+\begin{examtable}{@{}lrrrrr@{}}
+\toprule
+& $A$ & $B$ & $C$ & $D$ & $E$\\
+\midrule
+$A$ & 0 & 2 & 5 & 10 & 14\\
+$B$ & 2 & 0 & 3 & 8 & 12\\
+$C$ & 5 & 3 & 0 & 5 & 9\\
+$D$ & 10 & 8 & 5 & 0 & 4\\
+$E$ & 14 & 12 & 9 & 4 & 0\\
+\bottomrule
+\end{examtable}
+Begin from clusters $AB,C,D,E$, immediately after merging $A,B$. For single linkage, cluster distance is the smallest cross-cluster dissimilarity. For clustroid linkage, use the dissimilarity between clustroids. A clustroid minimises the sum of distances to the cluster's members; ties are broken alphabetically. The clustroid of $AB$ is $A$.
+\qpart{a} Give only the next merge under each linkage rule, with its distance. Explain the difference using the distances from $AB$ to $C$.
+\qpart{b} Independently consider cluster $ABC$. Find its clustroid and diameter. Can the diameter exceed the single-linkage distance at which $C$ joined $AB$?
+\qpart{c} Why is a clustroid suitable when the objects are strings and only their pairwise edit distances are available?
+
 \answer{\maptag{answer:Pr7}}
 \begin{guidesteps}[beginpenalty=10000]
 \item \guidepart{(a)}Single lấy $\min(5,3)=3$ cho khoảng cách $AB$ đến $C$. Vì $3<d(D,E)=4$ và các cặp còn lại lớn hơn 3, gộp $AB$ với $C$.
@@ -643,11 +875,20 @@ Chiều cao ghi theo $d(x,y)=\max(x,y)/\min(x,y)$, cách đều để dễ đọ
 \item \guidepart{(c)}Tính tổng khoảng cách chỉnh sửa cho từng chuỗi có thật rồi chọn chuỗi nhỏ nhất theo tổng. Không cần định nghĩa trung bình của các chuỗi.
 \end{guidesteps}
 
+% 2425Sem1-DSA5101.pdf, PDF page(s) 12, 13, 14.
 \ask[A1-Q3]{P24-Q3}{P24-Q3 / A1-Q3}{}
-\original{2425Sem1-DSA5101.pdf}{12}{53 642.890 542 747.890}
-\original{2425Sem1-DSA5101.pdf}{13}{53 718.890 542 748.890}
-\original{2425Sem1-DSA5101.pdf}{13}{53 413.890 542 434.890}
-\original{2425Sem1-DSA5101.pdf}{14}{53 576.890 542 738.890}
+\qpart{a} Consider hierarchical clustering on the following dataset of 8 one-dimensional points: $2^0,2^1,2^2,\ldots,2^7$. Suppose that we use the Euclidean distance between points and stop when there is only one cluster left. Draw the dendrograms resulting from the following linkage strategies:
+\qpart{i} simple linkage - merge clusters based on the closest pairwise distance between any two points (one from each cluster).
+\qpart{ii} complete linkage - merge clusters by minimizing the resulting cluster diameter. Diameter is defined as the farthest pairwise distance between any two points.
+\qpart{iii} average linkage - merge clusters based on the average pairwise distance between points.
+\qpart{b} Now, we modify our distance function as follows:
+\[
+d(x,y)=\frac{\max(x,y)}{\min(x,y)}
+\]
+where $x,y$ are any two 1-D points. For the same dataset as in part (a), draw the dendrogram resulting from the complete linkage method.
+
+Break ties in the following way: Define the rank of a point $2^i$ as $i+1$, and define the rank of a cluster to be the minimum rank of the points within that cluster. To break ties, first merge clusters with the smallest rank.
+
 \answer{\maptag{answer:A1-Q3}\maptag{answer:P24-Q3}}
 \begin{guidesteps}[beginpenalty=10000]
 \item \guidepart{(a)(i)--(iii)}Bắt đầu với cặp gần nhất $1,2$. Khi đã gộp đến $2^{j-1}$, khoảng cách complete tới $2^j$ bằng $2^j-1$, nhỏ hơn khoảng cách $2^j$ của cặp singleton gần nhất còn lại. Single và average không lớn hơn complete, nên cả ba cùng ghép lần lượt $4,8,16,32,64,128$.
@@ -710,8 +951,13 @@ So SSE trên cùng dữ liệu, lấy lại tâm cho mỗi phân hoạch. Trong 
 Chấm đen: cụm $ABDE$; vòng rỗng: cụm $CF$; dấu chéo: tâm mới. Tâm mỗi cụm là trung bình tọa độ; $B$ ở lại cụm 1 vì $3^2+1^2<3^2+2^2$.
 \end{example}
 
+% DSA5101 Exam Practice Questions.pdf, PDF page(s) 9.
 \ask{Pr8}{Pr8}{}
-\original{DSA5101 Exam Practice Questions.pdf}{9}{53 626.890 542 787.890}
+Six locations are $A=(0,0)$, $B=(0,2)$, $C=(0,4)$, $D=(6,0)$, $E=(6,2)$, $F=(6,4)$. For $k=2$, an initial assignment step has produced clusters $\{A,B,D,E\}$ and $\{C,F\}$.
+\qpart{a} Perform the centroid update for these two clusters.
+\qpart{b} Independently use centroids $(3,1)$ and $(3,4)$. Calculate only $B$'s two squared distances and assign $B$. You are told that all other points retain their previous assignments. Has this run reached a fixed point after the next centroid update?
+\qpart{c} The fixed point above has squared-error objective 58. The alternative partition $\{A,B,C\}\mid\{D,E,F\}$ has objective 16. What does this tell you about convergence and optimality? Suggest one practical way to reduce this problem.
+
 \answer{\maptag{answer:Pr8}}
 \begin{guidesteps}[beginpenalty=10000]
 \item \guidepart{(a)}Lấy trung bình tọa độ của $A,B,D,E$: tâm thứ nhất là $(3,1)$. Lấy trung bình của $C,F$: tâm thứ hai là $(3,4)$.
@@ -755,8 +1001,17 @@ D_M^2=\sum_j\frac{(x_j-\mu_j)^2}{\sigma_j^2}.
 \]
 Hai cụm riêng lẻ có thể rất chặt nhưng tâm cách xa. Với hai CS trong Pr9(c), chiều thứ hai có trọng số bằng nhau, tâm $6.5,8.5$ và mỗi phương sai là $1/4$. Sau gộp được $1/4+(1/4)\cdot2^2=5/4>1$, nên không gộp. Tính được từ tóm tắt mà không cần điểm gốc.
 
+% DSA5101 Exam Practice Questions.pdf, PDF page(s) 10.
 \ask{Pr9}{Pr9}{}
-\original{DSA5101 Exam Practice Questions.pdf}{10}{53 584.890 542 784.890}
+A two-dimensional discard-set cluster has summary $N=4$, $\mathrm{SUM}=(0,0)$, $\mathrm{SUMSQ}=(4,16)$. Use coordinate means $\mu_j=\mathrm{SUM}_j/N$ and variances $\sigma_j^2=\mathrm{SUMSQ}_j/N-\mu_j^2$. The squared Mahalanobis distance is
+\[
+M^2(x)=\sum_j(x_j-\mu_j)^2/\sigma_j^2.
+\]
+Assign a point to the closest discard-set cluster if its squared distance is at most 4.
+\qpart{a} Find this cluster's mean and variance vector, then its squared distance for $P=(1,2)$. You are given that $P$'s squared distance to the only other discard-set cluster is $85/9$. Decide where $P$ goes.
+\qpart{b} Independently, three points $R=(0,6)$, $S=(0,7)$, and $T=(15,8)$ remain unassigned. A local clustering step groups points within Euclidean distance 1; the only such pair is $R,S$. Give the new compression-set summary and the retained set.
+\qpart{c} Use the supplied new summary $(2,(0,13),(0,85))$. An existing compression-set cluster has summary $(2,(0,17),(0,145))$. Merge them only if every coordinate variance of their union is at most 1. Test just the second coordinate, and explain why the test needs no original point coordinates.
+
 \answer{\maptag{answer:Pr9}}
 \begin{guidesteps}[beginpenalty=10000]
 \item \guidepart{(a)}Chia SUM cho 4 để có $\mu=(0,0)$; lấy $\mathrm{SUMSQ}/4-\mu^2$ theo tọa độ để có phương sai $(1,4)$.
@@ -771,8 +1026,11 @@ Hai cụm riêng lẻ có thể rất chặt nhưng tâm cách xa. Với hai CS 
 \item Tính $230/4-(30/4)^2=5/4>1$, nên không gộp. Các thống kê đã đủ để tính phương sai.
 \end{guidesteps}
 
+% 2526Sem1-DSA5101.pdf, PDF page(s) 18.
 \ask{P25-Q7}{P25-Q7(a)}{}\maptag{question:P25-Q7a}
-\original{2526Sem1-DSA5101.pdf}{18}{53 653.890 542 750.890}
+Read the statements below and state whether they are True or False. You do not need to show any working or justification.
+\qpart{a} The main advantage of the BFR algorithm over K-means is that it can handle non-convex shapes, such as groups of points belonging in concentric circles.
+
 \answer{\maptag{answer:P25-Q7}\maptag{answer:P25-Q7a}}
 \begin{guidesteps}[beginpenalty=10000]
 \item \guidepart{(a)}Xác định BFR dùng thống kê tóm tắt theo cụm và mở rộng k-means để xử lý dữ liệu theo lô.
@@ -824,8 +1082,22 @@ x^{(1)}=\frac{1}{\sqrt{41}}\begin{pmatrix}5\\4\end{pmatrix}.
 Trong câu (a), $M=\bigl(\begin{smallmatrix}5&4\\4&5\end{smallmatrix}\bigr)$. Vì bắt đầu ở $(1,0)^T$, phép nhân lấy đúng cột 1 của $M$.
 \end{example}
 
+% DSA5101 Exam Practice Questions.pdf, PDF page(s) 11.
 \ask{Pr10}{Pr10}{}
-\original{DSA5101 Exam Practice Questions.pdf}{11}{53 517.890 542 756.890}
+Consider
+\[
+A=\begin{pmatrix}2&2\\1&0\\0&1\end{pmatrix},\qquad M=A^TA.
+\]
+Normalise power-iteration vectors to Euclidean norm 1.
+\qpart{a} Form $M$ and perform one power-iteration update from $x^{(0)}=(1,0)^T$. Leave the normalised result in exact form.
+\qpart{b} Independently, you are given the orthonormal eigenpairs of $M$:
+\[
+\lambda_1=9,\ v_1=\frac{1}{\sqrt2}(1,1)^T,\qquad
+\lambda_2=1,\ v_2=\frac{1}{\sqrt2}(1,-1)^T.
+\]
+Give the two singular values of $A$ and calculate only the first left singular vector, using $u_1=Av_1/\sigma_1$.
+\qpart{c} With $M$ and $v_1$ as supplied above, form the deflated matrix $M^*=M-9v_1v_1^T$. Also explain what happens if power iteration on the original $M$ starts exactly at $v_2$.
+
 \answer{\maptag{answer:Pr10}}
 \begin{guidesteps}[beginpenalty=10000]
 \item \guidepart{(a)}Nhân $A^TA$ được $M=\bigl(\begin{smallmatrix}5&4\\4&5\end{smallmatrix}\bigr)$; nhân với $(1,0)^T$ được $(5,4)^T$.
@@ -856,8 +1128,17 @@ A_r&=U_r\Sigma_rV_r^T, \\
 \hard{Pr11}{Tách lỗi toàn ma trận khỏi lỗi một truy vấn}
 Với $P_r=V_rV_r^T$, lỗi của truy vấn hàng $q$ là $\|q-qP_r\|^2=\|q\|^2-\|qV_r\|^2$ vì phép chiếu trực giao tách hai thành phần vuông góc. Trong Pr11, $qV_2=(1/2,1/2)$ nên lỗi là $1-1/2=1/2$. Năng lượng giữ lại $45/49$ mô tả ma trận dữ liệu, không mô tả từng truy vấn. Để kiểm tra đảo thứ hạng, tính cosine giữa truy vấn và tài liệu trong cùng không gian, trước rồi sau chiếu, và tính lại chuẩn sau chiếu.
 
+% DSA5101 Exam Practice Questions.pdf, PDF page(s) 12.
 \ask{Pr11}{Pr11}{}
-\original{DSA5101 Exam Practice Questions.pdf}{12}{53 548.890 542 784.890}
+A document matrix has nonzero singular values 6, 3, 2. Its first two right singular vectors form the columns of
+\[
+V_2=\frac12\begin{pmatrix}1&1\\1&1\\1&-1\\1&-1\end{pmatrix}.
+\]
+For a row vector $x$, use reduced representation $z_x=xV_2$ and reconstruction $\hat x=z_xV_2^T$.
+\qpart{a} Find the smallest rank retaining at least 90\% of the squared singular-value energy. Give the squared Frobenius reconstruction error at that rank.
+\qpart{b} For query $q=(1,0,0,0)$ and documents $d_1=(0,1,0,0)$, $d_3=(1,0,1,0)$, you are given $z_q=z_{d_1}=(1/2,1/2)$. Calculate only $z_{d_3}$ and compare the two reduced-space cosine similarities with $q$. The original-space cosines are 0 for $d_1$ and $1/\sqrt2$ for $d_3$. Does the nearest document change?
+\qpart{c} Use the supplied $z_q=(1/2,1/2)$ to reconstruct $q$ and give its squared reconstruction error. Why does high retained matrix energy not guarantee that every nearest neighbour is preserved?
+
 \answer{\maptag{answer:Pr11}}
 \begin{guidesteps}[beginpenalty=10000]
 \item \guidepart{(a)}Bình phương các singular value, được tổng năng lượng $36+9+4=49$. So $36/49<90\%$ và $45/49>90\%$.
@@ -885,8 +1166,23 @@ Với $P_r=V_rV_r^T$, lỗi của truy vấn hàng $q$ là $\|q-qP_r\|^2=\|q\|^2
 \hard{Pr12}{Chẩn đoán mất thông tin trước khi nhân}
 Với $A\in\mathbb{R}^{m\times n}$ và mẫu $c$ cột, $r$ hàng, $W$ là $r\times c$, $W^+$ là $c\times r$; tích $CW^+R$ phải là $m\times n$. Mọi cột kết quả là tổ hợp tuyến tính của các cột đã lấy. Trong Pr12, cả hai cột lấy đều là $(3,3,0)^T$, nên toàn hàng cuối của kết quả bắt buộc bằng 0: riêng ô $(3,3)$ đã đóng góp sai số bình phương ít nhất $2^2=4$. Có lấy hàng 3 cũng không khôi phục được hướng thiếu trong $C$.
 
+% DSA5101 Exam Practice Questions.pdf, PDF page(s) 13.
 \ask{Pr12}{Pr12}{}
-\original{DSA5101 Exam Practice Questions.pdf}{13}{53 478.890 542 784.890}
+Consider the unscaled CUR construction $\hat A=CW^+R$, where $C$ contains sampled columns, $R$ sampled rows, and $W$ their intersection. Sampling is with replacement. Let
+\[
+A=\begin{pmatrix}3&3&0\\3&3&0\\0&0&2\end{pmatrix}.
+\]
+The squared column norms are 18, 18, 4, with total 40.
+\qpart{a} When column probabilities are proportional to squared norms, what is the probability of choosing column 3 on one draw? Can a column appear twice in two draws?
+\qpart{b} The sampled column indices are $(1,1)$ and row indices $(1,3)$, in those orders. Write $C,R,W$; do not calculate a pseudoinverse.
+\qpart{c} Independently, you are given
+\[
+R=\begin{pmatrix}3&3&0\\0&0&2\end{pmatrix},\qquad
+W^+=\begin{pmatrix}1/6&0\\1/6&0\end{pmatrix},\qquad
+CW^+=\begin{pmatrix}1&0\\1&0\\0&0\end{pmatrix}.
+\]
+Use the last product to obtain $\hat A$ and its squared Frobenius error. Explain which direction the duplicated columns fail to represent.
+
 \answer{\maptag{answer:Pr12}}
 \begin{guidesteps}[beginpenalty=10000]
 \item \guidepart{(a)}Chia bình phương chuẩn cột 3 cho tổng: $4/40=1/10$. Lấy mẫu có hoàn lại nên một cột có thể được chọn hai lần.
@@ -934,8 +1230,34 @@ Cathy & $(3.5,0,-3.5)$ & $8.75/17.5=0.5$ & 13 \\
 Dùng vectơ đã trừ trung bình để tính trọng số, rồi dùng rating gốc theo công thức của đề: $(9\cdot0.918+13\cdot0.5)/(0.918+0.5)\approx10.41$.
 \end{example}
 
+% DSA5101 Exam Practice Questions.pdf, PDF page(s) 15.
 \ask{Pr14}{Pr14}{}
-\original{DSA5101 Exam Practice Questions.pdf}{15}{53 437.890 542 784.890}
+Podcasts $P,Q,R,T$ have these ratings; the target is user $u$'s missing rating for $T$.
+\begin{examtable}{@{}lccccc@{}}
+\toprule
+& $u$ & $v$ & $w$ & $x$ & $y$\\
+\midrule
+$P$ & 5 & 3 & 5 & 3 & 4\\
+$Q$ & 1 & 3 & 1 & 3 & 2\\
+$R$ & 3 & 3 & 4 & 5 & 5\\
+$T$ & ? & 1 & 3 & 1 & 3\\
+\bottomrule
+\end{examtable}
+Item means are 4, 2, 4, 2. For similarity only, subtract item means from observed entries and replace the missing centred entry by zero. The resulting vectors, all of norm 2, are
+\[
+\begin{aligned}
+p&=(1,-1,1,-1,0), &q&=(-1,1,-1,1,0),\\
+r&=(-1,-1,0,1,1), &t&=(0,-1,1,-1,1).
+\end{aligned}
+\]
+\qpart{a} Calculate $s_{TP}$ and $s_{TR}$ using cosine similarity. You are given $s_{TQ}=-3/4$. Choose the two positive-similarity neighbours for predicting $T$.
+\qpart{b} Independently use $N=\{P,R\}$ and weights $3/4,1/4$. Calculate the raw weighted prediction $\hat r_{uT}=\sum_{j\in N}s_{Tj}r_{uj}/\sum_{j\in N}s_{Tj}$.
+\qpart{c} A separately fitted baseline model supplies $b_{uT}=2$ and $b_{uP}=b_{uR}=4$; do not estimate these from the table. Using the same supplied neighbours and weights, calculate
+\[
+\hat r_{uT}=b_{uT}+\frac{\sum_{j\in N}s_{Tj}(r_{uj}-b_{uj})}{\sum_{j\in N}s_{Tj}}.
+\]
+Why can this prediction be below both neighbour ratings 3 and 5?
+
 \answer{\maptag{answer:Pr14}}
 \begin{guidesteps}[beginpenalty=10000]
 \item \guidepart{(a)}Lấy tích vô hướng của các vectơ đã trừ trung bình: $t\cdot p=3$, $t\cdot r=1$. Chia mỗi giá trị cho $2\cdot2=4$.
@@ -949,9 +1271,14 @@ Dùng vectơ đã trừ trung bình để tính trọng số, rồi dùng rating
 \item Kết quả $2+(3/4)(1)+(1/4)(-1)=5/2$. Đây là baseline cộng residual, nên có thể thấp hơn cả hai rating gốc.
 \end{guidesteps}
 
+% Assignments/DSA5101_Assignment_2.pdf, PDF page(s) 2.
 \ask{A2-Q1}{A2-Q1(a)}{}
-\original{Assignments/DSA5101_Assignment_2.pdf}{2}{53 526.890 542 747.890}
-\original{Assignments/DSA5101_Assignment_2.pdf}{2}{53 285.890 542 381.890}
+The table below represents the utility matrix which shows the ratings for three movies by three different users. There are two missing entries which we will estimate using two methods.
+\qrating
+\qpart{a} User-based collaborative filtering
+\qpart{i} Calculate the cosine-similarity between users after subtracting row means from known ratings. Give the results as a table with Alice, Bob and Cathy as both rows and columns.
+\qpart{ii} Using your answer from part (i), fill in the missing entries of the utility matrix with user-based collaborative filtering. Give the completed utility matrix.
+
 \answer{\maptag{answer:A2-Q1}\maptag{answer:A2-Q1a}}
 \begin{guidesteps}[beginpenalty=10000]
 \item \guidepart{(a)(i)}Tính trung bình từng hàng trên rating đã biết: $(7.5,11,9.5)$. Trừ trung bình rồi mới điền 0 cho ô thiếu.
@@ -972,9 +1299,14 @@ S_{\rm cosine}=\begin{pmatrix}
 \]
 \end{guidesteps}
 
+% 2425Sem1-DSA5101.pdf, PDF page(s) 15.
 \ask{P24-Q4}{P24-Q4(a)}{}
-\original{2425Sem1-DSA5101.pdf}{15}{53 528.890 542 747.890}
-\original{2425Sem1-DSA5101.pdf}{15}{53 287.890 542 383.890}
+The table below represents the utility matrix which shows the ratings for three movies by three different users. There are two missing entries which we will estimate using two methods.
+\qrating
+\qpart{a} User-based collaborative filtering
+\qpart{i} Calculate the Pearson correlation coefficient among all the users. Give the results as a table with Alice, Bob and Cathy as both rows and columns.
+\qpart{ii} Using Pearson correlation as similarity, fill in the missing entries of the utility matrix with user-based collaborative filtering. Give the completed utility matrix.
+
 \answer{\maptag{answer:P24-Q4}\maptag{answer:P24-Q4a}}
 \begin{guidesteps}[beginpenalty=10000]
 \item \guidepart{(a)(i)}Với từng cặp, lấy các phim cả hai đã chấm và tính lại hai trung bình trên phần giao. Alice--Bob và Bob--Cathy có các vectơ đã trừ trung bình cùng hướng nên Pearson bằng 1.
@@ -1003,8 +1335,17 @@ p'=p+\eta(eq-\lambda p),\qquad q'=q+\eta(ep-\lambda q).
 \hard{P24-Q4b}{Chọn ô đã biết để tháo từng ẩn}
 Không bắt đầu bằng phương trình có tích hai ẩn. Trong P24-Q4(b)/A2-Q1(b), dùng Alice--Star Wars để có $4+a=5$, rồi thay $a=1$ vào Alice--Inception: $8+c=10$. Bob--Matrix cho $b+6=9$. Kiểm tra ở ô đã biết khác trước khi điền hai ô thiếu. Còn trong \qlink{Pr15}{Pr15}, một bước SGD dùng cặp vectơ cũ cho cả hai gradient; giữ item test ngoài bước cập nhật, nhưng vẫn tính dự đoán test bằng vectơ user mới.
 
+% DSA5101 Exam Practice Questions.pdf, PDF page(s) 16.
 \ask{Pr15}{Pr15}{}
-\original{DSA5101 Exam Practice Questions.pdf}{16}{53 576.890 542 784.890}
+A rating model predicts $\hat r_{ui}=3+p_u^Tq_i$. Initially $p_u=(1,0)$ and $q_A=(1,1)$, and the observed training rating is $r_{uA}=5$. Set $\lambda=1/2$ and learning rate $\eta=1/2$. For this observation use loss
+\[
+\tfrac12(r_{uA}-\hat r_{uA})^2+\tfrac{\lambda}{2}(\|p_u\|^2+\|q_A\|^2).
+\]
+With $e=r_{uA}-\hat r_{uA}$, the gradients are $g_p=-eq_A+\lambda p_u$, $g_q=-ep_u+\lambda q_A$. Both gradients use the old vectors; update simultaneously by subtracting $\eta$ times the gradient.
+\qpart{a} Calculate the prediction, residual, and the two updated vectors for this single training observation.
+\qpart{b} Independently use $p'_u=(5/4,1/2)$. Two held-out ratings are $(q_C,r_{uC})=((1,-1),4)$ and $(q_D,r_{uD})=((0,1),3)$. Calculate the predictions and RMSE on these two ratings. Leave the square root exact.
+\qpart{c} During the training update, are other item vectors changed? Can their predictions for user $u$ nevertheless change? Should the held-out ratings be used for another training update before reporting the RMSE above?
+
 \answer{\maptag{answer:Pr15}}
 \begin{guidesteps}[beginpenalty=10000]
 \item \guidepart{(a)}Tính dự đoán $3+(1,0)\cdot(1,1)=4$ và residual $e=5-4=1$.
@@ -1019,9 +1360,20 @@ Không bắt đầu bằng phương trình có tích hai ẩn. Trong P24-Q4(b)/A
 \item Giữ các rating kiểm tra ngoài bước huấn luyện để RMSE đo khả năng dự đoán dữ liệu chưa dùng.
 \end{guidesteps}
 
+% 2425Sem1-DSA5101.pdf, PDF page(s) 16.
 \ask[A2-Q1b]{P24-Q4b}{P24-Q4(b) / A2-Q1(b)}{Dữ kiện chung: \hyperref[question:P24-Q4]{[P24-Q4]} \hyperref[question:A2-Q1]{[A2-Q1]}}
-\original{2425Sem1-DSA5101.pdf}{16}{53 519.890 542 738.890}
-\original{2425Sem1-DSA5101.pdf}{16}{53 247.890 542 363.890}
+\qpart{b} Latent factor method
+
+Given partial complete latent factor matrices $Q$ and $P^T$:
+\[
+Q=\begin{bmatrix}2&?\\?&2\\1&4\end{bmatrix},
+\qquad P^T=\begin{bmatrix}1&4&2\\3&?&1\end{bmatrix}.
+\]
+\qpart{i} Solve for the missing values in $Q$ and $P^T$ such that the objective $\min_{P,Q}\sum_{(i,x)\in R}(r_{xi}-q_xp_i)^2$ is minimized to zero for all known ratings $r_{xi}$ ($r_{xi}$ means the rating on movie $i$ by user $x$). Give the completed matrices $Q$ and $P^T$.
+
+Hint: $\hat r_{xi}=q_x\cdot p_i$, and we want to fill in $Q$ and $P^T$ such that $\hat r_{xi}-r_{xi}=0$ for all known ratings (do not use the estimates from part (a)).
+\qpart{ii} Using the full latent factor matrices $Q$ and $P^T$ obtained from the previous part, estimate the missing values in the table of ratings. Give the completed utility matrix with the same rows and columns as in part (a).
+
 \answer{\maptag{answer:A2-Q1b}\maptag{answer:P24-Q4b}}
 \begin{guidesteps}[beginpenalty=10000]
 \item \guidepart{(b)(i)}Bắt đầu bằng ô chỉ chứa một ẩn: Alice--Star Wars cho $4+a=5$, suy ra $a=1$.
@@ -1054,8 +1406,20 @@ P^T=\begin{pmatrix}1&4&2\\3&2&1\end{pmatrix}.
 }
 \key{Bẫy} Từ có trong mọi tài liệu có IDF bằng 0. IDF giảm theo $n_j$ qua logarit, không tỷ lệ nghịch đúng dạng $1/n_j$.
 
+% DSA5101 Exam Practice Questions.pdf, PDF page(s) 14.
 \ask{Pr13}{Pr13}{}
-\original{DSA5101 Exam Practice Questions.pdf}{14}{53 522.890 542 756.890}
+Four articles use the features science, sport, news, and stocks, in that order. Use $\mathrm{TF}_{ij}=f_{ij}/\max_k f_{ik}$ and $\mathrm{IDF}_j=\log_2(4/n_j)$, where $n_j$ counts articles containing feature $j$. Their TF-IDF profiles are supplied:
+\[
+\begin{aligned}
+g_1&=(1,1/2,0,0), &g_2&=(1,0,0,0),\\
+g_3&=(0,1,0,0), &g_4&=(0,0,0,1).
+\end{aligned}
+\]
+A reader rates article 1 as 1 and article 2 as 5.
+\qpart{a} In article 4 the largest term frequency is 4 and the stocks frequency is 2. Stocks occurs in just one article. Verify its TF-IDF weight. Why is the news weight zero in every profile if news occurs in all four articles?
+\qpart{b} Form the raw rating-weighted profile $p=(1g_1+5g_2)/2$ and the mean-centred profile $p_c=((1-3)g_1+(5-3)g_2)/2$. For each profile, which candidate, article 3 or 4, has larger cosine similarity? Both candidate profiles have norm 1, so compare dot products without calculating the user-profile norms.
+\qpart{c} Interpret the negative sport component in $p_c$. Does the centred model's preference for article 4 show evidence that the reader likes stocks?
+
 \answer{\maptag{answer:Pr13}}
 \begin{guidesteps}[beginpenalty=10000]
 \item \guidepart{(a)}Tính TF cho stocks bằng $2/4$; IDF là $\log_2(4/1)=2$, nên TF-IDF bằng 1.
@@ -1069,8 +1433,10 @@ P^T=\begin{pmatrix}1&4&2\\3&2&1\end{pmatrix}.
 \item \guidepart{(c)}Điểm sport âm phản ánh bài có sport được chấm dưới trung bình. Điểm stocks bằng 0, nên chọn bài 4 chỉ cho thấy mô hình tránh sport, chưa cho thấy thích stocks.
 \end{guidesteps}
 
+% 2526Sem1-DSA5101.pdf, PDF page(s) 18.
 \ask{P25-Q7b}{P25-Q7(b)}{Dữ kiện chung: \hyperref[question:P25-Q7]{[P25-Q7]}}
-\original{2526Sem1-DSA5101.pdf}{18}{53 595.890 542 626.890}
+\qpart{b} The TF-IDF score of a term in a document is proportional to the frequency of the term in the document and inversely proportional to the number of documents that mention the term.
+
 \answer{\maptag{answer:P25-Q7b}}
 \begin{guidesteps}[beginpenalty=10000]
 \item \guidepart{(b)}Giữ TF cố định và viết IDF là $\log(N/\mathrm{df})$. Khi $\mathrm{df}$ tăng, IDF giảm.
@@ -1112,8 +1478,17 @@ Nếu $r$ có tổng $S$ và $M_0$ vẫn để cột nút cụt bằng 0, đặt
 Nhãn cạnh là phần điểm truyền đi. Cột $A$ có $1/2$ ở hàng $B,C$. Từ điểm ban đầu đều bằng 1, $C$ nhận $1/2$ từ $A$ và 1 từ $B$: $r_C^{(1)}=3/2$. Vòng sau $C$ nhận $(1/2)(1/2)+1/2=3/4$.
 \end{example}
 
+% DSA5101 Exam Practice Questions.pdf, PDF page(s) 17.
 \ask{Pr16}{Pr16}{}
-\original{DSA5101 Exam Practice Questions.pdf}{17}{53 503.890 542 756.890}
+Pages have links $H\to L$, $L\to H,R$, and $R\to L$; $S$ has no outgoing links. With destination rows and source columns in order $H,L,R,S$, the link matrix before dead-end repair is
+\[
+M_0=\begin{pmatrix}0&1/2&0&0\\1&0&1&0\\0&1/2&0&0\\0&0&0&0\end{pmatrix}.
+\]
+Use damping $\beta=1/2$, uniform teleportation, and uniform redistribution of dead-end mass. An equivalent update is $u=\beta M_0r$, $S_u=\sum_i u_i$, then $r'_i=u_i+(1-S_u)/4$.
+\qpart{a} Starting from the supplied state $r=(1/5,2/5,1/5,1/5)^T$, calculate $M_0r$ and $u$. Why is the sum of $M_0r$ less than 1?
+\qpart{b} Independently use $u=(1/10,1/5,1/10,0)^T$. Find the uniform correction and complete this one PageRank update. Verify the total mass of the result.
+\qpart{c} What is the column for $S$ in the repaired Google transition matrix? Does a vector summing to 1 necessarily mean the PageRank iteration has converged?
+
 \answer{\maptag{answer:Pr16}}
 \begin{guidesteps}[beginpenalty=10000]
 \item \guidepart{(a)}Nhân ma trận theo thứ tự $H,L,R,S$: $M_0r=(1/5,2/5,1/5,0)^T$. Tổng chỉ $4/5$ vì cột $S$ bằng 0.
@@ -1128,12 +1503,13 @@ Nhãn cạnh là phần điểm truyền đi. Cột $A$ có $1/2$ ở hàng $B,C
 \item Tổng 1 chỉ kiểm tra bảo toàn khối lượng; để kiểm tra hội tụ, so $r'$ với $r$ hoặc kiểm tra phương trình điểm bất động.
 \end{guidesteps}
 
+% 2425Sem1-DSA5101.pdf, PDF page(s) 17.
 \ask[A2-Q2]{P24-Q5}{P24-Q5 / A2-Q2}{}
-\original{2425Sem1-DSA5101.pdf}{17}{53 466.890 542 750.890}
-\original{2425Sem1-DSA5101.pdf}{17}{53 387.890 542 433.890}
-\original{2425Sem1-DSA5101.pdf}{17}{53 347.890 542 375.890}
-\original{2425Sem1-DSA5101.pdf}{17}{53 270.890 542 325.890}
-\original{2425Sem1-DSA5101.pdf}{17}{53 165.890 542 237.890}
+\qgraphOne
+\qpart{a} Construct the transition matrix for the network. Give the results as a table with $A,B,C,D,E$ as both rows and columns.
+\qpart{b} Assuming no taxation ($\beta=1$), and assuming we initialize the PageRank vector to be $[1,1,1,1,1]^T$ for nodes $A,B,C,D$ and $E$ in that order. Using the power iteration method, compute the PageRank vector after one iteration and after two iterations.
+\qpart{c} Now, consider the teleport set $A,B$ with teleport probability $1-\beta=0.1$. For which nodes will the PageRank increase after one iteration of power iteration using the initial vector $[1,1,1,1,1]^T$?
+
 \answer{\maptag{answer:A2-Q2}\maptag{answer:P24-Q5}}
 \begin{guidesteps}[beginpenalty=10000]
 \item \guidepart{(a)}Đặt cột là nguồn và hàng là đích theo thứ tự $A,B,C,D,E$. Mỗi nguồn chia đều 1 cho các cạnh ra: $A,E$ chia đôi, $B,C,D$ truyền toàn bộ cho đích duy nhất.
@@ -1181,8 +1557,13 @@ t=\beta Mt+(1-\beta)v_{\mathrm{trusted}},\qquad
 \hard{P25-Q5}{Giải điểm cố định trên chu trình}
 Trên chu trình $L$ nút với xác suất tiếp tục $\beta$ và teleport chỉ về nút 0, viết $r_j=\beta^j r_0$. Điểm về nút 0 gồm teleport và phần đi hết vòng: $r_0=(1-\beta)+\beta^Lr_0$. Với $L=3,\beta=3/5$, suy ra $r_0=(1-3/5)/(1-(3/5)^3)=25/49$, rồi nhân $3/5$ hai lần. Với $\beta=1$, công thức này không dùng được: phép lặp chỉ xoay vectơ. Điểm dừng đều tồn tại, nhưng toàn bộ dãy chỉ hội tụ nếu bắt đầu tại đó.
 
+% DSA5101 Exam Practice Questions.pdf, PDF page(s) 19.
 \ask{Pr18}{Pr18}{}
-\original{DSA5101 Exam Practice Questions.pdf}{19}{53 599.890 542 784.890}
+A directed graph has links $G\to H$, $H\to G,T$, $T\to F$, and $F\to T$. Use damping $1/2$. Ordinary PageRank teleports uniformly; TrustRank teleports only to trusted seed $G$. Let $r$ denote ordinary PageRank and $t$ TrustRank. The following parts supply the quantities needed, so no full stationary system needs to be solved.
+\qpart{a} You are given $t_H=2/7$ and $t_F=1/21$. Use incoming links to calculate $t_T$. Explain why $t_T$ can be positive even though $T$ is not a trusted seed.
+\qpart{b} Independently use $r_F=2/7$ and $t_F=1/21$. Define spam mass as $(r_F-t_F)/r_F$. Calculate it and decide whether $F$ exceeds a flagging threshold of $3/4$. Does such a flag prove spam?
+\qpart{c} For ordinary PageRank, elimination of $r_F$ gives $r_T=x+\tfrac14r_T+\tfrac3{16}$, where $x=r_H/4$ is the direct rank contribution from outside the two-page farm $\{T,F\}$. Solve for $r_T$ as a function of $x$. Which term shows amplification of that external contribution?
+
 \answer{\maptag{answer:Pr18}}
 \begin{guidesteps}[beginpenalty=10000]
 \item \guidepart{(a)}Liệt kê nguồn vào $T$: $H$ có 2 cạnh ra, $F$ có 1. Cộng $\tfrac12(t_H/2+t_F)=2/21$.
@@ -1196,12 +1577,16 @@ Trên chu trình $L$ nút với xác suất tiếp tục $\beta$ và teleport ch
 \item Hệ số $4/3>1$ trước $x$ đo khuếch đại do điểm quay lại trong farm.
 \end{guidesteps}
 
+% 2526Sem1-DSA5101.pdf, PDF page(s) 15, 16.
 \ask{P25-Q5}{P25-Q5}{}
-\original{2526Sem1-DSA5101.pdf}{15}{53 497.890 542 750.890}
-\original{2526Sem1-DSA5101.pdf}{15}{53 372.890 542 407.890}
-\original{2526Sem1-DSA5101.pdf}{15}{53 229.890 542 248.890}
-\original{2526Sem1-DSA5101.pdf}{16}{53 719.890 542 738.890}
-\original{2526Sem1-DSA5101.pdf}{16}{53 448.890 542 486.890}
+Consider the web graph below. Let $a,b$ and $c$ denote the ranks of nodes $A,B$ and $C$ respectively. Assume that we always normalize so that $a+b+c=1$.
+\qgraphTwo
+\qpart{a} First consider vanilla PageRank with no teleports. For what initial values of $a,b$ and $c$ would PageRank converge? Moreover, explain why other values would not converge.
+\qpart{b} Now, consider TrustRank where $A$ is the only trusted node. Suppose that we teleport with probability $0.4$, i.e. $\beta=0.6$. Write down the 3 linear equations that $a,b$ and $c$ must satisfy.
+\qpart{c} Write down the solutions to the linear equations from part (b).
+\qpart{d} What is the spam mass of each node?
+\qpart{e} How is spam mass used to filter spam pages? What advantage does this have as compared to simply declaring pages with low PageRank as spam?
+
 \answer{\maptag{answer:P25-Q5}}
 \begin{guidesteps}[beginpenalty=10000]
 \item \guidepart{(a)}Theo cạnh có hướng, mỗi vòng chuyển $(a,b,c)$ thành $(c,a,b)$. Sau ba vòng trở lại điểm đầu.
@@ -1230,8 +1615,13 @@ Trên chu trình $L$ nút với xác suất tiếp tục $\beta$ và teleport ch
 
 \key{Bẫy} HITS cộng điểm qua mỗi cạnh mà không chia theo bậc ra như PageRank.
 
+% DSA5101 Exam Practice Questions.pdf, PDF page(s) 18.
 \ask{Pr17}{Pr17}{}
-\original{DSA5101 Exam Practice Questions.pdf}{18}{53 640.890 542 784.890}
+Directory $H_1$ links to resources $R_1,R_2,R_3$; $H_2$ links to $R_1,R_2$; $H_3$ links only to $R_3$. Let $B$ have directories as rows and resources as columns. HITS updates are $h=Ba$, then $a'=B^Th$. Use unnormalised scores in this question; a common positive scaling does not change a ranking.
+\qpart{a} Write $B$ and calculate the hub scores from $a^{(0)}=(1,1,1)^T$.
+\qpart{b} Independently use hub scores $(3,2,1)^T$. Calculate the next authority scores and rank the resources. If desired, normalise this single authority vector to norm 1.
+\qpart{c} All three resources have indegree 2. Why do their authority scores differ after this update? How does a hub's contribution differ from a PageRank page's contribution through its outgoing links?
+
 \answer{\maptag{answer:Pr17}}
 \begin{guidesteps}[beginpenalty=10000]
 \item \guidepart{(a)}Điền 1 ở mỗi liên kết từ hàng hub tới cột resource: $B=\bigl(\begin{smallmatrix}1&1&1\\1&1&0\\0&0&1\end{smallmatrix}\bigr)$.
@@ -1267,8 +1657,21 @@ Trong \qlink{Pr20}{Pr20}, chuyển nút $3$ sang cụm $\{4\}$ với $m=5$, $a=b
 
 \key{Kiểm tra khi co đồ thị} Với ma trận kề đối xứng có tổng hàng là bậc, đường chéo của siêu nút giữ $2e_C$; phần ngoài đường chéo đếm các cạnh nối hai cụm. Nhờ đó $\sum_{ij}B_{ij}=2m$ không đổi. Trong Pr20, hàng giữa của ma trận co là $(1,2,1)$: bậc $4$, trong đó $2$ đến từ một cạnh nội bộ. Xóa đường chéo sẽ làm sai cả thể tích và modularity.
 
+% DSA5101 Exam Practice Questions.pdf, PDF page(s) 21.
 \ask{Pr20}{Pr20}{}
-\original{DSA5101 Exam Practice Questions.pdf}{21}{53 484.890 542 784.890}
+An undirected graph is the path $1-2-3-4-5-6$, with $m=5$ edges. For a partition, use
+\[
+Q=\sum_C\left[\frac{e_C}{m}-\left(\frac{\operatorname{vol}(C)}{2m}\right)^2\right],
+\]
+where $e_C$ counts internal edges once. At a checkpoint the communities are $12\mid3\mid4\mid56$, with modularity $7/50$. Their $(e_C,\operatorname{vol}(C))$ values are $(1,3),(0,2),(0,2),(1,3)$.
+\qpart{a} Consider moving vertex 3 into the community containing 4. Calculate the modularity of $12\mid34\mid56$ and the gain. The alternative move of 3 into 12 has gain $2/25$. Which of these two improving moves does Louvain prefer?
+\qpart{b} Independently aggregate partition $12\mid34\mid56$ into supernodes $X,Y,Z$. The weighted adjacency matrix is
+\[
+B=\begin{pmatrix}2&1&0\\1&2&1\\0&1&2\end{pmatrix},
+\]
+where the diagonal stores twice the internal edge weight. Find the weighted degrees and total edge weight. Why must the diagonal entries be retained?
+\qpart{c} At the aggregated partition, merging either adjacent pair of supernodes has gain $-1/25$. Yet partition $123\mid456$ has modularity $3/10$. What does this show about Louvain's result?
+
 \answer{\maptag{answer:Pr20}}
 \begin{guidesteps}[beginpenalty=10000]
 \item \guidepart{(a)}Sau khi ghép 3 vào cụm của 4, các cặp $(e,\mathrm{vol})$ là $(1,3),(1,4),(1,3)$. Thế vào $Q$: $2(1/5-9/100)+(1/5-16/100)=13/50$.
@@ -1282,20 +1685,24 @@ Trong \qlink{Pr20}{Pr20}, chuyển nút $3$ sang cụm $\{4\}$ với $m=5$, $a=b
 \item \guidepart{(c)}Cả hai phép gộp kế tiếp đều giảm $Q$, nên thuật toán dừng. Nhưng $123|456$ có $Q=3/10>13/50$: điểm dừng không tối ưu toàn cục.
 \end{guidesteps}
 
+% 2526Sem1-DSA5101.pdf, PDF page(s) 12, 13, 14.
 \ask{P25-Q4}{P25-Q4}{}
-\original{2526Sem1-DSA5101.pdf}{12}{53 676.890 542 750.890}
-\original{2526Sem1-DSA5101.pdf}{12}{53 467.890 542 642.890}
-\original{2526Sem1-DSA5101.pdf}{12}{53 319.890 542 442.890}
-\original{2526Sem1-DSA5101.pdf}{12}{53 232.890 542 251.890}
-\original{2526Sem1-DSA5101.pdf}{12}{53 52.890 542 161.890}
-\original{2526Sem1-DSA5101.pdf}{13}{53 678.890 542 743.890}
-\original{2526Sem1-DSA5101.pdf}{13}{53 577.890 542 594.890}
-\original{2526Sem1-DSA5101.pdf}{13}{53 419.890 542 495.890}
-\original{2526Sem1-DSA5101.pdf}{13}{53 275.890 542 292.890}
-\original{2526Sem1-DSA5101.pdf}{13}{53 131.890 542 149.890}
-\original{2526Sem1-DSA5101.pdf}{14}{53 583.890 542 741.890}
-\original{2526Sem1-DSA5101.pdf}{14}{53 460.890 542 481.890}
-\original{2526Sem1-DSA5101.pdf}{14}{53 315.890 542 348.890}
+We consider the following two graphs that are composed of smaller sub-graphs as building blocks. While the first graph (left) is based on a number of circle graphs, the second graph (right) connects multiple clique graphs.
+\qgraphThree
+Let $G$ denote the entire connected graph for each of the cases, and $H_i$, $i=1,\ldots,K$, denote the component circle or clique graphs. Assume there are $K$ component graphs ($K>2$), and each component graph contains $N$ nodes ($N>2$). Let $S=\{H_1,H_2,\ldots,H_K\}$ be the partitioning of $G$ that considers each component graph as a separate community. Assume that the edge weights are all 1.
+\qpart{a} For both circle-based and clique-based graph, express the sum of degrees $2m$, as a function of $K$ and $N$.
+\qpart{b} Recall that the modularity $Q(G,S)$ can be written in terms of $2m$, $\Sigma_{\rm in}^{(C)}$ and $\Sigma_{\rm tot}^{(C)}$, where
+\[
+\begin{aligned}
+\Sigma_{\rm in}^{(C)} &= 2\times\text{sum of edge weights within community } C,\\
+\Sigma_{\rm tot}^{(C)} &= \text{sum of degrees of the nodes in } C.
+\end{aligned}
+\]
+\qpart{i} For both circle-based and clique-based graph, express $\Sigma_{\rm in}^{(C)}$ and $\Sigma_{\rm tot}^{(C)}$ as a function of $N$, where $C=H_i$.
+\qpart{ii} Show that $Q(G,S)=1-\frac{2}{2N+2}-\frac{1}{K}$ for the circle-based graph, and $Q(G,S)=1-\frac{2}{N^2-N+2}-\frac{1}{K}$ for the clique-based graph. Additionally, discuss whether the results make sense using one or two sentences.
+\qpart{c} Consider the change in modularity when we move the nodes $A$ and $B$ (see figure at the beginning of the question) to their adjacent communities. In lectures, we showed that the modularity gain $\Delta Q(i\to C)$ can be expressed in terms of $\Sigma_{\rm in}^{(C)}$, $\Sigma_{\rm tot}^{(C)}$, $k_i$ and $k_{i,\rm in}$, where $k_i$ is the degree of node $i$ and $k_{i,\rm in}$ is the sum of edge weights between $i$ and $C$. For both $A$ and $B$, express $k_i$ and $k_{i,\rm in}$ as a function of $N$. Consider $\Delta Q(A\to H_1)$ for the circle-based graph and $\Delta Q(B\to H_1)$ for the clique-based graph.
+\qpart{d} Name one graph clustering scenario where one should choose the Louvain method rather than the approximate PPR algorithm.
+
 \answer{\maptag{answer:P25-Q4}}
 \begin{guidesteps}[beginpenalty=10000]
 \item \guidepart{(a), (b)(i)}Đếm $e$ cạnh nội bộ mỗi cụm: $e=N$ cho chu trình, $e=N(N-1)/2$ cho clique. Có $K$ cầu nên $m=K(e+1)$.
@@ -1362,8 +1769,19 @@ Khi thêm $u$ vào $S$, có $h$ cạnh nối $u$ với $S$ cũ. Những cạnh n
 Theo thứ tự $A,C,B$, tập $\{A,C\}$ cắt 3 cạnh và có thể tích $2+3=5$, nên $\phi=3/5$. Thêm $B$ thì $AB$ và $BC$ thành cạnh nội bộ. Chỉ còn cắt $CD$; hai nửa đều có thể tích 7 nên $\phi=1/7$.
 \end{example}
 
+% DSA5101 Exam Practice Questions.pdf, PDF page(s) 20.
 \ask{Pr19}{Pr19}{}
-\original{DSA5101 Exam Practice Questions.pdf}{20}{53 544.890 542 756.890}
+Six sensors form a graph with edges $AB,AC,BC,CD,DE,DF,EF$. Their degrees in order $A,B,C,D,E,F$ are $(2,2,3,3,2,2)$. Set $\beta=1/2$, $\epsilon=1/20$, estimate $r=0$, and residual $q_A=1$, all other residuals zero. A vertex is eligible for a push when $q_u/d_u\ge\epsilon$. For a push at $u$, save $x=q_u$ and use
+\[
+r_u\gets r_u+(1-\beta)x,\quad
+q_u\gets\frac{\beta x}{2},\quad
+q_v\gets q_v+\frac{\beta x}{2d_u}
+\]
+for $v$ adjacent to $u$.
+\qpart{a} Perform only one push, at $A$. Give the nonzero entries of $r,q$. Which vertices are now eligible, and which would be chosen next by the largest-$q_u/d_u$ rule?
+\qpart{b} Independently, a completed run supplies sweep order $A,C,B$. For prefixes $AC$ and $ACB$, calculate cut size, volume (sum of degrees), and conductance $\phi(S)=\operatorname{cut}(S)/\min(\operatorname{vol}(S),14-\operatorname{vol}(S))$. The singleton prefix $A$ has conductance 1. Which of the three prefixes wins?
+\qpart{c} After a push, must $r$ alone sum to 1? Identify the mass invariant and explain why a local push need not scan the whole graph.
+
 \answer{\maptag{answer:Pr19}}
 \begin{guidesteps}[beginpenalty=10000]
 \item \guidepart{(a)}Lấy $x=q_A=1$. Chuyển $(1-\beta)x=1/2$ vào $r_A$; giữ $\beta x/2=1/4$ ở $q_A$ và gửi $1/8$ cho mỗi láng giềng $B,C$.
@@ -1444,8 +1862,13 @@ $h_1(x)=x+1$ & $0010$ & $0110$ & $1011$ & $(1,1,0)$ & 2 \\
 Chỉ viết 4 bit thấp vì đủ để thấy bit 1 cuối trong các giá trị này. Cả hai hash đều có $R=1$: ước lượng thô là 2 dù thực tế có 3 ID phân biệt.
 \end{example}
 
+% DSA5101 Exam Practice Questions.pdf, PDF page(s) 25.
 \ask{Pr24}{Pr24}{}
-\original{DSA5101 Exam Practice Questions.pdf}{25}{53 599.890 542 784.890}
+A stream is $A,B,A,C,D,B,E,A$. For each hash $h_j$, maintain $R_j$, the maximum number of trailing zero bits in a hash value seen so far. Use raw estimate $Z_j=2^{R_j}$; no bias correction is required in this exercise.
+\qpart{a} Under one hash, the values for $A,B,C,D,E$ are respectively 12, 10, 7, 6, 3. Find their trailing-zero counts, the final register $R_1$, and its raw estimate. Would three additional occurrences of $A$ change the result?
+\qpart{b} Independently, six hashes give final registers $(2,3,2,2,1,6)$. Form the six raw estimates. Average consecutive pairs $(Z_1,Z_2),(Z_3,Z_4),(Z_5,Z_6)$, then take the median of these three averages. Why is this less sensitive to one unusually large estimate than averaging all six?
+\qpart{c} Two monitors using the same six hash functions produce registers $(2,3,2,1,1,1)$ and $(1,2,2,2,1,6)$. Merge their summaries for the union of their observed IDs. Why is overlap between the two monitors not counted twice?
+
 \answer{\maptag{answer:Pr24}}
 \begin{guidesteps}[beginpenalty=10000]
 \item \guidepart{(a)}Đếm bit 0 cuối của $12,10,7,6,3$: $(2,1,0,1,0)$. Lấy max $R_1=2$, nên $Z_1=4$; thực tế có 5 ID.
@@ -1459,9 +1882,12 @@ Chỉ viết 4 bit thấp vì đủ để thấy bit 1 cuối trong các giá tr
 \item \guidepart{(c)}Lấy max từng tọa độ của hai monitor, được $(2,3,2,2,1,6)$. Cùng ID cho cùng hash nên lấy max không đếm trùng.
 \end{guidesteps}
 
+% 2425Sem1-DSA5101.pdf, PDF page(s) 19.
 \ask[A2-Q4]{P24-Q7}{P24-Q7(a,b) / A2-Q4(a,b)}{}
-\original{2425Sem1-DSA5101.pdf}{19}{53 668.890 542 747.890}
-\original{2425Sem1-DSA5101.pdf}{19}{53 567.890 542 649.890}
+A stream of integers consists of one 1, two 2's, three 3's, and so on, up to ten 10's.
+\qpart{a} What is the zeroth moment of this stream?
+\qpart{b} Let's apply the Flajolet-Martin algorithm with a single hash function being the identity function. That is, $h(i)$ is simply $i$ written as a 32-bit binary number (e.g., $h(1)=00\ldots001$, $h(2)=00\ldots010$). What estimate does $h$ give for the number of distinct elements in this stream?
+
 \answer{\maptag{answer:A2-Q4}\maptag{answer:A2-Q4ab}\maptag{answer:P24-Q7}\maptag{answer:P24-Q7ab}}
 \begin{guidesteps}[beginpenalty=10000]
 \item \guidepart{(a)}Liệt kê các giá trị khác nhau $1,\ldots,10$; tần suất khác nhau không ảnh hưởng $F_0$. Kết quả $F_0=10$.
@@ -1471,11 +1897,17 @@ Chỉ viết 4 bit thấp vì đủ để thấy bit 1 cuối trong các giá tr
 \item Giá trị lớn nhất đến từ $8=1000_2$, nên $R=3$ và ước lượng $2^3=8$.
 \end{guidesteps}
 
+% 2526Sem1-DSA5101.pdf, PDF page(s) 5.
 \ask{P25-Q3}{P25-Q3}{}
-\original{2526Sem1-DSA5101.pdf}{5}{53 640.890 542 749.890}
-\original{2526Sem1-DSA5101.pdf}{5}{53 523.890 542 543.890}
-\original{2526Sem1-DSA5101.pdf}{5}{53 371.890 542 427.890}
-\original{2526Sem1-DSA5101.pdf}{5}{53 180.890 542 244.890}
+Consider a stream which consists of the elements 1, 5 and 10 only, repeated many times in a random order. When applying the Flajolet-Martin Algorithm, we choose hash functions from the family
+\[
+h_i(x)=x+i\bmod 2^{16}.
+\]
+\qpart{a} What is the estimate of the number of distinct elements if we use the hash function $h_0$?
+\qpart{b} What is the estimate of the number of distinct elements if we use the hash function $h_1$?
+\qpart{c} Give an example of a hash function $h_i$ that gives the minimum possible estimate of the number of distinct elements. Explain why it is not possible to attain a lower estimate.
+\qpart{d} In general, the estimate given by the Flajolet-Martin Algorithm varies a lot depending on the choice of hash function. Therefore, we typically choose multiple different hash functions and aggregate the results from those episodes. Why is it not a good idea to take the mean of the output from each episode? Instead of simply taking the mean, what should be done in practice?
+
 \answer{\maptag{answer:P25-Q3}}
 \begin{guidesteps}[beginpenalty=10000]
 \item \guidepart{(a)}Tính $h_0$ cho ba đầu vào, được $(1,5,10)$. Số bit 0 cuối là $(0,0,1)$; lấy max 1 rồi trả $2^1=2$.
@@ -1573,8 +2005,15 @@ Vị trí bắt đầu & ID và vị trí lặp trong hậu tố & $c$ & $9(2c-1
 Lấy trung bình hai ước lượng được 45. Moment thực là $4^2+2^2+2^2+1^2=25$: một mẫu cụ thể có thể cho kết quả khác giá trị thực.
 \end{example}
 
+% DSA5101 Exam Practice Questions.pdf, PDF page(s) 26.
 \ask{Pr25}{Pr25}{}
-\original{DSA5101 Exam Practice Questions.pdf}{26}{53 559.890 542 784.890}
+A camera's first nine detections are $R,F,R,D,F,R,O,D,R$. Their frequencies are $(m_R,m_F,m_D,m_O)=(4,2,2,1)$, so the exact second moment is $F_2=\sum_x m_x^2=25$.
+
+Start positions are maintained by a two-slot reservoir, so each stream position has the same inclusion probability. An AMS sample $(s,a_s,c)$ stores a start position, its type, and that type's count from position $s$ through the current position $n$, inclusive. Its estimate is $Y_2=n(2c-1)$. Average samples without combining those of the same type.
+\qpart{a} At $n=9$, the two stored samples are $(1,R,4)$ and $(2,F,2)$. Calculate their estimates and their average. Must this realised average equal the exact second moment?
+\qpart{b} Independently start from the same supplied samples. Detection 10 is $R$. First increment matching stored counters, then draw $J_{10}$ uniformly from $\{1,\ldots,10\}$. The realised draw is 2, so replace slot 2 by $(10,R,1)$. Give the final slots and the new average $Y_2$. Why must the two resulting $R$ samples keep separate counters?
+\qpart{c} For the third moment, use $Y_3=n[c^3-(c-1)^3]$. For a separate sample with $n=10,c=2$, calculate $Y_3$. Why must AMS count from the sampled occurrence rather than use the sampled type's whole-stream frequency?
+
 \answer{\maptag{answer:Pr25}}
 \begin{guidesteps}[beginpenalty=10000]
 \item \guidepart{(a)}Thế hai suffix count 4 và 2 vào $Y_2=9(2c-1)$: lần lượt được 63 và 27.
@@ -1589,10 +2028,13 @@ Lấy trung bình hai ước lượng được 45. Moment thực là $4^2+2^2+2^
 \item Dùng suffix count để các lần xuất hiện của một item lần lượt cho $m,m-1,\ldots,1$. Dùng tần suất toàn luồng sẽ lặp cùng $m$ và mất tổng triệt tiêu.
 \end{guidesteps}
 
+% 2425Sem1-DSA5101.pdf, PDF page(s) 19.
 \ask[A2-Q4cd]{P24-Q7cd}{P24-Q7(c,d) / A2-Q4(c,d)}{Dữ kiện chung: \hyperref[question:P24-Q7]{[P24-Q7]}}
-\original{2425Sem1-DSA5101.pdf}{19}{53 433.890 542 489.890}
-\original{2425Sem1-DSA5101.pdf}{19}{53 267.890 542 354.890}
-\original{2425Sem1-DSA5101.pdf}{19}{53 127.890 542 194.890}
+\qpart{c} What is the 2nd moment (surprise number) of this stream?
+\qpart{d} Suppose that we use the AMS method to estimate the 2nd moment.
+\qpart{i} If we only have one variable and it appears in the first position of the stream, what is our estimate of the 2nd moment?
+\qpart{ii} If we have one variable for each position of the stream, and we average the estimates given by each of these variables, what is the resulting estimate of the 2nd moment?
+
 \answer{\maptag{answer:A2-Q4cd}\maptag{answer:P24-Q7cd}}
 \begin{guidesteps}[beginpenalty=10000]
 \item \guidepart{(c)}Bình phương tần suất của từng giá trị rồi cộng: $F_2=1^2+\cdots+10^2=385$.
@@ -1632,8 +2074,15 @@ $t$ & Thao tác & Bucket $(\text{cỡ},\text{timestamp})$, cũ trước \\
 Hỏi 6 vị trí cuối ($10$ đến $15$): tính nửa bucket $(2,10)$, cộng trọn hai bucket mới hơn, được $2/2+2+1=4$.
 \end{example}
 
+% DSA5101 Exam Practice Questions.pdf, PDF page(s) 23.
 \ask{Pr22}{Pr22}{}
-\original{DSA5101 Exam Practice Questions.pdf}{23}{53 568.890 542 784.890}
+Use DGIM with window length 10 and at most two buckets of any size. A bucket $(b,t)$ has size $b$ and timestamp $t$ of its newest 1. On every arrival, expire buckets with timestamp at most $n-10$; for a new 1 create a size-1 bucket. If three buckets have the same size, merge the oldest two, using the newer of their timestamps. Repeat if needed.
+
+After position 13 the buckets, oldest first, are $(4,4),(2,10),(1,11),(1,13)$. The next bits are $a_{14}=0,a_{15}=1$.
+\qpart{a} Give the buckets after each of these two arrivals. Identify the expiration and the merge.
+\qpart{b} Independently use final buckets $(2,10),(2,13),(1,15)$. Estimate the number of 1s in the last six positions, counting half the oldest selected bucket and all newer selected buckets. The actual last six bits are $1,1,0,1,0,1$; compare the result with the exact count. Does equality here mean DGIM is always exact?
+\qpart{c} For nonnegative three-bit integers, maintain one DGIM summary per bit position. Suppose the estimated recent bit counts are $\hat c_0=4,\hat c_1=\hat c_2=3/2$. Estimate the recent integer sum. The actual integers are $1,5,2,3,4,1$, with sum 16. Explain how the bit-count estimates are combined.
+
 \answer{\maptag{answer:Pr22}}
 \begin{guidesteps}[beginpenalty=10000]
 \item \guidepart{(a)}Ở $n=14$, loại $(4,4)$ vì $4\le14-10$; bit mới là 0. Còn $(2,10),(1,11),(1,13)$.
@@ -1648,10 +2097,13 @@ Hỏi 6 vị trí cuối ($10$ đến $15$): tính nửa bucket $(2,10)$, cộng
 \item So với tổng đúng 16: sai số đến từ các ước lượng từng vị trí bit.
 \end{guidesteps}
 
+% 2425Sem1-DSA5101.pdf, PDF page(s) 18.
 \ask[A2-Q3]{P24-Q6}{P24-Q6 / A2-Q3}{}
-\original{2425Sem1-DSA5101.pdf}{18}{53 692.890 542 747.890}
-\original{2425Sem1-DSA5101.pdf}{18}{53 428.890 542 544.890}
-\original{2425Sem1-DSA5101.pdf}{18}{53 198.890 542 268.890}
+Suppose that we are executing the DGIM algorithm to approximately count the number of bits in a stream. Let the window size be 500.
+\qpart{a} What is the largest possible bucket size in the representation of this stream?
+\qpart{b} Assuming that the largest possible bucket size is achieved, using your answer in part (a), give an upper bound of the error in our approximation (in terms of number of bits). Briefly justify your answer in one or two sentences.
+\qpart{c} Suppose that each of the last 500 bits is 1. What is the smallest possible size of the largest bucket in the representation of the current window?
+
 \answer{\maptag{answer:A2-Q3}\maptag{answer:P24-Q6}}
 \begin{guidesteps}[beginpenalty=10000]
 \item \guidepart{(a)}Thử tạo bucket 512: cần ba bucket 256. Chỉ hai bucket mới đã có 512 bit 1 sau timestamp của bucket cũ nhất, nên bucket cũ đã hết hạn trong cửa sổ 500.
@@ -1703,8 +2155,20 @@ Với một hash và $n$ khóa, yêu cầu $1-e^{-n/m}\le\alpha$ tương đươn
 Sau khi chèn $1,4,7,10$, truy vấn $17$ đọc $(1,8)$ và báo nhầm có mặt. Truy vấn $3$ đọc $(3,14)$ và kết luận chắc chắn vắng.
 \end{example}
 
+% DSA5101 Exam Practice Questions.pdf, PDF page(s) 24.
 \ask{Pr23}{Pr23}{}
-\original{DSA5101 Exam Practice Questions.pdf}{24}{53 552.890 542 784.890}
+A 16-bit Bloom filter starts at zero and inserts IDs 1, 4, 7, 10. Its two hashes are $h_1(x)=x\bmod16$ and $h_2(x)=(3x+5)\bmod16$. The insertion positions are supplied:
+\begin{examtable}{@{}lcccc@{}}
+\toprule
+$x$ & 1 & 4 & 7 & 10\\
+\midrule
+$(h_1(x),h_2(x))$ & $(1,8)$ & $(4,1)$ & $(7,10)$ & $(10,3)$\\
+\bottomrule
+\end{examtable}
+\qpart{a} Give the set of bit positions that are 1 after insertion. How is a position affected when more than one insertion uses it?
+\qpart{b} Independently use set positions $\{1,3,4,7,8,10\}$. Query ID 17, whose hash positions are $(1,8)$, and ID 3, whose positions are $(3,14)$. Give each filter response and classify it using the inserted set. Assume no deletions or bit corruption.
+\qpart{c} For a separate filter with 5000 bits and 2500 inserted IDs, use the approximate false-positive rates $f(1)=0.3935$ and $f(2)=0.3996$. The continuous optimum is $k^*=(5000/2500)\ln2\approx1.386$. Choose between one and two hashes. Estimate false positives among 200 nonmember queries. Why should $k^*$ not simply be rounded up?
+
 \answer{\maptag{answer:Pr23}}
 \begin{guidesteps}[beginpenalty=10000]
 \item \guidepart{(a)}Lấy hợp các vị trí hash đã cho: $\{1,3,4,7,8,10\}$. Đặt lại một bit đang là 1 không đổi trạng thái.
@@ -1718,10 +2182,13 @@ Sau khi chèn $1,4,7,10$, truy vấn $17$ đọc $(1,8)$ và báo nhầm có m�
 \item Nhân xác suất với 200 truy vấn vắng: số dương giả kỳ vọng $78.7$, khoảng 79.
 \end{guidesteps}
 
+% 2526Sem1-DSA5101.pdf, PDF page(s) 17.
 \ask{P25-Q6}{P25-Q6}{}
-\original{2526Sem1-DSA5101.pdf}{17}{53 604.890 542 750.890}
-\original{2526Sem1-DSA5101.pdf}{17}{53 450.890 542 486.890}
-\original{2526Sem1-DSA5101.pdf}{17}{53 218.890 542 258.890}
+Consider using a Bloom Filter to filter spam emails. We are given a list of 5000 spam email addresses, each of which has a unique 32-bit index. We define an email to be spam if it is sent from one of these 5000 spam email addresses.
+\qpart{a} Consider using a Bloom Filter bit array with $n$ bits, constructed with a single hash function $h:\{0,1,\ldots,2^{32}-1\}\to\{0,1,\ldots,n-1\}$. What is the smallest value of $n$ that can achieve a false positive rate of $0.1$? (Note: you may assume that $n$ is large enough and treat the approximation $(1-1/n)^n\approx1/e$ as an equality.)
+\qpart{b} We can improve the false positive rate by using multiple hash functions. Describe in detail how this is done while still maintaining a single bit array with $n$ bits.
+\qpart{c} Keeping the same value of $n$ from part (a), how many hash functions should we use to minimize the false positive rate? What is the minimal false positive rate?
+
 \answer{\maptag{answer:P25-Q6}}
 \begin{guidesteps}[beginpenalty=10000]
 \item \guidepart{(a)}Với một hash, áp dụng xấp xỉ $p_{\rm FP}\approx1-e^{-5000/m}$. Đặt giá trị này $\le0.1$ rồi giải $m\ge-5000/\ln(0.9)\approx47456.108$.
@@ -1745,8 +2212,22 @@ Sau khi chèn $1,4,7,10$, truy vấn $17$ đọc $(1,8)$ và báo nhầm có m�
 
 \key{Phân biệt} Key sampling băm theo ID người dùng nên giữ cả lịch sử của user được chọn; số bản ghi lưu có thể tăng theo luồng.
 
+% DSA5101 Exam Practice Questions.pdf, PDF page(s) 22.
 \ask{Pr21}{Pr21}{}
-\original{DSA5101 Exam Practice Questions.pdf}{22}{53 491.890 542 756.890}
+Eight log records have users and query strings as follows:
+\begin{examtable}{@{}lcccccccc@{}}
+\toprule
+Position & 1 & 2 & 3 & 4 & 5 & 6 & 7 & 8\\
+\midrule
+User & $A$ & $B$ & $A$ & $C$ & $A$ & $B$ & $D$ & $A$\\
+Query & $x$ & $y$ & $x$ & $z$ & $w$ & $y$ & $x$ & $x$\\
+\bottomrule
+\end{examtable}
+A size-3 reservoir stores record positions. At arrival $n>3$, draw $J_n$ uniformly from $1,\ldots,n$. If $J_n\le3$, replace that slot by position $n$; otherwise keep the reservoir.
+\qpart{a} After arrival 6 the slots contain $(6,4,3)$. Process only arrivals 7 and 8, with realised draws $J_7=3$ and $J_8=2$. Give the slots after each arrival.
+\qpart{b} A fixed record from the first seven positions is in the reservoir after arrival 7 with probability $3/7$. Find its probability of surviving arrival 8 conditional on being stored, and hence its inclusion probability after arrival 8. Compare with the new record's inclusion probability.
+\qpart{c} Instead hash by user, retaining every record whose user's hash is 0 or 1. The hashes are $h(A)=1,h(B)=3,h(C)=0,h(D)=1$. Which records of user $A$ are retained, and what are their query counts? Compare with the supplied realised reservoir $(6,8,7)$. Why is user-based sampling useful here, and does it give a fixed memory bound?
+
 \answer{\maptag{answer:Pr21}}
 \begin{guidesteps}[beginpenalty=10000]
 \item \guidepart{(a)}Từ $(6,4,3)$, $J_7=3$ thay ô 3 bằng 7: $(6,4,7)$. $J_8=2$ thay ô 2 bằng 8: $(6,8,7)$.
@@ -1768,8 +2249,15 @@ Sau khi chèn $1,4,7,10$, truy vấn $17$ đọc $(1,8)$ và báo nhầm có m�
 }
 \key{Bẫy} Pruning mất phần lịch sử đã xóa nên có thể bỏ lỡ cảnh báo. Tổng trọng số không vượt 2; nếu giữ điểm $\ge\tau>0$, số mục không vượt $2/\tau$.
 
+% DSA5101 Exam Practice Questions.pdf, PDF page(s) 27.
 \ask{Pr26}{Pr26}{}
-\original{DSA5101 Exam Practice Questions.pdf}{27}{53 580.890 542 784.890}
+One podcast play arrives per time step. The exact score is $S_x^{(t)}=\sum_{1\le i\le t:\,a_i=x}2^{-(t-i)}$. A pruned implementation instead maintains a dictionary. On each arrival: halve all stored scores; add 1 to the arriving podcast's score (create it at 1 if absent); delete scores strictly below $\tau=1/2$. Deleted scores are forgotten.
+
+The first seven plays are $A,B,A,C,B,A,D$. The resulting pruned dictionary is supplied as $\{A:1/2,D:1\}$.
+\qpart{a} Process only the next two plays, $E$ then $A$. Give the dictionary and the deleted podcast after each arrival.
+\qpart{b} Independently, at time 9 the pruned score for $A$ is 1 and its exact unpruned score is $293/256\approx1.145$. A trend alert requires score at least $9/8=1.125$. Compare the two alert decisions and explain the discrepancy without recomputing the full history.
+\qpart{c} The exact total score is at most the infinite geometric sum 2. Use this to give an upper bound on the number of stored dictionary entries when each retained score is at least $1/2$. How does exponential decay differ from a fixed-length sliding window?
+
 \answer{\maptag{answer:Pr26}}
 \begin{guidesteps}[beginpenalty=10000]
 \item \guidepart{(a)}Khi $E$ đến, chia đôi thành $\{A:1/4,D:1/2\}$, thêm $E:1$ rồi xóa $A$. Còn $\{D:1/2,E:1\}$.
@@ -1793,8 +2281,20 @@ Sau khi chèn $1,4,7,10$, truy vấn $17$ đọc $(1,8)$ và báo nhầm có m�
 }
 \key{Bảo đảm $1/2$} Matching greedy là maximal: không còn cạnh nối hai đầu mút chưa ghép. Mỗi cạnh OPT chạm ít nhất một cạnh greedy, và mỗi cạnh greedy chỉ có thể chạm tối đa hai cạnh OPT. Vì vậy $\mathrm{OPT}\le2\,\mathrm{ALG}$. Tỷ lệ của một ví dụ không phải cận cho mọi đầu vào.
 
+% DSA5101 Exam Practice Questions.pdf, PDF page(s) 28.
 \ask{Pr27}{Pr27}{}
-\original{DSA5101 Exam Practice Questions.pdf}{28}{53 530.890 542 756.890}
+Servers $S_1,S_2,S_3,S_4$ can each accept one job. Jobs arrive in order $J_1,J_2,J_3,J_4$, with compatible servers
+\begin{examtable}{@{}ll@{}}
+$J_1$ & $S_1,S_2$\\
+$J_2$ & $S_2,S_3$\\
+$J_3$ & $S_1$\\
+$J_4$ & $S_3,S_4$
+\end{examtable}
+Greedy assigns each arriving job to its lowest-index free compatible server, rejecting it if none exists. Assignments are irrevocable.
+\qpart{a} Give Greedy's four decisions and its matching size.
+\qpart{b} Independently, exhibit an offline matching of size 4 and justify its optimality. Calculate the achieved ratio of Greedy's supplied size 3 to this optimum.
+\qpart{c} When $J_3$ arrives, why can this online algorithm not move $J_1$ to another server to make room? Does the ratio $3/4$ on this instance prove a $3/4$ worst-case guarantee?
+
 \answer{\maptag{answer:Pr27}}
 \begin{guidesteps}[beginpenalty=10000]
 \item \guidepart{(a)}Chọn server khả dụng có chỉ số nhỏ nhất: $J_1\to S_1$, $J_2\to S_2$. $J_3$ bị loại vì chỉ dùng được $S_1$.
@@ -1834,8 +2334,23 @@ $z$ & $B$ & $(0,0)$ & Chỉ $B$ đủ điều kiện \\
 Nhánh trên phục vụ đủ 4 query. Nếu $x$ đầu tiên sang $B$, sau $y$ còn $(1,1)$: chọn $B$ khi hòa ở $x$ thứ hai sẽ hết tiền cho $z$. Có nhánh chỉ phục vụ 3, nên đáp án là No.
 \end{example}
 
+% DSA5101 Exam Practice Questions.pdf, PDF page(s) 29.
 \ask{Pr28}{Pr28}{}
-\original{DSA5101 Exam Practice Questions.pdf}{29}{53 491.890 542 784.890}
+Four advertisers $A,B,C,D$ each start with budget 2. Each placement earns 1 and spends 1 of the advertiser's budget. At most one ad is placed per query; decisions are irrevocable. Bidders are
+\begin{examtable}{@{}ll@{}}
+\toprule
+Query type & Bidders\\
+\midrule
+$u$ & $A,B,C$\\
+$v$ & $B,D$\\
+$w$ & $A$\\
+\bottomrule
+\end{examtable}
+BALANCE chooses the bidder with the largest positive remaining budget, breaking ties alphabetically. It skips only when no bidder has budget. Queries arrive as $u,u,u,v,v,v,w,w$.
+\qpart{a} After the first three $u$ queries, the supplied remaining budgets are $(1,1,1,2)$ in order $A,B,C,D$, and revenue is 3. Process only the next two queries, both $v$. Give each choice, remaining budgets, and cumulative revenue.
+\qpart{b} Independently, immediately before the final $w,w$, budgets are $(1,0,1,0)$ and revenue is 6. Process these two queries and give the final revenue. Why can any remaining budget not be spent on the last query?
+\qpart{c} An offline allocation for the eight queries is $B,C,C,B,D,D,A,A$. Check its feasibility and prove that its revenue is optimal. Using BALANCE revenue 7, give the instance ratio. What prevents BALANCE from revising its earlier $u$ placements to imitate this allocation at the end?
+
 \answer{\maptag{answer:Pr28}}
 \begin{guidesteps}[beginpenalty=10000]
 \item \guidepart{(a)}So ngân sách của $B,D$ ở lượt $v$ đầu: $D$ còn 2, nên chọn $D$. Còn $(1,1,1,1)$, doanh thu 4.
@@ -1849,11 +2364,16 @@ Nhánh trên phục vụ đủ 4 query. Nếu $x$ đầu tiên sang $B$, sau $y$
 \item Phục vụ đủ 8 query nên tối ưu, tỉ lệ $7/8$. BALANCE không thể đổi lại các lượt $u$ đã gán.
 \end{guidesteps}
 
+% 2425Sem1-DSA5101.pdf, PDF page(s) 20.
 \ask[A2-Q5]{P24-Q8}{P24-Q8 / A2-Q5}{}
-\original{2425Sem1-DSA5101.pdf}{20}{53 590.890 542 749.890}
-\original{2425Sem1-DSA5101.pdf}{20}{53 441.890 542 498.890}
-\original{2425Sem1-DSA5101.pdf}{20}{53 291.890 542 348.890}
-\original{2425Sem1-DSA5101.pdf}{20}{53 141.890 542 199.890}
+We apply the BALANCE algorithm with bids of 0 or 1 only, in a setting with two advertisers $A$ and $B$. Advertiser $A$ bids on query words $x$ and $y$, while $B$ bids on query words $x$ and $z$. Both advertisers $A$ and $B$ have a budget of \$2 each.
+
+For each of the sequences of queries below, identify which ones are guaranteed to be handled optimally by BALANCE. Give a Yes/No answer and justify your answer in one sentence.
+\qpart{a} Will BALANCE produce an optimal allocation for $xyzx$?
+\qpart{b} Will BALANCE produce an optimal allocation for $xyyy$?
+\qpart{c} Will BALANCE produce an optimal allocation for $xyxz$?
+\qpart{d} Will BALANCE produce an optimal allocation for $yzyy$?
+
 \answer{\maptag{answer:A2-Q5}\maptag{answer:P24-Q8}}
 \begin{guidesteps}[beginpenalty=10000]
 \item \guidepart{(a)}Theo dõi ngân sách sau lượt $x$ đầu. Nếu chọn $A$, lịch là $A,A,B,B$; nếu chọn $B$, lịch là $B,A,B,A$. Cả hai cho 4, nên Yes.
@@ -1892,8 +2412,14 @@ Nhánh trên phục vụ đủ 4 query. Nếu $x$ đầu tiên sang $B$, sau $y$
 \hard{Pr29}{Đổi bất đẳng thức Hoeffding thành số lần thử}
 Để sai số $\delta$ có xác suất vượt không quá $\alpha$, từ $2e^{-2n\delta^2}\le\alpha$ suy ra $n\ge\ln(2/\alpha)/(2\delta^2)$; làm tròn lên. Với $\delta=1/4,\alpha=1/8$, cần $8\ln16$ nên $n=23$. Khi chạy UCB, dùng số lần thử của từng arm trước vòng $t$, và sau reward $x$ chỉ cập nhật arm vừa chọn: $\hat\mu'=(n\hat\mu+x)/(n+1)$.
 
+% DSA5101 Exam Practice Questions.pdf, PDF page(s) 30.
 \ask{Pr29}{Pr29}{}
-\original{DSA5101 Exam Practice Questions.pdf}{30}{53 555.890 542 784.890}
+Three variants $A,B,C$ yield Bernoulli rewards. After one forced trial of each, counts are $(1,1,1)$ and empirical means $(1,0,1)$. At round $t$, UCB chooses the largest $\mathrm{UCB}_i(t)=\hat\mu_i+\sqrt{2\ln(t)/n_i}$, using observations before that round. Ties are broken alphabetically.
+\qpart{a} At round 4 the UCB values are supplied as $(2.6651,1.6651,2.6651)$. Select the variant. Its observed reward is 0; give the updated counts and empirical means.
+\qpart{b} Independently start round 5 with counts $(2,1,1)$ and means $(1/2,0,1)$. The exploration bonuses are approximately 1.27 for count 2 and 1.79 for count 1. Calculate the three indices and choose a variant. Its reward is 0; update the counts and means.
+\qpart{c} Independently, after five rounds the counts are $(2,1,2)$ and observed total reward is 2. True means are $(0.4,0.7,0.5)$. Calculate pseudo-regret $\sum_i n_i(\mu^*-\mu_i)$ and realised shortfall $5\mu^*-\sum_{t=1}^5 X_t$. Why can they differ?
+\qpart{d} Separately, for a fixed number $m$ of independent trials of one variant, Hoeffding's bound is $\Pr(|\hat\mu-\mu|\ge b)\le2e^{-2mb^2}$. Find a sufficient integer $m$ for $b=1/4$ and failure probability at most $1/8$. Use $8\ln16\approx22.18$.
+
 \answer{\maptag{answer:Pr29}}
 \begin{guidesteps}[beginpenalty=10000]
 \item \guidepart{(a)}Vòng 4, $A,C$ cùng lớn nhất ở $2.6651$. Chọn $A$ theo bảng chữ cái; reward 0 cho số lượt $(2,1,1)$ và trung bình $(1/2,0,1)$.
@@ -1910,8 +2436,10 @@ Nhánh trên phục vụ đủ 4 query. Nếu $x$ đầu tiên sang $B$, sau $y$
 \item Giải $m\ge8\ln16\approx22.18$; làm tròn lên: 23 lượt thử.
 \end{guidesteps}
 
+% 2526Sem1-DSA5101.pdf, PDF page(s) 18.
 \ask{P25-Q7d}{P25-Q7(d)}{Dữ kiện chung: \hyperref[question:P25-Q7]{[P25-Q7]}}
-\original{2526Sem1-DSA5101.pdf}{18}{53 480.890 542 511.890}
+\qpart{d} In the multi-armed bandits problem, the key advantage of the Epsilon-Greedy algorithm as compared to the Greedy algorithm is that it ensures sufficient exploration in the early iterations.
+
 \answer{\maptag{answer:P25-Q7d}}
 \begin{guidesteps}[beginpenalty=10000]
 \item \guidepart{(d)}So cơ chế chọn: pure greedy có thể bỏ qua các arm khác mãi; $\varepsilon$-greedy dành xác suất dương để thử chúng.
@@ -1963,8 +2491,22 @@ $\{A\}$ & -- & $1$ & $\mathbf{11/4}$ & $3/4$ \\
 Sau $A$, chủ đề sức khỏe còn phần chưa phủ $1/2$, văn hóa còn 1. Thêm $C$ đóng góp $3\cdot(1/2)\cdot(1/2)+2=11/4$, nên chọn $C$ và được tổng $33/4$. Với lazy greedy, tính lại $B$: $5\to1$, rồi $C$: $7/2\to11/4$; chọn $C$ vì $11/4$ vượt các cận còn lại.
 \end{example}
 
+% DSA5101 Exam Practice Questions.pdf, PDF page(s) 31.
 \ask{Pr30}{Pr30(a)}{}
-\original{DSA5101 Exam Practice Questions.pdf}{31}{53 539.890 542 756.890}
+A service selects two articles from $\{A,B,C,D\}$. Climate, health, and culture have weights $w=(4,3,2)$. Their coverage probabilities are
+\begin{examtable}{@{}lccc@{}}
+\toprule
+& Climate & Health & Culture\\
+\midrule
+$A$ & 1 & $1/2$ & 0\\
+$B$ & 1 & 0 & $1/2$\\
+$C$ & 0 & $1/2$ & 1\\
+$D$ & 0 & $1/2$ & 0\\
+\bottomrule
+\end{examtable}
+Use $F(S)=\sum_c w_c[1-\prod_{d\in S}(1-p_{dc})]$ and marginal gain $\Delta(d\mid S)=F(S\cup\{d\})-F(S)$. Greedy selects the largest marginal gain. Keep the original weights fixed in parts (a) and (b).
+\qpart{a} Singleton gains for $A,B,C,D$ are supplied as $11/2,5,7/2,3/2$. Choose the first article. After selecting $A$, calculate only $\Delta(C\mid\{A\})$; the other gains are $\Delta(B\mid\{A\})=1$ and $\Delta(D\mid\{A\})=3/4$. Choose the second article and give the final objective value.
+
 \answer{\maptag{answer:Pr30}}
 \begin{guidesteps}[beginpenalty=10000]
 \item \guidepart{(a)}So bốn gain singleton $11/2,5,7/2,3/2$: chọn $A$.
@@ -1983,8 +2525,10 @@ Sau $A$, chủ đề sức khỏe còn phần chưa phủ $1/2$, văn hóa còn 
 \hard{P25-Q7c}{Chứng nhận lựa chọn khi còn cận trên chưa làm mới}
 Ứng viên có gain vừa tính lại chỉ được chọn ngay nếu vượt mọi cận trên còn lại hoặc thắng theo quy tắc phá hòa khi bằng nhau. Nếu bằng cận của một ứng viên có ưu tiên cao hơn, phải kiểm tra ứng viên đó. Trong \qlink{Pr30b}{Pr30(b)}, sau khi chọn $A$, tính lại $B:5\to1$ rồi $C:3.5\to2.75$; $2.75$ vượt cả $1$ và $1.5$, nên không cần tính lại $D$. Bảo đảm $1-1/e$ vẫn áp dụng vì lazy chỉ thay cách tìm phần tử tốt nhất ở mỗi bước.
 
+% DSA5101 Exam Practice Questions.pdf, PDF page(s) 31.
 \ask{Pr30b}{Pr30(b)}{Dữ kiện chung: \hyperref[question:Pr30]{[Pr30]}}
-\original{DSA5101 Exam Practice Questions.pdf}{31}{53 481.890 542 539.890}
+\qpart{b} Independently, lazy greedy after choosing $A$ has cached keys $B:5,C:7/2,D:3/2$. Refreshing $B$ gives gain 1. Can $B$ be selected immediately? The next refresh gives $C:11/4$; can $C$ now be selected without refreshing $D$? Explain why old keys are valid upper bounds, and state greedy's approximation guarantee for a nonnegative monotone submodular objective with a cardinality limit.
+
 \answer{\maptag{answer:Pr30b}}
 \begin{guidesteps}[beginpenalty=10000]
 \item \guidepart{(b)}Lấy $B$ có key 5, tính lại còn 1. Chưa chọn vì key của $C$ vẫn là $7/2>1$.
@@ -1992,8 +2536,10 @@ Sau $A$, chủ đề sức khỏe còn phần chưa phủ $1/2$, văn hóa còn 
 \item Lazy greedy giữ lựa chọn greedy với cùng cách phá hòa, nên giữ cận $1-1/e$ cho bài toán này.
 \end{guidesteps}
 
+% 2526Sem1-DSA5101.pdf, PDF page(s) 18.
 \ask{P25-Q7c}{P25-Q7(c)}{Dữ kiện chung: \hyperref[question:P25-Q7]{[P25-Q7]}}
-\original{2526Sem1-DSA5101.pdf}{18}{53 538.890 542 568.890}
+\qpart{c} The Lazy Greedy algorithm for optimizing submodular functions can generate a different output when compared to the Greedy algorithm.
+
 \answer{\maptag{answer:P25-Q7c}}
 \begin{guidesteps}[beginpenalty=10000]
 \item \guidepart{(c)}Xem key cũ là cận trên nhờ diminishing returns. Tính lại ứng viên dẫn đầu và chỉ chọn khi gain thật không kém mọi cận còn lại.
@@ -2009,8 +2555,10 @@ Sau $A$, chủ đề sức khỏe còn phần chưa phủ $1/2$, văn hóa còn 
 }
 \key{Ví dụ} Trọng số $(4,3,2)$, phản hồi $-1$ và $\beta=4$ cho tài liệu có hai chủ đề đầu: trọng số mới $(1,3/4,2)$. Chuẩn hóa bằng cùng một hằng số dương không đổi thứ hạng trong lượt đó.
 
+% DSA5101 Exam Practice Questions.pdf, PDF page(s) 31.
 \ask{Pr30c}{Pr30(c)}{Dữ kiện chung: \hyperref[question:Pr30]{[Pr30]}}
-\original{DSA5101 Exam Practice Questions.pdf}{31}{53 420.890 542 481.890}
+\qpart{c} Independently, the reader sees only $A$ and gives feedback $r=-1$. Multiply each weight whose concept has $p_{Ac}>0$ by $4^r$, leaving the other weight unchanged. Give the updated unnormalised weights and compare the singleton scores of $B,C$ in a fresh selection round. Must the weights be normalised to determine which article wins?
+
 \answer{\maptag{answer:Pr30c}}
 \begin{guidesteps}[beginpenalty=10000]
 \item \guidepart{(c)}$A$ phủ climate, health với xác suất dương. Nhân hai trọng số đó với $4^{-1}$, giữ culture: $(1,3/4,2)$.

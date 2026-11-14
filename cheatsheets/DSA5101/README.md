@@ -1,28 +1,21 @@
 # DSA5101 exam cheatsheet
 
 - [PDF](cheatsheet.pdf) — two columns on A4 landscape, with a linked topic index.
-- [LaTeX source](cheatsheet.tex) — theory, worked examples and verbatim questions
-  grouped by topic.
+- [LaTeX source](cheatsheet.tex) — theory, worked examples, typeset questions
+  and step-by-step solutions grouped by topic.
 
-When the exam and an assignment ask the same question, one verbatim copy
-is shown under both source IDs. Both versions are kept if the task differs.
+The questions keep their original wording, data and requirements. The layout
+uses the same text and math fonts as the rest of the sheet and omits marks
+and blank answer spaces. When two sources ask the same question, one copy is
+shown under both source IDs. Both versions are kept if the task differs.
 
-The LaTeX source uses vector excerpts of the original questions. Keep these
-inputs in the local DSA5101 course folder:
-
-- `DSA5101 Exam Practice Questions.pdf`
-- `2425Sem1-DSA5101.pdf`
-- `2526Sem1-DSA5101.pdf`
-- `Assignments/DSA5101_Assignment_2.pdf`
-
-To rebuild, run from that course folder with a current TeX Live installation
-including XeLaTeX, latexmk, TikZ and STIX Two. Set
-`repo_dir` to the absolute path of your nus-atlas checkout:
+To rebuild, run from this directory with a current TeX Live installation
+including XeLaTeX, latexmk, TikZ and STIX Two. The source is self-contained.
 
 ```sh
 build_dir="$(mktemp -d)"
 latexmk -xelatex -interaction=nonstopmode -halt-on-error -file-line-error \
-  -outdir="$build_dir" "$repo_dir/cheatsheets/DSA5101/cheatsheet.tex"
+  -outdir="$build_dir" cheatsheet.tex
 ```
 
 Review the rendered output before copying `"$build_dir/cheatsheet.pdf"` to
