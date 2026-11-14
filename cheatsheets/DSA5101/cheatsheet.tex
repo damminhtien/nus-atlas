@@ -2303,9 +2303,36 @@ Khi $D\ll2^q$, ít có khả năng đạt ngưỡng $q$; khi $D\gg2^q$, khả n�
 \item Khi gộp hai monitor dùng cùng danh sách hash, lấy $\max$ theo từng thanh ghi trước khi đổi thành $2^R$.
 }
 \needspace{7\baselineskip}
-\key{Nhiều hash và ngoại lệ} Một $R$ lớn hiếm gặp làm $2^R$ rất lớn. Với hash lý tưởng vô hạn, $P(R\ge q)\approx D/2^q$ khi $q$ lớn, nên mỗi ngưỡng lớn đóng góp xấp xỉ hằng số vào $\mathbb E[2^R]$ và kỳ vọng phân kỳ; $2^R$ không phải ước lượng không chệch. Hash hữu hạn chặn kỳ vọng nhưng ngoại lệ vẫn có thể kéo lệch trung bình. Lấy median trong từng nhóm rồi trung bình các median để giảm ảnh hưởng này.
+\key{Ngoại lệ trong raw estimates} Một $R$ lớn hiếm gặp làm $2^R$ tăng theo lũy thừa. Chẳng hạn $R=(2,3,10)$ cho $Z=(4,8,1024)$, có mean khoảng $345.33$ dù hai giá trị đầu chỉ là 4 và 8. Với hash lý tưởng vô hạn, $P(R\ge q)\approx D/2^q$ khi $q$ lớn, nên mỗi ngưỡng lớn đóng góp xấp xỉ hằng số vào $\mathbb E[2^R]$ và kỳ vọng phân kỳ; raw estimate không phải ước lượng không chệch. Hash hữu hạn chặn kỳ vọng nhưng ngoại lệ vẫn có thể kéo lệch mean.
 
-\key{Cận dưới} Khi tìm hash cho ước lượng nhỏ nhất, chứng minh một cận dưới đúng với mọi hash trong họ rồi chỉ ra một hash đạt cận đó.
+\key{Hai cách tổng hợp} Cách thứ nhất lấy median trong từng nhóm rồi trung bình các median:
+\[
+\hat D_{\mathrm{mean\text{-}of\text{-}medians}}
+=\frac1g\sum_{\ell=1}^{g}\operatorname{median}\{Z_j:j\in G_\ell\}.
+\]
+Ví dụ ba nhóm $(4,8,1024)$, $(8,16,8)$, $(4,8,16)$ đều có median 8, nên kết quả là 8. Một outlier không nhất thiết làm đổi median nhóm.
+
+Cách thứ hai lấy mean trong từng nhóm rồi median các mean:
+\[
+\hat D_{\mathrm{median\text{-}of\text{-}means}}
+=\operatorname{median}_{\ell=1,\ldots,g}\left(\frac1{|G_\ell|}\sum_{j\in G_\ell}Z_j\right).
+\]
+Hai cách không tương đương: đổi thứ tự mean và median có thể đổi kết quả. Hãy chọn một quy tắc rõ ràng, áp dụng nhất quán; cả hai đều giảm ảnh hưởng của một ngoại lệ đơn lẻ nhưng không loại bỏ mọi sai số.
+
+\key{Gộp sketch phân tán} Mỗi máy giữ một vector $\mathbf R_A=(R_1^{(A)},\ldots,R_q^{(A)})$ từ cùng $q$ hash functions. Với hai tập $S_A,S_B$, gộp theo từng tọa độ:
+\[
+R_j^{(A\cup B)}=\max\bigl(R_j^{(A)},R_j^{(B)}\bigr),\qquad j=1,\ldots,q.
+\]
+Ví dụ $(2,1,4)$ và $(1,3,2)$ gộp thành $(2,3,4)$. Nếu $S_A=\{A,B,C\}$ và $S_B=\{B,C,D\}$ thì union có 4 phần tử, không phải tổng $3+3$, vì $B,C$ bị lặp.
+\begin{algpseudo}
+\textsc{Merge-FM}$(\mathbf R_A,\mathbf R_B)$:\\
+\quad với $j=1,\ldots,q$:\\
+\qquad $R_j\gets\max(R_j^{(A)},R_j^{(B)})$\\
+trả $\mathbf R=(R_1,\ldots,R_q)$
+\end{algpseudo}
+Chỉ gộp sketches dùng cùng hash functions, cùng thứ tự tọa độ và cùng cấu hình. Phép max giao hoán, kết hợp và lũy đẳng: thứ tự merge không quan trọng, có thể gộp theo cây, và bản ghi trùng không làm tăng register lần nữa. Merge tốn $O(q)$ thời gian, độc lập với số raw records. Thứ tự xử lý là $\mathbf R_A,\mathbf R_B\to\mathbf R_{A\cup B}\to 2^{R_j}\to$ tổng hợp; không cộng hoặc lấy max của các estimate cuối.
+
+\key{Cận dưới} Khi cần xác định estimate nhỏ nhất trong một họ hash, chứng minh cận dưới đúng với mọi hash trong họ rồi chỉ ra một hash đạt cận đó.
 
 \key{Ví dụ tính tay} Xét luồng $P,Q,P,R,S,Q,P$ với các hash sau:
 \begin{examtable}{@{}l c c c@{}}
