@@ -2756,15 +2756,41 @@ Reservoir: với bản ghi thứ $n$, nếu $n\le k$ thì lưu vào ô $n$\\
 Key sampling: giữ bản ghi $x$ nếu $h(\operatorname{ID}(x))<p$ với $h$ trong $[0,1)$
 \end{algpseudo}
 
+\key{Chọn mục tiêu} Key-based sampling giữ một tỷ lệ kỳ vọng $p$ của các key và mọi bản ghi thuộc key được chọn; số bản ghi lưu tăng theo luồng. Reservoir sampling giữ đúng $k$ lần xuất hiện, dùng $O(k)$ bộ nhớ cố định và không cần biết trước độ dài luồng.
+\key{Sampling theo key} Chọn key $g(x)$, chẳng hạn user, rồi băm vào $b$ bucket. Với $p=a/b$:
+\[
+\operatorname{Keep}(x)\iff h(g(x))\bmod b<a.
+\]
+Giả sử hash phân bố đều, một key được chọn với xác suất $p$. Mọi bản ghi cùng key có cùng quyết định; ví dụ $a=3,b=10$ chọn bucket 0, 1, 2, tức tỷ lệ kỳ vọng $30\%$. Tỷ lệ thực tế không nhất thiết đúng bằng $p$, và bộ nhớ không có cận cố định. Dùng key trùng với đơn vị cần phân tích sẽ giữ nguyên các đếm bên trong key đó.
+
+Nếu có $x$ query phân biệt xuất hiện một lần và $d$ query phân biệt xuất hiện hai lần, tỷ lệ query lặp thật là $d/(x+d)$. Lấy mẫu độc lập từng record với xác suất $p$ cho:
+\[
+\mathbb E[\text{query lặp được giữ}]=dp^2,\qquad
+\mathbb E[\text{query phân biệt được thấy}]=xp+d(2p-p^2).
+\]
+Khi $p=0.1$, tỷ số của hai kỳ vọng là $d/(10x+19d)$, không đồng nhất với kỳ vọng của tỷ lệ quan sát. Lấy mẫu record độc lập có thể làm thiếu thông tin về query lặp trong cùng user.
+
+\key{Reservoir sampling} Sau $n\ge k$ arrivals, mỗi occurrence có xác suất vào reservoir là $k/n$. Khi occurrence thứ $n+1$ đến, một record cũ đang được lưu bị thay đúng khi lấy trúng slot của nó, nên:
+\[
+P(\text{cũ sống}\mid\text{đang lưu})=\frac{n}{n+1},\qquad
+P(\text{mới được nhận})=\frac{k}{n+1}.
+\]
+Nếu record cũ có xác suất $k/n$ sau $n$ arrivals thì xác suất còn lại là $(k/n)(n/(n+1))=k/(n+1)$. Cùng với trường hợp record mới, đây là bước quy nạp duy trì tính đều; cơ sở là $n=k$, khi mọi record đầu tiên đều được lưu.
+\key{Phân bố mẫu} Reservoir chuẩn lấy đều trên các occurrence: mọi tập con $T$ gồm $k$ trong $n$ vị trí có xác suất $P(S_n=T)=1/\binom{n}{k}$. Nếu một giá trị $A$ xuất hiện $m$ lần, xác suất có ít nhất một occurrence của $A$ là:
+\[
+P(A\in S_n)=1-\frac{\binom{n-m}{k}}{\binom{n}{k}},
+\]
+trong đó $\binom{n-m}{k}=0$ nếu $n-m<k$. Vì vậy reservoir đều trên occurrences, không đều trên distinct values. Ví dụ với $(A_1,A_2,B,C)$ và $k=2$, $P(A\in S_4)=1-\binom22/\binom42=5/6$, còn $P(B\in S_4)=P(C\in S_4)=1/2$.
+
 \key{Khi dùng} Cần lấy đúng $k$ bản ghi ngẫu nhiên từ luồng chưa biết độ dài.
 \steps{
 \item Lưu $k$ bản ghi đầu tiên vào $k$ ô.
 \item Khi bản ghi thứ $n>k$ đến, rút đều $J$ từ 1 đến $n$. Nếu $J\le k$, thay ô $J$ bằng bản ghi mới.
 }
-\key{Tự kiểm} Sau $n$ bản ghi, mỗi bản ghi có xác suất nằm trong mẫu là $k/n$. Bản ghi cũ có xác suất sống qua bước $n$ là $(n-1)/n$, nếu trước đó đang nằm trong mẫu.
+\key{Độ phức tạp} Reservoir dùng $O(1)$ thời gian kỳ vọng mỗi arrival và $O(k)$ bộ nhớ; chỉ cần biết số arrivals đã xử lý. Key-based sampling không cần reservoir nhưng không giới hạn số bản ghi lưu.
+\key{Bẫy cần nhớ} Xác suất sống của record cũ có điều kiện là $n/(n+1)$, còn xác suất được giữ sau bước kế tiếp là $k/(n+1)$. Reservoir đều trên occurrences, không phải distinct values; key sampling cho quyết định nhất quán theo key nhưng không bảo đảm giữ đúng chính xác tỷ lệ $p$ trong một mẫu.
 
-\key{Phân biệt} Key sampling băm theo ID người dùng nên giữ cả lịch sử của user được chọn; số bản ghi lưu có thể tăng theo luồng.
-
+\needspace{38\baselineskip}
 % DSA5101 Exam Practice Questions.pdf, PDF page(s) 22.
 \ask{Pr21}{Pr21}{}
 Eight log records have users and query strings as follows:
