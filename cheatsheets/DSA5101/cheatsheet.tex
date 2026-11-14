@@ -2062,6 +2062,7 @@ r^{(2)}&=(1/2,1/4,3/4,2,3/2)^T.
 {Đồ thị, $\beta$, tập tin cậy khác rỗng và ngưỡng gắn cờ nếu có.}
 {Điểm thường $r$, điểm tin cậy $t$, spam mass tại các nút có $r_i>0$.}
 {Chạy PageRank hai lần với cùng chuẩn hóa, rồi lấy phần chênh so với điểm thường.}
+\key{Bức tranh chung} Link farm thao túng PageRank thường bằng cách tuần hoàn điểm qua các liên kết do spammer kiểm soát. TrustRank khởi động lại từ các trang đã xác minh để đo mức điểm được truyền từ nguồn tin cậy. Spam mass so sánh hai kết quả này; giá trị cao là tín hiệu để kiểm tra, không phải bằng chứng spam.
 \begin{algpseudo}
 $r\gets\operatorname{PageRank}(G,\beta,v_{\text{đều}})$; $t\gets\operatorname{PageRank}(G,\beta,v_{\text{tin cậy}})$\\
 với $i$ có $r_i>0$: $\mathrm{SM}_i\gets(r_i-t_i)/r_i$\\
@@ -2074,8 +2075,81 @@ trả $r,t,\mathrm{SM}$; gắn cờ theo ngưỡng của đề nếu có
 t=\beta Mt+(1-\beta)v_{\mathrm{trusted}},\qquad
 \mathrm{SM}_i=\frac{r_i-t_i}{r_i}\quad(r_i>0).
 \]
+TrustRank là Personalized PageRank với teleport phân phối trên tập seed. Với $M$ column-stochastic:
+\[
+(I-\beta M)t=(1-\beta)v_{\mathrm{trusted}},\qquad
+\boxed{t=(1-\beta)(I-\beta M)^{-1}v_{\mathrm{trusted}}}.
+\]
+Với $0<\beta<1$, nghiệm dừng là duy nhất; trên đồ thị nhỏ, lập và giải phương trình theo từng nút thay vì tính nghịch đảo. Mỗi nút truyền tổng cộng $\beta t_i$, chia đều thành $\beta t_i/d_i^+$ cho từng cạnh ra.
+\key{Approximate isolation} Giả định trực giác là trang tốt hiếm khi trỏ tới trang xấu. Trust giảm theo số bước khỏi seed và bị chia theo out-degree; đây là giả định mô hình, không bảo đảm mọi trang spam có điểm thấp. Nếu có dead end, dùng đúng phân phối sửa nút cụt của đề.
+\key{Chọn seed} Có thể lấy trang PageRank cao hoặc trang thuộc domain được kiểm soát làm ứng viên, rồi nhờ người đánh giá xác minh. PageRank cao không tự chứng minh đáng tin; domain như .edu hay .gov cũng không khiến mọi trang trong đó tự động đáng tin. Seed nhỏ giúp giảm chi phí đánh giá thủ công.
 \key{Diễn giải} Nếu $r_i=0.2$ và $t_i=0.05$ thì spam mass bằng $0.75$. Giá trị cao cho biết phần lớn điểm không được giải thích bởi TrustRank; dùng để gắn cờ. Trang tin cậy có thể có spam mass âm.
+\key{Ngưỡng và miền giá trị} Gắn cờ khi $\mathrm{SM}_i>\tau$; nếu đề nói “ít nhất $\tau$”, dùng $\ge$. Chỉ tính khi $r_i>0$; nếu $t_i>r_i$, spam mass âm, còn $t_i=0<r_i$ cho spam mass bằng 1. Đại lượng này không bị chặn dưới bởi 0, nên không phải xác suất đã chuẩn hóa.
 \key{Chu trình} Trên chu trình $L$ nút, teleport chỉ về nút 0 và xác suất đi tiếp $\beta<1$, điểm dừng thỏa $r_j=\beta^jr_0$ và $r_0=(1-\beta)/(1-\beta^L)$. Với $\beta=1$, phép lặp chỉ xoay vectơ; phân phối dừng có thể tồn tại nhưng dãy chỉ hội tụ nếu khởi tạo tại điểm bất động.
+
+\topic{linkfarm}{Link farm amplification}
+\algsummary{Tính mức PageRank mà một vòng liên kết có thể dồn vào trang mục tiêu trong mô hình link farm.}
+{Một vòng target $\to$ farm $\to$ target mất hệ số $\beta$ ở mỗi bước; các vòng lặp tạo thành cấp số nhân.}
+{Giả sử $0\le\beta<1$: tổng số trang $N>1$, số farm pages $1\le M_f<N$ và điểm vào $x\ge0$ từ các trang accessible.}
+{PageRank $y$ của target và hệ số khuếch đại của phần điểm ngoài $x$.}
+{Lập phương trình điểm của một farm page và target, thế lẫn nhau rồi giải phương trình tuyến tính.}
+\key{Mô hình} Inaccessible pages không thể sửa; accessible pages có thể thêm liên kết (chẳng hạn qua bình luận); owned pages do spammer kiểm soát hoàn toàn. Trong cấu hình dưới đây, target $t$ trỏ tới $M_f$ farm pages, mỗi farm page chỉ trỏ lại $t$, và các farm pages có cùng rank $q_f$. Teleport là đều; $x$ là tổng đóng góp từ accessible pages.
+\begin{diagram}
+\begin{tikzpicture}[>=Stealth,every node/.style={font=\small}]
+  \node[draw,rounded corners,align=center] (a) at (0,0) {Accessible\\pages};
+  \node[draw,circle] (t) at (2.3,0) {$t$};
+  \node[draw,dashed,rounded corners,align=center,minimum width=2.4cm,minimum height=8mm] (f) at (5,0) {$M_f$ owned\\farm pages};
+  \draw[->] (a)--node[above]{$x$}(t);
+  \draw[->] (t)--node[above,align=center]{chia đều;\\tổng $\beta y$}(f);
+  \draw[->] (f) to[bend left=35] node[below]{$\beta$}(t);
+\end{tikzpicture}
+\end{diagram}
+Đóng góp $x$ quay lại sau hai bước với hệ số $\beta^2$; các vòng sau có hệ số $\beta^4,\beta^6,\ldots$.
+\key{Lập phương trình} Mỗi farm page nhận $\beta y/M_f$ từ target và $ (1-\beta)/N$ từ teleport. Target nhận $x$, điểm từ tất cả farm pages và teleport:
+\[
+q_f=\frac{\beta y}{M_f}+\frac{1-\beta}{N},\qquad
+y=x+\beta M_fq_f+\frac{1-\beta}{N}.
+\]
+Thế phương trình thứ nhất vào thứ hai rồi gom các hạng chứa $y$:
+\[
+(1-\beta^2)y=x+\frac{(1-\beta)(\beta M_f+1)}{N}.
+\]
+Suy ra nghiệm chính xác theo mô hình:
+\[
+\boxed{y=\frac{x}{1-\beta^2}+\frac{\beta M_f+1}{N(1+\beta)}}.
+\]
+Nếu bỏ qua teleport trực tiếp nhỏ của target, số hạng $1/[N(1+\beta)]$ bị lược bỏ:
+\[
+y\approx\frac{x}{1-\beta^2}+\frac{\beta}{1+\beta}\frac{M_f}{N}.
+\]
+\key{Hệ số khuếch đại} Phần điểm ngoài được lặp lại theo cấp số nhân:
+\[
+x+\beta^2x+\beta^4x+\cdots
+=x\sum_{j=0}^{\infty}(\beta^2)^j
+=\frac{x}{1-\beta^2},\qquad
+\boxed{A(\beta)=\frac{1}{1-\beta^2}}.
+\]
+Với $\beta=0.85$, $A\approx3.60$. Tăng $\beta$ làm hệ số này lớn hơn trong cấu hình đã giả định; không suy ra mọi trang đều tăng điểm khi $\beta$ tăng. Đây là khuếch đại ở nghiệm dừng, không có nghĩa PageRank tăng ở mọi vòng power iteration.
+\begin{examtable}{@{}c c@{}}
+\toprule
+$\beta$ & $1/(1-\beta^2)$\\
+\midrule
+0.5 & 1.333\\
+0.8 & 2.778\\
+0.85 & 3.604\\
+0.9 & 5.263\\
+\bottomrule
+\end{examtable}
+\begin{minipage}{\columnwidth}
+\begin{algpseudo}
+\textsc{Link-Farm-Rank}$(\beta,N,M_f,x)$:\\
+\quad $A\gets1/(1-\beta^2)$\\
+\quad $y\gets Ax+(\beta M_f+1)/(N(1+\beta))$\\
+\quad trả $y,A$
+\end{algpseudo}
+\end{minipage}
+Phép tính chỉ đúng khi các tham số khớp topology giả định; nó không dựng link farm tổng quát.
+\key{Mở rộng và giới hạn} Nếu một vòng có $L$ bước và chỉ phần tỷ lệ $\rho$ quay lại target, $0\le\rho\le1$, thì hệ số suy ra từ cấp số nhân là $1/(1-\rho\beta^L)$. Khi có nhánh hoặc nhiều vòng lặp giao nhau, phải lập lại phương trình luồng; không áp dụng máy móc $1/(1-\beta^2)$. Link farm không tăng điểm chỉ nhờ có self-links: cần xét incoming rank, cách chia điểm và toàn bộ topology.
 
 % DSA5101 Exam Practice Questions.pdf, PDF page(s) 19.
 \ask{Pr18}{Pr18}{}
