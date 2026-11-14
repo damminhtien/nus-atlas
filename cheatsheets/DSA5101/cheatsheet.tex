@@ -2580,29 +2580,93 @@ Suppose that we are executing the DGIM algorithm to approximately count the numb
 \end{guidesteps}
 
 \topic{bloom}{Bloom filter: approximate membership}
-\algsummary{Kiểm tra nhanh một khóa có thể thuộc tập đã lưu hay chắc chắn vắng.}
-{Một bit 0 loại khóa ngay; nhiều khóa có thể cùng bật các bit gây sai dương.}
-{Khóa thêm và khóa hỏi, $m$ bit, $k$ hàm băm vào cùng mảng.}
-{Chắc chắn vắng hoặc có thể có mặt.}
-{Khi thêm, bật mọi vị trí được băm; khi hỏi, kiểm tra đúng các vị trí đó.}
+\algsummary{Kiểm tra membership với ít bộ nhớ thay vì lưu mọi key.}
+{Một bit 0 chứng minh key vắng; mọi bit 1 chỉ cho biết key có thể có mặt.}
+{Tập $S$ gồm $m$ key phân biệt, mảng $n$ bit và $k$ hash functions.}
+{Definitely absent hoặc possibly present.}
+{Đặt mọi bit về 0; khi insert thì bật $k$ vị trí, khi query thì kiểm tra cả $k$ vị trí.}
 \begin{algpseudo}
-khởi tạo $B[0\ldots m-1]\gets0$\\
-thêm $x$: với mỗi $h_j$, đặt $B[h_j(x)]\gets1$\\
-hỏi $x$: nếu có $B[h_j(x)]=0$, trả vắng; nếu không, trả có thể có
+\textsc{Bloom-Init}$(n)$: $B[0\ldots n-1]\gets0$\\
+\textsc{Bloom-Insert}$(x)$: với $i=1,\ldots,k$, đặt $B[h_i(x)]\gets1$\\
+\textsc{Bloom-Query}$(x)$: nếu có $i$ sao cho $B[h_i(x)]=0$, trả \textsc{Definitely-Absent}\\
+\quad ngược lại trả \textsc{Possibly-Present}
 \end{algpseudo}
 
-\key{Khi dùng} Hỏi một khóa đã từng xuất hiện hay chưa mà không giữ danh sách đầy đủ.
-\steps{
-\item Khi thêm khóa, bật $k$ vị trí do các hàm băm chỉ định trong cùng mảng $m$ bit.
-\item Khi hỏi khóa, gặp ít nhất một bit 0 thì chắc chắn vắng. Nếu cả $k$ bit bằng 1 thì khóa có thể có mặt.
-\item Với $n$ khóa đã thêm, dùng
+\key{Bài toán} Với tập rất lớn $S$ (chẳng hạn một tỷ email hợp lệ), mỗi email mới $x$ cần được kiểm tra xem có thuộc $S$ không. Hash table lưu key để trả lời chính xác nhưng có thể tốn nhiều bộ nhớ; Bloom filter dùng một bit array để giảm bộ nhớ và chấp nhận khả năng báo dương giả.
+
+\key{Ký hiệu}
+\begin{examtable}{@{}l p{.76\linewidth}@{}}
+\toprule
+Ký hiệu & Ý nghĩa\\
+\midrule
+$n$ & Số bit của mảng $B$\\
+$m$ & Số key phân biệt đã insert\\
+$k$ & Số hash functions; riêng trong DGIM, $k$ thường là độ dài cửa sổ truy vấn\\
+$B$ & Một bit array chung, $B\in\{0,1\}^n$\\
+$h_1,\ldots,h_k$ & Hash functions ánh xạ key vào $\{0,\ldots,n-1\}$\\
+\bottomrule
+\end{examtable}
+\needspace{5\baselineskip}
+Khi insert $x$, bật $B[h_i(x)]$ với mọi $i=1,\ldots,k$. Query trả Definitely absent nếu gặp một bit 0; nếu cả $k$ bit bằng 1, trả Possibly present. Các hash functions cùng ghi vào một mảng $B$, không cần $k$ mảng riêng.
 \[
-\Pr(\mathrm{FP})\approx(1-e^{-kn/m})^k,\qquad
-k^*\approx(m/n)\ln2.
+\operatorname{Query}(x)=
+\begin{cases}
+\text{Definitely absent}, & \exists i:\ B[h_i(x)]=0,\\
+\text{Possibly present}, & \forall i:\ B[h_i(x)]=1.
+\end{cases}
 \]
-}
-\key{Chọn tham số} Để đạt xác suất dương giả mục tiêu $\alpha$ với một hash, giải $1-e^{-n/m}\le\alpha$, tức $m\ge n/[-\ln(1-\alpha)]$, rồi làm tròn lên. Với $m$ cố định, $k^*$ là tối ưu liên tục; vì $k$ nguyên, tính lại xác suất tại các số nguyên lân cận thay vì làm tròn tự động.
-\key{Bẫy} Có sai dương do khóa khác bật trùng bit. Với bộ lọc chuẩn không xóa bit và cùng các hàm băm, không có sai âm.
+
+\key{Ví dụ nhỏ} Với $n=8$, $k=2$, $S=\{2,5\}$, lấy $h_1(x)=x\bmod8$ và $h_2(x)=(3x+1)\bmod8$. Insert 2 bật các vị trí 2, 7; insert 5 bật 5, 0:
+\begin{examtable}{@{}lcccccccc@{}}
+\toprule
+Chỉ số $j$ & 0 & 1 & 2 & 3 & 4 & 5 & 6 & 7\\
+\midrule
+Bit $B[j]$ & 1 & 0 & 1 & 0 & 0 & 1 & 0 & 1\\
+\bottomrule
+\end{examtable}
+\begin{examtable}{@{}c c p{.46\linewidth}@{}}
+\toprule
+Query & Vị trí hash & Kết quả\\
+\midrule
+$2$ & $(2,7)$ & Possibly present; true positive\\
+$3$ & $(3,2)$ & Definitely absent; true negative\\
+$10$ & $(2,7)$ & Possibly present; false positive\\
+\bottomrule
+\end{examtable}
+Key 10 vắng trong $S$, nhưng hai bit của nó đã được bật bởi các key trước; Bloom filter không lưu danh tính key.
+
+\key{Không có false negatives} Nếu $x$ đã được insert thì tất cả vị trí $h_i(x)$ được đặt thành 1. Các lần insert sau chỉ đổi bit từ 0 sang 1, nên query lại $x$ luôn trả Possibly present. Đây là bảo đảm tất định:
+\[
+x\in S\implies\operatorname{Query}(x)=\text{Possibly present}.
+\]
+Chiều ngược lại không đúng: một key ngoài $S$ vẫn có thể trùng các vị trí đã bật. Bloom filter chuẩn không xóa key bằng cách reset bit; do nhiều key có thể dùng chung bit, xóa bit có thể tạo false negative.
+
+\key{Xác suất false positive} Với $m$ key và $k$ lần băm cho mỗi key, có $km$ phép đặt bit. Với hash độc lập, đều, xác suất một bit cụ thể vẫn 0 và xác suất bit đó thành 1 lần lượt là
+\[
+\Pr(B[j]=0)=\left(1-\frac1n\right)^{km}\approx e^{-km/n},
+\qquad
+\Pr(B[j]=1)\approx1-e^{-km/n}.
+\]
+Xác suất xấp xỉ một key không thuộc $S$ vẫn query thành Possibly present là
+\[
+\boxed{\Pr(\mathrm{FP})\approx\left(1-e^{-km/n}\right)^k}.
+\]
+Xấp xỉ này giả định các phép băm phân bố đều và độc lập; hash phụ thuộc nhau hoặc phân bố lệch có thể làm xác suất thực khác công thức. Phần $1-e^{-km/n}$ cũng là tỷ lệ bit 1 kỳ vọng trong mảng.
+
+\needspace{9\baselineskip}
+\key{Chọn số hash} Tăng $k$ làm một key ngoài tập khó vượt qua mọi lần kiểm tra hơn, nhưng cũng bật nhiều bit hơn cho mỗi key và làm mảng bão hòa nhanh hơn. Vì vậy false positive rate giảm rồi tăng. Xem $k$ là số thực, cực tiểu của
+\[
+f(k)=\left(1-e^{-km/n}\right)^k
+\]
+nằm tại
+\[
+\boxed{k^*=\frac{n}{m}\ln2}.
+\]
+Trong thực tế $k$ là số nguyên, nên tính lại $f(k)$ ở các số nguyên khả thi gần $k^*$ thay vì luôn làm tròn lên. Chẳng hạn $n/m=8$ cho $k^*\approx5.55$; $f(5)\approx2.168\%$ và $f(6)\approx2.158\%$, nên chọn $k=6$.
+
+\key{Độ phức tạp} Khởi tạo tốn $O(n)$ thời gian và $n$ bit bộ nhớ. Mỗi lần insert hoặc query tốn $O(k)$ thời gian và $O(1)$ bộ nhớ phụ; Bloom filter không lưu danh sách các key.
+
+\key{Bẫy} Possibly present không khẳng định key thuộc $S$; false positive có thể xảy ra, false negative thì không nếu chỉ insert và không xóa/reset bit. Một bit $B[h_i(x)]=0$ đủ kết luận key vắng. Tăng số hash không luôn giảm false positive rate, $k^*$ không nhất thiết nguyên, và Bloom filter dùng một bit array chung.
 
 \begin{example}{Pr23}{Pr23(a,b) · Bloom filter: một bit 0 đủ để loại}
 \begin{diagram}
@@ -2657,17 +2721,17 @@ Consider using a Bloom Filter to filter spam emails. We are given a list of 5000
 \qpart{b} We can improve the false positive rate by using multiple hash functions. Describe in detail how this is done while still maintaining a single bit array with $n$ bits.
 \qpart{c} Keeping the same value of $n$ from part (a), how many hash functions should we use to minimize the false positive rate? What is the minimal false positive rate?
 
-\examnote{Giải $m\ge5000/[-\ln(0.9)]$ rồi làm tròn lên được $m=47457$. So sánh số hash nguyên: $f(6)\approx0.01058$, $f(7)\approx0.01052$, nên chọn $k=7$.}
+\examnote{Với $m=5000$ key, giải $n\ge5000/[-\ln(0.9)]$ rồi làm tròn lên được $n=47457$ bit. So sánh $k=6,7$: $f(6)\approx0.01058$, $f(7)\approx0.01052$, nên chọn $k=7$.}
 \answer{\maptag{answer:P25-Q6}}
 \begin{guidesteps}[beginpenalty=10000]
-\item \guidepart{(a)}Với một hash, áp dụng xấp xỉ $p_{\rm FP}\approx1-e^{-5000/m}$. Đặt giá trị này $\le0.1$ rồi giải $m\ge-5000/\ln(0.9)\approx47456.108$.
+\item \guidepart{(a)}Với một hash, áp dụng xấp xỉ $p_{\rm FP}\approx1-e^{-5000/n}$. Đặt giá trị này $\le0.1$ rồi giải $n\ge-5000/\ln(0.9)\approx47456.108$.
 \item Làm tròn lên theo xấp xỉ của đề: 47457 bit.
 \end{guidesteps}
 \begin{guidesteps}
 \item \guidepart{(b)}Chèn: dùng $k$ hash độc lập và bật tất cả vị trí trong cùng mảng. Truy vấn: nếu có bit 0 thì báo vắng; chỉ khi cả $k$ bit bằng 1 mới báo có thể có.
 \end{guidesteps}
 \begin{guidesteps}
-\item \guidepart{(c)}Tính cực tiểu liên tục $k^*\approx(m/5000)\ln2\approx6.58$. Thử hai số nguyên kề $6,7$ trong $(1-e^{-5000k/m})^k$.
+\item \guidepart{(c)}Tính cực tiểu liên tục $k^*\approx(n/5000)\ln2\approx6.58$. Thử hai số nguyên kề $6,7$ trong $(1-e^{-5000k/n})^k$.
 \item So $0.01058$ với $0.01052$: chọn 7 hash, xác suất dương giả khoảng $1.052\%$.
 \end{guidesteps}
 
