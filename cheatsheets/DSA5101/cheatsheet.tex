@@ -2269,34 +2269,56 @@ trả embedding
 {Đuôi có $r$ bit 0 hiếm cỡ $2^{-r}$; ID lặp lại có cùng mã băm nên không tăng cực đại.}
 {Luồng ID khác rỗng, danh sách hash và cách ghép nhóm thanh ghi.}
 {Các cực đại $R_j$ và số phân biệt ước lượng.}
-{Giữ số bit 0 cuối lớn nhất cho mỗi hash; tổng hợp để giảm ảnh hưởng giá trị cực lớn.}
+{Giữ số bit 0 cuối lớn nhất cho mỗi hash; lấy median từng nhóm rồi trung bình các median để giảm ảnh hưởng giá trị cực lớn.}
 \begin{algpseudo}
 đặt mọi $R_j\gets0$\\
-với mỗi ID $x$ và mỗi hash $h_j$: $R_j\gets\max(R_j,\operatorname{zeros}(h_j(x)))$\\
-dùng quy ước số bit của đề nếu $h_j(x)=0$\\
-trả $R$ và trung vị của các trung bình nhóm tính trên $2^{R_j}$
+với mỗi ID $x$, hash $h_j$: $z_j\gets\operatorname{zeros}(h_j(x))$\\
+\quad nếu $h_j(x)=0$ thì $z_j\gets W$; $R_j\gets\max(R_j,z_j)$\\
+với mỗi hash: $Z_j\gets2^{R_j}$\\
+nếu một hash: trả $Z_1$; nếu nhiều hash: chia $Z_j$ thành nhóm nhỏ\\
+trả trung bình của các trung vị nhóm
 \end{algpseudo}
 
-\key{Khi dùng} Ước lượng số ID khác nhau $F_0$ trên luồng. Mỗi ID lặp lại nhận cùng mã băm nên không làm thay đổi kết quả đã ghi cho ID đó.
+\key{Bài toán} Với luồng $a_1,\ldots,a_t$, cần ước lượng số giá trị phân biệt
+\[
+D=F_0=\left|\{a_1,\ldots,a_t\}\right|.
+\]
+$t$ là số lần xuất hiện, còn $D$ là số ID khác nhau. FM cơ bản tóm tắt các ID đã thấy từ đầu luồng, không trả distinct count cho một cửa sổ gần đây. Một hash set đếm chính xác nhưng cần $O(D)$ bộ nhớ; FM giữ một thanh ghi nhỏ cho mỗi hash.
+
+\key{Trailing zeros} $r(x)$ là số bit 0 liên tiếp ở bên phải bit 1 ngoài cùng bên phải của $h(x)$; hash lẻ có $r=0$. Ví dụ $12=1100_2$ có $r=2$. Đây là trailing zeros, không phải leading zeros. Nếu hash có $W$ bit và bằng 0 thì có $W$ bit 0 cuối; cần xử lý giá trị này nhất quán.
+
+\key{Ước lượng thô} Với một hash, giữ $R=\max_x r(x)$ và trả $\hat D=2^R$. ID lặp lại có cùng hash nên không làm tăng cực đại. Đây là ước lượng thô, không phải đẳng thức $D=2^R$.
+
+\key{Vì sao trailing zeros cho biết quy mô} Với hash đều và độc lập, xác suất một ID có ít nhất $q$ bit 0 cuối là $2^{-q}$ (với $q\le W$ cho hash $W$ bit). Nếu có $D$ ID phân biệt:
+\[
+\begin{aligned}
+P(R<q)&=(1-2^{-q})^D\approx e^{-D/2^q},\\
+P(R\ge q)&=1-(1-2^{-q})^D\approx1-e^{-D/2^q}.
+\end{aligned}
+\]
+Khi $D\ll2^q$, ít có khả năng đạt ngưỡng $q$; khi $D\gg2^q$, khả năng đạt ngưỡng cao. Điểm chuyển tiếp là $D$ cùng bậc với $2^R$. Chẳng hạn, với $D=1024$ và $q=10$, $P(R\ge10)\approx1-e^{-1}\approx63.2\%$.
 \steps{
 \item Đếm số bit 0 liên tiếp ở cuối mỗi mã băm. Lấy số lớn nhất $R$ cho mỗi hàm băm.
-\item Ước lượng thô $2^R$. Với nhiều thanh ghi, lấy trung bình trong nhóm, rồi trung vị giữa các nhóm theo cách chia của đề.
+\item Một hash cho ước lượng thô $2^R$. Với nhiều hash độc lập, tính $Z_j=2^{R_j}$, chia thành nhóm nhỏ, lấy median trong mỗi nhóm rồi lấy trung bình các median.
 \item Khi gộp hai monitor dùng cùng danh sách hash, lấy $\max$ theo từng thanh ghi trước khi đổi thành $2^R$.
 }
-\key{Bẫy} Một $R$ lớn hiếm gặp có thể kéo trung bình lên mạnh. $F_0$ không phải độ dài luồng.
+\needspace{7\baselineskip}
+\key{Nhiều hash và ngoại lệ} Một $R$ lớn hiếm gặp làm $2^R$ rất lớn. Với hash lý tưởng vô hạn, $P(R\ge q)\approx D/2^q$ khi $q$ lớn, nên mỗi ngưỡng lớn đóng góp xấp xỉ hằng số vào $\mathbb E[2^R]$ và kỳ vọng phân kỳ; $2^R$ không phải ước lượng không chệch. Hash hữu hạn chặn kỳ vọng nhưng ngoại lệ vẫn có thể kéo lệch trung bình. Lấy median trong từng nhóm rồi trung bình các median để giảm ảnh hưởng này.
+
 \key{Cận dưới} Khi tìm hash cho ước lượng nhỏ nhất, chứng minh một cận dưới đúng với mọi hash trong họ rồi chỉ ra một hash đạt cận đó.
 
-\begin{example}{P25-Q3}{P25-Q3(a,b) · Flajolet--Martin: đếm bit 0 ở cuối}
-\begin{examtable}{@{}l c c c c c@{}}
+\key{Ví dụ tính tay} Xét luồng $P,Q,P,R,S,Q,P$ với các hash sau:
+\begin{examtable}{@{}l c c c@{}}
 \toprule
-Hash & ID 1 & ID 5 & ID 10 & Các số bit 0 cuối & $2^R$ \\
+Key & Hash & Nhị phân & $r(x)$ \\
 \midrule
-$h_0(x)=x$ & $0001$ & $0101$ & $1010$ & $(0,0,1)$ & 2 \\
-$h_1(x)=x+1$ & $0010$ & $0110$ & $1011$ & $(1,1,0)$ & 2 \\
+P & 6 & $0110$ & 1 \\
+Q & 9 & $1001$ & 0 \\
+R & 4 & $0100$ & 2 \\
+S & 11 & $1011$ & 0 \\
 \bottomrule
 \end{examtable}
-Chỉ viết 4 bit thấp vì đủ để thấy bit 1 cuối trong các giá trị này. Cả hai hash đều có $R=1$: ước lượng thô là 2 dù thực tế có 3 ID phân biệt.
-\end{example}
+Thanh ghi lớn nhất là $R_{\max}=2$, nên $\hat D=2^{R_{\max}}=4$. Giá trị này trùng với số key phân biệt trong ví dụ; đó là sự trùng hợp, không phải bảo đảm chính xác.
 
 % DSA5101 Exam Practice Questions.pdf, PDF page(s) 25.
 \ask{Pr24}{Pr24}{}
