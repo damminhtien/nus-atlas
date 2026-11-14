@@ -16,7 +16,7 @@ inputs in the local DSA5101 course folder:
 - `Assignments/DSA5101_Assignment_2.pdf`
 
 To rebuild, run from that course folder with a current TeX Live installation
-including XeLaTeX, latexmk, TikZ, STIX Two and Source Code Pro. Set
+including XeLaTeX, latexmk, TikZ and STIX Two. Set
 `repo_dir` to the absolute path of your nus-atlas checkout:
 
 ```sh
