@@ -49,7 +49,7 @@
 \newcommand{\topic}[2]{\par\subsection{#2}\label{topic:#1}}
 \newcommand{\key}[1]{#1:\enspace}
 \newcommand{\advancedheading}[1]{%
-  \par\addvspace{5pt}\noindent\textbf{NÂNG CAO — #1}\par\nobreak\addvspace{1pt}}
+  \par\addvspace{4pt}\noindent\textbf{#1}\par\nobreak\addvspace{1pt}}
 \newcommand{\solutionprompt}[1]{\par\addvspace{1pt}\noindent\key{Đề tóm tắt}#1\par\addvspace{2pt}}
 \newcommand{\examnote}[1]{\par\addvspace{2pt}\noindent\key{Ghi chú}#1\par\addvspace{3pt}}
 \newcommand{\literal}[1]{“#1”}
@@ -171,13 +171,18 @@
 
 
 \newcommand{\algfield}[2]{\par\noindent\hangindent=1em\relax#1:\enspace#2}
-\newcommand{\algsummary}[5]{%
-  \par\noindent Vấn đề giải quyết: #1%
+\newcommand{\unitheading}[2]{%
+  \par\addvspace{4pt}\noindent\textbf{#1. #2}\par\nobreak\addvspace{1pt}}
+\newcommand{\algsummary}[6]{%
+  \unitheading{1}{Recognition / Nhận diện}%
   \begingroup\setlength{\parskip}{1pt}%
-  \algfield{Trực giác}{#2}%
-  \algfield{INPUT / GIẢ THIẾT}{#3}%
-  \algfield{OUTPUT}{#4}%
-  \algfield{Phương pháp làm}{#5}\par\endgroup}
+  \algfield{Vấn đề}{#1}%
+  \algfield{Dấu hiệu / trực giác}{#2}%
+  \if\relax\detokenize{#3}\relax\else\par\noindent#3\par\fi%
+  \unitheading{2}{Execution / Thực hiện}%
+  \algfield{INPUT / GIẢ THIẾT}{#4}%
+  \algfield{OUTPUT}{#5}%
+  \algfield{Phương pháp làm}{#6}\par\endgroup}
 \newenvironment{algpseudo}{%
   \par\addvspace{2pt}\noindent
   \setlength{\parskip}{0pt}%
@@ -191,7 +196,6 @@
 
 \begin{document}
 \begin{multicols}{2}
-\raggedcolumns
 \pdfbookmark[0]{Mục lục chủ đề}{index-bookmark}
 {\headingfont DSA5101 Cheatsheet}\par
 \blocklabel{Mục lục chủ đề}
@@ -261,31 +265,34 @@
 \lecture{1}{Frequent itemsets \& association rules}
 
 \topic{bonferroni}{Bonferroni's Principle (multiple comparisons)}
-\algsummary{Ước lượng số kết quả tình cờ khi kiểm tra nhiều giả thuyết.}
-{Cộng xác suất báo nhầm của từng phép thử; không cần giả sử độc lập.}
-{$M$ phép thử với xác suất báo nhầm $p_j$ của mỗi phép.}
-{Số báo nhầm kỳ vọng $E$ và cận xác suất có ít nhất một báo nhầm.}
-{Cộng các $p_j$, rồi chặn tổng bởi 1 nếu dùng làm cận xác suất.}
+
+\algsummary{Ước lượng số kết quả tình cờ khi kiểm tra nhiều giả thuyết.}{Cộng xác suất báo nhầm của từng phép thử; không cần giả sử độc lập.}{\textbf{Khi dùng:}\enspace Đề thử rất nhiều mẫu rồi hỏi có bao nhiêu phát hiện chỉ do tình cờ.}{$M$ phép thử với xác suất báo nhầm $p_j$ của mỗi phép.}{Số báo nhầm kỳ vọng $E$ và cận xác suất có ít nhất một báo nhầm.}{Cộng các $p_j$, rồi chặn tổng bởi 1 nếu dùng làm cận xác suất.}
+
+\key{Công thức} Nếu mỗi trong $M$ phép thử có xác suất báo nhầm $p$, số báo nhầm kỳ vọng là $Mp$, kể cả khi các phép thử phụ thuộc nhau. Xác suất có ít nhất một báo nhầm không vượt $\min(1,Mp)$ (union bound).
+
 \begin{algpseudo}
 $E\gets0$\\
 với mỗi phép thử $j$: $E\gets E+p_j$\\
 trả $E,\ \min(1,E)$
 \end{algpseudo}
 
-\key{Khi dùng} Đề thử rất nhiều mẫu rồi hỏi có bao nhiêu phát hiện chỉ do tình cờ.
-
-\key{Công thức} Nếu mỗi trong $M$ phép thử có xác suất báo nhầm $p$, số báo nhầm kỳ vọng là $Mp$, kể cả khi các phép thử phụ thuộc nhau. Xác suất có ít nhất một báo nhầm không vượt $\min(1,Mp)$ (union bound).
-
 \key{Ví dụ} $10^6$ phép thử, $p=10^{-4}$: kỳ vọng 100 báo nhầm. Với ví dụ khách sạn, một cặp người trùng khách sạn trong hai ngày xác định có xác suất $10^{-18}$. Nhân với khoảng $5\times10^{17}$ cặp người và $5\times10^5$ cặp ngày cho khoảng $2.5\times10^5$ lần trùng ngẫu nhiên.
 
+\unitheading{3}{Verification / Kiểm tra}
 
+\key{Kiểm tra} Kỳ vọng số báo nhầm $E$ có thể lớn hơn 1; chỉ xác suất có ít nhất một báo nhầm mới bị chặn thêm bởi 1.
 
+\unitheading{4}{Advanced / Nâng cao}
+
+\key{Vì sao đúng} Đặt $I_j$ là chỉ báo phép thử $j$ báo nhầm. Tính tuyến tính cho $\mathbb E[\sum_j I_j]=\sum_jp_j$; union bound cho $\Pr(\sum_jI_j\ge1)\le\sum_jp_j$, không cần độc lập.
 \topic{apriori}{Apriori}
-\algsummary{Tìm mọi tập item có support ít nhất $s$.}
-{Một tập không frequent loại được mọi tập lớn hơn chứa nó.}
-{Các giỏ hàng $D$ và ngưỡng đếm $s$.}
-{Các tập frequent $L_1,L_2,\ldots$ theo kích thước.}
-{Từ tập frequent của tầng trước, ghép ứng viên, cắt qua tập con rồi quét dữ liệu để đếm.}
+
+\algsummary{Tìm mọi tập item có support ít nhất $s$.}{Một tập không frequent loại được mọi tập lớn hơn chứa nó.}{\textbf{Khi dùng:}\enspace Đề cho các giỏ hàng và ngưỡng $s$; cần tìm các tập item xuất hiện trong ít nhất $s$ giỏ. $\operatorname{supp}(X)$ là số giỏ chứa toàn bộ $X$.}{Các giỏ hàng $D$ và ngưỡng đếm $s$.}{Các tập frequent $L_1,L_2,\ldots$ theo kích thước.}{Từ tập frequent của tầng trước, ghép ứng viên, cắt qua tập con rồi quét dữ liệu để đếm.}
+
+\key{Số lượt quét} Quét một lần để đếm $L_1$, rồi một lần cho mỗi tầng $k\ge2$ có $C_k\ne\varnothing$. Sinh ứng viên và tỉa tập con không cần đọc lại giỏ; nếu $C_k=\varnothing$ thì dừng trước khi quét tầng đó.
+
+\key{Ràng buộc phụ} Chỉ đẩy một điều kiện xuống bước cắt nếu mọi siêu tập của tập bị loại cũng không thể thỏa điều kiện. Với khoảng giá $R(X)=\max_X p-\min_X p$, ta có $R(Y)\ge R(X)$ khi $X\subseteq Y$; do đó điều kiện $R(X)<T$ cho phép cắt khi $R(X)\ge T$. Điều kiện tổng giá $\sum_Xp\ge T$ không có tính chất này vì thêm item có thể làm tổng tăng.
+
 \begin{algpseudo}
 $L_1\gets$ các singleton có support $\ge s$\\
 với $k=2,3,\ldots$ khi $L_{k-1}\ne\varnothing$:\\
@@ -294,15 +301,6 @@ với $k=2,3,\ldots$ khi $L_{k-1}\ne\varnothing$:\\
 \quad quét $D$ để đếm $C_k$; $L_k\gets\{X\in C_k:\operatorname{supp}_D(X)\ge s\}$\\
 trả hợp các $L_k$
 \end{algpseudo}
-
-\key{Khi dùng} Đề cho các giỏ hàng và ngưỡng $s$; cần tìm các tập item xuất hiện trong ít nhất $s$ giỏ. $\operatorname{supp}(X)$ là số giỏ chứa toàn bộ $X$.
-
-\key{Vì sao cắt được} Nếu $X\subseteq Y$, mọi giỏ chứa $Y$ cũng chứa $X$, nên $\operatorname{supp}(Y)\le\operatorname{supp}(X)$. Một tập con không frequent thì mọi tập cha của nó cũng không frequent.
-
-\key{Số lượt quét} Quét một lần để đếm $L_1$, rồi một lần cho mỗi tầng $k\ge2$ có $C_k\ne\varnothing$. Sinh ứng viên và tỉa tập con không cần đọc lại giỏ; nếu $C_k=\varnothing$ thì dừng trước khi quét tầng đó.
-\key{Độ phức tạp} Với $n=|D|$ giỏ và $|C_k|$ ứng viên, cách trực tiếp kiểm tra từng ứng viên trong từng giỏ tốn $O(n\sum_{k:C_k\ne\varnothing}k|C_k|)$ thời gian. Bộ nhớ đếm là $O(|C_k|+|L_{k-1}|)$ ở tầng hiện tại, ngoài dữ liệu đầu vào.
-\key{Bẫy} Giữ ứng viên khi support $\ge s$, không phải $>s$. Mỗi giỏ đóng góp nhiều nhất 1 cho mỗi tập item, kể cả khi bản ghi giỏ lặp item.
-\key{Ràng buộc phụ} Chỉ đẩy một điều kiện xuống bước cắt nếu mọi siêu tập của tập bị loại cũng không thể thỏa điều kiện. Với khoảng giá $R(X)=\max_X p-\min_X p$, ta có $R(Y)\ge R(X)$ khi $X\subseteq Y$; do đó điều kiện $R(X)<T$ cho phép cắt khi $R(X)\ge T$. Điều kiện tổng giá $\sum_Xp\ge T$ không có tính chất này vì thêm item có thể làm tổng tăng.
 
 \begin{example}{Pr1}{Pr1(a) · Apriori: cắt ứng viên $ABCD$}
 \begin{diagram}
@@ -319,6 +317,19 @@ Ngưỡng $s=2$. Ba bộ ba đạt ngưỡng, riêng $BCD$ chỉ có trong giỏ
 \end{example}
 
 % DSA5101 Exam Practice Questions.pdf, PDF page(s) 2.
+
+\unitheading{3}{Verification / Kiểm tra}
+
+\key{Bẫy} Giữ ứng viên khi support $\ge s$, không phải $>s$. Mỗi giỏ đóng góp nhiều nhất 1 cho mỗi tập item, kể cả khi bản ghi giỏ lặp item.
+
+\unitheading{4}{Advanced / Nâng cao}
+
+\key{Vì sao cắt được} Nếu $X\subseteq Y$, mọi giỏ chứa $Y$ cũng chứa $X$, nên $\operatorname{supp}(Y)\le\operatorname{supp}(X)$. Một tập con không frequent thì mọi tập cha của nó cũng không frequent.
+
+\key{Độ phức tạp} Với $n=|D|$ giỏ và $|C_k|$ ứng viên, cách trực tiếp kiểm tra từng ứng viên trong từng giỏ tốn $O(n\sum_{k:C_k\ne\varnothing}k|C_k|)$ thời gian. Bộ nhớ đếm là $O(|C_k|+|L_{k-1}|)$ ở tầng hiện tại, ngoài dữ liệu đầu vào.
+
+\unitheading{5}{Exam evidence / Câu hỏi và lời giải}
+
 \ask{Pr1}{Pr1(a,c)}{}
 A field station records seven kits. The items are atlas ($A$), binoculars ($B$), compass ($C$), dry bag ($D$), and emergency beacon ($E$). The kits are
 \[
@@ -434,34 +445,36 @@ $abcd$ & Chắc chắn không frequent & Chứa $bc$ có support $2<5$. \\
 \end{examtable}
 \item Không có hàng nào được bảo đảm frequent.
 \end{guidesteps}
-
 \topic{pairs}{Pair counters: triangular matrix vs triples}
-\algsummary{Lưu số đếm cặp sao cho hợp ngân sách bộ nhớ.}
-{Ma trận tam giác dành chỗ cho mọi cặp; triples chỉ lưu cặp đã thấy.}
-{Các giỏ, $n$ ID item; $q$ là số cặp phân biệt đã thấy khi so chi phí.}
-{Bộ đếm số giỏ chứa từng cặp.}
-{Mã hóa thứ tự $i<j$; dùng ô tam giác khi bảng đặc, dùng khóa $(i,j)$ khi thưa.}
+
+\algsummary{Lưu số đếm cặp sao cho hợp ngân sách bộ nhớ.}{Ma trận tam giác dành chỗ cho mọi cặp; triples chỉ lưu cặp đã thấy.}{\textbf{Khi dùng:}\enspace So bộ nhớ để lưu số đếm của các cặp. Với $n$ item và $q$ cặp thực sự xuất hiện:
+\begin{itemize}
+\item Triangular matrix: có $\binom n2$ ô, mỗi ô 4 byte.
+\item Triples: mỗi bản ghi $(i,j,\mathrm{count})$ tốn 12 byte; có $q$ bản ghi.
+\end{itemize}}{Các giỏ, $n$ ID item; $q$ là số cặp phân biệt đã thấy khi so chi phí.}{Bộ đếm số giỏ chứa từng cặp.}{Mã hóa thứ tự $i<j$; dùng ô tam giác khi bảng đặc, dùng khóa $(i,j)$ khi thưa.}
+
 \begin{algpseudo}
 khởi tạo bộ đếm tam giác hoặc bảng triples\\
 với mỗi giỏ $T$: với mỗi cặp $i<j$ trong tập item của $T$, tăng $\operatorname{count}[i,j]$\\
 trả bảng đếm; cặp chưa thấy có số đếm 0
 \end{algpseudo}
 
-\key{Khi dùng} So bộ nhớ để lưu số đếm của các cặp. Với $n$ item và $q$ cặp thực sự xuất hiện:
-\begin{itemize}
-\item Triangular matrix: có $\binom n2$ ô, mỗi ô 4 byte.
-\item Triples: mỗi bản ghi $(i,j,\mathrm{count})$ tốn 12 byte; có $q$ bản ghi.
-\end{itemize}
+\unitheading{3}{Verification / Kiểm tra}
+
 \key{So nhanh} Triples tiết kiệm khi $q<\binom n2/3$, chưa tính overhead. Với $n=4$, $q=2$ thì hòa (24 byte); $q=3$ thì bảng đặc rẻ hơn.
 
+\unitheading{4}{Advanced / Nâng cao}
 
-
+\key{Chi phí bộ nhớ} Bảng tam giác lưu $\binom n2=\Theta(n^2)$ bộ đếm; triples lưu $O(q)$ bản ghi cho $q$ cặp đã thấy. Điểm hòa vốn phụ thuộc kích thước counter, ID và overhead của cấu trúc sparse.
 \topic{pcy}{PCY}
-\algsummary{Tìm các cặp frequent mà không phải giữ bộ đếm cho mọi cặp.}
-{Cặp frequent chắc chắn gồm hai item frequent và nằm trong bucket đủ ngưỡng.}
-{Các giỏ $D$, ngưỡng $s$, hàm băm cặp $h$.}
-{Các cặp có support $\ge s$.}
-{Lượt đầu dựng bitmap từ bucket; lượt hai chỉ đếm cặp qua cả hai bộ lọc.}
+
+\algsummary{Tìm các cặp frequent mà không phải giữ bộ đếm cho mọi cặp.}{Cặp frequent chắc chắn gồm hai item frequent và nằm trong bucket đủ ngưỡng.}{\textbf{Khi dùng:}\enspace Tìm frequent pairs khi không đủ bộ nhớ giữ số đếm của mọi cặp.}{Các giỏ $D$, ngưỡng $s$, hàm băm cặp $h$.}{Các cặp có support $\ge s$.}{Lượt đầu dựng bitmap từ bucket; lượt hai chỉ đếm cặp qua cả hai bộ lọc.}
+
+\steps{
+\item Pass 1: đếm item đơn và đưa mỗi cặp quan sát được vào bucket $h(i,j)$. Lưu bitmap: bit bằng 1 nếu số đếm bucket $\ge s$.
+\item Pass 2: chỉ đếm chính xác cặp có cả hai item frequent và bit bucket bằng 1. So số đếm thật với $s$ để kết luận.
+}
+
 \begin{algpseudo}
 quét $D$: đếm singleton và tăng bucket $h(x,y)$ cho mỗi cặp\\
 $L_1\gets$ singleton đủ ngưỡng; $B\gets[\text{số đếm bucket}\ge s]$\\
@@ -469,15 +482,18 @@ quét $D$: đếm $(x,y)$ nếu $x,y\in L_1$ và $B[h(x,y)]=1$\\
 trả các cặp có số đếm $\ge s$
 \end{algpseudo}
 
-\key{Khi dùng} Tìm frequent pairs khi không đủ bộ nhớ giữ số đếm của mọi cặp.
+\unitheading{3}{Verification / Kiểm tra}
 
-\steps{
-\item Pass 1: đếm item đơn và đưa mỗi cặp quan sát được vào bucket $h(i,j)$. Lưu bitmap: bit bằng 1 nếu số đếm bucket $\ge s$.
-\item Pass 2: chỉ đếm chính xác cặp có cả hai item frequent và bit bucket bằng 1. So số đếm thật với $s$ để kết luận.
-}
 \key{Bẫy} Nhiều cặp có thể rơi vào cùng bucket. Bucket đủ ngưỡng chỉ cho phép giữ ứng viên; kết luận frequent cần số đếm của riêng cặp đó.
 
 % DSA5101 Exam Practice Questions.pdf, PDF page(s) 3.
+
+\unitheading{4}{Advanced / Nâng cao}
+
+\key{Chi phí} PCY dùng hai lượt quét giỏ: lượt đầu đếm singleton và bucket, lượt sau đếm riêng các cặp qua cả hai bộ lọc. Bitmap cần $O(B)$ bit cho $B$ bucket; bucket va chạm chỉ tạo ứng viên, không thay bộ đếm cặp.
+
+\unitheading{5}{Exam evidence / Câu hỏi và lời giải}
+
 \ask{Pr2}{Pr2}{}
 Six reports contain fault codes 123, 123, 124, 14, 24, 15.
 
@@ -504,13 +520,17 @@ Use support threshold 3. Pass 1 has already found that only items 1, 2, 4 are fr
 \item Tổng bộ nhớ bằng số phần tử lưu nhân kích thước mỗi phần tử. Apriori: $3\cdot4=12$ byte; PCY: $2\cdot12+1=25$ byte.
 \item Thế theo cách cài đặt đề cho, PCY dùng nhiều hơn $25-12=13$ byte do record cặp và bitmap; ít candidate hơn không bảo đảm ít byte hơn nếu đơn vị lưu khác nhau.
 \end{guidesteps}
-
 \topic{multihash}{Multistage \& Multihash (PCY refinements)}
-\algsummary{Giảm tiếp số cặp phải giữ sau bộ lọc PCY.}
-{Cặp frequent không bị loại ở bất kỳ bảng băm nào.}
-{Các giỏ $D$, ngưỡng $s$, hai hàm băm $h_1,h_2$.}
-{Các cặp frequent.}
-{Multihash dựng hai bitmap cùng lượt; Multistage dựng bitmap thứ hai sau khi lọc bằng bitmap đầu.}
+
+\algsummary{Giảm tiếp số cặp phải giữ sau bộ lọc PCY.}{Cặp frequent không bị loại ở bất kỳ bảng băm nào.}{}{Các giỏ $D$, ngưỡng $s$, hai hàm băm $h_1,h_2$.}{Các cặp frequent.}{Multihash dựng hai bitmap cùng lượt; Multistage dựng bitmap thứ hai sau khi lọc bằng bitmap đầu.}
+
+\key{Ý chính} Kiểm tra nhiều bitmap: cặp frequent phải qua tất cả vì số đếm bucket chứa nó luôn ít nhất bằng support của cặp.
+
+\steps{
+\item Multistage (3 pass): tạo bitmap $B_1$ như PCY. Quét lần hai, chỉ băm các cặp qua bộ lọc PCY vào hàm $h_2$ để tạo $B_2$. Quét lần ba để đếm cặp qua cả hai bitmap.
+\item Multihash (2 pass): dựng cả hai bảng băm cùng lúc ở pass 1; pass 2 đếm cặp qua cả hai bitmap. Cùng ngân sách bộ nhớ, mỗi bảng thường nhỏ hơn và dễ va chạm hơn.
+}
+
 \begin{algpseudo}
 Multihash: quét $D$ để đếm singleton và bucket của cả $h_1,h_2$\\
 Multistage: lượt 1 đếm singleton và bucket $h_1$; đổi thành $B_1$\\
@@ -520,21 +540,25 @@ quét $D$: đếm cặp gồm hai item frequent và qua cả hai bitmap\\
 trả các cặp có số đếm $\ge s$
 \end{algpseudo}
 
-\key{Ý chính} Kiểm tra nhiều bitmap: cặp frequent phải qua tất cả vì số đếm bucket chứa nó luôn ít nhất bằng support của cặp.
-\steps{
-\item Multistage (3 pass): tạo bitmap $B_1$ như PCY. Quét lần hai, chỉ băm các cặp qua bộ lọc PCY vào hàm $h_2$ để tạo $B_2$. Quét lần ba để đếm cặp qua cả hai bitmap.
-\item Multihash (2 pass): dựng cả hai bảng băm cùng lúc ở pass 1; pass 2 đếm cặp qua cả hai bitmap. Cùng ngân sách bộ nhớ, mỗi bảng thường nhỏ hơn và dễ va chạm hơn.
-}
+\unitheading{3}{Verification / Kiểm tra}
+
 \key{Bẫy} Thêm bảng không luôn tiết kiệm bộ nhớ. Nếu gần như mọi bit đã là 1 thì bitmap ít giúp cắt ứng viên.
 
+\unitheading{4}{Advanced / Nâng cao}
 
-
+\key{Chi phí} Với $p$ giai đoạn cần $p$ lượt quét. Mỗi lượt dùng bitmap để giảm tập ứng viên cho lượt kế tiếp; thêm lượt có thể giảm bộ đếm cặp nhưng tăng I/O và thời gian quét.
 \topic{toivonen}{Toivonen}
-\algsummary{Đào frequent itemsets trên mẫu, vẫn phát hiện được nếu mẫu làm bỏ sót.}
-{Tập frequent nhỏ nhất bị bỏ sót sẽ nằm ở negative border.}
-{Các giỏ $D$, miền item, ngưỡng thật $s$, quy tắc lấy mẫu và ngưỡng mẫu.}
-{Toàn bộ frequent itemsets khi lượt kiểm tra thành công.}
-{Đào mẫu, đếm cả tập frequent mẫu lẫn border trên $D$; đổi mẫu nếu border có tập đạt $s$.}
+
+\algsummary{Đào frequent itemsets trên mẫu, vẫn phát hiện được nếu mẫu làm bỏ sót.}{Tập frequent nhỏ nhất bị bỏ sót sẽ nằm ở negative border.}{\textbf{Khi dùng:}\enspace Muốn dùng mẫu nhỏ nhưng vẫn kiểm tra được liệu có bỏ sót frequent itemset hay không.}{Các giỏ $D$, miền item, ngưỡng thật $s$, quy tắc lấy mẫu và ngưỡng mẫu.}{Toàn bộ frequent itemsets khi lượt kiểm tra thành công.}{Đào mẫu, đếm cả tập frequent mẫu lẫn border trên $D$; đổi mẫu nếu border có tập đạt $s$.}
+
+\steps{
+\item Lấy mẫu, giảm ngưỡng support cho mẫu, rồi tìm họ tập frequent $F$ trong mẫu.
+\item Tìm negative border: các tập $X\notin F$ mà mọi tập con thực sự, khác rỗng của $X$ đều nằm trong $F$. Nếu xét đủ miền item, một singleton vắng khỏi $F$ cũng thuộc border.
+\item Quét toàn bộ dữ liệu một lần để đếm $F$ và border. Nếu có tập ở border đạt ngưỡng toàn cục thì bỏ mẫu và chạy lại. Nếu không, trả các tập của $F$ đạt ngưỡng toàn cục.
+}
+
+\key{Sinh border} Kiểm singleton không thuộc $F$ trước. Với $k>1$, ghép từ $F_{k-1}$, giữ các ứng viên có mọi tập con kích thước $k-1$ trong $F_{k-1}$, rồi lấy hiệu với $F_k$. Nếu bất kỳ tập border nào đạt support toàn cục $s$, lượt chạy thất bại và phải lấy mẫu lại.
+
 \begin{algpseudo}
 lặp:\\
 \quad $F\gets$ các tập frequent trong mẫu với ngưỡng mẫu\\
@@ -542,16 +566,6 @@ lặp:\\
 \quad quét $D$ đếm support cho $F\cup B$\\
 \quad nếu không có tập trong $B$ đạt $s$: trả $\{X\in F:\operatorname{supp}_D(X)\ge s\}$
 \end{algpseudo}
-
-\key{Khi dùng} Muốn dùng mẫu nhỏ nhưng vẫn kiểm tra được liệu có bỏ sót frequent itemset hay không.
-
-\steps{
-\item Lấy mẫu, giảm ngưỡng support cho mẫu, rồi tìm họ tập frequent $F$ trong mẫu.
-\item Tìm negative border: các tập $X\notin F$ mà mọi tập con thực sự, khác rỗng của $X$ đều nằm trong $F$. Nếu xét đủ miền item, một singleton vắng khỏi $F$ cũng thuộc border.
-\item Quét toàn bộ dữ liệu một lần để đếm $F$ và border. Nếu có tập ở border đạt ngưỡng toàn cục thì bỏ mẫu và chạy lại. Nếu không, trả các tập của $F$ đạt ngưỡng toàn cục.
-}
-\key{Vì sao đúng} Nếu bỏ sót tập frequent, chọn tập con nhỏ nhất của nó cũng bị bỏ sót. Tập này thuộc border và cũng frequent, nên lượt kiểm tra sẽ phát hiện.
-\key{Sinh border} Kiểm singleton không thuộc $F$ trước. Với $k>1$, ghép từ $F_{k-1}$, giữ các ứng viên có mọi tập con kích thước $k-1$ trong $F_{k-1}$, rồi lấy hiệu với $F_k$. Nếu bất kỳ tập border nào đạt support toàn cục $s$, lượt chạy thất bại và phải lấy mẫu lại.
 
 \begin{example}{Pr3}{Pr3(a,b) · Toivonen: đọc negative border}
 \begin{examtable}{@{}l l l@{}}
@@ -566,6 +580,17 @@ Quét đủ 10 tài liệu: $\operatorname{supp}(AC)=5$, đạt ngưỡng toàn 
 \end{example}
 
 % DSA5101 Exam Practice Questions.pdf, PDF page(s) 4.
+
+\unitheading{3}{Verification / Kiểm tra}
+
+\key{Kiểm tra} Chỉ chấp nhận lượt chạy khi mọi tập trong negative border có support toàn cục nhỏ hơn $s$; một tập border đạt ngưỡng buộc phải lấy mẫu lại.
+
+\unitheading{4}{Advanced / Nâng cao}
+
+\key{Vì sao đúng} Nếu bỏ sót tập frequent, chọn tập con nhỏ nhất của nó cũng bị bỏ sót. Tập này thuộc border và cũng frequent, nên lượt kiểm tra sẽ phát hiện.
+
+\unitheading{5}{Exam evidence / Câu hỏi và lời giải}
+
 \ask{Pr3}{Pr3}{}
 Ten documents contain sentence-pattern sets $ABC,ABD,BC,AD,CD,ABC,ABC,ABC,ABC,AB$. The full-data support threshold is 5. A sample consisting of documents 1--5 is mined with sample threshold 2. Its frequent itemsets are already known: $F=\{A,B,C,D,AB,AD,BC\}$. The negative border contains the itemsets not in $F$ whose every proper nonempty subset is in $F$. Consider nonempty itemsets over $A,B,C,D$ only.
 \qpart{a} Find the negative border. Is $ABC$ in it? Give the subset test that determines your answer; do not rerun Apriori on the sample.
@@ -621,13 +646,13 @@ Hint: Your answer in part (a) should be useful here.
 \item Nếu còn bỏ sót một global frequent set $S$, chọn tập con nhỏ nhất $T\subseteq S$ cũng bị bỏ sót. Tính phản đơn điệu cho $\operatorname{supp}(T)\ge\operatorname{supp}(S)\ge s$, và tính tối tiểu đặt $T$ vào border.
 \item Điều đó mâu thuẫn điều kiện chấp nhận là mọi border itemset có support dưới $s$. Vì vậy sau một lần xác nhận thành công, không còn global frequent set nào bị bỏ sót.
 \end{guidesteps}
-
 \topic{son}{Random Sampling \& SON}
-\algsummary{Tìm tập frequent khi toàn bộ giỏ không vừa bộ nhớ.}
-{Nếu tập đủ support toàn cục, nó phải đủ theo tỷ lệ ở ít nhất một phần.}
-{$N$ giỏ chia thành các phần $D_j$ vừa bộ nhớ; ngưỡng đếm $s$.}
-{Các tập frequent toàn cục.}
-{SON lấy hợp các kết quả cục bộ rồi quét xác nhận; lấy một mẫu ngẫu nhiên chỉ cho xấp xỉ.}
+
+\algsummary{Tìm tập frequent khi toàn bộ giỏ không vừa bộ nhớ.}{Nếu tập đủ support toàn cục, nó phải đủ theo tỷ lệ ở ít nhất một phần.}{\textbf{Phân biệt:}\enspace \begin{itemize}
+\item Random sampling: đào trên một mẫu chiếm tỷ lệ $p$, với ngưỡng khoảng $ps$. Quét xác nhận chỉ lọc sai dương trong các ứng viên đã tìm; một tập vắng khỏi mẫu vẫn có thể bị bỏ sót.
+\item SON: chia toàn bộ dữ liệu thành các phần vừa bộ nhớ. Pass 1 lấy hợp các tập đạt ngưỡng $p_js$ ở phần $j$; $p_j$ là tỷ lệ giỏ ở phần đó. Pass 2 đếm toàn cục cho hợp ứng viên, giữ tập có support $\ge s$.
+\end{itemize}}{$N$ giỏ chia thành các phần $D_j$ vừa bộ nhớ; ngưỡng đếm $s$.}{Các tập frequent toàn cục.}{SON lấy hợp các kết quả cục bộ rồi quét xác nhận; lấy một mẫu ngẫu nhiên chỉ cho xấp xỉ.}
+
 \begin{algpseudo}
 $C\gets\varnothing$\\
 với mỗi phần $D_j$: $C\gets C\cup\operatorname{Apriori}(D_j,\lceil s|D_j|/N\rceil)$\\
@@ -636,38 +661,42 @@ trả $\{X\in C:\operatorname{supp}(X)\ge s\}$
 \end{algpseudo}
 \algfield{Nếu chỉ dùng một mẫu}{Lấy phần $p$ của giỏ, chạy Apriori với ngưỡng mẫu $\lceil ps\rceil$; nếu xác nhận trên toàn dữ liệu, chỉ lọc các tập đã tìm.}
 
-\key{Phân biệt}
-\begin{itemize}
-\item Random sampling: đào trên một mẫu chiếm tỷ lệ $p$, với ngưỡng khoảng $ps$. Quét xác nhận chỉ lọc sai dương trong các ứng viên đã tìm; một tập vắng khỏi mẫu vẫn có thể bị bỏ sót.
-\item SON: chia toàn bộ dữ liệu thành các phần vừa bộ nhớ. Pass 1 lấy hợp các tập đạt ngưỡng $p_js$ ở phần $j$; $p_j$ là tỷ lệ giỏ ở phần đó. Pass 2 đếm toàn cục cho hợp ứng viên, giữ tập có support $\ge s$.
-\end{itemize}
+\unitheading{3}{Verification / Kiểm tra}
+
+\key{Kiểm tra} Gộp support theo số lần xuất hiện trong toàn bộ partition rồi mới so với $s$; ngưỡng cục bộ là $p_js$, không phải $s$.
+
+\unitheading{4}{Advanced / Nâng cao}
+
 \key{Vì sao SON không bỏ sót} Nếu mọi support cục bộ đều $<p_js$, cộng lại sẽ $<s$. Ví dụ hai phần bằng nhau và $s=6$: ngưỡng mỗi phần là 3; một tập có tổng 6 phải đạt ít nhất 3 ở một phần.
-
-
-
 \topic{rules}{Association rules}
-\algsummary{Tìm các luật đồng xuất hiện hữu ích từ tập frequent.}
-{So tỷ lệ xuất hiện của $y$ trong các giỏ chứa $X$ với tỷ lệ nền của $y$.}
-{Support các tập frequent, $N$, ngưỡng confidence và các tiêu chí đề cho.}
-{Luật $X\to y$ đạt tiêu chí cùng các chỉ số.}
-{Tách từng $y$ khỏi một tập frequent $F$; tính confidence, interest hoặc lift rồi lọc.}
-\begin{algpseudo}
-với mỗi tập frequent $F$ có ít nhất hai item:\\
-\quad với mỗi $y\in F$: $X\gets F\setminus\{y\}$; $c\gets\operatorname{supp}(F)/\operatorname{supp}(X)$\\
-\quad nếu đạt các ngưỡng: xuất $X\to y$ cùng các chỉ số
-\end{algpseudo}
 
-\key{Khi dùng} Đề hỏi luật $X\to y$. Đặt $a=\operatorname{supp}(X)$, $c=\operatorname{supp}(X\cup\{y\})$, $p_y=\operatorname{supp}(y)/N$ với $N$ là số giỏ.
+\algsummary{Tìm các luật đồng xuất hiện hữu ích từ tập frequent.}{So tỷ lệ xuất hiện của $y$ trong các giỏ chứa $X$ với tỷ lệ nền của $y$.}{\textbf{Khi dùng:}\enspace Đề hỏi luật $X\to y$. Đặt $a=\operatorname{supp}(X)$, $c=\operatorname{supp}(X\cup\{y\})$, $p_y=\operatorname{supp}(y)/N$ với $N$ là số giỏ.
 \[
 \begin{aligned}
 \operatorname{conf}(X\to y)&=c/a,\\
 \operatorname{interest}(X\to y)&=c/a-p_y,\\
 \operatorname{lift}(X\to y)&=(c/a)/p_y .
 \end{aligned}
-\]
+\]}{Support các tập frequent, $N$, ngưỡng confidence và các tiêu chí đề cho.}{Luật $X\to y$ đạt tiêu chí cùng các chỉ số.}{Tách từng $y$ khỏi một tập frequent $F$; tính confidence, interest hoặc lift rồi lọc.}
+
+\begin{algpseudo}
+với mỗi tập frequent $F$ có ít nhất hai item:\\
+\quad với mỗi $y\in F$: $X\gets F\setminus\{y\}$; $c\gets\operatorname{supp}(F)/\operatorname{supp}(X)$\\
+\quad nếu đạt các ngưỡng: xuất $X\to y$ cùng các chỉ số
+\end{algpseudo}
+
+\unitheading{3}{Verification / Kiểm tra}
+
 \key{Bẫy} Support của luật là $c$, không phải $a$. Công thức interest ở trên là dạng có dấu; dùng đúng định nghĩa đề cho. Lift cần $p_y>0$.
 
 % DSA5101 Exam Practice Questions.pdf, PDF page(s) 2.
+
+\unitheading{4}{Advanced / Nâng cao}
+
+\key{Số luật} Một frequent itemset cỡ $k$ có tối đa $2^k-2$ cách tách thành vế trái khác rỗng và vế phải khác rỗng. Vì vậy số luật có thể tăng theo hàm mũ dù số frequent itemset nhỏ.
+
+\unitheading{5}{Exam evidence / Câu hỏi và lời giải}
+
 \ask{Pr1b}{Pr1(b)}{Dữ kiện chung: \hyperref[question:Pr1]{[Pr1]}}
 \qpart{b} Use the supplied counts $\operatorname{supp}(ABD)=\operatorname{supp}(ACD)=\operatorname{supp}(BD)=2$, $\operatorname{supp}(AC)=3$, $\operatorname{supp}(A)=5$, and $\operatorname{supp}(D)=4$. For $BD\to A$ and $AC\to D$, give confidence and signed interest, where $\operatorname{interest}(X\to y)=\operatorname{conf}(X\to y)-\operatorname{supp}(y)/7$. Which rules meet both support count 2 and confidence $4/5$?
 
@@ -681,19 +710,10 @@ với mỗi tập frequent $F$ có ít nhất hai item:\\
 \end{guidesteps}
 
 \lecture{2}{Finding similar items / LSH}
-
 \topic{jaccard}{Shingling \& Jaccard}
-\algsummary{So tài liệu theo các đoạn token liên tiếp dài $k$.}
-{Đếm phần giao theo tỷ lệ của toàn bộ shingle phân biệt trong hai tài liệu.}
-{Hai tài liệu $A,B$, quy tắc tách token và độ dài $k$.}
-{Hai tập shingle và độ tương tự Jaccard.}
-{Trượt cửa sổ, bỏ trùng trong mỗi tài liệu, rồi lấy kích thước giao chia kích thước hợp.}
-\begin{algpseudo}
-với $D\in\{A,B\}$: $S_D\gets$ tập các cửa sổ $k$ token của $D$\\
-trả $S_A,S_B$ và $|S_A\cap S_B|/|S_A\cup S_B|$ nếu hợp không rỗng
-\end{algpseudo}
 
-\key{Khi dùng} Đề yêu cầu so độ giống của hai tài liệu theo các cụm $k$ token liên tiếp ($k$-shingles).
+\algsummary{So tài liệu theo các đoạn token liên tiếp dài $k$.}{Đếm phần giao theo tỷ lệ của toàn bộ shingle phân biệt trong hai tài liệu.}{\textbf{Khi dùng:}\enspace Đề yêu cầu so độ giống của hai tài liệu theo các cụm $k$ token liên tiếp ($k$-shingles).}{Hai tài liệu $A,B$, quy tắc tách token và độ dài $k$.}{Hai tập shingle và độ tương tự Jaccard.}{Trượt cửa sổ, bỏ trùng trong mỗi tài liệu, rồi lấy kích thước giao chia kích thước hợp.}
+
 \steps{
 \item Xác định token là ký tự hay từ. Trượt cửa sổ dài $k$ và lấy tập các shingle khác nhau.
 \item Đếm số shingle chung và kích thước hợp.
@@ -701,9 +721,26 @@ trả $S_A,S_B$ và $|S_A\cap S_B|/|S_A\cup S_B|$ nếu hợp không rỗng
 \[
 J(A,B)=\frac{|S_A\cap S_B|}{|S_A|+|S_B|-|S_A\cap S_B|}.
 \]
+
+\begin{algpseudo}
+với $D\in\{A,B\}$: $S_D\gets$ tập các cửa sổ $k$ token của $D$\\
+trả $S_A,S_B$ và $|S_A\cap S_B|/|S_A\cup S_B|$ nếu hợp không rỗng
+\end{algpseudo}
+
 \key{Ví dụ} \literal{ABCAB} với $k=2$ cho $\{AB,BC,CA\}$. $AB$ lặp nhưng chỉ đếm một lần.
 
 % DSA5101 Exam Practice Questions.pdf, PDF page(s) 5.
+
+\unitheading{3}{Verification / Kiểm tra}
+
+\key{Kiểm tra} Với hai tập không rỗng, $0\le J(A,B)\le1$; tập trùng cho $J=1$, hai tập rời nhau cho $J=0$. Nếu hợp rỗng, dùng quy ước của đề.
+
+\unitheading{4}{Advanced / Nâng cao}
+
+\key{Chi phí chính xác} Tạo tập shingle tốn thời gian tuyến tính theo số token; so một cặp bằng cách quét hợp/giao tốn $O(|A|+|B|)$ với tập đã sắp hoặc hash. Nhiều tài liệu lớn cần chỉ mục hoặc MinHash/LSH để giảm so sánh.
+
+\unitheading{5}{Exam evidence / Câu hỏi và lời giải}
+
 \ask{Pr4}{Pr4(a)}{}
 Three DNA strings are $D_1=\mathrm{ACGACA}$, $D_2=\mathrm{ACGATA}$, and $D_3=\mathrm{ATGACA}$. Use sets of contiguous 3-character shingles with these IDs:
 \begin{examtable}{@{}lcccccccc@{}}
@@ -757,28 +794,33 @@ Consider two documents $A$ and $B$, containing 400 and 800 unique $k$-shingles r
 \item Dùng $J=|S_A\cap S_B|/|S_A\cup S_B|$ và $|S_A\cup S_B|=|S_A|+|S_B|-|S_A\cap S_B|$. Thay số, hợp là $400+800-200=1000$.
 \item Chia giao cho hợp: $J=200/1000=0.2$.
 \end{guidesteps}
-
 \topic{minhash}{MinHash}
-\algsummary{Ước lượng Jaccard bằng chữ ký nhỏ thay cho các tập shingle lớn.}
-{Hàng đầu tiên trong hợp nằm trong giao đúng khi hai giá trị MinHash trùng.}
-{Tập shingle khác rỗng của mỗi tài liệu; $t$ hoán vị hàng dùng chung.}
-{Ma trận chữ ký và ước lượng Jaccard cho từng cặp cần so.}
-{Với mỗi hoán vị, ghi ID hàng có mặt đầu tiên; lấy tỷ lệ các hàng chữ ký trùng.}
+
+\algsummary{Ước lượng Jaccard bằng chữ ký nhỏ thay cho các tập shingle lớn.}{Hàng đầu tiên trong hợp nằm trong giao đúng khi hai giá trị MinHash trùng.}{\textbf{Khi dùng:}\enspace Đề cho ma trận hàng là shingle, cột là tài liệu, hoặc cho sẵn các tập ID và hoán vị.}{Tập shingle khác rỗng của mỗi tài liệu; $t$ hoán vị hàng dùng chung.}{Ma trận chữ ký và ước lượng Jaccard cho từng cặp cần so.}{Với mỗi hoán vị, ghi ID hàng có mặt đầu tiên; lấy tỷ lệ các hàng chữ ký trùng.}
+
+\steps{
+\item Duyệt các hàng theo thứ tự $\pi$, dùng cùng $\pi$ cho tất cả tài liệu.
+\item Với mỗi tài liệu, ghi ID của hàng có mặt đầu tiên để tạo một hàng chữ ký. Lặp với $t$ hoán vị; ước lượng $\widehat J$ bằng số hàng trùng chia $t$.
+}
+
 \begin{algpseudo}
 với mỗi hoán vị $\pi_j$ và tài liệu $D$:\\
 \quad $M[j,D]\gets$ ID đầu tiên gặp trong $S_D$ khi duyệt $\pi_j$\\
 trả $M$ và $\widehat J(A,B)=|\{j:M[j,A]=M[j,B]\}|/t$
 \end{algpseudo}
 
-\key{Khi dùng} Đề cho ma trận hàng là shingle, cột là tài liệu, hoặc cho sẵn các tập ID và hoán vị.
+\unitheading{3}{Verification / Kiểm tra}
 
-\steps{
-\item Duyệt các hàng theo thứ tự $\pi$, dùng cùng $\pi$ cho tất cả tài liệu.
-\item Với mỗi tài liệu, ghi ID của hàng có mặt đầu tiên để tạo một hàng chữ ký. Lặp với $t$ hoán vị; ước lượng $\widehat J$ bằng số hàng trùng chia $t$.
-}
+\key{Kiểm tra} Mỗi chữ ký ghi ID hàng nhỏ nhất theo hoán vị, không ghi vị trí của hàng đó; ước lượng Jaccard là tỷ lệ tọa độ chữ ký trùng.
+
+\unitheading{4}{Advanced / Nâng cao}
+
 \key{Vì sao được} Hàng đầu tiên trong hợp rơi vào giao với xác suất $J(A,B)$; đúng lúc đó MinHash trùng. Ví dụ thứ tự $(1,4,3,2)$ trên tập $\{2,4\}$ trả ID 4, không phải vị trí 2. Chữ ký của $n$ tài liệu lưu $O(tn)$ giá trị.
 
 % DSA5101 Exam Practice Questions.pdf, PDF page(s) 5.
+
+\unitheading{5}{Exam evidence / Câu hỏi và lời giải}
+
 \ask{Pr4bc}{Pr4(b,c)}{Dữ kiện chung: \hyperref[question:Pr4]{[Pr4]}}
 \qpart{b} Independently use $S_3=\{3,4,7,8\}$. Two permutations list row IDs in visitation order: $\pi_1=(5,3,1,8,2,6,4,7)$, $\pi_2=(2,7,6,4,8,1,3,5)$. For each permutation, record the first visited row present in each set. Give the resulting two-row signature matrix and the signature-agreement estimate for the similarity of $D_1,D_3$.
 \qpart{c} Why must the same permutations be used for all documents? Does the estimate $1/2$ contradict the exact similarity $1/3$?
@@ -834,21 +876,10 @@ Each column corresponds to a permutation of shingles, specifying the order in wh
 M=\begin{pmatrix}5&4&3&4\\2&2&3&4\\1&4&3&4\end{pmatrix}.
 \]
 \end{guidesteps}
-
 \topic{banding}{LSH banding}
-\algsummary{Tìm cặp tài liệu có khả năng giống nhau mà không so mọi cặp.}
-{Cặp giống dễ trùng cả một band; nhiều band cho thêm cơ hội trùng.}
-{Chữ ký $M$ có $m=br$ hàng, $b$ band, $r$ hàng mỗi band.}
-{Tập cặp ứng viên; có thể lọc tiếp bằng Jaccard thật.}
-{Nhóm tài liệu theo chữ ký con trong mỗi band, rồi hợp và bỏ trùng các cặp.}
-\begin{algpseudo}
-$C\gets\varnothing$\\
-với mỗi band $j$: nhóm tài liệu theo bộ $r$ giá trị trong band $j$\\
-\quad thêm vào $C$ mọi cặp cùng nhóm\\
-trả $C$; nếu cần xác nhận, chỉ tính Jaccard thật cho các cặp trong $C$
-\end{algpseudo}
 
-\key{Khi dùng} Cần chọn cặp ứng viên từ chữ ký MinHash, tránh so chính xác mọi cặp.
+\algsummary{Tìm cặp tài liệu có khả năng giống nhau mà không so mọi cặp.}{Cặp giống dễ trùng cả một band; nhiều band cho thêm cơ hội trùng.}{\textbf{Khi dùng:}\enspace Cần chọn cặp ứng viên từ chữ ký MinHash, tránh so chính xác mọi cặp.}{Chữ ký $M$ có $m=br$ hàng, $b$ band, $r$ hàng mỗi band.}{Tập cặp ứng viên; có thể lọc tiếp bằng Jaccard thật.}{Nhóm tài liệu theo chữ ký con trong mỗi band, rồi hợp và bỏ trùng các cặp.}
+
 \steps{
 \item Chia $m=br$ số hash thành $b$ band, mỗi band $r$ hàng.
 \item Một band khớp khi tất cả $r$ hàng khớp. Một cặp là ứng viên khi ít nhất một band khớp. So chính xác chỉ để xác nhận các ứng viên.
@@ -856,9 +887,13 @@ trả $C$; nếu cần xác nhận, chỉ tính Jaccard thật cho các cặp tr
 \[
 \Pr(\mathrm{candidate}\mid s)=1-(1-s^r)^b.
 \]
-\key{Đọc tham số} $s$ là Jaccard, công thức giả sử các hàng độc lập. Tại $m$ cố định, tăng $b$ làm giảm $r$: thường tăng recall và giảm precision. Nếu $r$ cố định, tăng $b$ cũng tăng xác suất thành ứng viên.
 
-\key{Mốc 50\%} $s_{1/2}=(1-2^{-1/b})^{1/r}$. Đây là mốc xác suất, không phải ngưỡng cứng. Bước xác nhận lọc ứng viên sai, không phục hồi cặp chưa từng được chọn.
+\begin{algpseudo}
+$C\gets\varnothing$\\
+với mỗi band $j$: nhóm tài liệu theo bộ $r$ giá trị trong band $j$\\
+\quad thêm vào $C$ mọi cặp cùng nhóm\\
+trả $C$; nếu cần xác nhận, chỉ tính Jaccard thật cho các cặp trong $C$
+\end{algpseudo}
 
 \begin{example}{Pr5}{Pr5(a,b) · Banding: ứng viên và kết quả xác nhận}
 \begin{examtable}{@{}l c c c l@{}}
@@ -874,6 +909,19 @@ Gộp và bỏ trùng sau khi băm: chỉ so chính xác $AB$ và $BD$ (2 trên 
 \end{example}
 
 % DSA5101 Exam Practice Questions.pdf, PDF page(s) 6.
+
+\unitheading{3}{Verification / Kiểm tra}
+
+\key{Đọc tham số} $s$ là Jaccard, công thức giả sử các hàng độc lập. Tại $m$ cố định, tăng $b$ làm giảm $r$: thường tăng recall và giảm precision. Nếu $r$ cố định, tăng $b$ cũng tăng xác suất thành ứng viên.
+
+\key{Mốc 50\%} $s_{1/2}=(1-2^{-1/b})^{1/r}$. Đây là mốc xác suất, không phải ngưỡng cứng. Bước xác nhận lọc ứng viên sai, không phục hồi cặp chưa từng được chọn.
+
+\unitheading{4}{Advanced / Nâng cao}
+
+\key{Xác suất ứng viên} Với Jaccard $s$, $b$ band và $r$ hàng mỗi band, $P(\text{candidate})=1-(1-s^r)^b$: một band khớp đủ khi cả $r$ hàng khớp, rồi lấy hợp qua $b$ band.
+
+\unitheading{5}{Exam evidence / Câu hỏi và lời giải}
+
 \ask{Pr5}{Pr5}{}
 Viewer histories are sets $A=\{1,2,3,4\}$, $B=\{1,2,3,5\}$, $C=\{1,2,4,6\}$, $D=\{3,5,7\}$. Use three bands of two consecutive rows in the following signatures. Two viewers are candidates if they agree in every row of at least one band. Assume no additional hash collisions between different band tuples.
 \begin{examtable}{@{}ccccc@{}}
@@ -955,13 +1003,16 @@ The target exact Jaccard threshold is $3/5$.
 \begin{guidesteps}
 \item Từ $P_{\rm cand}=1-(1-s^r)^b$, tăng $b$ với $r$ cố định tạo thêm cơ hội có band khớp. Nếu tổng số hàng $m=br$ cố định, $r=m/b$ giảm nên mỗi band cũng dễ khớp hơn.
 \end{guidesteps}
-
 \topic{families}{LSH families, AND/OR amplification \& cascades}
-\algsummary{Điều chỉnh xác suất va chạm để tách cặp gần khỏi cặp xa.}
-{AND yêu cầu mọi nhánh khớp; OR chỉ cần một nhánh khớp.}
-{Xác suất gốc $p$; các tầng AND hoặc OR với số nhánh, dùng hash độc lập.}
-{Xác suất va chạm cuối $p'$ và tổng số hash gốc.}
-{Tính từng tầng từ trong ra ngoài; mỗi tầng nhân số lần dùng hash gốc.}
+
+\algsummary{Điều chỉnh xác suất va chạm để tách cặp gần khỏi cặp xa.}{AND yêu cầu mọi nhánh khớp; OR chỉ cần một nhánh khớp.}{\textbf{Khi dùng:}\enspace Đề cho xác suất va chạm $p$ của một hash rồi ghép nhiều hash độc lập. Một họ LSH $(d_1,d_2,p_1,p_2)$ bảo đảm xác suất trùng $\ge p_1$ khi khoảng cách $\le d_1$ và $\le p_2$ khi khoảng cách $\ge d_2$.
+
+\begin{itemize}
+\item AND $r$ lần: tất cả trùng, xác suất $p^r$.
+\item OR $b$ lần: ít nhất một lần trùng, xác suất $1-(1-p)^b$.
+\item Cascade: áp dụng theo thứ tự từ tầng trong ra ngoài. Số hash gốc bằng tích số nhánh các tầng, nếu mỗi nhánh dùng hash độc lập.
+\end{itemize}}{Xác suất gốc $p$; các tầng AND hoặc OR với số nhánh, dùng hash độc lập.}{Xác suất va chạm cuối $p'$ và tổng số hash gốc.}{Tính từng tầng từ trong ra ngoài; mỗi tầng nhân số lần dùng hash gốc.}
+
 \begin{algpseudo}
 $m\gets1$\\
 với mỗi tầng $(\mathrm{op},k)$ từ trong ra ngoài:\\
@@ -970,16 +1021,20 @@ với mỗi tầng $(\mathrm{op},k)$ từ trong ra ngoài:\\
 trả $p,m$
 \end{algpseudo}
 
-\key{Khi dùng} Đề cho xác suất va chạm $p$ của một hash rồi ghép nhiều hash độc lập. Một họ LSH $(d_1,d_2,p_1,p_2)$ bảo đảm xác suất trùng $\ge p_1$ khi khoảng cách $\le d_1$ và $\le p_2$ khi khoảng cách $\ge d_2$.
-
-\begin{itemize}
-\item AND $r$ lần: tất cả trùng, xác suất $p^r$.
-\item OR $b$ lần: ít nhất một lần trùng, xác suất $1-(1-p)^b$.
-\item Cascade: áp dụng theo thứ tự từ tầng trong ra ngoài. Số hash gốc bằng tích số nhánh các tầng, nếu mỗi nhánh dùng hash độc lập.
-\end{itemize}
 \key{Ví dụ} Với $p=1/2$, dùng 2 nhánh mỗi tầng: AND rồi OR cho $7/16$; OR rồi AND cho $9/16$. Điểm bất động $f(s)=s$ khác mốc $f(s)=1/2$.
 
 % 2425Sem1-DSA5101.pdf, PDF page(s) 8.
+
+\unitheading{3}{Verification / Kiểm tra}
+
+\key{Kiểm tra} AND phải làm xác suất va chạm giảm còn OR phải làm xác suất tăng; mọi phép lũy thừa cần giả thiết các phép băm độc lập.
+
+\unitheading{4}{Advanced / Nâng cao}
+
+\key{Khuếch đại} Nếu một phép băm va chạm với xác suất $p$, ghép AND trên $r$ phép cho $p^r$; ghép OR trên $b$ nhánh cho $1-(1-p)^b$. Tách tầng chỉ hợp lý khi chi phí ứng viên ở mỗi tầng được tính riêng.
+
+\unitheading{5}{Exam evidence / Câu hỏi và lời giải}
+
 \ask[A1-Q2ef]{P24-Q2ef}{P24-Q2(e,f) / A1-Q2(e,f)}{}
 \qpart{e} Given a hash family $H$ such that $\forall h\in H$, $h(x=y)=\operatorname{Similarity}(x,y)$. We construct a $(5,6,7)$ way AND-OR-AND hash family $G$ from $H$. If a pair of documents have similarity $s=0.9$, what is the probability that they get hashed into the same bucket for each $g\in G$?
 
@@ -998,27 +1053,21 @@ trả $p,m$
 \begin{guidesteps}
 \item Số hash gốc là tích fan-out của mọi tầng lồng nhau. Thay AND-5, OR-6, AND-7, OR-3, AND-4: $5\cdot6\cdot7\cdot3\cdot4=2520$ hash.
 \end{guidesteps}
-
 \topic{hyperplanes}{Random hyperplanes (cosine LSH)}
-\algsummary{Băm vectơ để ưu tiên các cặp có cosine cao.}
-{Một siêu phẳng ngẫu nhiên ít khi tách hai vectơ có góc nhỏ.}
-{Vectơ khác 0, số bit $t$, các pháp tuyến đẳng hướng dùng chung.}
-{Chữ ký bit; với một cặp có góc $\theta$, xác suất khớp một bit là $1-\theta/\pi$.}
-{Tính dấu của tích vô hướng với từng pháp tuyến; xử lý dấu 0 theo quy ước đề.}
-\begin{algpseudo}
-với $j=1,\ldots,t$: lấy hoặc đọc pháp tuyến $v_j$\\
-\quad với mỗi vectơ $x$: $\operatorname{sig}[j,x]\gets [v_j^Tx\ge0]$\\
-trả $\operatorname{sig}$ (nếu đề dùng quy ước dấu khác, thay phép so tương ứng)
-\end{algpseudo}
 
-\key{Khi dùng} So vectơ theo góc; mỗi pháp tuyến $v$ cho một bit $h_v(x)=\operatorname{sign}(v^Tx)$.
+\algsummary{Băm vectơ để ưu tiên các cặp có cosine cao.}{Một siêu phẳng ngẫu nhiên ít khi tách hai vectơ có góc nhỏ.}{\textbf{Khi dùng:}\enspace So vectơ theo góc; mỗi pháp tuyến $v$ cho một bit $h_v(x)=\operatorname{sign}(v^Tx)$.}{Vectơ khác 0, số bit $t$, các pháp tuyến đẳng hướng dùng chung.}{Chữ ký bit; với một cặp có góc $\theta$, xác suất khớp một bit là $1-\theta/\pi$.}{Tính dấu của tích vô hướng với từng pháp tuyến; xử lý dấu 0 theo quy ước đề.}
 
 \key{Cách làm} Nếu đề cho $v$, tính tích vô hướng rồi lấy dấu theo quy ước của đề. Nếu hỏi xác suất trên siêu phẳng ngẫu nhiên qua gốc, tính $\theta$ từ cosine:
 \[
 \cos\theta=\frac{x^Ty}{\|x\|\|y\|},\qquad
 \Pr[h_v(x)=h_v(y)]=1-\theta/\pi.
 \]
-\key{Bẫy} Hai vectơ vuông góc trùng bit với xác suất $1/2$. Nhân vectơ với số dương giữ nguyên dấu. Lặp lại cùng siêu phẳng không tạo các phép thử độc lập.
+
+\begin{algpseudo}
+với $j=1,\ldots,t$: lấy hoặc đọc pháp tuyến $v_j$\\
+\quad với mỗi vectơ $x$: $\operatorname{sig}[j,x]\gets [v_j^Tx\ge0]$\\
+trả $\operatorname{sig}$ (nếu đề dùng quy ước dấu khác, thay phép so tương ứng)
+\end{algpseudo}
 
 \begin{example}{P25-Q2b}{P25-Q2(b) · Random hyperplanes: góc quyết định xác suất}
 \begin{diagram}
@@ -1034,6 +1083,17 @@ Hai vectơ có 200 vị trí cùng bằng 1, nên $\cos\theta=200/\sqrt{400\cdot
 \end{example}
 
 % DSA5101 Exam Practice Questions.pdf, PDF page(s) 7.
+
+\unitheading{3}{Verification / Kiểm tra}
+
+\key{Bẫy} Hai vectơ vuông góc trùng bit với xác suất $1/2$. Nhân vectơ với số dương giữ nguyên dấu. Lặp lại cùng siêu phẳng không tạo các phép thử độc lập.
+
+\unitheading{4}{Advanced / Nâng cao}
+
+\key{Xác suất va chạm} Với hai vector tạo góc $\theta$, một siêu phẳng ngẫu nhiên qua gốc cho xác suất cùng dấu $1-\theta/\pi$. Với $m$ siêu phẳng độc lập, khoảng cách Hamming kỳ vọng giữa chữ ký là $m\theta/\pi$.
+
+\unitheading{5}{Exam evidence / Câu hỏi và lời giải}
+
 \ask{Pr6}{Pr6}{}
 Use the sign of $v\cdot x$ as a hash bit, with zero assigned $+$. The hyperplane normals are $v_1=(1,0)$, $v_2=(0,1)$, $v_3=(1,-2)$, $v_4=(2,1)$. Image descriptors include $P=(3,1)$ and $Q=(2,2)$. You are given that $P$ has sign signature $(+,+,+,+)$.
 \qpart{a} Calculate the four dot products for $Q$, its sign signature, and its observed agreement fraction with $P$.
@@ -1073,22 +1133,19 @@ Give each scheme's final collision probability.
 \item Cosine similarity là $\cos\theta=(x\cdot y)/(\|x\|\|y\|)$. Thay $x\cdot y=200$, $\|x\|^2=400$, $\|y\|^2=800$: $\cos\theta=200/\sqrt{400\cdot800}=1/\sqrt8$.
 \item Random hyperplane cho xác suất cùng dấu $p=1-\theta/\pi=1-\arccos(\cos\theta)/\pi$. Thế $\cos\theta=1/\sqrt8$: $p\approx0.6150$.
 \end{guidesteps}
-
 \topic{euclidean}{Euclidean-distance LSH via random projection}
-\algsummary{Tạo khóa ứng viên cho các vectơ gần theo khoảng cách Euclid.}
-{Sau khi chiếu, hai điểm gần nhau dễ lọt vào cùng một ô rộng $a$.}
-{Vectơ, hướng chiếu $u$, độ rộng $a>0$ và mốc ô $b$ của hàm băm.}
-{ID ô của từng vectơ, dùng để nhóm ứng viên.}
-{Dùng cùng trục và mốc cho mọi vectơ; nếu mô hình cho dịch ngẫu nhiên, bốc mốc một lần cho mỗi hash.}
+
+\algsummary{Tạo khóa ứng viên cho các vectơ gần theo khoảng cách Euclid.}{Sau khi chiếu, hai điểm gần nhau dễ lọt vào cùng một ô rộng $a$.}{\textbf{Khi dùng:}\enspace Tìm cặp vectơ gần nhau theo khoảng cách Euclid bằng phép chiếu lên đường thẳng.}{Vectơ, hướng chiếu $u$, độ rộng $a>0$ và mốc ô $b$ của hàm băm.}{ID ô của từng vectơ, dùng để nhóm ứng viên.}{Dùng cùng trục và mốc cho mọi vectơ; nếu mô hình cho dịch ngẫu nhiên, bốc mốc một lần cho mỗi hash.}
+
+\key{Cách làm} Chiếu $x$ lên hướng $u$, chia đường chiếu thành các ô rộng $a$ và băm vào số ô. Ví dụ nếu mốc ô là 0 thì $h_u(x)=\lfloor u^Tx/a\rfloor$. Với $a=2$, các giá trị chiếu $1.3,1.8,2.1$ vào các ô $0,0,1$.
+
 \begin{algpseudo}
 chọn hoặc đọc $u,a,b$\\
 với mỗi vectơ $x$: $h(x)\gets\lfloor (u^Tx-b)/a\rfloor$\\
 nhóm vectơ theo $h(x)$; trả các nhóm
 \end{algpseudo}
 
-\key{Khi dùng} Tìm cặp vectơ gần nhau theo khoảng cách Euclid bằng phép chiếu lên đường thẳng.
-
-\key{Cách làm} Chiếu $x$ lên hướng $u$, chia đường chiếu thành các ô rộng $a$ và băm vào số ô. Ví dụ nếu mốc ô là 0 thì $h_u(x)=\lfloor u^Tx/a\rfloor$. Với $a=2$, các giá trị chiếu $1.3,1.8,2.1$ vào các ô $0,0,1$.
+\unitheading{3}{Verification / Kiểm tra}
 
 \key{Bẫy} Hai điểm gần nhau vẫn có thể nằm hai bên biên ô. Trong mô hình của lecture, các mốc gần/xa $a/2$ và $2a$ cho cận va chạm lần lượt $\ge1/2$ và $\le1/3$.
 
@@ -1096,21 +1153,12 @@ nhóm vectơ theo $h(x)$; trả các nhóm
 
 \lecture{3}{Clustering}
 
-\topic{hierarchical}{Hierarchical agglomerative clustering}
-\algsummary{Dựng cây gộp cụm ở nhiều mức chi tiết.}
-{Gộp cặp gần nhất; định nghĩa khoảng cách giữa hai cụm quyết định cây.}
-{Điểm, khoảng cách, loại linkage và quy tắc phá hòa.}
-{Dendrogram gồm các phép gộp và độ cao.}
-{Từ các cụm một điểm, chọn cặp gần nhất, ghi độ cao rồi cập nhật khoảng cách.}
-\begin{algpseudo}
-$\mathcal C\gets$ các cụm một điểm; $T\gets$ cây rỗng\\
-khi $|\mathcal C|>1$: chọn cặp $(A,B)$ có linkage nhỏ nhất, phá hòa theo đề\\
-\quad ghi phép gộp ở độ cao $\operatorname{linkage}(A,B)$ vào $T$\\
-\quad thay $A,B$ bằng $A\cup B$; cập nhật linkage tới cụm mới\\
-trả $T$
-\end{algpseudo}
+\unitheading{4}{Advanced / Nâng cao}
 
-\key{Khi dùng} Đề yêu cầu cây gộp cụm (dendrogram). Bắt đầu từ các cụm một điểm; mỗi vòng gộp hai cụm có khoảng cách linkage nhỏ nhất. Ghi khoảng cách đó làm độ cao của lần gộp.
+\key{Chi phí băm} Với $k$ hướng chiếu dày trong $d$ chiều, tính các giá trị chiếu tốn $O(kd)$ mỗi điểm; tra bucket tốn thêm $O(k)$. Dùng nhiều phép băm độc lập tăng chi phí nhưng cho phép khuếch đại xác suất ứng viên.
+\topic{hierarchical}{Hierarchical agglomerative clustering}
+
+\algsummary{Dựng cây gộp cụm ở nhiều mức chi tiết.}{Gộp cặp gần nhất; định nghĩa khoảng cách giữa hai cụm quyết định cây.}{\textbf{Khi dùng:}\enspace Đề yêu cầu cây gộp cụm (dendrogram). Bắt đầu từ các cụm một điểm; mỗi vòng gộp hai cụm có khoảng cách linkage nhỏ nhất. Ghi khoảng cách đó làm độ cao của lần gộp.
 
 \begin{itemize}
 \item Single: lấy khoảng cách nhỏ nhất trong các cặp chéo hai cụm.
@@ -1118,8 +1166,15 @@ trả $T$
 \item Average: lấy trung bình của mọi khoảng cách chéo.
 \item Clustroid: chọn một điểm thật trong cụm, thường là điểm có tổng khoảng cách đến các điểm cùng cụm nhỏ nhất. So các điểm đại diện nếu đề yêu cầu clustroid linkage.
 \item Average linkage có thể cập nhật từ hai khoảng cách đã biết: $d(A\cup B,C)=\frac{|A|d(A,C)+|B|d(B,C)}{|A|+|B|}$. Với metric tự định nghĩa, tính lại đúng theo định nghĩa; khi hòa, áp dụng đúng thứ tự phá hòa.
-\end{itemize}
-\key{Bẫy} Độ cao gộp theo single có thể nhỏ hơn đường kính của cụm vừa gộp. Khi hòa, theo đúng quy tắc của đề.
+\end{itemize}}{Điểm, khoảng cách, loại linkage và quy tắc phá hòa.}{Dendrogram gồm các phép gộp và độ cao.}{Từ các cụm một điểm, chọn cặp gần nhất, ghi độ cao rồi cập nhật khoảng cách.}
+
+\begin{algpseudo}
+$\mathcal C\gets$ các cụm một điểm; $T\gets$ cây rỗng\\
+khi $|\mathcal C|>1$: chọn cặp $(A,B)$ có linkage nhỏ nhất, phá hòa theo đề\\
+\quad ghi phép gộp ở độ cao $\operatorname{linkage}(A,B)$ vào $T$\\
+\quad thay $A,B$ bằng $A\cup B$; cập nhật linkage tới cụm mới\\
+trả $T$
+\end{algpseudo}
 
 \begin{example}{A1-Q3}{A1-Q3(b) · Dendrogram: complete linkage với khoảng cách tỉ số}
 \begin{diagram}
@@ -1140,6 +1195,17 @@ Chiều cao ghi theo $d(x,y)=\max(x,y)/\min(x,y)$, cách đều để dễ đọ
 \end{example}
 
 % DSA5101 Exam Practice Questions.pdf, PDF page(s) 8.
+
+\unitheading{3}{Verification / Kiểm tra}
+
+\key{Bẫy} Độ cao gộp theo single có thể nhỏ hơn đường kính của cụm vừa gộp. Khi hòa, theo đúng quy tắc của đề.
+
+\unitheading{4}{Advanced / Nâng cao}
+
+\key{Chi phí bản trực tiếp} Lưu mọi khoảng cách cặp cần $O(n^2)$ bộ nhớ. Nếu mỗi lần gộp quét lại mọi cặp cụm để tìm linkage nhỏ nhất, $n-1$ lần gộp tốn $O(n^3)$ thời gian.
+
+\unitheading{5}{Exam evidence / Câu hỏi và lời giải}
+
 \ask{Pr7}{Pr7}{}
 Five text fragments have the following dissimilarities.
 \begin{examtable}{@{}lrrrrr@{}}
@@ -1222,13 +1288,16 @@ Nút $j$ & 1 & 2 & 3 & 4 & 5 & 6 & 7 \\
 \item Complete linkage dùng $d_{\rm complete}(X,Y)=\max_{x\in X,y\in Y}d(x,y)$. Với ratio metric $d(x,y)=\max(x,y)/\min(x,y)$, hai cụm có điểm nhỏ nhất $x_{\min}$ và lớn nhất $y_{\max}$ cách nhau tối đa theo tỷ số $y_{\max}/x_{\min}$.
 \item Thay các lũy thừa 2 vào công thức, cặp $(1,2),(4,8),(16,32),(64,128)$ có khoảng cách 2; phá hòa theo rank ghép chúng ở độ cao 2. Hai cụm đầu và hai cụm cuối sau đó cách nhau 8; hai cụm còn lại cách nhau 128.
 \end{guidesteps}
-
 \topic{kmeans}{K-means / Lloyd's algorithm}
-\algsummary{Chia điểm thành $K$ cụm có tổng sai số bình phương tới tâm nhỏ.}
-{Khi cố định tâm, gán gần nhất giảm SSE; khi cố định cụm, trung bình là tâm tốt nhất.}
-{Tập điểm, $K$ tâm ban đầu và điều kiện dừng.}
-{Nhãn cụm, các tâm cuối và SSE.}
-{Luân phiên gán vào tâm gần nhất và tính lại tâm bằng trung bình.}
+
+\algsummary{Chia điểm thành $K$ cụm có tổng sai số bình phương tới tâm nhỏ.}{Khi cố định tâm, gán gần nhất giảm SSE; khi cố định cụm, trung bình là tâm tốt nhất.}{\textbf{Khi dùng:}\enspace Đề cho $K$ tâm hoặc một cách gán điểm ban đầu. Mục tiêu là giảm SSE, tức tổng bình phương khoảng cách của mỗi điểm tới tâm cụm của nó.}{Tập điểm, $K$ tâm ban đầu và điều kiện dừng.}{Nhãn cụm, các tâm cuối và SSE.}{Luân phiên gán vào tâm gần nhất và tính lại tâm bằng trung bình.}
+
+\steps{
+\item Assign: gán mỗi điểm vào tâm gần nhất.
+\item Update: thay tâm của mỗi cụm $C$ bằng trung bình $\mu_C=\sum_{x\in C}x/|C|$.
+\item Lặp cho đến khi không đổi hoặc mức giảm SSE đủ nhỏ. Xử lý cụm rỗng theo quy ước đề.
+}
+
 \begin{algpseudo}
 lặp:\\
 \quad với mỗi điểm $x$: $c(x)\gets\arg\min_j\|x-\mu_j\|^2$\\
@@ -1236,14 +1305,6 @@ lặp:\\
 \quad xử lý cụm rỗng theo đề\\
 đến khi đạt điều kiện dừng; trả $c,\mu,\sum_x\|x-\mu_{c(x)}\|^2$
 \end{algpseudo}
-
-\key{Khi dùng} Đề cho $K$ tâm hoặc một cách gán điểm ban đầu. Mục tiêu là giảm SSE, tức tổng bình phương khoảng cách của mỗi điểm tới tâm cụm của nó.
-\steps{
-\item Assign: gán mỗi điểm vào tâm gần nhất.
-\item Update: thay tâm của mỗi cụm $C$ bằng trung bình $\mu_C=\sum_{x\in C}x/|C|$.
-\item Lặp cho đến khi không đổi hoặc mức giảm SSE đủ nhỏ. Xử lý cụm rỗng theo quy ước đề.
-}
-\key{Bẫy} Mỗi bước không tăng SSE, nhưng nghiệm dừng có thể không tối ưu toàn cục. Một vòng thường tốn $O(nKd)$ với $n$ điểm, $d$ chiều.
 
 \begin{example}{Pr8}{Pr8(a,b) · K-means: cập nhật tâm rồi gán lại $B$}
 \begin{diagram}
@@ -1266,6 +1327,17 @@ Chấm đen: cụm $ABDE$; vòng rỗng: cụm $CF$; dấu chéo: tâm mới. T�
 \end{example}
 
 % DSA5101 Exam Practice Questions.pdf, PDF page(s) 9.
+
+\unitheading{3}{Verification / Kiểm tra}
+
+\key{Bẫy} Mỗi bước không tăng SSE, nhưng nghiệm dừng có thể không tối ưu toàn cục. Một vòng thường tốn $O(nKd)$ với $n$ điểm, $d$ chiều.
+
+\unitheading{4}{Advanced / Nâng cao}
+
+\key{Vì sao giảm SSE} Với tâm cố định, gán mỗi điểm vào tâm gần nhất không tăng SSE; với nhãn cố định, cập nhật tâm bằng trung bình cụm tối thiểu hóa SSE. Do đó mỗi vòng không tăng mục tiêu, nhưng chỉ hội tụ tới nghiệm cục bộ.
+
+\unitheading{5}{Exam evidence / Câu hỏi và lời giải}
+
 \ask{Pr8}{Pr8}{}
 Six locations are $A=(0,0)$, $B=(0,2)$, $C=(0,4)$, $D=(6,0)$, $E=(6,2)$, $F=(6,4)$. For $k=2$, an initial assignment step has produced clusters $\{A,B,D,E\}$ and $\{C,F\}$.
 \qpart{a} Perform the centroid update for these two clusters.
@@ -1289,13 +1361,16 @@ Six locations are $A=(0,0)$, $B=(0,2)$, $C=(0,4)$, $D=(6,0)$, $E=(6,2)$, $F=(6,4
 \item SSE của phân hoạch là $\sum_x\|x-\mu_{c(x)}\|^2$. Với hai cột, tâm là $(0,2),(6,2)$; thay sáu điểm cho $2^2+0^2+2^2+2^2+0^2+2^2=16<58$.
 \item K-means dừng ở điểm cố định nhưng một phân hoạch khả thi có SSE thấp hơn, nên điểm dừng không tối ưu toàn cục. Chạy nhiều khởi tạo và giữ SSE thấp nhất hoặc dùng k-means++ để cải thiện khởi tạo.
 \end{guidesteps}
-
 \topic{seeding}{K-means++-style seeding, choosing K \& stopping}
-\algsummary{Chọn tâm ban đầu có độ bao phủ tốt cho K-means.}
-{Điểm xa mọi tâm đã chọn đại diện cho vùng chưa được phủ.}
-{Tập điểm, số tâm $K$.}
-{$K$ tâm khởi tạo.}
-{Chọn tâm đầu đều; chọn tiếp theo bình phương khoảng cách tới tâm gần nhất.}
+
+\algsummary{Chọn tâm ban đầu có độ bao phủ tốt cho K-means.}{Điểm xa mọi tâm đã chọn đại diện cho vùng chưa được phủ.}{}{Tập điểm, số tâm $K$.}{$K$ tâm khởi tạo.}{Chọn tâm đầu đều; chọn tiếp theo bình phương khoảng cách tới tâm gần nhất.}
+
+\key{Ý chính} Tâm ban đầu khác nhau có thể cho các nghiệm khác nhau. Chọn tâm đầu ngẫu nhiên; chọn điểm tiếp theo với xác suất tỷ lệ $D(x)^2$, trong đó $D(x)$ đo tới tâm đã chọn gần nhất.
+
+\key{Tính nhanh} Nếu $D=(1,2,3)$, trọng số là $(1,4,9)$; chuẩn hóa bằng tổng 14. Điểm xa nhất có xác suất cao hơn chứ không được chọn chắc chắn.
+
+\key{Quy ước} K-means++ chuẩn chọn $K$ tâm. Biến thể trong lecture lấy khoảng $K\log N$ điểm rồi gom mẫu để khởi tạo tâm. Khi chọn $K$, elbow là nơi tăng thêm cụm chỉ giảm SSE ít; có thể không có elbow rõ.
+
 \begin{algpseudo}
 $C\gets$ một điểm chọn đều\\
 khi $|C|<K$: với mỗi $x\notin C$, đặt $w_x\gets\min_{c\in C}\|x-c\|^2$\\
@@ -1304,20 +1379,28 @@ khi $|C|<K$: với mỗi $x\notin C$, đặt $w_x\gets\min_{c\in C}\|x-c\|^2$\\
 trả $C$
 \end{algpseudo}
 
-\key{Ý chính} Tâm ban đầu khác nhau có thể cho các nghiệm khác nhau. Chọn tâm đầu ngẫu nhiên; chọn điểm tiếp theo với xác suất tỷ lệ $D(x)^2$, trong đó $D(x)$ đo tới tâm đã chọn gần nhất.
+\unitheading{3}{Verification / Kiểm tra}
 
-\key{Tính nhanh} Nếu $D=(1,2,3)$, trọng số là $(1,4,9)$; chuẩn hóa bằng tổng 14. Điểm xa nhất có xác suất cao hơn chứ không được chọn chắc chắn.
+\key{Kiểm tra} Xác suất chọn điểm phải cộng thành 1 sau chuẩn hóa trọng số $D(x)^2$; nếu tổng trọng số bằng 0, mọi điểm còn lại đã có khoảng cách 0 tới tâm.
 
-\key{Quy ước} K-means++ chuẩn chọn $K$ tâm. Biến thể trong lecture lấy khoảng $K\log N$ điểm rồi gom mẫu để khởi tạo tâm. Khi chọn $K$, elbow là nơi tăng thêm cụm chỉ giảm SSE ít; có thể không có elbow rõ.
+\unitheading{4}{Advanced / Nâng cao}
 
-
-
+\key{Bảo đảm chuẩn} Với K-means++ chuẩn dùng D²-sampling và mục tiêu SSE Euclid, kỳ vọng chi phí khởi tạo bị chặn bởi $O(\log K)$ lần tối ưu. Không chuyển bảo đảm này sang biến thể oversampling nếu chưa có định lý tương ứng.
 \topic{bfr}{BFR (Bradley-Fayyad-Reina)}
-\algsummary{Gom dữ liệu theo lô khi không thể giữ mọi điểm.}
-{Cụm gần Gaussian theo trục được tóm tắt bằng số điểm, tổng và tổng bình phương.}
-{Các lô điểm, $K$, ngưỡng Mahalanobis và quy tắc gộp.}
-{Tóm tắt cụm cuối và phần chưa được gán.}
-{Giữ DS cho cụm chính, CS cho cụm tạm, RS cho điểm lẻ.}
+
+\algsummary{Gom dữ liệu theo lô khi không thể giữ mọi điểm.}{Cụm gần Gaussian theo trục được tóm tắt bằng số điểm, tổng và tổng bình phương.}{\textbf{Khi dùng:}\enspace Dữ liệu lớn đọc theo lô; giữ thống kê của cụm thay cho từng điểm. BFR phù hợp cụm gần Gaussian theo các trục tọa độ.
+\begin{itemize}
+\item DS: các điểm đã gán vào cụm chính; chỉ giữ tóm tắt.
+\item CS: các cụm tạm chưa gán vào cụm chính; cũng giữ tóm tắt.
+\item RS: còn giữ từng điểm chưa gán để thử gom ở lô sau.
+\end{itemize}}{Các lô điểm, $K$, ngưỡng Mahalanobis và quy tắc gộp.}{Tóm tắt cụm cuối và phần chưa được gán.}{Giữ DS cho cụm chính, CS cho cụm tạm, RS cho điểm lẻ.}
+
+\key{Tính} Cộng các bộ $(N,\mathrm{SUM},\mathrm{SUMSQ})$ theo tọa độ để gộp. Sau đó tính
+\[
+\mu_j=\mathrm{SUM}_j/N,\quad \sigma_j^2=\mathrm{SUMSQ}_j/N-\mu_j^2,\quad
+D_M^2=\sum_j\frac{(x_j-\mu_j)^2}{\sigma_j^2}.
+\]
+
 \begin{algpseudo}
 phân cụm lô đầu: tạo DS, CS và RS theo kích thước cụm\\
 với mỗi điểm $x$ của lô mới:\\
@@ -1327,21 +1410,18 @@ sau mỗi lô: gom RS thành CS nếu đủ điểm; thử gộp các CS\\
 cuối luồng: gộp CS đạt điều kiện vào DS; trả DS và phần còn lại
 \end{algpseudo}
 
-\key{Khi dùng} Dữ liệu lớn đọc theo lô; giữ thống kê của cụm thay cho từng điểm. BFR phù hợp cụm gần Gaussian theo các trục tọa độ.
-\begin{itemize}
-\item DS: các điểm đã gán vào cụm chính; chỉ giữ tóm tắt.
-\item CS: các cụm tạm chưa gán vào cụm chính; cũng giữ tóm tắt.
-\item RS: còn giữ từng điểm chưa gán để thử gom ở lô sau.
-\end{itemize}
-\key{Tính} Cộng các bộ $(N,\mathrm{SUM},\mathrm{SUMSQ})$ theo tọa độ để gộp. Sau đó tính
-\[
-\mu_j=\mathrm{SUM}_j/N,\quad \sigma_j^2=\mathrm{SUMSQ}_j/N-\mu_j^2,\quad
-D_M^2=\sum_j\frac{(x_j-\mu_j)^2}{\sigma_j^2}.
-\]
+\unitheading{3}{Verification / Kiểm tra}
+
 \key{Bẫy} So $D_M^2$ với ngưỡng bình phương nếu đề cho như vậy. Không chia trực tiếp cho phương sai bằng 0.
+
+\unitheading{4}{Advanced / Nâng cao}
+
 \key{Phương sai sau gộp} Theo từng chiều, với $w_i=N_i/(N_1+N_2)$, $\sigma^2=w_1\sigma_1^2+w_2\sigma_2^2+w_1w_2(\mu_1-\mu_2)^2$. Cụm có phương sai nhỏ riêng lẻ vẫn có thể vượt ngưỡng sau khi gộp nếu hai trung bình cách xa.
 
 % DSA5101 Exam Practice Questions.pdf, PDF page(s) 10.
+
+\unitheading{5}{Exam evidence / Câu hỏi và lời giải}
+
 \ask{Pr9}{Pr9}{}
 A two-dimensional discard-set cluster has summary $N=4$, $\mathrm{SUM}=(0,0)$, $\mathrm{SUMSQ}=(4,16)$. Use coordinate means $\mu_j=\mathrm{SUM}_j/N$ and variances $\sigma_j^2=\mathrm{SUMSQ}_j/N-\mu_j^2$. The squared Mahalanobis distance is
 \[
@@ -1383,13 +1463,15 @@ Read the statements below and state whether they are True or False. You do not n
 \item BFR tóm tắt cụm bằng trung bình/phương sai theo trục và kiểm tra điểm bằng khoảng cách Mahalanobis; vì vậy nó mở rộng cách gom kiểu K-means cho dữ liệu lớn theo lô.
 \item Hai vòng đồng tâm có cùng centroid; khoảng cách tới centroid không phân biệt vòng trong với vòng ngoài. Do đó BFR không tự xử lý hình dạng phi lồi này như phát biểu nói: False.
 \end{guidesteps}
-
 \topic{cure}{CURE: clustering using representatives}
-\algsummary{Tìm cụm có hình dạng mà một tâm duy nhất khó biểu diễn.}
-{Nhiều điểm trải rộng giữ hình dạng; co chúng về tâm để bớt nhạy với ngoại lai.}
-{Dữ liệu, mẫu vừa bộ nhớ, số cụm $K$, số đại diện $c$, tỷ lệ co $\alpha$.}
-{Các cụm, điểm đại diện và nhãn cho dữ liệu ngoài mẫu.}
-{Gộp bằng khoảng cách giữa đại diện; sau mỗi lần gộp chọn lại đại diện rồi co.}
+
+\algsummary{Tìm cụm có hình dạng mà một tâm duy nhất khó biểu diễn.}{Nhiều điểm trải rộng giữ hình dạng; co chúng về tâm để bớt nhạy với ngoại lai.}{\textbf{Khi dùng:}\enspace Một tâm có thể đại diện kém cho cụm kéo dài. CURE dùng nhiều điểm đại diện của cùng một cụm.}{Dữ liệu, mẫu vừa bộ nhớ, số cụm $K$, số đại diện $c$, tỷ lệ co $\alpha$.}{Các cụm, điểm đại diện và nhãn cho dữ liệu ngoài mẫu.}{Gộp bằng khoảng cách giữa đại diện; sau mỗi lần gộp chọn lại đại diện rồi co.}
+
+\steps{
+\item Lấy mẫu vừa bộ nhớ và gom cụm phân cấp. Chọn các điểm đại diện cách xa nhau, kéo mỗi $r$ về tâm $\mu$ thành $r'=(1-\alpha)r+\alpha\mu$.
+\item Gộp dựa trên khoảng cách giữa các đại diện. Quét toàn bộ dữ liệu và gán mỗi điểm theo đại diện gần nhất.
+}
+
 \begin{algpseudo}
 khởi tạo cụm một điểm trên mẫu\\
 khi còn hơn $K$ cụm: gộp cặp có hai đại diện gần nhau nhất\\
@@ -1398,43 +1480,50 @@ khi còn hơn $K$ cụm: gộp cặp có hai đại diện gần nhau nhất\\
 gán mỗi điểm ngoài mẫu vào cụm có đại diện gần nhất; trả các cụm
 \end{algpseudo}
 
-\key{Khi dùng} Một tâm có thể đại diện kém cho cụm kéo dài. CURE dùng nhiều điểm đại diện của cùng một cụm.
-
-\steps{
-\item Lấy mẫu vừa bộ nhớ và gom cụm phân cấp. Chọn các điểm đại diện cách xa nhau, kéo mỗi $r$ về tâm $\mu$ thành $r'=(1-\alpha)r+\alpha\mu$.
-\item Gộp dựa trên khoảng cách giữa các đại diện. Quét toàn bộ dữ liệu và gán mỗi điểm theo đại diện gần nhất.
-}
 \key{Ví dụ} Cụm có tâm 5, đại diện 0 và 10, $\alpha=0.2$: sau khi co còn 1 và 9. Chất lượng phụ thuộc mẫu và độ bao phủ của các đại diện.
 
+\unitheading{3}{Verification / Kiểm tra}
 
+\key{Kiểm tra} Điểm đại diện co về tâm theo $r\gets(1-\alpha)r+\alpha\mu$; khi so hai cụm, dùng khoảng cách gần nhất giữa các đại diện đã co.
 
+\unitheading{4}{Advanced / Nâng cao}
+
+\key{Vai trò số đại diện} Nếu mỗi cụm giữ $c$ đại diện, so hai cụm bằng khoảng cách nhỏ nhất trong $c^2$ cặp đại diện. Tăng $c$ mô tả hình dạng cụm tốt hơn nhưng làm tăng chi phí so khoảng cách.
 \topic{purity}{Cluster purity (evaluation with known labels)}
-\algsummary{Đo một phân hoạch có gom các điểm cùng nhãn thật hay không.}
-{Mỗi cụm ghi công cho nhãn chiếm đa số; cộng trên toàn bộ điểm.}
-{Nhãn cụm và nhãn thật của $N>0$ điểm.}
-{Purity trong $[0,1]$.}
-{Lập bảng đếm cụm--nhãn, lấy số lớn nhất mỗi hàng, chia tổng cho $N$.}
+
+\algsummary{Đo một phân hoạch có gom các điểm cùng nhãn thật hay không.}{Mỗi cụm ghi công cho nhãn chiếm đa số; cộng trên toàn bộ điểm.}{\textbf{Khi dùng:}\enspace Có nhãn thật để đo mức đồng nhất của từng cụm. Với $n_{ij}$ là số điểm nhãn $j$ trong cụm $i$, chọn nhãn chiếm đa số trong mỗi cụm:
+\[
+\operatorname{purity}=\frac{\sum_i\max_j n_{ij}}{N}.
+\]}{Nhãn cụm và nhãn thật của $N>0$ điểm.}{Purity trong $[0,1]$.}{Lập bảng đếm cụm--nhãn, lấy số lớn nhất mỗi hàng, chia tổng cho $N$.}
+
 \begin{algpseudo}
 với mỗi điểm: tăng bộ đếm của cặp (cụm, nhãn thật)\\
 trả $\sum_i\max_j\operatorname{count}[i,j]/N$
 \end{algpseudo}
 
-\key{Khi dùng} Có nhãn thật để đo mức đồng nhất của từng cụm. Với $n_{ij}$ là số điểm nhãn $j$ trong cụm $i$, chọn nhãn chiếm đa số trong mỗi cụm:
-\[
-\operatorname{purity}=\frac{\sum_i\max_j n_{ij}}{N}.
-\]
 \key{Ví dụ} Hai cụm có nhãn $AAAB$ và $BB$ cho purity $(3+2)/6=5/6$. Cộng số điểm đúng rồi chia tổng, không lấy trung bình đều theo cụm. Chia mỗi điểm thành một cụm cho purity 1 dù cách gom có thể vô ích.
 
 
 
 \lecture{4}{Dimensionality reduction}
 
+\unitheading{3}{Verification / Kiểm tra}
+
+\key{Kiểm tra} Cộng số điểm đúng theo đa số của từng cụm rồi chia tổng số điểm; kết quả nằm trong $[0,1]$ và không phải trung bình đều của các cụm.
+
+\unitheading{4}{Advanced / Nâng cao}
+
+\key{Giới hạn thước đo} Purity có thể đạt 1 khi tách mỗi điểm thành một cụm, nên không phạt phân mảnh. Chỉ so purity khi số cụm hoặc quy tắc phân hoạch được kiểm soát.
 \topic{svd}{SVD and power iteration}
-\algsummary{Tìm các hướng kỳ dị; dùng power iteration khi chỉ cần vài hướng trội.}
-{Nhân lặp với $A^TA$ khuếch đại hướng có trị riêng lớn; deflation bỏ hướng đã tìm.}
-{Ma trận $A$, số hướng $r$, vectơ khởi tạo và điều kiện dừng.}
-{Tối đa $r$ bộ ba $(u_i,\sigma_i,v_i)$ có $\sigma_i>0$.}
-{Tìm hướng đơn vị trội của $A^TA$, tính giá trị kỳ dị và vectơ trái, rồi deflate.}
+
+\algsummary{Tìm các hướng kỳ dị; dùng power iteration khi chỉ cần vài hướng trội.}{Nhân lặp với $A^TA$ khuếch đại hướng có trị riêng lớn; deflation bỏ hướng đã tìm.}{\textbf{Khi dùng:}\enspace Đề cho ma trận $A$ và hỏi vectơ hoặc giá trị kỳ dị. Trong $A=U\Sigma V^T$, các cột của $V$ là vectơ riêng của $A^TA$.}{Ma trận $A$, số hướng $r$, vectơ khởi tạo và điều kiện dừng.}{Tối đa $r$ bộ ba $(u_i,\sigma_i,v_i)$ có $\sigma_i>0$.}{Tìm hướng đơn vị trội của $A^TA$, tính giá trị kỳ dị và vectơ trái, rồi deflate.}
+
+\steps{
+\item Lập $M=A^TA$. Tìm cặp riêng $(\lambda_i,v_i)$ với $\|v_i\|=1$.
+\item Lấy $\sigma_i=\sqrt{\lambda_i}$ và $u_i=Av_i/\sigma_i$ nếu $\sigma_i>0$.
+\item Nếu đề yêu cầu power iteration: nhân $Mx$ rồi chuẩn hóa. Nếu cần deflation sau cặp trội, dùng $M-\lambda_1v_1v_1^T$.
+}
+
 \begin{algpseudo}
 $M\gets A^TA$\\
 với $i=1,\ldots,r$ khi $M$ còn trị riêng dương: chọn $x$ có thành phần theo hướng trội\\
@@ -1443,15 +1532,6 @@ với $i=1,\ldots,r$ khi $M$ còn trị riêng dương: chọn $x$ có thành ph
 \quad $M\gets M-\lambda_i v_i v_i^T$\\
 trả các bộ ba đã tìm
 \end{algpseudo}
-
-\key{Khi dùng} Đề cho ma trận $A$ và hỏi vectơ hoặc giá trị kỳ dị. Trong $A=U\Sigma V^T$, các cột của $V$ là vectơ riêng của $A^TA$.
-\steps{
-\item Lập $M=A^TA$. Tìm cặp riêng $(\lambda_i,v_i)$ với $\|v_i\|=1$.
-\item Lấy $\sigma_i=\sqrt{\lambda_i}$ và $u_i=Av_i/\sigma_i$ nếu $\sigma_i>0$.
-\item Nếu đề yêu cầu power iteration: nhân $Mx$ rồi chuẩn hóa. Nếu cần deflation sau cặp trội, dùng $M-\lambda_1v_1v_1^T$.
-}
-\key{Bẫy} Cần thành phần ban đầu theo không gian riêng trội; lặp không tự tạo thành phần bị thiếu. Tách một hướng trội thường cần khoảng cách giữa trị riêng lớn nhất và trị kế tiếp.
-\key{Hội tụ} Nếu $x^{(0)}=\sum_i c_iv_i$, sau $t$ phép nhân chưa chuẩn hóa hệ số theo $v_i$ là $c_i\lambda_i^t$. Hội tụ về $v_1$ cần $c_1\ne0$ và $|\lambda_1|>|\lambda_2|$; nếu $c_1=0$, phép lặp không tự sinh hướng đó.
 
 \begin{example}{Pr10}{Pr10(a) · Power iteration: nhân rồi chuẩn hóa}
 \[
@@ -1465,6 +1545,17 @@ Trong câu (a), $M=\bigl(\begin{smallmatrix}5&4\\4&5\end{smallmatrix}\bigr)$. V�
 \end{example}
 
 % DSA5101 Exam Practice Questions.pdf, PDF page(s) 11.
+
+\unitheading{3}{Verification / Kiểm tra}
+
+\key{Bẫy} Cần thành phần ban đầu theo không gian riêng trội; lặp không tự tạo thành phần bị thiếu. Tách một hướng trội thường cần khoảng cách giữa trị riêng lớn nhất và trị kế tiếp.
+
+\unitheading{4}{Advanced / Nâng cao}
+
+\key{Hội tụ} Nếu $x^{(0)}=\sum_i c_iv_i$, sau $t$ phép nhân chưa chuẩn hóa hệ số theo $v_i$ là $c_i\lambda_i^t$. Hội tụ về $v_1$ cần $c_1\ne0$ và $|\lambda_1|>|\lambda_2|$; nếu $c_1=0$, phép lặp không tự sinh hướng đó.
+
+\unitheading{5}{Exam evidence / Câu hỏi và lời giải}
+
 \ask{Pr10}{Pr10}{}
 Consider
 \[
@@ -1498,13 +1589,19 @@ Give the two singular values of $A$ and calculate only the first left singular v
 \item Deflation loại thành phần trị riêng lớn nhất: $M^*=M-\lambda_1v_1v_1^T$. Thay $\lambda_1=9$ và $v_1=(1,1)^T/\sqrt2$ cho $M^*=\frac12\bigl(\begin{smallmatrix}1&-1\\-1&1\end{smallmatrix}\bigr)$.
 \item Power iteration từ eigenvector $v_2$ thỏa $Mv_2=\lambda_2v_2=1\cdot v_2$; chuẩn hóa vẫn là $v_2$. Khởi tạo không có thành phần theo $v_1$ thì không hội tụ tới hướng trội.
 \end{guidesteps}
-
 \topic{pca}{Truncated SVD / PCA projection}
-\algsummary{Giảm chiều hoặc tái tạo gần đúng ma trận với hạng nhỏ.}
-{Các hướng kỳ dị lớn giữ nhiều năng lượng, hoặc nhiều phương sai khi đã trừ trung bình.}
-{$A$, hạng $r$ hoặc tỷ lệ năng lượng cần giữ; chọn PCA hay SVD thuần.}
-{Cơ sở $V_r$, tọa độ giảm chiều $Z$ và bản tái tạo $\widehat A$.}
-{Trừ trung bình cột nếu dùng PCA, giữ các hướng kỳ dị đầu, chiếu rồi tái tạo.}
+
+\algsummary{Giảm chiều hoặc tái tạo gần đúng ma trận với hạng nhỏ.}{Các hướng kỳ dị lớn giữ nhiều năng lượng, hoặc nhiều phương sai khi đã trừ trung bình.}{\textbf{Khi dùng:}\enspace Đề hỏi giữ bao nhiêu chiều hoặc tái tạo dữ liệu sau khi chiếu. Giữ $r$ giá trị kỳ dị lớn nhất:
+\[
+\begin{aligned}
+A_r&=U_r\Sigma_rV_r^T, \\
+\text{năng lượng giữ lại}&=\frac{\sum_{i\le r}\sigma_i^2}{\sum_i\sigma_i^2},\\
+\|A-A_r\|_F^2&=\sum_{i>r}\sigma_i^2 .
+\end{aligned}
+\]}{$A$, hạng $r$ hoặc tỷ lệ năng lượng cần giữ; chọn PCA hay SVD thuần.}{Cơ sở $V_r$, tọa độ giảm chiều $Z$ và bản tái tạo $\widehat A$.}{Trừ trung bình cột nếu dùng PCA, giữ các hướng kỳ dị đầu, chiếu rồi tái tạo.}
+
+\key{Chiếu và tái tạo} Với $x$ là vectơ hàng, $z=xV_r$ và $\hat x=zV_r^T$. Với PCA, trừ trung bình trước khi chiếu và cộng lại sau khi tái tạo về thang gốc.
+
 \begin{algpseudo}
 $\mu\gets$ vectơ các trung bình cột của $A$ nếu PCA; ngược lại $\mu\gets0$\\
 $X\gets A-\mathbf 1\mu$; tìm SVD của $X$\\
@@ -1512,20 +1609,18 @@ chọn $r$; $Z\gets XV_r$; $\widehat A\gets ZV_r^T+\mathbf 1\mu$\\
 trả $V_r,Z,\widehat A$
 \end{algpseudo}
 
-\key{Khi dùng} Đề hỏi giữ bao nhiêu chiều hoặc tái tạo dữ liệu sau khi chiếu. Giữ $r$ giá trị kỳ dị lớn nhất:
-\[
-\begin{aligned}
-A_r&=U_r\Sigma_rV_r^T, \\
-\text{năng lượng giữ lại}&=\frac{\sum_{i\le r}\sigma_i^2}{\sum_i\sigma_i^2},\\
-\|A-A_r\|_F^2&=\sum_{i>r}\sigma_i^2 .
-\end{aligned}
-\]
-\key{Chiếu và tái tạo} Với $x$ là vectơ hàng, $z=xV_r$ và $\hat x=zV_r^T$. Với PCA, trừ trung bình trước khi chiếu và cộng lại sau khi tái tạo về thang gốc.
+\unitheading{3}{Verification / Kiểm tra}
 
 \key{Bẫy} Dùng bình phương giá trị kỳ dị. Sai số tái tạo nhỏ trên toàn bộ ma trận không bảo đảm giữ nguyên thứ hạng hàng xóm.
+
+\unitheading{4}{Advanced / Nâng cao}
+
 \key{Sai số truy vấn} Với hàng truy vấn $q$ và phép chiếu trực giao $P_r=V_rV_r^T$, $\|q-qP_r\|^2=\|q\|^2-\|qV_r\|^2$. Tỷ lệ năng lượng giữ lại là đại lượng toàn ma trận, không thay cho sai số hay thứ hạng hàng xóm của một truy vấn.
 
 % DSA5101 Exam Practice Questions.pdf, PDF page(s) 12.
+
+\unitheading{5}{Exam evidence / Câu hỏi và lời giải}
+
 \ask{Pr11}{Pr11}{}
 A document matrix has nonzero singular values 6, 3, 2. Its first two right singular vectors form the columns of
 \[
@@ -1554,30 +1649,36 @@ For a row vector $x$, use reduced representation $z_x=xV_2$ and reconstruction $
 \item Tái tạo là $\hat q=z_qV_2^T$; với $z_q=(1/2,1/2)$, được $\hat q=(1/2,1/2,0,0)$. Lỗi riêng truy vấn là $\|q-\hat q\|^2=1/4+1/4=1/2$.
 \item Tỷ lệ năng lượng kỳ dị là trung bình/toàn ma trận, không ràng buộc mọi truy vấn; phép chiếu có thể làm thay đổi cosine và thứ hạng láng giềng như ở (b).
 \end{guidesteps}
-
 \topic{cur}{CUR approximation}
-\algsummary{Xấp xỉ ma trận bằng hàng và cột lấy từ chính dữ liệu.}
-{Hàng và cột gốc dễ diễn giải; phần giao cho biết cách ghép chúng.}
-{$A$ và danh sách chỉ số hàng $I$, cột $J$ (hoặc quy tắc lấy mẫu).}
-{$C,U,R$ và xấp xỉ $CUR$ theo biến thể Practice.}
-{Lấy đúng thứ tự và số lần lặp của chỉ số; tính giả nghịch đảo của phần giao.}
-\begin{algpseudo}
-$C\gets A[:,J]$; $R\gets A[I,:]$; $W\gets A[I,J]$ (lấy mọi giao)\\
-$U\gets W^+$ bằng SVD, chỉ đảo giá trị kỳ dị khác 0\\
-trả $C,U,R,\widehat A=CUR$
-\end{algpseudo}
 
-\key{Khi dùng} Cần xấp xỉ ma trận bằng các hàng và cột có thật, dễ diễn giải hơn các vectơ của SVD.
+\algsummary{Xấp xỉ ma trận bằng hàng và cột lấy từ chính dữ liệu.}{Hàng và cột gốc dễ diễn giải; phần giao cho biết cách ghép chúng.}{\textbf{Khi dùng:}\enspace Cần xấp xỉ ma trận bằng các hàng và cột có thật, dễ diễn giải hơn các vectơ của SVD.}{$A$ và danh sách chỉ số hàng $I$, cột $J$ (hoặc quy tắc lấy mẫu).}{$C,U,R$ và xấp xỉ $CUR$ theo biến thể Practice.}{Lấy đúng thứ tự và số lần lặp của chỉ số; tính giả nghịch đảo của phần giao.}
 
 \steps{
 \item Chọn cột $C$, hàng $R$ và lấy giao $W$. Nếu lấy có hoàn lại, một chỉ số có thể xuất hiện nhiều lần. Xác suất lấy mẫu thường tỷ lệ với bình phương chuẩn hàng hoặc cột.
 \item Với $W=X\Sigma Y^T$, tính $W^+=Y\Sigma^+X^T$: chỉ lấy nghịch đảo các giá trị kỳ dị khác 0.
 \item Với phiên bản không co giãn trong Practice, tính $\hat A=CW^+R$.
 }
-\key{Kích thước} Nếu $A\in\mathbb R^{m\times n}$, $C$ lấy $c$ cột, $R$ lấy $r$ hàng, thì $W\in\mathbb R^{r\times c}$, $W^+\in\mathbb R^{c\times r}$ và $CW^+R\in\mathbb R^{m\times n}$. \key{Bẫy} $W$ suy biến vẫn có giả nghịch đảo. Chẳng hạn $\operatorname{diag}(2,0)^+=\operatorname{diag}(1/2,0)$. CUR không có bảo đảm tối ưu Frobenius như truncated SVD.
+
+\key{Kích thước} Nếu $A\in\mathbb R^{m\times n}$, $C$ lấy $c$ cột, $R$ lấy $r$ hàng, thì $W\in\mathbb R^{r\times c}$, $W^+\in\mathbb R^{c\times r}$ và $CW^+R\in\mathbb R^{m\times n}$.
+
+\begin{algpseudo}
+$C\gets A[:,J]$; $R\gets A[I,:]$; $W\gets A[I,J]$ (lấy mọi giao)\\
+$U\gets W^+$ bằng SVD, chỉ đảo giá trị kỳ dị khác 0\\
+trả $C,U,R,\widehat A=CUR$
+\end{algpseudo}
+
+\unitheading{3}{Verification / Kiểm tra}
+
+\key{Bẫy} $W$ suy biến vẫn có giả nghịch đảo. Chẳng hạn $\operatorname{diag}(2,0)^+=\operatorname{diag}(1/2,0)$. CUR không có bảo đảm tối ưu Frobenius như truncated SVD.
+
+\unitheading{4}{Advanced / Nâng cao}
+
 \key{Không gian biểu diễn} Mọi cột của $\widehat A=CW^+R$ nằm trong không gian cột của $C$. Lấy thêm hàng không thể khôi phục hướng cột bị thiếu; kiểm tra không gian này trước khi nhân để nhận ra các hàng hoặc ô chắc chắn bằng 0.
 
 % DSA5101 Exam Practice Questions.pdf, PDF page(s) 13.
+
+\unitheading{5}{Exam evidence / Câu hỏi và lời giải}
+
 \ask{Pr12}{Pr12}{}
 Consider the unscaled CUR construction $\hat A=CW^+R$, where $C$ contains sampled columns, $R$ sampled rows, and $W$ their intersection. Sampling is with replacement. Let
 \[
@@ -1621,21 +1722,12 @@ W=\begin{pmatrix}3&3\\0&0\end{pmatrix}.
 \end{guidesteps}
 
 \lecture{5}{Recommender systems}
-
 \topic{cf}{User-based and item-based collaborative filtering}
-\algsummary{Dự đoán rating của người $u$ cho item $i$ từ các rating đã biết.}
-{Người dùng hoặc item tương tự cung cấp thông tin về ô bị thiếu.}
-{Ma trận rating, ô $(u,i)$, kiểu user/item, cách tính similarity và chọn hàng xóm.}
-{Rating ước lượng $\hat r_{ui}$.}
-{Tính similarity, lấy hàng xóm có rating cần dùng rồi tính trung bình có trọng số.}
-\begin{algpseudo}
-\textsc{Similarity}: chọn cặp user/item, tập giao và cách center theo đề; tính $s$\\
-\textsc{Neighbor set}: giữ các hàng xóm đủ điều kiện có rating cần cho ô đích\\
-\textsc{Prediction}: chọn công thức raw hoặc baseline/residual đúng wording\\
-nếu mẫu số bằng 0: dùng quy tắc dự phòng của đề; trả $\hat r_{ui}$
-\end{algpseudo}
+
+\algsummary{Dự đoán rating của người $u$ cho item $i$ từ các rating đã biết.}{Người dùng hoặc item tương tự cung cấp thông tin về ô bị thiếu.}{}{Ma trận rating, ô $(u,i)$, kiểu user/item, cách tính similarity và chọn hàng xóm.}{Rating ước lượng $\hat r_{ui}$.}{Tính similarity, lấy hàng xóm có rating cần dùng rồi tính trung bình có trọng số.}
 
 \key{Hai giai đoạn} Tính similarity theo đúng loại vectơ và tập giao mà đề nêu; sau đó, độc lập, chọn hàng xóm đủ điều kiện và áp dụng công thức prediction đã cho. Với user-based, hàng xóm phải chấm item đích; với item-based, người dùng đích phải chấm item hàng xóm.
+
 \key{Similarity: chọn theo wording của đề}
 \begin{examtable}{@{}p{.21\columnwidth}p{.62\columnwidth}@{}}
 \toprule
@@ -1646,6 +1738,7 @@ Pearson trên phần giao $I$ & Chỉ dùng các item cả hai cùng chấm; tí
 Cosine không nói centered & Dùng vectơ rating và tập tọa độ mà đề quy định; không tự ý trừ mean. \\
 \bottomrule
 \end{examtable}
+
 \key{Prediction: chọn theo wording của đề}
 \begin{examtable}{@{}p{.35\columnwidth}p{.48\columnwidth}@{}}
 \toprule
@@ -1664,8 +1757,13 @@ Nếu đề cho baseline, dùng residual:
 \hat r_{ui}=b_{ui}+\frac{\sum_{v\in N_i(u)}w_v(r_{vi}-b_{vi})}{\sum_{v\in N_i(u)}w_v}.
 \]
 Với item-based, thay hàng xóm $v$ bằng item $j$ mà user $u$ đã chấm. Centering trong bước similarity không tự động biến prediction thành công thức residual.
-\key{Độ phức tạp} Tính similarity cho một cặp tốn $O(|I|)$ trên phần tử được so sánh; prediction cho một ô tốn $O(|N|)$ với $|N|$ hàng xóm đã chọn, ngoài chi phí tìm ứng viên.
-\key{Bẫy} Similarity âm vẫn là giá trị hợp lệ. Chỉ loại hàng xóm âm nếu đề yêu cầu chọn positive-similarity neighbors hoặc quy tắc đã nêu như vậy; không tự lấy trị tuyệt đối hay cắt về 0. Kiểm tra mẫu số và chuẩn bằng 0; khi mẫu số prediction bằng 0, dùng fallback của đề.
+
+\begin{algpseudo}
+\textsc{Similarity}: chọn cặp user/item, tập giao và cách center theo đề; tính $s$\\
+\textsc{Neighbor set}: giữ các hàng xóm đủ điều kiện có rating cần cho ô đích\\
+\textsc{Prediction}: chọn công thức raw hoặc baseline/residual đúng wording\\
+nếu mẫu số bằng 0: dùng quy tắc dự phòng của đề; trả $\hat r_{ui}$
+\end{algpseudo}
 
 \begin{example}{A2-Q1}{A2-Q1(a) · Collaborative filtering: Alice chấm phim Matrix}
 \begin{examtable}{@{}l c c c@{}}
@@ -1681,6 +1779,17 @@ Dùng vectơ đã trừ trung bình để tính trọng số, rồi dùng rating
 \end{example}
 
 % DSA5101 Exam Practice Questions.pdf, PDF page(s) 15.
+
+\unitheading{3}{Verification / Kiểm tra}
+
+\key{Bẫy} Similarity âm vẫn là giá trị hợp lệ. Chỉ loại hàng xóm âm nếu đề yêu cầu chọn positive-similarity neighbors hoặc quy tắc đã nêu như vậy; không tự lấy trị tuyệt đối hay cắt về 0. Kiểm tra mẫu số và chuẩn bằng 0; khi mẫu số prediction bằng 0, dùng fallback của đề.
+
+\unitheading{4}{Advanced / Nâng cao}
+
+\key{Độ phức tạp} Tính similarity cho một cặp tốn $O(|I|)$ trên phần tử được so sánh; prediction cho một ô tốn $O(|N|)$ với $|N|$ hàng xóm đã chọn, ngoài chi phí tìm ứng viên.
+
+\unitheading{5}{Exam evidence / Câu hỏi và lời giải}
+
 \ask{Pr14}{Pr14}{}
 Podcasts $P,Q,R,T$ have these ratings; the target is user $u$'s missing rating for $T$.
 \begin{examtable}{@{}lccccc@{}}
@@ -1783,13 +1892,19 @@ S_{\rm Pearson}=\begin{pmatrix}1&1&\text{KXĐ}\\1&1&1\\\text{KXĐ}&1&1\end{pmatr
 \begin{pmatrix}9&10&5\\9&16&8\\13&16&6\end{pmatrix}.
 \]
 \end{guidesteps}
-
 \topic{factors}{Latent factor / regularized matrix factorization}
-\algsummary{Ước lượng rating từ ma trận thưa bằng vectơ người dùng và item.}
-{Tích vô hướng mô tả mức tương hợp trong ít chiều; chỉ học từ các ô đã biết.}
-{Rating huấn luyện, hạng $d$, bước học $\eta$, regularization $\lambda$, quy tắc dừng.}
-{Các nhân tử $p_u,q_i$ và dự đoán rating thiếu.}
-{Dùng SGD trên từng rating; tính cả hai gradient từ cùng trạng thái cũ.}
+
+\algsummary{Ước lượng rating từ ma trận thưa bằng vectơ người dùng và item.}{Tích vô hướng mô tả mức tương hợp trong ít chiều; chỉ học từ các ô đã biết.}{\textbf{Khi dùng:}\enspace Đề cho vectơ người dùng $p_u$, vectơ item $q_i$ hoặc ma trận nhân tử và yêu cầu fit hay dự đoán. Dự đoán là $\hat r_{ui}=\mu+b_u+b_i+p_u^Tq_i$; chỉ giữ các số hạng bias mà đề nêu.}{Rating huấn luyện, hạng $d$, bước học $\eta$, regularization $\lambda$, quy tắc dừng.}{Các nhân tử $p_u,q_i$ và dự đoán rating thiếu.}{Dùng SGD trên từng rating; tính cả hai gradient từ cùng trạng thái cũ.}
+
+\key{Một bước SGD} Đặt $e=r_{ui}-\hat r_{ui}$ trên một rating đã biết. Với loss $\frac12 e^2+\frac\lambda2(\|p\|^2+\|q\|^2)$:
+\[
+p'=p+\eta(eq-\lambda p),\qquad q'=q+\eta(ep-\lambda q).
+\]
+
+\key{Giải nhân tử} Khi giải các nhân tử tuyến tính chưa biết, bắt đầu từ ô rating đã biết mà phương trình chỉ có một ẩn, thế ngược vào các phương trình còn lại, rồi kiểm tra mọi ô quan sát. Tránh bắt đầu bằng tích chứa đồng thời hai ẩn.
+
+% DSA5101 Exam Practice Questions.pdf, PDF page(s) 16.
+
 \begin{algpseudo}
 khởi tạo $p_u,q_i$; lặp qua rating huấn luyện đến khi dừng:\\
 \quad lấy $p,q$ cũ của ô $(u,i)$; $e\gets r_{ui}-\hat r_{ui}$\\
@@ -1798,16 +1913,16 @@ khởi tạo $p_u,q_i$; lặp qua rating huấn luyện đến khi dừng:\\
 trả tham số và các dự đoán cần tính
 \end{algpseudo}
 
-\key{Khi dùng} Đề cho vectơ người dùng $p_u$, vectơ item $q_i$ hoặc ma trận nhân tử và yêu cầu fit hay dự đoán. Dự đoán là $\hat r_{ui}=\mu+b_u+b_i+p_u^Tq_i$; chỉ giữ các số hạng bias mà đề nêu.
+\unitheading{3}{Verification / Kiểm tra}
 
-\key{Một bước SGD} Đặt $e=r_{ui}-\hat r_{ui}$ trên một rating đã biết. Với loss $\frac12 e^2+\frac\lambda2(\|p\|^2+\|q\|^2)$:
-\[
-p'=p+\eta(eq-\lambda p),\qquad q'=q+\eta(ep-\lambda q).
-\]
 \key{Bẫy} Cả hai vế phải dùng nhân tử cũ. Khi tìm ẩn trong ma trận, lập phương trình từ các rating có thật. Khi đo $\mathrm{RMSE}$, lấy căn trung bình bình phương lỗi trên tập kiểm tra, không dùng tập đó để fit.
-\key{Giải nhân tử} Khi giải các nhân tử tuyến tính chưa biết, bắt đầu từ ô rating đã biết mà phương trình chỉ có một ẩn, thế ngược vào các phương trình còn lại, rồi kiểm tra mọi ô quan sát. Tránh bắt đầu bằng tích chứa đồng thời hai ẩn.
 
-% DSA5101 Exam Practice Questions.pdf, PDF page(s) 16.
+\unitheading{4}{Advanced / Nâng cao}
+
+\key{Chi phí và tối ưu} Một cập nhật SGD cho một rating tốn $O(d)$ với latent dimension $d$. Mục tiêu chứa tích $p_u^Tq_i$ nên không lồi đồng thời theo cả hai nhân tử; SGD tìm nghiệm phụ thuộc khởi tạo.
+
+\unitheading{5}{Exam evidence / Câu hỏi và lời giải}
+
 \ask{Pr15}{Pr15}{}
 A rating model predicts $\hat r_{ui}=3+p_u^Tq_i$. Initially $p_u=(1,0)$ and $q_A=(1,1)$, and the observed training rating is $r_{uA}=5$. Set $\lambda=1/2$ and learning rate $\eta=1/2$. For this observation use loss
 \[
@@ -1868,19 +1983,9 @@ P^T=\begin{pmatrix}1&4&2\\3&2&1\end{pmatrix}.
 \item Ma trận dự đoán là $\widehat R=QP^T$, nên mỗi ô bằng tích vô hướng hàng user và cột item. Alice--Matrix: $(2,1)\cdot(1,3)=5$; Cathy--Inception: $(1,4)\cdot(4,2)=12$.
 \item Nhân toàn bộ hai ma trận cho $\widehat R=\bigl(\begin{smallmatrix}5&10&5\\9&16&8\\13&12&6\end{smallmatrix}\bigr)$; dùng hai giá trị trên để điền các ô thiếu.
 \end{guidesteps}
-
 \topic{biases}{Learnable \& temporal biases (latent factors extension)}
-\algsummary{Tách xu hướng chấm cao hoặc thấp khỏi tương tác người dùng và item.}
-{Người dùng hoặc item có thể lệch nền ổn định hoặc thay đổi theo thời gian.}
-{Rating huấn luyện, các bias của mô hình, bin thời gian nếu có.}
-{Bias đã học để cộng vào dự đoán nhân tử.}
-{Tính lỗi từ dự đoán cũ, rồi cập nhật các bias đang đóng góp vào rating đó.}
-\begin{algpseudo}
-khởi tạo bias bằng 0; chọn $\mu$ theo mô hình\\
-với mỗi bước SGD trên $(u,i,t,r)$: tính $e\gets r-\hat r_{ui}(t)$\\
-\quad với mỗi bias $b$ dùng trong $\hat r_{ui}(t)$: $b\gets b+\eta(e-\lambda_b b)$\\
-trả các bias đã học
-\end{algpseudo}
+
+\algsummary{Tách xu hướng chấm cao hoặc thấp khỏi tương tác người dùng và item.}{Người dùng hoặc item có thể lệch nền ổn định hoặc thay đổi theo thời gian.}{}{Rating huấn luyện, các bias của mô hình, bin thời gian nếu có.}{Bias đã học để cộng vào dự đoán nhân tử.}{Tính lỗi từ dự đoán cũ, rồi cập nhật các bias đang đóng góp vào rating đó.}
 
 \key{Ý nghĩa} $\mu$ là rating nền; $b_u$ là xu hướng người dùng chấm cao/thấp; $b_i$ là xu hướng item được chấm cao/thấp. Sau phần nền mới cộng tương tác $p_u^Tq_i$.
 
@@ -1888,14 +1993,30 @@ trả các bias đã học
 
 \key{Theo thời gian} Ví dụ đặt $b_i(t)=b_i+b_{i,\operatorname{bin}(t)}$ với bin 10 tuần trong lecture. Có thể thay bias theo thời gian mà vẫn giữ nguyên số chiều của nhân tử.
 
+\begin{algpseudo}
+khởi tạo bias bằng 0; chọn $\mu$ theo mô hình\\
+với mỗi bước SGD trên $(u,i,t,r)$: tính $e\gets r-\hat r_{ui}(t)$\\
+\quad với mỗi bias $b$ dùng trong $\hat r_{ui}(t)$: $b\gets b+\eta(e-\lambda_b b)$\\
+trả các bias đã học
+\end{algpseudo}
 
+\unitheading{3}{Verification / Kiểm tra}
 
+\key{Kiểm tra} Thế từng rating quan sát vào đúng các bias người dùng, item và thời gian đang hoạt động; không cộng bias của bin thời gian khác.
+
+\unitheading{4}{Advanced / Nâng cao}
+
+\key{Nhận dạng tham số} Trong $\mu+b_u+b_i$, nhiều cách dịch hằng số giữa global mean và bias có thể cho cùng dự đoán. Regularization hoặc ràng buộc tổng bias giúp chọn nghiệm ổn định; bias theo thời gian cũng cần regularization.
 \topic{tfidf}{Content-based / TF-IDF}
-\algsummary{Xếp hạng tài liệu mới theo nội dung hợp với hồ sơ người dùng.}
-{Từ lặp trong tài liệu giúp nhận diện chủ đề; từ phổ biến khắp kho ít phân biệt hơn.}
-{Kho tài liệu, tần suất từ và trọng số hoặc rating người dùng.}
-{Vectơ tài liệu, hồ sơ người dùng, thứ hạng gợi ý.}
-{Tính TF-IDF, gộp vectơ các tài liệu đã chấm, rồi so cosine với ứng viên.}
+
+\algsummary{Xếp hạng tài liệu mới theo nội dung hợp với hồ sơ người dùng.}{Từ lặp trong tài liệu giúp nhận diện chủ đề; từ phổ biến khắp kho ít phân biệt hơn.}{\textbf{Khi dùng:}\enspace Gợi ý từ đặc trưng nội dung, chẳng hạn các từ trong bài báo, thay vì dùng lịch sử của người khác.}{Kho tài liệu, tần suất từ và trọng số hoặc rating người dùng.}{Vectơ tài liệu, hồ sơ người dùng, thứ hạng gợi ý.}{Tính TF-IDF, gộp vectơ các tài liệu đã chấm, rồi so cosine với ứng viên.}
+
+\steps{
+\item Tính $g_{ij}=\mathrm{TF}_{ij}\mathrm{IDF}_j$ cho từ $j$ trong tài liệu $i$. Practice dùng $\mathrm{TF}_{ij}=f_{ij}/\max_k f_{ik}$ và $\mathrm{IDF}_j=\log_2(N/n_j)$, với $n_j$ tài liệu chứa từ $j$.
+\item Tạo hồ sơ người dùng $p=\sum_i w_i g_i$. Chọn $w_i$ là rating gốc hoặc rating đã trừ trung bình theo đề.
+\item Xếp hạng tài liệu bằng cosine với $p$, theo quy ước của đề.
+}
+
 \begin{algpseudo}
 tính số tài liệu $n_j$ chứa từng từ $j$\\
 với mỗi tài liệu $i$: $g_{ij}\gets(f_{ij}/\max_k f_{ik})\log_2(N/n_j)$ theo đề\\
@@ -1903,15 +2024,18 @@ $p\gets\sum_i w_i g_i$ trên tài liệu đã chấm\\
 trả ứng viên xếp theo $\cos(p,g_i)$ khi các chuẩn khác 0
 \end{algpseudo}
 
-\key{Khi dùng} Gợi ý từ đặc trưng nội dung, chẳng hạn các từ trong bài báo, thay vì dùng lịch sử của người khác.
-\steps{
-\item Tính $g_{ij}=\mathrm{TF}_{ij}\mathrm{IDF}_j$ cho từ $j$ trong tài liệu $i$. Practice dùng $\mathrm{TF}_{ij}=f_{ij}/\max_k f_{ik}$ và $\mathrm{IDF}_j=\log_2(N/n_j)$, với $n_j$ tài liệu chứa từ $j$.
-\item Tạo hồ sơ người dùng $p=\sum_i w_i g_i$. Chọn $w_i$ là rating gốc hoặc rating đã trừ trung bình theo đề.
-\item Xếp hạng tài liệu bằng cosine với $p$, theo quy ước của đề.
-}
+\unitheading{3}{Verification / Kiểm tra}
+
 \key{Bẫy} Từ có trong mọi tài liệu có IDF bằng 0. IDF giảm theo $n_j$ qua logarit, không tỷ lệ nghịch đúng dạng $1/n_j$.
 
 % DSA5101 Exam Practice Questions.pdf, PDF page(s) 14.
+
+\unitheading{4}{Advanced / Nâng cao}
+
+\key{Tính trên dữ liệu thưa} Với biểu diễn sparse, dựng TF-IDF tốn thời gian theo tổng số lần xuất hiện term; cosine giữa hai tài liệu có thể tính bằng phép merge các chỉ số term chung. Công thức IDF/smoothing cụ thể phụ thuộc định nghĩa đề.
+
+\unitheading{5}{Exam evidence / Câu hỏi và lời giải}
+
 \ask{Pr13}{Pr13}{}
 Four articles use the features science, sport, news, and stocks, in that order. Use $\mathrm{TF}_{ij}=f_{ij}/\max_k f_{ik}$ and $\mathrm{IDF}_j=\log_2(4/n_j)$, where $n_j$ counts articles containing feature $j$. Their TF-IDF profiles are supplied:
 \[
@@ -1955,13 +2079,10 @@ A reader rates article 1 as 1 and article 2 as 5.
 \end{guidesteps}
 
 \lecture{6}{Link analysis \& graph ranking}
-
 \topic{pagerank}{PageRank}
-\algsummary{Xếp hạng nút theo mức độ được một người đi ngẫu nhiên ghé thăm.}
-{Mỗi nút chia điểm qua cạnh đi ra; teleport tạo đường thoát khỏi bẫy.}
-{Đồ thị có hướng, $\beta$, phân phối teleport $s$, quy tắc sửa nút cụt và $r^{(0)}$.}
-{Vectơ điểm sau số vòng yêu cầu hoặc khi đạt điều kiện dừng.}
-{Dựng phép chuyển theo cột, xử lý nút cụt theo đề, rồi lặp truyền điểm và teleport.}
+
+\algsummary{Xếp hạng nút theo mức độ được một người đi ngẫu nhiên ghé thăm.}{Mỗi nút chia điểm qua cạnh đi ra; teleport tạo đường thoát khỏi bẫy.}{\textbf{Khi dùng:}\enspace Đề cho đồ thị có hướng và yêu cầu lập ma trận hoặc tính điểm sau vài vòng.}{Đồ thị có hướng, $\beta$, phân phối teleport $s$, quy tắc sửa nút cụt và $r^{(0)}$.}{Vectơ điểm sau số vòng yêu cầu hoặc khi đạt điều kiện dừng.}{Dựng phép chuyển theo cột, xử lý nút cụt theo đề, rồi lặp truyền điểm và teleport.}
+
 \key{Ma trận chuyển} Cột là nút nguồn, hàng là nút đích. Với $d_i=\operatorname{outdeg}(i)>0$:
 \[
 M_{ji}=P(X_{t+1}=j\mid X_t=i)=
@@ -1995,6 +2116,12 @@ Nếu dùng cùng phân phối $v$ cho cả hai, $S_u=\sum_j u_j=\beta(S-\delta)
 \]
 Với $v=\mathbf1/N$ và $S=1$, cộng $(1-S_u)/N$ vào mỗi nút. Với vector chưa chuẩn hóa, phải dùng $(S-S_u)/N$. Phần hụt gồm $(1-\beta)S$ do teleport và $\beta\delta$ do dead ends; không chia $u$ cho $S_u$. Nếu $s\ne w$, giữ riêng hai phần khối lượng.
 
+\steps{
+\item Dùng cột là nguồn, hàng là đích; chia điểm cho out-degree và ghi riêng các cột nút cụt.
+\item Chọn đúng mô hình của đề: ma trận đã sửa hoặc cập nhật thưa với đúng $s,w$; không cộng phần hụt lần hai.
+\item Tính đồng thời từ vector cũ. Giữ tổng $S$; nếu đề yêu cầu số vòng cố định thì chạy đúng số vòng đó.
+}
+
 \begin{algpseudo}
 $r\gets r^{(0)}$; $S\gets\sum_i r_i$\\
  lặp: $u\gets0$, $\delta\gets0$\\
@@ -2006,26 +2133,29 @@ $r\gets r^{(0)}$; $S\gets\sum_i r_i$\\
 trả $r$
 \end{algpseudo}
 
-\key{Khi dùng} Đề cho đồ thị có hướng và yêu cầu lập ma trận hoặc tính điểm sau vài vòng.
-\steps{
-\item Dùng cột là nguồn, hàng là đích; chia điểm cho out-degree và ghi riêng các cột nút cụt.
-\item Chọn đúng mô hình của đề: ma trận đã sửa hoặc cập nhật thưa với đúng $s,w$; không cộng phần hụt lần hai.
-\item Tính đồng thời từ vector cũ. Giữ tổng $S$; nếu đề yêu cầu số vòng cố định thì chạy đúng số vòng đó.
-}
-\key{Độ phức tạp} Dùng adjacency lists cần $O(N+|E|)$ thời gian và $O(N)$ bộ nhớ phụ mỗi vòng; $T$ vòng tốn $O(T(N+|E|))$. Nếu lưu ma trận Google dày, riêng ma trận cần $O(N^2)$ bộ nhớ.
+\unitheading{3}{Verification / Kiểm tra}
+
 \key{Đọc đúng yêu cầu} Nếu đề hỏi $M_0r$, nhân ma trận gốc trước khi sửa. $\beta=1$ không có teleport thường. Tổng điểm được bảo toàn không chứng minh đã hội tụ; kiểm tra sai khác giữa hai vòng hoặc điều kiện dừng.
 
+\unitheading{4}{Advanced / Nâng cao}
+
+\key{Độ phức tạp} Dùng adjacency lists cần $O(N+|E|)$ thời gian và $O(N)$ bộ nhớ phụ mỗi vòng; $T$ vòng tốn $O(T(N+|E|))$. Nếu lưu ma trận Google dày, riêng ma trận cần $O(N^2)$ bộ nhớ.
 \topic{teleport}{PageRank: teleport distributions \& convergence}
-\algsummary{Chọn PageRank toàn cục, theo chủ đề hoặc theo một seed.}
-{Phân phối teleport chọn nơi khởi động lại; cạnh vẫn có thể truyền điểm ra ngoài tập đó.}
-{$G$, $\beta$, phân phối teleport, $r^{(0)}$ và điều kiện dừng.}
-{Phân phối điểm theo mô hình PageRank đã chọn.}
-{Chuẩn hóa phân phối teleport, cập nhật theo cạnh và cộng khối lượng teleport.}
+
+\algsummary{Chọn PageRank toàn cục, theo chủ đề hoặc theo một seed.}{Phân phối teleport chọn nơi khởi động lại; cạnh vẫn có thể truyền điểm ra ngoài tập đó.}{}{$G$, $\beta$, phân phối teleport, $r^{(0)}$ và điều kiện dừng.}{Phân phối điểm theo mô hình PageRank đã chọn.}{Chuẩn hóa phân phối teleport, cập nhật theo cạnh và cộng khối lượng teleport.}
+
 \key{Cập nhật tổng quát} Với $M$ column-stochastic, phân phối teleport $s$ và tổng điểm $S$:
 \[
 \boxed{r^{(t+1)}=T(r^{(t)})=\beta Mr^{(t)}+(1-\beta)S s},
 \qquad s_i\ge0,\quad\sum_i s_i=1.
 \]
+
+\key{Tính tay theo thứ tự} Xác định $M$ sau khi sửa dead end và chuẩn hóa $s$; tính $Mr$ từ vector cũ; nhân với $\beta$; cộng phần dead-end $\beta\delta w$ và teleport $(1-\beta)Ss$ đúng theo mô hình; cuối cùng kiểm tra tổng điểm và điều kiện dừng.
+
+\key{Điều kiện đủ thường dùng} Ma trận Google dương (chẳng hạn $\beta<1$ và $s_i>0$ trên mọi nút) cũng bảo đảm hội tụ, nhưng mạnh hơn mức cần thiết khi đã có contraction. Với $\beta=1$, phép lặp trên ma trận stochastic có thể tuần hoàn và không hội tụ.
+
+\key{Xử lý dead end trong PPR} Dùng phân phối sửa nút cụt theo đúng đề. Chỉ gộp phần hụt vào $s$ khi phân phối sửa cũng chính là $s$; nếu khác, giữ hai hạng riêng trong cập nhật.
+
 \begin{algpseudo}
 $T\gets$ mọi nút, tập chủ đề khác rỗng hoặc tập seed khác rỗng\\
 $s_i\gets1/|T|$ nếu $i\in T$, ngược lại $0$\\
@@ -2049,20 +2179,6 @@ Dead end & Phân phối sửa $w$ & Thay cột cụt bằng $w$; giữ riêng $\
 \end{examtable}
 Nếu $w=s$, có thể gộp hai phần khối lượng bị hụt; nếu khác nhau, không gộp.
 \par
-\key{Tính tay theo thứ tự} Xác định $M$ sau khi sửa dead end và chuẩn hóa $s$; tính $Mr$ từ vector cũ; nhân với $\beta$; cộng phần dead-end $\beta\delta w$ và teleport $(1-\beta)Ss$ đúng theo mô hình; cuối cùng kiểm tra tổng điểm và điều kiện dừng.
-\key{Ba trạng thái cần phân biệt} Chuẩn hóa: $r\ge0$ và $\mathbf1^Tr=S$. Điểm dừng: $T(r^*)=r^*$. Thuật toán đạt điều kiện dừng khi $\|r^{(t+1)}-r^{(t)}\|_1<\epsilon$; sai khác hai vòng nhỏ không có nghĩa sai số đến nghiệm đúng bằng $\epsilon$.
-\advancedheading{Hội tụ và sai số}
-\key{Hội tụ khi $0\le\beta<1$} Trên simplex có tổng $S$, với $r,q$ cùng tổng và $M$ column-stochastic:
-\[
-\|T(r)-T(q)\|_1
-=\beta\|M(r-q)\|_1
-\le\beta\|r-q\|_1.
-\]
-Vì $\beta<1$, đây là contraction: có điểm bất động duy nhất và phép lặp hội tụ từ mọi khởi tạo hợp lệ, kể cả khi $s$ chỉ hỗ trợ một tập con. Nếu dừng khi $\|r^{(t+1)}-r^{(t)}\|_1<\epsilon$, sai số đến điểm bất động thỏa $\|r^{(t+1)}-r^*\|_1\le\frac{\beta}{1-\beta}\epsilon$.
-\key{Điều kiện đủ thường dùng} Ma trận Google dương (chẳng hạn $\beta<1$ và $s_i>0$ trên mọi nút) cũng bảo đảm hội tụ, nhưng mạnh hơn mức cần thiết khi đã có contraction. Với $\beta=1$, phép lặp trên ma trận stochastic có thể tuần hoàn và không hội tụ.
-\key{Chu trình hai nút} Với $M=\left(\begin{smallmatrix}0&1\\1&0\end{smallmatrix}\right)$, $(1,0)^T\to(0,1)^T\to(1,0)^T\to\cdots$, dù $(1/2,1/2)^T$ là điểm dừng. Có điểm dừng không đảm bảo mọi khởi tạo đều hội tụ.
-\key{Ảnh hưởng của $\beta$} $\beta$ lớn làm kết quả phụ thuộc nhiều hơn vào cạnh và có thể cần nhiều vòng hơn; $\beta=0$ trả theo $s$; $\beta=1$ không teleport, nên spider trap hoặc chu kỳ có thể còn.
-\key{Xử lý dead end trong PPR} Dùng phân phối sửa nút cụt theo đúng đề. Chỉ gộp phần hụt vào $s$ khi phân phối sửa cũng chính là $s$; nếu khác, giữ hai hạng riêng trong cập nhật.
 
 \begin{example}{A2-Q2}{A2-Q2(a,b) · PageRank: từ cạnh sang cột ma trận}
 \begin{diagram}
@@ -2086,6 +2202,29 @@ Nhãn cạnh là phần điểm truyền đi. Cột $A$ có $1/2$ ở hàng $B,C
 \end{example}
 
 % DSA5101 Exam Practice Questions.pdf, PDF page(s) 17.
+
+\unitheading{3}{Verification / Kiểm tra}
+
+\key{Ba trạng thái cần phân biệt} Chuẩn hóa: $r\ge0$ và $\mathbf1^Tr=S$. Điểm dừng: $T(r^*)=r^*$. Thuật toán đạt điều kiện dừng khi $\|r^{(t+1)}-r^{(t)}\|_1<\epsilon$; sai khác hai vòng nhỏ không có nghĩa sai số đến nghiệm đúng bằng $\epsilon$.
+
+\key{Chu trình hai nút} Với $M=\left(\begin{smallmatrix}0&1\\1&0\end{smallmatrix}\right)$, $(1,0)^T\to(0,1)^T\to(1,0)^T\to\cdots$, dù $(1/2,1/2)^T$ là điểm dừng. Có điểm dừng không đảm bảo mọi khởi tạo đều hội tụ.
+
+\key{Ảnh hưởng của $\beta$} $\beta$ lớn làm kết quả phụ thuộc nhiều hơn vào cạnh và có thể cần nhiều vòng hơn; $\beta=0$ trả theo $s$; $\beta=1$ không teleport, nên spider trap hoặc chu kỳ có thể còn.
+
+\unitheading{4}{Advanced / Nâng cao}
+
+\advancedheading{Hội tụ và sai số}
+
+\key{Hội tụ khi $0\le\beta<1$} Trên simplex có tổng $S$, với $r,q$ cùng tổng và $M$ column-stochastic:
+\[
+\|T(r)-T(q)\|_1
+=\beta\|M(r-q)\|_1
+\le\beta\|r-q\|_1.
+\]
+Vì $\beta<1$, đây là contraction: có điểm bất động duy nhất và phép lặp hội tụ từ mọi khởi tạo hợp lệ, kể cả khi $s$ chỉ hỗ trợ một tập con. Nếu dừng khi $\|r^{(t+1)}-r^{(t)}\|_1<\epsilon$, sai số đến điểm bất động thỏa $\|r^{(t+1)}-r^*\|_1\le\frac{\beta}{1-\beta}\epsilon$.
+
+\unitheading{5}{Exam evidence / Câu hỏi và lời giải}
+
 \ask{Pr16}{Pr16}{}
 Pages have links $H\to L$, $L\to H,R$, and $R\to L$; $S$ has no outgoing links. With destination rows and source columns in order $H,L,R,S$, the link matrix before dead-end repair is
 \[
@@ -2148,21 +2287,9 @@ r^{(2)}&=(1/2,1/4,3/4,2,3/2)^T.
 \item Với tổng điểm $S=\mathbf1^Tr^{(1)}=5$, teleport về $A,B$ có $v=(1/2,1/2,0,0,0)^T$; công thức là $r'=\beta Mr^{(0)}+(1-\beta)Sv$. Thế $\beta=0.9$ và $Mr^{(0)}=r^{(1)}$: $r' =0.9(1/2,1/2,3/2,3/2,1)^T+0.5(1/2,1/2,0,0,0)^T=(0.70,0.70,1.35,1.35,0.90)^T$.
 \item So với một vòng không teleport, $A,B$ tăng từ $0.5$ lên $0.70$; so với điểm ban đầu 1, $C,D$ tăng lên $1.35$. Nêu rõ mốc so sánh vì hai cách hỏi cho kết luận khác nhau.
 \end{guidesteps}
-
 \topic{trust}{TrustRank / spam mass}
-\algsummary{Xác định các trang nhận nhiều điểm nhưng ít liên hệ với trang tin cậy.}
-{So điểm khi teleport toàn cục với điểm khi khởi động lại chỉ ở tập tin cậy.}
-{Đồ thị, $\beta$, tập tin cậy khác rỗng và ngưỡng gắn cờ nếu có.}
-{Điểm thường $r$, điểm tin cậy $t$, spam mass tại các nút có $r_i>0$.}
-{Chạy PageRank hai lần với cùng chuẩn hóa, rồi lấy phần chênh so với điểm thường.}
-\key{Bức tranh chung} Link farm thao túng PageRank thường bằng cách tuần hoàn điểm qua các liên kết do spammer kiểm soát. TrustRank khởi động lại từ các trang đã xác minh để đo mức điểm được truyền từ nguồn tin cậy. Spam mass so sánh hai kết quả này; giá trị cao là tín hiệu để kiểm tra, không phải bằng chứng spam.
-\begin{algpseudo}
-$r\gets\operatorname{PageRank}(G,\beta,v_{\text{đều}})$; $t\gets\operatorname{PageRank}(G,\beta,v_{\text{tin cậy}})$\\
-với $i$ có $r_i>0$: $\mathrm{SM}_i\gets(r_i-t_i)/r_i$\\
-trả $r,t,\mathrm{SM}$; gắn cờ theo ngưỡng của đề nếu có
-\end{algpseudo}
 
-\key{Khi dùng} Đề so PageRank thường $r$ với điểm tin cậy $t$, trong đó teleport chỉ ưu tiên các trang tin cậy. Giữ cùng đồ thị và quy ước chuẩn hóa khi so sánh.
+\algsummary{Xác định các trang nhận nhiều điểm nhưng ít liên hệ với trang tin cậy.}{So điểm khi teleport toàn cục với điểm khi khởi động lại chỉ ở tập tin cậy.}{\textbf{Bức tranh chung:}\enspace Link farm thao túng PageRank thường bằng cách tuần hoàn điểm qua các liên kết do spammer kiểm soát. TrustRank khởi động lại từ các trang đã xác minh để đo mức điểm được truyền từ nguồn tin cậy. Spam mass so sánh hai kết quả này; giá trị cao là tín hiệu để kiểm tra, không phải bằng chứng spam.\par\nobreak \textbf{Khi dùng:}\enspace Đề so PageRank thường $r$ với điểm tin cậy $t$, trong đó teleport chỉ ưu tiên các trang tin cậy. Giữ cùng đồ thị và quy ước chuẩn hóa khi so sánh.
 
 \[
 t=\beta Mt+(1-\beta)v_{\mathrm{trusted}},\qquad
@@ -2173,19 +2300,31 @@ TrustRank là Personalized PageRank với teleport phân phối trên tập seed
 (I-\beta M)t=(1-\beta)v_{\mathrm{trusted}},\qquad
 \boxed{t=(1-\beta)(I-\beta M)^{-1}v_{\mathrm{trusted}}}.
 \]
-Với $0<\beta<1$, nghiệm dừng là duy nhất; trên đồ thị nhỏ, lập và giải phương trình theo từng nút thay vì tính nghịch đảo. Mỗi nút truyền tổng cộng $\beta t_i$, chia đều thành $\beta t_i/d_i^+$ cho từng cạnh ra.
-\key{Approximate isolation} Giả định trực giác là trang tốt hiếm khi trỏ tới trang xấu. Trust giảm theo số bước khỏi seed và bị chia theo out-degree; đây là giả định mô hình, không bảo đảm mọi trang spam có điểm thấp. Nếu có dead end, dùng đúng phân phối sửa nút cụt của đề.
+Với $0<\beta<1$, nghiệm dừng là duy nhất; trên đồ thị nhỏ, lập và giải phương trình theo từng nút thay vì tính nghịch đảo. Mỗi nút truyền tổng cộng $\beta t_i$, chia đều thành $\beta t_i/d_i^+$ cho từng cạnh ra.}{Đồ thị, $\beta$, tập tin cậy khác rỗng và ngưỡng gắn cờ nếu có.}{Điểm thường $r$, điểm tin cậy $t$, spam mass tại các nút có $r_i>0$.}{Chạy PageRank hai lần với cùng chuẩn hóa, rồi lấy phần chênh so với điểm thường.}
+
 \key{Chọn seed} Có thể lấy trang PageRank cao hoặc trang thuộc domain được kiểm soát làm ứng viên, rồi nhờ người đánh giá xác minh. PageRank cao không tự chứng minh đáng tin; domain như .edu hay .gov cũng không khiến mọi trang trong đó tự động đáng tin. Seed nhỏ giúp giảm chi phí đánh giá thủ công.
+
 \key{Diễn giải} Nếu $r_i=0.2$ và $t_i=0.05$ thì spam mass bằng $0.75$. Giá trị cao cho biết phần lớn điểm không được giải thích bởi TrustRank; dùng để gắn cờ. Trang tin cậy có thể có spam mass âm.
+
+\begin{algpseudo}
+$r\gets\operatorname{PageRank}(G,\beta,v_{\text{đều}})$; $t\gets\operatorname{PageRank}(G,\beta,v_{\text{tin cậy}})$\\
+với $i$ có $r_i>0$: $\mathrm{SM}_i\gets(r_i-t_i)/r_i$\\
+trả $r,t,\mathrm{SM}$; gắn cờ theo ngưỡng của đề nếu có
+\end{algpseudo}
+
+\unitheading{3}{Verification / Kiểm tra}
+
 \key{Ngưỡng và miền giá trị} Gắn cờ khi $\mathrm{SM}_i>\tau$; nếu đề nói “ít nhất $\tau$”, dùng $\ge$. Chỉ tính khi $r_i>0$; nếu $t_i>r_i$, spam mass âm, còn $t_i=0<r_i$ cho spam mass bằng 1. Đại lượng này không bị chặn dưới bởi 0, nên không phải xác suất đã chuẩn hóa.
+
 \key{Chu trình} Trên chu trình $L$ nút, teleport chỉ về nút 0 và xác suất đi tiếp $\beta<1$, điểm dừng thỏa $r_j=\beta^jr_0$ và $r_0=(1-\beta)/(1-\beta^L)$. Với $\beta=1$, phép lặp chỉ xoay vectơ; phân phối dừng có thể tồn tại nhưng dãy chỉ hội tụ nếu khởi tạo tại điểm bất động.
 
+\unitheading{4}{Advanced / Nâng cao}
+
+\key{Approximate isolation} Giả định trực giác là trang tốt hiếm khi trỏ tới trang xấu. Trust giảm theo số bước khỏi seed và bị chia theo out-degree; đây là giả định mô hình, không bảo đảm mọi trang spam có điểm thấp. Nếu có dead end, dùng đúng phân phối sửa nút cụt của đề.
 \topic{linkfarm}{Link farm amplification}
-\algsummary{Tính mức PageRank mà một vòng liên kết có thể dồn vào trang mục tiêu trong mô hình link farm.}
-{Một vòng target $\to$ farm $\to$ target mất hệ số $\beta$ ở mỗi bước; các vòng lặp tạo thành cấp số nhân.}
-{Giả sử $0\le\beta<1$: tổng số trang $N>1$, số farm pages $1\le M_f<N$ và điểm vào $x\ge0$ từ các trang accessible.}
-{PageRank $y$ của target và hệ số khuếch đại của phần điểm ngoài $x$.}
-{Lập phương trình điểm của một farm page và target, thế lẫn nhau rồi giải phương trình tuyến tính.}
+
+\algsummary{Tính mức PageRank mà một vòng liên kết có thể dồn vào trang mục tiêu trong mô hình link farm.}{Một vòng target $\to$ farm $\to$ target mất hệ số $\beta$ ở mỗi bước; các vòng lặp tạo thành cấp số nhân.}{}{Giả sử $0\le\beta<1$: tổng số trang $N>1$, số farm pages $1\le M_f<N$ và điểm vào $x\ge0$ từ các trang accessible.}{PageRank $y$ của target và hệ số khuếch đại của phần điểm ngoài $x$.}{Lập phương trình điểm của một farm page và target, thế lẫn nhau rồi giải phương trình tuyến tính.}
+
 \key{Mô hình} Inaccessible pages không thể sửa; accessible pages có thể thêm liên kết (chẳng hạn qua bình luận); owned pages do spammer kiểm soát hoàn toàn. Trong cấu hình dưới đây, target $t$ trỏ tới $M_f$ farm pages, mỗi farm page chỉ trỏ lại $t$, và các farm pages có cùng rank $q_f$. Teleport là đều; $x$ là tổng đóng góp từ accessible pages.
 \begin{diagram}
 \begin{tikzpicture}[>=Stealth,every node/.style={font=\small}]
@@ -2198,6 +2337,7 @@ Với $0<\beta<1$, nghiệm dừng là duy nhất; trên đồ thị nhỏ, lậ
 \end{tikzpicture}
 \end{diagram}
 Đóng góp $x$ quay lại sau hai bước với hệ số $\beta^2$; các vòng sau có hệ số $\beta^4,\beta^6,\ldots$.
+
 \key{Lập phương trình} Mỗi farm page nhận $\beta y/M_f$ từ target và $ (1-\beta)/N$ từ teleport. Target nhận $x$, điểm từ tất cả farm pages và teleport:
 \[
 q_f=\frac{\beta y}{M_f}+\frac{1-\beta}{N},\qquad
@@ -2215,6 +2355,23 @@ Nếu bỏ qua teleport trực tiếp nhỏ của target, số hạng $1/[N(1+\b
 \[
 y\approx\frac{x}{1-\beta^2}+\frac{\beta}{1+\beta}\frac{M_f}{N}.
 \]
+
+\begin{minipage}{\columnwidth}
+\begin{algpseudo}
+\textsc{Link-Farm-Rank}$(\beta,N,M_f,x)$:\\
+\quad $A\gets1/(1-\beta^2)$\\
+\quad $y\gets Ax+(\beta M_f+1)/(N(1+\beta))$\\
+\quad trả $y,A$
+\end{algpseudo}
+\end{minipage}
+Phép tính chỉ đúng khi các tham số khớp topology giả định; nó không dựng link farm tổng quát.
+
+\unitheading{3}{Verification / Kiểm tra}
+
+\key{Kiểm tra} Thế nghiệm vào cả hai phương trình gốc; chỉ dùng hệ số khuếch đại sau khi xác nhận topology, out-degree và teleport khớp giả định.
+
+\unitheading{4}{Advanced / Nâng cao}
+
 \key{Hệ số khuếch đại} Phần điểm ngoài được lặp lại theo cấp số nhân:
 \[
 x+\beta^2x+\beta^4x+\cdots
@@ -2233,18 +2390,13 @@ $\beta$ & $1/(1-\beta^2)$\\
 0.9 & 5.263\\
 \bottomrule
 \end{examtable}
-\begin{minipage}{\columnwidth}
-\begin{algpseudo}
-\textsc{Link-Farm-Rank}$(\beta,N,M_f,x)$:\\
-\quad $A\gets1/(1-\beta^2)$\\
-\quad $y\gets Ax+(\beta M_f+1)/(N(1+\beta))$\\
-\quad trả $y,A$
-\end{algpseudo}
-\end{minipage}
-Phép tính chỉ đúng khi các tham số khớp topology giả định; nó không dựng link farm tổng quát.
+
 \key{Mở rộng và giới hạn} Nếu một vòng có $L$ bước và chỉ phần tỷ lệ $\rho$ quay lại target, $0\le\rho\le1$, thì hệ số suy ra từ cấp số nhân là $1/(1-\rho\beta^L)$. Khi có nhánh hoặc nhiều vòng lặp giao nhau, phải lập lại phương trình luồng; không áp dụng máy móc $1/(1-\beta^2)$. Link farm không tăng điểm chỉ nhờ có self-links: cần xét incoming rank, cách chia điểm và toàn bộ topology.
 
 % DSA5101 Exam Practice Questions.pdf, PDF page(s) 19.
+
+\unitheading{5}{Exam evidence / Câu hỏi và lời giải}
+
 \ask{Pr18}{Pr18}{}
 A directed graph has links $G\to H$, $H\to G,T$, $T\to F$, and $F\to T$. Use damping $1/2$. Ordinary PageRank teleports uniformly; TrustRank teleports only to trusted seed $G$. Let $r$ denote ordinary PageRank and $t$ TrustRank. The following parts supply the quantities needed, so no full stationary system needs to be solved.
 \qpart{a} You are given $t_H=2/7$ and $t_F=1/21$. Use incoming links to calculate $t_T$. Explain why $t_T$ can be positive even though $T$ is not a trusted seed.
@@ -2310,23 +2462,9 @@ Consider the web graph below. Let $a,b$ and $c$ denote the ranks of nodes $A,B$ 
 \item Dùng spam mass $(r_i-t_i)/r_i$ để đo tỷ lệ điểm PageRank không được giải thích bởi lan truyền từ seed tin cậy; gắn cờ khi vượt ngưỡng đã chọn.
 \item PageRank thấp chỉ cho biết trang nhận ít điểm, không tách được trang ít phổ biến khỏi trang có điểm cao do liên kết spam.
 \end{guidesteps}
-
 \topic{hits}{HITS (hubs and authorities)}
-\algsummary{Xếp hạng riêng nút dẫn đường (hub) và nút cung cấp nội dung (authority).}
-{Hub mạnh trỏ tới authority mạnh; authority mạnh nhận liên kết từ hub mạnh.}
-{Ma trận kề $B$ có cạnh, điểm authority đầu không âm và khác không, ngưỡng dừng $\epsilon>0$.}
-{Hai vectơ điểm hub $h$ và authority $a$.}
-{Lặp $h=Ba$, $a'=B^Th$; chuẩn hóa $L_2$ và dừng khi hai vectơ authority liên tiếp đủ gần.}
-\begin{algpseudo}
-$a\gets a^{(0)}$\\
-lặp: $h\gets Ba$; nếu $\|h\|_2=0$ thì trả $(h,0)$\\
-\quad $h\gets h/\|h\|_2$; $a_{\mathrm{new}}\gets B^Th$; nếu $\|a_{\mathrm{new}}\|_2=0$ thì trả $(h,a_{\mathrm{new}})$\\
-\quad $a_{\mathrm{new}}\gets a_{\mathrm{new}}/\|a_{\mathrm{new}}\|_2$; $e\gets\|a_{\mathrm{new}}-a\|_2$\\
-\quad $a\gets a_{\mathrm{new}}$; nếu $e<\epsilon$ thì dừng\\
-trả $h,a$
-\end{algpseudo}
 
-\key{Khi dùng} Muốn xếp hai vai trò: hub tốt trỏ tới nhiều authority tốt; authority tốt được hub tốt trỏ đến.
+\algsummary{Xếp hạng riêng nút dẫn đường (hub) và nút cung cấp nội dung (authority).}{Hub mạnh trỏ tới authority mạnh; authority mạnh nhận liên kết từ hub mạnh.}{\textbf{Khi dùng:}\enspace Muốn xếp hai vai trò: hub tốt trỏ tới nhiều authority tốt; authority tốt được hub tốt trỏ đến.}{Ma trận kề $B$ có cạnh, điểm authority đầu không âm và khác không, ngưỡng dừng $\epsilon>0$.}{Hai vectơ điểm hub $h$ và authority $a$.}{Lặp $h=Ba$, $a'=B^Th$; chuẩn hóa $L_2$ và dừng khi hai vectơ authority liên tiếp đủ gần.}
 
 \key{Quy ước ma trận} $B_{ij}=1$ khi có cạnh $i\to j$, ngược lại bằng 0; hàng là nguồn, cột là đích. Trên đồ thị tổng quát, mỗi nút có thể mang cả điểm hub lẫn authority; trên đồ thị hai phía, hàng ứng với hubs và cột ứng với authorities. Khi đó $h_i=\sum_{j:i\to j}a_j$ và $a'_j=\sum_{i:i\to j}h_i$, tức $h=Ba$ rồi $a'=B^Th$.
 
@@ -2338,6 +2476,21 @@ trả $h,a$
 \]
 Khởi tạo thường dùng vectơ đều dương. Chia cho cùng một số dương không đổi thứ hạng. Dừng khi $\|a^{(t+1)}-a^{(t)}\|_2<\epsilon$ (hoặc theo tiêu chuẩn đề bài); nếu vectơ cập nhật có chuẩn 0 thì không thể chuẩn hóa. Không thay chuẩn $L_2$ bằng chuẩn hóa tổng bằng 1 của PageRank, trừ khi đề yêu cầu.
 
+\begin{algpseudo}
+$a\gets a^{(0)}$\\
+lặp: $h\gets Ba$; nếu $\|h\|_2=0$ thì trả $(h,0)$\\
+\quad $h\gets h/\|h\|_2$; $a_{\mathrm{new}}\gets B^Th$; nếu $\|a_{\mathrm{new}}\|_2=0$ thì trả $(h,a_{\mathrm{new}})$\\
+\quad $a_{\mathrm{new}}\gets a_{\mathrm{new}}/\|a_{\mathrm{new}}\|_2$; $e\gets\|a_{\mathrm{new}}-a\|_2$\\
+\quad $a\gets a_{\mathrm{new}}$; nếu $e<\epsilon$ thì dừng\\
+trả $h,a$
+\end{algpseudo}
+
+\unitheading{3}{Verification / Kiểm tra}
+
+\key{So với PageRank} PageRank dùng ma trận chuyển có hàng là đích, cột là nguồn, chia điểm theo bậc ra, thường cộng teleport và chuẩn hóa tổng điểm bằng 1. HITS dùng $B$ với hàng là nguồn, cột là đích; mỗi cạnh truyền toàn bộ điểm hub, tính riêng $h,a$ và chuẩn hóa $L_2$. HITS chuẩn không có damping factor hay teleportation.
+
+\unitheading{4}{Advanced / Nâng cao}
+
 \key{Ý nghĩa trị riêng} Bỏ qua hệ số chuẩn hóa, hai lần cập nhật cho $a^{(t+1)}\propto B^TB a^{(t)}$ và $h^{(t+1)}\propto BB^T h^{(t)}$. Khi hướng trội là duy nhất:
 \[
 B^TB a^*=\lambda a^*,\qquad BB^T h^*=\lambda h^*.
@@ -2346,10 +2499,12 @@ Hai ma trận đối xứng, nửa xác định dương; trị riêng lớn nh�
 
 \key{Độ phức tạp} Với đồ thị hai phía có $m$ hubs, $n$ authorities và $|E|$ cạnh, một vòng nhân $B$ và $B^T$ tốn $O(m+n+|E|)$; $T$ vòng tốn $O(T(m+n+|E|))$. Bộ nhớ phụ $O(m+n)$, ngoài cấu trúc đồ thị $O(m+n+|E|)$.
 
-\key{So với PageRank} PageRank dùng ma trận chuyển có hàng là đích, cột là nguồn, chia điểm theo bậc ra, thường cộng teleport và chuẩn hóa tổng điểm bằng 1. HITS dùng $B$ với hàng là nguồn, cột là đích; mỗi cạnh truyền toàn bộ điểm hub, tính riêng $h,a$ và chuẩn hóa $L_2$. HITS chuẩn không có damping factor hay teleportation.
 \key{Giới hạn} HITS nhạy với cấu trúc đồ thị: link spam hoặc tập liên kết lệch chủ đề có thể làm sai lệch cả hub lẫn authority. Đồ thị không có cạnh hoặc cập nhật tạo vectơ 0 thì chuẩn hóa không xác định; thành phần rời rạc hay trị riêng trội lặp có thể khiến thứ hạng không duy nhất.
 
 % DSA5101 Exam Practice Questions.pdf, PDF page(s) 18.
+
+\unitheading{5}{Exam evidence / Câu hỏi và lời giải}
+
 \ask{Pr17}{Pr17}{}
 Directory $H_1$ links to resources $R_1,R_2,R_3$; $H_2$ links to $R_1,R_2$; $H_3$ links only to $R_3$. Let $B$ have directories as rows and resources as columns. HITS updates are $h=Ba$, then $a'=B^Th$. Use unnormalised scores in this question; a common positive scaling does not change a ranking.
 \qpart{a} Write $B$ and calculate the hub scores from $a^{(0)}=(1,1,1)^T$.
@@ -2379,13 +2534,28 @@ B=\begin{pmatrix}1&1&1\\1&1&0\\0&0&1\end{pmatrix}.
 \end{guidesteps}
 
 \lecture{7}{Communities / graph clustering}
-
 \topic{louvain}{Louvain / modularity}
-\algsummary{Tìm cộng đồng trên toàn đồ thị bằng cách tăng modularity.}
-{Cải thiện ở mức nút rồi nén từng cụm để phát hiện cấu trúc quy mô lớn hơn.}
-{Đồ thị vô hướng (có thể có trọng số), thứ tự nút và quy tắc phá hòa.}
-{Phân hoạch các nút gốc và modularity của nó.}
-{Mỗi nút vào một cụm; lặp chuyển có lợi, rồi gom cụm thành siêu nút và giữ self-loop.}
+
+\algsummary{Tìm cộng đồng trên toàn đồ thị bằng cách tăng modularity.}{Cải thiện ở mức nút rồi nén từng cụm để phát hiện cấu trúc quy mô lớn hơn.}{\textbf{Khi dùng:}\enspace Cần tìm phân hoạch toàn đồ thị theo modularity. Trong đồ thị vô hướng có $m$ cạnh, $e_C$ là số cạnh nội bộ của cụm $C$ đếm một lần và $\operatorname{vol}(C)=\sum_{v\in C}d_v$.
+\[
+Q=\sum_C\left[\frac{e_C}{m}-\left(\frac{\operatorname{vol}(C)}{2m}\right)^2\right].
+\]}{Đồ thị vô hướng (có thể có trọng số), thứ tự nút và quy tắc phá hòa.}{Phân hoạch các nút gốc và modularity của nó.}{Mỗi nút vào một cụm; lặp chuyển có lợi, rồi gom cụm thành siêu nút và giữ self-loop.}
+
+\steps{
+\item Khởi tạo mỗi nút một cụm. Chuyển từng nút sang cụm lân cận cho mức tăng $Q$ tốt nhất nếu mức tăng dương.
+\item Khi không còn cải thiện ở mức đang xét, gộp mỗi cụm thành một siêu nút, giữ đúng trọng số cạnh và self-loop rồi lặp.
+}
+
+\key{Đổi một nút} Nếu chuyển $i$ từ $A$ sang $B$, đặt $a=\operatorname{vol}(A)$ gồm $i$, $b=\operatorname{vol}(B)$, $k=d_i$, còn $k_{i,A},k_{i,B}$ là số cạnh tới phần còn lại của hai cụm. Khi đó
+\[
+\Delta Q=\frac{k_{i,B}-k_{i,A}}{m}-\frac{(a-k)^2+(b+k)^2-a^2-b^2}{(2m)^2}.
+\]
+Đồ thị co giữ đường chéo siêu nút bằng $2e_C$; bỏ self-loop làm sai thể tích và modularity.
+
+\key{Tra ký hiệu} $\Sigma_{\rm in}=2e_C$ và $\Sigma_{\rm tot}=\operatorname{vol}(C)$ cho đồ thị vô hướng không trọng số. Louvain là heuristic; nếu chỉ quan tâm vùng quanh một seed, xem Local PPR.
+
+% DSA5101 Exam Practice Questions.pdf, PDF page(s) 21.
+
 \begin{algpseudo}
 mỗi nút hiện tại là một cụm; theo dõi ánh xạ về nút gốc\\
 lặp các lượt quét: chuyển từng nút sang cụm lân cận có $\Delta Q$ dương lớn nhất\\
@@ -2394,22 +2564,16 @@ nếu có tăng: thu gọn theo cụm, cộng trọng số cạnh cả giữa l�
 trả phân hoạch trên các nút gốc
 \end{algpseudo}
 
-\key{Khi dùng} Cần tìm phân hoạch toàn đồ thị theo modularity. Trong đồ thị vô hướng có $m$ cạnh, $e_C$ là số cạnh nội bộ của cụm $C$ đếm một lần và $\operatorname{vol}(C)=\sum_{v\in C}d_v$.
-\[
-Q=\sum_C\left[\frac{e_C}{m}-\left(\frac{\operatorname{vol}(C)}{2m}\right)^2\right].
-\]
-\steps{
-\item Khởi tạo mỗi nút một cụm. Chuyển từng nút sang cụm lân cận cho mức tăng $Q$ tốt nhất nếu mức tăng dương.
-\item Khi không còn cải thiện ở mức đang xét, gộp mỗi cụm thành một siêu nút, giữ đúng trọng số cạnh và self-loop rồi lặp.
-}
-\key{Đổi một nút} Nếu chuyển $i$ từ $A$ sang $B$, đặt $a=\operatorname{vol}(A)$ gồm $i$, $b=\operatorname{vol}(B)$, $k=d_i$, còn $k_{i,A},k_{i,B}$ là số cạnh tới phần còn lại của hai cụm. Khi đó
-\[
-\Delta Q=\frac{k_{i,B}-k_{i,A}}{m}-\frac{(a-k)^2+(b+k)^2-a^2-b^2}{(2m)^2}.
-\]
-Đồ thị co giữ đường chéo siêu nút bằng $2e_C$; bỏ self-loop làm sai thể tích và modularity.
-\key{Tra ký hiệu} $\Sigma_{\rm in}=2e_C$ và $\Sigma_{\rm tot}=\operatorname{vol}(C)$ cho đồ thị vô hướng không trọng số. Louvain là heuristic; nếu chỉ quan tâm vùng quanh một seed, xem Local PPR.
+\unitheading{3}{Verification / Kiểm tra}
 
-% DSA5101 Exam Practice Questions.pdf, PDF page(s) 21.
+\key{Kiểm tra} Chỉ chấp nhận nước chuyển có $\Delta Q>0$; sau khi co đồ thị, giữ self-loop để bảo toàn cạnh nội bộ.
+
+\unitheading{4}{Advanced / Nâng cao}
+
+\key{Tìm cực đại cục bộ} Louvain chỉ khảo sát các nước chuyển cục bộ rồi co cụm; khi không còn nước tăng modularity, dừng tại cực đại cục bộ của các nước đã xét, không chứng minh cực đại toàn cục.
+
+\unitheading{5}{Exam evidence / Câu hỏi và lời giải}
+
 \ask{Pr20}{Pr20}{}
 An undirected graph is the path $1-2-3-4-5-6$, with $m=5$ edges. For a partition, use
 \[
@@ -2514,23 +2678,10 @@ trong đó $a,b$ là thể tích hai cụm trước chuyển và $k_{i,A},k_{i,B
 \begin{guidesteps}
 \item Quy tắc chọn theo mục tiêu: phân hoạch toàn đồ thị, không có seed thì dùng Louvain; chỉ cần cộng đồng cục bộ quanh seed đã biết thì dùng Local PPR.
 \end{guidesteps}
-
 \topic{ppr}{Local approximate PPR + conductance sweep}
-\algsummary{Tìm cộng đồng quanh một seed mà không quét toàn đồ thị để tính PPR.}
-{Đẩy điểm dư ở nút đủ lớn; cụm tốt có ít cạnh băng ra so với thể tích.}
-{Đồ thị vô hướng, seed $s$ có $d_s>0$, $\beta$, ngưỡng $\varepsilon$ và quy tắc sweep.}
-{Điểm PPR gần đúng $r$ và tập nút có conductance nhỏ nhất trong các tiền tố hợp lệ.}
-{Đẩy điểm dư theo lazy walk, rồi xếp hạng chuẩn hóa và sweep qua các tiền tố.}
-\begin{algpseudo}
-$r,q\gets0$; $q_s\gets1$\\
-khi tồn tại $u$ với $d_u>0$ và $q_u/d_u\ge\varepsilon$:\\
-\quad $x\gets q_u$; $r_u\gets r_u+(1-\beta)x$; $q_u\gets\beta x/2$\\
-\quad với mỗi hàng xóm $v$: $q_v\gets q_v+\beta x/(2d_u)$\\
-xếp nút theo điểm chuẩn hóa (thường là $r_u/d_u$); tính $\phi$ của từng tiền tố hợp lệ\\
-trả $r$ và tiền tố có $\phi$ nhỏ nhất
-\end{algpseudo}
 
-\key{Khi dùng} Đề cho một seed $s$ và hỏi tìm cộng đồng cục bộ. Giữ hai vectơ: $r$ là điểm đã chốt, $q$ là điểm còn chờ lan truyền. Khởi tạo $q_s=1$, các phần tử còn lại bằng 0.
+\algsummary{Tìm cộng đồng quanh một seed mà không quét toàn đồ thị để tính PPR.}{Đẩy điểm dư ở nút đủ lớn; cụm tốt có ít cạnh băng ra so với thể tích.}{\textbf{Khi dùng:}\enspace Đề cho một seed $s$ và hỏi tìm cộng đồng cục bộ. Giữ hai vectơ: $r$ là điểm đã chốt, $q$ là điểm còn chờ lan truyền. Khởi tạo $q_s=1$, các phần tử còn lại bằng 0.}{Đồ thị vô hướng, seed $s$ có $d_s>0$, $\beta$, ngưỡng $\varepsilon$ và quy tắc sweep.}{Điểm PPR gần đúng $r$ và tập nút có conductance nhỏ nhất trong các tiền tố hợp lệ.}{Đẩy điểm dư theo lazy walk, rồi xếp hạng chuẩn hóa và sweep qua các tiền tố.}
+
 \steps{
 \item Chọn nút $u$ có $q_u/d_u\ge\varepsilon$. Đặt $x=q_u$ trước khi cập nhật.
 \item Với xác suất restart $1-\beta$ theo Practice, cộng $(1-\beta)x$ vào $r_u$, giữ $\beta x/2$ ở $q_u$ và cộng $\beta x/(2d_u)$ vào $q_v$ cho mỗi hàng xóm $v$.
@@ -2541,8 +2692,17 @@ trả $r$ và tiền tố có $\phi$ nhỏ nhất
 \]
 chọn $S$ có conductance nhỏ nhất.
 }
-\key{Kiểm tra nhanh} Tổng $r+q$ vẫn bằng 1. Cut đếm cạnh băng qua; volume là tổng bậc, không phải số nút.
+
 \key{Cập nhật sweep} Khi thêm $u$ vào $S$, nếu $h$ cạnh của $u$ nối vào $S$ cũ thì $\operatorname{cut}'=\operatorname{cut}+d_u-2h$ và $\operatorname{vol}'=\operatorname{vol}+d_u$. Bỏ tập rỗng và toàn đồ thị khỏi sweep vì mẫu số conductance bằng 0.
+
+\begin{algpseudo}
+$r,q\gets0$; $q_s\gets1$\\
+khi tồn tại $u$ với $d_u>0$ và $q_u/d_u\ge\varepsilon$:\\
+\quad $x\gets q_u$; $r_u\gets r_u+(1-\beta)x$; $q_u\gets\beta x/2$\\
+\quad với mỗi hàng xóm $v$: $q_v\gets q_v+\beta x/(2d_u)$\\
+xếp nút theo điểm chuẩn hóa (thường là $r_u/d_u$); tính $\phi$ của từng tiền tố hợp lệ\\
+trả $r$ và tiền tố có $\phi$ nhỏ nhất
+\end{algpseudo}
 
 \begin{example}{Pr19}{Pr19(c) · Conductance: tìm điểm cắt bằng sweep}
 \begin{diagram}
@@ -2563,6 +2723,17 @@ Theo thứ tự $A,C,B$, tập $\{A,C\}$ cắt 3 cạnh và có thể tích $2+3
 \end{example}
 
 % DSA5101 Exam Practice Questions.pdf, PDF page(s) 20.
+
+\unitheading{3}{Verification / Kiểm tra}
+
+\key{Kiểm tra nhanh} Tổng $r+q$ vẫn bằng 1. Cut đếm cạnh băng qua; volume là tổng bậc, không phải số nút.
+
+\unitheading{4}{Advanced / Nâng cao}
+
+\key{Sweep conductance} Sau khi sắp hạng nút theo điểm chuẩn hóa, cập nhật cut và volume khi thêm từng nút; toàn sweep có thể tính bằng một lượt qua cạnh sau bước sắp xếp $O(n\log n)$.
+
+\unitheading{5}{Exam evidence / Câu hỏi và lời giải}
+
 \ask{Pr19}{Pr19}{}
 Six sensors form a graph with edges $AB,AC,BC,CD,DE,DF,EF$. Their degrees in order $A,B,C,D,E,F$ are $(2,2,3,3,2,2)$. Set $\beta=1/2$, $\epsilon=1/20$, estimate $r=0$, and residual $q_A=1$, all other residuals zero. A vertex is eligible for a push when $q_u/d_u\ge\epsilon$. For a push at $u$, save $x=q_u$ and use
 \[
@@ -2592,19 +2763,9 @@ for $v$ adjacent to $u$.
 \begin{guidesteps}
 \item Bất biến của thuật toán là $\sum_u(r_u+q_u)=1$, không phải riêng $\sum_u r_u=1$. Một push chỉ cập nhật nút $u$ và hàng xóm; do đó chi phí phụ thuộc vùng cục bộ được chạm tới, không cần quét mọi cạnh của đồ thị.
 \end{guidesteps}
-
 \topic{embedding}{Node embeddings: shallow encoding \& random walks}
-\algsummary{Học biểu diễn vectơ ít chiều cho các nút.}
-{Hai nút thường cùng xuất hiện trong một đoạn walk nên có vectơ dễ dự đoán nhau.}
-{Đồ thị, chiều $d$, bộ sinh walk, bán kính cửa sổ và số vòng huấn luyện.}
-{Bảng embedding $z_u$ cho từng nút đã thấy.}
-{Sinh cặp nút--ngữ cảnh từ walk rồi huấn luyện bằng softmax hoặc negative sampling.}
-\begin{algpseudo}
-sinh walk; lấy các cặp có thứ tự $(u,v)$ trong cửa sổ ngữ cảnh\\
-khởi tạo bảng $z$; lặp qua các cặp huấn luyện:\\
-\quad cập nhật $z$ để giảm $-\log P(v\mid u)$, hoặc dùng mục tiêu negative sampling\\
-trả bảng $z$
-\end{algpseudo}
+
+\algsummary{Học biểu diễn vectơ ít chiều cho các nút.}{Hai nút thường cùng xuất hiện trong một đoạn walk nên có vectơ dễ dự đoán nhau.}{}{Đồ thị, chiều $d$, bộ sinh walk, bán kính cửa sổ và số vòng huấn luyện.}{Bảng embedding $z_u$ cho từng nút đã thấy.}{Sinh cặp nút--ngữ cảnh từ walk rồi huấn luyện bằng softmax hoặc negative sampling.}
 
 \key{Ý chính} Mỗi nút $u$ được gán một vectơ học được $z_u$. Hai nút hay xuất hiện trong cửa sổ của cùng random walk nên có vectơ dễ dự đoán nhau, dù không có cạnh trực tiếp.
 
@@ -2616,26 +2777,24 @@ P(v\mid u)=\frac{\exp(z_v^Tz_u)}{\sum_{w\in V}\exp(z_w^Tz_u)}.
 \]
 Tương đương tối thiểu hóa tổng $-\log P(v\mid u)$ trên các cặp dương.
 }
-\key{Bẫy} Mẫu số softmax đi qua mọi nút. Bảng tra theo ID cần $O(d|V|)$ ô và không tự sinh vectơ cho nút chưa thấy.
 
-
-
-\topic{node2vec}{DeepWalk vs node2vec (walk generation)}
-\algsummary{Sinh các walk để lấy ngữ cảnh huấn luyện embedding.}
-{DeepWalk chỉ nhìn nút hiện tại; node2vec còn dùng nút trước để điều chỉnh khoảng khám phá.}
-{Đồ thị, seed, độ dài walk và $p,q>0$ nếu dùng node2vec.}
-{Chuỗi nút đã thăm.}
-{Ở mỗi bước, chuẩn hóa trọng số các cạnh ra sau khi áp hệ số của biến thể.}
 \begin{algpseudo}
-$v\gets$ seed; $t\gets$ chưa có; khởi tạo walk bằng $v$\\
-khi chưa đủ độ dài và $v$ có hàng xóm:\\
-\quad điểm của $x\in N(v)$ là $w_{vx}$ (DeepWalk hoặc bước đầu)\\
-\quad nếu node2vec và có $t$: nhân điểm của $x$ với $\alpha_{pq}(t,x)$\\
-\quad chọn $x$ theo các điểm; nối $x$; đặt $(t,v)\gets(v,x)$\\
-trả walk
+sinh walk; lấy các cặp có thứ tự $(u,v)$ trong cửa sổ ngữ cảnh\\
+khởi tạo bảng $z$; lặp qua các cặp huấn luyện:\\
+\quad cập nhật $z$ để giảm $-\log P(v\mid u)$, hoặc dùng mục tiêu negative sampling\\
+trả bảng $z$
 \end{algpseudo}
 
-\key{Phân biệt} DeepWalk đi ngẫu nhiên đều trên hàng xóm nếu cạnh không trọng số. node2vec còn xét nút ngay trước đó $t$ để quyết định bước tiếp từ $v$.
+\unitheading{3}{Verification / Kiểm tra}
+
+\key{Bẫy} Mẫu số softmax đi qua mọi nút. Bảng tra theo ID cần $O(d|V|)$ ô và không tự sinh vectơ cho nút chưa thấy.
+
+\unitheading{4}{Advanced / Nâng cao}
+
+\key{Chi phí học} Bảng embedding có $|V|d$ tham số. Với $T$ cặp center-context và $k$ negative samples, skip-gram negative sampling tốn khoảng $O(T(k+1)d)$ thay vì tính softmax trên mọi nút.
+\topic{node2vec}{DeepWalk vs node2vec (walk generation)}
+
+\algsummary{Sinh các walk để lấy ngữ cảnh huấn luyện embedding.}{DeepWalk chỉ nhìn nút hiện tại; node2vec còn dùng nút trước để điều chỉnh khoảng khám phá.}{\textbf{Phân biệt:}\enspace DeepWalk đi ngẫu nhiên đều trên hàng xóm nếu cạnh không trọng số. node2vec còn xét nút ngay trước đó $t$ để quyết định bước tiếp từ $v$.}{Đồ thị, seed, độ dài walk và $p,q>0$ nếu dùng node2vec.}{Chuỗi nút đã thăm.}{Ở mỗi bước, chuẩn hóa trọng số các cạnh ra sau khi áp hệ số của biến thể.}
 
 \key{Cách tính} Với ứng viên $x\in N(v)$, nhân trọng số cạnh $w_{vx}$ với hệ số dưới đây rồi chuẩn hóa trên toàn bộ hàng xóm của $v$:
 \[
@@ -2646,16 +2805,39 @@ trả walk
 1/q & d(t,x)=2 \quad\text{(đi xa)}.
 \end{cases}
 \]
+
+\begin{algpseudo}
+$v\gets$ seed; $t\gets$ chưa có; khởi tạo walk bằng $v$\\
+khi chưa đủ độ dài và $v$ có hàng xóm:\\
+\quad điểm của $x\in N(v)$ là $w_{vx}$ (DeepWalk hoặc bước đầu)\\
+\quad nếu node2vec và có $t$: nhân điểm của $x$ với $\alpha_{pq}(t,x)$\\
+\quad chọn $x$ theo các điểm; nối $x$; đặt $(t,v)\gets(v,x)$\\
+trả walk
+\end{algpseudo}
+
 \key{Ví dụ} $p=2,q=1/2$, mỗi loại một ứng viên không trọng số: điểm thô $(1/2,1,2)$, xác suất $(1/7,2/7,4/7)$. Đo $d(t,x)$ từ nút trước, không đo từ $v$. $q$ nhỏ thiên về đi xa; $q$ lớn thiên về quanh vùng hiện tại.
 
+\unitheading{3}{Verification / Kiểm tra}
 
+\key{Kiểm tra} Chuẩn hóa trọng số chuyển trên toàn bộ $N(v)$; khi $p=q=1$, xác suất trở về, đi gần và đi xa đều bằng nhau như random walk đều.
 
+\unitheading{4}{Advanced / Nâng cao}
+
+\key{Ảnh hưởng tham số} Tham số $p$ điều khiển xác suất quay lại nút trước; $q$ điều khiển xu hướng đi ra xa hay ở gần vùng hiện tại. Chúng đổi phân phối walk, còn vector embedding được học ở bước riêng.
 \topic{negatives}{Negative sampling for graph embeddings}
-\algsummary{Huấn luyện embedding mà không tính softmax trên tất cả nút ở mỗi bước.}
-{So cặp quan sát được với vài cặp nhiễu lấy từ một phân phối nền.}
-{Cặp dương $(u,v)$, $k$ mẫu nhiễu mỗi cặp, phân phối nền và bước học.}
-{Các embedding đã cập nhật.}
-{Tối đa hóa log-sigmoid cho cặp dương và log-sigmoid với dấu âm cho cặp nhiễu.}
+
+\algsummary{Huấn luyện embedding mà không tính softmax trên tất cả nút ở mỗi bước.}{So cặp quan sát được với vài cặp nhiễu lấy từ một phân phối nền.}{\textbf{Khi dùng:}\enspace Muốn tránh tính mẫu số softmax trên mọi nút cho từng cặp. Cặp $(u,v)$ từ cửa sổ walk là dương; lấy $k$ mẫu nhiễu $n_j$ từ phân phối nền.
+\[
+\log\sigma(z_u^Tz_v)+\sum_{j=1}^k\log\sigma(-z_u^Tz_{n_j}),
+\qquad \sigma(a)=\frac{1}{1+e^{-a}}.
+\]}{Cặp dương $(u,v)$, $k$ mẫu nhiễu mỗi cặp, phân phối nền và bước học.}{Các embedding đã cập nhật.}{Tối đa hóa log-sigmoid cho cặp dương và log-sigmoid với dấu âm cho cặp nhiễu.}
+
+\key{Diễn giải} Tối đa hóa biểu thức để tăng tích vô hướng của cặp dương và giảm tích vô hướng của cặp nhiễu. Mỗi cặp tốn khoảng $O((k+1)d)$ thay vì $O(|V|d)$. Đây là mục tiêu huấn luyện khác full softmax.
+
+
+
+\lecture{8}{Data streams}
+
 \begin{algpseudo}
 với mỗi cặp dương $(u,v)$: lấy $n_1,\ldots,n_k$ từ phân phối nền\\
 \quad $J\gets\log\sigma(z_u^Tz_v)+\sum_j\log\sigma(-z_u^Tz_{n_j})$\\
@@ -2663,23 +2845,27 @@ với mỗi cặp dương $(u,v)$: lấy $n_1,\ldots,n_k$ từ phân phối nề
 trả embedding
 \end{algpseudo}
 
-\key{Khi dùng} Muốn tránh tính mẫu số softmax trên mọi nút cho từng cặp. Cặp $(u,v)$ từ cửa sổ walk là dương; lấy $k$ mẫu nhiễu $n_j$ từ phân phối nền.
-\[
-\log\sigma(z_u^Tz_v)+\sum_{j=1}^k\log\sigma(-z_u^Tz_{n_j}),
-\qquad \sigma(a)=\frac{1}{1+e^{-a}}.
-\]
-\key{Diễn giải} Tối đa hóa biểu thức để tăng tích vô hướng của cặp dương và giảm tích vô hướng của cặp nhiễu. Mỗi cặp tốn khoảng $O((k+1)d)$ thay vì $O(|V|d)$. Đây là mục tiêu huấn luyện khác full softmax.
+\unitheading{3}{Verification / Kiểm tra}
 
+\key{Kiểm tra} Hạng dương phải được kéo gần hơn, còn các hạng nhiễu bị đẩy xa; kiểm tra dấu của từng log-sigmoid trước khi cập nhật vector.
 
+\unitheading{4}{Advanced / Nâng cao}
 
-\lecture{8}{Data streams}
-
+\key{Chi phí mục tiêu} Với chiều embedding $d$ và $k$ negative samples, mỗi cặp center-context cần khoảng $O((k+1)d)$ phép tính thay vì $O(|V|d)$ của full softmax.
 \topic{fm}{Flajolet-Martin (FM): distinct count}
-\algsummary{Ước lượng số ID phân biệt mà không giữ tập tất cả ID.}
-{Đuôi có $r$ bit 0 hiếm cỡ $2^{-r}$; ID lặp lại có cùng mã băm nên không tăng cực đại.}
-{Luồng ID khác rỗng, danh sách hash và cách ghép nhóm thanh ghi.}
-{Các cực đại $R_j$ và số phân biệt ước lượng.}
-{Giữ số bit 0 cuối lớn nhất cho mỗi hash; quy tắc FM là lấy median từng nhóm rồi trung bình các median.}
+
+\algsummary{Ước lượng số ID phân biệt mà không giữ tập tất cả ID.}{Đuôi có $r$ bit 0 hiếm cỡ $2^{-r}$; ID lặp lại có cùng mã băm nên không tăng cực đại.}{\textbf{Bài toán:}\enspace Với luồng $a_1,\ldots,a_t$, cần ước lượng số giá trị phân biệt
+\[
+D=F_0=\left|\{a_1,\ldots,a_t\}\right|.
+\]
+$t$ là số lần xuất hiện, còn $D$ là số ID khác nhau. FM cơ bản tóm tắt các ID đã thấy từ đầu luồng, không trả distinct count cho một cửa sổ gần đây. Một hash set đếm chính xác nhưng cần $O(D)$ bộ nhớ; FM giữ một thanh ghi nhỏ cho mỗi hash.}{Luồng ID khác rỗng, danh sách hash và cách ghép nhóm thanh ghi.}{Các cực đại $R_j$ và số phân biệt ước lượng.}{Giữ số bit 0 cuối lớn nhất cho mỗi hash; quy tắc FM là lấy median từng nhóm rồi trung bình các median.}
+
+\key{Trailing zeros} $r(x)$ là số bit 0 liên tiếp ở bên phải bit 1 ngoài cùng bên phải của $h(x)$; hash lẻ có $r=0$. Ví dụ $12=1100_2$ có $r=2$. Đây là trailing zeros, không phải leading zeros. Nếu hash có $W$ bit và bằng 0 thì có $W$ bit 0 cuối; cần xử lý giá trị này nhất quán.
+
+\key{Ước lượng thô} Với một hash, giữ $R=\max_x r(x)$ và trả $\hat D=2^R$. ID lặp lại có cùng hash nên không làm tăng cực đại. Đây là ước lượng thô, không phải đẳng thức $D=2^R$.
+
+\key{Tính trong bài thi} Với mỗi hash, đếm trailing zeros rồi lấy cực đại $R_j$; đổi sang $Z_j=2^{R_j}$. Nếu đề cho nhiều hash theo nhóm, áp dụng đúng thứ tự phép toán trong đề; mặc định FM dùng median trong từng nhóm rồi mean giữa các nhóm.
+
 \begin{algpseudo}
 đặt mọi $R_j\gets0$\\
 với mỗi ID $x$, hash $h_j$: $z_j\gets\operatorname{zeros}(h_j(x))$\\
@@ -2689,27 +2875,31 @@ nếu một hash: trả $Z_1$; nếu nhiều hash: chia $Z_j$ thành nhóm nhỏ
 trả trung bình của các trung vị nhóm
 \end{algpseudo}
 
-\key{Bài toán} Với luồng $a_1,\ldots,a_t$, cần ước lượng số giá trị phân biệt
-\[
-D=F_0=\left|\{a_1,\ldots,a_t\}\right|.
-\]
-$t$ là số lần xuất hiện, còn $D$ là số ID khác nhau. FM cơ bản tóm tắt các ID đã thấy từ đầu luồng, không trả distinct count cho một cửa sổ gần đây. Một hash set đếm chính xác nhưng cần $O(D)$ bộ nhớ; FM giữ một thanh ghi nhỏ cho mỗi hash.
+\begin{algpseudo}
+\textsc{Merge-FM}$(\mathbf R_A,\mathbf R_B)$:\\
+\quad với $j=1,\ldots,q$:\\
+\qquad $R_j\gets\max(R_j^{(A)},R_j^{(B)})$\\
+trả $\mathbf R=(R_1,\ldots,R_q)$
+\end{algpseudo}
+Chỉ gộp sketches dùng cùng hash functions, cùng thứ tự tọa độ và cùng cấu hình. Phép max giao hoán, kết hợp và lũy đẳng: thứ tự merge không quan trọng, có thể gộp theo cây, và bản ghi trùng không làm tăng register lần nữa. Merge tốn $O(q)$ thời gian, độc lập với số raw records. Thứ tự xử lý là $\mathbf R_A,\mathbf R_B\to\mathbf R_{A\cup B}\to 2^{R_j}\to$ tổng hợp; không cộng hoặc lấy max của các estimate cuối.
 
-\key{Trailing zeros} $r(x)$ là số bit 0 liên tiếp ở bên phải bit 1 ngoài cùng bên phải của $h(x)$; hash lẻ có $r=0$. Ví dụ $12=1100_2$ có $r=2$. Đây là trailing zeros, không phải leading zeros. Nếu hash có $W$ bit và bằng 0 thì có $W$ bit 0 cuối; cần xử lý giá trị này nhất quán.
+\key{Ví dụ tính tay} Xét luồng $P,Q,P,R,S,Q,P$ với các hash sau:
+\begin{examtable}{@{}l c c c@{}}
+\toprule
+Key & Hash & Nhị phân & $r(x)$ \\
+\midrule
+P & 6 & $0110$ & 1 \\
+Q & 9 & $1001$ & 0 \\
+R & 4 & $0100$ & 2 \\
+S & 11 & $1011$ & 0 \\
+\bottomrule
+\end{examtable}
+Thanh ghi lớn nhất là $R_{\max}=2$, nên $\hat D=2^{R_{\max}}=4$. Giá trị này trùng với số key phân biệt trong ví dụ; đó là sự trùng hợp, không phải bảo đảm chính xác.
 
-\key{Ước lượng thô} Với một hash, giữ $R=\max_x r(x)$ và trả $\hat D=2^R$. ID lặp lại có cùng hash nên không làm tăng cực đại. Đây là ước lượng thô, không phải đẳng thức $D=2^R$.
+% DSA5101 Exam Practice Questions.pdf, PDF page(s) 25.
 
-\key{Tính trong bài thi} Với mỗi hash, đếm trailing zeros rồi lấy cực đại $R_j$; đổi sang $Z_j=2^{R_j}$. Nếu đề cho nhiều hash theo nhóm, áp dụng đúng thứ tự phép toán trong đề; mặc định FM dùng median trong từng nhóm rồi mean giữa các nhóm.
+\unitheading{3}{Verification / Kiểm tra}
 
-\advancedheading{Trực giác xác suất}
-Với hash đều và độc lập, xác suất một ID có ít nhất $q$ bit 0 cuối là $2^{-q}$ (với $q\le W$ cho hash $W$ bit). Nếu có $D$ ID phân biệt:
-\[
-\begin{aligned}
-P(R<q)&=(1-2^{-q})^D\approx e^{-D/2^q},\\
-P(R\ge q)&=1-(1-2^{-q})^D\approx1-e^{-D/2^q}.
-\end{aligned}
-\]
-Khi $D\ll2^q$, ít có khả năng đạt ngưỡng $q$; khi $D\gg2^q$, khả năng đạt ngưỡng cao. Điểm chuyển tiếp là $D$ cùng bậc với $2^R$. Chẳng hạn, với $D=1024$ và $q=10$, $P(R\ge10)\approx1-e^{-1}\approx63.2\%$.
 \key{FM và AMS: thứ tự tổng hợp khác nhau}
 \begin{examtable}{@{}l p{.28\columnwidth}p{.34\columnwidth}@{}}
 \toprule
@@ -2728,6 +2918,18 @@ Ví dụ phân ba nhóm $(2,4,1024)$, $(4,8,16)$, $(2,4,8)$. Median từng nhóm
 \end{aligned}
 \]
 
+\unitheading{4}{Advanced / Nâng cao}
+
+\advancedheading{Trực giác xác suất}
+Với hash đều và độc lập, xác suất một ID có ít nhất $q$ bit 0 cuối là $2^{-q}$ (với $q\le W$ cho hash $W$ bit). Nếu có $D$ ID phân biệt:
+\[
+\begin{aligned}
+P(R<q)&=(1-2^{-q})^D\approx e^{-D/2^q},\\
+P(R\ge q)&=1-(1-2^{-q})^D\approx1-e^{-D/2^q}.
+\end{aligned}
+\]
+Khi $D\ll2^q$, ít có khả năng đạt ngưỡng $q$; khi $D\gg2^q$, khả năng đạt ngưỡng cao. Điểm chuyển tiếp là $D$ cùng bậc với $2^R$. Chẳng hạn, với $D=1024$ và $q=10$, $P(R\ge10)\approx1-e^{-1}\approx63.2\%$.
+
 \advancedheading{Ngoại lệ của raw estimates}
 Một $R$ lớn hiếm gặp làm $2^R$ tăng theo lũy thừa. Chẳng hạn $R=(2,3,10)$ cho $Z=(4,8,1024)$, có mean khoảng $345.33$ dù hai giá trị đầu chỉ là 4 và 8. Với hash lý tưởng vô hạn, $P(R\ge q)\approx D/2^q$ khi $q$ lớn, nên mỗi ngưỡng lớn đóng góp xấp xỉ hằng số vào $\mathbb E[2^R]$ và kỳ vọng phân kỳ; raw estimate không phải ước lượng không chệch. Hash hữu hạn chặn kỳ vọng nhưng ngoại lệ vẫn có thể kéo lệch mean.
 
@@ -2736,31 +2938,13 @@ Một $R$ lớn hiếm gặp làm $2^R$ tăng theo lũy thừa. Chẳng hạn $R
 R_j^{(A\cup B)}=\max\bigl(R_j^{(A)},R_j^{(B)}\bigr),\qquad j=1,\ldots,q.
 \]
 Ví dụ $(2,1,4)$ và $(1,3,2)$ gộp thành $(2,3,4)$. Nếu $S_A=\{A,B,C\}$ và $S_B=\{B,C,D\}$ thì union có 4 phần tử, không phải tổng $3+3$, vì $B,C$ bị lặp.
-\begin{algpseudo}
-\textsc{Merge-FM}$(\mathbf R_A,\mathbf R_B)$:\\
-\quad với $j=1,\ldots,q$:\\
-\qquad $R_j\gets\max(R_j^{(A)},R_j^{(B)})$\\
-trả $\mathbf R=(R_1,\ldots,R_q)$
-\end{algpseudo}
-Chỉ gộp sketches dùng cùng hash functions, cùng thứ tự tọa độ và cùng cấu hình. Phép max giao hoán, kết hợp và lũy đẳng: thứ tự merge không quan trọng, có thể gộp theo cây, và bản ghi trùng không làm tăng register lần nữa. Merge tốn $O(q)$ thời gian, độc lập với số raw records. Thứ tự xử lý là $\mathbf R_A,\mathbf R_B\to\mathbf R_{A\cup B}\to 2^{R_j}\to$ tổng hợp; không cộng hoặc lấy max của các estimate cuối.
+
 \key{Độ phức tạp} Với $q$ hash functions, một record cập nhật $q$ thanh ghi trong $O(q)$ thời gian; sketch chiếm $O(q)$ bộ nhớ. Gộp hai sketch cũng tốn $O(q)$ thời gian.
 
 \key{Cận dưới} Khi cần xác định estimate nhỏ nhất trong một họ hash, chứng minh cận dưới đúng với mọi hash trong họ rồi chỉ ra một hash đạt cận đó.
 
-\key{Ví dụ tính tay} Xét luồng $P,Q,P,R,S,Q,P$ với các hash sau:
-\begin{examtable}{@{}l c c c@{}}
-\toprule
-Key & Hash & Nhị phân & $r(x)$ \\
-\midrule
-P & 6 & $0110$ & 1 \\
-Q & 9 & $1001$ & 0 \\
-R & 4 & $0100$ & 2 \\
-S & 11 & $1011$ & 0 \\
-\bottomrule
-\end{examtable}
-Thanh ghi lớn nhất là $R_{\max}=2$, nên $\hat D=2^{R_{\max}}=4$. Giá trị này trùng với số key phân biệt trong ví dụ; đó là sự trùng hợp, không phải bảo đảm chính xác.
+\unitheading{5}{Exam evidence / Câu hỏi và lời giải}
 
-% DSA5101 Exam Practice Questions.pdf, PDF page(s) 25.
 \ask{Pr24}{Pr24}{}
 A stream is $A,B,A,C,D,B,E,A$. For each hash $h_j$, maintain $R_j$, the maximum number of trailing zero bits in a hash value seen so far. Use raw estimate $Z_j=2^{R_j}$; no bias correction is required in this exercise.
 \qpart{a} Under one hash, the values for $A,B,C,D,E$ are respectively 12, 10, 7, 6, 3. Find their trailing-zero counts, the final register $R_1$, and its raw estimate. Would three additional occurrences of $A$ change the result?
@@ -2834,28 +3018,9 @@ h_i(x)=x+i\bmod 2^{16}.
 \item Từ mỗi register tính $Z_j=2^{R_j}$. Một giá trị lớn có thể kéo lệch mean chung, nên không lấy trung bình thẳng tất cả estimates.
 \item Quy tắc FM: chia estimates thành nhóm, lấy median trong từng nhóm, rồi lấy mean của các median (mean of medians). Median nhóm giảm ảnh hưởng của một outlier; phép mean sau đó tổng hợp các nhóm.
 \end{guidesteps}
-
 \topic{ams}{AMS: frequency moments}
-\algsummary{Ước lượng moment bậc hai $F_2$ khi không đủ bộ nhớ giữ tần suất mọi ID.}
-{Chọn vị trí đồng đều, đếm số lần item xuất hiện từ đó về sau; $2c-1$ là bước tăng của bình phương.}
-{Luồng không rỗng $a_1,\ldots,a_n$ khi biết $n$, hoặc luồng online khi chưa biết $n$; số mẫu $k$.}
-{Ước lượng không chệch $\widehat F_2$; một mẫu dùng $Y=n(2c-1)$.}
-{Tách trường hợp: chọn trước vị trí khi biết $n$; dùng reservoir để giữ vị trí đều khi chưa biết $n$.}
-\begin{algpseudo}
-\textsc{AMS with fixed n}: chọn độc lập $t_j\sim\mathrm{Unif}\{1,\ldots,n\}$ cho $j=1,\ldots,k$\\
-$c_j\gets0$; quét $p=1,\ldots,n$ và xét mỗi mẫu $j$:\\
-\quad nếu $p=t_j$: lưu $x_j\gets a_p$; $c_j\gets1$\\
-\quad nếu $p>t_j$ và $a_p=x_j$: $c_j\gets c_j+1$\\
-$Y_j\gets n(2c_j-1)$; trả $\frac1k\sum_{j=1}^kY_j$
-\end{algpseudo}
-\begin{algpseudo}
-\textbf{Online, chưa biết $n$:} khởi tạo tối đa $k$ slot rỗng\\
-với mỗi arrival $a_p$: tăng $c_j$ cho mọi slot đang giữ có $x_j=a_p$\\
-\quad nếu $p\le k$: điền slot $p$ bằng $(p,a_p,1)$\\
-\quad nếu $p>k$: lấy $J\sim\mathrm{Unif}\{1,\ldots,p\}$; nếu $J\le k$, thay slot $J$ bằng $(p,a_p,1)$\\
-khi kết thúc, với mỗi slot tính $Y_j=n(2c_j-1)$
-\end{algpseudo}
-Ở vị trí $p>k$, mỗi vị trí trước đó có xác suất $k/p$ nằm trong reservoir. Tăng counter trước khi thay slot để các mẫu cũ đếm arrival mới; slot mới bắt đầu với $c=1$. Mỗi slot giữ vị trí bắt đầu và suffix count riêng.
+
+\algsummary{Ước lượng moment bậc hai $F_2$ khi không đủ bộ nhớ giữ tần suất mọi ID.}{Chọn vị trí đồng đều, đếm số lần item xuất hiện từ đó về sau; $2c-1$ là bước tăng của bình phương.}{}{Luồng không rỗng $a_1,\ldots,a_n$ khi biết $n$, hoặc luồng online khi chưa biết $n$; số mẫu $k$.}{Ước lượng không chệch $\widehat F_2$; một mẫu dùng $Y=n(2c-1)$.}{Tách trường hợp: chọn trước vị trí khi biết $n$; dùng reservoir để giữ vị trí đều khi chưa biết $n$.}
 
 \key{Ký hiệu} $m_i$ là tần suất của item $i$, $d$ là số item phân biệt, và $F_2=\sum_i m_i^2$.
 
@@ -2868,13 +3033,29 @@ Bộ nhớ & $O(d)$ & $O(k)$ \\
 Kết quả & $F_2$ chính xác, tất định & $\widehat F_2$ ngẫu nhiên, không chệch \\
 \bottomrule
 \end{examtable}
+
 \key{Một mẫu, biết $n$} Chọn đều vị trí $t$; đặt $X.el=a_t$ và $c_t=1$. Đếm các lần xuất hiện của $a_t$ sau $t$, nên $c_t$ là suffix count tính cả vị trí mẫu. Trả $Y=n(2c_t-1)$; đây là trường hợp $k=1$.
 
 \key{Nhiều mẫu, biết $n$} Chọn $k$ vị trí độc lập, mỗi vị trí đều trên $1,\ldots,n$; các mẫu có thể trùng vị trí. Tính $Y_j=n(2c_j-1)$ riêng cho từng vị trí rồi lấy mean $\widehat F_2=k^{-1}\sum_jY_j$. Mean này không chệch.
 
 \key{Tổng hợp mẫu} Mean của mọi $Y_j$ là ước lượng không chệch. Khi dùng quy tắc robust theo nhóm, lấy mean trong mỗi nhóm rồi median của các group means; đây là median-of-averages, như ví dụ so sánh ở FM. Median cuối không nhất thiết giữ tính không chệch của mean thô.
 
-\key{Độ phức tạp} Một mẫu tốn $O(n)$ thời gian và $O(1)$ bộ nhớ. $k$ mẫu cần $O(nk)$ thời gian và $O(k)$ bộ nhớ; reservoir online cũng cần $O(k)$ thời gian cho mỗi arrival và $O(k)$ bộ nhớ.
+\begin{algpseudo}
+\textsc{AMS with fixed n}: chọn độc lập $t_j\sim\mathrm{Unif}\{1,\ldots,n\}$ cho $j=1,\ldots,k$\\
+$c_j\gets0$; quét $p=1,\ldots,n$ và xét mỗi mẫu $j$:\\
+\quad nếu $p=t_j$: lưu $x_j\gets a_p$; $c_j\gets1$\\
+\quad nếu $p>t_j$ và $a_p=x_j$: $c_j\gets c_j+1$\\
+$Y_j\gets n(2c_j-1)$; trả $\frac1k\sum_{j=1}^kY_j$
+\end{algpseudo}
+
+\begin{algpseudo}
+\textbf{Online, chưa biết $n$:} khởi tạo tối đa $k$ slot rỗng\\
+với mỗi arrival $a_p$: tăng $c_j$ cho mọi slot đang giữ có $x_j=a_p$\\
+\quad nếu $p\le k$: điền slot $p$ bằng $(p,a_p,1)$\\
+\quad nếu $p>k$: lấy $J\sim\mathrm{Unif}\{1,\ldots,p\}$; nếu $J\le k$, thay slot $J$ bằng $(p,a_p,1)$\\
+khi kết thúc, với mỗi slot tính $Y_j=n(2c_j-1)$
+\end{algpseudo}
+Ở vị trí $p>k$, mỗi vị trí trước đó có xác suất $k/p$ nằm trong reservoir. Tăng counter trước khi thay slot để các mẫu cũ đếm arrival mới; slot mới bắt đầu với $c=1$. Mỗi slot giữ vị trí bắt đầu và suffix count riêng.
 
 \key{Ví dụ: luồng $A,B,A,C,A,B$} Nếu chọn $t=3$, lưu item $A$ và đặt bộ đếm 1. Bảng cũng cho $c_t$ và $Y_t$ nếu bắt đầu ở bất kỳ vị trí $t$ nào.
 \begin{examtable}{@{}c c c c l@{}}
@@ -2891,16 +3072,22 @@ $t$ & $a_t$ & $c_t$ & $Y_t=6(2c_t-1)$ & Cập nhật khi chọn $t=3$ \\
 \end{examtable}
 Mẫu ở $t=3$ cho $Y=6(2\cdot2-1)=18$, còn giá trị chính xác là $3^2+2^2+1^2=14$. Trung bình qua cả sáu điểm bắt đầu là $(30+18+18+6+6+6)/6=14$.
 
-\advancedheading{Vì sao suffix count không chệch}
-Nếu item $i$ xuất hiện $m_i$ lần, mỗi lần xuất hiện cho một giá trị $c_t$ khác nhau: $m_i,m_i-1,\ldots,1$. Vì $2c-1=c^2-(c-1)^2$, tổng $1+3+\cdots+(2m_i-1)$ bằng $m_i^2$. Gom các vị trí theo item:
-\[
-\begin{aligned}
-\mathbb E[Y]
-  &=\frac1n\sum_{t=1}^n n(2c_t-1)\\
-  &=\sum_i\sum_{c=1}^{m_i}(2c-1)
-   =\sum_i m_i^2=F_2.
-\end{aligned}
-\]
+\begin{example}{Pr25}{Pr25(a) · AMS: cùng một luồng, hai vị trí lấy mẫu}
+\begin{examtable}{@{}c l c c@{}}
+\toprule
+Vị trí bắt đầu & ID và vị trí lặp trong hậu tố & $c$ & $9(2c-1)$ \\
+\midrule
+1 & $R$ tại $1,3,6,9$ & 4 & 63 \\
+2 & $F$ tại $2,5$ & 2 & 27 \\
+\bottomrule
+\end{examtable}
+Lấy trung bình hai ước lượng được 45. Moment thực là $4^2+2^2+2^2+1^2=25$: một mẫu cụ thể có thể cho kết quả khác giá trị thực.
+\end{example}
+
+% DSA5101 Exam Practice Questions.pdf, PDF page(s) 26.
+
+\unitheading{3}{Verification / Kiểm tra}
+
 \key{Nếu dùng tần suất toàn luồng} Mỗi item $i$ có $m_i$ vị trí để được chọn, và ở cả $m_i$ vị trí đó ta sẽ dùng cùng giá trị $m_i$ thay cho $c_t$. Khi đó:
 \[
 \mathbb E[Y_{\mathrm{sai}}]
@@ -2925,19 +3112,23 @@ Mẫu tại vị trí đầu có thể cho $Y>F_2$. & Đúng \\
 \end{examtable}
 Kỳ vọng xét qua các lần lấy mẫu ngẫu nhiên; một lần chạy không bắt buộc cho kết quả đúng. Chẳng hạn vị trí đầu của luồng trên cho 30. Chọn đều vị trí lấy được item $i$ với xác suất $m_i/n$, nên nói chung không thể thay bằng chọn đều trên các item phân biệt.
 
-\begin{example}{Pr25}{Pr25(a) · AMS: cùng một luồng, hai vị trí lấy mẫu}
-\begin{examtable}{@{}c l c c@{}}
-\toprule
-Vị trí bắt đầu & ID và vị trí lặp trong hậu tố & $c$ & $9(2c-1)$ \\
-\midrule
-1 & $R$ tại $1,3,6,9$ & 4 & 63 \\
-2 & $F$ tại $2,5$ & 2 & 27 \\
-\bottomrule
-\end{examtable}
-Lấy trung bình hai ước lượng được 45. Moment thực là $4^2+2^2+2^2+1^2=25$: một mẫu cụ thể có thể cho kết quả khác giá trị thực.
-\end{example}
+\unitheading{4}{Advanced / Nâng cao}
 
-% DSA5101 Exam Practice Questions.pdf, PDF page(s) 26.
+\key{Độ phức tạp} Một mẫu tốn $O(n)$ thời gian và $O(1)$ bộ nhớ. $k$ mẫu cần $O(nk)$ thời gian và $O(k)$ bộ nhớ; reservoir online cũng cần $O(k)$ thời gian cho mỗi arrival và $O(k)$ bộ nhớ.
+
+\advancedheading{Vì sao suffix count không chệch}
+Nếu item $i$ xuất hiện $m_i$ lần, mỗi lần xuất hiện cho một giá trị $c_t$ khác nhau: $m_i,m_i-1,\ldots,1$. Vì $2c-1=c^2-(c-1)^2$, tổng $1+3+\cdots+(2m_i-1)$ bằng $m_i^2$. Gom các vị trí theo item:
+\[
+\begin{aligned}
+\mathbb E[Y]
+  &=\frac1n\sum_{t=1}^n n(2c_t-1)\\
+  &=\sum_i\sum_{c=1}^{m_i}(2c-1)
+   =\sum_i m_i^2=F_2.
+\end{aligned}
+\]
+
+\unitheading{5}{Exam evidence / Câu hỏi và lời giải}
+
 \ask{Pr25}{Pr25}{}
 A camera's first nine detections are $R,F,R,D,F,R,O,D,R$. Their frequencies are $(m_R,m_F,m_D,m_O)=(4,2,2,1)$, so the exact second moment is $F_2=\sum_x m_x^2=25$.
 
@@ -2989,31 +3180,27 @@ Start positions are maintained by a two-slot reservoir, so each stream position 
 \item Cộng các nhóm: $\sum_{j=1}^{10}j^2=385$. Do đó trung bình trên cả 55 vị trí bằng đúng $F_2$, bất kể thứ tự stream.
 \end{guidesteps}
 
-\columnbreak
 \topic{dgim}{DGIM: sliding-window bit counts}
-\algsummary{Đếm xấp xỉ số bit 1 trong $k$ vị trí cuối của stream.}
-{Giữ tối đa hai bucket mỗi cỡ; query ước lượng nửa bucket biên cũ nhất.}
-{Luồng bit, cửa sổ $N$, truy vấn $1\le k\le N$.}
-{Ước lượng số bit 1 trong $k$ vị trí cuối.}
-{Expire $\to$ insert $\to$ merge; query cộng bucket mới hơn và nửa bucket biên.}
+
+\algsummary{Đếm xấp xỉ số bit 1 trong $k$ vị trí cuối của stream.}{Giữ tối đa hai bucket mỗi cỡ; query ước lượng nửa bucket biên cũ nhất.}{\textbf{Bài toán:}\enspace Với luồng bit $x_1,\ldots,x_t\in\{0,1\}$, cửa sổ tối đa $N$ và truy vấn $1\le k\le N$, cần ước lượng
+\[
+C_{t,k}=\sum_{i=t-k+1}^{t}x_i.
+\]
+Lưu thẳng $N$ bit cho kết quả chính xác nhưng tốn $O(N)$ bit. Ước lượng theo tỷ lệ toàn luồng, $N S/(S+Z)$ với $S,Z$ là tổng số bit 1 và 0, chỉ phù hợp khi tỷ lệ ổn định và không có bảo đảm xấu nhất. DGIM dùng $O(\log^2N)$ bit, không giả định phân bố ổn định.}{Luồng bit, cửa sổ $N$, truy vấn $1\le k\le N$.}{Ước lượng số bit 1 trong $k$ vị trí cuối.}{Expire $\to$ insert $\to$ merge; query cộng bucket mới hơn và nửa bucket biên.}
+
+\key{Ước lượng query} Đặt $L=t-k+1$. Nếu các bucket được chọn có cỡ $s_1,\ldots,s_m$ theo thứ tự cũ đến mới, thì
+\[
+\widehat C_{t,k}=\begin{cases}0,&m=0,\\[2pt]\displaystyle\sum_{j=1}^{m}s_j-\frac{s_1}{2},&m>0.\end{cases}
+\]
+
+\key{Biểu diễn} Bucket $B=(s,t_{\mathrm{end}})$ đại diện $s$ bit 1; $t_{\mathrm{end}}$ là timestamp của bit 1 mới nhất. Cỡ $s$ là lũy thừa của 2. Buckets không chồng lấn, cỡ không tăng từ cũ sang mới và có tối đa hai bucket mỗi cỡ. Khi lưu timestamp modulo $N$, phải tính tuổi qua phép modulo, không so sánh trực tiếp timestamp đã cuộn vòng.
+
 \begin{algpseudo}
 khi nhận $b$ tại $t$: expire $t_{\mathrm{end}}\le t-N$; nếu $b=1$, insert $(1,t)$\\
 nếu 3 bucket cùng cỡ: merge 2 cũ nhất, giữ timestamp mới hơn; lặp\\
 query $k$: chọn bucket có $t_{\mathrm{end}}\ge L=t-k+1$\\
 trả 0 nếu rỗng; nếu có, trả $\sum_j s_j-s_1/2$ (bucket cũ trước)
 \end{algpseudo}
-
-\key{Ước lượng query} Đặt $L=t-k+1$. Nếu các bucket được chọn có cỡ $s_1,\ldots,s_m$ theo thứ tự cũ đến mới, thì
-\[
-\widehat C_{t,k}=\begin{cases}0,&m=0,\\[2pt]\displaystyle\sum_{j=1}^{m}s_j-\frac{s_1}{2},&m>0.\end{cases}
-\]
-\key{Bài toán} Với luồng bit $x_1,\ldots,x_t\in\{0,1\}$, cửa sổ tối đa $N$ và truy vấn $1\le k\le N$, cần ước lượng
-\[
-C_{t,k}=\sum_{i=t-k+1}^{t}x_i.
-\]
-Lưu thẳng $N$ bit cho kết quả chính xác nhưng tốn $O(N)$ bit. Ước lượng theo tỷ lệ toàn luồng, $N S/(S+Z)$ với $S,Z$ là tổng số bit 1 và 0, chỉ phù hợp khi tỷ lệ ổn định và không có bảo đảm xấu nhất. DGIM dùng $O(\log^2N)$ bit, không giả định phân bố ổn định.
-\key{Biểu diễn} Bucket $B=(s,t_{\mathrm{end}})$ đại diện $s$ bit 1; $t_{\mathrm{end}}$ là timestamp của bit 1 mới nhất. Cỡ $s$ là lũy thừa của 2. Buckets không chồng lấn, cỡ không tăng từ cũ sang mới và có tối đa hai bucket mỗi cỡ. Khi lưu timestamp modulo $N$, phải tính tuổi qua phép modulo, không so sánh trực tiếp timestamp đã cuộn vòng.
-\key{Độ phức tạp} Có $O(\log N)$ bucket, mỗi timestamp cần $O(\log N)$ bit nên tổng bộ nhớ là $O(\log^2N)$ bit. Cập nhật tốn $O(\log N)$ trong trường hợp xấu nhất do gộp dây chuyền; truy vấn tốn $O(\log N)$ để duyệt buckets.
 
 \begin{example}{Pr22}{Pr22(a,b) · DGIM: xóa, thêm, gộp rồi truy vấn}
 \begin{examtable}{@{}c l l@{}}
@@ -3029,7 +3216,16 @@ $t$ & Thao tác & Bucket $(\text{cỡ},\text{timestamp})$, cũ trước \\
 Hỏi 6 vị trí cuối ($10$ đến $15$): tính nửa bucket $(2,10)$, cộng trọn hai bucket mới hơn, được $2/2+2+1=4$.
 \end{example}
 
+\unitheading{3}{Verification / Kiểm tra}
+
+\key{Kiểm tra} Sau cập nhật, bucket không chồng lấn, kích thước là lũy thừa của 2 và mỗi cỡ có tối đa hai bucket; query chỉ lấy nửa bucket cũ nhất bị cắt.
+
+\unitheading{4}{Advanced / Nâng cao}
+
+\key{Độ phức tạp} Có $O(\log N)$ bucket, mỗi timestamp cần $O(\log N)$ bit nên tổng bộ nhớ là $O(\log^2N)$ bit. Cập nhật tốn $O(\log N)$ trong trường hợp xấu nhất do gộp dây chuyền; truy vấn tốn $O(\log N)$ để duyệt buckets.
+
 \advancedheading{Cỡ bucket cực đại và cận sai số}
+
 \key{Cỡ bucket lớn nhất} Với $N>1$, cỡ lớn nhất có thể là lũy thừa 2 lớn nhất nhỏ hơn $N$:
 \[
 B_{\max}=2^{\lfloor\log_2(N-1)\rfloor}.
@@ -3049,6 +3245,9 @@ Với DGIM chuẩn, $x\ge1$ và các bucket mới hơn có ít nhất một buck
 \key{Mở rộng: sai số và luồng số nguyên} Biến thể tham số $r>2$ giữ nhiều bucket hơn và dùng quy tắc truy vấn tương ứng, đạt $E_{\mathrm{rel}}\le1/(r-1)$: $r=3$ cho $50\%$, $r=4$ cho $33.3\%$, $r=5$ cho $25\%$, $r=11$ cho $10\%$. Với số nguyên không âm tối đa $m$ bit, duy trì một DGIM cho mỗi bit: $x_q=\sum_{i=0}^{m-1}b_{q,i}2^i$. Nếu $\hat c_i$ là số bit 1 ước lượng ở vị trí $i$, thì $\widehat{\sum_qx_q}=\sum_{i=0}^{m-1}2^i\hat c_i$; bộ nhớ là $O(m\log^2N)$ bit.
 
 % DSA5101 Exam Practice Questions.pdf, PDF page(s) 23.
+
+\unitheading{5}{Exam evidence / Câu hỏi và lời giải}
+
 \ask{Pr22}{Pr22}{}
 Use DGIM with window length 10 and at most two buckets of any size. A bucket $(b,t)$ has size $b$ and timestamp $t$ of its newest 1. On every arrival, expire buckets with timestamp at most $n-10$; for a new 1 create a size-1 bucket. If three buckets have the same size, merge the oldest two, using the newer of their timestamps. Repeat if needed.
 
@@ -3101,21 +3300,9 @@ Suppose that we are executing the DGIM algorithm to approximately count the numb
 \item Nếu cỡ lớn nhất là $b$, tối đa hai bucket mỗi cỡ cho sức chứa $2\sum_{j=0}^{\log_2 b}2^j=4b-2$. Với $b=64$, sức chứa là $4(64)-2=254<500$, nên cỡ lớn nhất phải lớn hơn 64.
 \item Từ rỗng, 500 bit 1 tạo hai bucket cỡ 128 (cùng các bucket nhỏ hơn) và không cần bucket 256. Vậy cỡ lớn nhất nhỏ nhất có thể là 128.
 \end{guidesteps}
-
 \topic{bloom}{Bloom filter: approximate membership}
-\algsummary{Kiểm tra membership với ít bộ nhớ thay vì lưu mọi key.}
-{Một bit 0 chứng minh key vắng; mọi bit 1 chỉ cho biết key có thể có mặt.}
-{Tập $S$ gồm $m$ key phân biệt, mảng $n$ bit và $k$ hash functions.}
-{Definitely absent hoặc possibly present.}
-{Đặt mọi bit về 0; khi insert thì bật $k$ vị trí, khi query thì kiểm tra cả $k$ vị trí.}
-\begin{algpseudo}
-\textsc{Bloom-Init}$(n)$: $B[0\ldots n-1]\gets0$\\
-\textsc{Bloom-Insert}$(x)$: với $i=1,\ldots,k$, đặt $B[h_i(x)]\gets1$\\
-\textsc{Bloom-Query}$(x)$: nếu có $i$ sao cho $B[h_i(x)]=0$, trả \textsc{Definitely-Absent}\\
-\quad ngược lại trả \textsc{Possibly-Present}
-\end{algpseudo}
 
-\key{Bài toán} Với tập rất lớn $S$ (chẳng hạn một tỷ email hợp lệ), mỗi email mới $x$ cần được kiểm tra xem có thuộc $S$ không. Hash table lưu key để trả lời chính xác nhưng có thể tốn nhiều bộ nhớ; Bloom filter dùng một bit array để giảm bộ nhớ và chấp nhận khả năng báo dương giả.
+\algsummary{Kiểm tra membership với ít bộ nhớ thay vì lưu mọi key.}{Một bit 0 chứng minh key vắng; mọi bit 1 chỉ cho biết key có thể có mặt.}{\textbf{Bài toán:}\enspace Với tập rất lớn $S$ (chẳng hạn một tỷ email hợp lệ), mỗi email mới $x$ cần được kiểm tra xem có thuộc $S$ không. Hash table lưu key để trả lời chính xác nhưng có thể tốn nhiều bộ nhớ; Bloom filter dùng một bit array để giảm bộ nhớ và chấp nhận khả năng báo dương giả.}{Tập $S$ gồm $m$ key phân biệt, mảng $n$ bit và $k$ hash functions.}{Definitely absent hoặc possibly present.}{Đặt mọi bit về 0; khi insert thì bật $k$ vị trí, khi query thì kiểm tra cả $k$ vị trí.}
 
 \key{Ký hiệu}
 \begin{examtable}{@{}l p{.76\linewidth}@{}}
@@ -3138,6 +3325,25 @@ Khi insert $x$, bật $B[h_i(x)]$ với mọi $i=1,\ldots,k$. Query trả Defini
 \end{cases}
 \]
 
+\key{Xác suất false positive} Với $m$ key và $k$ lần băm cho mỗi key, có $km$ phép đặt bit. Với hash độc lập, đều, xác suất một bit cụ thể vẫn 0 và xác suất bit đó thành 1 lần lượt là
+\[
+\Pr(B[j]=0)=\left(1-\frac1n\right)^{km}\approx e^{-km/n},
+\qquad
+\Pr(B[j]=1)\approx1-e^{-km/n}.
+\]
+Xác suất xấp xỉ một key không thuộc $S$ vẫn query thành Possibly present là
+\[
+\boxed{\Pr(\mathrm{FP})\approx\left(1-e^{-km/n}\right)^k}.
+\]
+Xấp xỉ này giả định các phép băm phân bố đều và độc lập; hash phụ thuộc nhau hoặc phân bố lệch có thể làm xác suất thực khác công thức. Phần $1-e^{-km/n}$ cũng là tỷ lệ bit 1 kỳ vọng trong mảng.
+
+\begin{algpseudo}
+\textsc{Bloom-Init}$(n)$: $B[0\ldots n-1]\gets0$\\
+\textsc{Bloom-Insert}$(x)$: với $i=1,\ldots,k$, đặt $B[h_i(x)]\gets1$\\
+\textsc{Bloom-Query}$(x)$: nếu có $i$ sao cho $B[h_i(x)]=0$, trả \textsc{Definitely-Absent}\\
+\quad ngược lại trả \textsc{Possibly-Present}
+\end{algpseudo}
+
 \key{Ví dụ nhỏ} Với $n=8$, $k=2$, $S=\{2,5\}$, lấy $h_1(x)=x\bmod8$ và $h_2(x)=(3x+1)\bmod8$. Insert 2 bật các vị trí 2, 7; insert 5 bật 5, 0:
 \begin{examtable}{@{}lcccccccc@{}}
 \toprule
@@ -3156,38 +3362,6 @@ $10$ & $(2,7)$ & Possibly present; false positive\\
 \bottomrule
 \end{examtable}
 Key 10 vắng trong $S$, nhưng hai bit của nó đã được bật bởi các key trước; Bloom filter không lưu danh tính key.
-
-\key{Không có false negatives} Nếu $x$ đã được insert thì tất cả vị trí $h_i(x)$ được đặt thành 1. Các lần insert sau chỉ đổi bit từ 0 sang 1, nên query lại $x$ luôn trả Possibly present. Đây là bảo đảm tất định:
-\[
-x\in S\implies\operatorname{Query}(x)=\text{Possibly present}.
-\]
-Chiều ngược lại không đúng: một key ngoài $S$ vẫn có thể trùng các vị trí đã bật. Bloom filter chuẩn không xóa key bằng cách reset bit; do nhiều key có thể dùng chung bit, xóa bit có thể tạo false negative.
-
-\key{Xác suất false positive} Với $m$ key và $k$ lần băm cho mỗi key, có $km$ phép đặt bit. Với hash độc lập, đều, xác suất một bit cụ thể vẫn 0 và xác suất bit đó thành 1 lần lượt là
-\[
-\Pr(B[j]=0)=\left(1-\frac1n\right)^{km}\approx e^{-km/n},
-\qquad
-\Pr(B[j]=1)\approx1-e^{-km/n}.
-\]
-Xác suất xấp xỉ một key không thuộc $S$ vẫn query thành Possibly present là
-\[
-\boxed{\Pr(\mathrm{FP})\approx\left(1-e^{-km/n}\right)^k}.
-\]
-Xấp xỉ này giả định các phép băm phân bố đều và độc lập; hash phụ thuộc nhau hoặc phân bố lệch có thể làm xác suất thực khác công thức. Phần $1-e^{-km/n}$ cũng là tỷ lệ bit 1 kỳ vọng trong mảng.
-
-\key{Chọn số hash} Tăng $k$ làm một key ngoài tập khó vượt qua mọi lần kiểm tra hơn, nhưng cũng bật nhiều bit hơn cho mỗi key và làm mảng bão hòa nhanh hơn. Vì vậy false positive rate giảm rồi tăng. Xem $k$ là số thực, cực tiểu của
-\[
-f(k)=\left(1-e^{-km/n}\right)^k
-\]
-nằm tại
-\[
-\boxed{k^*=\frac{n}{m}\ln2}.
-\]
-Trong thực tế $k$ là số nguyên, nên tính lại $f(k)$ ở các số nguyên khả thi gần $k^*$ thay vì luôn làm tròn lên. Chẳng hạn $n/m=8$ cho $k^*\approx5.55$; $f(5)\approx2.168\%$ và $f(6)\approx2.158\%$, nên chọn $k=6$.
-
-\key{Độ phức tạp} Khởi tạo tốn $O(n)$ thời gian và $n$ bit bộ nhớ. Mỗi lần insert hoặc query tốn $O(k)$ thời gian và $O(1)$ bộ nhớ phụ; Bloom filter không lưu danh sách các key.
-
-\key{Bẫy} Possibly present không khẳng định key thuộc $S$; false positive có thể xảy ra, false negative thì không nếu chỉ insert và không xóa/reset bit. Một bit $B[h_i(x)]=0$ đủ kết luận key vắng. Tăng số hash không luôn giảm false positive rate, $k^*$ không nhất thiết nguyên, và Bloom filter dùng một bit array chung.
 
 \begin{example}{Pr23}{Pr23(a,b) · Bloom filter: một bit 0 đủ để loại}
 \begin{diagram}
@@ -3209,6 +3383,33 @@ Sau khi chèn $1,4,7,10$, truy vấn $17$ đọc $(1,8)$ và báo nhầm có m�
 \end{example}
 
 % DSA5101 Exam Practice Questions.pdf, PDF page(s) 24.
+
+\unitheading{3}{Verification / Kiểm tra}
+
+\key{Không có false negatives} Nếu $x$ đã được insert thì tất cả vị trí $h_i(x)$ được đặt thành 1. Các lần insert sau chỉ đổi bit từ 0 sang 1, nên query lại $x$ luôn trả Possibly present. Đây là bảo đảm tất định:
+\[
+x\in S\implies\operatorname{Query}(x)=\text{Possibly present}.
+\]
+Chiều ngược lại không đúng: một key ngoài $S$ vẫn có thể trùng các vị trí đã bật. Bloom filter chuẩn không xóa key bằng cách reset bit; do nhiều key có thể dùng chung bit, xóa bit có thể tạo false negative.
+
+\key{Chọn số hash} Tăng $k$ làm một key ngoài tập khó vượt qua mọi lần kiểm tra hơn, nhưng cũng bật nhiều bit hơn cho mỗi key và làm mảng bão hòa nhanh hơn. Vì vậy false positive rate giảm rồi tăng. Xem $k$ là số thực, cực tiểu của
+\[
+f(k)=\left(1-e^{-km/n}\right)^k
+\]
+nằm tại
+\[
+\boxed{k^*=\frac{n}{m}\ln2}.
+\]
+Trong thực tế $k$ là số nguyên, nên tính lại $f(k)$ ở các số nguyên khả thi gần $k^*$ thay vì luôn làm tròn lên. Chẳng hạn $n/m=8$ cho $k^*\approx5.55$; $f(5)\approx2.168\%$ và $f(6)\approx2.158\%$, nên chọn $k=6$.
+
+\key{Bẫy} Possibly present không khẳng định key thuộc $S$; false positive có thể xảy ra, false negative thì không nếu chỉ insert và không xóa/reset bit. Một bit $B[h_i(x)]=0$ đủ kết luận key vắng. Tăng số hash không luôn giảm false positive rate, $k^*$ không nhất thiết nguyên, và Bloom filter dùng một bit array chung.
+
+\unitheading{4}{Advanced / Nâng cao}
+
+\key{Độ phức tạp} Khởi tạo tốn $O(n)$ thời gian và $n$ bit bộ nhớ. Mỗi lần insert hoặc query tốn $O(k)$ thời gian và $O(1)$ bộ nhớ phụ; Bloom filter không lưu danh sách các key.
+
+\unitheading{5}{Exam evidence / Câu hỏi và lời giải}
+
 \ask{Pr23}{Pr23}{}
 A 16-bit Bloom filter starts at zero and inserts IDs 1, 4, 7, 10. Its two hashes are $h_1(x)=x\bmod16$ and $h_2(x)=(3x+5)\bmod16$. The insertion positions are supplied:
 \begin{examtable}{@{}lcccc@{}}
@@ -3263,21 +3464,10 @@ Consider using a Bloom Filter to filter spam emails. We are given a list of 5000
 \item Công thức tối ưu liên tục là $k^*=(n/m)\ln2$. Thế $n=47457,m=5000$: $k^*\approx6.58$; vì $k$ nguyên, so $f(k)=(1-e^{-5000k/47457})^k$ tại các số nguyên lân cận.
 \item $f(6)\approx0.01058$, $f(7)\approx0.01052$; chọn $k=7$ và false-positive rate nhỏ nhất xấp xỉ $1.052\%$.
 \end{guidesteps}
-
 \topic{reservoir}{Reservoir / key sampling}
-\algsummary{Lấy mẫu đều $k$ bản ghi từ luồng chưa biết độ dài, hoặc lấy theo ID.}
-{Reservoir cho bản ghi mới xác suất vào mẫu $\min(1,k/n)$; key sampling ra cùng quyết định cho cùng ID.}
-{Luồng và $k$ cho reservoir; hàm băm ID và xác suất $p$ cho key sampling.}
-{Mẫu bản ghi, hoặc toàn bộ bản ghi có ID được chọn.}
-{Reservoir thay ngẫu nhiên một ô khi bản ghi được nhận; key sampling so hash của ID với $p$.}
-\begin{algpseudo}
-Reservoir: với bản ghi thứ $n$, nếu $n\le k$ thì lưu vào ô $n$\\
-\quad nếu $n>k$: lấy $J$ đều từ $1$ đến $n$; nếu $J\le k$ thì thay ô $J$\\
-\quad trả các ô đã lưu\\
-Key sampling: giữ bản ghi $x$ nếu $h(\operatorname{ID}(x))<p$ với $h$ trong $[0,1)$
-\end{algpseudo}
 
-\key{Chọn mục tiêu} Key-based sampling giữ một tỷ lệ kỳ vọng $p$ của các key và mọi bản ghi thuộc key được chọn; số bản ghi lưu tăng theo luồng. Reservoir sampling giữ đúng $k$ lần xuất hiện, dùng $O(k)$ bộ nhớ cố định và không cần biết trước độ dài luồng.
+\algsummary{Lấy mẫu đều $k$ bản ghi từ luồng chưa biết độ dài, hoặc lấy theo ID.}{Reservoir cho bản ghi mới xác suất vào mẫu $\min(1,k/n)$; key sampling ra cùng quyết định cho cùng ID.}{\textbf{Chọn mục tiêu:}\enspace Key-based sampling giữ một tỷ lệ kỳ vọng $p$ của các key và mọi bản ghi thuộc key được chọn; số bản ghi lưu tăng theo luồng. Reservoir sampling giữ đúng $k$ lần xuất hiện, dùng $O(k)$ bộ nhớ cố định và không cần biết trước độ dài luồng.\par\nobreak \textbf{Khi dùng:}\enspace Cần lấy đúng $k$ bản ghi ngẫu nhiên từ luồng chưa biết độ dài.}{Luồng và $k$ cho reservoir; hàm băm ID và xác suất $p$ cho key sampling.}{Mẫu bản ghi, hoặc toàn bộ bản ghi có ID được chọn.}{Reservoir thay ngẫu nhiên một ô khi bản ghi được nhận; key sampling so hash của ID với $p$.}
+
 \key{Sampling theo key} Chọn key $g(x)$, chẳng hạn user, rồi băm vào $b$ bucket. Với $p=a/b$:
 \[
 \operatorname{Keep}(x)\iff h(g(x))\bmod b<a.
@@ -3297,21 +3487,37 @@ P(\text{cũ sống}\mid\text{đang lưu})=\frac{n}{n+1},\qquad
 P(\text{mới được nhận})=\frac{k}{n+1}.
 \]
 Nếu record cũ có xác suất $k/n$ sau $n$ arrivals thì xác suất còn lại là $(k/n)(n/(n+1))=k/(n+1)$. Cùng với trường hợp record mới, đây là bước quy nạp duy trì tính đều; cơ sở là $n=k$, khi mọi record đầu tiên đều được lưu.
+
+\steps{
+\item Lưu $k$ bản ghi đầu tiên vào $k$ ô.
+\item Khi bản ghi thứ $n>k$ đến, rút đều $J$ từ 1 đến $n$. Nếu $J\le k$, thay ô $J$ bằng bản ghi mới.
+}
+
+\begin{algpseudo}
+Reservoir: với bản ghi thứ $n$, nếu $n\le k$ thì lưu vào ô $n$\\
+\quad nếu $n>k$: lấy $J$ đều từ $1$ đến $n$; nếu $J\le k$ thì thay ô $J$\\
+\quad trả các ô đã lưu\\
+Key sampling: giữ bản ghi $x$ nếu $h(\operatorname{ID}(x))<p$ với $h$ trong $[0,1)$
+\end{algpseudo}
+
+\unitheading{3}{Verification / Kiểm tra}
+
+\key{Bẫy} Xác suất sống của record cũ có điều kiện là $n/(n+1)$, còn xác suất được giữ sau bước kế tiếp là $k/(n+1)$. Reservoir đều trên occurrences, không phải distinct values; key sampling cho quyết định nhất quán theo key nhưng không bảo đảm giữ đúng chính xác tỷ lệ $p$ trong một mẫu.
+
+% DSA5101 Exam Practice Questions.pdf, PDF page(s) 22.
+
+\unitheading{4}{Advanced / Nâng cao}
+
 \key{Phân bố mẫu} Reservoir chuẩn lấy đều trên các occurrence: mọi tập con $T$ gồm $k$ trong $n$ vị trí có xác suất $P(S_n=T)=1/\binom{n}{k}$. Nếu một giá trị $A$ xuất hiện $m$ lần, xác suất có ít nhất một occurrence của $A$ là:
 \[
 P(A\in S_n)=1-\frac{\binom{n-m}{k}}{\binom{n}{k}},
 \]
 trong đó $\binom{n-m}{k}=0$ nếu $n-m<k$. Vì vậy reservoir đều trên occurrences, không đều trên distinct values. Ví dụ với $(A_1,A_2,B,C)$ và $k=2$, $P(A\in S_4)=1-\binom22/\binom42=5/6$, còn $P(B\in S_4)=P(C\in S_4)=1/2$.
 
-\key{Khi dùng} Cần lấy đúng $k$ bản ghi ngẫu nhiên từ luồng chưa biết độ dài.
-\steps{
-\item Lưu $k$ bản ghi đầu tiên vào $k$ ô.
-\item Khi bản ghi thứ $n>k$ đến, rút đều $J$ từ 1 đến $n$. Nếu $J\le k$, thay ô $J$ bằng bản ghi mới.
-}
 \key{Độ phức tạp} Reservoir dùng $O(1)$ thời gian kỳ vọng mỗi arrival và $O(k)$ bộ nhớ; chỉ cần biết số arrivals đã xử lý. Key-based sampling không cần reservoir nhưng không giới hạn số bản ghi lưu.
-\key{Bẫy} Xác suất sống của record cũ có điều kiện là $n/(n+1)$, còn xác suất được giữ sau bước kế tiếp là $k/(n+1)$. Reservoir đều trên occurrences, không phải distinct values; key sampling cho quyết định nhất quán theo key nhưng không bảo đảm giữ đúng chính xác tỷ lệ $p$ trong một mẫu.
 
-% DSA5101 Exam Practice Questions.pdf, PDF page(s) 22.
+\unitheading{5}{Exam evidence / Câu hỏi và lời giải}
+
 \ask{Pr21}{Pr21}{}
 Eight log records have users and query strings as follows:
 \begin{examtable}{@{}lcccccccc@{}}
@@ -3343,13 +3549,26 @@ A size-3 reservoir stores record positions. At arrival $n>3$, draw $J_n$ uniform
 \item Vì $h(A)=1$, giữ các vị trí $1,3,5,8$. Theo hàng query của đề: ba $x$, một $w$. Reservoir $(6,8,7)$ chỉ giữ vị trí 8 của $A$.
 \item Hash theo user giữ trọn lịch sử của user được chọn, nhưng số bản ghi có thể tăng theo luồng.
 \end{guidesteps}
-
 \topic{decay}{Decaying windows}
-\algsummary{Tìm item đang thịnh hành trong luồng, chẳng hạn phim đang được xem nhiều trên Netflix.}
-{Lượt xem càng cũ thì trọng số càng nhỏ. Có thể bỏ những item có điểm quá thấp để tiết kiệm bộ nhớ.}
-{Một sự kiện mỗi bước; decay rate $0<c<1$, hệ số $\lambda=1-c$, ngưỡng $\tau>0$ nếu bật pruning.}
-{Điểm hiện tại của từng item; khi pruning, chỉ lưu các mục còn đạt ngưỡng.}
-{Nhân điểm cũ với $\lambda$, cộng 1 cho item vừa đến, rồi xóa các mục có điểm $<\tau$ nếu bật pruning.}
+
+\algsummary{Tìm item đang thịnh hành trong luồng, chẳng hạn phim đang được xem nhiều trên Netflix.}{Lượt xem càng cũ thì trọng số càng nhỏ. Có thể bỏ những item có điểm quá thấp để tiết kiệm bộ nhớ.}{}{Một sự kiện mỗi bước; decay rate $0<c<1$, hệ số $\lambda=1-c$, ngưỡng $\tau>0$ nếu bật pruning.}{Điểm hiện tại của từng item; khi pruning, chỉ lưu các mục còn đạt ngưỡng.}{Nhân điểm cũ với $\lambda$, cộng 1 cho item vừa đến, rồi xóa các mục có điểm $<\tau$ nếu bật pruning.}
+
+\key{Công thức} Gọi $a_t$ là vectơ one-hot có giá trị 1 ở item đến lúc $t$, còn $S_t$ là vectơ điểm chính xác của mọi item. Với $S_0=0$:
+\[
+S_t=\sum_{i=1}^{t}\lambda^{t-i}a_i,\qquad
+S_{t+1}=\lambda S_t+a_{t+1}.
+\]
+Khi sang bước mới, mọi đóng góp cũ cùng nhân với $\lambda=1-c$, nên không cần quét lại lịch sử.
+\begin{examtable}{@{}ll@{}}
+\toprule
+Tham số tăng & Tác động\\
+\midrule
+$c$ (decay rate) & Quên lịch sử nhanh hơn.\\
+$\lambda=1-c$ & Giữ ảnh hưởng của lịch sử lâu hơn.\\
+$\tau$ (ngưỡng pruning) & Giữ ít mục hơn; mất nhiều thông tin hơn.\\
+\bottomrule
+\end{examtable}
+
 \begin{algpseudo}
 $D\gets$ bảng rỗng\\
 khi nhận item $x$: với mỗi khóa $y\in D$, đặt $D[y]\gets\lambda D[y]$\\
@@ -3357,6 +3576,23 @@ khi nhận item $x$: với mỗi khóa $y\in D$, đặt $D[y]\gets\lambda D[y]$\
 \quad nếu bật pruning: xóa mọi khóa $y$ có $D[y]<\tau$\\
 \quad trả điểm hiện tại nếu được hỏi
 \end{algpseudo}
+
+\begin{example}{Pr26}{Tính điểm và pruning trước khi làm Pr26}
+Cho $\lambda=\tau=0.5$ và luồng $A,B,A,C$. Ở mỗi bước, nhân điểm cũ với $\lambda$, cộng 1 cho item mới, rồi xóa nếu điểm $<\tau$.
+\begin{examtable}{@{}ccll@{}}
+\toprule
+$t$ & Item & Điểm trước khi xóa & Bảng sau khi xóa\\
+\midrule
+1 & $A$ & $A{:}1$ & $A{:}1$\\
+2 & $B$ & $A{:}0.5,\ B{:}1$ & $A{:}0.5,\ B{:}1$\\
+3 & $A$ & $A{:}1.25,\ B{:}0.5$ & $A{:}1.25,\ B{:}0.5$\\
+4 & $C$ & $A{:}0.625,\ B{:}0.25,\ C{:}1$ & $A{:}0.625,\ C{:}1$\\
+\bottomrule
+\end{examtable}
+$B$ còn ở bước 3 vì $0.5=\tau$, nhưng bị xóa ở bước 4 vì $0.25<\tau$. Nếu $B$ đến ở bước 5, bảng đặt lại $B$ ở điểm 1; điểm chính xác vẫn tính thêm $0.125$ từ lượt cũ.
+\end{example}
+
+\unitheading{3}{Verification / Kiểm tra}
 
 \key{So với sliding window} Với tuổi $j=t-i$, cửa sổ cố định dài $N$ giữ trọng số 1 cho $0\le j<N$ và cho 0 từ $j=N$. Decay theo hàm mũ cho trọng số $\lambda^j$ ở mọi tuổi: mỗi bước nhân thêm $\lambda$, không có mốc tuổi mà trọng số đột ngột về 0.
 \begin{diagram}
@@ -3377,36 +3613,11 @@ khi nhận item $x$: với mỗi khóa $y\in D$, đặt $D[y]\gets\lambda D[y]$\
 \end{tikzpicture}
 \end{diagram}
 
-\key{Công thức} Gọi $a_t$ là vectơ one-hot có giá trị 1 ở item đến lúc $t$, còn $S_t$ là vectơ điểm chính xác của mọi item. Với $S_0=0$:
-\[
-S_t=\sum_{i=1}^{t}\lambda^{t-i}a_i,\qquad
-S_{t+1}=\lambda S_t+a_{t+1}.
-\]
-Khi sang bước mới, mọi đóng góp cũ cùng nhân với $\lambda=1-c$, nên không cần quét lại lịch sử.
-\begin{examtable}{@{}ll@{}}
-\toprule
-Tham số tăng & Tác động\\
-\midrule
-$c$ (decay rate) & Quên lịch sử nhanh hơn.\\
-$\lambda=1-c$ & Giữ ảnh hưởng của lịch sử lâu hơn.\\
-$\tau$ (ngưỡng pruning) & Giữ ít mục hơn; mất nhiều thông tin hơn.\\
-\bottomrule
-\end{examtable}
+\key{Bẫy} Sliding window cắt hẳn theo tuổi; decay thuần giảm dần. Pruning chỉ xóa điểm $<\tau$, giữ điểm $=\tau$. Điểm sau pruning có thể thấp hơn điểm chính xác và làm mất cảnh báo.
 
-\begin{example}{Pr26}{Tính điểm và pruning trước khi làm Pr26}
-Cho $\lambda=\tau=0.5$ và luồng $A,B,A,C$. Ở mỗi bước, nhân điểm cũ với $\lambda$, cộng 1 cho item mới, rồi xóa nếu điểm $<\tau$.
-\begin{examtable}{@{}ccll@{}}
-\toprule
-$t$ & Item & Điểm trước khi xóa & Bảng sau khi xóa\\
-\midrule
-1 & $A$ & $A{:}1$ & $A{:}1$\\
-2 & $B$ & $A{:}0.5,\ B{:}1$ & $A{:}0.5,\ B{:}1$\\
-3 & $A$ & $A{:}1.25,\ B{:}0.5$ & $A{:}1.25,\ B{:}0.5$\\
-4 & $C$ & $A{:}0.625,\ B{:}0.25,\ C{:}1$ & $A{:}0.625,\ C{:}1$\\
-\bottomrule
-\end{examtable}
-$B$ còn ở bước 3 vì $0.5=\tau$, nhưng bị xóa ở bước 4 vì $0.25<\tau$. Nếu $B$ đến ở bước 5, bảng đặt lại $B$ ở điểm 1; điểm chính xác vẫn tính thêm $0.125$ từ lượt cũ.
-\end{example}
+% DSA5101 Exam Practice Questions.pdf, PDF page(s) 27.
+
+\unitheading{4}{Advanced / Nâng cao}
 
 \key{Cận bộ nhớ} Với đúng một sự kiện mỗi bước, tổng điểm chính xác ở bước $t$ là
 \[
@@ -3415,9 +3626,8 @@ $B$ còn ở bước 3 vì $0.5=\tau$, nhưng bị xóa ở bước 4 vì $0.25<
 \]
 Pruning chỉ làm giảm tổng. Nếu mỗi mục được giữ có điểm ít nhất $\tau$, thì $K\tau\le 1/c$, nên $K\le\lfloor 1/(c\tau)\rfloor$. Với $c=\tau=0.5$, cận là 4 mục. Lưu $O(K)$ mục. Mỗi sự kiện quét $K$ mục và có thể thêm một mục tạm thời: thời gian $O(K+1)$, tức tuyến tính theo kích thước bảng.
 
-\key{Bẫy} Sliding window cắt hẳn theo tuổi; decay thuần giảm dần. Pruning chỉ xóa điểm $<\tau$, giữ điểm $=\tau$. Điểm sau pruning có thể thấp hơn điểm chính xác và làm mất cảnh báo.
+\unitheading{5}{Exam evidence / Câu hỏi và lời giải}
 
-% DSA5101 Exam Practice Questions.pdf, PDF page(s) 27.
 \ask{Pr26}{Pr26}{}
 One podcast play arrives per time step. The exact score is $S_x^{(t)}=\sum_{1\le i\le t:\,a_i=x}2^{-(t-i)}$. A pruned implementation instead maintains a dictionary. On each arrival: halve all stored scores; add 1 to the arriving podcast's score (create it at 1 if absent); delete scores strictly below $\tau=1/2$. Deleted scores are forgotten.
 
@@ -3444,13 +3654,15 @@ The first seven plays are $A,B,A,C,B,A,D$. The resulting pruned dictionary is su
 \end{guidesteps}
 
 \lecture{9}{Online matching, BALANCE \& bandits}
-
 \topic{matching}{Online bipartite matching}
-\algsummary{Ghép nhiều job nhất với server khi job đến lần lượt và không được đổi quyết định.}
-{Ghép ngay nếu còn server hợp lệ; kết quả không thể thêm cạnh nhưng có thể thua OPT.}
-{Thứ tự job, server tương thích và quy tắc phá hòa.}
-{Các cặp ghép và số job được phục vụ.}
-{Duy trì tập server rảnh và kiểm tra giao với danh sách của mỗi job mới.}
+
+\algsummary{Ghép nhiều job nhất với server khi job đến lần lượt và không được đổi quyết định.}{Ghép ngay nếu còn server hợp lệ; kết quả không thể thêm cạnh nhưng có thể thua OPT.}{\textbf{Khi dùng:}\enspace Job đến lần lượt, mỗi server nhận tối đa một job và quyết định không được đổi lại.}{Thứ tự job, server tương thích và quy tắc phá hòa.}{Các cặp ghép và số job được phục vụ.}{Duy trì tập server rảnh và kiểm tra giao với danh sách của mỗi job mới.}
+
+\steps{
+\item Xét danh sách hàng xóm của job vừa đến. Ghép với một server hợp lệ còn rảnh theo quy tắc đề; nếu không có thì bỏ qua.
+\item Tính $\mathrm{ALG}/\mathrm{OPT}$, với OPT được biết cả chuỗi đến. Để tìm OPT, cho phép chọn lại từ đầu thay vì sửa lời giải greedy.
+}
+
 \begin{algpseudo}
 $R\gets$ tất cả server rảnh; $M\gets\varnothing$\\
 với mỗi job $j$: $A\gets R\cap N(j)$\\
@@ -3458,14 +3670,18 @@ với mỗi job $j$: $A\gets R\cap N(j)$\\
 trả $M,|M|$
 \end{algpseudo}
 
-\key{Khi dùng} Job đến lần lượt, mỗi server nhận tối đa một job và quyết định không được đổi lại.
-\steps{
-\item Xét danh sách hàng xóm của job vừa đến. Ghép với một server hợp lệ còn rảnh theo quy tắc đề; nếu không có thì bỏ qua.
-\item Tính $\mathrm{ALG}/\mathrm{OPT}$, với OPT được biết cả chuỗi đến. Để tìm OPT, cho phép chọn lại từ đầu thay vì sửa lời giải greedy.
-}
+\unitheading{3}{Verification / Kiểm tra}
+
+\key{Kiểm tra} Mỗi job đến được ghép tối đa một lần với server còn rảnh; greedy tạo matching maximal, không đảm bảo matching maximum.
+
+\unitheading{4}{Advanced / Nâng cao}
+
 \key{Bảo đảm $1/2$} Matching greedy là maximal: không còn cạnh nối hai đầu mút chưa ghép. Mỗi cạnh OPT chạm ít nhất một cạnh greedy, và mỗi cạnh greedy chỉ có thể chạm tối đa hai cạnh OPT. Vì vậy $\mathrm{OPT}\le2\,\mathrm{ALG}$. Tỷ lệ của một ví dụ không phải cận cho mọi đầu vào.
 
 % DSA5101 Exam Practice Questions.pdf, PDF page(s) 28.
+
+\unitheading{5}{Exam evidence / Câu hỏi và lời giải}
+
 \ask{Pr27}{Pr27}{}
 Servers $S_1,S_2,S_3,S_4$ can each accept one job. Jobs arrive in order $J_1,J_2,J_3,J_4$, with compatible servers
 \begin{examtable}{@{}ll@{}}
@@ -3495,20 +3711,9 @@ Greedy assigns each arriving job to its lowest-index free compatible server, rej
 \begin{guidesteps}
 \item Quyết định online không thể hủy, nên không dời $J_1$ để nhường chỗ. Tỉ lệ một trường hợp không chứng minh cận cho mọi thứ tự đến.
 \end{guidesteps}
-
 \topic{balance}{BALANCE (unit bids / budgets)}
-\algsummary{Phân bổ query đến lần lượt khi advertiser có ngân sách và bid bằng 1.}
-{Ưu tiên bên còn nhiều ngân sách để tránh cạn sớm khi query tương lai chưa biết.}
-{Thứ tự query, advertiser đủ điều kiện, ngân sách nguyên và phá hòa.}
-{Cách phân bổ, ngân sách còn lại và doanh thu.}
-{Trong các bên hợp lệ còn tiền, chọn bên có ngân sách còn lại lớn nhất.}
-\begin{algpseudo}
-doanh thu $\gets0$\\
-với mỗi query $q$: $A\gets\{i:i\text{ nhận được }q,\ B_i>0\}$\\
-\quad nếu $A$ rỗng: bỏ qua\\
-\quad ngược lại: chọn $i\in\arg\max_{j\in A}B_j$; gán $q$ cho $i$; $B_i\gets B_i-1$; tăng doanh thu 1\\
-trả phân bổ, ngân sách và doanh thu
-\end{algpseudo}
+
+\algsummary{Phân bổ query đến lần lượt khi advertiser có ngân sách và bid bằng 1.}{Ưu tiên bên còn nhiều ngân sách để tránh cạn sớm khi query tương lai chưa biết.}{\textbf{Khi dùng:}\enspace Mỗi query có giá trị 1 và quyết định không thể sửa lại. Chỉ advertiser đủ điều kiện và còn ngân sách mới được xét.}{Thứ tự query, advertiser đủ điều kiện, ngân sách nguyên và phá hòa.}{Cách phân bổ, ngân sách còn lại và doanh thu.}{Trong các bên hợp lệ còn tiền, chọn bên có ngân sách còn lại lớn nhất.}
 
 \key{Cập nhật sau mỗi query}
 \begin{examtable}{@{}p{.20\columnwidth}p{.67\columnwidth}@{}}
@@ -3521,15 +3726,17 @@ Hòa ngân sách & Dùng đúng quy tắc phá hòa của đề; nếu hỏi b�
 \bottomrule
 \end{examtable}
 
-\key{Khi dùng} Mỗi query có giá trị 1 và quyết định không thể sửa lại. Chỉ advertiser đủ điều kiện và còn ngân sách mới được xét.
-
 \key{Tính trên giấy} Viết vectơ ngân sách sau từng lượt; tuân thủ cách phá hòa. Nếu đề hỏi guaranteed optimal, tất cả cách phá hòa hợp lệ đều phải đạt OPT; chỉ cần tìm một nhánh thất bại để trả lời No.
-\key{Mọi cách phá hòa} Để chứng minh Yes, theo dõi mọi nhánh phá hòa (gộp trạng thái giống nhau) và chứng minh mỗi nhánh đạt OPT. Để chứng minh tối ưu, ghép một cận trên với một lịch khả thi đạt cận đó.
 
-\key{Độ phức tạp} Với $Q$ query và $A$ advertisers, quét bidder list trực tiếp tốn $O(QA)$ thời gian; ngân sách và phân bổ đang xét cần $O(A)$ bộ nhớ ngoài dữ liệu input.
+\begin{algpseudo}
+doanh thu $\gets0$\\
+với mỗi query $q$: $A\gets\{i:i\text{ nhận được }q,\ B_i>0\}$\\
+\quad nếu $A$ rỗng: bỏ qua\\
+\quad ngược lại: chọn $i\in\arg\max_{j\in A}B_j$; gán $q$ cho $i$; $B_i\gets B_i-1$; tăng doanh thu 1\\
+trả phân bổ, ngân sách và doanh thu
+\end{algpseudo}
+
 \key{Ví dụ} Với $B=4$, bốn query đầu cả hai đều nhận được, bốn query sau chỉ một bên nhận được: BALANCE đạt 6, OPT đạt 8. Trong mô hình nhiều advertiser của lecture, cận $1-1/e$ được suy ra từ phần ngân sách còn lại khi các bên lần lượt cạn.
-\advancedheading{Competitive ratio}
-Hai advertiser cùng ngân sách $B$ chẵn, OPT phục vụ $2B$: BALANCE phục vụ ít nhất $3B/2$. Nếu còn query bị bỏ, ít nhất một bên đã hết ngân sách. Gọi $A$ là bên còn tiền. Cả $B$ query OPT giao cho $A$ đều được BALANCE phục vụ vì $A$ chưa bao giờ hết tiền. Nếu $A$ nhận ít nhất $B/2$ query thì đạt cận. Nếu hơn $B/2$ query đó sang bên kia, ở lần chuyển thứ $B/2+1$, bên kia còn tối đa $B/2$ ngân sách. Quy tắc chọn bên còn nhiều tiền hơn cho thấy $A$ cũng chỉ còn tối đa $B/2$. Lập luận với $B$ lẻ cho cận $\lfloor3B/2\rfloor$.
 
 \begin{example}{A2-Q5}{A2-Q5(c) · BALANCE: hai cách phá hòa, hai kết quả}
 \begin{examtable}{@{}l c l l@{}}
@@ -3546,6 +3753,20 @@ Nhánh trên phục vụ đủ 4 query. Nếu $x$ đầu tiên sang $B$, sau $y$
 \end{example}
 
 % DSA5101 Exam Practice Questions.pdf, PDF page(s) 29.
+
+\unitheading{3}{Verification / Kiểm tra}
+
+\key{Mọi cách phá hòa} Để chứng minh Yes, theo dõi mọi nhánh phá hòa (gộp trạng thái giống nhau) và chứng minh mỗi nhánh đạt OPT. Để chứng minh tối ưu, ghép một cận trên với một lịch khả thi đạt cận đó.
+
+\unitheading{4}{Advanced / Nâng cao}
+
+\key{Độ phức tạp} Với $Q$ query và $A$ advertisers, quét bidder list trực tiếp tốn $O(QA)$ thời gian; ngân sách và phân bổ đang xét cần $O(A)$ bộ nhớ ngoài dữ liệu input.
+
+\advancedheading{Competitive ratio}
+Hai advertiser cùng ngân sách $B$ chẵn, OPT phục vụ $2B$: BALANCE phục vụ ít nhất $3B/2$. Nếu còn query bị bỏ, ít nhất một bên đã hết ngân sách. Gọi $A$ là bên còn tiền. Cả $B$ query OPT giao cho $A$ đều được BALANCE phục vụ vì $A$ chưa bao giờ hết tiền. Nếu $A$ nhận ít nhất $B/2$ query thì đạt cận. Nếu hơn $B/2$ query đó sang bên kia, ở lần chuyển thứ $B/2+1$, bên kia còn tối đa $B/2$ ngân sách. Quy tắc chọn bên còn nhiều tiền hơn cho thấy $A$ cũng chỉ còn tối đa $B/2$. Lập luận với $B$ lẻ cho cận $\lfloor3B/2\rfloor$.
+
+\unitheading{5}{Exam evidence / Câu hỏi và lời giải}
+
 \ask{Pr28}{Pr28}{}
 Four advertisers $A,B,C,D$ each start with budget 2. Each placement earns 1 and spends 1 of the advertiser's budget. At most one ad is placed per query; decisions are irrevocable. Bidders are
 \begin{examtable}{@{}ll@{}}
@@ -3621,13 +3842,17 @@ For each of the sequences of queries below, identify which ones are guaranteed t
 \bottomrule
 \end{examtable}
 \end{guidesteps}
-
 \topic{bandits}{Multi-armed bandits: epsilon-greedy / UCB}
-\algsummary{Tối đa hóa phần thưởng khi mỗi vòng chỉ được thử một lựa chọn.}
-{$\varepsilon$-greedy khám phá ngẫu nhiên; UCB ưu tiên arm còn nhiều bất định.}
-{Các arm, số vòng $T$, lịch $\varepsilon_t$ hoặc quy tắc UCB, cách phá hòa.}
-{Lượt chọn, số lần thử, trung bình quan sát và tổng reward.}
-{Thử mỗi arm một lần trước khi dùng chỉ số UCB; mỗi vòng chỉ cập nhật arm vừa chọn.}
+
+\algsummary{Tối đa hóa phần thưởng khi mỗi vòng chỉ được thử một lựa chọn.}{$\varepsilon$-greedy khám phá ngẫu nhiên; UCB ưu tiên arm còn nhiều bất định.}{\textbf{Khi dùng:}\enspace Mỗi vòng chọn một arm, chỉ quan sát reward của arm đó. Cần cân bằng thử arm chưa rõ tốt hay xấu (exploration) với dùng arm đang có điểm trung bình cao (exploitation).}{Các arm, số vòng $T$, lịch $\varepsilon_t$ hoặc quy tắc UCB, cách phá hòa.}{Lượt chọn, số lần thử, trung bình quan sát và tổng reward.}{Thử mỗi arm một lần trước khi dùng chỉ số UCB; mỗi vòng chỉ cập nhật arm vừa chọn.}
+
+\key{Hai quy tắc} Với $\varepsilon$-greedy, chọn ngẫu nhiên với xác suất $\varepsilon_t$, nếu không thì chọn arm có trung bình quan sát cao nhất. Với UCB, thường thử mỗi arm một lần rồi chọn arm có chỉ số lớn nhất:
+\[
+\mathrm{UCB}_i(t)=\hat\mu_i+\sqrt{2\ln(t)/n_i}.
+\]
+
+\key{Sau khi nhận reward} Chỉ cập nhật $n_i$ và $\hat\mu_i$ của arm đã chọn. Pseudo-regret là $\sum_i n_i(\mu^*-\mu_i)$; chênh lệch reward thực tế là $T\mu^*-\sum_t X_t$. Với mẫu độc lập trong $[0,1]$, Hoeffding cho $\Pr(|\hat\mu-\mu|\ge\delta)\le 2e^{-2n\delta^2}$.
+
 \begin{algpseudo}
 khởi tạo $n_i,\hat\mu_i\gets0$; với $t=1,\ldots,T$:\\
 \quad UCB: thử arm chưa thử nếu có; nếu không lấy cực đại $\hat\mu_i+\sqrt{2\ln(t)/n_i}$\\
@@ -3636,15 +3861,18 @@ khởi tạo $n_i,\hat\mu_i\gets0$; với $t=1,\ldots,T$:\\
 trả lịch sử lượt chọn, $n,\hat\mu$ và tổng reward
 \end{algpseudo}
 
-\key{Khi dùng} Mỗi vòng chọn một arm, chỉ quan sát reward của arm đó. Cần cân bằng thử arm chưa rõ tốt hay xấu (exploration) với dùng arm đang có điểm trung bình cao (exploitation).
+\unitheading{3}{Verification / Kiểm tra}
 
-\key{Hai quy tắc} Với $\varepsilon$-greedy, chọn ngẫu nhiên với xác suất $\varepsilon_t$, nếu không thì chọn arm có trung bình quan sát cao nhất. Với UCB, thường thử mỗi arm một lần rồi chọn arm có chỉ số lớn nhất:
-\[
-\mathrm{UCB}_i(t)=\hat\mu_i+\sqrt{2\ln(t)/n_i}.
-\]
-\key{Sau khi nhận reward} Chỉ cập nhật $n_i$ và $\hat\mu_i$ của arm đã chọn. Pseudo-regret là $\sum_i n_i(\mu^*-\mu_i)$; chênh lệch reward thực tế là $T\mu^*-\sum_t X_t$. Với mẫu độc lập trong $[0,1]$, Hoeffding cho $\Pr(|\hat\mu-\mu|\ge\delta)\le 2e^{-2n\delta^2}$. \key{Cỡ mẫu} Để xác suất sai quá $\delta$ không vượt $\alpha$, cần $n\ge\ln(2/\alpha)/(2\delta^2)$; làm tròn lên.
+\key{Kiểm tra} Sau reward chỉ tăng số đếm và trung bình của arm vừa chọn; khởi tạo mọi arm trước khi dùng UCB để mẫu số $n_i$ khác 0.
+
+\unitheading{4}{Advanced / Nâng cao}
+
+\key{Cỡ mẫu} Để xác suất sai quá $\delta$ không vượt $\alpha$, cần $n\ge\ln(2/\alpha)/(2\delta^2)$; làm tròn lên.
 
 % DSA5101 Exam Practice Questions.pdf, PDF page(s) 30.
+
+\unitheading{5}{Exam evidence / Câu hỏi và lời giải}
+
 \ask{Pr29}{Pr29}{}
 Three variants $A,B,C$ yield Bernoulli rewards. After one forced trial of each, counts are $(1,1,1)$ and empirical means $(1,0,1)$. At round $t$, UCB chooses the largest $\mathrm{UCB}_i(t)=\hat\mu_i+\sqrt{2\ln(t)/n_i}$, using observations before that round. Ties are broken alphabetically.
 \qpart{a} At round 4 the UCB values are supplied as $(2.6651,1.6651,2.6651)$. Select the variant. Its observed reward is 0; give the updated counts and empirical means.
@@ -3687,13 +3915,12 @@ Three variants $A,B,C$ yield Bernoulli rewards. After one forced trial of each, 
 \end{guidesteps}
 
 \lecture{10}{Submodular optimization (through slide 51)}
-
 \topic{greedy}{Monotone submodular greedy}
-\algsummary{Chọn tối đa $k$ phần tử để đạt giá trị cao cho hàm đơn điệu submodular.}
-{Lấy lợi ích bổ sung lớn nhất; thêm phần tử thường làm lợi ích còn lại giảm.}
-{Tập ứng viên $V$, hàm $F$, giới hạn $k$ và quy tắc phá hòa.}
-{Tập $S$ được chọn và giá trị $F(S)$.}
-{Bắt đầu từ rỗng, tính lại lợi ích biên theo $S$ ở mỗi vòng.}
+
+\algsummary{Chọn tối đa $k$ phần tử để đạt giá trị cao cho hàm đơn điệu submodular.}{Lấy lợi ích bổ sung lớn nhất; thêm phần tử thường làm lợi ích còn lại giảm.}{\textbf{Khi dùng:}\enspace Chọn tối đa $k$ phần tử để tối đa hóa $F(S)$. Marginal gain của $x$ là $\Delta(x\mid S)=F(S\cup\{x\})-F(S)$.}{Tập ứng viên $V$, hàm $F$, giới hạn $k$ và quy tắc phá hòa.}{Tập $S$ được chọn và giá trị $F(S)$.}{Bắt đầu từ rỗng, tính lại lợi ích biên theo $S$ ở mỗi vòng.}
+
+\key{Diminishing returns} Nếu $A\subseteq B$ và $x\notin B$, tính submodular nghĩa là $\Delta(x\mid A)\ge\Delta(x\mid B)$. Greedy bắt đầu từ rỗng và mỗi vòng lấy phần tử có marginal gain lớn nhất.
+
 \begin{algpseudo}
 $S\gets\varnothing$\\
 lặp $\min(k,|V|)$ lần: chọn $x$ tốt nhất trong $V\setminus S$ theo $F(S\cup\{x\})-F(S)$\\
@@ -3701,9 +3928,11 @@ lặp $\min(k,|V|)$ lần: chọn $x$ tốt nhất trong $V\setminus S$ theo $F(
 trả $S,F(S)$
 \end{algpseudo}
 
-\key{Khi dùng} Chọn tối đa $k$ phần tử để tối đa hóa $F(S)$. Marginal gain của $x$ là $\Delta(x\mid S)=F(S\cup\{x\})-F(S)$.
+\unitheading{3}{Verification / Kiểm tra}
 
-\key{Diminishing returns} Nếu $A\subseteq B$ và $x\notin B$, tính submodular nghĩa là $\Delta(x\mid A)\ge\Delta(x\mid B)$. Greedy bắt đầu từ rỗng và mỗi vòng lấy phần tử có marginal gain lớn nhất.
+\key{Kiểm tra} Mỗi vòng tính marginal gain trên tập $S$ hiện tại, thêm đúng một phần tử và không vượt giới hạn $k$; áp dụng nhất quán quy tắc phá hòa.
+
+\unitheading{4}{Advanced / Nâng cao}
 
 \key{Bảo đảm} Với $F(\varnothing)=0$, $F$ đơn điệu và submodular, sau $k$ vòng đạt ít nhất $(1-1/e)\mathrm{OPT}$ dưới giới hạn số phần tử.
 \[
@@ -3717,15 +3946,18 @@ trả $S,F(S)$
 Vì vậy mỗi vòng giảm phần còn thiếu ít nhất $1/k$; phần thiếu sau $k$ vòng không vượt $(1-1/k)^k\mathrm{OPT}\le \mathrm{OPT}/e$.
 
 \key{Phản ví dụ tối ưu} Với $k=2$, nếu $A=\{1,2,3,4\}$, $B=\{1,2,5\}$, $C=\{3,4,6\}$ thì greedy chọn $A$ trước và phủ 5; $B,C$ phủ 6.
-
-
-
 \topic{coverage}{Probabilistic coverage}
-\algsummary{Chọn tài liệu để bao phủ tốt các chủ đề có trọng số.}
-{Lợi ích của tài liệu mới chỉ đến từ phần mỗi chủ đề chưa được phủ.}
-{Xác suất $p_{ac}$, trọng số $w_c$, giới hạn $k$ và quy tắc phá hòa.}
-{Tập tài liệu greedy chọn và mức phủ kỳ vọng.}
-{Giữ $q_c$ là xác suất chưa phủ; tính gain từ $q_c$ rồi cập nhật sau mỗi lượt chọn.}
+
+\algsummary{Chọn tài liệu để bao phủ tốt các chủ đề có trọng số.}{Lợi ích của tài liệu mới chỉ đến từ phần mỗi chủ đề chưa được phủ.}{\textbf{Khi dùng:}\enspace Chọn tài liệu để bao phủ nhiều chủ đề. $p_{dc}$ là xác suất tài liệu $d$ phủ chủ đề $c$; $w_c\ge0$ là trọng số chủ đề.
+\[
+F(S)=\sum_c w_c\Big[1-\prod_{a\in S}(1-p_{ac})\Big].
+\]}{Xác suất $p_{ac}$, trọng số $w_c$, giới hạn $k$ và quy tắc phá hòa.}{Tập tài liệu greedy chọn và mức phủ kỳ vọng.}{Giữ $q_c$ là xác suất chưa phủ; tính gain từ $q_c$ rồi cập nhật sau mỗi lượt chọn.}
+
+\key{Cách chọn} Tích $\prod_{a\in S}(1-p_{ac})$ là phần chưa phủ trong mô hình của đề. Khi thêm $d$, nhân phần đó với xác suất $p_{dc}$ rồi cộng theo trọng số:
+\[
+\Delta(d\mid S)=\sum_c w_c p_{dc}\prod_{a\in S}(1-p_{ac}).
+\]
+
 \begin{algpseudo}
 $S\gets\varnothing$; mọi $q_c\gets1$\\
 lặp tối đa $k$ lượt khi còn ứng viên:\\
@@ -3733,16 +3965,6 @@ lặp tối đa $k$ lượt khi còn ứng viên:\\
 \quad với mỗi chủ đề $c$: $q_c\gets q_c(1-p_{ac})$\\
 trả $S,\sum_c w_c(1-q_c)$
 \end{algpseudo}
-
-\key{Khi dùng} Chọn tài liệu để bao phủ nhiều chủ đề. $p_{dc}$ là xác suất tài liệu $d$ phủ chủ đề $c$; $w_c\ge0$ là trọng số chủ đề.
-\[
-F(S)=\sum_c w_c\Big[1-\prod_{a\in S}(1-p_{ac})\Big].
-\]
-\key{Cách chọn} Tích $\prod_{a\in S}(1-p_{ac})$ là phần chưa phủ trong mô hình của đề. Khi thêm $d$, nhân phần đó với xác suất $p_{dc}$ rồi cộng theo trọng số:
-\[
-\Delta(d\mid S)=\sum_c w_c p_{dc}\prod_{a\in S}(1-p_{ac}).
-\]
-\key{Vì sao submodular} Khi $S$ lớn lên, tích có thêm thừa số trong $[0,1]$ nên gain không tăng. Với phủ tất định, phần tăng là số chủ đề mới. Tổng có hệ số không âm của các hàm submodular vẫn submodular.
 
 \begin{example}{Pr30}{Pr30(a,b) · Coverage: đọc lại marginal gain sau khi chọn $A$}
 \begin{examtable}{@{}l c c c c@{}}
@@ -3757,6 +3979,17 @@ Sau $A$, chủ đề sức khỏe còn phần chưa phủ $1/2$, văn hóa còn 
 \end{example}
 
 % DSA5101 Exam Practice Questions.pdf, PDF page(s) 31.
+
+\unitheading{3}{Verification / Kiểm tra}
+
+\key{Kiểm tra} Các xác suất $p_{dc}$ phải thuộc $[0,1]$ và trọng số $w_c\ge0$; thêm tài liệu không làm giảm điểm phủ.
+
+\unitheading{4}{Advanced / Nâng cao}
+
+\key{Vì sao submodular} Khi $S$ lớn lên, tích có thêm thừa số trong $[0,1]$ nên gain không tăng. Với phủ tất định, phần tăng là số chủ đề mới. Tổng có hệ số không âm của các hàm submodular vẫn submodular.
+
+\unitheading{5}{Exam evidence / Câu hỏi và lời giải}
+
 \ask{Pr30}{Pr30(a)}{}
 A service selects two articles from $\{A,B,C,D\}$. Climate, health, and culture have weights $w=(4,3,2)$. Their coverage probabilities are
 \begin{examtable}{@{}lccc@{}}
@@ -3780,13 +4013,17 @@ Use $F(S)=\sum_c w_c[1-\prod_{d\in S}(1-p_{dc})]$ and marginal gain $\Delta(d\mi
 \item Sau $A$, các xác suất chưa phủ theo climate, health, culture là $(0,1/2,1)$. Thế vào công thức cho $C$: $\Delta(C\mid\{A\})=3(1/2)(1/2)+2=11/4$.
 \item So gain cập nhật: $11/4>1>3/4$, nên lượt hai chọn $C$. Giá trị cuối là $F(\{A,C\})=F(\{A\})+\Delta(C\mid\{A\})=11/2+11/4=33/4$.
 \end{guidesteps}
-
 \topic{lazy}{Lazy greedy}
-\algsummary{Giảm số lần tính lợi ích biên khi chạy greedy cho hàm submodular.}
-{Gain tính ở vòng trước là cận trên của gain sau khi tập đã lớn hơn.}
-{Tập ứng viên, hàm $F$, giới hạn $k$ và cùng quy tắc phá hòa như greedy.}
-{Tập chọn theo greedy và giá trị của nó.}
-{Giữ max-heap của các cận; làm mới ứng viên đứng đầu trước khi chốt.}
+
+\algsummary{Giảm số lần tính lợi ích biên khi chạy greedy cho hàm submodular.}{Gain tính ở vòng trước là cận trên của gain sau khi tập đã lớn hơn.}{\textbf{Khi dùng:}\enspace Muốn tìm đúng lựa chọn greedy với ít lần tính marginal gain hơn. Diminishing returns bảo đảm giá trị cũ là cận trên của gain hiện tại.}{Tập ứng viên, hàm $F$, giới hạn $k$ và cùng quy tắc phá hòa như greedy.}{Tập chọn theo greedy và giá trị của nó.}{Giữ max-heap của các cận; làm mới ứng viên đứng đầu trước khi chốt.}
+
+\steps{
+\item Lưu các cận trên trong max-heap. Lấy ứng viên có cận cao nhất và tính lại gain thật theo $S$ hiện tại.
+\item Nếu gain thật vẫn không nhỏ hơn các cận khác, có thể chọn ứng viên đó. Nếu không, cập nhật cận và đưa lại vào heap.
+}
+
+\key{Tiêu chuẩn chọn} Chọn được ngay khi gain vừa tính lại thắng mọi cận trên còn lại; nếu bằng nhau, phải thắng theo cùng quy tắc phá hòa của greedy. Nếu chưa chứng nhận được, làm mới tiếp ứng viên đứng đầu.
+
 \begin{algpseudo}
 $S\gets\varnothing$; đưa mọi $x$ vào heap theo gain tại $S$ và ưu tiên phá hòa\\
 khi $|S|<k$ và heap không rỗng: lấy $x$ có khóa lớn nhất; tính lại $g=\Delta(x\mid S)$\\
@@ -3795,13 +4032,15 @@ khi $|S|<k$ và heap không rỗng: lấy $x$ có khóa lớn nhất; tính lạ
 trả $S,F(S)$
 \end{algpseudo}
 
-\key{Khi dùng} Muốn tìm đúng lựa chọn greedy với ít lần tính marginal gain hơn. Diminishing returns bảo đảm giá trị cũ là cận trên của gain hiện tại.
-\steps{
-\item Lưu các cận trên trong max-heap. Lấy ứng viên có cận cao nhất và tính lại gain thật theo $S$ hiện tại.
-\item Nếu gain thật vẫn không nhỏ hơn các cận khác, có thể chọn ứng viên đó. Nếu không, cập nhật cận và đưa lại vào heap.
-}
+\unitheading{3}{Verification / Kiểm tra}
+
 \key{Bẫy} Giá trị đứng đầu heap là giá trị cũ, nên phải tính lại trước khi chọn. Cùng quy tắc phá hòa thì lazy greedy và greedy chọn cùng phần tử; bảo đảm xấp xỉ giữ nguyên.
-\key{Tiêu chuẩn chọn} Chọn được ngay khi gain vừa tính lại thắng mọi cận trên còn lại; nếu bằng nhau, phải thắng theo cùng quy tắc phá hòa của greedy. Nếu chưa chứng nhận được, làm mới tiếp ứng viên đứng đầu.
+
+\unitheading{4}{Advanced / Nâng cao}
+
+\key{Vì sao phép trì hoãn an toàn} Diminishing returns cho $S\subseteq T$ cho $\Delta(x\mid T)\le\Delta(x\mid S)$. Vì vậy marginal gain đã tính trước là cận trên hiện tại; chỉ chốt phần tử khi gain vừa tính lại vượt mọi cận còn lại.
+
+\unitheading{5}{Exam evidence / Câu hỏi và lời giải}
 
 \ask{Pr30b}{Pr30(b)}{Dữ kiện chung: \hyperref[question:Pr30]{[Pr30]}}
 \qpart{b} Independently, lazy greedy after choosing $A$ has cached keys $B:5,C:7/2,D:3/2$. Refreshing $B$ gives gain 1. Can $B$ be selected immediately? The next refresh gives $C:11/4$; can $C$ now be selected without refreshing $D$? Explain why old keys are valid upper bounds, and state greedy's approximation guarantee for a nonnegative monotone submodular objective with a cardinality limit.
@@ -3828,28 +4067,35 @@ trả $S,F(S)$
 \item Quan hệ tổng quát khi $S\subseteq T$ là $\Delta(d\mid T)\le\Delta(d\mid S)$; do đó key cũ là cận trên. Tính lại ứng viên dẫn đầu và chỉ chốt khi gain thật không nhỏ hơn mọi cận còn lại.
 \item Với cùng tie-break, lazy greedy không đổi lựa chọn của greedy mà chỉ giảm số gain phải tính lại. Vì phát biểu nói có thể chọn khác, trả lời False theo quy ước này.
 \end{guidesteps}
-
 \topic{mw}{Personalization / Multiplicative Weights (MW)}
-\algsummary{Cá nhân hóa trọng số chủ đề sau phản hồi về tài liệu.}
-{Nhân trọng số liên quan để tăng ưu tiên khi thích và giảm khi không thích.}
-{Các $w_c$, tài liệu $d$, phản hồi $r\in\{-1,1\}$ và hệ số $\beta>1$.}
-{Trọng số mới; xếp hạng hoặc lượt chọn mới nếu đề yêu cầu.}
-{Xác định chủ đề của tài liệu đã xem rồi nhân riêng trọng số của chúng với $\beta^r$.}
+
+\algsummary{Cá nhân hóa trọng số chủ đề sau phản hồi về tài liệu.}{Nhân trọng số liên quan để tăng ưu tiên khi thích và giảm khi không thích.}{\textbf{Khi dùng:}\enspace Cập nhật độ quan trọng của chủ đề sau phản hồi tốt/xấu về một tài liệu.}{Các $w_c$, tài liệu $d$, phản hồi $r\in\{-1,1\}$ và hệ số $\beta>1$.}{Trọng số mới; xếp hạng hoặc lượt chọn mới nếu đề yêu cầu.}{Xác định chủ đề của tài liệu đã xem rồi nhân riêng trọng số của chúng với $\beta^r$.}
+
+\steps{
+\item Với phản hồi $r\in\{-1,1\}$ và $\beta>1$, nhân trọng số của các chủ đề xuất hiện trong tài liệu (ví dụ $p_{dc}>0$) với $\beta^r$. Giữ các chủ đề khác như cũ.
+\item Nếu đề yêu cầu một lượt chọn mới, tính lại điểm theo các trọng số mới từ tập rỗng.
+}
+
 \begin{algpseudo}
 với mỗi chủ đề $c$: nếu $p_{dc}>0$ thì $w_c\gets w_c\beta^r$\\
 nếu cần lượt chọn mới: chạy lại với trọng số mới, bắt đầu từ tập rỗng\\
 trả trọng số cập nhật và lựa chọn nếu đã tính
 \end{algpseudo}
 
-\key{Khi dùng} Cập nhật độ quan trọng của chủ đề sau phản hồi tốt/xấu về một tài liệu.
-
-\steps{
-\item Với phản hồi $r\in\{-1,1\}$ và $\beta>1$, nhân trọng số của các chủ đề xuất hiện trong tài liệu (ví dụ $p_{dc}>0$) với $\beta^r$. Giữ các chủ đề khác như cũ.
-\item Nếu đề yêu cầu một lượt chọn mới, tính lại điểm theo các trọng số mới từ tập rỗng.
-}
 \key{Ví dụ} Trọng số $(4,3,2)$, phản hồi $-1$ và $\beta=4$ cho tài liệu có hai chủ đề đầu: trọng số mới $(1,3/4,2)$. Chuẩn hóa bằng cùng một hằng số dương không đổi thứ hạng trong lượt đó.
 
 % DSA5101 Exam Practice Questions.pdf, PDF page(s) 31.
+
+\unitheading{3}{Verification / Kiểm tra}
+
+\key{Kiểm tra} Với $\beta>1$, phản hồi dương nhân trọng số liên quan với $\beta$, phản hồi âm chia cho $\beta$; chuẩn hóa chung không đổi thứ tự điểm.
+
+\unitheading{4}{Advanced / Nâng cao}
+
+\key{Dạng log} Từ $w_c\gets w_c\beta^r$, lấy log cho $\log w_c\gets\log w_c+r\log\beta$. Cập nhật nhân trở thành cộng trên thang log, giúp kiểm tra hướng tăng/giảm và tránh nhầm dấu phản hồi.
+
+\unitheading{5}{Exam evidence / Câu hỏi và lời giải}
+
 \ask{Pr30c}{Pr30(c)}{Dữ kiện chung: \hyperref[question:Pr30]{[Pr30]}}
 \qpart{c} Independently, the reader sees only $A$ and gives feedback $r=-1$. Multiply each weight whose concept has $p_{Ac}>0$ by $4^r$, leaving the other weight unchanged. Give the updated unnormalised weights and compare the singleton scores of $B,C$ in a fresh selection round. Must the weights be normalised to determine which article wins?
 
