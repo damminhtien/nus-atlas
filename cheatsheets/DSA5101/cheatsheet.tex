@@ -98,6 +98,8 @@
     Câu hỏi: #3%
     \if\relax\detokenize{#4}\relax\else\hfill #4\fi}}
 \newcommand{\qlink}[2]{\hyperref[question:#1]{#2}}
+\newcommand{\shareddataref}[1]{%
+  \qlink{#1}{\mbox{[#1, tr.~\pageref*{question:#1}]}}}
 \newenvironment{example}[2]{%
   \par\addvspace{6pt}\noindent
   \raggedright
@@ -416,7 +418,7 @@ $k$ & $C_k$ và support tương ứng & $L_k$ \\
 \end{guidesteps}
 
 % 2526Sem1-DSA5101.pdf, PDF page(s) 3.
-\ask{P25-Q1g}{P25-Q1(g)}{Dữ kiện chung: \hyperref[question:P25-Q1]{[P25-Q1]}}
+\ask{P25-Q1g}{P25-Q1(g)}{Dữ kiện chung: \shareddataref{P25-Q1}}
 \qpart{g} Now, suppose that each item has an associated price $\mathrm{item.price}$, and we want an additional constraint to the output of Apriori algorithm, so that only frequent itemsets whose price range is below some threshold $T$ is output. Given an itemset $I$, we only output $I$ if it is frequent and
 \[
 \max_{\mathrm{item}\in I}(\mathrm{item.price})-\min_{\mathrm{item}\in I}(\mathrm{item.price})<T.
@@ -624,7 +626,7 @@ Ten documents contain sentence-pattern sets $ABC,ABD,BC,AD,CD,ABC,ABC,ABC,ABC,AB
 \end{guidesteps}
 
 % 2526Sem1-DSA5101.pdf, PDF page(s) 2, 3.
-\ask{P25-Q1cdf}{P25-Q1(c-f)}{Dữ kiện chung: \hyperref[question:P25-Q1]{[P25-Q1]}}
+\ask{P25-Q1cdf}{P25-Q1(c-f)}{Dữ kiện chung: \shareddataref{P25-Q1}}
 \qpart{c} What is the major advantage of Toivonen's algorithm over the Apriori algorithm?
 \qpart{d} Recall that the negative border in Toivonen's algorithm is the collection of itemsets that are not frequent in sample, but all its subsets are frequent in sample. Suppose that the sample consists exactly of the 6 baskets in the previous part and we use a support threshold of $s=3$ for the sample. Write down the itemsets belonging to the negative border in this case.
 
@@ -699,7 +701,7 @@ với mỗi tập frequent $F$ có ít nhất hai item:\\
 \unitadvanced
 \key{Số luật} Một frequent itemset cỡ $k$ có tối đa $2^k-2$ cách tách thành vế trái khác rỗng và vế phải khác rỗng. Vì vậy số luật có thể tăng theo hàm mũ dù số frequent itemset nhỏ.
 
-\ask{Pr1b}{Pr1(b)}{Dữ kiện chung: \hyperref[question:Pr1]{[Pr1]}}
+\ask{Pr1b}{Pr1(b)}{Dữ kiện chung: \shareddataref{Pr1}}
 \qpart{b} Use the supplied counts $\operatorname{supp}(ABD)=\operatorname{supp}(ACD)=\operatorname{supp}(BD)=2$, $\operatorname{supp}(AC)=3$, $\operatorname{supp}(A)=5$, and $\operatorname{supp}(D)=4$. For $BD\to A$ and $AC\to D$, give confidence and signed interest, where $\operatorname{interest}(X\to y)=\operatorname{conf}(X\to y)-\operatorname{supp}(y)/7$. Which rules meet both support count 2 and confidence $4/5$?
 
 \answer{\maptag{answer:Pr1b}}
@@ -815,7 +817,7 @@ trả $M$ và $\widehat J(A,B)=|\{j:M[j,A]=M[j,B]\}|/t$
 
 % DSA5101 Exam Practice Questions.pdf, PDF page(s) 5.
 
-\ask{Pr4bc}{Pr4(b,c)}{Dữ kiện chung: \hyperref[question:Pr4]{[Pr4]}}
+\ask{Pr4bc}{Pr4(b,c)}{Dữ kiện chung: \shareddataref{Pr4}}
 \qpart{b} Independently use $S_3=\{3,4,7,8\}$. Two permutations list row IDs in visitation order: $\pi_1=(5,3,1,8,2,6,4,7)$, $\pi_2=(2,7,6,4,8,1,3,5)$. For each permutation, record the first visited row present in each set. Give the resulting two-row signature matrix and the signature-agreement estimate for the similarity of $D_1,D_3$.
 \qpart{c} Why must the same permutations be used for all documents? Does the estimate $1/2$ contradict the exact similarity $1/3$?
 
@@ -979,7 +981,7 @@ The target exact Jaccard threshold is $3/5$.
 \end{guidesteps}
 
 % 2526Sem1-DSA5101.pdf, PDF page(s) 4.
-\ask{P25-Q2aii}{P25-Q2(a)(ii,iii)}{Dữ kiện chung: \hyperref[question:P25-Q2]{[P25-Q2]}}
+\ask{P25-Q2aii}{P25-Q2(a)(ii,iii)}{Dữ kiện chung: \shareddataref{P25-Q2}}
 \qpart{ii} Consider applying Minhash and the LSH bands and rows technique with $r=10$ rows per band and $b=12$ bands. What is the probability that $A$ and $B$ become candidate similar documents (identical in at least one band)?
 \qpart{iii} If we want to increase the probability of $A$ and $B$ becoming candidates, should we increase $b$ or decrease $b$?
 
@@ -1105,7 +1107,7 @@ Give each scheme's final collision probability.
 \end{guidesteps}
 
 % 2526Sem1-DSA5101.pdf, PDF page(s) 4.
-\ask{P25-Q2b}{P25-Q2(b)}{Dữ kiện chung: \hyperref[question:P25-Q2]{[P25-Q2]}}
+\ask{P25-Q2b}{P25-Q2(b)}{Dữ kiện chung: \shareddataref{P25-Q2}}
 \qpart{b} Now, consider representing the shingle sets of $A$ and $B$ as Boolean vectors $x_A$ and $x_B$. That is, if the universal set of $k$-shingles has size $m$, then $x_A$ and $x_B$ are length $m$ Boolean vectors, with a 1 in every position corresponding to the shingle that they contain. Using the cosine similarity and random hyperplanes technique from lectures, calculate the probability that $x_A$ and $x_B$ end up on the same side of a random hyperplane.
 
 \answer{\maptag{answer:P25-Q2b}}
@@ -1895,7 +1897,7 @@ With $e=r_{uA}-\hat r_{uA}$, the gradients are $g_p=-eq_A+\lambda p_u$, $g_q=-ep
 \end{guidesteps}
 
 % 2425Sem1-DSA5101.pdf, PDF page(s) 16.
-\ask[A2-Q1b]{P24-Q4b}{P24-Q4(b) / A2-Q1(b)}{Dữ kiện chung: \hyperref[question:P24-Q4]{[P24-Q4]} \hyperref[question:A2-Q1]{[A2-Q1]}}
+\ask[A2-Q1b]{P24-Q4b}{P24-Q4(b) / A2-Q1(b)}{Dữ kiện chung: \shareddataref{P24-Q4} \shareddataref{A2-Q1}}
 \qpart{b} Latent factor method
 
 Given partial complete latent factor matrices $Q$ and $P^T$:
@@ -2003,7 +2005,7 @@ A reader rates article 1 as 1 and article 2 as 5.
 \end{guidesteps}
 
 % 2526Sem1-DSA5101.pdf, PDF page(s) 18.
-\ask{P25-Q7b}{P25-Q7(b)}{Dữ kiện chung: \hyperref[question:P25-Q7]{[P25-Q7]}}
+\ask{P25-Q7b}{P25-Q7(b)}{Dữ kiện chung: \shareddataref{P25-Q7}}
 \qpart{b} The TF-IDF score of a term in a document is proportional to the frequency of the term in the document and inversely proportional to the number of documents that mention the term.
 
 \answer{\maptag{answer:P25-Q7b}}
@@ -3179,7 +3181,7 @@ Start positions are maintained by a two-slot reservoir, so each stream position 
 \end{guidesteps}
 
 % 2425Sem1-DSA5101.pdf, PDF page(s) 19.
-\ask[A2-Q4cd]{P24-Q7cd}{P24-Q7(c,d) / A2-Q4(c,d)}{Dữ kiện chung: \hyperref[question:P24-Q7]{[P24-Q7]}}
+\ask[A2-Q4cd]{P24-Q7cd}{P24-Q7(c,d) / A2-Q4(c,d)}{Dữ kiện chung: \shareddataref{P24-Q7}}
 \qpart{c} What is the 2nd moment (surprise number) of this stream?
 \qpart{d} Suppose that we use the AMS method to estimate the 2nd moment.
 \qpart{i} If we only have one variable and it appears in the first position of the stream, what is our estimate of the 2nd moment?
@@ -3898,7 +3900,7 @@ Three variants $A,B,C$ yield Bernoulli rewards. After one forced trial of each, 
 \end{guidesteps}
 
 % 2526Sem1-DSA5101.pdf, PDF page(s) 18.
-\ask{P25-Q7d}{P25-Q7(d)}{Dữ kiện chung: \hyperref[question:P25-Q7]{[P25-Q7]}}
+\ask{P25-Q7d}{P25-Q7(d)}{Dữ kiện chung: \shareddataref{P25-Q7}}
 \qpart{d} In the multi-armed bandits problem, the key advantage of the Epsilon-Greedy algorithm as compared to the Greedy algorithm is that it ensures sufficient exploration in the early iterations.
 
 \answer{\maptag{answer:P25-Q7d}}
@@ -4027,7 +4029,7 @@ trả $S,F(S)$
 \unitadvanced
 \key{Vì sao phép trì hoãn an toàn} Diminishing returns cho $S\subseteq T$ cho $\Delta(x\mid T)\le\Delta(x\mid S)$. Vì vậy marginal gain đã tính trước là cận trên hiện tại; chỉ chốt phần tử khi gain vừa tính lại vượt mọi cận còn lại.
 
-\ask{Pr30b}{Pr30(b)}{Dữ kiện chung: \hyperref[question:Pr30]{[Pr30]}}
+\ask{Pr30b}{Pr30(b)}{Dữ kiện chung: \shareddataref{Pr30}}
 \qpart{b} Independently, lazy greedy after choosing $A$ has cached keys $B:5,C:7/2,D:3/2$. Refreshing $B$ gives gain 1. Can $B$ be selected immediately? The next refresh gives $C:11/4$; can $C$ now be selected without refreshing $D$? Explain why old keys are valid upper bounds, and state greedy's approximation guarantee for a nonnegative monotone submodular objective with a cardinality limit.
 
 \examnote{Sau khi làm mới $B$ được gain $1$, tiếp tục làm mới $C$ được $11/4$; giá trị này lớn hơn các cận còn lại $1$ và $3/2$, nên chọn $C$ mà chưa cần làm mới $D$.}
@@ -4041,7 +4043,7 @@ trả $S,F(S)$
 \end{guidesteps}
 
 % 2526Sem1-DSA5101.pdf, PDF page(s) 18.
-\ask{P25-Q7c}{P25-Q7(c)}{Dữ kiện chung: \hyperref[question:P25-Q7]{[P25-Q7]}}
+\ask{P25-Q7c}{P25-Q7(c)}{Dữ kiện chung: \shareddataref{P25-Q7}}
 \qpart{c} The Lazy Greedy algorithm for optimizing submodular functions can generate a different output when compared to the Greedy algorithm.
 
 \examnote{Cùng quy tắc phá hòa, Lazy Greedy vẫn chọn như Greedy vì chỉ chốt phần tử sau khi gain thật thắng mọi cận còn lại.}
@@ -4077,7 +4079,7 @@ trả trọng số cập nhật và lựa chọn nếu đã tính
 \unitadvanced
 \key{Dạng log} Từ $w_c\gets w_c\beta^r$, lấy log cho $\log w_c\gets\log w_c+r\log\beta$. Cập nhật nhân trở thành cộng trên thang log, giúp kiểm tra hướng tăng/giảm và tránh nhầm dấu phản hồi.
 
-\ask{Pr30c}{Pr30(c)}{Dữ kiện chung: \hyperref[question:Pr30]{[Pr30]}}
+\ask{Pr30c}{Pr30(c)}{Dữ kiện chung: \shareddataref{Pr30}}
 \qpart{c} Independently, the reader sees only $A$ and gives feedback $r=-1$. Multiply each weight whose concept has $p_{Ac}>0$ by $4^r$, leaving the other weight unchanged. Give the updated unnormalised weights and compare the singleton scores of $B,C$ in a fresh selection round. Must the weights be normalised to determine which article wins?
 
 \answer{\maptag{answer:Pr30c}}
