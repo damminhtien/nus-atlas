@@ -22,7 +22,8 @@
 
 \setlist{nosep,leftmargin=1.25em}
 \newcommand{\tightlist}{}
-\setcounter{secnumdepth}{0}
+\setcounter{secnumdepth}{2}
+\renewcommand{\thesubsection}{\Alph{subsection}}
 % Fill left then right, including on the last page. Put any unused height
 % below the text instead of stretching the space between blocks.
 \raggedbottom
@@ -41,11 +42,16 @@
   \colorbox{black!8}{%
     \parbox{\dimexpr\linewidth-2\fboxsep\relax}{\raggedright\strut#1\strut}}%
   \endgroup}
+\newcommand{\topicbadge}[1]{%
+  \begingroup
+  \setlength{\fboxsep}{1pt}%
+  \colorbox{black!15}{\makebox[1.1em]{#1}}%
+  \endgroup}
 \titleformat{\section}[block]{\headingfont}{}{0pt}{\lectureband}
-\titleformat{\subsection}[block]{\algorithmfont\raggedright}{}{0pt}{%
-  \rule[-.2ex]{1pt}{1.35ex}\hspace{5pt}}
+\titleformat{\subsection}[hang]{\algorithmfont\raggedright}%
+  {\topicbadge{\thesubsection}}{5pt}{}[\vspace{.5pt}\titlerule]
 \titlespacing*{\section}{0pt}{10pt}{4pt}
-\titlespacing*{\subsection}{0pt}{3pt}{1pt}
+\titlespacing*{\subsection}{0pt}{3pt}{2pt}
 
 
 \makeatletter
@@ -66,8 +72,9 @@
 \newcommand{\steps}[1]{\begin{enumerate}[label=\arabic*.,leftmargin=1.5em,itemsep=1pt,topsep=2pt]#1\end{enumerate}}
 \newcommand{\outline}[2]{\hyperref[lecture:#1]{\makebox[2.3em][l]{L#1}#2\hfill\pageref*{lecture:#1}}\par}
 \newcommand{\topicoutline}[2]{%
-  \par\noindent\hangindent=1.5em\hangafter=1%
-  \hspace*{1.5em}\hyperref[topic:#1]{#2\hfill\pageref*{topic:#1}}\par}
+  \par\noindent\hangindent=3em\hangafter=1%
+  \hspace*{1.5em}\hyperref[topic:#1]{%
+    \makebox[1.5em][l]{\ref*{topic:#1}.}#2\hfill\pageref*{topic:#1}}\par}
 
 \newcommand{\blocklabel}[1]{\par\noindent#1\par\nobreak}
 \newcommand{\answer}[1]{%
@@ -75,18 +82,19 @@
   \blocklabel{#1Hướng dẫn giải}}
 \newcommand{\guidepart}[1]{%
   \par\addvspace{2pt}%
-  \noindent\textbf{Phần #1}\par\nobreak}
+  \blocklabel{Phần #1}}
 \newlist{guidesteps}{enumerate}{1}
 \setlist[guidesteps]{label=\arabic*.,leftmargin=1.65em,topsep=0pt,
   itemsep=1pt,parsep=0pt,partopsep=0pt}
+\newcommand{\evidenceheading}[1]{\blocklabel{\textbf{5. #1}}}
 \newcommand{\examsectionlabel}{%
   \ifexamheadingprinted\else
-    \textbf{5. Exam evidence / Câu hỏi và lời giải}\enspace\nobreak
+    \evidenceheading{Câu hỏi và lời giải}%
     \global\examheadingprintedtrue
   \fi}
 \NewDocumentCommand{\ask}{o m m m}{%
-  \par\addvspace{5pt}%
-  \blocklabel{\examsectionlabel\maptag{question:#2}\IfValueT{#1}{\maptag{question:#1}}%
+  \par\addvspace{5pt}\examsectionlabel
+  \blocklabel{\maptag{question:#2}\IfValueT{#1}{\maptag{question:#1}}%
     Câu hỏi: #3%
     \if\relax\detokenize{#4}\relax\else\hfill #4\fi}}
 \newcommand{\qlink}[2]{\hyperref[question:#1]{#2}}
@@ -186,14 +194,16 @@
 \newcommand{\algfield}[2]{\par\noindent\hangindent=1em\relax#1:\enspace#2}
 \newcommand{\unitheading}[2]{%
   \par\addvspace{1pt}\noindent\textbf{#1. #2}\enspace}
+\newcommand{\unitverification}{\unitheading{3}{Xác minh}}
+\newcommand{\unitadvanced}{\unitheading{4}{Nâng cao}}
 \newcommand{\unitfield}[4]{%
   \par\noindent\textbf{#1. #2}\enspace #3:\enspace #4}
 \newcommand{\algsummary}[6]{%
   \begingroup\setlength{\parskip}{1pt}%
-  \unitfield{1}{Recognition / Nhận diện}{Vấn đề}{#1}%
+  \unitfield{1}{Nhận diện}{Vấn đề}{#1}%
   \algfield{Dấu hiệu / trực giác}{#2}%
   \if\relax\detokenize{#3}\relax\else\par\noindent#3\par\fi%
-  \unitfield{2}{Execution / Thực hiện}{INPUT / GIẢ THIẾT}{#4}%
+  \unitfield{2}{Thực hiện}{INPUT / GIẢ THIẾT}{#4}%
   \algfield{OUTPUT}{#5}%
   \algfield{Phương pháp làm}{#6}\par\endgroup}
 \newenvironment{algpseudo}{%
@@ -293,10 +303,10 @@ trả $E,\ \min(1,E)$
 
 \key{Ví dụ} $10^6$ phép thử, $p=10^{-4}$: kỳ vọng 100 báo nhầm. Với ví dụ khách sạn, một cặp người trùng khách sạn trong hai ngày xác định có xác suất $10^{-18}$. Nhân với khoảng $5\times10^{17}$ cặp người và $5\times10^5$ cặp ngày cho khoảng $2.5\times10^5$ lần trùng ngẫu nhiên.
 
-\unitheading{3}{Verification / Xác minh}
+\unitverification
 \key{Kiểm tra} Kỳ vọng số báo nhầm $E$ có thể lớn hơn 1; chỉ xác suất có ít nhất một báo nhầm mới bị chặn thêm bởi 1.
 
-\unitheading{4}{Advanced / Nâng cao}
+\unitadvanced
 \key{Vì sao đúng} Đặt $I_j$ là chỉ báo phép thử $j$ báo nhầm. Tính tuyến tính cho $\mathbb E[\sum_j I_j]=\sum_jp_j$; union bound cho $\Pr(\sum_jI_j\ge1)\le\sum_jp_j$, không cần độc lập.
 \topic{apriori}{Apriori}
 
@@ -331,10 +341,10 @@ Ngưỡng $s=2$. Ba bộ ba đạt ngưỡng, riêng $BCD$ chỉ có trong giỏ
 
 % DSA5101 Exam Practice Questions.pdf, PDF page(s) 2.
 
-\unitheading{3}{Verification / Xác minh}
+\unitverification
 \key{Bẫy} Giữ ứng viên khi support $\ge s$, không phải $>s$. Mỗi giỏ đóng góp nhiều nhất 1 cho mỗi tập item, kể cả khi bản ghi giỏ lặp item.
 
-\unitheading{4}{Advanced / Nâng cao}
+\unitadvanced
 \key{Vì sao cắt được} Nếu $X\subseteq Y$, mọi giỏ chứa $Y$ cũng chứa $X$, nên $\operatorname{supp}(Y)\le\operatorname{supp}(X)$. Một tập con không frequent thì mọi tập cha của nó cũng không frequent.
 
 \key{Độ phức tạp} Với $n=|D|$ giỏ và $|C_k|$ ứng viên, cách trực tiếp kiểm tra từng ứng viên trong từng giỏ tốn $O(n\sum_{k:C_k\ne\varnothing}k|C_k|)$ thời gian. Bộ nhớ đếm là $O(|C_k|+|L_{k-1}|)$ ở tầng hiện tại, ngoài dữ liệu đầu vào.
@@ -469,10 +479,10 @@ với mỗi giỏ $T$: với mỗi cặp $i<j$ trong tập item của $T$, tăng
 trả bảng đếm; cặp chưa thấy có số đếm 0
 \end{algpseudo}
 
-\unitheading{3}{Verification / Xác minh}
+\unitverification
 \key{So nhanh} Triples tiết kiệm khi $q<\binom n2/3$, chưa tính overhead. Với $n=4$, $q=2$ thì hòa (24 byte); $q=3$ thì bảng đặc rẻ hơn.
 
-\unitheading{4}{Advanced / Nâng cao}
+\unitadvanced
 \key{Chi phí bộ nhớ} Bảng tam giác lưu $\binom n2=\Theta(n^2)$ bộ đếm; triples lưu $O(q)$ bản ghi cho $q$ cặp đã thấy. Điểm hòa vốn phụ thuộc kích thước counter, ID và overhead của cấu trúc sparse.
 \topic{pcy}{PCY}
 
@@ -490,12 +500,12 @@ quét $D$: đếm $(x,y)$ nếu $x,y\in L_1$ và $B[h(x,y)]=1$\\
 trả các cặp có số đếm $\ge s$
 \end{algpseudo}
 
-\unitheading{3}{Verification / Xác minh}
+\unitverification
 \key{Bẫy} Nhiều cặp có thể rơi vào cùng bucket. Bucket đủ ngưỡng chỉ cho phép giữ ứng viên; kết luận frequent cần số đếm của riêng cặp đó.
 
 % DSA5101 Exam Practice Questions.pdf, PDF page(s) 3.
 
-\unitheading{4}{Advanced / Nâng cao}
+\unitadvanced
 \key{Chi phí} PCY dùng hai lượt quét giỏ: lượt đầu đếm singleton và bucket, lượt sau đếm riêng các cặp qua cả hai bộ lọc. Bitmap cần $O(B)$ bit cho $B$ bucket; bucket va chạm chỉ tạo ứng viên, không thay bộ đếm cặp.
 
 \ask{Pr2}{Pr2}{}
@@ -544,10 +554,10 @@ quét $D$: đếm cặp gồm hai item frequent và qua cả hai bitmap\\
 trả các cặp có số đếm $\ge s$
 \end{algpseudo}
 
-\unitheading{3}{Verification / Xác minh}
+\unitverification
 \key{Bẫy} Thêm bảng không luôn tiết kiệm bộ nhớ. Nếu gần như mọi bit đã là 1 thì bitmap ít giúp cắt ứng viên.
 
-\unitheading{4}{Advanced / Nâng cao}
+\unitadvanced
 \key{Chi phí} Với $p$ giai đoạn cần $p$ lượt quét. Mỗi lượt dùng bitmap để giảm tập ứng viên cho lượt kế tiếp; thêm lượt có thể giảm bộ đếm cặp nhưng tăng I/O và thời gian quét.
 \topic{toivonen}{Toivonen}
 
@@ -583,10 +593,10 @@ Quét đủ 10 tài liệu: $\operatorname{supp}(AC)=5$, đạt ngưỡng toàn 
 
 % DSA5101 Exam Practice Questions.pdf, PDF page(s) 4.
 
-\unitheading{3}{Verification / Xác minh}
+\unitverification
 \key{Kiểm tra} Chỉ chấp nhận lượt chạy khi mọi tập trong negative border có support toàn cục nhỏ hơn $s$; một tập border đạt ngưỡng buộc phải lấy mẫu lại.
 
-\unitheading{4}{Advanced / Nâng cao}
+\unitadvanced
 \key{Vì sao đúng} Nếu bỏ sót tập frequent, chọn tập con nhỏ nhất của nó cũng bị bỏ sót. Tập này thuộc border và cũng frequent, nên lượt kiểm tra sẽ phát hiện.
 
 \ask{Pr3}{Pr3}{}
@@ -659,10 +669,10 @@ trả $\{X\in C:\operatorname{supp}(X)\ge s\}$
 \end{algpseudo}
 \algfield{Nếu chỉ dùng một mẫu}{Lấy phần $p$ của giỏ, chạy Apriori với ngưỡng mẫu $\lceil ps\rceil$; nếu xác nhận trên toàn dữ liệu, chỉ lọc các tập đã tìm.}
 
-\unitheading{3}{Verification / Xác minh}
+\unitverification
 \key{Kiểm tra} Gộp support theo số lần xuất hiện trong toàn bộ partition rồi mới so với $s$; ngưỡng cục bộ là $p_js$, không phải $s$.
 
-\unitheading{4}{Advanced / Nâng cao}
+\unitadvanced
 \key{Vì sao SON không bỏ sót} Nếu mọi support cục bộ đều $<p_js$, cộng lại sẽ $<s$. Ví dụ hai phần bằng nhau và $s=6$: ngưỡng mỗi phần là 3; một tập có tổng 6 phải đạt ít nhất 3 ở một phần.
 \topic{rules}{Association rules}
 
@@ -681,12 +691,12 @@ với mỗi tập frequent $F$ có ít nhất hai item:\\
 \quad nếu đạt các ngưỡng: xuất $X\to y$ cùng các chỉ số
 \end{algpseudo}
 
-\unitheading{3}{Verification / Xác minh}
+\unitverification
 \key{Bẫy} Support của luật là $c$, không phải $a$. Công thức interest ở trên là dạng có dấu; dùng đúng định nghĩa đề cho. Lift cần $p_y>0$.
 
 % DSA5101 Exam Practice Questions.pdf, PDF page(s) 2.
 
-\unitheading{4}{Advanced / Nâng cao}
+\unitadvanced
 \key{Số luật} Một frequent itemset cỡ $k$ có tối đa $2^k-2$ cách tách thành vế trái khác rỗng và vế phải khác rỗng. Vì vậy số luật có thể tăng theo hàm mũ dù số frequent itemset nhỏ.
 
 \ask{Pr1b}{Pr1(b)}{Dữ kiện chung: \hyperref[question:Pr1]{[Pr1]}}
@@ -723,10 +733,10 @@ trả $S_A,S_B$ và $|S_A\cap S_B|/|S_A\cup S_B|$ nếu hợp không rỗng
 
 % DSA5101 Exam Practice Questions.pdf, PDF page(s) 5.
 
-\unitheading{3}{Verification / Xác minh}
+\unitverification
 \key{Kiểm tra} Với hai tập không rỗng, $0\le J(A,B)\le1$; tập trùng cho $J=1$, hai tập rời nhau cho $J=0$. Nếu hợp rỗng, dùng quy ước của đề.
 
-\unitheading{4}{Advanced / Nâng cao}
+\unitadvanced
 \key{Chi phí chính xác} Tạo tập shingle tốn thời gian tuyến tính theo số token; so một cặp bằng cách quét hợp/giao tốn $O(|A|+|B|)$ với tập đã sắp hoặc hash. Nhiều tài liệu lớn cần chỉ mục hoặc MinHash/LSH để giảm so sánh.
 
 \ask{Pr4}{Pr4(a)}{}
@@ -797,10 +807,10 @@ với mỗi hoán vị $\pi_j$ và tài liệu $D$:\\
 trả $M$ và $\widehat J(A,B)=|\{j:M[j,A]=M[j,B]\}|/t$
 \end{algpseudo}
 
-\unitheading{3}{Verification / Xác minh}
+\unitverification
 \key{Kiểm tra} Mỗi chữ ký ghi ID hàng nhỏ nhất theo hoán vị, không ghi vị trí của hàng đó; ước lượng Jaccard là tỷ lệ tọa độ chữ ký trùng.
 
-\unitheading{4}{Advanced / Nâng cao}
+\unitadvanced
 \key{Vì sao được} Hàng đầu tiên trong hợp rơi vào giao với xác suất $J(A,B)$; đúng lúc đó MinHash trùng. Ví dụ thứ tự $(1,4,3,2)$ trên tập $\{2,4\}$ trả ID 4, không phải vị trí 2. Chữ ký của $n$ tài liệu lưu $O(tn)$ giá trị.
 
 % DSA5101 Exam Practice Questions.pdf, PDF page(s) 5.
@@ -894,12 +904,12 @@ Gộp và bỏ trùng sau khi băm: chỉ so chính xác $AB$ và $BD$ (2 trên 
 
 % DSA5101 Exam Practice Questions.pdf, PDF page(s) 6.
 
-\unitheading{3}{Verification / Xác minh}
+\unitverification
 \key{Đọc tham số} $s$ là Jaccard, công thức giả sử các hàng độc lập. Tại $m$ cố định, tăng $b$ làm giảm $r$: thường tăng recall và giảm precision. Nếu $r$ cố định, tăng $b$ cũng tăng xác suất thành ứng viên.
 
 \key{Mốc 50\%} $s_{1/2}=(1-2^{-1/b})^{1/r}$. Đây là mốc xác suất, không phải ngưỡng cứng. Bước xác nhận lọc ứng viên sai, không phục hồi cặp chưa từng được chọn.
 
-\unitheading{4}{Advanced / Nâng cao}
+\unitadvanced
 \key{Xác suất ứng viên} Với Jaccard $s$, $b$ band và $r$ hàng mỗi band, $P(\text{candidate})=1-(1-s^r)^b$: một band khớp đủ khi cả $r$ hàng khớp, rồi lấy hợp qua $b$ band.
 
 \ask{Pr5}{Pr5}{}
@@ -1005,10 +1015,10 @@ trả $p,m$
 
 % 2425Sem1-DSA5101.pdf, PDF page(s) 8.
 
-\unitheading{3}{Verification / Xác minh}
+\unitverification
 \key{Kiểm tra} AND phải làm xác suất va chạm giảm còn OR phải làm xác suất tăng; mọi phép lũy thừa cần giả thiết các phép băm độc lập.
 
-\unitheading{4}{Advanced / Nâng cao}
+\unitadvanced
 \key{Khuếch đại} Nếu một phép băm va chạm với xác suất $p$, ghép AND trên $r$ phép cho $p^r$; ghép OR trên $b$ nhánh cho $1-(1-p)^b$. Tách tầng chỉ hợp lý khi chi phí ứng viên ở mỗi tầng được tính riêng.
 
 \ask[A1-Q2ef]{P24-Q2ef}{P24-Q2(e,f) / A1-Q2(e,f)}{}
@@ -1060,10 +1070,10 @@ Hai vectơ có 200 vị trí cùng bằng 1, nên $\cos\theta=200/\sqrt{400\cdot
 
 % DSA5101 Exam Practice Questions.pdf, PDF page(s) 7.
 
-\unitheading{3}{Verification / Xác minh}
+\unitverification
 \key{Bẫy} Hai vectơ vuông góc trùng bit với xác suất $1/2$. Nhân vectơ với số dương giữ nguyên dấu. Lặp lại cùng siêu phẳng không tạo các phép thử độc lập.
 
-\unitheading{4}{Advanced / Nâng cao}
+\unitadvanced
 \key{Xác suất va chạm} Với hai vector tạo góc $\theta$, một siêu phẳng ngẫu nhiên qua gốc cho xác suất cùng dấu $1-\theta/\pi$. Với $m$ siêu phẳng độc lập, khoảng cách Hamming kỳ vọng giữa chữ ký là $m\theta/\pi$.
 
 \ask{Pr6}{Pr6}{}
@@ -1117,14 +1127,14 @@ với mỗi vectơ $x$: $h(x)\gets\lfloor (u^Tx-b)/a\rfloor$\\
 nhóm vectơ theo $h(x)$; trả các nhóm
 \end{algpseudo}
 
-\unitheading{3}{Verification / Xác minh}
+\unitverification
 \key{Bẫy} Hai điểm gần nhau vẫn có thể nằm hai bên biên ô. Trong mô hình của lecture, các mốc gần/xa $a/2$ và $2a$ cho cận va chạm lần lượt $\ge1/2$ và $\le1/3$.
 
 
 
 \lecture{3}{Clustering}
 
-\unitheading{4}{Advanced / Nâng cao}
+\unitadvanced
 \key{Chi phí băm} Với $k$ hướng chiếu dày trong $d$ chiều, tính các giá trị chiếu tốn $O(kd)$ mỗi điểm; tra bucket tốn thêm $O(k)$. Dùng nhiều phép băm độc lập tăng chi phí nhưng cho phép khuếch đại xác suất ứng viên.
 \topic{hierarchical}{Hierarchical agglomerative clustering}
 
@@ -1166,10 +1176,10 @@ Chiều cao ghi theo $d(x,y)=\max(x,y)/\min(x,y)$, cách đều để dễ đọ
 
 % DSA5101 Exam Practice Questions.pdf, PDF page(s) 8.
 
-\unitheading{3}{Verification / Xác minh}
+\unitverification
 \key{Bẫy} Độ cao gộp theo single có thể nhỏ hơn đường kính của cụm vừa gộp. Khi hòa, theo đúng quy tắc của đề.
 
-\unitheading{4}{Advanced / Nâng cao}
+\unitadvanced
 \key{Chi phí bản trực tiếp} Lưu mọi khoảng cách cặp cần $O(n^2)$ bộ nhớ. Nếu mỗi lần gộp quét lại mọi cặp cụm để tìm linkage nhỏ nhất, $n-1$ lần gộp tốn $O(n^3)$ thời gian.
 
 \ask{Pr7}{Pr7}{}
@@ -1294,10 +1304,10 @@ Chấm đen: cụm $ABDE$; vòng rỗng: cụm $CF$; dấu chéo: tâm mới. T�
 
 % DSA5101 Exam Practice Questions.pdf, PDF page(s) 9.
 
-\unitheading{3}{Verification / Xác minh}
+\unitverification
 \key{Bẫy} Mỗi bước không tăng SSE, nhưng nghiệm dừng có thể không tối ưu toàn cục. Một vòng thường tốn $O(nKd)$ với $n$ điểm, $d$ chiều.
 
-\unitheading{4}{Advanced / Nâng cao}
+\unitadvanced
 \key{Vì sao giảm SSE} Với tâm cố định, gán mỗi điểm vào tâm gần nhất không tăng SSE; với nhãn cố định, cập nhật tâm bằng trung bình cụm tối thiểu hóa SSE. Do đó mỗi vòng không tăng mục tiêu, nhưng chỉ hội tụ tới nghiệm cục bộ.
 
 \ask{Pr8}{Pr8}{}
@@ -1341,10 +1351,10 @@ khi $|C|<K$: với mỗi $x\notin C$, đặt $w_x\gets\min_{c\in C}\|x-c\|^2$\\
 trả $C$
 \end{algpseudo}
 
-\unitheading{3}{Verification / Xác minh}
+\unitverification
 \key{Kiểm tra} Xác suất chọn điểm phải cộng thành 1 sau chuẩn hóa trọng số $D(x)^2$; nếu tổng trọng số bằng 0, mọi điểm còn lại đã có khoảng cách 0 tới tâm.
 
-\unitheading{4}{Advanced / Nâng cao}
+\unitadvanced
 \key{Bảo đảm chuẩn} Với K-means++ chuẩn dùng D²-sampling và mục tiêu SSE Euclid, kỳ vọng chi phí khởi tạo bị chặn bởi $O(\log K)$ lần tối ưu. Không chuyển bảo đảm này sang biến thể oversampling nếu chưa có định lý tương ứng.
 \topic{bfr}{BFR (Bradley-Fayyad-Reina)}
 
@@ -1370,10 +1380,10 @@ sau mỗi lô: gom RS thành CS nếu đủ điểm; thử gộp các CS\\
 cuối luồng: gộp CS đạt điều kiện vào DS; trả DS và phần còn lại
 \end{algpseudo}
 
-\unitheading{3}{Verification / Xác minh}
+\unitverification
 \key{Bẫy} So $D_M^2$ với ngưỡng bình phương nếu đề cho như vậy. Không chia trực tiếp cho phương sai bằng 0.
 
-\unitheading{4}{Advanced / Nâng cao}
+\unitadvanced
 \key{Phương sai sau gộp} Theo từng chiều, với $w_i=N_i/(N_1+N_2)$, $\sigma^2=w_1\sigma_1^2+w_2\sigma_2^2+w_1w_2(\mu_1-\mu_2)^2$. Cụm có phương sai nhỏ riêng lẻ vẫn có thể vượt ngưỡng sau khi gộp nếu hai trung bình cách xa.
 
 % DSA5101 Exam Practice Questions.pdf, PDF page(s) 10.
@@ -1438,10 +1448,10 @@ gán mỗi điểm ngoài mẫu vào cụm có đại diện gần nhất; trả
 
 \key{Ví dụ} Cụm có tâm 5, đại diện 0 và 10, $\alpha=0.2$: sau khi co còn 1 và 9. Chất lượng phụ thuộc mẫu và độ bao phủ của các đại diện.
 
-\unitheading{3}{Verification / Xác minh}
+\unitverification
 \key{Kiểm tra} Điểm đại diện co về tâm theo $r\gets(1-\alpha)r+\alpha\mu$; khi so hai cụm, dùng khoảng cách gần nhất giữa các đại diện đã co.
 
-\unitheading{4}{Advanced / Nâng cao}
+\unitadvanced
 \key{Vai trò số đại diện} Nếu mỗi cụm giữ $c$ đại diện, so hai cụm bằng khoảng cách nhỏ nhất trong $c^2$ cặp đại diện. Tăng $c$ mô tả hình dạng cụm tốt hơn nhưng làm tăng chi phí so khoảng cách.
 \topic{purity}{Cluster purity (evaluation with known labels)}
 
@@ -1461,10 +1471,10 @@ trả $\sum_i\max_j\operatorname{count}[i,j]/N$
 
 \lecture{4}{Dimensionality reduction}
 
-\unitheading{3}{Verification / Xác minh}
+\unitverification
 \key{Kiểm tra} Cộng số điểm đúng theo đa số của từng cụm rồi chia tổng số điểm; kết quả nằm trong $[0,1]$ và không phải trung bình đều của các cụm.
 
-\unitheading{4}{Advanced / Nâng cao}
+\unitadvanced
 \key{Giới hạn thước đo} Purity có thể đạt 1 khi tách mỗi điểm thành một cụm, nên không phạt phân mảnh. Chỉ so purity khi số cụm hoặc quy tắc phân hoạch được kiểm soát.
 \topic{svd}{SVD and power iteration}
 
@@ -1498,10 +1508,10 @@ Trong câu (a), $M=\bigl(\begin{smallmatrix}5&4\\4&5\end{smallmatrix}\bigr)$. V�
 
 % DSA5101 Exam Practice Questions.pdf, PDF page(s) 11.
 
-\unitheading{3}{Verification / Xác minh}
+\unitverification
 \key{Bẫy} Cần thành phần ban đầu theo không gian riêng trội; lặp không tự tạo thành phần bị thiếu. Tách một hướng trội thường cần khoảng cách giữa trị riêng lớn nhất và trị kế tiếp.
 
-\unitheading{4}{Advanced / Nâng cao}
+\unitadvanced
 \key{Hội tụ} Nếu $x^{(0)}=\sum_i c_iv_i$, sau $t$ phép nhân chưa chuẩn hóa hệ số theo $v_i$ là $c_i\lambda_i^t$. Hội tụ về $v_1$ cần $c_1\ne0$ và $|\lambda_1|>|\lambda_2|$; nếu $c_1=0$, phép lặp không tự sinh hướng đó.
 
 \ask{Pr10}{Pr10}{}
@@ -1557,10 +1567,10 @@ chọn $r$; $Z\gets XV_r$; $\widehat A\gets ZV_r^T+\mathbf 1\mu$\\
 trả $V_r,Z,\widehat A$
 \end{algpseudo}
 
-\unitheading{3}{Verification / Xác minh}
+\unitverification
 \key{Bẫy} Dùng bình phương giá trị kỳ dị. Sai số tái tạo nhỏ trên toàn bộ ma trận không bảo đảm giữ nguyên thứ hạng hàng xóm.
 
-\unitheading{4}{Advanced / Nâng cao}
+\unitadvanced
 \key{Sai số truy vấn} Với hàng truy vấn $q$ và phép chiếu trực giao $P_r=V_rV_r^T$, $\|q-qP_r\|^2=\|q\|^2-\|qV_r\|^2$. Tỷ lệ năng lượng giữ lại là đại lượng toàn ma trận, không thay cho sai số hay thứ hạng hàng xóm của một truy vấn.
 
 % DSA5101 Exam Practice Questions.pdf, PDF page(s) 12.
@@ -1611,10 +1621,10 @@ $U\gets W^+$ bằng SVD, chỉ đảo giá trị kỳ dị khác 0\\
 trả $C,U,R,\widehat A=CUR$
 \end{algpseudo}
 
-\unitheading{3}{Verification / Xác minh}
+\unitverification
 \key{Bẫy} $W$ suy biến vẫn có giả nghịch đảo. Chẳng hạn $\operatorname{diag}(2,0)^+=\operatorname{diag}(1/2,0)$. CUR không có bảo đảm tối ưu Frobenius như truncated SVD.
 
-\unitheading{4}{Advanced / Nâng cao}
+\unitadvanced
 \key{Không gian biểu diễn} Mọi cột của $\widehat A=CW^+R$ nằm trong không gian cột của $C$. Lấy thêm hàng không thể khôi phục hướng cột bị thiếu; kiểm tra không gian này trước khi nhân để nhận ra các hàng hoặc ô chắc chắn bằng 0.
 
 % DSA5101 Exam Practice Questions.pdf, PDF page(s) 13.
@@ -1720,10 +1730,10 @@ Dùng vectơ đã trừ trung bình để tính trọng số, rồi dùng rating
 
 % DSA5101 Exam Practice Questions.pdf, PDF page(s) 15.
 
-\unitheading{3}{Verification / Xác minh}
+\unitverification
 \key{Bẫy} Similarity âm vẫn là giá trị hợp lệ. Chỉ loại hàng xóm âm nếu đề yêu cầu chọn positive-similarity neighbors hoặc quy tắc đã nêu như vậy; không tự lấy trị tuyệt đối hay cắt về 0. Kiểm tra mẫu số và chuẩn bằng 0; khi mẫu số prediction bằng 0, dùng fallback của đề.
 
-\unitheading{4}{Advanced / Nâng cao}
+\unitadvanced
 \key{Độ phức tạp} Tính similarity cho một cặp tốn $O(|I|)$ trên phần tử được so sánh; prediction cho một ô tốn $O(|N|)$ với $|N|$ hàng xóm đã chọn, ngoài chi phí tìm ứng viên.
 
 \ask{Pr14}{Pr14}{}
@@ -1849,10 +1859,10 @@ khởi tạo $p_u,q_i$; lặp qua rating huấn luyện đến khi dừng:\\
 trả tham số và các dự đoán cần tính
 \end{algpseudo}
 
-\unitheading{3}{Verification / Xác minh}
+\unitverification
 \key{Bẫy} Cả hai vế phải dùng nhân tử cũ. Khi tìm ẩn trong ma trận, lập phương trình từ các rating có thật. Khi đo $\mathrm{RMSE}$, lấy căn trung bình bình phương lỗi trên tập kiểm tra, không dùng tập đó để fit.
 
-\unitheading{4}{Advanced / Nâng cao}
+\unitadvanced
 \key{Chi phí và tối ưu} Một cập nhật SGD cho một rating tốn $O(d)$ với latent dimension $d$. Mục tiêu chứa tích $p_u^Tq_i$ nên không lồi đồng thời theo cả hai nhân tử; SGD tìm nghiệm phụ thuộc khởi tạo.
 
 \ask{Pr15}{Pr15}{}
@@ -1932,10 +1942,10 @@ với mỗi bước SGD trên $(u,i,t,r)$: tính $e\gets r-\hat r_{ui}(t)$\\
 trả các bias đã học
 \end{algpseudo}
 
-\unitheading{3}{Verification / Xác minh}
+\unitverification
 \key{Kiểm tra} Thế từng rating quan sát vào đúng các bias người dùng, item và thời gian đang hoạt động; không cộng bias của bin thời gian khác.
 
-\unitheading{4}{Advanced / Nâng cao}
+\unitadvanced
 \key{Nhận dạng tham số} Trong $\mu+b_u+b_i$, nhiều cách dịch hằng số giữa global mean và bias có thể cho cùng dự đoán. Regularization hoặc ràng buộc tổng bias giúp chọn nghiệm ổn định; bias theo thời gian cũng cần regularization.
 \topic{tfidf}{Content-based / TF-IDF}
 
@@ -1954,12 +1964,12 @@ $p\gets\sum_i w_i g_i$ trên tài liệu đã chấm\\
 trả ứng viên xếp theo $\cos(p,g_i)$ khi các chuẩn khác 0
 \end{algpseudo}
 
-\unitheading{3}{Verification / Xác minh}
+\unitverification
 \key{Bẫy} Từ có trong mọi tài liệu có IDF bằng 0. IDF giảm theo $n_j$ qua logarit, không tỷ lệ nghịch đúng dạng $1/n_j$.
 
 % DSA5101 Exam Practice Questions.pdf, PDF page(s) 14.
 
-\unitheading{4}{Advanced / Nâng cao}
+\unitadvanced
 \key{Tính trên dữ liệu thưa} Với biểu diễn sparse, dựng TF-IDF tốn thời gian theo tổng số lần xuất hiện term; cosine giữa hai tài liệu có thể tính bằng phép merge các chỉ số term chung. Công thức IDF/smoothing cụ thể phụ thuộc định nghĩa đề.
 
 \ask{Pr13}{Pr13}{}
@@ -2059,10 +2069,10 @@ $r\gets r^{(0)}$; $S\gets\sum_i r_i$\\
 trả $r$
 \end{algpseudo}
 
-\unitheading{3}{Verification / Xác minh}
+\unitverification
 \key{Đọc đúng yêu cầu} Nếu đề hỏi $M_0r$, nhân ma trận gốc trước khi sửa. $\beta=1$ không có teleport thường. Tổng điểm được bảo toàn không chứng minh đã hội tụ; kiểm tra sai khác giữa hai vòng hoặc điều kiện dừng.
 
-\unitheading{4}{Advanced / Nâng cao}
+\unitadvanced
 \key{Độ phức tạp} Dùng adjacency lists cần $O(N+|E|)$ thời gian và $O(N)$ bộ nhớ phụ mỗi vòng; $T$ vòng tốn $O(T(N+|E|))$. Nếu lưu ma trận Google dày, riêng ma trận cần $O(N^2)$ bộ nhớ.
 \topic{teleport}{PageRank: teleport distributions \& convergence}
 
@@ -2127,14 +2137,14 @@ Nhãn cạnh là phần điểm truyền đi. Cột $A$ có $1/2$ ở hàng $B,C
 
 % DSA5101 Exam Practice Questions.pdf, PDF page(s) 17.
 
-\unitheading{3}{Verification / Xác minh}
+\unitverification
 \key{Ba trạng thái cần phân biệt} Chuẩn hóa: $r\ge0$ và $\mathbf1^Tr=S$. Điểm dừng: $T(r^*)=r^*$. Thuật toán đạt điều kiện dừng khi $\|r^{(t+1)}-r^{(t)}\|_1<\epsilon$; sai khác hai vòng nhỏ không có nghĩa sai số đến nghiệm đúng bằng $\epsilon$.
 
 \key{Chu trình hai nút} Với $M=\left(\begin{smallmatrix}0&1\\1&0\end{smallmatrix}\right)$, $(1,0)^T\to(0,1)^T\to(1,0)^T\to\cdots$, dù $(1/2,1/2)^T$ là điểm dừng. Có điểm dừng không đảm bảo mọi khởi tạo đều hội tụ.
 
 \key{Ảnh hưởng của $\beta$} $\beta$ lớn làm kết quả phụ thuộc nhiều hơn vào cạnh và có thể cần nhiều vòng hơn; $\beta=0$ trả theo $s$; $\beta=1$ không teleport, nên spider trap hoặc chu kỳ có thể còn.
 
-\unitheading{4}{Advanced / Nâng cao}
+\unitadvanced
 \advancedheading{Hội tụ và sai số}
 
 \key{Hội tụ khi $0\le\beta<1$} Trên simplex có tổng $S$, với $r,q$ cùng tổng và $M$ column-stochastic:
@@ -2240,10 +2250,10 @@ sau khi ghi đủ các block, dùng vectơ mới làm đầu vào vòng sau
 \end{aligned}
 \]
 
-\unitheading{3}{Verification / Xác minh}
+\unitverification
 \key{Kiểm tra} Ba cách tính cho cùng một vectơ vì mỗi cạnh đóng góp đúng một lần từ $r^{old}$; tổng mới phải bằng $S$ (ví dụ trên bằng 1). Luôn chia theo \textbf{bậc ra gốc}: nguồn 0 có $d_0=2$ ở cả hai stripe. Nếu chia theo bậc cục bộ 1, tổng trong ví dụ sai thành $1.20$.
 
-\unitheading{4}{Advanced / Nâng cao}
+\unitadvanced
 \key{Chi phí I/O mỗi vòng} Basic đọc mỗi đầu vào một lần. Block đọc toàn $M$ và $r^{old}$ cho từng block. Stripe đọc mỗi stripe một lần, nhưng vẫn đọc $r^{old}$ cho từng stripe. Cả ba ghi đúng một vectơ mới.
 \begin{examtable}{@{}lll@{}}
 \toprule
@@ -2260,7 +2270,7 @@ Nếu cần lượt đọc riêng để lấy $\delta$, cộng chi phí lượt 
 
 \key{Thời gian CPU} Basic $O(N+|E|)$; Block $O(k(N+|E|))$; Stripe $O(kN+|E|+H)$ với $H$ là số record nguồn phải đọc trong các stripe.
 
-\unitheading{5}{Exam evidence / Bài tự luyện}
+\evidenceheading{Bài tự luyện}
 Với $|M|=1000$, $|\mathbf r|=100$, $k=5$, $\epsilon=0.1$, nếu chỉ một block đầu ra vừa RAM thì chọn cách nào? Thế số vào bảng: Basic $=1000+2(100)=1200$ (không đủ RAM); Block $=5(1000)+6(100)=5600$; Stripe $=1.1(1000)+6(100)=1700$. Chọn Stripe theo I/O mỗi vòng; tiết kiệm $3900$ đơn vị so với Block.
 
 \topic{trust}{TrustRank / spam mass}
@@ -2288,12 +2298,12 @@ với $i$ có $r_i>0$: $\mathrm{SM}_i\gets(r_i-t_i)/r_i$\\
 trả $r,t,\mathrm{SM}$; gắn cờ theo ngưỡng của đề nếu có
 \end{algpseudo}
 
-\unitheading{3}{Verification / Xác minh}
+\unitverification
 \key{Ngưỡng và miền giá trị} Gắn cờ khi $\mathrm{SM}_i>\tau$; nếu đề nói “ít nhất $\tau$”, dùng $\ge$. Chỉ tính khi $r_i>0$; nếu $t_i>r_i$, spam mass âm, còn $t_i=0<r_i$ cho spam mass bằng 1. Đại lượng này không bị chặn dưới bởi 0, nên không phải xác suất đã chuẩn hóa.
 
 \key{Chu trình} Trên chu trình $L$ nút, teleport chỉ về nút 0 và xác suất đi tiếp $\beta<1$, điểm dừng thỏa $r_j=\beta^jr_0$ và $r_0=(1-\beta)/(1-\beta^L)$. Với $\beta=1$, phép lặp chỉ xoay vectơ; phân phối dừng có thể tồn tại nhưng dãy chỉ hội tụ nếu khởi tạo tại điểm bất động.
 
-\unitheading{4}{Advanced / Nâng cao}
+\unitadvanced
 \key{Approximate isolation} Giả định trực giác là trang tốt hiếm khi trỏ tới trang xấu. Trust giảm theo số bước khỏi seed và bị chia theo out-degree; đây là giả định mô hình, không bảo đảm mọi trang spam có điểm thấp. Nếu có dead end, dùng đúng phân phối sửa nút cụt của đề.
 \topic{linkfarm}{Link farm amplification}
 
@@ -2340,10 +2350,10 @@ y\approx\frac{x}{1-\beta^2}+\frac{\beta}{1+\beta}\frac{M_f}{N}.
 \end{minipage}
 Phép tính chỉ đúng khi các tham số khớp topology giả định; nó không dựng link farm tổng quát.
 
-\unitheading{3}{Verification / Xác minh}
+\unitverification
 \key{Kiểm tra} Thế nghiệm vào cả hai phương trình gốc; chỉ dùng hệ số khuếch đại sau khi xác nhận topology, out-degree và teleport khớp giả định.
 
-\unitheading{4}{Advanced / Nâng cao}
+\unitadvanced
 \key{Hệ số khuếch đại} Phần điểm ngoài được lặp lại theo cấp số nhân:
 \[
 x+\beta^2x+\beta^4x+\cdots
@@ -2455,10 +2465,10 @@ lặp: $h\gets Ba$; nếu $\|h\|_2=0$ thì trả $(h,0)$\\
 trả $h,a$
 \end{algpseudo}
 
-\unitheading{3}{Verification / Xác minh}
+\unitverification
 \key{So với PageRank} PageRank dùng ma trận chuyển có hàng là đích, cột là nguồn, chia điểm theo bậc ra, thường cộng teleport và chuẩn hóa tổng điểm bằng 1. HITS dùng $B$ với hàng là nguồn, cột là đích; mỗi cạnh truyền toàn bộ điểm hub, tính riêng $h,a$ và chuẩn hóa $L_2$. HITS chuẩn không có damping factor hay teleportation.
 
-\unitheading{4}{Advanced / Nâng cao}
+\unitadvanced
 \key{Ý nghĩa trị riêng} Bỏ qua hệ số chuẩn hóa, hai lần cập nhật cho $a^{(t+1)}\propto B^TB a^{(t)}$ và $h^{(t+1)}\propto BB^T h^{(t)}$. Khi hướng trội là duy nhất:
 \[
 B^TB a^*=\lambda a^*,\qquad BB^T h^*=\lambda h^*.
@@ -2530,10 +2540,10 @@ nếu có tăng: thu gọn theo cụm, cộng trọng số cạnh cả giữa l�
 trả phân hoạch trên các nút gốc
 \end{algpseudo}
 
-\unitheading{3}{Verification / Xác minh}
+\unitverification
 \key{Kiểm tra} Chỉ chấp nhận nước chuyển có $\Delta Q>0$; sau khi co đồ thị, giữ self-loop để bảo toàn cạnh nội bộ.
 
-\unitheading{4}{Advanced / Nâng cao}
+\unitadvanced
 \key{Tìm cực đại cục bộ} Louvain chỉ khảo sát các nước chuyển cục bộ rồi co cụm; khi không còn nước tăng modularity, dừng tại cực đại cục bộ của các nước đã xét, không chứng minh cực đại toàn cục.
 
 \ask{Pr20}{Pr20}{}
@@ -2683,15 +2693,15 @@ $ABCD$ & $1$ & $9$ & $1$ & $1$ \\
 \end{samepage}
 Khi thêm $C$ vào $AB$, hai cạnh $AC,BC$ thành nội bộ và $CD$ thành cạnh băng qua: $\mathrm{cut}=2+3-2(2)=1$, $\mathrm{vol}=4+3=7$. Với thứ tự minh họa $A,B,C,D,E$, tiền tố tốt nhất là $ABC$ vì $\phi=1/\min(7,3)=1/3$. Cô lập $E$ cũng chỉ cắt một cạnh nhưng cho $\phi=1$.
 
-\unitheading{3}{Verification / Xác minh}
+\unitverification
 \key{Miền giá trị} Khi hai phía đều có thể tích dương, $\phi(S)=\phi(\bar S)$ và $0\le\phi\le1$. $\phi=0$ khi không có cạnh băng qua; $\phi=1$ khi phía có thể tích nhỏ hơn không có cạnh nội bộ. Bỏ qua mọi mẫu bằng $0$, kể cả một phía chỉ gồm nút cô lập. Chỉ dùng mẫu $\operatorname{vol}(S)$ khi $\operatorname{vol}(S)\le m$. Thể tích là tổng bậc; conductance thấp đo mức tách biệt, không bảo đảm mật độ nội bộ cao hay hai phía có cùng số nút.
 
-\unitheading{4}{Advanced / Nâng cao}
+\unitadvanced
 \key{Vì sao trừ $2c$} Thêm $u$ tạo $d_u-c$ cạnh băng qua mới và bỏ $c$ cạnh băng qua cũ, nên cut đổi $(d_u-c)-c$. Với mảng đánh dấu, tính trực tiếp hoặc sweep toàn bộ thứ tự nút đều tốn $O(|V|+m)$ thời gian và $O(|V|)$ bộ nhớ phụ. Nếu phải sắp toàn bộ nút theo điểm, tính thêm $O(|V|\log |V|)$ thời gian cho bước sắp xếp so sánh.
 
 \key{Phạm vi tối ưu} Cực tiểu toàn cục xét mọi tập có mẫu dương. Sweep chỉ xét tiền tố của thứ tự đã cho; cực tiểu cục bộ của đường sweep là ứng viên, còn nếu đề hỏi tiền tố tốt nhất thì lấy $\phi$ nhỏ nhất trong các tiền tố hợp lệ.
 
-\unitheading{5}{Exam evidence / Bài tự luyện}
+\evidenceheading{Bài tự luyện}
 Hai lát cắt có (cut, thể tích phía nhỏ) là $(2,4)$ và $(6,92)$. So $\phi$: $2/4=0.5$ và $6/92\approx0.065$. Theo conductance, chọn lát cắt thứ hai dù cắt nhiều cạnh hơn. Bài \qlink{Pr19}{Pr19(b)}, tr.~\pageref*{question:Pr19}, luyện chọn tiền tố.
 
 % Lec7_Graphs.pdf, pp. 19--25. The cut bound follows Andersen--Chung--Lang,
@@ -2748,10 +2758,10 @@ Theo thứ tự $A,C,B$, tập $\{A,C\}$ cắt 3 cạnh và có thể tích $2+3
 
 % DSA5101 Exam Practice Questions.pdf, PDF page(s) 20.
 
-\unitheading{3}{Verification / Xác minh}
+\unitverification
 \key{Dừng và bảo toàn} Dừng khi mọi nút bậc dương có $q_u/d_u<\varepsilon$; bằng ngưỡng vẫn push. Mỗi push chia hết $x$ thành $(1-\beta)x+\beta x/2+\beta x/2$, nên $\sum_u(r_u+q_u)=1$. Không chuẩn hóa lại $r$, kể cả khi dừng. Bỏ qua các nút cô lập khi chia theo bậc; nếu chính seed cô lập và bước đi luôn ở lại seed, trả $e_s$ trực tiếp.
 
-\unitheading{4}{Advanced / Nâng cao}
+\unitadvanced
 \key{Cận số lần push và công việc} Một push tại $u$ chốt ít nhất $(1-\beta)\varepsilon d_u$; do tổng điểm chốt không quá 1 và $d_u\ge1$:
 \[
 N_{\mathrm{push}}\le\sum_{\text{lần push tại }u}d_u
@@ -2816,10 +2826,10 @@ khởi tạo bảng $z$; lặp qua các cặp huấn luyện:\\
 trả bảng $z$
 \end{algpseudo}
 
-\unitheading{3}{Verification / Xác minh}
+\unitverification
 \key{Bẫy} Mẫu số softmax đi qua mọi nút. Bảng tra theo ID cần $O(d|V|)$ ô và không tự sinh vectơ cho nút chưa thấy.
 
-\unitheading{4}{Advanced / Nâng cao}
+\unitadvanced
 \key{Chi phí học} Bảng embedding có $|V|d$ tham số. Với $T$ cặp center-context và $k$ negative samples, skip-gram negative sampling tốn khoảng $O(T(k+1)d)$ thay vì tính softmax trên mọi nút.
 \topic{node2vec}{DeepWalk vs node2vec (walk generation)}
 
@@ -2846,10 +2856,10 @@ trả walk
 
 \key{Ví dụ} $p=2,q=1/2$, mỗi loại một ứng viên không trọng số: điểm thô $(1/2,1,2)$, xác suất $(1/7,2/7,4/7)$. Đo $d(t,x)$ từ nút trước, không đo từ $v$. $q$ nhỏ thiên về đi xa; $q$ lớn thiên về quanh vùng hiện tại.
 
-\unitheading{3}{Verification / Xác minh}
+\unitverification
 \key{Kiểm tra} Chuẩn hóa trọng số chuyển trên toàn bộ $N(v)$; khi $p=q=1$, xác suất trở về, đi gần và đi xa đều bằng nhau như random walk đều.
 
-\unitheading{4}{Advanced / Nâng cao}
+\unitadvanced
 \key{Ảnh hưởng tham số} Tham số $p$ điều khiển xác suất quay lại nút trước; $q$ điều khiển xu hướng đi ra xa hay ở gần vùng hiện tại. Chúng đổi phân phối walk, còn vector embedding được học ở bước riêng.
 \topic{negatives}{Negative sampling for graph embeddings}
 
@@ -2872,10 +2882,10 @@ với mỗi cặp dương $(u,v)$: lấy $n_1,\ldots,n_k$ từ phân phối nề
 trả embedding
 \end{algpseudo}
 
-\unitheading{3}{Verification / Xác minh}
+\unitverification
 \key{Kiểm tra} Hạng dương phải được kéo gần hơn, còn các hạng nhiễu bị đẩy xa; kiểm tra dấu của từng log-sigmoid trước khi cập nhật vector.
 
-\unitheading{4}{Advanced / Nâng cao}
+\unitadvanced
 \key{Chi phí mục tiêu} Với chiều embedding $d$ và $k$ negative samples, mỗi cặp center-context cần khoảng $O((k+1)d)$ phép tính thay vì $O(|V|d)$ của full softmax.
 \topic{fm}{Flajolet-Martin (FM): distinct count}
 
@@ -2923,7 +2933,7 @@ Thanh ghi lớn nhất là $R_{\max}=2$, nên $\hat D=2^{R_{\max}}=4$. Giá tr�
 
 % DSA5101 Exam Practice Questions.pdf, PDF page(s) 25.
 
-\unitheading{3}{Verification / Xác minh}
+\unitverification
 \key{FM và AMS: thứ tự tổng hợp khác nhau}
 \begin{examtable}{@{}l p{.28\columnwidth}p{.34\columnwidth}@{}}
 \toprule
@@ -2942,7 +2952,7 @@ Ví dụ phân ba nhóm $(2,4,1024)$, $(4,8,16)$, $(2,4,8)$. Median từng nhóm
 \end{aligned}
 \]
 
-\unitheading{4}{Advanced / Nâng cao}
+\unitadvanced
 \advancedheading{Trực giác xác suất}
 Với hash đều và độc lập, xác suất một ID có ít nhất $q$ bit 0 cuối là $2^{-q}$ (với $q\le W$ cho hash $W$ bit). Nếu có $D$ ID phân biệt:
 \[
@@ -3105,7 +3115,7 @@ Lấy trung bình hai ước lượng được 45. Moment thực là $4^2+2^2+2^
 
 % DSA5101 Exam Practice Questions.pdf, PDF page(s) 26.
 
-\unitheading{3}{Verification / Xác minh}
+\unitverification
 \key{Nếu dùng tần suất toàn luồng} Mỗi item $i$ có $m_i$ vị trí để được chọn, và ở cả $m_i$ vị trí đó ta sẽ dùng cùng giá trị $m_i$ thay cho $c_t$. Khi đó:
 \[
 \mathbb E[Y_{\mathrm{sai}}]
@@ -3130,7 +3140,7 @@ Mẫu tại vị trí đầu có thể cho $Y>F_2$. & Đúng \\
 \end{examtable}
 Kỳ vọng xét qua các lần lấy mẫu ngẫu nhiên; một lần chạy không bắt buộc cho kết quả đúng. Chẳng hạn vị trí đầu của luồng trên cho 30. Chọn đều vị trí lấy được item $i$ với xác suất $m_i/n$, nên nói chung không thể thay bằng chọn đều trên các item phân biệt.
 
-\unitheading{4}{Advanced / Nâng cao}
+\unitadvanced
 \key{Độ phức tạp} Một mẫu tốn $O(n)$ thời gian và $O(1)$ bộ nhớ. $k$ mẫu cần $O(nk)$ thời gian và $O(k)$ bộ nhớ; reservoir online cũng cần $O(k)$ thời gian cho mỗi arrival và $O(k)$ bộ nhớ.
 
 \advancedheading{Vì sao suffix count không chệch}
@@ -3229,10 +3239,10 @@ $t$ & Thao tác & Bucket $(\text{cỡ},\text{timestamp})$, cũ trước \\
 Hỏi 6 vị trí cuối ($10$ đến $15$): tính nửa bucket $(2,10)$, cộng trọn hai bucket mới hơn, được $2/2+2+1=4$.
 \end{example}
 
-\unitheading{3}{Verification / Xác minh}
+\unitverification
 \key{Kiểm tra} Sau cập nhật, bucket không chồng lấn, kích thước là lũy thừa của 2 và mỗi cỡ có tối đa hai bucket; query chỉ lấy nửa bucket cũ nhất bị cắt.
 
-\unitheading{4}{Advanced / Nâng cao}
+\unitadvanced
 \key{Độ phức tạp} Có $O(\log N)$ bucket, mỗi timestamp cần $O(\log N)$ bit nên tổng bộ nhớ là $O(\log^2N)$ bit. Cập nhật tốn $O(\log N)$ trong trường hợp xấu nhất do gộp dây chuyền; truy vấn tốn $O(\log N)$ để duyệt buckets.
 
 \advancedheading{Cỡ bucket cực đại và cận sai số}
@@ -3393,7 +3403,7 @@ Sau khi chèn $1,4,7,10$, truy vấn $17$ đọc $(1,8)$ và báo nhầm có m�
 
 % DSA5101 Exam Practice Questions.pdf, PDF page(s) 24.
 
-\unitheading{3}{Verification / Xác minh}
+\unitverification
 \key{Không có false negatives} Nếu $x$ đã được insert thì tất cả vị trí $h_i(x)$ được đặt thành 1. Các lần insert sau chỉ đổi bit từ 0 sang 1, nên query lại $x$ luôn trả Possibly present. Đây là bảo đảm tất định:
 \[
 x\in S\implies\operatorname{Query}(x)=\text{Possibly present}.
@@ -3412,7 +3422,7 @@ Trong thực tế $k$ là số nguyên, nên tính lại $f(k)$ ở các số ng
 
 \key{Bẫy} Possibly present không khẳng định key thuộc $S$; false positive có thể xảy ra, false negative thì không nếu chỉ insert và không xóa/reset bit. Một bit $B[h_i(x)]=0$ đủ kết luận key vắng. Tăng số hash không luôn giảm false positive rate, $k^*$ không nhất thiết nguyên, và Bloom filter dùng một bit array chung.
 
-\unitheading{4}{Advanced / Nâng cao}
+\unitadvanced
 \key{Độ phức tạp} Khởi tạo tốn $O(n)$ thời gian và $n$ bit bộ nhớ. Mỗi lần insert hoặc query tốn $O(k)$ thời gian và $O(1)$ bộ nhớ phụ; Bloom filter không lưu danh sách các key.
 
 \ask{Pr23}{Pr23}{}
@@ -3505,12 +3515,12 @@ Reservoir: với bản ghi thứ $n$, nếu $n\le k$ thì lưu vào ô $n$\\
 Key sampling: giữ bản ghi $x$ nếu $h(\operatorname{ID}(x))<p$ với $h$ trong $[0,1)$
 \end{algpseudo}
 
-\unitheading{3}{Verification / Xác minh}
+\unitverification
 \key{Bẫy} Xác suất sống của record cũ có điều kiện là $n/(n+1)$, còn xác suất được giữ sau bước kế tiếp là $k/(n+1)$. Reservoir đều trên occurrences, không phải distinct values; key sampling cho quyết định nhất quán theo key nhưng không bảo đảm giữ đúng chính xác tỷ lệ $p$ trong một mẫu.
 
 % DSA5101 Exam Practice Questions.pdf, PDF page(s) 22.
 
-\unitheading{4}{Advanced / Nâng cao}
+\unitadvanced
 \key{Phân bố mẫu} Reservoir chuẩn lấy đều trên các occurrence: mọi tập con $T$ gồm $k$ trong $n$ vị trí có xác suất $P(S_n=T)=1/\binom{n}{k}$. Nếu một giá trị $A$ xuất hiện $m$ lần, xác suất có ít nhất một occurrence của $A$ là:
 \[
 P(A\in S_n)=1-\frac{\binom{n-m}{k}}{\binom{n}{k}},
@@ -3593,7 +3603,7 @@ $t$ & Item & Điểm trước khi xóa & Bảng sau khi xóa\\
 $B$ còn ở bước 3 vì $0.5=\tau$, nhưng bị xóa ở bước 4 vì $0.25<\tau$. Nếu $B$ đến ở bước 5, bảng đặt lại $B$ ở điểm 1; điểm chính xác vẫn tính thêm $0.125$ từ lượt cũ.
 \end{example}
 
-\unitheading{3}{Verification / Xác minh}
+\unitverification
 \key{So với sliding window} Với tuổi $j=t-i$, cửa sổ cố định dài $N$ giữ trọng số 1 cho $0\le j<N$ và cho 0 từ $j=N$. Decay theo hàm mũ cho trọng số $\lambda^j$ ở mọi tuổi: mỗi bước nhân thêm $\lambda$, không có mốc tuổi mà trọng số đột ngột về 0.
 \begin{diagram}
 \begin{tikzpicture}[x=.92cm,y=1.23cm,>=Stealth]
@@ -3617,7 +3627,7 @@ $B$ còn ở bước 3 vì $0.5=\tau$, nhưng bị xóa ở bước 4 vì $0.25<
 
 % DSA5101 Exam Practice Questions.pdf, PDF page(s) 27.
 
-\unitheading{4}{Advanced / Nâng cao}
+\unitadvanced
 \key{Cận bộ nhớ} Với đúng một sự kiện mỗi bước, tổng điểm chính xác ở bước $t$ là
 \[
 \sum_x S_t[x]=\sum_{j=0}^{t-1}\lambda^j
@@ -3667,10 +3677,10 @@ với mỗi job $j$: $A\gets R\cap N(j)$\\
 trả $M,|M|$
 \end{algpseudo}
 
-\unitheading{3}{Verification / Xác minh}
+\unitverification
 \key{Kiểm tra} Mỗi job đến được ghép tối đa một lần với server còn rảnh; greedy tạo matching maximal, không đảm bảo matching maximum.
 
-\unitheading{4}{Advanced / Nâng cao}
+\unitadvanced
 \key{Bảo đảm $1/2$} Matching greedy là maximal: không còn cạnh nối hai đầu mút chưa ghép. Mỗi cạnh OPT chạm ít nhất một cạnh greedy, và mỗi cạnh greedy chỉ có thể chạm tối đa hai cạnh OPT. Vì vậy $\mathrm{OPT}\le2\,\mathrm{ALG}$. Tỷ lệ của một ví dụ không phải cận cho mọi đầu vào.
 
 % DSA5101 Exam Practice Questions.pdf, PDF page(s) 28.
@@ -3747,10 +3757,10 @@ Nhánh trên phục vụ đủ 4 query. Nếu $x$ đầu tiên sang $B$, sau $y$
 
 % DSA5101 Exam Practice Questions.pdf, PDF page(s) 29.
 
-\unitheading{3}{Verification / Xác minh}
+\unitverification
 \key{Mọi cách phá hòa} Để chứng minh Yes, theo dõi mọi nhánh phá hòa (gộp trạng thái giống nhau) và chứng minh mỗi nhánh đạt OPT. Để chứng minh tối ưu, ghép một cận trên với một lịch khả thi đạt cận đó.
 
-\unitheading{4}{Advanced / Nâng cao}
+\unitadvanced
 \key{Độ phức tạp} Với $Q$ query và $A$ advertisers, quét bidder list trực tiếp tốn $O(QA)$ thời gian; ngân sách và phân bổ đang xét cần $O(A)$ bộ nhớ ngoài dữ liệu input.
 
 \advancedheading{Competitive ratio}
@@ -3850,10 +3860,10 @@ khởi tạo $n_i,\hat\mu_i\gets0$; với $t=1,\ldots,T$:\\
 trả lịch sử lượt chọn, $n,\hat\mu$ và tổng reward
 \end{algpseudo}
 
-\unitheading{3}{Verification / Xác minh}
+\unitverification
 \key{Kiểm tra} Sau reward chỉ tăng số đếm và trung bình của arm vừa chọn; khởi tạo mọi arm trước khi dùng UCB để mẫu số $n_i$ khác 0.
 
-\unitheading{4}{Advanced / Nâng cao}
+\unitadvanced
 \key{Cỡ mẫu} Để xác suất sai quá $\delta$ không vượt $\alpha$, cần $n\ge\ln(2/\alpha)/(2\delta^2)$; làm tròn lên.
 
 % DSA5101 Exam Practice Questions.pdf, PDF page(s) 30.
@@ -3913,10 +3923,10 @@ lặp $\min(k,|V|)$ lần: chọn $x$ tốt nhất trong $V\setminus S$ theo $F(
 trả $S,F(S)$
 \end{algpseudo}
 
-\unitheading{3}{Verification / Xác minh}
+\unitverification
 \key{Kiểm tra} Mỗi vòng tính marginal gain trên tập $S$ hiện tại, thêm đúng một phần tử và không vượt giới hạn $k$; áp dụng nhất quán quy tắc phá hòa.
 
-\unitheading{4}{Advanced / Nâng cao}
+\unitadvanced
 \key{Bảo đảm} Với $F(\varnothing)=0$, $F$ đơn điệu và submodular, sau $k$ vòng đạt ít nhất $(1-1/e)\mathrm{OPT}$ dưới giới hạn số phần tử.
 \[
 \begin{aligned}
@@ -3963,10 +3973,10 @@ Sau $A$, chủ đề sức khỏe còn phần chưa phủ $1/2$, văn hóa còn 
 
 % DSA5101 Exam Practice Questions.pdf, PDF page(s) 31.
 
-\unitheading{3}{Verification / Xác minh}
+\unitverification
 \key{Kiểm tra} Các xác suất $p_{dc}$ phải thuộc $[0,1]$ và trọng số $w_c\ge0$; thêm tài liệu không làm giảm điểm phủ.
 
-\unitheading{4}{Advanced / Nâng cao}
+\unitadvanced
 \key{Vì sao submodular} Khi $S$ lớn lên, tích có thêm thừa số trong $[0,1]$ nên gain không tăng. Với phủ tất định, phần tăng là số chủ đề mới. Tổng có hệ số không âm của các hàm submodular vẫn submodular.
 
 \ask{Pr30}{Pr30(a)}{}
@@ -4011,10 +4021,10 @@ khi $|S|<k$ và heap không rỗng: lấy $x$ có khóa lớn nhất; tính lạ
 trả $S,F(S)$
 \end{algpseudo}
 
-\unitheading{3}{Verification / Xác minh}
+\unitverification
 \key{Bẫy} Giá trị đứng đầu heap là giá trị cũ, nên phải tính lại trước khi chọn. Cùng quy tắc phá hòa thì lazy greedy và greedy chọn cùng phần tử; bảo đảm xấp xỉ giữ nguyên.
 
-\unitheading{4}{Advanced / Nâng cao}
+\unitadvanced
 \key{Vì sao phép trì hoãn an toàn} Diminishing returns cho $S\subseteq T$ cho $\Delta(x\mid T)\le\Delta(x\mid S)$. Vì vậy marginal gain đã tính trước là cận trên hiện tại; chỉ chốt phần tử khi gain vừa tính lại vượt mọi cận còn lại.
 
 \ask{Pr30b}{Pr30(b)}{Dữ kiện chung: \hyperref[question:Pr30]{[Pr30]}}
@@ -4061,10 +4071,10 @@ trả trọng số cập nhật và lựa chọn nếu đã tính
 
 % DSA5101 Exam Practice Questions.pdf, PDF page(s) 31.
 
-\unitheading{3}{Verification / Xác minh}
+\unitverification
 \key{Kiểm tra} Với $\beta>1$, phản hồi dương nhân trọng số liên quan với $\beta$, phản hồi âm chia cho $\beta$; chuẩn hóa chung không đổi thứ tự điểm.
 
-\unitheading{4}{Advanced / Nâng cao}
+\unitadvanced
 \key{Dạng log} Từ $w_c\gets w_c\beta^r$, lấy log cho $\log w_c\gets\log w_c+r\log\beta$. Cập nhật nhân trở thành cộng trên thang log, giúp kiểm tra hướng tăng/giảm và tránh nhầm dấu phản hồi.
 
 \ask{Pr30c}{Pr30(c)}{Dữ kiện chung: \hyperref[question:Pr30]{[Pr30]}}
