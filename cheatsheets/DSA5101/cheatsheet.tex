@@ -2221,20 +2221,40 @@ Consider the web graph below. Let $a,b$ and $c$ denote the ranks of nodes $A,B$ 
 \topic{hits}{HITS (hubs and authorities)}
 \algsummary{Xếp hạng riêng nút dẫn đường (hub) và nút cung cấp nội dung (authority).}
 {Hub mạnh trỏ tới authority mạnh; authority mạnh nhận liên kết từ hub mạnh.}
-{Ma trận kề $B$, điểm authority đầu và quy tắc dừng.}
+{Ma trận kề $B$ có cạnh, điểm authority đầu không âm và khác không, ngưỡng dừng $\epsilon>0$.}
 {Hai vectơ điểm hub $h$ và authority $a$.}
-{Cộng theo cạnh ra để tính hub, rồi theo cạnh vào để tính authority; chuẩn hóa theo đề.}
+{Lặp $h=Ba$, $a'=B^Th$; chuẩn hóa $L_2$ và dừng khi hai vectơ authority liên tiếp đủ gần.}
 \begin{algpseudo}
 $a\gets a^{(0)}$\\
-lặp đến khi dừng: $h\gets Ba$; $a\gets B^Th$; chuẩn hóa hai vectơ nếu yêu cầu\\
+lặp: $h\gets Ba$; nếu $\|h\|_2=0$ thì trả $(h,0)$\\
+\quad $h\gets h/\|h\|_2$; $a_{\mathrm{new}}\gets B^Th$; nếu $\|a_{\mathrm{new}}\|_2=0$ thì trả $(h,a_{\mathrm{new}})$\\
+\quad $a_{\mathrm{new}}\gets a_{\mathrm{new}}/\|a_{\mathrm{new}}\|_2$; $e\gets\|a_{\mathrm{new}}-a\|_2$\\
+\quad $a\gets a_{\mathrm{new}}$; nếu $e<\epsilon$ thì dừng\\
 trả $h,a$
 \end{algpseudo}
 
 \key{Khi dùng} Muốn xếp hai vai trò: hub tốt trỏ tới nhiều authority tốt; authority tốt được hub tốt trỏ đến.
 
-\key{Cách tính} Đặt ma trận kề $B$ có hàng là hub, cột là authority. Tính $h=Ba$ trước, sau đó dùng $h$ mới để tính $a'=B^Th$. Chuẩn hóa theo đề. Qua nhiều vòng, hướng của authority và hub tương ứng với vectơ riêng trội của $B^TB$ và $BB^T$.
+\key{Quy ước ma trận} $B_{ij}=1$ khi có cạnh $i\to j$, ngược lại bằng 0; hàng là nguồn, cột là đích. Trên đồ thị tổng quát, mỗi nút có thể mang cả điểm hub lẫn authority; trên đồ thị hai phía, hàng ứng với hubs và cột ứng với authorities. Khi đó $h_i=\sum_{j:i\to j}a_j$ và $a'_j=\sum_{i:i\to j}h_i$, tức $h=Ba$ rồi $a'=B^Th$.
 
-\key{Bẫy} HITS cộng điểm qua mỗi cạnh mà không chia theo bậc ra như PageRank.
+\key{Chuẩn hóa và dừng} Chuẩn hóa từng vectơ bằng chuẩn Euclid:
+\[
+\widehat h=\frac{h}{\|h\|_2},\qquad
+\widehat a=\frac{a'}{\|a'\|_2},\qquad
+\|z\|_2=\sqrt{\sum_i z_i^2}.
+\]
+Khởi tạo thường dùng vectơ đều dương. Chia cho cùng một số dương không đổi thứ hạng. Dừng khi $\|a^{(t+1)}-a^{(t)}\|_2<\epsilon$ (hoặc theo tiêu chuẩn đề bài); nếu vectơ cập nhật có chuẩn 0 thì không thể chuẩn hóa. Không thay chuẩn $L_2$ bằng chuẩn hóa tổng bằng 1 của PageRank, trừ khi đề yêu cầu.
+
+\key{Ý nghĩa trị riêng} Bỏ qua hệ số chuẩn hóa, hai lần cập nhật cho $a^{(t+1)}\propto B^TB a^{(t)}$ và $h^{(t+1)}\propto BB^T h^{(t)}$. Khi hướng trội là duy nhất:
+\[
+B^TB a^*=\lambda a^*,\qquad BB^T h^*=\lambda h^*.
+\]
+Hai ma trận đối xứng, nửa xác định dương; trị riêng lớn nhất bằng $\sigma_{\max}(B)^2$. $B^TB$ nối các authority có chung hub, còn $BB^T$ nối các hub có chung authority. Nếu trị riêng lớn nhất lặp, hướng xếp hạng có thể không duy nhất và kết quả phụ thuộc khởi tạo.
+
+\key{Độ phức tạp} Với đồ thị hai phía có $m$ hubs, $n$ authorities và $|E|$ cạnh, một vòng nhân $B$ và $B^T$ tốn $O(m+n+|E|)$; $T$ vòng tốn $O(T(m+n+|E|))$. Bộ nhớ phụ $O(m+n)$, ngoài cấu trúc đồ thị $O(m+n+|E|)$.
+
+\key{So với PageRank} PageRank dùng ma trận chuyển có hàng là đích, cột là nguồn, chia điểm theo bậc ra, thường cộng teleport và chuẩn hóa tổng điểm bằng 1. HITS dùng $B$ với hàng là nguồn, cột là đích; mỗi cạnh truyền toàn bộ điểm hub, tính riêng $h,a$ và chuẩn hóa $L_2$. HITS chuẩn không có damping factor hay teleportation.
+\key{Giới hạn} HITS nhạy với cấu trúc đồ thị: link spam hoặc tập liên kết lệch chủ đề có thể làm sai lệch cả hub lẫn authority. Đồ thị không có cạnh hoặc cập nhật tạo vectơ 0 thì chuẩn hóa không xác định; thành phần rời rạc hay trị riêng trội lặp có thể khiến thứ hạng không duy nhất.
 
 % DSA5101 Exam Practice Questions.pdf, PDF page(s) 18.
 \ask{Pr17}{Pr17}{}
@@ -2257,6 +2277,7 @@ B=\begin{pmatrix}1&1&1\\1&1&0\\0&0&1\end{pmatrix}.
 \begin{guidesteps}
 \item Công thức authority kế tiếp là $a'=B^Th$, tức mỗi resource cộng điểm của các hub nối vào. Thay $h=(3,2,1)^T$: $a'=(3+2,3+2,3+1)^T=(5,5,4)^T$.
 \item Do đó xếp hạng $R_1=R_2>R_3$.
+\item Nếu đề yêu cầu chuẩn hóa $L_2$: $\|a'\|_2=\sqrt{5^2+5^2+4^2}=\sqrt{66}$, nên $\widehat a'=(5,5,4)^T/\sqrt{66}$. Chia cùng một hệ số dương giữ nguyên thứ hạng.
 \end{guidesteps}
 \guidepart{(c)}
 \begin{guidesteps}
