@@ -249,7 +249,7 @@
 \outline{7}{Communities \& graph embeddings}
 \topicoutline{louvain}{Louvain / modularity}
 \topicoutline{conductance}{Graph Cut \& Conductance}
-\topicoutline{ppr}{Local approximate PPR + conductance sweep}
+\topicoutline{ppr}{Approximate Personalized PageRank (PPR)}
 \topicoutline{embedding}{Node embeddings: shallow encoding \& random walks}
 \topicoutline{node2vec}{DeepWalk vs node2vec (walk generation)}
 \topicoutline{negatives}{Negative sampling for graph embeddings}
@@ -2687,24 +2687,39 @@ Khi thêm $C$ vào $AB$, hai cạnh $AC,BC$ thành nội bộ và $CD$ thành c�
 \unitheading{5}{Exam evidence / Bài tự luyện}
 Hai lát cắt có (cut, thể tích phía nhỏ) là $(2,4)$ và $(6,92)$. So $\phi$: $2/4=0.5$ và $6/92\approx0.065$. Theo conductance, chọn lát cắt thứ hai dù cắt nhiều cạnh hơn. Bài \qlink{Pr19}{Pr19(b)}, tr.~\pageref*{question:Pr19}, luyện chọn tiền tố.
 
-\topic{ppr}{Local approximate PPR + conductance sweep}
+% Lec7_Graphs.pdf, pp. 19--25. The cut bound follows Andersen--Chung--Lang,
+% Using PageRank to Locally Partition a Graph (2007), Theorem 5.
+\topic{ppr}{Approximate Personalized PageRank (PPR)}
 
-\algsummary{Tìm cộng đồng quanh một seed mà không quét toàn đồ thị để tính PPR.}{Đẩy điểm dư ở các nút đủ điều kiện, dùng điểm PPR sinh tiền tố để đánh giá.}{\textbf{Khi dùng:}\enspace Đề cho một seed $s$ và hỏi tìm cộng đồng cục bộ. Giữ hai vectơ: $r$ là điểm đã chốt, $q$ là điểm còn chờ lan truyền. Khởi tạo $q_s=1$, các phần tử còn lại bằng 0.}{Đồ thị vô hướng, seed $s$ có $d_s>0$, $\beta$, ngưỡng $\varepsilon$ và quy tắc sweep.}{Điểm PPR gần đúng $r$ và tiền tố được chọn theo conductance.}{Đẩy điểm dư theo lazy walk, rồi sắp nút theo yêu cầu của đề và sweep qua các tiền tố.}
+\algsummary{Ước lượng mức liên quan của các nút với seed $s$.}{Global PageRank thường teleport đều; PPR ở đây teleport về $s$. Thay vì quét cả đồ thị mỗi vòng như power iteration, chỉ push tại nút còn đủ điểm dư.}{\textbf{Khi dùng:}\enspace Đề hỏi một lần push, điều kiện dừng hoặc cộng đồng quanh seed.}{Đồ thị đơn vô hướng không trọng số, seed $s$ với $d_s>0$, xác suất đi tiếp $0\le\beta<1$, ngưỡng $\varepsilon>0$.}{Vectơ điểm đã chốt $r\approx p_s$; có thể sweep $r$ để chọn cộng đồng.}{Khởi tạo $r=0$, điểm dư $q=e_s$. Mỗi push chốt một phần tại nút đang xét và đẩy phần còn lại theo lazy walk.}
 
-\steps{
-\item Chọn nút $u$ có $q_u/d_u\ge\varepsilon$. Đặt $x=q_u$ trước khi cập nhật.
-\item Với xác suất restart $1-\beta$ theo Practice, cộng $(1-\beta)x$ vào $r_u$, giữ $\beta x/2$ ở $q_u$ và cộng $\beta x/(2d_u)$ vào $q_v$ cho mỗi hàng xóm $v$.
-\item Sắp nút theo quy tắc đề cho ($r_u$ hoặc $r_u/d_u$), rồi áp dụng \hyperref[topic:conductance]{Graph Cut \& Conductance}, tr.~\pageref*{topic:conductance}. Nếu đề cho sẵn thứ tự sweep, dùng thứ tự đó.
-}
+\key{Đích xấp xỉ} Trên thành phần chứa $s$, gọi $M$ là ma trận bước đi thường (cột là nguồn). Dùng $W=(I+M)/2$ cho lazy walk: một nửa ở lại, một nửa đi đều sang hàng xóm. PPR chính xác của cùng mô hình thỏa $p_s=(1-\beta)e_s+\beta Wp_s$.
 
+\key{Một lần push} Lấy $x=q_u$ trước khi sửa. Chốt $(1-\beta)x$ vào $r_u$; trong phần $\beta x$ đi tiếp, giữ một nửa tại $u$ và chia nửa kia cho $d_u$ hàng xóm.
 \begin{algpseudo}
 $r,q\gets0$; $q_s\gets1$\\
 khi tồn tại $u$ với $d_u>0$ và $q_u/d_u\ge\varepsilon$:\\
+\quad chọn bất kỳ $u$ đủ điều kiện hoặc theo quy tắc chọn của đề\\
 \quad $x\gets q_u$; $r_u\gets r_u+(1-\beta)x$; $q_u\gets\beta x/2$\\
 \quad với mỗi hàng xóm $v$: $q_v\gets q_v+\beta x/(2d_u)$\\
-xếp nút theo quy tắc đề cho; tính $\phi$ của từng tiền tố hợp lệ\\
-trả $r$ và tiền tố tốt nhất theo yêu cầu (thường là $\phi$ nhỏ nhất)
+trả $r$; giữ $q$ nếu đề hỏi điểm dư
 \end{algpseudo}
+
+\begin{samepage}
+\key{Ví dụ: hai lần push} Trên đường $A$--$B$--$C$, lấy $s=A$, $\beta=1/2$, $\varepsilon=1/5$; bậc là $(1,2,1)$ theo thứ tự $A,B,C$. Mỗi push ở $A$ cộng $x/2$ vào $r_A$, gán $q_A=x/4$ và cộng $x/4$ vào $q_B$.\par\nopagebreak
+\begin{examtable}{@{}lccc@{}}
+\toprule
+Bước & $r_A$ & $(q_A,q_B,q_C)$ & $\max_{u:d_u>0}q_u/d_u$ \\
+\midrule
+Khởi tạo & $0$ & $(1,0,0)$ & $1$ \\
+Push $A$ với $x=1$ & $1/2$ & $(1/4,1/4,0)$ & $1/4$ \\
+Push $A$ với $x=1/4$ & $5/8$ & $(1/16,5/16,0)$ & $5/32$ \\
+\bottomrule
+\end{examtable}
+\end{samepage}
+Sau bước đầu, $B$ có $q_B/d_B=1/8<1/5$, nên chỉ $A$ được push tiếp. Sau bước hai, $5/32<1/5$ nên dừng. $B$ có $q_B>0$ nhưng $r_B=0$ vì chưa từng được push. Tổng $r$ là $5/8$, tổng $q$ là $3/8$.
+
+\key{Nếu đề hỏi cộng đồng} Dùng thứ tự đề cho; nếu phải tự xếp, tuân theo quy tắc điểm của đề ($r_u$ hoặc $r_u/d_u$). Đánh giá các tiền tố theo \hyperref[topic:conductance]{Graph Cut \& Conductance}, tr.~\pageref*{topic:conductance}.
 
 \begin{example}{Pr19}{Pr19(b) · Conductance: tìm điểm cắt bằng sweep}
 \begin{diagram}
@@ -2727,10 +2742,21 @@ Theo thứ tự $A,C,B$, tập $\{A,C\}$ cắt 3 cạnh và có thể tích $2+3
 % DSA5101 Exam Practice Questions.pdf, PDF page(s) 20.
 
 \unitheading{3}{Verification / Xác minh}
-\key{Kiểm tra nhanh} $\sum_u(r_u+q_u)=1$; riêng $r$ có thể chưa đạt tổng 1. Kiểm tra điều kiện push bằng $q_u/d_u$, dùng $r$ để xếp nút khi sweep.
+\key{Dừng và bảo toàn} Dừng khi mọi nút bậc dương có $q_u/d_u<\varepsilon$; bằng ngưỡng vẫn push. Mỗi push chia hết $x$ thành $(1-\beta)x+\beta x/2+\beta x/2$, nên $\sum_u(r_u+q_u)=1$. Không chuẩn hóa lại $r$, kể cả khi dừng. Bỏ qua các nút cô lập khi chia theo bậc; nếu chính seed cô lập và bước đi luôn ở lại seed, trả $e_s$ trực tiếp.
 
 \unitheading{4}{Advanced / Nâng cao}
-\key{Vì sao push có thể chạy cục bộ} Với $\beta<1$, mỗi push hợp lệ tại $u$ chốt ít nhất $(1-\beta)\varepsilon d_u$ vào $r$. Tổng điểm chốt không vượt 1, nên tổng bậc qua mọi lần push không quá $1/((1-\beta)\varepsilon)$. Cận này đếm công việc thăm hàng xóm khi push; bước xếp hạng và sweep tính riêng.
+\key{Cận số lần push và công việc} Một push tại $u$ chốt ít nhất $(1-\beta)\varepsilon d_u$; do tổng điểm chốt không quá 1 và $d_u\ge1$:
+\[
+N_{\mathrm{push}}\le\sum_{\text{lần push tại }u}d_u
+\le\frac{1}{(1-\beta)\varepsilon}.
+\]
+Hai đại lượng khác nhau: một push tốn $O(d_u)$ để cập nhật hàng xóm. Lưu $r,q$ thưa và giữ hàng đợi các nút đủ điều kiện; chỉ kiểm tra lại $u$ và hàng xóm sau một push. Xếp hạng và sweep tính riêng.
+
+\key{Ảnh hưởng tham số} Với cùng $q$, giảm $\varepsilon$ cho phép push thêm nút; điểm có thể lan xa hơn. Nếu $1/d_s<\varepsilon$, không có push đầu tiên và $r=0$. Tăng $\beta$ làm mỗi push chốt ít điểm hơn và truyền tiếp nhiều hơn.
+
+\key{Sai số thực} Đặt $P(z)=(1-\beta)(I-\beta W)^{-1}z$. Mỗi push đổi $q$ thành $q-x(I-\beta W)e_u$ và tăng $r_u$ thêm $(1-\beta)x$, nên $p_s=r+P(q)$ luôn đúng. Vì $P$ bảo toàn tổng, $\|p_s-r\|_1=\sum_u q_u$. Khi dừng, $q\le\varepsilon d$ và $Wd=d$, suy ra $0\le p_s(u)-r_u\le\varepsilon d_u$. Trong ví dụ, giải phương trình PPR chính xác cho $p_s=(17/24,1/4,1/24)^T$; sai số tại $B$ là $1/4$, khác $q_B=5/16$.
+
+\key{Bảo đảm về lát cắt} \href{https://fanchung.ucsd.edu/wp/localpartfull.pdf}{Andersen, Chung và Lang (2007), Định lý 5}: với cụm $C$ có thể tích $k\le\operatorname{vol}(V)/2$, conductance $\phi>0$, đặt restart $\alpha=1-\beta=10\phi\le1$. Nếu seed $s\in C$ thỏa $p_s(\bar C)\le\phi/\alpha$, $\varepsilon\le1/(10k)$ và sweep theo $r_u/d_u$, thì tìm được một lát cắt có conductance $O(\sqrt{\phi\log k})$. Hệ số $\log k$ nhân dưới căn. Bảo đảm này phụ thuộc seed và tham số, không khẳng định tìm cực tiểu toàn cục.
 
 \ask{Pr19}{Pr19}{}
 Six sensors form a graph with edges $AB,AC,BC,CD,DE,DF,EF$. Their degrees in order $A,B,C,D,E,F$ are $(2,2,3,3,2,2)$. Set $\beta=1/2$, $\epsilon=1/20$, estimate $r=0$, and residual $q_A=1$, all other residuals zero. A vertex is eligible for a push when $q_u/d_u\ge\epsilon$. For a push at $u$, save $x=q_u$ and use
@@ -2758,7 +2784,7 @@ for $v$ adjacent to $u$.
 \item Với $S=ACB$, chỉ $CD$ băng qua và $\operatorname{vol}(S)=2+3+2=7$, nên $\phi(ACB)=1/\min(7,7)=1/7$. Singleton $A$ có $\phi=1$; nhỏ nhất là tiền tố $ACB$.
 \end{guidesteps}
 \guidepart{(c)}
-\begin{guidesteps}
+\begin{guidesteps}[beginpenalty=10000]
 \item Bất biến của thuật toán là $\sum_u(r_u+q_u)=1$, không phải riêng $\sum_u r_u=1$. Một push chỉ cập nhật nút $u$ và hàng xóm; do đó chi phí phụ thuộc vùng cục bộ được chạm tới, không cần quét mọi cạnh của đồ thị.
 \end{guidesteps}
 \topic{embedding}{Node embeddings: shallow encoding \& random walks}
