@@ -1,13 +1,13 @@
 % !TeX program = xelatex
 % Compile with latexmk -xelatex on this file.
 % Questions are typeset from the source PDFs, grouped by topic.
-\documentclass[10pt,a4paper]{article}
+\documentclass[10pt,a4paper,twocolumn]{article}
 \usepackage[a4paper,landscape,left=10mm,right=10mm,top=9mm,bottom=11mm,nohead,footskip=6mm]{geometry}
 \usepackage{amsmath}
 \usepackage{fontspec,unicode-math}
 \setmainfont{STIXTwoText}[Extension=.otf,UprightFont=*-Regular,BoldFont=*-Bold,ItalicFont=*-Italic,BoldItalicFont=*-BoldItalic]
 \setmathfont{STIXTwoMath-Regular.otf}
-\usepackage{enumitem,multicol,titlesec}
+\usepackage{enumitem,titlesec}
 \usepackage[protrusion=true,expansion=false]{microtype}
 \usepackage[unicode,hidelinks,bookmarksopen,bookmarksdepth=2]{hyperref}
 \usepackage{bookmark,booktabs,tikz}
@@ -16,14 +16,22 @@
 \hypersetup{pdftitle={DSA5101 - Exam Cheatsheet}}
 \pagestyle{plain}
 \setlength{\parindent}{0pt}
-\setlength{\parskip}{1.5pt}
+\setlength{\parskip}{1.25pt}
 \setlength{\columnsep}{9mm}
 \setlength{\emergencystretch}{2em}
 
 \setlist{nosep,leftmargin=1.25em}
 \newcommand{\tightlist}{}
 \setcounter{secnumdepth}{0}
+% Fill left then right, including on the last page. Put any unused height
+% below the text instead of stretching the space between blocks.
 \raggedbottom
+% Set these after \normalsize, which restores the class defaults.
+\AddToHook{cmd/normalsize/after}{%
+  \setlength{\abovedisplayskip}{3pt}%
+  \setlength{\belowdisplayskip}{3pt}%
+  \setlength{\abovedisplayshortskip}{3pt}%
+  \setlength{\belowdisplayshortskip}{3pt}}
 
 \newcommand{\headingfont}{\fontsize{12pt}{14pt}\selectfont\bfseries}
 \newcommand{\algorithmfont}{\fontsize{11pt}{13pt}\selectfont\bfseries}
@@ -37,7 +45,7 @@
 \titleformat{\subsection}[block]{\algorithmfont\raggedright}{}{0pt}{%
   \rule[-.2ex]{1pt}{1.35ex}\hspace{5pt}}
 \titlespacing*{\section}{0pt}{10pt}{4pt}
-\titlespacing*{\subsection}{0pt}{4pt}{1pt}
+\titlespacing*{\subsection}{0pt}{3pt}{1pt}
 
 
 \makeatletter
@@ -84,16 +92,14 @@
 \newcommand{\qlink}[2]{\hyperref[question:#1]{#2}}
 \newenvironment{example}[2]{%
   \par\addvspace{6pt}\noindent
-  \setlength{\parskip}{1.5pt}%
-  \setlength{\abovedisplayskip}{4pt}\setlength{\belowdisplayskip}{4pt}%
   \raggedright
   \blocklabel{Ví dụ: \qlink{#1}{#2}}%
 }{\par\addvspace{4pt}}
 \newenvironment{examtable}[1]{%
-  \par\addvspace{3pt}\noindent\hbox to \linewidth\bgroup\hfil
+  \par\addvspace{2pt}\noindent\hbox to \linewidth\bgroup\hfil
   \setlength{\tabcolsep}{4pt}%
   \renewcommand{\arraystretch}{1.12}\begin{tabular}{#1}%
-}{\end{tabular}\hfil\egroup\par\addvspace{3pt}}
+}{\end{tabular}\hfil\egroup\par\addvspace{2pt}}
 \newenvironment{diagram}{%
   \par\addvspace{3pt}\noindent\hbox to \linewidth\bgroup\hfil
 }{\hfil\egroup\par\addvspace{3pt}}
@@ -197,12 +203,12 @@
   \begin{list}{}{\setlength{\leftmargin}{1em}\setlength{\topsep}{0pt}%
     \setlength{\partopsep}{0pt}\setlength{\parsep}{0pt}}%
   \item\relax
-}{\end{list}\par\addvspace{5pt}}
+}{\end{list}\par\addvspace{3pt}}
 
-\AtBeginDocument{\raggedright\allowdisplaybreaks[1]}
+% A display that does not fit may move by itself; keep its lead-in in the column.
+\AtBeginDocument{\raggedright\predisplaypenalty=250\relax\allowdisplaybreaks[1]}
 
 \begin{document}
-\begin{multicols}{2}
 \pdfbookmark[0]{Mục lục chủ đề}{index-bookmark}
 {\headingfont DSA5101 Cheatsheet}\par
 \blocklabel{Mục lục chủ đề}
@@ -366,9 +372,10 @@ Let $L_k$ be the frequent $k$-itemsets and $C_k$ the candidates after subset pru
 % 2526Sem1-DSA5101.pdf, PDF page(s) 2.
 \ask{P25-Q1}{P25-Q1(a,b)}{}
 Suppose that we have items $A,B,C,D,E$ and the following 6 baskets:
-\begin{examtable}{@{}ll@{}}
-Basket 1 & $A,B,C$\\ Basket 2 & $A,B$\\ Basket 3 & $A,B,D$\\
-Basket 4 & $B,C,D,E$\\ Basket 5 & $A,B,D,E$\\ Basket 6 & $A,B,C,D$
+\begin{examtable}{@{}ll@{\qquad}ll@{}}
+Basket 1 & $A,B,C$ & Basket 2 & $A,B$\\
+Basket 3 & $A,B,D$ & Basket 4 & $B,C,D,E$\\
+Basket 5 & $A,B,D,E$ & Basket 6 & $A,B,C,D$
 \end{examtable}
 \qpart{a} Let the support threshold be $s=3$. Run the Apriori algorithm to find all frequent itemsets. For each iteration, state $C_k$ (candidate frequent itemsets of size $k$) and $L_k$ (truly frequent itemsets of size $k$).
 \qpart{b} In the setting where the number of baskets is too big to fit all baskets in memory, recall that baskets are kept in disk, and only read into memory when required. This results in communication cost which is measured in terms of the number of passes (one pass = transferring all baskets from disk to memory). With the assumptions above, what is the communication cost of the Apriori algorithm for finding all frequent itemsets up to size $k$? Explain your answer by indicating the step in Apriori algorithm that requires baskets to reside in memory.
@@ -3071,17 +3078,15 @@ khi kết thúc, với mỗi slot tính $Y_j=n(2c_j-1)$
 \end{algpseudo}
 Ở vị trí $p>k$, mỗi vị trí trước đó có xác suất $k/p$ nằm trong reservoir. Tăng counter trước khi thay slot để các mẫu cũ đếm arrival mới; slot mới bắt đầu với $c=1$. Mỗi slot giữ vị trí bắt đầu và suffix count riêng.
 
-\key{Ví dụ: luồng $A,B,A,C,A,B$} Nếu chọn $t=3$, lưu item $A$ và đặt bộ đếm 1. Bảng cũng cho $c_t$ và $Y_t$ nếu bắt đầu ở bất kỳ vị trí $t$ nào.
-\begin{examtable}{@{}c c c c l@{}}
+\key{Ví dụ: luồng $A,B,A,C,A,B$} Nếu chọn $t=3$, lưu $A$ và đặt bộ đếm 1. Giữ nguyên ở vị trí 4 và 6; tăng lên 2 khi gặp $A$ ở vị trí 5. Hai dòng $c_t$ và $Y_t$ cho kết quả nếu chọn từng vị trí làm điểm bắt đầu.
+\begin{examtable}{@{}lrrrrrr@{}}
 \toprule
-$t$ & $a_t$ & $c_t$ & $Y_t=6(2c_t-1)$ & Cập nhật khi chọn $t=3$ \\
+$t$ & 1 & 2 & 3 & 4 & 5 & 6 \\
 \midrule
-1 & $A$ & 3 & 30 & Chưa bắt đầu \\
-2 & $B$ & 2 & 18 & Chưa bắt đầu \\
-3 & $A$ & 2 & 18 & Khởi tạo: $c=1$ \\
-4 & $C$ & 1 & 6  & Giữ $c=1$ \\
-5 & $A$ & 1 & 6  & Tăng lên $c=2$ \\
-6 & $B$ & 1 & 6  & Giữ $c=2$ \\
+$a_t$ & $A$ & $B$ & $A$ & $C$ & $A$ & $B$ \\
+Bộ đếm khi chọn vị trí 3 & -- & -- & 1 & 1 & 2 & 2 \\
+$c_t$ & 3 & 2 & 2 & 1 & 1 & 1 \\
+$Y_t=6(2c_t-1)$ & 30 & 18 & 18 & 6 & 6 & 6 \\
 \bottomrule
 \end{examtable}
 Mẫu ở $t=3$ cho $Y=6(2\cdot2-1)=18$, còn giá trị chính xác là $3^2+2^2+1^2=14$. Trung bình qua cả sáu điểm bắt đầu là $(30+18+18+6+6+6)/6=14$.
@@ -3130,14 +3135,12 @@ Kỳ vọng xét qua các lần lấy mẫu ngẫu nhiên; một lần chạy kh
 
 \advancedheading{Vì sao suffix count không chệch}
 Nếu item $i$ xuất hiện $m_i$ lần, mỗi lần xuất hiện cho một giá trị $c_t$ khác nhau: $m_i,m_i-1,\ldots,1$. Vì $2c-1=c^2-(c-1)^2$, tổng $1+3+\cdots+(2m_i-1)$ bằng $m_i^2$. Gom các vị trí theo item:
-\[
-\begin{aligned}
+\begin{align*}
 \mathbb E[Y]
   &=\frac1n\sum_{t=1}^n n(2c_t-1)\\
   &=\sum_i\sum_{c=1}^{m_i}(2c-1)
    =\sum_i m_i^2=F_2.
-\end{aligned}
-\]
+\end{align*}
 
 \ask{Pr25}{Pr25}{}
 A camera's first nine detections are $R,F,R,D,F,R,O,D,R$. Their frequencies are $(m_R,m_F,m_D,m_O)=(4,2,2,1)$, so the exact second moment is $F_2=\sum_x m_x^2=25$.
@@ -4076,5 +4079,4 @@ trả trọng số cập nhật và lựa chọn nếu đã tính
 \item Chuẩn hóa mọi trọng số bằng cùng tổng dương chỉ nhân các scores cùng hệ số, không đổi thứ tự argmax; không cần chuẩn hóa để chọn.
 \end{guidesteps}
 
-\end{multicols}
 \end{document}
