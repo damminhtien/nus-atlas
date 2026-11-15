@@ -48,6 +48,8 @@
   \section{L#1. #2}\label{lecture:#1}}
 \newcommand{\topic}[2]{\par\subsection{#2}\label{topic:#1}}
 \newcommand{\key}[1]{#1:\enspace}
+\newcommand{\advancedheading}[1]{%
+  \par\addvspace{5pt}\noindent\textbf{NÂNG CAO — #1}\par\nobreak\addvspace{1pt}}
 \newcommand{\solutionprompt}[1]{\par\addvspace{1pt}\noindent\key{Đề tóm tắt}#1\par\addvspace{2pt}}
 \newcommand{\examnote}[1]{\par\addvspace{2pt}\noindent\key{Ghi chú}#1\par\addvspace{3pt}}
 \newcommand{\literal}[1]{“#1”}
@@ -170,7 +172,7 @@
   \par\noindent Vấn đề giải quyết: #1%
   \begingroup\setlength{\parskip}{1pt}%
   \algfield{Trực giác}{#2}%
-  \algfield{INPUT}{#3}%
+  \algfield{INPUT / GIẢ THIẾT}{#3}%
   \algfield{OUTPUT}{#4}%
   \algfield{Phương pháp làm}{#5}\par\endgroup}
 \newenvironment{algpseudo}{%
@@ -244,12 +246,9 @@ trả hợp các $L_k$
 
 \key{Vì sao cắt được} Nếu $X\subseteq Y$, mọi giỏ chứa $Y$ cũng chứa $X$, nên $\operatorname{supp}(Y)\le\operatorname{supp}(X)$. Một tập con không frequent thì mọi tập cha của nó cũng không frequent.
 
-\steps{
-\item Đếm từng item một lần qua dữ liệu để có $L_1$.
-\item Ở mức $k$, ghép từ $L_{k-1}$. Cắt mọi ứng viên có bất kỳ tập con kích thước $k-1$ vắng trong $L_{k-1}$. Tập còn lại là $C_k$.
-\item Quét giỏ để đếm support cho $C_k$; giữ các ứng viên có support $\ge s$ trong $L_k$. Nếu $C_k$ rỗng thì dừng, không cần quét.
-}
-\key{Chi phí} Một lần quét cho mỗi mức thực sự đếm. Lặp item trong cùng giỏ không tăng support.
+\key{Số lượt quét} Quét một lần để đếm $L_1$, rồi một lần cho mỗi tầng $k\ge2$ có $C_k\ne\varnothing$. Sinh ứng viên và tỉa tập con không cần đọc lại giỏ; nếu $C_k=\varnothing$ thì dừng trước khi quét tầng đó.
+\key{Độ phức tạp} Với $n=|D|$ giỏ và $|C_k|$ ứng viên, cách trực tiếp kiểm tra từng ứng viên trong từng giỏ tốn $O(n\sum_{k:C_k\ne\varnothing}k|C_k|)$ thời gian. Bộ nhớ đếm là $O(|C_k|+|L_{k-1}|)$ ở tầng hiện tại, ngoài dữ liệu đầu vào.
+\key{Bẫy} Giữ ứng viên khi support $\ge s$, không phải $>s$. Mỗi giỏ đóng góp nhiều nhất 1 cho mỗi tập item, kể cả khi bản ghi giỏ lặp item.
 \key{Ràng buộc phụ} Chỉ đẩy một điều kiện xuống bước cắt nếu mọi siêu tập của tập bị loại cũng không thể thỏa điều kiện. Với khoảng giá $R(X)=\max_X p-\min_X p$, ta có $R(Y)\ge R(X)$ khi $X\subseteq Y$; do đó điều kiện $R(X)<T$ cho phép cắt khi $R(X)\ge T$. Điều kiện tổng giá $\sum_Xp\ge T$ không có tính chất này vì thêm item có thể làm tổng tăng.
 
 \begin{example}{Pr1}{Pr1(a) · Apriori: cắt ứng viên $ABCD$}
@@ -1577,23 +1576,43 @@ W=\begin{pmatrix}3&3\\0&0\end{pmatrix}.
 {Rating ước lượng $\hat r_{ui}$.}
 {Tính similarity, lấy hàng xóm có rating cần dùng rồi tính trung bình có trọng số.}
 \begin{algpseudo}
-nếu user-based: lấy các người $v$ đã chấm $i$; tính $s(u,v)$\\
-nếu item-based: lấy các item $j$ mà $u$ đã chấm; tính $s(i,j)$\\
-chọn hàng xóm theo đề; lấy trung bình trọng số của $r_{vi}$ hoặc $r_{uj}$\\
-nếu mẫu số bằng 0: dùng quy tắc dự phòng của đề; trả rating
+\textsc{Similarity}: chọn cặp user/item, tập giao và cách center theo đề; tính $s$\\
+\textsc{Neighbor set}: giữ các hàng xóm đủ điều kiện có rating cần cho ô đích\\
+\textsc{Prediction}: chọn công thức raw hoặc baseline/residual đúng wording\\
+nếu mẫu số bằng 0: dùng quy tắc dự phòng của đề; trả $\hat r_{ui}$
 \end{algpseudo}
 
-\key{Khi dùng} Ước lượng rating còn thiếu từ người dùng tương tự (user-based) hoặc item tương tự (item-based).
-\steps{
-\item Với centered cosine, trừ trung bình trên các rating đã biết của từng người dùng hoặc từng item. Điền 0 vào tọa độ thiếu sau bước trừ trung bình để tính cosine. Nếu đề yêu cầu Pearson trên phần cùng chấm, dùng đúng tập giao và quy ước của đề.
-\item Chọn hàng xóm theo đề. Với user-based, chỉ dùng người đã chấm item $i$; với item-based, chỉ dùng các item mà người $u$ đã chấm.
-\item Lấy trung bình có trọng số. Với user-based và rating gốc:
+\key{Hai giai đoạn} Tính similarity theo đúng loại vectơ và tập giao mà đề nêu; sau đó, độc lập, chọn hàng xóm đủ điều kiện và áp dụng công thức prediction đã cho. Với user-based, hàng xóm phải chấm item đích; với item-based, người dùng đích phải chấm item hàng xóm.
+\key{Similarity: chọn theo wording của đề}
+\begin{examtable}{@{}p{.21\columnwidth}p{.62\columnwidth}@{}}
+\toprule
+Wording & Cách tính similarity \\
+\midrule
+Centered cosine & Trừ mean của từng user hoặc item trên các rating đã biết; xử lý ô thiếu theo đề (thường điền 0 sau khi center). \\
+Pearson trên phần giao $I$ & Chỉ dùng các item cả hai cùng chấm; tính mean riêng trên $I$, center rồi tính Pearson. Không xác định nếu một vectơ centered có phương sai 0. \\
+Cosine không nói centered & Dùng vectơ rating và tập tọa độ mà đề quy định; không tự ý trừ mean. \\
+\bottomrule
+\end{examtable}
+\key{Prediction: chọn theo wording của đề}
+\begin{examtable}{@{}p{.35\columnwidth}p{.48\columnwidth}@{}}
+\toprule
+Wording & Dùng loại công thức \\
+\midrule
+Weighted ratings trực tiếp & Raw weighted prediction \\
+Baseline, deviations hoặc residuals & Baseline / residual prediction \\
+\bottomrule
+\end{examtable}
+Đặt $w_v=s(u,v)$. Với raw weighted prediction:
 \[
-\hat r_{ui}=\frac{\sum_{v\in N_i(u)}s(u,v) r_{vi}}{\sum_{v\in N_i(u)}s(u,v)}.
+\hat r_{ui}=\frac{\sum_{v\in N_i(u)}w_vr_{vi}}{\sum_{v\in N_i(u)}w_v}.
 \]
-}
-\key{Bẫy} Trừ trung bình để tính similarity không tự thay đổi công thức dự đoán. Nếu đề cho baseline, áp dụng công thức phần dư đề yêu cầu. Kiểm tra mẫu số và vectơ chuẩn bằng 0.
-\key{Pearson trên phần giao} Với Pearson trên phần cùng chấm $I$, tính trung bình của mỗi người dùng chỉ trên $I$ rồi lấy cosine giữa hai vectơ đã centered. Nếu $|I|=1$, ít nhất một vectơ centered có chuẩn 0 nên Pearson không xác định; không thay bằng 0 nếu đề không quy định.
+Nếu đề cho baseline, dùng residual:
+\[
+\hat r_{ui}=b_{ui}+\frac{\sum_{v\in N_i(u)}w_v(r_{vi}-b_{vi})}{\sum_{v\in N_i(u)}w_v}.
+\]
+Với item-based, thay hàng xóm $v$ bằng item $j$ mà user $u$ đã chấm. Centering trong bước similarity không tự động biến prediction thành công thức residual.
+\key{Độ phức tạp} Tính similarity cho một cặp tốn $O(|I|)$ trên phần tử được so sánh; prediction cho một ô tốn $O(|N|)$ với $|N|$ hàng xóm đã chọn, ngoài chi phí tìm ứng viên.
+\key{Bẫy} Similarity âm vẫn là giá trị hợp lệ. Chỉ loại hàng xóm âm nếu đề yêu cầu chọn positive-similarity neighbors hoặc quy tắc đã nêu như vậy; không tự lấy trị tuyệt đối hay cắt về 0. Kiểm tra mẫu số và chuẩn bằng 0; khi mẫu số prediction bằng 0, dùng fallback của đề.
 
 \begin{example}{A2-Q1}{A2-Q1(a) · Collaborative filtering: Alice chấm phim Matrix}
 \begin{examtable}{@{}l c c c@{}}
@@ -1888,7 +1907,7 @@ A reader rates article 1 as 1 and article 2 as 5.
 \algsummary{Xếp hạng nút theo mức độ được một người đi ngẫu nhiên ghé thăm.}
 {Mỗi nút chia điểm qua cạnh đi ra; teleport tạo đường thoát khỏi bẫy.}
 {Đồ thị có hướng, $\beta$, phân phối teleport $s$, quy tắc sửa nút cụt và $r^{(0)}$.}
-{Vectơ điểm sau số vòng yêu cầu hoặc khi hội tụ.}
+{Vectơ điểm sau số vòng yêu cầu hoặc khi đạt điều kiện dừng.}
 {Dựng phép chuyển theo cột, xử lý nút cụt theo đề, rồi lặp truyền điểm và teleport.}
 \key{Ma trận chuyển} Cột là nút nguồn, hàng là nút đích. Với $d_i=\operatorname{outdeg}(i)>0$:
 \[
@@ -1940,7 +1959,7 @@ trả $r$
 \item Chọn đúng mô hình của đề: ma trận đã sửa hoặc cập nhật thưa với đúng $s,w$; không cộng phần hụt lần hai.
 \item Tính đồng thời từ vector cũ. Giữ tổng $S$; nếu đề yêu cầu số vòng cố định thì chạy đúng số vòng đó.
 }
-\key{Chi phí} Dùng adjacency lists cần $O(N+|E|)$ thời gian và $O(N)$ bộ nhớ phụ mỗi vòng; $T$ vòng tốn $O(T(N+|E|))$. Nếu lưu ma trận Google dày, riêng ma trận cần $O(N^2)$ bộ nhớ.
+\key{Độ phức tạp} Dùng adjacency lists cần $O(N+|E|)$ thời gian và $O(N)$ bộ nhớ phụ mỗi vòng; $T$ vòng tốn $O(T(N+|E|))$. Nếu lưu ma trận Google dày, riêng ma trận cần $O(N^2)$ bộ nhớ.
 \key{Đọc đúng yêu cầu} Nếu đề hỏi $M_0r$, nhân ma trận gốc trước khi sửa. $\beta=1$ không có teleport thường. Tổng điểm được bảo toàn không chứng minh đã hội tụ; kiểm tra sai khác giữa hai vòng hoặc điều kiện dừng.
 
 \topic{teleport}{PageRank: teleport distributions \& convergence}
@@ -1949,6 +1968,11 @@ trả $r$
 {$G$, $\beta$, phân phối teleport, $r^{(0)}$ và điều kiện dừng.}
 {Phân phối điểm theo mô hình PageRank đã chọn.}
 {Chuẩn hóa phân phối teleport, cập nhật theo cạnh và cộng khối lượng teleport.}
+\key{Cập nhật tổng quát} Với $M$ column-stochastic, phân phối teleport $s$ và tổng điểm $S$:
+\[
+\boxed{r^{(t+1)}=T(r^{(t)})=\beta Mr^{(t)}+(1-\beta)S s},
+\qquad s_i\ge0,\quad\sum_i s_i=1.
+\]
 \begin{algpseudo}
 $T\gets$ mọi nút, tập chủ đề khác rỗng hoặc tập seed khác rỗng\\
 $s_i\gets1/|T|$ nếu $i\in T$, ngược lại $0$\\
@@ -1958,15 +1982,31 @@ $e\gets\|r_{\mathrm{next}}-r\|_1$; $r\gets r_{\mathrm{next}}$\\
 nếu $e<\epsilon$ thì dừng; nếu không, tiếp tục\\
 trả $r$
 \end{algpseudo}
-\key{Personalized PageRank} Với ma trận $M$ đã column-stochastic:
-\[
-\boxed{r'=\beta Mr+(1-\beta)S s},\qquad
-s_i\ge0,\quad\sum_i s_i=1.
-\]
-PageRank chuẩn dùng teleport đều; topic-sensitive dùng tập chủ đề; Random Walk with Restarts dồn $s$ vào một seed. Nút có $s_i=0$ vẫn có thể nhận điểm qua cạnh đi vào.
+\begin{examtable}{@{}p{.16\columnwidth}p{.21\columnwidth}p{.51\columnwidth}@{}}
+\toprule
+\multicolumn{3}{l}{\textbf{Các trường hợp của cùng công thức}}\\
+\midrule
+Mô hình & $s$ & Thao tác đặc trưng \\
+\midrule
+Global & Uniform & $s_i=1/N$ trên mọi nút. \\
+Topic & Uniform trên $C$ & $s_i=0$ ngoài $C$; cạnh vẫn truyền điểm ra ngoài. \\
+RWR & $e_v$ & Teleport về seed $v$; cạnh vẫn truyền điểm ra ngoài. \\
+Dead end & Phân phối sửa $w$ & Thay cột cụt bằng $w$; giữ riêng $\beta\delta w$ và $(1-\beta)Ss$ nếu $w\ne s$. \\
+\bottomrule
+\end{examtable}
+Nếu $w=s$, có thể gộp hai phần khối lượng bị hụt; nếu khác nhau, không gộp.
 \par
-\key{Ba trạng thái cần phân biệt} Chuẩn hóa: $r\ge0$ và tổng điểm bằng $S$; stationary: $Gr=r$; đã hội tụ: $\|r^{(t+1)}-r^{(t)}\|_1<\epsilon$. Chuẩn hóa không đồng nghĩa stationary hoặc hội tụ.
-\key{Khi hội tụ được bảo đảm} Nếu $0<\beta<1$ và $s_i>0$ cho mọi nút, ma trận Google dương, có phân phối dừng duy nhất và phép lặp hội tụ từ mọi vector khởi tạo chuẩn hóa. Teleport chỉ vào một tập con thì không tự động có bảo đảm này.
+\key{Tính tay theo thứ tự} Xác định $M$ sau khi sửa dead end và chuẩn hóa $s$; tính $Mr$ từ vector cũ; nhân với $\beta$; cộng phần dead-end $\beta\delta w$ và teleport $(1-\beta)Ss$ đúng theo mô hình; cuối cùng kiểm tra tổng điểm và điều kiện dừng.
+\key{Ba trạng thái cần phân biệt} Chuẩn hóa: $r\ge0$ và $\mathbf1^Tr=S$. Điểm dừng: $T(r^*)=r^*$. Thuật toán đạt điều kiện dừng khi $\|r^{(t+1)}-r^{(t)}\|_1<\epsilon$; sai khác hai vòng nhỏ không có nghĩa sai số đến nghiệm đúng bằng $\epsilon$.
+\advancedheading{Hội tụ và sai số}
+\key{Hội tụ khi $0\le\beta<1$} Trên simplex có tổng $S$, với $r,q$ cùng tổng và $M$ column-stochastic:
+\[
+\|T(r)-T(q)\|_1
+=\beta\|M(r-q)\|_1
+\le\beta\|r-q\|_1.
+\]
+Vì $\beta<1$, đây là contraction: có điểm bất động duy nhất và phép lặp hội tụ từ mọi khởi tạo hợp lệ, kể cả khi $s$ chỉ hỗ trợ một tập con. Nếu dừng khi $\|r^{(t+1)}-r^{(t)}\|_1<\epsilon$, sai số đến điểm bất động thỏa $\|r^{(t+1)}-r^*\|_1\le\frac{\beta}{1-\beta}\epsilon$.
+\key{Điều kiện đủ thường dùng} Ma trận Google dương (chẳng hạn $\beta<1$ và $s_i>0$ trên mọi nút) cũng bảo đảm hội tụ, nhưng mạnh hơn mức cần thiết khi đã có contraction. Với $\beta=1$, phép lặp trên ma trận stochastic có thể tuần hoàn và không hội tụ.
 \key{Chu trình hai nút} Với $M=\left(\begin{smallmatrix}0&1\\1&0\end{smallmatrix}\right)$, $(1,0)^T\to(0,1)^T\to(1,0)^T\to\cdots$, dù $(1/2,1/2)^T$ là điểm dừng. Có điểm dừng không đảm bảo mọi khởi tạo đều hội tụ.
 \key{Ảnh hưởng của $\beta$} $\beta$ lớn làm kết quả phụ thuộc nhiều hơn vào cạnh và có thể cần nhiều vòng hơn; $\beta=0$ trả theo $s$; $\beta=1$ không teleport, nên spider trap hoặc chu kỳ có thể còn.
 \key{Xử lý dead end trong PPR} Dùng phân phối sửa nút cụt theo đúng đề. Chỉ gộp phần hụt vào $s$ khi phân phối sửa cũng chính là $s$; nếu khác, giữ hai hạng riêng trong cập nhật.
@@ -2448,7 +2488,7 @@ trả $r$ và tiền tố có $\phi$ nhỏ nhất
 \]
 chọn $S$ có conductance nhỏ nhất.
 }
-\key{Tự kiểm} Tổng $r+q$ vẫn bằng 1. Cut đếm cạnh băng qua; volume là tổng bậc, không phải số nút.
+\key{Kiểm tra nhanh} Tổng $r+q$ vẫn bằng 1. Cut đếm cạnh băng qua; volume là tổng bậc, không phải số nút.
 \key{Cập nhật sweep} Khi thêm $u$ vào $S$, nếu $h$ cạnh của $u$ nối vào $S$ cũ thì $\operatorname{cut}'=\operatorname{cut}+d_u-2h$ và $\operatorname{vol}'=\operatorname{vol}+d_u$. Bỏ tập rỗng và toàn đồ thị khỏi sweep vì mẫu số conductance bằng 0.
 
 \begin{example}{Pr19}{Pr19(c) · Conductance: tìm điểm cắt bằng sweep}
@@ -2586,7 +2626,7 @@ trả embedding
 {Đuôi có $r$ bit 0 hiếm cỡ $2^{-r}$; ID lặp lại có cùng mã băm nên không tăng cực đại.}
 {Luồng ID khác rỗng, danh sách hash và cách ghép nhóm thanh ghi.}
 {Các cực đại $R_j$ và số phân biệt ước lượng.}
-{Giữ số bit 0 cuối lớn nhất cho mỗi hash; lấy median từng nhóm rồi trung bình các median để giảm ảnh hưởng giá trị cực lớn.}
+{Giữ số bit 0 cuối lớn nhất cho mỗi hash; quy tắc FM là lấy median từng nhóm rồi trung bình các median.}
 \begin{algpseudo}
 đặt mọi $R_j\gets0$\\
 với mỗi ID $x$, hash $h_j$: $z_j\gets\operatorname{zeros}(h_j(x))$\\
@@ -2606,7 +2646,10 @@ $t$ là số lần xuất hiện, còn $D$ là số ID khác nhau. FM cơ bản 
 
 \key{Ước lượng thô} Với một hash, giữ $R=\max_x r(x)$ và trả $\hat D=2^R$. ID lặp lại có cùng hash nên không làm tăng cực đại. Đây là ước lượng thô, không phải đẳng thức $D=2^R$.
 
-\key{Vì sao trailing zeros cho biết quy mô} Với hash đều và độc lập, xác suất một ID có ít nhất $q$ bit 0 cuối là $2^{-q}$ (với $q\le W$ cho hash $W$ bit). Nếu có $D$ ID phân biệt:
+\key{Tính trong bài thi} Với mỗi hash, đếm trailing zeros rồi lấy cực đại $R_j$; đổi sang $Z_j=2^{R_j}$. Nếu đề cho nhiều hash theo nhóm, áp dụng đúng thứ tự phép toán trong đề; mặc định FM dùng median trong từng nhóm rồi mean giữa các nhóm.
+
+\advancedheading{Trực giác xác suất}
+Với hash đều và độc lập, xác suất một ID có ít nhất $q$ bit 0 cuối là $2^{-q}$ (với $q\le W$ cho hash $W$ bit). Nếu có $D$ ID phân biệt:
 \[
 \begin{aligned}
 P(R<q)&=(1-2^{-q})^D\approx e^{-D/2^q},\\
@@ -2614,26 +2657,26 @@ P(R\ge q)&=1-(1-2^{-q})^D\approx1-e^{-D/2^q}.
 \end{aligned}
 \]
 Khi $D\ll2^q$, ít có khả năng đạt ngưỡng $q$; khi $D\gg2^q$, khả năng đạt ngưỡng cao. Điểm chuyển tiếp là $D$ cùng bậc với $2^R$. Chẳng hạn, với $D=1024$ và $q=10$, $P(R\ge10)\approx1-e^{-1}\approx63.2\%$.
-\steps{
-\item Đếm số bit 0 liên tiếp ở cuối mỗi mã băm. Lấy số lớn nhất $R$ cho mỗi hàm băm.
-\item Một hash cho ước lượng thô $2^R$. Với nhiều hash độc lập, tính $Z_j=2^{R_j}$, chia thành nhóm nhỏ, lấy median trong mỗi nhóm rồi lấy trung bình các median.
-\item Khi gộp hai monitor dùng cùng danh sách hash, lấy $\max$ theo từng thanh ghi trước khi đổi thành $2^R$.
-}
-\key{Ngoại lệ trong raw estimates} Một $R$ lớn hiếm gặp làm $2^R$ tăng theo lũy thừa. Chẳng hạn $R=(2,3,10)$ cho $Z=(4,8,1024)$, có mean khoảng $345.33$ dù hai giá trị đầu chỉ là 4 và 8. Với hash lý tưởng vô hạn, $P(R\ge q)\approx D/2^q$ khi $q$ lớn, nên mỗi ngưỡng lớn đóng góp xấp xỉ hằng số vào $\mathbb E[2^R]$ và kỳ vọng phân kỳ; raw estimate không phải ước lượng không chệch. Hash hữu hạn chặn kỳ vọng nhưng ngoại lệ vẫn có thể kéo lệch mean.
-
-\key{Hai cách tổng hợp} Cách thứ nhất lấy median trong từng nhóm rồi trung bình các median:
+\key{FM và AMS: thứ tự tổng hợp khác nhau}
+\begin{examtable}{@{}l p{.28\columnwidth}p{.34\columnwidth}@{}}
+\toprule
+Thuật toán & Trong từng nhóm & Giữa các nhóm \\
+\midrule
+FM & Median các $Z_j=2^{R_j}$ & Mean của các median \\
+AMS & Mean các ước lượng $Y_j$ & Median của các mean \\
+\bottomrule
+\end{examtable}
+Ví dụ phân ba nhóm $(2,4,1024)$, $(4,8,16)$, $(2,4,8)$. Median từng nhóm là $(4,8,4)$; mean từng nhóm là $(1030/3,28/3,14/3)$. Vì thế FM cho $(4+8+4)/3=16/3$, còn AMS cho $\operatorname{median}(1030/3,28/3,14/3)=28/3$. Đổi thứ tự mean và median đổi kết quả; đây là ví dụ minh họa thứ tự, không phải một bảo đảm sai số.
 \[
-\hat D_{\mathrm{mean\text{-}of\text{-}medians}}
-=\frac1g\sum_{\ell=1}^{g}\operatorname{median}\{Z_j:j\in G_\ell\}.
+\begin{aligned}
+\widehat F_{0,\mathrm{FM}}&=\frac1g\sum_{\ell=1}^g\operatorname{median}_{j\in G_\ell}Z_j,\\
+\widehat F_{2,\mathrm{AMS,robust}}&=\operatorname{median}_{\ell=1}^g\bar Y_\ell,
+&\qquad \bar Y_\ell=\frac1{|G_\ell|}\sum_{j\in G_\ell}Y_j.
+\end{aligned}
 \]
-Ví dụ ba nhóm $(4,8,1024)$, $(8,16,8)$, $(4,8,16)$ đều có median 8, nên kết quả là 8. Một outlier không nhất thiết làm đổi median nhóm.
 
-Cách thứ hai lấy mean trong từng nhóm rồi median các mean:
-\[
-\hat D_{\mathrm{median\text{-}of\text{-}means}}
-=\operatorname{median}_{\ell=1,\ldots,g}\left(\frac1{|G_\ell|}\sum_{j\in G_\ell}Z_j\right).
-\]
-Hai cách không tương đương: đổi thứ tự mean và median có thể đổi kết quả. Hãy chọn một quy tắc rõ ràng, áp dụng nhất quán; cả hai đều giảm ảnh hưởng của một ngoại lệ đơn lẻ nhưng không loại bỏ mọi sai số.
+\advancedheading{Ngoại lệ của raw estimates}
+Một $R$ lớn hiếm gặp làm $2^R$ tăng theo lũy thừa. Chẳng hạn $R=(2,3,10)$ cho $Z=(4,8,1024)$, có mean khoảng $345.33$ dù hai giá trị đầu chỉ là 4 và 8. Với hash lý tưởng vô hạn, $P(R\ge q)\approx D/2^q$ khi $q$ lớn, nên mỗi ngưỡng lớn đóng góp xấp xỉ hằng số vào $\mathbb E[2^R]$ và kỳ vọng phân kỳ; raw estimate không phải ước lượng không chệch. Hash hữu hạn chặn kỳ vọng nhưng ngoại lệ vẫn có thể kéo lệch mean.
 
 \key{Gộp sketch phân tán} Mỗi máy giữ một vector $\mathbf R_A=(R_1^{(A)},\ldots,R_q^{(A)})$ từ cùng $q$ hash functions. Với hai tập $S_A,S_B$, gộp theo từng tọa độ:
 \[
@@ -2647,6 +2690,7 @@ Ví dụ $(2,1,4)$ và $(1,3,2)$ gộp thành $(2,3,4)$. Nếu $S_A=\{A,B,C\}$ v
 trả $\mathbf R=(R_1,\ldots,R_q)$
 \end{algpseudo}
 Chỉ gộp sketches dùng cùng hash functions, cùng thứ tự tọa độ và cùng cấu hình. Phép max giao hoán, kết hợp và lũy đẳng: thứ tự merge không quan trọng, có thể gộp theo cây, và bản ghi trùng không làm tăng register lần nữa. Merge tốn $O(q)$ thời gian, độc lập với số raw records. Thứ tự xử lý là $\mathbf R_A,\mathbf R_B\to\mathbf R_{A\cup B}\to 2^{R_j}\to$ tổng hợp; không cộng hoặc lấy max của các estimate cuối.
+\key{Độ phức tạp} Với $q$ hash functions, một record cập nhật $q$ thanh ghi trong $O(q)$ thời gian; sketch chiếm $O(q)$ bộ nhớ. Gộp hai sketch cũng tốn $O(q)$ thời gian.
 
 \key{Cận dưới} Khi cần xác định estimate nhỏ nhất trong một họ hash, chứng minh cận dưới đúng với mọi hash trong họ rồi chỉ ra một hash đạt cận đó.
 
@@ -2680,7 +2724,7 @@ A stream is $A,B,A,C,D,B,E,A$. For each hash $h_j$, maintain $R_j$, the maximum 
 \guidepart{(b)}
 \begin{guidesteps}
 \item Đổi register bằng công thức $Z_j=2^{R_j}$. Với $(R_1,\ldots,R_6)=(2,3,2,2,1,6)$, được $(4,8,4,4,2,64)$; công thức trung bình cặp là $\bar Z_g=(Z_{2g-1}+Z_{2g})/2$, cho $(6,4,33)$.
-\item Lấy trung vị ba nhóm: $\operatorname{median}(6,4,33)=6$. Một estimate 64 chỉ làm lớn một nhóm rồi bị median giảm ảnh hưởng.
+\item Lấy trung vị ba nhóm: $\operatorname{median}(6,4,33)=6$. Một estimate 64 chỉ làm lớn một nhóm rồi bị median giảm ảnh hưởng. Câu này yêu cầu mean trong nhóm rồi median giữa nhóm; hãy làm đúng thứ tự đó. FM mặc định dùng mean of medians như phần lý thuyết.
 \end{guidesteps}
 \guidepart{(c)}
 \begin{guidesteps}
@@ -2734,25 +2778,31 @@ h_i(x)=x+i\bmod 2^{16}.
 \end{guidesteps}
 \guidepart{(d)}
 \begin{guidesteps}
-\item Từ mỗi register tính $Z_j=2^{R_j}$. Một register lớn có thể kéo lệch trung bình số học chung; vì vậy chia các estimates thành nhóm nhỏ.
-\item Tính trung bình trong từng nhóm rồi lấy trung vị các trung bình (median of means), giúp giảm ảnh hưởng của nhóm có estimate ngoại lệ.
+\item Từ mỗi register tính $Z_j=2^{R_j}$. Một giá trị lớn có thể kéo lệch mean chung, nên không lấy trung bình thẳng tất cả estimates.
+\item Quy tắc FM: chia estimates thành nhóm, lấy median trong từng nhóm, rồi lấy mean của các median (mean of medians). Median nhóm giảm ảnh hưởng của một outlier; phép mean sau đó tổng hợp các nhóm.
 \end{guidesteps}
 
 \topic{ams}{AMS: frequency moments}
 \algsummary{Ước lượng moment bậc hai $F_2$ khi không đủ bộ nhớ giữ tần suất mọi ID.}
 {Chọn vị trí đồng đều, đếm số lần item xuất hiện từ đó về sau; $2c-1$ là bước tăng của bình phương.}
-{Luồng không rỗng $a_1,\ldots,a_n$ và số mẫu độc lập $k$.}
+{Luồng không rỗng $a_1,\ldots,a_n$ khi biết $n$, hoặc luồng online khi chưa biết $n$; số mẫu $k$.}
 {Ước lượng không chệch $\widehat F_2$; một mẫu dùng $Y=n(2c-1)$.}
-{Chọn vị trí mẫu, đếm hậu tố gồm chính vị trí đó, rồi lấy trung bình các ước lượng.}
+{Tách trường hợp: chọn trước vị trí khi biết $n$; dùng reservoir để giữ vị trí đều khi chưa biết $n$.}
 \begin{algpseudo}
-lặp độc lập với $j=1,\ldots,k$: lấy $t_j$ đều từ $1$ đến $n$; $c_j\gets0$\\
-quét từng vị trí $p$ và xét mỗi mẫu $j$:\\
-\quad nếu $p=t_j$: lưu $x_j\gets a_p$ và $c_j\gets1$\\
-\quad nếu $p>t_j$ và $a_p=x_j$: tăng $c_j$\\
-khi biết $n$, trả $\sum_{j=1}^k n(2c_j-1)/k$\\
-nếu chưa biết $n$: tại vị trí $p$, với mỗi mẫu $j$, thay $(x_j,c_j)$ bằng $(a_p,1)$\\
-\quad với xác suất $1/p$; nếu không thay và $a_p=x_j$, tăng $c_j$. Tính như trên lúc kết thúc.
+\textsc{AMS with fixed n}: chọn độc lập $t_j\sim\mathrm{Unif}\{1,\ldots,n\}$ cho $j=1,\ldots,k$\\
+$c_j\gets0$; quét $p=1,\ldots,n$ và xét mỗi mẫu $j$:\\
+\quad nếu $p=t_j$: lưu $x_j\gets a_p$; $c_j\gets1$\\
+\quad nếu $p>t_j$ và $a_p=x_j$: $c_j\gets c_j+1$\\
+$Y_j\gets n(2c_j-1)$; trả $\frac1k\sum_{j=1}^kY_j$
 \end{algpseudo}
+\begin{algpseudo}
+\textbf{Online, chưa biết $n$:} khởi tạo tối đa $k$ slot rỗng\\
+với mỗi arrival $a_p$: tăng $c_j$ cho mọi slot đang giữ có $x_j=a_p$\\
+\quad nếu $p\le k$: điền slot $p$ bằng $(p,a_p,1)$\\
+\quad nếu $p>k$: lấy $J\sim\mathrm{Unif}\{1,\ldots,p\}$; nếu $J\le k$, thay slot $J$ bằng $(p,a_p,1)$\\
+khi kết thúc, với mỗi slot tính $Y_j=n(2c_j-1)$
+\end{algpseudo}
+Ở vị trí $p>k$, mỗi vị trí trước đó có xác suất $k/p$ nằm trong reservoir. Tăng counter trước khi thay slot để các mẫu cũ đếm arrival mới; slot mới bắt đầu với $c=1$. Mỗi slot giữ vị trí bắt đầu và suffix count riêng.
 
 \key{Ký hiệu} $m_i$ là tần suất của item $i$, $d$ là số item phân biệt, và $F_2=\sum_i m_i^2$.
 
@@ -2765,9 +2815,13 @@ Bộ nhớ & $O(d)$ & $O(k)$ \\
 Kết quả & $F_2$ chính xác, tất định & $\widehat F_2$ ngẫu nhiên, không chệch \\
 \bottomrule
 \end{examtable}
-\key{Một mẫu (slide 76)} Chọn đều một vị trí $t$ trong luồng. Lưu $\mathsf{X.el}=a_t$ và $\mathsf{X.val}=c_t$, số lần item đó xuất hiện từ vị trí $t$ đến cuối, tính cả $a_t$. Ước lượng là $Y=n(2c_t-1)$. Với $k$ mẫu, lấy trung bình các $Y$ để được $\widehat F_2$.
+\key{Một mẫu, biết $n$} Chọn đều vị trí $t$; đặt $X.el=a_t$ và $c_t=1$. Đếm các lần xuất hiện của $a_t$ sau $t$, nên $c_t$ là suffix count tính cả vị trí mẫu. Trả $Y=n(2c_t-1)$; đây là trường hợp $k=1$.
 
-\key{Chi phí} Một mẫu dùng một lượt quét $O(n)$ thời gian và $O(1)$ bộ nhớ. Với $k$ mẫu, lưu $O(k)$ item và bộ đếm. Khi chưa biết $n$, dùng \hyperref[topic:reservoir]{reservoir sampling} để duy trì mẫu đều theo vị trí (slide 81). Khi nhận vị trí mới, tăng các bộ đếm đang giữ nếu item khớp; nếu vị trí mới được chọn, thay ô tương ứng bằng item mới và bộ đếm 1.
+\key{Nhiều mẫu, biết $n$} Chọn $k$ vị trí độc lập, mỗi vị trí đều trên $1,\ldots,n$; các mẫu có thể trùng vị trí. Tính $Y_j=n(2c_j-1)$ riêng cho từng vị trí rồi lấy mean $\widehat F_2=k^{-1}\sum_jY_j$. Mean này không chệch.
+
+\key{Tổng hợp mẫu} Mean của mọi $Y_j$ là ước lượng không chệch. Khi dùng quy tắc robust theo nhóm, lấy mean trong mỗi nhóm rồi median của các group means; đây là median-of-averages, như ví dụ so sánh ở FM. Median cuối không nhất thiết giữ tính không chệch của mean thô.
+
+\key{Độ phức tạp} Một mẫu tốn $O(n)$ thời gian và $O(1)$ bộ nhớ. $k$ mẫu cần $O(nk)$ thời gian và $O(k)$ bộ nhớ; reservoir online cũng cần $O(k)$ thời gian cho mỗi arrival và $O(k)$ bộ nhớ.
 
 \key{Ví dụ: luồng $A,B,A,C,A,B$} Nếu chọn $t=3$, lưu item $A$ và đặt bộ đếm 1. Bảng cũng cho $c_t$ và $Y_t$ nếu bắt đầu ở bất kỳ vị trí $t$ nào.
 \begin{examtable}{@{}c c c c l@{}}
@@ -2784,7 +2838,8 @@ $t$ & $a_t$ & $c_t$ & $Y_t=6(2c_t-1)$ & Cập nhật khi chọn $t=3$ \\
 \end{examtable}
 Mẫu ở $t=3$ cho $Y=6(2\cdot2-1)=18$, còn giá trị chính xác là $3^2+2^2+1^2=14$. Trung bình qua cả sáu điểm bắt đầu là $(30+18+18+6+6+6)/6=14$.
 
-\key{Vì sao đếm theo hậu tố? (slides 77--78)} Nếu item $i$ xuất hiện $m_i$ lần, mỗi lần xuất hiện cho một giá trị $c_t$ khác nhau: $m_i,m_i-1,\ldots,1$. Vì $2c-1=c^2-(c-1)^2$, tổng $1+3+\cdots+(2m_i-1)$ bằng $m_i^2$. Gom các vị trí theo item:
+\advancedheading{Vì sao suffix count không chệch}
+Nếu item $i$ xuất hiện $m_i$ lần, mỗi lần xuất hiện cho một giá trị $c_t$ khác nhau: $m_i,m_i-1,\ldots,1$. Vì $2c-1=c^2-(c-1)^2$, tổng $1+3+\cdots+(2m_i-1)$ bằng $m_i^2$. Gom các vị trí theo item:
 \[
 \begin{aligned}
 \mathbb E[Y]
@@ -2802,7 +2857,7 @@ Cách thay này làm ước lượng lệch lên $F_2-n$, trừ khi mọi item c
 
 Cùng lập luận theo hậu tố cho moment bậc $r$: dùng $Y_r=n[c^r-(c-1)^r]$ để ước lượng $F_r=\sum_i m_i^r$. Bậc $1$ cho $F_1=n$.
 
-\key{Tự kiểm trước khi thi}
+\key{Kiểm tra nhanh}
 \par\nopagebreak
 \begin{examtable}{@{}p{.76\linewidth}l@{}}
 \toprule
@@ -2881,35 +2936,30 @@ Start positions are maintained by a two-slot reservoir, so each stream position 
 \item Cộng các nhóm: $\sum_{j=1}^{10}j^2=385$. Do đó trung bình trên cả 55 vị trí bằng đúng $F_2$, bất kể thứ tự stream.
 \end{guidesteps}
 
+\columnbreak
 \topic{dgim}{DGIM: sliding-window bit counts}
-\algsummary{Đếm xấp xỉ số bit 1 trong cửa sổ gần đây của một luồng.}
-{Giữ bucket lớn dần về quá khứ; chỉ bucket cũ nhất giao với ranh giới cần ước lượng.}
-{Luồng bit, kích thước cửa sổ $N$ và truy vấn $1\le k\le N$.}
+\algsummary{Đếm xấp xỉ số bit 1 trong $k$ vị trí cuối của stream.}
+{Giữ tối đa hai bucket mỗi cỡ; query ước lượng nửa bucket biên cũ nhất.}
+{Luồng bit, cửa sổ $N$, truy vấn $1\le k\le N$.}
 {Ước lượng số bit 1 trong $k$ vị trí cuối.}
-{Xóa bucket hết hạn; gặp bit 1 thêm bucket rồi gộp nếu có ba bucket cùng cỡ.}
+{Expire $\to$ insert $\to$ merge; query cộng bucket mới hơn và nửa bucket biên.}
 \begin{algpseudo}
-khi nhận bit $b$ ở $t$: xóa bucket có timestamp $\le t-N$\\
-nếu $b=1$: thêm bucket $(1,t)$; khi có ba bucket cùng cỡ:\\
-\quad gộp hai bucket cũ nhất, nhân đôi cỡ, giữ timestamp mới hơn\\
-khi hỏi $k$: lấy các bucket có timestamp $>t-k$\\
-nếu không có bucket: trả 0; nếu có: trả tổng cỡ trừ nửa cỡ bucket cũ nhất
+khi nhận $b$ tại $t$: expire $t_{\mathrm{end}}\le t-N$; nếu $b=1$, insert $(1,t)$\\
+nếu 3 bucket cùng cỡ: merge 2 cũ nhất, giữ timestamp mới hơn; lặp\\
+query $k$: chọn bucket có $t_{\mathrm{end}}\ge L=t-k+1$\\
+trả 0 nếu rỗng; nếu có, trả $\sum_j s_j-s_1/2$ (bucket cũ trước)
 \end{algpseudo}
 
-\key{Bài toán và lựa chọn} Với luồng bit $x_1,\ldots,x_t\in\{0,1\}$, cửa sổ tối đa $N$ và truy vấn $1\le k\le N$, cần ước lượng
+\key{Ước lượng query} Đặt $L=t-k+1$. Nếu các bucket được chọn có cỡ $s_1,\ldots,s_m$ theo thứ tự cũ đến mới, thì
+\[
+\widehat C_{t,k}=\begin{cases}0,&m=0,\\[2pt]\displaystyle\sum_{j=1}^{m}s_j-\frac{s_1}{2},&m>0.\end{cases}
+\]
+\key{Bài toán} Với luồng bit $x_1,\ldots,x_t\in\{0,1\}$, cửa sổ tối đa $N$ và truy vấn $1\le k\le N$, cần ước lượng
 \[
 C_{t,k}=\sum_{i=t-k+1}^{t}x_i.
 \]
 Lưu thẳng $N$ bit cho kết quả chính xác nhưng tốn $O(N)$ bit. Ước lượng theo tỷ lệ toàn luồng, $N S/(S+Z)$ với $S,Z$ là tổng số bit 1 và 0, chỉ phù hợp khi tỷ lệ ổn định và không có bảo đảm xấu nhất. DGIM dùng $O(\log^2N)$ bit, không giả định phân bố ổn định.
-\key{Biểu diễn} Bucket $B=(s,t_{\mathrm{end}})$ đại diện $s$ bit 1; $t_{\mathrm{end}}$ là timestamp của bit 1 mới nhất. Cỡ $s$ là lũy thừa của 2. Buckets không chồng lấn, cỡ không tăng từ cũ sang mới và có tối đa hai bucket mỗi cỡ. Có thể lưu timestamp modulo $N$, nhưng phải xét tuổi qua phép tính modulo, không so sánh trực tiếp timestamp đã cuộn vòng.
-\steps{
-\item Khi đến vị trí $t$, xóa bucket có timestamp $\le t-N$.
-\item Nếu bit đến là 1, thêm bucket cỡ 1. Khi có ba bucket cùng cỡ, gộp hai bucket cũ nhất và giữ timestamp mới hơn trong hai bucket. Lặp nếu tràn ở cỡ lớn hơn.
-\item Khi hỏi $k$ vị trí cuối, đặt $L=t-k+1$ và chọn bucket có $t_{\mathrm{end}}\ge L$. Cộng đủ các bucket mới hơn và nửa bucket cũ nhất còn lại. Nếu không còn bucket, trả 0.
-}
-\key{Sai số} Nếu bucket cũ nhất được chọn có cỡ $B=2^j$, ước lượng thay phần giao của bucket đó với cửa sổ bằng $B/2$, nên $|\hat C-C|\le B/2$. Có ít nhất một bit 1 từ bucket biên và ít nhất $1+2+\cdots+2^{j-1}=B-1$ bit 1 từ các bucket mới hơn; do đó $C\ge B$ và sai số tương đối không quá $50\%$ khi $C>0$. Cận này có thể chưa chặt cho một cửa sổ cụ thể.
-\key{Giảm sai số} Biến thể với tham số $r>2$ giữ nhiều bucket hơn và dùng quy tắc truy vấn tương ứng, đạt $E_{\mathrm{rel}}\le1/(r-1)$: $r=3$ cho $50\%$, $r=4$ cho $33.3\%$, $r=5$ cho $25\%$, $r=11$ cho $10\%$. Tham số $r$ này khác số mũ $j$ trong $B=2^j$.
-\key{Cỡ bucket cực trị} Với $N>1$, bucket lớn nhất có cỡ $B_{\max}=2^{\lfloor\log_2(N-1)\rfloor}$. Để tạo bucket cỡ $B$, cần ba bucket cỡ $B/2$; khoảng cách từ bit mới nhất của bucket cũ nhất đến bit mới nhất của bucket thứ ba ít nhất $B$ vị trí. Nếu $B\ge N$, bucket cũ nhất hết hạn trước khi merge. Khi cả $N$ bit đều là 1, nếu cỡ bucket lớn nhất là $B$, tổng sức chứa tối đa là $2(1+2+\cdots+B)=4B-2$. Vì vậy cỡ nhỏ nhất có thể là lũy thừa của 2 nhỏ nhất thỏa $4B-2\ge N$; với $N=500$, cỡ đó là $128$.
-\key{Luồng số nguyên} Với số nguyên không âm tối đa $m$ bit, viết $x_q=\sum_{i=0}^{m-1}b_{q,i}2^i$ và duy trì một DGIM cho mỗi vị trí bit. Nếu $\hat c_i$ là số bit 1 ước lượng ở vị trí $i$, thì $\widehat{\sum_qx_q}=\sum_{i=0}^{m-1}2^i\hat c_i$; chia cho số phần tử để ước lượng trung bình. Bộ nhớ là $O(m\log^2N)$ bit.
+\key{Biểu diễn} Bucket $B=(s,t_{\mathrm{end}})$ đại diện $s$ bit 1; $t_{\mathrm{end}}$ là timestamp của bit 1 mới nhất. Cỡ $s$ là lũy thừa của 2. Buckets không chồng lấn, cỡ không tăng từ cũ sang mới và có tối đa hai bucket mỗi cỡ. Khi lưu timestamp modulo $N$, phải tính tuổi qua phép modulo, không so sánh trực tiếp timestamp đã cuộn vòng.
 \key{Độ phức tạp} Có $O(\log N)$ bucket, mỗi timestamp cần $O(\log N)$ bit nên tổng bộ nhớ là $O(\log^2N)$ bit. Cập nhật tốn $O(\log N)$ trong trường hợp xấu nhất do gộp dây chuyền; truy vấn tốn $O(\log N)$ để duyệt buckets.
 
 \begin{example}{Pr22}{Pr22(a,b) · DGIM: xóa, thêm, gộp rồi truy vấn}
@@ -2925,6 +2975,25 @@ $t$ & Thao tác & Bucket $(\text{cỡ},\text{timestamp})$, cũ trước \\
 \end{examtable}
 Hỏi 6 vị trí cuối ($10$ đến $15$): tính nửa bucket $(2,10)$, cộng trọn hai bucket mới hơn, được $2/2+2+1=4$.
 \end{example}
+
+\advancedheading{Cỡ bucket cực đại và cận sai số}
+\key{Cỡ bucket lớn nhất} Với $N>1$, cỡ lớn nhất có thể là lũy thừa 2 lớn nhất nhỏ hơn $N$:
+\[
+B_{\max}=2^{\lfloor\log_2(N-1)\rfloor}.
+\]
+Để tạo bucket cỡ $B$, thuật toán cần ba bucket cỡ $B/2$. Khoảng cách từ timestamp của bucket cũ nhất đến bucket thứ ba ít nhất $B$; nếu $B\ge N$, bucket cũ nhất hết hạn trước khi merge. Với $N=500$, $B_{\max}=256$.
+
+\key{Sai số và trường hợp chặt $N=500$} Nếu bucket biên cũ nhất có cỡ $B$ và đúng $x$ bit 1 của bucket đó nằm trong cửa sổ, thì:
+\[
+\widehat C=\sum_{j>1}s_j+\frac B2,
+\qquad C=\sum_{j>1}s_j+x,
+\qquad |\widehat C-C|=\left|\frac B2-x\right|.
+\]
+Với DGIM chuẩn, $x\ge1$ và các bucket mới hơn có ít nhất một bucket mỗi cỡ $1,2,\ldots,B/2$, tổng ít nhất $B-1$ bit 1. Do đó $C\ge B$ và sai số tương đối không quá $50\%$. Với $N=500$, bucket biên lớn nhất có $B=256$; các bucket mới hơn chiếm ít nhất 255 vị trí, nên $1\le x\le245$. Estimate thay phần này bằng 128, vì vậy sai số lớn nhất là $\max(|128-1|,|128-245|)=127$ bit. Chuỗi 511 bit 1 theo sau bởi 244 bit 0 đạt $x=1$, nên cận 127 là chặt.
+
+\key{Bucket nhỏ nhất chứa 500 bit 1} Nếu cỡ bucket lớn nhất là $B$, tối đa hai bucket mỗi cỡ cho tổng sức chứa $2(1+2+\cdots+B)=4B-2$. Cần $4B-2\ge500$, nên lũy thừa 2 nhỏ nhất là $B=128$; với $B=64$, sức chứa chỉ 254.
+
+\key{Mở rộng: sai số và luồng số nguyên} Biến thể tham số $r>2$ giữ nhiều bucket hơn và dùng quy tắc truy vấn tương ứng, đạt $E_{\mathrm{rel}}\le1/(r-1)$: $r=3$ cho $50\%$, $r=4$ cho $33.3\%$, $r=5$ cho $25\%$, $r=11$ cho $10\%$. Với số nguyên không âm tối đa $m$ bit, duy trì một DGIM cho mỗi bit: $x_q=\sum_{i=0}^{m-1}b_{q,i}2^i$. Nếu $\hat c_i$ là số bit 1 ước lượng ở vị trí $i$, thì $\widehat{\sum_qx_q}=\sum_{i=0}^{m-1}2^i\hat c_i$; bộ nhớ là $O(m\log^2N)$ bit.
 
 % DSA5101 Exam Practice Questions.pdf, PDF page(s) 23.
 \ask{Pr22}{Pr22}{}
@@ -3187,7 +3256,7 @@ trong đó $\binom{n-m}{k}=0$ nếu $n-m<k$. Vì vậy reservoir đều trên oc
 \item Khi bản ghi thứ $n>k$ đến, rút đều $J$ từ 1 đến $n$. Nếu $J\le k$, thay ô $J$ bằng bản ghi mới.
 }
 \key{Độ phức tạp} Reservoir dùng $O(1)$ thời gian kỳ vọng mỗi arrival và $O(k)$ bộ nhớ; chỉ cần biết số arrivals đã xử lý. Key-based sampling không cần reservoir nhưng không giới hạn số bản ghi lưu.
-\key{Bẫy cần nhớ} Xác suất sống của record cũ có điều kiện là $n/(n+1)$, còn xác suất được giữ sau bước kế tiếp là $k/(n+1)$. Reservoir đều trên occurrences, không phải distinct values; key sampling cho quyết định nhất quán theo key nhưng không bảo đảm giữ đúng chính xác tỷ lệ $p$ trong một mẫu.
+\key{Bẫy} Xác suất sống của record cũ có điều kiện là $n/(n+1)$, còn xác suất được giữ sau bước kế tiếp là $k/(n+1)$. Reservoir đều trên occurrences, không phải distinct values; key sampling cho quyết định nhất quán theo key nhưng không bảo đảm giữ đúng chính xác tỷ lệ $p$ trong một mẫu.
 
 % DSA5101 Exam Practice Questions.pdf, PDF page(s) 22.
 \ask{Pr21}{Pr21}{}
@@ -3293,7 +3362,7 @@ $B$ còn ở bước 3 vì $0.5=\tau$, nhưng bị xóa ở bước 4 vì $0.25<
 \]
 Pruning chỉ làm giảm tổng. Nếu mỗi mục được giữ có điểm ít nhất $\tau$, thì $K\tau\le 1/c$, nên $K\le\lfloor 1/(c\tau)\rfloor$. Với $c=\tau=0.5$, cận là 4 mục. Lưu $O(K)$ mục. Mỗi sự kiện quét $K$ mục và có thể thêm một mục tạm thời: thời gian $O(K+1)$, tức tuyến tính theo kích thước bảng.
 
-\key{Bẫy thi} Sliding window cắt hẳn theo tuổi; decay thuần giảm dần. Pruning chỉ xóa điểm $<\tau$, giữ điểm $=\tau$. Điểm sau pruning có thể thấp hơn điểm chính xác và làm mất cảnh báo (Pr26(b)).
+\key{Bẫy} Sliding window cắt hẳn theo tuổi; decay thuần giảm dần. Pruning chỉ xóa điểm $<\tau$, giữ điểm $=\tau$. Điểm sau pruning có thể thấp hơn điểm chính xác và làm mất cảnh báo.
 
 % DSA5101 Exam Practice Questions.pdf, PDF page(s) 27.
 \ask{Pr26}{Pr26}{}
@@ -3388,14 +3457,26 @@ với mỗi query $q$: $A\gets\{i:i\text{ nhận được }q,\ B_i>0\}$\\
 trả phân bổ, ngân sách và doanh thu
 \end{algpseudo}
 
-\key{Khi dùng} Mỗi query mang lại 1 đơn vị doanh thu. Chọn một advertiser đủ điều kiện có ngân sách còn lại lớn nhất, trừ 1 và chuyển sang query tiếp theo. Nếu không có advertiser phù hợp còn ngân sách, bỏ qua.
+\key{Cập nhật sau mỗi query}
+\begin{examtable}{@{}p{.20\columnwidth}p{.67\columnwidth}@{}}
+\toprule
+Trường hợp & Thao tác \\
+\midrule
+Không có bidder đủ điều kiện còn tiền & Bỏ qua query; ngân sách và doanh thu giữ nguyên. \\
+Có bidder hợp lệ & Chọn bidder có ngân sách còn lại lớn nhất; gán query, giảm ngân sách đi 1 và tăng doanh thu đi 1. \\
+Hòa ngân sách & Dùng đúng quy tắc phá hòa của đề; nếu hỏi bảo đảm với mọi cách phá hòa, kiểm tra mọi nhánh. \\
+\bottomrule
+\end{examtable}
+
+\key{Khi dùng} Mỗi query có giá trị 1 và quyết định không thể sửa lại. Chỉ advertiser đủ điều kiện và còn ngân sách mới được xét.
 
 \key{Tính trên giấy} Viết vectơ ngân sách sau từng lượt; tuân thủ cách phá hòa. Nếu đề hỏi guaranteed optimal, tất cả cách phá hòa hợp lệ đều phải đạt OPT; chỉ cần tìm một nhánh thất bại để trả lời No.
 \key{Mọi cách phá hòa} Để chứng minh Yes, theo dõi mọi nhánh phá hòa (gộp trạng thái giống nhau) và chứng minh mỗi nhánh đạt OPT. Để chứng minh tối ưu, ghép một cận trên với một lịch khả thi đạt cận đó.
 
-\key{Bảo đảm theo mô hình} Hai advertiser cùng ngân sách $B$ chẵn, OPT phục vụ $2B$: BALANCE phục vụ ít nhất $3B/2$. Nếu còn query bị bỏ, ít nhất một bên đã hết ngân sách. Gọi $A$ là bên còn tiền. Cả $B$ query OPT giao cho $A$ đều được BALANCE phục vụ vì $A$ chưa bao giờ hết tiền. Nếu $A$ nhận ít nhất $B/2$ query thì đạt cận. Nếu hơn $B/2$ query đó sang bên kia, ở lần chuyển thứ $B/2+1$, bên kia còn tối đa $B/2$ ngân sách. Quy tắc chọn bên còn nhiều tiền hơn cho thấy $A$ cũng chỉ còn tối đa $B/2$. Lập luận với $B$ lẻ cho cận $\lfloor3B/2\rfloor$.
-
+\key{Độ phức tạp} Với $Q$ query và $A$ advertisers, quét bidder list trực tiếp tốn $O(QA)$ thời gian; ngân sách và phân bổ đang xét cần $O(A)$ bộ nhớ ngoài dữ liệu input.
 \key{Ví dụ} Với $B=4$, bốn query đầu cả hai đều nhận được, bốn query sau chỉ một bên nhận được: BALANCE đạt 6, OPT đạt 8. Trong mô hình nhiều advertiser của lecture, cận $1-1/e$ được suy ra từ phần ngân sách còn lại khi các bên lần lượt cạn.
+\advancedheading{Competitive ratio}
+Hai advertiser cùng ngân sách $B$ chẵn, OPT phục vụ $2B$: BALANCE phục vụ ít nhất $3B/2$. Nếu còn query bị bỏ, ít nhất một bên đã hết ngân sách. Gọi $A$ là bên còn tiền. Cả $B$ query OPT giao cho $A$ đều được BALANCE phục vụ vì $A$ chưa bao giờ hết tiền. Nếu $A$ nhận ít nhất $B/2$ query thì đạt cận. Nếu hơn $B/2$ query đó sang bên kia, ở lần chuyển thứ $B/2+1$, bên kia còn tối đa $B/2$ ngân sách. Quy tắc chọn bên còn nhiều tiền hơn cho thấy $A$ cũng chỉ còn tối đa $B/2$. Lập luận với $B$ lẻ cho cận $\lfloor3B/2\rfloor$.
 
 \begin{example}{A2-Q5}{A2-Q5(c) · BALANCE: hai cách phá hòa, hai kết quả}
 \begin{examtable}{@{}l c l l@{}}
