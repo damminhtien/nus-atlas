@@ -242,6 +242,7 @@
 \outline{6}{Link analysis \& graph ranking}
 \topicoutline{pagerank}{PageRank}
 \topicoutline{teleport}{PageRank: teleport distributions \& convergence}
+\topicoutline{largepagerank}{Large-Scale PageRank}
 \topicoutline{trust}{TrustRank / spam mass}
 \topicoutline{linkfarm}{Link farm amplification}
 \topicoutline{hits}{HITS (hubs and authorities)}
@@ -2198,6 +2199,62 @@ r^{(2)}&=(1/2,1/4,3/4,2,3/2)^T.
 \item Với tổng điểm $S=\mathbf1^Tr^{(1)}=5$, teleport về $A,B$ có $v=(1/2,1/2,0,0,0)^T$; công thức là $r'=\beta Mr^{(0)}+(1-\beta)Sv$. Thế $\beta=0.9$ và $Mr^{(0)}=r^{(1)}$: $r' =0.9(1/2,1/2,3/2,3/2,1)^T+0.5(1/2,1/2,0,0,0)^T=(0.70,0.70,1.35,1.35,0.90)^T$.
 \item So với một vòng không teleport, $A,B$ tăng từ $0.5$ lên $0.70$; so với điểm ban đầu 1, $C,D$ tăng lên $1.35$. Nêu rõ mốc so sánh vì hai cách hỏi cho kết luận khác nhau.
 \end{guidesteps}
+% Lec6_LinkAnalysis.pdf, pp. 50--60; worked examples use the supplied notes.
+\topic{largepagerank}{Large-Scale PageRank}
+
+\algsummary{Tính PageRank khi graph hoặc vectơ hạng không vừa RAM.}{Chỉ lưu cạnh thật; mỗi lần chỉ giữ phần đầu ra vừa RAM.}{\textbf{Khi dùng:}\enspace Đề cho graph trên disk, giới hạn RAM hoặc hỏi lượng dữ liệu truyền mỗi vòng.}{$N$ nút, $|E|$ cạnh, danh sách cạnh ra $M$ và $r^{old}$ trên disk, $\beta$, quy tắc teleport/sửa nút cụt và dung lượng RAM.}{$r^{new}$ trên disk sau một vòng.}{Giữ cả đầu ra nếu đủ RAM (Basic); nếu không, chia đích thành $k$ block. Quét lại cả graph (Block) hoặc chia trước các cạnh theo đích (Stripe).}
+
+\key{Lưu graph thưa} Không dựng $G$ gồm $N^2$ ô. Theo thứ tự nguồn $i$, lưu $(d_i,j_1,\ldots,j_{d_i})$; chẳng hạn nguồn 0 có các đích $1,5,7$, lưu $(3,1,5,7)$. Với một bậc ra mỗi nguồn và một ID mỗi cạnh, $|M|\approx N+|E|$ số nguyên. Với $N=10^9$, $|E|=10^{10}$ và 4 byte mỗi số, riêng graph cần khoảng $4(N+|E|)=44\times10^9$ byte (44 GB thập phân).
+
+\key{Cập nhật theo cạnh} Mỗi cạnh $i\to j$ gửi $\beta r_i^{old}/d_i$. Với hạng chuẩn hóa và cùng phân phối đều cho teleport và nút cụt, đặt $\delta=\sum_{i:d_i=0}r_i^{old}$:
+\[
+r_j^{new}=b+\sum_{i:i\to j}\frac{\beta r_i^{old}}{d_i},\qquad
+b=\frac{1-\beta+\beta\delta}{N}.
+\]
+Không có nút cụt thì $\delta=0$. Với $u=\beta M_0r^{old}$, có thể tính cùng số $b=(1-\sum_j u_j)/N$. Nếu đề cho phân phối teleport $s$ và phân phối sửa nút cụt $w$ khác nhau hoặc hạng chưa chuẩn hóa, dùng $b_j=\beta\delta w_j+(1-\beta)S s_j$ từ mục \hyperref[topic:pagerank]{PageRank}, với $S=\sum_i r_i^{old}$.
+
+\key{Chuẩn bị Stripe một lần} Ghi mỗi cạnh vào stripe của block chứa đích. Trong mỗi stripe, lưu ID nguồn, bậc ra gốc $d_i$ và danh sách đích thuộc block đó; sắp theo nguồn để quét cùng $r^{old}$.
+\begin{algpseudo}
+Basic: dùng một block chứa mọi đích; Block/Stripe: dùng $k$ block đích\\
+cho mỗi block $B$: khởi tạo $r_B^{new}\gets0$ trong RAM\\
+\quad quét $r^{old}$ cùng toàn $M$ (Basic/Block) hoặc stripe $B$ (Stripe)\\
+\quad với mỗi cạnh $i\to j$ đọc được và $j\in B$: $r_j^{new}\mathrel{+}=\beta r_i^{old}/d_i$\\
+\quad cộng $b_j$ cho mỗi $j\in B$, dùng cùng khối lượng $S,\delta$ cho mọi block\\
+\quad ghi $r_B^{new}$ về disk\\
+sau khi ghi đủ các block, dùng vectơ mới làm đầu vào vòng sau
+\end{algpseudo}
+
+\key{Ví dụ: tính một vòng Stripe} Cho $0\to\{1,2\}$, $1\to2$, $2\to3$, $3\to0$. Chia $B_0=\{0,1\}$, $B_1=\{2,3\}$. Stripe 0 lưu $0\to1,3\to0$; stripe 1 lưu $0\to2,1\to2,2\to3$. Với $r^{old}=(1/4,1/4,1/4,1/4)^T$ và $\beta=0.8$, ta có $b=0.2/4=0.05$. Nguồn 0 truyền $0.8(1/4)/2=0.10$ trên mỗi cạnh; các nguồn còn lại truyền $0.20$ trên mỗi cạnh. Do đó:
+\[
+\begin{aligned}
+(r_0',r_1')&=(b+0.20,\ b+0.10)=(0.25,\ 0.15),\\
+(r_2',r_3')&=(b+0.10+0.20,\ b+0.20)=(0.35,\ 0.25).
+\end{aligned}
+\]
+
+\unitheading{3}{Verification / Xác minh}
+\key{Kiểm tra} Ba cách tính cho cùng một vectơ vì mỗi cạnh đóng góp đúng một lần từ $r^{old}$; tổng mới phải bằng $S$ (ví dụ trên bằng 1). Luôn chia theo \textbf{bậc ra gốc}: nguồn 0 có $d_0=2$ ở cả hai stripe. Nếu chia theo bậc cục bộ 1, tổng trong ví dụ sai thành $1.20$.
+
+\unitheading{4}{Advanced / Nâng cao}
+\key{Chi phí I/O mỗi vòng} Basic đọc mỗi đầu vào một lần. Block đọc toàn $M$ và $r^{old}$ cho từng block. Stripe đọc mỗi stripe một lần, nhưng vẫn đọc $r^{old}$ cho từng stripe. Cả ba ghi đúng một vectơ mới.
+\begin{examtable}{@{}lll@{}}
+\toprule
+Cách & RAM giữ đầu ra & I/O mỗi vòng ($|\mathbf r|=N$) \\
+\midrule
+Basic & Cả vectơ & $|M|+2|\mathbf r|$ \\
+Block & Một block & $k|M|+(k+1)|\mathbf r|$ \\
+Stripe & Một block & $(1+\epsilon)|M|+(k+1)|\mathbf r|$ \\
+\bottomrule
+\end{examtable}
+Nếu cần lượt đọc riêng để lấy $\delta$, cộng chi phí lượt đó. Basic/Block có thể cộng $\delta$ trong lượt quét đầu; Stripe cần nhận diện các nút cụt riêng vì chúng không có cạnh trong stripe. Khi tính theo byte, dùng kích thước thực của graph và vectơ.
+
+\key{Khi nào Stripe lợi} Mỗi cạnh nằm đúng một stripe; nguồn $i$ xuất hiện ở $q_i\le\min(k,d_i)$ stripe. Nếu mỗi record chỉ tính một bậc ra ngoài các ID đích, tổng là $|E|+\sum_{i:d_i>0}q_i$ số, chưa tính ID nguồn và chỉ mục. Các đích tập trung trong ít block làm giảm phần lặp. Ở đây $\epsilon$ là tỷ lệ tăng kích thước graph, không phải ngưỡng dừng. Hiệu $C_{\mathrm{Block}}-C_{\mathrm{Stripe}}=(k-1-\epsilon)|M|$ dương khi $k>1+\epsilon$. Đây là điều kiện giảm I/O mỗi vòng; chi phí chia stripe ban đầu và truy cập disk còn ảnh hưởng tốc độ thực tế.
+
+\key{Thời gian CPU} Basic $O(N+|E|)$; Block $O(k(N+|E|))$; Stripe $O(kN+|E|+H)$ với $H$ là số record nguồn phải đọc trong các stripe.
+
+\unitheading{5}{Exam evidence / Bài tự luyện}
+Với $|M|=1000$, $|\mathbf r|=100$, $k=5$, $\epsilon=0.1$, nếu chỉ một block đầu ra vừa RAM thì chọn cách nào? Thế số vào bảng: Basic $=1000+2(100)=1200$ (không đủ RAM); Block $=5(1000)+6(100)=5600$; Stripe $=1.1(1000)+6(100)=1700$. Chọn Stripe theo I/O mỗi vòng; tiết kiệm $3900$ đơn vị so với Block.
+
 \topic{trust}{TrustRank / spam mass}
 
 \algsummary{Xác định các trang nhận nhiều điểm nhưng ít liên hệ với trang tin cậy.}{So điểm khi teleport toàn cục với điểm khi khởi động lại chỉ ở tập tin cậy.}{\textbf{Bức tranh chung:}\enspace Link farm thao túng PageRank thường bằng cách tuần hoàn điểm qua các liên kết do spammer kiểm soát. TrustRank khởi động lại từ các trang đã xác minh để đo mức điểm được truyền từ nguồn tin cậy. Spam mass so sánh hai kết quả này; giá trị cao là tín hiệu để kiểm tra, không phải bằng chứng spam.\par\nobreak \textbf{Khi dùng:}\enspace Đề so PageRank thường $r$ với điểm tin cậy $t$, trong đó teleport chỉ ưu tiên các trang tin cậy. Giữ cùng đồ thị và quy ước chuẩn hóa khi so sánh.
