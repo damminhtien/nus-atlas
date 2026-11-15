@@ -55,6 +55,9 @@
 \newcommand{\literal}[1]{“#1”}
 \newcommand{\steps}[1]{\begin{enumerate}[label=\arabic*.,leftmargin=1.5em,itemsep=1pt,topsep=2pt]#1\end{enumerate}}
 \newcommand{\outline}[2]{\hyperref[lecture:#1]{\makebox[2.3em][l]{L#1}#2\hfill\pageref*{lecture:#1}}\par}
+\newcommand{\topicoutline}[2]{%
+  \par\noindent\hangindent=1.5em\hangafter=1%
+  \hspace*{1.5em}\hyperref[topic:#1]{#2\hfill\pageref*{topic:#1}}\par}
 
 \newcommand{\blocklabel}[1]{\par\noindent#1\par\nobreak}
 \newcommand{\answer}[1]{%
@@ -192,17 +195,67 @@
 \pdfbookmark[0]{Mục lục chủ đề}{index-bookmark}
 {\headingfont DSA5101 Cheatsheet}\par
 \blocklabel{Mục lục chủ đề}
-{\setlength{\parskip}{1.5pt}
+{\setlength{\parskip}{.5pt}
 \outline{1}{Frequent itemsets \& association rules}
+\topicoutline{bonferroni}{Bonferroni's Principle (multiple comparisons)}
+\topicoutline{apriori}{Apriori}
+\topicoutline{pairs}{Pair counters: triangular matrix vs triples}
+\topicoutline{pcy}{PCY}
+\topicoutline{multihash}{Multistage \& Multihash (PCY refinements)}
+\topicoutline{toivonen}{Toivonen}
+\topicoutline{son}{Random Sampling \& SON}
+\topicoutline{rules}{Association rules}
 \outline{2}{Similar items \& locality-sensitive hashing}
+\topicoutline{jaccard}{Shingling \& Jaccard}
+\topicoutline{minhash}{MinHash}
+\topicoutline{banding}{LSH banding}
+\topicoutline{families}{LSH families, AND/OR amplification \& cascades}
+\topicoutline{hyperplanes}{Random hyperplanes (cosine LSH)}
+\topicoutline{euclidean}{Euclidean-distance LSH via random projection}
 \outline{3}{Clustering}
+\topicoutline{hierarchical}{Hierarchical agglomerative clustering}
+\topicoutline{kmeans}{K-means / Lloyd's algorithm}
+\topicoutline{seeding}{K-means++-style seeding, choosing K \& stopping}
+\topicoutline{bfr}{BFR (Bradley-Fayyad-Reina)}
+\topicoutline{cure}{CURE: clustering using representatives}
+\topicoutline{purity}{Cluster purity (evaluation with known labels)}
 \outline{4}{Dimensionality reduction}
+\topicoutline{svd}{SVD and power iteration}
+\topicoutline{pca}{Truncated SVD / PCA projection}
+\topicoutline{cur}{CUR approximation}
 \outline{5}{Recommender systems}
+\topicoutline{cf}{User-based and item-based collaborative filtering}
+\topicoutline{factors}{Latent factor / regularized matrix factorization}
+\topicoutline{biases}{Learnable \& temporal biases (latent factors extension)}
+\topicoutline{tfidf}{Content-based / TF-IDF}
 \outline{6}{Link analysis \& graph ranking}
+\topicoutline{pagerank}{PageRank}
+\topicoutline{teleport}{PageRank: teleport distributions \& convergence}
+\topicoutline{trust}{TrustRank / spam mass}
+\topicoutline{linkfarm}{Link farm amplification}
+\topicoutline{hits}{HITS (hubs and authorities)}
 \outline{7}{Communities \& graph embeddings}
+\topicoutline{louvain}{Louvain / modularity}
+\topicoutline{ppr}{Local approximate PPR + conductance sweep}
+\topicoutline{embedding}{Node embeddings: shallow encoding \& random walks}
+\topicoutline{node2vec}{DeepWalk vs node2vec (walk generation)}
+\topicoutline{negatives}{Negative sampling for graph embeddings}
 \outline{8}{Data streams}
+\topicoutline{fm}{Flajolet-Martin (FM): distinct count}
+\topicoutline{ams}{AMS: frequency moments}
+\topicoutline{dgim}{DGIM: sliding-window bit counts}
+\topicoutline{bloom}{Bloom filter: approximate membership}
+\topicoutline{reservoir}{Reservoir / key sampling}
+\topicoutline{decay}{Decaying windows}
 \outline{9}{Online matching, BALANCE \& bandits}
+\topicoutline{matching}{Online bipartite matching}
+\topicoutline{balance}{BALANCE (unit bids / budgets)}
+\topicoutline{bandits}{Multi-armed bandits: epsilon-greedy / UCB}
 \outline{10}{Submodular optimization}
+\topicoutline{greedy}{Monotone submodular greedy}
+\topicoutline{coverage}{Probabilistic coverage}
+\topicoutline{lazy}{Lazy greedy}
+\topicoutline{mw}{Personalization / Multiplicative Weights (MW)}
 }
 
 \lecture{1}{Frequent itemsets \& association rules}
