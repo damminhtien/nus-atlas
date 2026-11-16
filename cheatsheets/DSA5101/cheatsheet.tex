@@ -314,44 +314,49 @@ trả $E,\ \min(1,E)$
 \key{Vì sao đúng} Đặt $I_j$ là chỉ báo phép thử $j$ báo nhầm. Tính tuyến tính cho $\mathbb E[\sum_j I_j]=\sum_jp_j$; union bound cho $\Pr(\sum_jI_j\ge1)\le\sum_jp_j$, không cần độc lập.
 \topic{apriori}{Apriori}
 
-\algsummary{Từ các giỏ hàng, tìm tất cả tập item xuất hiện ít nhất $s$ lần.}{Một tập không frequent loại được mọi tập lớn hơn chứa nó.}{\textbf{Cách đếm:}\enspace $\operatorname{supp}(X)$ là số giỏ chứa toàn bộ $X$.}{Các giỏ hàng $D$ và ngưỡng đếm $s$.}{Các tập frequent $L_1,L_2,\ldots$ theo kích thước.}{Ghép các tập frequent của tầng trước. Bỏ ứng viên có tập con không frequent rồi quét các giỏ để đếm những ứng viên còn lại.}
-
-\key{Số lượt quét} Quét một lần để đếm $L_1$, rồi một lần cho mỗi tầng $k\ge2$ có $C_k\ne\varnothing$. Sinh ứng viên và tỉa tập con không cần đọc lại giỏ; nếu $C_k=\varnothing$ thì dừng trước khi quét tầng đó.
-
-\key{Ràng buộc phụ} Chỉ đẩy một điều kiện xuống bước cắt nếu mọi siêu tập của tập bị loại cũng không thể thỏa điều kiện. Với khoảng giá $R(X)=\max_X p-\min_X p$, ta có $R(Y)\ge R(X)$ khi $X\subseteq Y$; do đó điều kiện $R(X)<T$ cho phép cắt khi $R(X)\ge T$. Điều kiện tổng giá $\sum_Xp\ge T$ không có tính chất này vì thêm item có thể làm tổng tăng.
+\algsummary{Tìm mọi tập item có mặt trong ít nhất $s$ giỏ.}{Nếu một tập con không đạt ngưỡng, tập lớn hơn chứa nó cũng không thể đạt.}{\key{Support count} $\operatorname{supp}(X)=\sum_{B\in D}\mathbf1[X\subseteq B]$.}{Các giỏ hàng $D$ và ngưỡng đếm $s$.}{Tập frequent $L_k$ ở từng cỡ $k$.}{Ghép $\to$ tỉa $\to$ đếm $\to$ lọc. $C_k$ là ứng viên sau tỉa; chỉ giữ vào $L_k$ những ứng viên có support $\ge s$.}
 
 \begin{algpseudo}
-$L_1\gets$ các singleton có support $\ge s$\\
-với $k=2,3,\ldots$ khi $L_{k-1}\ne\varnothing$:\\
-\quad $C_k\gets$ ghép $L_{k-1}$; loại tập có tập con cỡ $k-1$ vắng trong $L_{k-1}$\\
-\quad nếu $C_k=\varnothing$: dừng\\
-\quad quét $D$ để đếm $C_k$; $L_k\gets\{X\in C_k:\operatorname{supp}_D(X)\ge s\}$\\
+quét $D$ để đếm các singleton $C_1$; lấy $L_1$ theo ngưỡng $s$\\
+với $k=2,3,\ldots$:\\
+\quad ghép hai tập trong $L_{k-1}$ nếu hợp của chúng có đúng $k$ item\\
+\quad giữ vào $C_k$ các hợp mà mọi tập con cỡ $k-1$ đều thuộc $L_{k-1}$\\
+\quad nếu $C_k=\varnothing$: dừng, không quét $D$\\
+\quad quét $D$ để đếm $C_k$; $L_k\gets\{X\in C_k:\operatorname{supp}(X)\ge s\}$\\
 trả hợp các $L_k$
 \end{algpseudo}
 
-\begin{example}{Pr1}{Pr1(a) · Apriori: cắt ứng viên $ABCD$}
-\begin{diagram}
-\begin{tikzpicture}[x=1cm,y=1cm,>=Stealth, every node/.style={font=\normalsize}]
-\node (top) at (0,1.05) {$ABCD$};
-\foreach \name/\x/\val in {ABC/-3.6/2,ABD/-1.2/2,ACD/1.2/2,BCD/3.6/1}{
-  \node (\name) at (\x,0) {\(\mathrm{\name}:\ \val\)};
-  \draw[->] (top.south) -- (\name.north);
-}
-\draw[dashed,rounded corners=2pt] (2.95,-.24) rectangle (4.25,.24);
-\end{tikzpicture}
-\end{diagram}
-Ngưỡng $s=2$. Ba bộ ba đạt ngưỡng, riêng $BCD$ chỉ có trong giỏ $ABCD$. Một tập con trượt ngưỡng là đủ để bỏ $ABCD$ trước lần quét tiếp theo.
+\begin{example}{Pr1}{Pr1(a) · Chạy Apriori với ngưỡng $s=2$}
+\begin{examtable}{@{}cll@{}}
+\toprule
+$k$ & $C_k$ và support theo thứ tự & $L_k$ \\
+\midrule
+1 & $A,B,C,D,E:\ 5,5,4,4,1$ & $A,B,C,D$ \\
+2 & $AB,AC,AD,BC,BD,CD:\ 3,3,4,3,2,2$ & $C_2$ \\
+3 & $ABC,ABD,ACD,BCD:\ 2,2,2,1$ & $ABC,ABD,ACD$ \\
+4 & $\varnothing$ & Không đếm \\
+\bottomrule
+\end{examtable}
+$\operatorname{supp}(BCD)=1<2\ \Rightarrow\ BCD\notin L_3\ \Rightarrow$ tỉa $ABCD$. Chỉ quét 3 lượt.
 \end{example}
 
 % DSA5101 Exam Practice Questions.pdf, PDF page(s) 2.
 
 \unitverification
-\key{Bẫy} Giữ ứng viên khi support $\ge s$, không phải $>s$. Mỗi giỏ đóng góp nhiều nhất 1 cho mỗi tập item, kể cả khi bản ghi giỏ lặp item.
+\key{Bẫy} Cặp con đều frequent vẫn chưa đủ: $BCD\in C_3$ nhưng $BCD\notin L_3$. Nhớ giữ support $=s$ và chỉ đếm mỗi giỏ một lần.
+
+\key{Khi thiếu support} Với $A\subseteq X\subseteq B$, ta có $\operatorname{supp}(B)\le\operatorname{supp}(X)\le\operatorname{supp}(A)$. Cận dưới $\ge s$: chắc chắn đạt. Cận trên $<s$: chắc chắn trượt. Hai tập lồng nhau có cùng support thì xuất hiện trong đúng cùng các giỏ.
 
 \unitadvanced
-\key{Vì sao cắt được} Nếu $X\subseteq Y$, mọi giỏ chứa $Y$ cũng chứa $X$, nên $\operatorname{supp}(Y)\le\operatorname{supp}(X)$. Một tập con không frequent thì mọi tập cha của nó cũng không frequent.
+\key{Vì sao tỉa được} Giỏ chứa $Y$ cũng chứa $X\subseteq Y$, nên $\operatorname{supp}(X)\ge\operatorname{supp}(Y)$. Hạ ngưỡng ở tầng sau có thể làm tỉa sai: trong hai giỏ $AB$, singleton trượt ngưỡng 3 nhưng cặp đạt ngưỡng 2.
 
-\key{Độ phức tạp} Với $n=|D|$ giỏ và $|C_k|$ ứng viên, cách trực tiếp kiểm tra từng ứng viên trong từng giỏ tốn $O(n\sum_{k:C_k\ne\varnothing}k|C_k|)$ thời gian. Bộ nhớ đếm là $O(|C_k|+|L_{k-1}|)$ ở tầng hiện tại, ngoài dữ liệu đầu vào.
+\key{I/O và bộ nhớ} Tối đa $k$ lượt quét đến cỡ $k$, tức $O(kM)$ byte với dữ liệu cỡ $M$. Tầng $j$ cần $|C_j|$ bộ đếm, chưa tính ID. $|C_2|=\binom{|L_1|}{2}$; xem cách lưu cặp ở trang~\pageref*{topic:pairs}.
+
+\key{Chi phí đếm} Với $N$ giỏ dạng hash set, một phép thử chứa tập cỡ $j$ tốn kỳ vọng $O(j)$, nên đếm trực tiếp tốn $O(N\sum_{j=1}^k j|C_j|)$. Chưa tính tạo hash set và sinh ứng viên. Xấu nhất, cả $2^n-1$ tập từ $n$ item đều frequent.
+
+\key{Ràng buộc phản đơn điệu} Tỉa siêu tập nếu vi phạm ở $X$ kéo theo vi phạm ở mọi $Y\supseteq X$. Khoảng giá $R(X)=\max_{i\in X}p_i-\min_{i\in X}p_i$ không giảm khi thêm item, nên loại $R(X)\ge T$ trước khi đếm. Giá có sẵn trong bộ nhớ: không thêm lượt quét; chỉ bớt lượt nếu một tầng rỗng sớm hơn.
+
+\key{Bẫy về giá} $\sum_{i\in X}p_i<T$ với $p_i\ge0$ và $|X|\le \ell$ tỉa được. Cận dưới của tổng và cận trên của trung bình thì không: thêm giá 1 vào 7 và 9 kéo trung bình từ 8 xuống $17/3<6$.
 
 \ask{Pr1}{Pr1(a,c)}{}
 A field station records seven kits. The items are atlas ($A$), binoculars ($B$), compass ($C$), dry bag ($D$), and emergency beacon ($E$). The kits are
@@ -399,10 +404,8 @@ Basket 5 & $A,B,D,E$ & Basket 6 & $A,B,C,D$
 \solutionprompt{Dùng sáu giỏ và ngưỡng 3. Ở mỗi cỡ $k$, ghi ứng viên còn lại sau tỉa vào $C_k$ và tập đủ support vào $L_k$. Chỉ tính một lượt quét khi cần đọc giỏ để đếm.}
 \guidepart{(a)}
 \begin{guidesteps}
-\item Quy tắc Apriori là $L_k=\{X\in C_k:\operatorname{supp}(X)\ge s\}$. Với $s=3$, quét sáu giỏ cho singleton support $(5,6,3,4,2)$ của $(A,B,C,D,E)$, nên $L_1=\{A,B,C,D\}$.
-\item Sinh $C_2$ từ các cặp trong $L_1$, rồi đếm support theo định nghĩa số giỏ chứa cặp. Thay các counts của đề, các cặp đạt $s=3$ là $L_2=\{AB,AD,BC,BD\}$.
-\item Sinh bộ ba chỉ khi mọi cặp con thuộc $L_2$. Chỉ $ABD$ qua bước tỉa; support của nó là 3, nên $L_3=\{ABD\}$.
-\item Không thể ghép hai bộ ba frequent khác nhau để sinh $C_4$, nên $C_4=\varnothing$ và thuật toán dừng. Tập frequent là $L_1\cup L_2\cup L_3$.
+\item Dùng $L_j=\{X\in C_j:\operatorname{supp}(X)\ge s\}$. Với $s=3$, đếm singleton trong sáu giỏ, giữ $A,B,C,D$ rồi đếm cả sáu cặp sinh từ bốn item này.
+\item Trong các cặp đạt ngưỡng, chỉ $AB,AD,BD$ tạo thành đủ ba cặp con của một bộ ba. Đếm $ABD$: có ở giỏ 3, 5, 6 nên đạt ngưỡng. Không có hai bộ ba để ghép, nên $C_4=\varnothing$.
 \begin{examtable}{@{}c l l@{}}
 \toprule
 $k$ & $C_k$ và support tương ứng & $L_k$ \\
@@ -416,10 +419,10 @@ $k$ & $C_k$ và support tương ứng & $L_k$ \\
 \end{guidesteps}
 \guidepart{(b)}
 \begin{guidesteps}
-\item Ở mỗi mức $k$, chỉ quét dữ liệu để đếm $\operatorname{supp}(X)$ cho các ứng viên $X\in C_k$. Khi sinh và tỉa ứng viên ở mức kế tiếp, chỉ cần dùng những tập phổ biến vừa lưu.
-\item Ba mức $C_1,C_2,C_3$ đều có ứng viên cần đếm, nên số lượt quét là $1+1+1=3$. Dừng ngay khi sinh ra $C_4=\varnothing$.
+\item Khi tìm tới cỡ $k$, số lượt quét là $\sum_{j=1}^{k}\mathbf1[C_j\ne\varnothing]$, coi các tầng sau khi dừng là rỗng. Chỉ bước đếm support của $C_j$ cần đọc giỏ. Bước ghép và tỉa dùng $L_{j-1}$ đã lưu.
+\item Nếu đủ $k$ tầng có ứng viên, cần $k$ lượt. Với sáu giỏ ở phần (a), chỉ $C_1,C_2,C_3$ có ứng viên, nên cần 3 lượt nếu đếm đến hết; $C_4=\varnothing$ không phát sinh lượt thứ tư.
 \end{guidesteps}
-\finalanswer{(a) Sau bước tỉa: $C_1=\{A,B,C,D,E\}$, $L_1=\{A,B,C,D\}$; $C_2=\{AB,AC,AD,BC,BD,CD\}$, $L_2=\{AB,AD,BC,BD\}$; $C_3=L_3=\{ABD\}$; $C_4=L_4=\varnothing$. (b) Mỗi tầng ứng viên không rỗng cần một lượt quét để đếm support; ở đây 3 lượt, không quét tầng 4.}
+\finalanswer{(a) Sau bước tỉa: $C_1=\{A,B,C,D,E\}$, $L_1=\{A,B,C,D\}$; $C_2=\{AB,AC,AD,BC,BD,CD\}$, $L_2=\{AB,AD,BC,BD\}$; $C_3=L_3=\{ABD\}$; $C_4=L_4=\varnothing$. (b) Tối đa $k$ lượt khi tìm đến cỡ $k$, mỗi tầng có ứng viên quét một lần để đếm support. Với dữ liệu này cần $\min(k,3)$ lượt.}
 
 % 2526Sem1-DSA5101.pdf, PDF page(s) 3.
 \ask{P25-Q1g}{P25-Q1(g)}{Dữ kiện chung: \shareddataref{P25-Q1}}
@@ -431,14 +434,13 @@ Assume that the price of all items and $T$ are all positive. Moreover, we have e
 
 Hint: You only need to add one step in the candidate generation/pruning step in the Apriori algorithm.
 
-\examnote{Nếu $R(X)\ge T$, loại $X$ và mọi siêu tập; dấu bằng đã vi phạm điều kiện xuất $R<T$. Không thể cắt tương tự bằng điều kiện tổng giá có cận dưới.}
 \answer{\maptag{answer:P25-Q1g}}
 \solutionprompt{Xét khoảng giá của một ứng viên $X$ trước khi quét giỏ. Nếu khoảng giá vượt điều kiện của đề, kiểm tra điều gì xảy ra với nó khi thêm item vào $X$.}
 \guidepart{(g)}
 \begin{guidesteps}
 \item Tính khoảng giá $R(X)=\max_{i\in X}p_i-\min_{i\in X}p_i$ ngay khi sinh $X$.
 \item Nếu $R(X)\ge T$, bỏ $X$: điều kiện đầu ra yêu cầu nghiêm ngặt $R(X)<T$. Với mọi $Y\supseteq X$, khoảng giá $R(Y)\ge R(X)$ vì min chỉ có thể giảm và max chỉ có thể tăng.
-\item Do đó mọi superset của $X$ cũng vi phạm ràng buộc giá. Tỉa chúng ngay lúc sinh ứng viên; các tập chưa bị tỉa vẫn phải qua bước kiểm tra support như Apriori thường.
+\item Chỉ xuất tập đã qua cả kiểm tra giá lẫn kiểm tra support. Ngược lại, nếu $Y$ đạt cả hai, mọi tập con khác rỗng của $Y$ đều có support ít nhất $\operatorname{supp}(Y)$ và khoảng giá không vượt $R(Y)$. Vì vậy các tập con vẫn được giữ để sinh $Y$.
 \end{guidesteps}
 \finalanswer{(g) Khi sinh $X$, loại ngay nếu $\max_{i\in X}p_i-\min_{i\in X}p_i\ge T$. Khoảng giá không thể giảm khi thêm item, nên tỉa cả các siêu tập. Vẫn đếm support của các ứng viên qua bước tỉa.}
 
@@ -470,7 +472,7 @@ $bcd$ & Chắc chắn không frequent & Chứa $bc$ có support $2<5$. \\
 $abcd$ & Chắc chắn không frequent & Chứa $bc$ có support $2<5$. \\
 \bottomrule
 \end{examtable}
-\item Không có hàng nào được bảo đảm frequent.
+\item Ngoài các giỏ có $b$, 11 giỏ chứa $a$ và 11 giỏ chứa $c$ có thể rời nhau hoặc trùng cả 11 giỏ. Trong các giỏ có $b$, có thể bố trí để $a,c$ không đi cùng. Vậy $ac$ có thể đạt hoặc trượt ngưỡng 5. Tương tự, $e$ có thể nằm trong 0 hoặc cả 7 giỏ chứa $bd$.
 \end{guidesteps}
 \finalanswer{Chắc chắn không frequent: $cd,bcd,abcd$. Chưa đủ dữ kiện: $ac,bde$. Không có tập nào trong danh sách chắc chắn frequent.}
 \topic{pairs}{Pair counters: triangular matrix vs triples}
