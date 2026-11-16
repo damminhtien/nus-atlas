@@ -2557,30 +2557,36 @@ B=\begin{pmatrix}1&1&1\\1&1&0\\0&0&1\end{pmatrix}.
 % Lec7_Graphs.pdf, pp. 29--38.
 \topic{louvain}{Modularity, Configuration Model \& Louvain}
 
-\algsummary{Dùng modularity $Q$ để chấm một phân hoạch. Dùng Louvain khi cần tìm phân hoạch toàn đồ thị mà không có seed.}{Modularity so cạnh nội bộ với mức kỳ vọng dựa trên bậc. Louvain tăng $Q$ bằng cách đổi cụm từng nút, rồi co cụm để xét các lần gộp ở mức lớn hơn.}{}{Đồ thị vô hướng $G$, có thể có trọng số, với $m>0$; phân hoạch $\mathcal S$ nếu tính điểm, hoặc thứ tự quét và quy tắc phá hòa nếu chạy Louvain.}{$Q(G,\mathcal S)$, hoặc phân hoạch trên các nút gốc cùng điểm $Q$ ở mỗi mức Louvain.}{Tính cạnh nội bộ và tổng bậc cho mỗi cụm. Trong Louvain, lặp hai pha: chuyển nút để tăng $Q$, rồi co cụm thành siêu nút.}
+\algsummary{Chấm một phân hoạch bằng modularity $Q$, hoặc tìm phân hoạch toàn đồ thị bằng Louvain.}{So cạnh nội bộ với mức kỳ vọng dựa trên bậc.}{}{Đồ thị vô hướng có trọng số không âm, $m>0$; phân hoạch $\mathcal S$ để chấm, hoặc thứ tự quét và quy tắc phá hòa để chạy Louvain.}{$Q(G,\mathcal S)$ hoặc phân hoạch và $Q$ ở mỗi mức.}{Đếm trọng số cạnh nội bộ và tổng bậc. Louvain lặp hai pha: chuyển nút để tăng $Q$, rồi co cụm.}
 
-\key{Công thức tính tay} $e_C$ đếm mỗi cạnh nội bộ một lần, còn $\operatorname{vol}(C)=\sum_{i\in C}k_i$ cộng bậc của các nút trong $C$. Cộng chênh lệch giữa hai tỷ lệ trong từng cụm:
+\key{Công thức tính tay} $e_C$ cộng trọng số mỗi cạnh nội bộ một lần; $\operatorname{vol}(C)=\sum_{i\in C}k_i$ cộng bậc có trọng số của các nút trong $C$.
 \[
 Q=\sum_{C\in\mathcal S}\left[\frac{e_C}{m}-\left(\frac{\operatorname{vol}(C)}{2m}\right)^2\right].
 \]
-Với đồ thị có trọng số, dùng tổng trọng số cạnh cho $m,e_C$ và bậc có trọng số cho $k_i$.
+$m$ cộng trọng số mỗi cạnh một lần, $2m=\sum_i k_i$. Kiểm tra $\operatorname{vol}(C)=2e_C+\operatorname{cut}(C)$, với cut là trọng số qua biên.
 
 \begin{algpseudo}
-tính modularity: khởi tạo $e_C=\operatorname{vol}(C)=0$ cho mọi cụm\\
-với mỗi nút $i$: cộng $k_i$ vào thể tích của cụm chứa $i$\\
-với mỗi cạnh $ij$ có hai đầu cùng cụm $C$: cộng trọng số cạnh vào $e_C$\\
-trả tổng $e_C/m-(\operatorname{vol}(C)/(2m))^2$ qua các cụm
+tính $Q$: khởi tạo $e_C=\operatorname{vol}(C)=0$ cho mọi cụm\\
+quét nút để cộng bậc vào thể tích; quét cạnh nội bộ để cộng trọng số vào $e_C$\\
+cộng các đóng góp của cụm theo công thức $Q$
 \end{algpseudo}
 
-\key{Ví dụ: hai tam giác nối bằng một cầu} Với các tam giác $ABC,DEF$ và cạnh cầu $CD$, $m=7$. Mỗi tam giác có $e_C=3$, $\operatorname{vol}(C)=2+2+3=7$. Hai cụm đóng góp như nhau, nên $Q=2[3/7-(7/14)^2]=5/14\approx0.3571$. Gộp cả sáu nút thành một cụm cho $Q=7/7-(14/14)^2=0$.
+\key{Ví dụ: hai tam giác} Với $ABC,DEF$ nối bằng cạnh $CD$, $m=7$. Mỗi tam giác có $e_C=3$, $\operatorname{vol}(C)=7$, nên $Q=2[3/7-(7/14)^2]=5/14\approx0.3571$. Gộp cả sáu nút cho $Q=1-1^2=0$.
 
-\key{Pha 1: chuyển nút} Để thử chuyển $i$ từ $A$ sang $B$, lấy $a=\operatorname{vol}(A)$ và $b=\operatorname{vol}(B)$ \emph{trước} khi chuyển, nên $a$ còn chứa $k_i$. Chỉ hai cụm này đổi điểm: cụm cũ mất trọng số $k_{i,A}$, cụm mới nhận $k_{i,B}$; thể tích đổi thành $a-k_i,b+k_i$. Các $k_{i,A},k_{i,B}$ chỉ tính cạnh từ $i$ đến các nút khác. Tính cả phần rời $A$ và phần vào $B$:
+\key{Pha 1: chuyển nút} Cách kiểm tra mọi nước đi là tính $\Delta Q=Q_{\rm sau}-Q_{\rm trước}$; chỉ cần tính lại các cụm thay đổi. Khi chuyển $i$ từ $A$ sang $B$, lấy $a=\operatorname{vol}(A)$ và $b=\operatorname{vol}(B)$ trước khi chuyển, nên $a$ còn chứa $k_i$. Cụm cũ mất trọng số $k_{i,A}$, cụm mới nhận $k_{i,B}$; thể tích đổi thành $a-k_i,b+k_i$. Hai trọng số này chỉ tính cạnh từ $i$ đến các nút khác:
 \[
 \Delta Q=\frac{k_{i,B}-k_{i,A}}{m}-\frac{k_i(b-a)+k_i^2}{2m^2}.
 \]
 Số hạng thứ hai là chênh lệch phần kỳ vọng: $[(a-k_i)^2+(b+k_i)^2-a^2-b^2]/(2m)^2$. Nếu $i$ có self-loop, tính nó trong $k_i$ theo quy ước đường chéo gấp đôi. Loop vẫn là cạnh nội bộ trước và sau khi chuyển, nên triệt tiêu trong hiệu phần quan sát.
 
-\key{Pha 2: co cụm} Mỗi cụm thành một siêu nút. Cộng trọng số các cạnh nối hai cụm để điền phần ngoài đường chéo. Trên đường chéo, ghi $B_{CC}=2e_C$ để tổng hàng bằng $\operatorname{vol}(C)$. Giữ ánh xạ về các nút gốc: mỗi mức kế tiếp chỉ gộp các cụm của mức trước.
+\key{Gộp hai cụm} Gọi $w_{XY}$ là trọng số cạnh nối $X,Y$. Khi gộp, phần nội bộ tăng thêm $w_{XY}$ và thể tích mới bằng tổng hai thể tích cũ:
+\[
+\Delta Q_{\rm gộp}(X,Y)=\frac{w_{XY}}{m}
+-\frac{\operatorname{vol}(X)\operatorname{vol}(Y)}{2m^2}.
+\]
+Chỉ gộp khi gain dương. Chuyển một nút đang đứng riêng cũng là gộp hai cụm.
+
+\key{Pha 2: co cụm} Mỗi cụm thành một siêu nút: $B_{CC}=2e_C$, $B_{CD}=w_{CD}$ với $C\ne D$. Tổng hàng $k'_C=\operatorname{vol}(C)$ cho $m'=\tfrac12\sum_C k'_C=m$. Mở rộng các siêu nút về nút gốc giữ nguyên trọng số nội bộ và thể tích từng nhóm, nên $Q$ không đổi. Các mức sau không tách được nút đã co chung.
 
 \begin{algpseudo}
 Louvain: ở đầu mỗi mức, đặt mỗi nút hoặc siêu nút vào một cụm riêng\\
@@ -2591,18 +2597,18 @@ nếu cả mức không tăng $Q$, mở rộng phân hoạch hiện tại về c
 pha 2: lưu phân hoạch mới, co cụm, rồi bắt đầu mức kế tiếp
 \end{algpseudo}
 
-\key{Ví dụ: chuyển nút rồi co cụm} Trên đường đi $1-2-3-4$, $m=3$ và bậc là $(1,2,2,1)$. Phân hoạch $12\mid3\mid4$ có các cặp $(e_C,\operatorname{vol}(C))$ là $(1,3),(0,2),(0,1)$. Thử chuyển $3$ vào cụm $\{4\}$:
+\key{Ví dụ: đồ thị có trọng số} Đường đi $A-B-C-D-E$ có trọng số $3,2,1,4$, nên $m=10$ và bậc là $(3,5,3,5,4)$. Phân hoạch $AB\mid C\mid DE$ có các cặp $(e,\operatorname{vol})$ là $(3,8),(0,3),(4,9)$:
 \[
 \begin{aligned}
-Q_{\rm trước}&=\tfrac13-(\tfrac36)^2-(\tfrac26)^2-(\tfrac16)^2=-\tfrac1{18},\\
-Q_{\rm sau}(12\mid34)&=2[\tfrac13-(\tfrac36)^2]=\tfrac16,\qquad
-\Delta Q=\tfrac29.
+Q_{\rm trước}&=\tfrac{3+4}{10}-\tfrac{8^2+3^2+9^2}{20^2}=0.315,\\
+\Delta Q(C\to AB)&=\tfrac{2}{10}-\tfrac{3\cdot8}{2\cdot10^2}=0.08,\\
+\Delta Q(C\to DE)&=\tfrac{1}{10}-\tfrac{3\cdot9}{2\cdot10^2}=-0.035.
 \end{aligned}
 \]
-Tính nhanh với $a=2,b=1,k_3=2,k_{3,A}=0,k_{3,B}=1$: $\Delta Q=\tfrac13-[2(1-2)+4]/18=\tfrac29$. Chuyển $3$ vào $\{1,2\}$ cho $\Delta Q=0$, nên chọn $\{4\}$. Khi co $12\mid34$, hai cạnh nội bộ cho đường chéo $(2,2)$, cạnh $2-3$ cho hai ô ngoài đường chéo bằng 1. Ma trận $B=\bigl(\begin{smallmatrix}2&1\\1&2\end{smallmatrix}\bigr)$ có bậc $(3,3)$, nên tổng trọng số cạnh vẫn là $(3+3)/2=3$. Chấm hai siêu nút riêng vẫn được $Q=1/6$; gộp chúng cho $Q=0$, nên dừng.
+Chọn $C\to AB$: $Q(ABC\mid DE)=(5+4)/10-(11^2+9^2)/20^2=0.395$, tăng đúng $0.08$. Co cụm cho $B'=\bigl(\begin{smallmatrix}10&1\\1&8\end{smallmatrix}\bigr)$, bậc $(11,9)$ và $m'=(11+9)/2=10$. Hai siêu nút riêng vẫn có $Q=0.395$; gộp cho $\Delta Q=1/10-11\cdot9/200=-0.395$, nên dừng.
 
 \unitverification
-\key{Kiểm tra} $\Sigma_{\rm in}=2e_C$, $\Sigma_{\rm tot}=\operatorname{vol}(C)$ và $\sum_C\operatorname{vol}(C)=2m$. Khi chọn cụm đích, so $\Delta Q$, không chỉ đếm hàng xóm. $\Delta Q=0$ thì giữ nguyên. Thứ tự quét và cách phá hòa có thể đổi kết quả; nếu đề không ấn định, có thể xáo thứ tự mỗi lượt. $Q\in[-1,1]$; $Q>0$ cho biết số cạnh nội bộ vượt kỳ vọng. Khoảng $0.3$--$0.7$ là mốc tham khảo, không phải kiểm định thống kê.
+\key{Kiểm tra} $\Sigma_{\rm in}=2e_C$, $\Sigma_{\rm tot}=\operatorname{vol}(C)$. So gain, không chỉ đếm hàng xóm; $\Delta Q=0$ thì giữ nguyên. Thứ tự quét và phá hòa có thể đổi kết quả. $Q\in[-1,1]$; $Q>0$ nghĩa là nội bộ vượt kỳ vọng. Mốc $0.3$--$0.7$ chỉ để tham khảo.
 
 \key{Chọn thuật toán} Louvain tìm phân hoạch toàn đồ thị và tăng modularity. Approximate PPR cần seed, tìm cụm cục bộ bằng sweep chọn conductance thấp; kết quả phụ thuộc seed và tham số.
 
@@ -2661,8 +2667,8 @@ Q_{\rm new}=2\left(\frac15-\left(\frac3{10}\right)^2\right)
 \end{guidesteps}
 \guidepart{(c)}
 \begin{guidesteps}
-\item Louvain chỉ tiếp tục khi nước đi cục bộ có $\Delta Q>0$. Hai phép gộp còn lại có $\Delta Q=-1/25<0$, nên dừng ở phân hoạch hiện tại.
-\item Tuy nhiên $Q(12|34|56)=13/50$, còn phân hoạch khả thi $123|456$ có $Q=3/10>13/50$. Vì vậy điểm dừng là cực đại cục bộ của các nước đi đã xét, không bảo đảm cực đại toàn cục.
+\item Với mỗi cặp siêu nút kề nhau, $w_{XY}=1$, hai thể tích là $3,4$. Thay vào công thức gộp: $\Delta Q=1/5-3\cdot4/(2\cdot5^2)=-1/25$. Cả hai cách đều làm $Q$ giảm, nên dừng.
+\item Phân hoạch $123|456$ có $Q=3/10>13/50$ nhưng cần tách 3 và 4, vốn nằm chung một siêu nút. Các phép gộp ở mức này không thể tạo ra phân hoạch đó. Không còn nước gộp có lợi chỉ cho biết đã đạt điểm dừng cục bộ.
 \end{guidesteps}
 \finalanswer{(a) $Q(12|34|56)=13/50$; $\Delta Q=3/25>2/25$, nên chuyển 3 vào cụm 4. (b) Bậc siêu nút $(3,4,3)$, tổng trọng số cạnh 5; giữ đường chéo để bảo toàn cạnh nội bộ và bậc. (c) Dừng ở $13/50<3/10$ của $123|456$: cực đại cục bộ, không bảo đảm tối ưu toàn cục.}
 
