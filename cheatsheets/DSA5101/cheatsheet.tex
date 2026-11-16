@@ -2,7 +2,7 @@
 % Compile with latexmk -xelatex on this file.
 % Questions are typeset from the source PDFs, grouped by topic.
 \documentclass[10pt,a4paper,twocolumn]{article}
-\usepackage[a4paper,landscape,left=10mm,right=10mm,top=8mm,bottom=10mm,nohead,footskip=6mm]{geometry}
+\usepackage[a4paper,landscape,left=10mm,right=10mm,top=7mm,bottom=10mm,nohead,footskip=6mm]{geometry}
 \usepackage{amsmath}
 \usepackage{fontspec,unicode-math}
 \setmainfont{STIXTwoText}[Extension=.otf,UprightFont=*-Regular,BoldFont=*-Bold,ItalicFont=*-Italic,BoldItalicFont=*-BoldItalic]
@@ -2896,89 +2896,110 @@ for $v$ adjacent to $u$.
 \item Sau mỗi push, cộng cả điểm đã giữ và điểm chờ lan truyền để kiểm tra $\sum_u(r_u+q_u)=1$. Chưa cần có $\sum_u r_u=1$ vì vẫn còn điểm chờ lan truyền. Một push chỉ chạm nút $u$ và hàng xóm, nên không cần quét mọi cạnh của đồ thị.
 \end{guidesteps}
 \finalanswer{(a) Chỉ $r_A=1/2$ khác 0; $q_A=1/4$, $q_B=q_C=1/8$. Chỉ $A,B$ đủ ngưỡng, push tiếp tại $A$. (b) $(\operatorname{cut},\operatorname{vol},\phi)$: $AC:(3,5,3/5)$, $ACB:(1,7,1/7)$; chọn $ACB$. (c) $\sum_u(r_u+q_u)=1$; riêng $r$ không cần có tổng 1. Chỉ cập nhật nút được push và các hàng xóm.}
+% Lec7_Graphs.pdf, pp. 39--71 and 84--86.
 \topic{embedding}{Node embeddings: shallow encoding \& random walks}
 
-\algsummary{Học vectơ ít chiều cho từng nút từ các đoạn walk trên đồ thị.}{Hai nút thường cùng xuất hiện trong một đoạn walk nên có vectơ dễ dự đoán nhau.}{}{Đồ thị, chiều $d$, bộ sinh walk, bán kính cửa sổ và số vòng huấn luyện.}{Bảng embedding $z_u$ cho từng nút đã thấy.}{Dùng cửa sổ trượt trên walk để tạo các cặp nút và ngữ cảnh. Huấn luyện bằng softmax hoặc negative sampling.}
+\algsummary{Học vectơ ít chiều cho mỗi nút.}{Chọn quan hệ cần giữ: cạnh trực tiếp, hàng xóm chung, độ gần nhiều bước hoặc cùng vai trò cấu trúc.}{}{Đồ thị $G$ (cơ bản: ma trận kề nhị phân), chiều $d$, cách sinh walk và bán kính cửa sổ; không dùng nhãn hay đặc trưng nút.}{Ánh xạ $u\mapsto z_u\in\mathbb R^d$ cho các nút đã thấy.}{Sinh walk $\to$ lấy cặp ngữ cảnh $\to$ học bằng softmax hoặc negative sampling.}
 
-\key{Ý chính} Mỗi nút $u$ được gán một vectơ học được $z_u$. Hai nút hay xuất hiện trong cửa sổ của cùng random walk nên có vectơ dễ dự đoán nhau, dù không có cạnh trực tiếp.
+\key{Shallow encoder} Với $n=|V|$, mỗi ID tra một cột $z_u=Z[:,u]$ của $Z\in\mathbb R^{d\times n}$. Ví dụ $n=5000,d=128$: bảng có $nd=640{,}000$ tham số; đọc một cột tốn $O(d)$. Tích vô hướng $s(u,v)=z_u^\top z_v$ là điểm mô hình học để phản ánh độ tương tự, không phải đẳng thức với xác suất đồng xuất hiện.
 
-\steps{
-\item Sinh các random walk; lấy các cặp nút trung tâm $u$ và nút ngữ cảnh $v$ trong cửa sổ. Giữ số lần cặp xuất hiện.
-\item Học các vectơ bằng cách tăng xác suất của cặp quan sát:
+\key{Tạo cặp dương} $N_R(u)$ là đa tập ngữ cảnh từ cách lấy mẫu $R$. Walk $A\to B\to C\to B$ cho $(B,C,B)$ sau nút đầu, đếm $B$ hai lần. Với cửa sổ skip-gram, lấy từng vị trí làm trung tâm và giữ các cặp lặp.
+
+\key{Softmax} Giả sử xác suất của đa tập là tích các $P(v\mid u)$. Đổi tích thành tổng log và đổi dấu để được loss $\mathcal L=-\sum_u\sum_{v\in N_R(u)}\log P(v\mid u)$:
 \[
-P(v\mid u)=\frac{\exp(z_v^Tz_u)}{\sum_{w\in V}\exp(z_w^Tz_u)}.
+P(v\mid u)=\frac{\exp(s(u,v))}{\sum_{x\in V}\exp(s(u,x))}.
 \]
-Tương đương tối thiểu hóa tổng $-\log P(v\mid u)$ trên các cặp dương.
-}
+Ví dụ logits cho $A,B,C$ là $(\ln4,\ln2,0)$: mũ hóa được $(4,2,1)$, nên $P(A\mid u)=4/7$. Nếu $(u,A)$ là cặp dương, loss là $\ln(7/4)\approx0.5596$.
 
 \begin{algpseudo}
 sinh walk; lấy các cặp có thứ tự $(u,v)$ trong cửa sổ ngữ cảnh\\
-khởi tạo bảng $z$; lặp qua các cặp huấn luyện:\\
-\quad cập nhật $z$ để giảm $-\log P(v\mid u)$, hoặc dùng mục tiêu negative sampling\\
-trả bảng $z$
+khởi tạo $Z$; cập nhật bằng SGD để giảm loss của từng cặp huấn luyện\\
+trả $Z$
 \end{algpseudo}
 
 \unitverification
-\key{Bẫy} Mẫu số softmax đi qua mọi nút. Bảng tra theo ID cần $O(d|V|)$ ô và không tự sinh vectơ cho nút chưa thấy.
+\key{Kiểm tra} Mỗi cột là một nút, nên bộ nhớ là $O(nd)$. Bảng tra không tự sinh vectơ cho ID mới. Full softmax cần $n$ tích vô hướng cho mỗi cặp dương; tính cả mẫu số tốn $O(nd)$.
 
 \unitadvanced
-\key{Chi phí học} Bảng embedding có $|V|d$ tham số. Với $T$ cặp center-context và $k$ negative samples, skip-gram negative sampling tốn khoảng $O(T(k+1)d)$ thay vì tính softmax trên mọi nút.
+\key{Dùng embedding} Phân loại hoặc gom cụm các $z_u$. Để dự đoán cạnh, ghép hai vectơ rồi dùng hàm chấm điểm $g$. Ví dụ $z_A=(1,2),z_B=(3,4)$:
+\begin{examtable}{@{}lccc@{}}
+\toprule
+Phép ghép & Đặc trưng & Chiều & Ví dụ \\
+\midrule
+Nối & $[z_u;z_v]$ & $2d$ & $(1,2,3,4)$ \\
+Hadamard & $z_u\odot z_v$ & $d$ & $(3,8)$ \\
+Tổng / trung bình & $z_u+z_v$ / $(z_u+z_v)/2$ & $d$ & $(4,6)$ / $(2,3)$ \\
+Khoảng cách & $\|z_u-z_v\|_2$ & $1$ & $2\sqrt2$ \\
+\bottomrule
+\end{examtable}
+Phép nối đổi khi đảo thứ tự hai nút; các phép còn lại đối xứng, hữu ích khi dự đoán cạnh vô hướng. Chọn cách định nghĩa độ tương tự theo bài toán đầu ra.
+
+% Lec7_Graphs.pdf, pp. 72--82.
 \topic{node2vec}{DeepWalk vs node2vec (walk generation)}
 
-\algsummary{Sinh các walk để lấy dữ liệu ngữ cảnh cho node embedding.}{DeepWalk chỉ nhìn nút hiện tại; node2vec còn dùng nút trước để điều chỉnh khoảng khám phá.}{\textbf{Phân biệt:}\enspace DeepWalk đi ngẫu nhiên đều trên hàng xóm nếu cạnh không trọng số. node2vec còn xét nút ngay trước đó $t$ để quyết định bước tiếp từ $v$.}{Đồ thị, seed, độ dài walk và $p,q>0$ nếu dùng node2vec.}{Chuỗi nút đã thăm.}{Ở mỗi nút, gán trọng số cho các cạnh đi ra theo biến thể đang dùng. Chuẩn hóa trọng số thành xác suất rồi rút bước kế tiếp.}
+\algsummary{Lấy mẫu ngữ cảnh nhiều bước.}{DeepWalk bậc một chỉ dùng nút hiện tại; node2vec bậc hai dùng cả nút vừa rời.}{}{Đồ thị vô hướng, trọng số không âm, $r$ walk mỗi nút, tối đa $\ell$ bước mỗi walk; node2vec cần $p,q>0$.}{Các chuỗi nút để lấy cặp ngữ cảnh.}{Từ nút trước $t$ và nút hiện tại $v$, tính điểm cho từng $x\in N(v)$, chuẩn hóa rồi lấy mẫu.}
 
-\key{Cách tính} Với ứng viên $x\in N(v)$, nhân trọng số cạnh $w_{vx}$ với hệ số dưới đây rồi chuẩn hóa trên toàn bộ hàng xóm của $v$:
+\key{DeepWalk} Chọn đều trên $N(v)$: $P(x\mid v)=1/\deg(v)$. Nếu mở rộng có trọng số, chọn theo $w_{vx}/\sum_{y\in N(v)}w_{vy}$. Biết nút đầu thì nhân xác suất các bước. Trên $A-B-C-D$, walk $B\to C\to D\to C$ có xác suất $(1/2)(1/2)(1)=1/4$ vì $D$ chỉ kề $C$.
+
+\key{node2vec} Sau bước $t\to v$, đo khoảng cách không trọng số $d_G(t,x)$ từ nút \emph{trước} đến $x$. Vì $t$ và $x$ đều kề $v$, khoảng cách chỉ có thể là $0,1,2$:
 \[
 \alpha_{pq}(t,x)=
 \begin{cases}
 1/p & x=t \quad\text{(quay lại)},\\
-1 & d(t,x)=1 \quad\text{(gần)},\\
-1/q & d(t,x)=2 \quad\text{(đi xa)}.
+1 & d_G(t,x)=1 \quad\text{(gần)},\\
+1/q & d_G(t,x)=2 \quad\text{(đi xa)}.
 \end{cases}
+\qquad
+P(x\mid t,v)=\frac{\alpha_{pq}(t,x)w_{vx}}
+{\sum_{y\in N(v)}\alpha_{pq}(t,y)w_{vy}}.
 \]
 
+\noindent\begin{minipage}{\linewidth}
 \begin{algpseudo}
-$v\gets$ seed; $t\gets$ chưa có; khởi tạo walk bằng $v$\\
-khi chưa đủ độ dài và $v$ có hàng xóm:\\
-\quad điểm của $x\in N(v)$ là $w_{vx}$ (DeepWalk hoặc bước đầu)\\
-\quad nếu node2vec và có $t$: nhân điểm của $x$ với $\alpha_{pq}(t,x)$\\
-\quad chọn $x$ theo các điểm; nối $x$; đặt $(t,v)\gets(v,x)$\\
-trả walk
+với mỗi seed, sinh $r$ walk: bắt đầu ở $v=$ seed, chưa có nút trước $t$\\
+\quad khi chưa đủ $\ell$ bước: lấy điểm $w_{vx}$ cho các $x\in N(v)$\\
+\quad với node2vec nếu đã có $t$: nhân mỗi điểm với $\alpha_{pq}(t,x)$\\
+\quad nếu tổng điểm bằng 0 thì dừng walk; nếu dương, chuẩn hóa và lấy mẫu $x$\\
+\quad nối $x$ vào walk, cập nhật $(t,v)\gets(v,x)$\\
+trả các walk để lấy cặp ngữ cảnh
 \end{algpseudo}
+\end{minipage}\par
 
-\key{Ví dụ} $p=2,q=1/2$, mỗi loại một ứng viên không trọng số: điểm thô $(1/2,1,2)$, xác suất $(1/7,2/7,4/7)$. Đo $d(t,x)$ từ nút trước, không đo từ $v$. $q$ nhỏ thiên về đi xa; $q$ lớn thiên về quanh vùng hiện tại.
+\key{Ví dụ: phân loại rồi chuẩn hóa} Walker vừa đi $s_1\to w$. Hàng xóm của $w$ là $s_1,s_2,s_3,s_4$; trong ba ứng viên mới, chỉ $s_2$ kề $s_1$. Cạnh đều có trọng số 1, nên khoảng cách là $(0,1,2,2)$. Với $p=2,q=1/2$, điểm thô $(1/2,1,2,2)$ có tổng $11/2$; xác suất là $(1,2,4,4)/11$.
 
 \unitverification
-\key{Kiểm tra} Chuẩn hóa trọng số chuyển trên toàn bộ $N(v)$; khi $p=q=1$, xác suất trở về, đi gần và đi xa đều bằng nhau như random walk đều.
+\key{Kiểm tra} Xác suất các ứng viên phải có tổng 1. Với $p=q=1$, bias biến mất: walk đều nếu không trọng số, còn có trọng số thì vẫn chọn theo $w_{vx}$. Kiểm tra $x=t$ rồi tra cạnh $tx$ để phân loại $0,1,2$; không cần chạy thuật toán đường đi ngắn nhất.
 
 \unitadvanced
-\key{Ảnh hưởng tham số} Tham số $p$ điều khiển xác suất quay lại nút trước; $q$ điều khiển xu hướng đi ra xa hay ở gần vùng hiện tại. Chúng đổi phân phối walk, còn vector embedding được học ở bước riêng.
+\key{Ảnh hưởng tham số} $p$ nhỏ tăng xu hướng quay lại; $q$ nhỏ ưu tiên đi xa (thiên DFS), $q$ lớn giữ walk gần vùng cũ (thiên BFS). Đây vẫn là walk ngẫu nhiên. Giữ $p=1$ trong ví dụ: $q=2$ cho $(2,2,1,1)/6$, còn $q=1/2$ cho $(1,1,2,2)/6$.
+
+\key{Chi phí và giới hạn} Nếu lấy mẫu mỗi bước trong $O(1)$ sau tiền xử lý, sinh walk tốn $O(nr\ell)$; với bán kính $w$, số cặp là $M=O(nr\ell w)$. Bảng chuyển bậc hai cần thêm chi phí lưu và dựng, nhất là ở nút bậc cao. Tăng $r$ phủ rộng hơn; tăng $\ell$ có thể làm loãng ngữ cảnh gần; tăng $d$ tốn thêm ô nhớ và phép tính. Walk không vượt qua các thành phần rời nhau; ít mẫu làm ước lượng ngữ cảnh nhiễu.
+
+% Lec7_Graphs.pdf, pp. 69--71; use the standard binary classification objective.
 \topic{negatives}{Negative sampling for graph embeddings}
 
-\algsummary{Huấn luyện embedding mà không phải tính softmax trên tất cả nút ở mỗi bước.}{So cặp quan sát được với vài cặp nhiễu lấy từ một phân phối nền.}{\textbf{Tạo cặp:}\enspace Cặp $(u,v)$ từ cửa sổ walk là dương; lấy $k$ mẫu nhiễu $n_j$ từ phân phối nền.
+\algsummary{Học embedding mà không tính mẫu số full softmax.}{Phân biệt cặp quan sát được và cặp nhiễu.}{}{Cặp dương $(u,v)$, số mẫu nhiễu $k$, phân phối nền $P_V$ và bước học.}{Các vectơ đã cập nhật.}{Lấy $k$ mẫu $n_j$ và tăng xác suất nhãn đúng của từng cặp.}
+
+\key{Hàm mục tiêu} Gọi $s_+=z_u^\top z_v$, $s_j^-=z_u^\top z_{n_j}$. Nếu lấy mẫu theo bậc, $P_V(x)=\deg(x)/\sum_y\deg(y)$. Tối đa hóa $J$ tương đương tối thiểu hóa $\ell_{\rm NS}=-J$:
 \[
-\log\sigma(z_u^Tz_v)+\sum_{j=1}^k\log\sigma(-z_u^Tz_{n_j}),
+J=\log\sigma(s_+)+\sum_{j=1}^k\log\sigma(-s_j^-),
 \qquad \sigma(a)=\frac{1}{1+e^{-a}}.
-\]}{Cặp dương $(u,v)$, $k$ mẫu nhiễu mỗi cặp, phân phối nền và bước học.}{Các embedding đã cập nhật.}{Tối đa hóa log-sigmoid của điểm cho cặp dương và log-sigmoid của điểm đã đổi dấu cho cặp nhiễu.}
-
-\key{Diễn giải} Tối đa hóa biểu thức để tăng tích vô hướng của cặp dương và giảm tích vô hướng của cặp nhiễu. Mỗi cặp tốn khoảng $O((k+1)d)$ thay vì $O(|V|d)$. Đây là mục tiêu huấn luyện khác full softmax.
-
-
-
-\lecture{8}{Data streams}
+\]
+Ví dụ $s_+=2$, hai điểm nhiễu $(-1,0)$: $\ell_{\rm NS}=-\log\sigma(2)-\log\sigma(1)-\log\sigma(0)\approx1.1333$.
 
 \begin{algpseudo}
-với mỗi cặp dương $(u,v)$: lấy $n_1,\ldots,n_k$ từ phân phối nền\\
-\quad $J\gets\log\sigma(z_u^Tz_v)+\sum_j\log\sigma(-z_u^Tz_{n_j})$\\
-\quad cộng bước gradient ascent của $J$ vào các vectơ liên quan\\
-trả embedding
+với mỗi cặp $(u,v)$: lấy $k$ nút nhiễu từ $P_V$, tính các tích vô hướng\\
+\quad tính $\ell_{\rm NS}$ rồi dùng SGD để giảm loss trên các vectơ liên quan\\
+trả $Z$
 \end{algpseudo}
 
 \unitverification
-\key{Kiểm tra} Hạng dương phải được kéo gần hơn, còn các hạng nhiễu bị đẩy xa; kiểm tra dấu của từng log-sigmoid trước khi cập nhật vector.
+\key{Kiểm tra dấu} Mục tiêu logistic khác softmax. Nhãn nhiễu có xác suất $1-\sigma(s^-)=\sigma(-s^-)$, nên cần tăng $s_+$ và giảm $s^-$. Không tối đa hóa $-\log\sigma(s^-)$: hạng này tăng vô hạn khi $s^-\to-\infty$.
 
 \unitadvanced
-\key{Chi phí mục tiêu} Với chiều embedding $d$ và $k$ negative samples, mỗi cặp center-context cần khoảng $O((k+1)d)$ phép tính thay vì $O(|V|d)$ của full softmax.
+\key{Chi phí và đánh đổi} Mỗi cặp cần $1+k$ điểm thay vì $n$: với $n=10^6,k=10$ là 11 thay vì một triệu. Một lượt qua $M$ cặp tốn $O(M(k+1)d)$. Tăng $k$ thêm đối chứng và chi phí; 5--20 là mốc tham khảo.
+
+\lecture{8}{Data streams}
 \topic{fm}{Flajolet-Martin (FM): distinct count}
 
 \algsummary{Ước lượng số ID phân biệt trong luồng mà không phải lưu từng ID.}{Đuôi có $r$ bit 0 hiếm cỡ $2^{-r}$; ID lặp lại có cùng mã băm nên không tăng cực đại.}{\textbf{Bài toán:}\enspace Với luồng $a_1,\ldots,a_t$, cần ước lượng số giá trị phân biệt
