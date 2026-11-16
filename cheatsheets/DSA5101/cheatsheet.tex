@@ -2,7 +2,7 @@
 % Compile with latexmk -xelatex on this file.
 % Questions are typeset from the source PDFs, grouped by topic.
 \documentclass[10pt,a4paper,twocolumn]{article}
-\usepackage[a4paper,landscape,left=10mm,right=10mm,top=9mm,bottom=11mm,nohead,footskip=6mm]{geometry}
+\usepackage[a4paper,landscape,left=10mm,right=10mm,top=8mm,bottom=10mm,nohead,footskip=6mm]{geometry}
 \usepackage{amsmath}
 \usepackage{fontspec,unicode-math}
 \setmainfont{STIXTwoText}[Extension=.otf,UprightFont=*-Regular,BoldFont=*-Bold,ItalicFont=*-Italic,BoldItalicFont=*-BoldItalic]
@@ -267,7 +267,7 @@
 \topicoutline{linkfarm}{Link farm amplification}
 \topicoutline{hits}{HITS (hubs and authorities)}
 \outline{7}{Communities \& graph embeddings}
-\topicoutline{louvain}{Louvain / modularity}
+\topicoutline{louvain}{Modularity, Configuration Model \& Louvain}
 \topicoutline{conductance}{Graph Cut \& Conductance}
 \topicoutline{ppr}{Approximate Personalized PageRank (PPR)}
 \topicoutline{embedding}{Node embeddings: shallow encoding \& random walks}
@@ -2554,30 +2554,33 @@ B=\begin{pmatrix}1&1&1\\1&1&0\\0&0&1\end{pmatrix}.
 \finalanswer{(a) Ba hàng của $B$ là $(1,1,1),(1,1,0),(0,0,1)$; $h=(3,2,1)^T$. (b) $a'=(5,5,4)^T$; $R_1=R_2>R_3$. Nếu chuẩn hóa $L_2$, chia cho $\sqrt{66}$. (c) HITS cộng toàn bộ điểm các hub trỏ đến; PageRank chia điểm nguồn theo bậc ra.}
 
 \lecture{7}{Communities / graph clustering}
-\topic{louvain}{Louvain / modularity}
+% Lec7_Graphs.pdf, pp. 29--38.
+\topic{louvain}{Modularity, Configuration Model \& Louvain}
 
-\algsummary{Phân cụm toàn đồ thị bằng cách tìm các nước chuyển làm modularity tăng.}{Cải thiện ở mức nút rồi nén từng cụm để phát hiện cấu trúc quy mô lớn hơn.}{\textbf{Đọc mục tiêu:}\enspace Trong đồ thị vô hướng có $m$ cạnh, $e_C$ là số cạnh nội bộ của cụm $C$ đếm một lần và $\operatorname{vol}(C)=\sum_{v\in C}d_v$.
+\algsummary{Chấm điểm một phân hoạch bằng modularity $Q$. Nếu đề yêu cầu tìm phân hoạch cho toàn đồ thị, Louvain tìm cách tăng $Q$.}{Một nhóm gồm các nút bậc cao có thể có nhiều cạnh nội bộ ngay cả khi nối ngẫu nhiên. So số cạnh thật với mức kỳ vọng dựa trên bậc.}{}{Đồ thị vô hướng $G$ với $m>0$; phân hoạch $\mathcal S$ nếu cần tính điểm, hoặc thứ tự nút và cách phá hòa nếu chạy Louvain.}{$Q(G,\mathcal S)$ hoặc phân hoạch do Louvain tìm được và điểm $Q$.}{Tính cạnh nội bộ và tổng bậc cho mỗi cụm. Khi chạy Louvain, dùng $\Delta Q$ để chọn nước chuyển rồi co cụm.}
+
+\key{Công thức tính tay} $e_C$ đếm mỗi cạnh nội bộ một lần, còn $\operatorname{vol}(C)=\sum_{i\in C}k_i$ cộng bậc của các nút trong $C$. Cộng chênh lệch giữa hai tỷ lệ trong từng cụm:
 \[
-Q=\sum_C\left[\frac{e_C}{m}-\left(\frac{\operatorname{vol}(C)}{2m}\right)^2\right].
-\]}{Đồ thị vô hướng (có thể có trọng số), thứ tự nút và quy tắc phá hòa.}{Phân hoạch các nút gốc và modularity của nó.}{Khởi tạo mỗi nút một cụm. Lặp các nước chuyển tăng modularity, sau đó gom cụm thành siêu nút và giữ self-loop.}
+Q=\sum_{C\in\mathcal S}\left[\frac{e_C}{m}-\left(\frac{\operatorname{vol}(C)}{2m}\right)^2\right].
+\]
+Với đồ thị có trọng số, dùng tổng trọng số cạnh cho $m,e_C$ và bậc có trọng số cho $k_i$.
 
-\steps{
-\item Khởi tạo mỗi nút một cụm. Chuyển từng nút sang cụm lân cận cho mức tăng $Q$ tốt nhất nếu mức tăng dương.
-\item Khi không còn cải thiện ở mức đang xét, gộp mỗi cụm thành một siêu nút, giữ đúng trọng số cạnh và self-loop rồi lặp.
-}
+\begin{algpseudo}
+tính modularity: khởi tạo $e_C=\operatorname{vol}(C)=0$ cho mọi cụm\\
+với mỗi nút $i$: cộng $k_i$ vào thể tích của cụm chứa $i$\\
+với mỗi cạnh $ij$ có hai đầu cùng cụm $C$: cộng trọng số cạnh vào $e_C$\\
+trả tổng $e_C/m-(\operatorname{vol}(C)/(2m))^2$ qua các cụm
+\end{algpseudo}
+
+\key{Ví dụ: hai tam giác nối bằng một cầu} Với các tam giác $ABC,DEF$ và cạnh cầu $CD$, $m=7$. Mỗi tam giác có $e_C=3$, $\operatorname{vol}(C)=2+2+3=7$. Hai cụm đóng góp như nhau, nên $Q=2[3/7-(7/14)^2]=5/14\approx0.3571$. Gộp cả sáu nút thành một cụm cho $Q=7/7-(14/14)^2=0$.
 
 \key{Đổi một nút} Nếu chuyển $i$ từ $A$ sang $B$, đặt $a=\operatorname{vol}(A)$ gồm $i$, $b=\operatorname{vol}(B)$, $k=d_i$, còn $k_{i,A},k_{i,B}$ là số cạnh tới phần còn lại của hai cụm. Khi đó
 \[
 \Delta Q=\frac{k_{i,B}-k_{i,A}}{m}-\frac{(a-k)^2+(b+k)^2-a^2-b^2}{(2m)^2}.
 \]
-Đồ thị co giữ đường chéo siêu nút bằng $2e_C$; bỏ self-loop làm sai thể tích và modularity.
-
-\key{Tra ký hiệu} $\Sigma_{\rm in}=2e_C$ và $\Sigma_{\rm tot}=\operatorname{vol}(C)$ cho đồ thị vô hướng không trọng số. Louvain là heuristic; nếu chỉ quan tâm vùng quanh một seed, xem Local PPR.
-
-% DSA5101 Exam Practice Questions.pdf, PDF page(s) 21.
 
 \begin{algpseudo}
-mỗi nút hiện tại là một cụm; theo dõi ánh xạ về nút gốc\\
+Louvain: mỗi nút hiện tại là một cụm; theo dõi ánh xạ về nút gốc\\
 lặp các lượt quét: chuyển từng nút sang cụm lân cận có $\Delta Q$ dương lớn nhất\\
 khi một lượt không còn phép chuyển: nếu mức này không tăng $Q$, dừng\\
 nếu có tăng: thu gọn theo cụm, cộng trọng số cạnh cả giữa lẫn trong cụm; lặp\\
@@ -2585,11 +2588,32 @@ trả phân hoạch trên các nút gốc
 \end{algpseudo}
 
 \unitverification
-\key{Kiểm tra} Chỉ chấp nhận nước chuyển có $\Delta Q>0$; sau khi co đồ thị, giữ self-loop để bảo toàn cạnh nội bộ.
+\key{Kiểm tra} $\Sigma_{\rm in}=2e_C$, $\Sigma_{\rm tot}=\operatorname{vol}(C)$ và $\sum_C\operatorname{vol}(C)=2m$. Khi co cụm, giữ đường chéo $2e_C$ trong ma trận kề của siêu nút để tổng hàng vẫn là bậc. $Q\in[-1,1]$; $Q>0$ nghĩa là tổng cạnh nội bộ vượt mức kỳ vọng, chưa chứng minh phân hoạch tối ưu. Khoảng $0.3$--$0.7$ là mốc tham khảo, không phải kiểm định thống kê.
+
+\key{Chọn thước đo} Modularity chấm phân hoạch toàn đồ thị và cần tối đa hóa. Conductance đo biên của một tập so với thể tích phía nhỏ hơn và cần tối thiểu hóa. Nếu chỉ cần cụm quanh một seed, dùng Local PPR.
 
 \unitadvanced
-\key{Tìm cực đại cục bộ} Louvain chỉ khảo sát các nước chuyển cục bộ rồi co cụm; khi không còn nước tăng modularity, dừng tại cực đại cục bộ của các nước đã xét, không chứng minh cực đại toàn cục.
+\key{Configuration Model} Mô hình nền nối lại các đầu cạnh ngẫu nhiên, giữ số đầu cạnh $k_i$ của từng nút, với $\sum_i k_i=2m$. Mô hình cho phép cạnh lặp và cạnh tự nối. Trong công thức modularity chuẩn, kỳ vọng ma trận kề dùng tích bậc:
+\[
+P_{ij}=\frac{k_i k_j}{2m},\qquad
+Q=\frac{1}{2m}\sum_{C\in\mathcal S}\sum_{i,j\in C}(A_{ij}-P_{ij}).
+\]
+Vì đồ thị vô hướng, $\sum_{i,j\in C}A_{ij}=2e_C$. Tổng $\sum_{i,j\in C}k_i k_j$ bằng $\operatorname{vol}(C)^2$. Thay hai tổng này vào $Q$ cho công thức tính tay. Nếu đề hỏi kỳ vọng \emph{chính xác} khi ghép từng cặp đầu cạnh không hoàn lại, dùng $k_i(k_j-\mathbf1_{i=j})/(2m-1)$, với đường chéo đếm cạnh tự nối hai lần; bài tính modularity chuẩn vẫn dùng $P_{ij}$.
 
+\key{Ví dụ: cùng số cạnh nội bộ, khác thể tích} Với $m=10$, hai phân hoạch $P,R$ đều có 8 cạnh nội bộ. Phần quan sát là $8/10=0.80$ cho cả hai. Đổi thể tích thành tỷ lệ trên $2m=20$ rồi bình phương từng tỷ lệ:
+\begin{examtable}{@{}lccc@{}}
+\toprule
+Phân hoạch & Thể tích & Tỷ lệ nội bộ kỳ vọng & $Q$ \\
+\midrule
+$P$ & $(10,10)$ & $0.5^2+0.5^2=0.50$ & $0.80-0.50=0.30$ \\
+$R$ & $(12,8)$ & $0.6^2+0.4^2=0.52$ & $0.80-0.52=0.28$ \\
+\bottomrule
+\end{examtable}
+Trong mô hình nền, xác suất cả hai đầu cạnh rơi vào cùng cụm tăng theo bình phương tỷ lệ thể tích của cụm. Với hai cụm, $a^2+b^2=((a+b)^2+(a-b)^2)/2$: khi tổng $a+b$ cố định, tăng độ lệch $|a-b|$ làm tăng phần kỳ vọng. Nếu giữ cả số cụm và tổng số cạnh nội bộ cố định, thể tích cân bằng làm $Q$ cao hơn. Khi chuyển nút thật, số cạnh nội bộ cũng có thể đổi; Louvain so toàn bộ $\Delta Q$.
+
+\key{Chi phí và giới hạn} Tính $Q$ cho phân hoạch đã cho tốn $O(|V|+|E|+K)$ thời gian và $O(K)$ bộ nhớ phụ nếu đã có nhãn cụm và bậc. Louvain chỉ xét các nước chuyển cục bộ rồi co cụm; dừng khi không còn cải thiện ở mức đang xét, chưa bảo đảm tìm được $\mathcal S^*=\arg\max_{\mathcal S}Q(G,\mathcal S)$.
+
+% DSA5101 Exam Practice Questions.pdf, PDF page(s) 21.
 \ask{Pr20}{Pr20}{}
 An undirected graph is the path $1-2-3-4-5-6$, with $m=5$ edges. For a partition, use
 \[
