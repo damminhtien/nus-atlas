@@ -722,29 +722,46 @@ Hint: Your answer in part (a) should be useful here.
 \finalanswer{(c) Chạy Apriori trên mẫu, rồi xác nhận bằng một lượt quét toàn bộ dữ liệu mỗi lần thử. (d) Negative border $\{E,AC,CD\}$. (e) Lấy lại mẫu nếu một tập ở border đạt ngưỡng toàn cục; hạ ngưỡng mẫu để giảm xác suất phải chạy lại. (f) Nếu xác nhận thành công, tỷ lệ âm giả bằng $0$.}
 \topic{rules}{Association rules}
 
-\algsummary{Từ các tập frequent, tìm luật dự đoán item nào thường xuất hiện cùng các item đã biết.}{So tỷ lệ xuất hiện của $y$ trong các giỏ chứa $X$ với tỷ lệ nền của $y$.}{\textbf{Khi dùng:}\enspace Đề hỏi luật $X\to y$. Đặt $a=\operatorname{supp}(X)$, $c=\operatorname{supp}(X\cup\{y\})$, $p_y=\operatorname{supp}(y)/N$ với $N$ là số giỏ.
+\algsummary{Tìm luật $X\to Y$ đạt ngưỡng support và confidence; đề có thể hỏi thêm interest hoặc lift.}{Trong các giỏ chứa $X$, đo tỷ lệ cũng chứa $Y$ rồi so với tỷ lệ nền của $Y$.}{}{Dữ liệu $D$ gồm $N$ giỏ (hoặc các frequent itemset kèm support), ngưỡng support count $s$ và confidence $\gamma$.}{Luật $X\to Y$ với hai vế khác rỗng, $X\cap Y=\varnothing$, đạt cả hai ngưỡng.}{Khai phá các tập frequent bằng Apriori, PCY (cho cặp), SON hoặc Toivonen. Tách mỗi tập thành hai vế rồi lọc luật theo confidence.}
+
+\key{Công thức} Viết $n_Z=\operatorname{supp}(Z)=\sum_{b\in D}\mathbf1[Z\subseteq b]$. Mỗi giỏ đóng góp tối đa 1, kể cả khi một item lặp trong giỏ. Với $I=X\cup Y$ và $p_Y=n_Y/N$:
 \[
 \begin{aligned}
-\operatorname{conf}(X\to y)&=c/a,\\
-\operatorname{interest}(X\to y)&=c/a-p_y,\\
-\operatorname{lift}(X\to y)&=(c/a)/p_y .
+\text{Support count của luật}&=n_I,\\
+\operatorname{conf}(X\to Y)&=n_I/n_X,\\
+\operatorname{interest}(X\to Y)&=n_I/n_X-p_Y,\\
+\operatorname{lift}(X\to Y)&=(n_I/n_X)/p_Y.
 \end{aligned}
-\]}{Support các tập frequent, $N$, ngưỡng confidence và các tiêu chí đề cho.}{Luật $X\to y$ đạt tiêu chí cùng các chỉ số.}{Tách từng $y$ khỏi tập frequent $F$ để lập luật. Tính confidence, interest hoặc lift theo đề rồi giữ các luật đạt tiêu chí.}
+\]
+Chấp nhận khi $n_I\ge s$ và $\operatorname{conf}(X\to Y)\ge\gamma$. Nếu đề dùng support theo tỷ lệ, dùng $n_I/N$.
 
 \begin{algpseudo}
-với mỗi tập frequent $F$ có ít nhất hai item:\\
-\quad với mỗi $y\in F$: $X\gets F\setminus\{y\}$; $c\gets\operatorname{supp}(F)/\operatorname{supp}(X)$\\
-\quad nếu đạt các ngưỡng: xuất $X\to y$ cùng các chỉ số
+với mỗi tập frequent $I$ có ít nhất hai item:\\
+\quad với mỗi tập con khác rỗng $X\subsetneq I$: $Y\gets I\setminus X$\\
+\qquad nếu đề giới hạn dạng vế phải và $Y$ không đúng dạng: bỏ qua\\
+\qquad nếu $n_I/n_X\ge\gamma$: xuất $X\to Y$ cùng các chỉ số đề yêu cầu
 \end{algpseudo}
 
-\unitverification
-\key{Bẫy} Support của luật là $c$, không phải $a$. Công thức interest ở trên là dạng có dấu; dùng đúng định nghĩa đề cho. Lift cần $p_y>0$.
+\key{Ví dụ sinh luật} Với $I=\{A,B,C\}$, có sáu ứng viên: $A\to BC$, $B\to AC$, $C\to AB$, $AB\to C$, $AC\to B$, $BC\to A$. Nếu đề chỉ cho vế phải một item, xét ba luật cuối.
 
-% DSA5101 Exam Practice Questions.pdf, PDF page(s) 2.
+\unitverification
+\key{Đọc dấu interest} Dương, bằng 0 hoặc âm nghĩa là $Y$ xuất hiện nhiều hơn, ngang bằng hoặc ít hơn mức nền khi giỏ chứa $X$. Ví dụ $n_I=2$, $n_X=4$, $n_Y=5$, $N=8$ cho $\operatorname{conf}=2/4=1/2$, signed interest $1/2-5/8=-1/8$ và độ lớn $1/8$. Chỉ bỏ dấu khi đề hỏi trị tuyệt đối.
+
+\key{Bẫy} Đảo hai vế giữ support nhưng có thể đổi confidence vì mẫu số đổi. Confidence cao có thể do $p_Y$ vốn cao; vẫn phải kiểm tra support và chưa thể suy ra quan hệ nhân quả. Lift chỉ xác định khi $p_Y>0$; confidence cần $n_X>0$.
+
+\key{Sao chép dữ liệu} Nếu nhân số bản của từng giỏ lên $k$ lần, mọi support count và $N$ cùng nhân $k$. Support fraction, confidence và signed interest giữ nguyên; tập frequent có thể đổi nếu giữ nguyên ngưỡng đếm $s$. Thêm bản sao một item vào \emph{trong} một giỏ thì support count không đổi.
 
 \unitadvanced
-\key{Số luật} Một frequent itemset cỡ $k$ có tối đa $2^k-2$ cách tách thành vế trái khác rỗng và vế phải khác rỗng. Vì vậy số luật có thể tăng theo hàm mũ dù số frequent itemset nhỏ.
+\key{Tỉa theo confidence} Giữ nguyên hợp $I$. Nếu $\varnothing\ne B\subset A\subsetneq I$ thì $n_B\ge n_A$, còn tử số $n_I$ không đổi, nên
+\[
+\operatorname{conf}(B\to I\setminus B)=\frac{n_I}{n_B}
+\le\frac{n_I}{n_A}=\operatorname{conf}(A\to I\setminus A).
+\]
+Do đó nếu $ABC\to D$ trượt ngưỡng thì $AB\to CD$ và $A\to BCD$ cũng trượt với cùng hợp $ABCD$. Đổi hợp thì không dùng được lập luận này.
 
+\key{Chi phí} Tập frequent cỡ $k$ sinh tối đa $2^k-2$ ứng viên. Với tra support $O(1)$, xét confidence tốn tối đa $O(2^k)$, chưa tính chi phí tạo và ghi luật. Không quét lại giao dịch nếu các support cần thiết đã được lưu; khai phá các tập frequent thường là phần tốn I/O.
+
+% DSA5101 Exam Practice Questions.pdf, PDF page(s) 2.
 \ask{Pr1b}{Pr1(b)}{Dữ kiện chung: \shareddataref{Pr1}}
 \qpart{b} Use the supplied counts $\operatorname{supp}(ABD)=\operatorname{supp}(ACD)=\operatorname{supp}(BD)=2$, $\operatorname{supp}(AC)=3$, $\operatorname{supp}(A)=5$, and $\operatorname{supp}(D)=4$. For $BD\to A$ and $AC\to D$, give confidence and signed interest, where $\operatorname{interest}(X\to y)=\operatorname{conf}(X\to y)-\operatorname{supp}(y)/7$. Which rules meet both support count 2 and confidence $4/5$?
 
