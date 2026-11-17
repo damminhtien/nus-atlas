@@ -233,8 +233,8 @@
 \topicoutline{pairs}{Pair counters: triangular matrix vs triples}
 \topicoutline{pcy}{PCY}
 \topicoutline{multihash}{Multistage \& Multihash (PCY refinements)}
-\topicoutline{toivonen}{Toivonen}
 \topicoutline{son}{Random Sampling \& SON}
+\topicoutline{toivonen}{Toivonen}
 \topicoutline{rules}{Association rules}
 \outline{2}{Similar items \& locality-sensitive hashing}
 \topicoutline{jaccard}{Shingling \& Jaccard}
@@ -577,45 +577,63 @@ Multistage chỉ băm lại $12$ và $24$: chúng góp 3 lượt vào bucket 2 v
 \key{Cùng ngân sách} Multistage giữ $B_1$ cùng bảng đếm thứ hai; Multihash giữ hai bảng đếm cùng lúc nên thường ít bucket hơn mỗi bảng. Với cùng hàm băm và kích thước bảng, số đếm $h_2$ của Multistage không vượt số đếm của Multihash vì băm ít lượt hơn.
 
 \key{Cận lọc} Trung bình $s/10$ lượt mỗi bucket của PCY cho tối đa $1/10$ số bit bật: mỗi bit bật cần ít nhất $s$ lượt. Chia đôi số bucket mỗi bảng của Multihash thì trung bình lên $s/5$, với tối đa $1/5$ bit bật mỗi bảng. Nếu cặp kiểm tra rơi đều và độc lập trên hai bitmap đã dựng, xác suất qua cả hai không quá $(1/5)^2=0.04$. Đây là cận theo mô hình, không phải tỷ lệ đo được; hai hàm khác nhau chưa chắc độc lập.
+\topic{son}{Random Sampling \& SON}
+
+\algsummary{Giảm I/O khi Apriori phải quét dữ liệu lớn cho từng cỡ tập.}{Chạy Apriori trong RAM trên một mẫu hoặc lần lượt trên mọi phần vừa RAM.}{}{$N$ giỏ trong $D$; ngưỡng $s$; mẫu tỷ lệ $p$ hoặc các phần rời $D_j$ phủ $D$, với $p_j=|D_j|/N$.}{Random Sampling: ứng viên; SON: kết quả chính xác.}{Điều chỉnh ngưỡng theo tỷ lệ giỏ; nếu xác nhận, đếm lại theo ngưỡng $s$.}
+
+\begin{examtable}{@{}lll@{}}
+\toprule
+Cách & Đọc dữ liệu & Sau xác nhận \\
+\midrule
+Random Sampling & Mẫu; tùy chọn quét thêm 1 lượt & Còn có thể sót \\
+SON & Mọi phần; quét thêm 1 lượt & Chính xác \\
+Toivonen & Mẫu; quét 1 lượt mỗi lần thử & Chính xác nếu nhận mẫu \\
+\bottomrule
+\end{examtable}
+
+\begin{algpseudo}
+Sampling: lấy mẫu đều $S$; $C\gets\operatorname{Apriori}(S,\lceil ps\rceil)$\\
+\quad nếu không xác nhận: trả $C$\\
+SON: $C\gets\varnothing$; với mọi phần $D_j$, lấy hợp $C$ với $\operatorname{Apriori}(D_j,\lceil p_js\rceil)$\\
+xác nhận: quét $D$ đếm mọi $X\in C$; trả các tập có $\operatorname{supp}_D(X)\ge s$
+\end{algpseudo}
+
+\key{Ví dụ} Sampling: $p=0.1,s=100$, ngưỡng 10; một tập có support thật 100 có kỳ vọng 10 trên mẫu nhưng đếm được 9 thì vẫn bị bỏ sót. SON: $N=10$, $s=5$, hai phần 5 giỏ có ngưỡng $\lceil(5/10)5\rceil=3$; nếu support chia $(2,3)$, phần 2 đưa tập vào $C$.
+
+\unitverification
+\key{Kiểm tra} Sampling chưa xác nhận có thể có dương giả lẫn âm giả. Xác nhận loại dương giả, không tìm lại tập vắng trong $C$. Hạ ngưỡng mẫu xuống $\lceil\alpha ps\rceil$, $0<\alpha<1$, để bớt bỏ sót; đổi lại có thể có thêm ứng viên.
+
+\unitadvanced
+\key{Vì sao SON đúng} Support nguyên trượt $\lceil p_js\rceil$ cũng nhỏ hơn $p_js$. Nếu trượt ở mọi phần, tổng support sẽ $<\sum_j p_js=s$. Vì vậy hợp ứng viên không bỏ sót và lượt đếm toàn cục loại hết dương giả.
+
+\key{I/O} SON đọc toàn bộ hai lượt. Chi phí lấy mẫu có thể gần $p$ lượt nếu truy cập trực tiếp các giỏ đã chọn; tùy cách lưu, lấy mẫu đều có thể cần quét toàn bộ.
 \topic{toivonen}{Toivonen}
 
-\algsummary{Đào frequent itemsets trên mẫu và kiểm tra xem mẫu có bỏ sót tập frequent toàn cục hay không.}{Tập frequent nhỏ nhất bị bỏ sót sẽ nằm ở negative border.}{}{Các giỏ $D$, miền item, ngưỡng thật $s$, quy tắc lấy mẫu và ngưỡng mẫu.}{Toàn bộ frequent itemsets khi lượt kiểm tra thành công.}{Tìm các tập frequent trên mẫu. Quét $D$ để đếm lại cả các tập đó và negative border. Lấy mẫu khác nếu một tập ở border đạt $s$.}
+\algsummary{Phát hiện tập frequent toàn cục bị bỏ sót khi đào mẫu.}{Tập con tối tiểu bị bỏ sót nằm trong negative border.}{}{Giỏ $D$, toàn bộ miền item, ngưỡng $s$ và tỷ lệ mẫu $p$.}{Toàn bộ tập frequent nếu xác nhận thành công.}{Đào $F$ trên mẫu, rồi đếm lại $F$ và negative border $\mathrm{NB}$ trên dữ liệu gốc.}
 
-\steps{
-\item Lấy mẫu, giảm ngưỡng support cho mẫu, rồi tìm họ tập frequent $F$ trong mẫu.
-\item Tìm negative border: các tập $X\notin F$ mà mọi tập con thực sự, khác rỗng của $X$ đều nằm trong $F$. Nếu xét đủ miền item, một singleton vắng khỏi $F$ cũng thuộc border.
-\item Quét toàn bộ dữ liệu một lần để đếm $F$ và border. Nếu có tập ở border đạt ngưỡng toàn cục thì bỏ mẫu và chạy lại. Nếu không, trả các tập của $F$ đạt ngưỡng toàn cục.
-}
-
-\key{Sinh border} Kiểm singleton không thuộc $F$ trước. Với $k>1$, ghép từ $F_{k-1}$, giữ các ứng viên có mọi tập con kích thước $k-1$ trong $F_{k-1}$, rồi lấy hiệu với $F_k$. Nếu bất kỳ tập border nào đạt support toàn cục $s$, lượt chạy thất bại và phải lấy mẫu lại.
+\key{Sinh border} $\mathrm{NB}=\bigcup_k(C_k\setminus L_k)$ trên mẫu, với $C_1$ gồm mọi singleton trong miền item, kể cả item vắng khỏi mẫu. Ở cỡ $k>1$, $C_k$ gồm các tập có mọi tập con cỡ $k-1$ thuộc $F$; chỉ cần xét tập con trực tiếp.
 
 \begin{algpseudo}
 lặp:\\
-\quad $F\gets$ các tập frequent trong mẫu với ngưỡng mẫu\\
-\quad $B\gets\{X\notin F:\text{mọi tập con thực sự khác rỗng của }X\text{ thuộc }F\}$\\
-\quad quét $D$ đếm support cho $F\cup B$\\
-\quad nếu không có tập trong $B$ đạt $s$: trả $\{X\in F:\operatorname{supp}_D(X)\ge s\}$
+\quad lấy mẫu $S$; $F\gets\operatorname{Apriori}(S,\lceil\alpha ps\rceil)$ với $0<\alpha<1$\\
+\quad dựng $\mathrm{NB}$; quét $D$ một lượt để đếm $F\cup\mathrm{NB}$\\
+\quad nếu có tập trong $\mathrm{NB}$ đạt $s$: lấy mẫu mới\\
+\quad nếu không: trả $\{X\in F:\operatorname{supp}_D(X)\ge s\}$
 \end{algpseudo}
 
-\begin{example}{Pr3}{Pr3(a,b) · Toivonen: đọc negative border}
-\begin{examtable}{@{}l l l@{}}
-\toprule
-Tập đang xét & Kiểm tra trên mẫu & Kết luận \\
-\midrule
-$AC$ & $A,C$ frequent; $AC$ không & Thuộc negative border \\
-$ABC$ & $AC$ không frequent & Không thuộc border \\
-\bottomrule
-\end{examtable}
-Quét đủ 10 tài liệu: $\operatorname{supp}(AC)=5$, đạt ngưỡng toàn cục. Bỏ lượt chạy và lấy mẫu lại; nếu không kiểm tra border, còn bỏ sót cả $ABC$ (support $5$).
+\begin{example}{Pr3}{Pr3(a,b) · Khi phải lấy mẫu lại}
+Với $p=5/10$, $s=5$ và $\alpha=0.8$, ngưỡng mẫu là 2. $\mathrm{NB}=\{AC,BD,CD\}$; $ABC$ không vào border vì thiếu $AC$. Trên cả 10 tài liệu, $AC$ và $ABC$ đều có support 5. Phải lấy mẫu lại: chỉ thêm $AC$ sẽ vẫn bỏ sót $ABC$.
 \end{example}
 
 % DSA5101 Exam Practice Questions.pdf, PDF page(s) 4.
 
 \unitverification
-\key{Kiểm tra} Chỉ chấp nhận lượt chạy khi mọi tập trong negative border có support toàn cục nhỏ hơn $s$; một tập border đạt ngưỡng buộc phải lấy mẫu lại.
+\key{Kiểm tra} Chấp nhận khi mọi tập trong $\mathrm{NB}$ có support toàn cục $<s$. Trong $F$ vẫn có thể có tập trượt ngưỡng toàn cục; chỉ trả những tập đã xác nhận.
 
 \unitadvanced
-\key{Vì sao đúng} Nếu bỏ sót tập frequent, chọn tập con nhỏ nhất của nó cũng bị bỏ sót. Tập này thuộc border và cũng frequent, nên lượt kiểm tra sẽ phát hiện.
+\key{Vì sao đúng} Nếu tập frequent $X$ vắng khỏi $F$, chọn tập con khác rỗng tối tiểu $T\subseteq X$ cũng vắng. Mọi tập con trực tiếp khác rỗng của $T$ đều thuộc $F$, nên $T\in\mathrm{NB}$; $\operatorname{supp}_D(T)\ge\operatorname{supp}_D(X)\ge s$ buộc thử lại.
+
+\key{Chi phí} Mỗi lần thử đọc mẫu và quét toàn bộ một lần. Hạ $\alpha$ làm $F\cup\mathrm{NB}$ lớn hơn hoặc giữ nguyên, tốn bộ nhớ và công đếm hơn nhưng có thể bớt thử lại. Mẫu lớn cần thêm RAM và chi phí đọc mẫu.
 
 \ask{Pr3}{Pr3}{}
 Ten documents contain sentence-pattern sets $ABC,ABD,BC,AD,CD,ABC,ABC,ABC,ABC,AB$. The full-data support threshold is 5. A sample consisting of documents 1--5 is mined with sample threshold 2. Its frequent itemsets are already known: $F=\{A,B,C,D,AB,AD,BC\}$. The negative border contains the itemsets not in $F$ whose every proper nonempty subset is in $F$. Consider nonempty itemsets over $A,B,C,D$ only.
@@ -651,22 +669,22 @@ Hint: Your answer in part (a) should be useful here.
 \qpart{e} Recall that one issue with Toivonen's algorithm is that it might fail and need to be restarted. Describe the condition under which the algorithm would fail, and state how we can reduce the probability of failure.
 \qpart{f} If Toivonen's algorithm does NOT fail and successfully terminates, what is the false negative rate?
 
-\examnote{Dựng border theo từng kích thước: loại $ACD$ vì $AC$ đã nằm ngoài $F$. Nếu một tập trong border đạt support toàn cục $s$, bỏ mẫu này và chạy lại.}
+\examnote{$ACD$ không thuộc border vì có tập con $AC\notin F$.}
 \answer{\maptag{answer:P25-Q1cdf}}
 \solutionprompt{Dùng lại sáu giỏ P25-Q1 với $s=3$, $L_1=\{A,B,C,D\}$ và $L_2=\{AB,AD,BC,BD\}$. Tìm các tập vừa rớt ở mẫu rồi xét điều kiện chấp nhận mẫu trên toàn dữ liệu.}
 \guidepart{(c)}
 \begin{guidesteps}
-\item Toivonen chạy Apriori trên mẫu để tìm tập frequent mẫu và negative border, rồi đếm toàn bộ các tập đó trong một lượt quét dữ liệu gốc. Nếu border không có tập frequent toàn cục, thuật toán kết thúc nhanh hơn Apriori nhiều lượt; nếu có, mẫu phải chạy lại.
+\item Apriori quét dữ liệu gốc để đếm từng tầng có ứng viên. Toivonen xử lý các tầng trên mẫu trong RAM; mỗi lần thử chỉ cần một lượt quét dữ liệu gốc để xác nhận, ngoài chi phí đọc mẫu.
 \end{guidesteps}
 \guidepart{(d)}
 \begin{guidesteps}
-\item Dùng định nghĩa border: tập không frequent nhưng mọi tập con trực tiếp đều frequent. $E$ là singleton không frequent; ở cỡ 2, $AC,CD$ trượt nhưng các singleton của chúng đều đạt.
-\item Mọi bộ ba trượt đều chứa ít nhất một cặp trượt nên không có mọi tập con trực tiếp trong $F$. Kết quả $\{E,AC,CD\}$.
+\item Lấy các hiệu $C_k\setminus L_k$ từ phần (a). Với $s=3$, $E$ có support 2 nên trượt ở cỡ 1; $AC,CD$ đều có support 2 nhưng mọi singleton con đạt ngưỡng.
+\item Ở cỡ 3, $C_3=L_3=\{ABD\}$; $C_4$ rỗng nên không thêm tập nào.
 \end{guidesteps}
 \guidepart{(e)}
 \begin{guidesteps}
 \item Điều kiện chấp nhận mẫu là $\operatorname{supp}(X)<s$ cho mọi $X$ trong border sau khi đếm trên toàn dữ liệu. Nếu có $X$ đạt $s$, bỏ mẫu và lấy lại.
-\item Giảm ngưỡng cục bộ làm tăng candidate union và chi phí kiểm tra, nhưng giảm xác suất một global frequent set không xuất hiện ở mẫu.
+\item Hạ hệ số $\alpha$ trong $\lceil\alpha ps\rceil$, chẳng hạn từ 1 xuống 0.8. Nhiều tập có thể vào $F$ hơn nên dễ xác nhận thành công hơn; đổi lại có thể phải lưu và đếm thêm tập.
 \end{guidesteps}
 \guidepart{(f)}
 \begin{guidesteps}
@@ -674,26 +692,6 @@ Hint: Your answer in part (a) should be useful here.
 \item Điều đó mâu thuẫn điều kiện chấp nhận là mọi border itemset có support dưới $s$. Vì vậy sau một lần xác nhận thành công, không còn global frequent set nào bị bỏ sót.
 \end{guidesteps}
 \finalanswer{(c) Chạy Apriori trên mẫu, rồi xác nhận bằng một lượt quét toàn bộ dữ liệu mỗi lần thử. (d) Negative border $\{E,AC,CD\}$. (e) Lấy lại mẫu nếu một tập ở border đạt ngưỡng toàn cục; hạ ngưỡng mẫu để giảm xác suất phải chạy lại. (f) Nếu xác nhận thành công, tỷ lệ âm giả bằng $0$.}
-\topic{son}{Random Sampling \& SON}
-
-\algsummary{Tìm toàn bộ tập frequent khi các giỏ hàng phải chia thành nhiều phần mới vừa bộ nhớ.}{Nếu tập đủ support toàn cục, nó phải đủ theo tỷ lệ ở ít nhất một phần.}{\textbf{Phân biệt:}\enspace \begin{itemize}
-\item Random sampling: đào trên một mẫu chiếm tỷ lệ $p$, với ngưỡng khoảng $ps$. Quét xác nhận chỉ lọc sai dương trong các ứng viên đã tìm; một tập vắng khỏi mẫu vẫn có thể bị bỏ sót.
-\item SON: chia toàn bộ dữ liệu thành các phần vừa bộ nhớ. Pass 1 lấy hợp các tập đạt ngưỡng $p_js$ ở phần $j$; $p_j$ là tỷ lệ giỏ ở phần đó. Pass 2 đếm toàn cục cho hợp ứng viên, giữ tập có support $\ge s$.
-\end{itemize}}{$N$ giỏ chia thành các phần $D_j$ vừa bộ nhớ; ngưỡng đếm $s$.}{Các tập frequent toàn cục.}{Lấy hợp các tập frequent tìm được ở từng phần rồi quét toàn bộ dữ liệu để xác nhận. Chỉ đào trên một mẫu ngẫu nhiên thì kết quả là xấp xỉ.}
-
-\begin{algpseudo}
-$C\gets\varnothing$\\
-với mỗi phần $D_j$: $C\gets C\cup\operatorname{Apriori}(D_j,\lceil s|D_j|/N\rceil)$\\
-quét toàn bộ dữ liệu đếm support cho $C$\\
-trả $\{X\in C:\operatorname{supp}(X)\ge s\}$
-\end{algpseudo}
-\algfield{Nếu chỉ dùng một mẫu}{Lấy phần $p$ của giỏ, chạy Apriori với ngưỡng mẫu $\lceil ps\rceil$; nếu xác nhận trên toàn dữ liệu, chỉ lọc các tập đã tìm.}
-
-\unitverification
-\key{Kiểm tra} Gộp support theo số lần xuất hiện trong toàn bộ partition rồi mới so với $s$; ngưỡng cục bộ là $p_js$, không phải $s$.
-
-\unitadvanced
-\key{Vì sao SON không bỏ sót} Nếu mọi support cục bộ đều $<p_js$, cộng lại sẽ $<s$. Ví dụ hai phần bằng nhau và $s=6$: ngưỡng mỗi phần là 3; một tập có tổng 6 phải đạt ít nhất 3 ở một phần.
 \topic{rules}{Association rules}
 
 \algsummary{Từ các tập frequent, tìm luật dự đoán item nào thường xuất hiện cùng các item đã biết.}{So tỷ lệ xuất hiện của $y$ trong các giỏ chứa $X$ với tỷ lệ nền của $y$.}{\textbf{Khi dùng:}\enspace Đề hỏi luật $X\to y$. Đặt $a=\operatorname{supp}(X)$, $c=\operatorname{supp}(X\cup\{y\})$, $p_y=\operatorname{supp}(y)/N$ với $N$ là số giỏ.
