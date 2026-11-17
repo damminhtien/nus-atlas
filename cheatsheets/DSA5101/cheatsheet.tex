@@ -1188,12 +1188,11 @@ nhóm vectơ theo $h(x)$; trả các nhóm
 \unitverification
 \key{Bẫy} Hai điểm gần nhau vẫn có thể nằm hai bên biên ô. Trong mô hình của lecture, các mốc gần/xa $a/2$ và $2a$ cho cận va chạm lần lượt $\ge1/2$ và $\le1/3$.
 
-
+\unitadvanced
+\key{Xác suất khi biết hình chiếu} Cố định $u$, rồi chọn mốc $b$ đều trên $[0,a)$. Với độ cách trên trục $\ell=|u^T(x-y)|<a$, biên ô cắt giữa hai hình chiếu với xác suất $\ell/a$. Vì thế xác suất cùng ô là $\max(0,1-\ell/a)$; ví dụ $a=2,\ell=0.5$ cho $3/4$. Đây là xác suất theo mốc dịch khi đã biết $u$.
+\key{Chi phí băm} Với $k$ hướng chiếu dày trong $d$ chiều, tính các giá trị chiếu tốn $O(kd)$ mỗi điểm; tra bucket tốn thêm $O(k)$. Dùng nhiều phép băm độc lập tăng chi phí nhưng cho phép khuếch đại xác suất ứng viên.
 
 \lecture{3}{Clustering}
-
-\unitadvanced
-\key{Chi phí băm} Với $k$ hướng chiếu dày trong $d$ chiều, tính các giá trị chiếu tốn $O(kd)$ mỗi điểm; tra bucket tốn thêm $O(k)$. Dùng nhiều phép băm độc lập tăng chi phí nhưng cho phép khuếch đại xác suất ứng viên.
 \topic{hierarchical}{Hierarchical agglomerative clustering}
 
 \algsummary{Dựng cây cho biết các cụm được gộp theo thứ tự nào và ở khoảng cách nào.}{Gộp cặp gần nhất; định nghĩa khoảng cách giữa hai cụm quyết định cây.}{\textbf{Đọc cây gộp cụm (dendrogram):}\enspace Bắt đầu từ các cụm một điểm; mỗi vòng gộp hai cụm có khoảng cách linkage nhỏ nhất. Ghi khoảng cách đó làm độ cao của lần gộp.
@@ -1528,17 +1527,15 @@ với mỗi điểm: tăng bộ đếm của cặp (cụm, nhãn thật)\\
 trả $\sum_i\max_j\operatorname{count}[i,j]/N$
 \end{algpseudo}
 
-\key{Ví dụ} Hai cụm có nhãn $AAAB$ và $BB$ cho purity $(3+2)/6=5/6$. Cộng số điểm đúng rồi chia tổng, không lấy trung bình đều theo cụm. Chia mỗi điểm thành một cụm cho purity 1 dù cách gom có thể vô ích.
-
-
-
-\lecture{4}{Dimensionality reduction}
+\key{Ví dụ} Hai cụm có nhãn $AAAB$ và $BB$ cho purity $(3+2)/6=5/6$. Trung bình đều hai purity cục bộ cho $(3/4+1)/2=7/8$, sai vì hai cụm có cỡ khác nhau.
 
 \unitverification
 \key{Kiểm tra} Cộng số điểm đúng theo đa số của từng cụm rồi chia tổng số điểm; kết quả nằm trong $[0,1]$ và không phải trung bình đều của các cụm.
 
 \unitadvanced
 \key{Giới hạn thước đo} Purity có thể đạt 1 khi tách mỗi điểm thành một cụm, nên không phạt phân mảnh. Chỉ so purity khi số cụm hoặc quy tắc phân hoạch được kiểm soát.
+
+\lecture{4}{Dimensionality reduction}
 \topic{svd}{SVD and power iteration}
 
 \algsummary{Tìm các hướng kỳ dị. Nếu chỉ cần vài hướng trội, dùng power iteration để tìm lần lượt.}{Nhân lặp với $A^TA$ khuếch đại hướng có trị riêng lớn; deflation bỏ hướng đã tìm.}{\textbf{Nhận dạng từ ma trận:}\enspace Trong $A=U\Sigma V^T$, các cột của $V$ là vectơ riêng của $A^TA$.}{Ma trận $A$, số hướng $r$, vectơ khởi tạo và điều kiện dừng.}{Tối đa $r$ bộ ba $(u_i,\sigma_i,v_i)$ có $\sigma_i>0$.}{Tìm vectơ đơn vị trội của $A^TA$. Từ đó tính giá trị kỳ dị và vectơ kỳ dị trái, rồi deflate nếu cần tìm tiếp.}
@@ -1691,6 +1688,8 @@ trả $C,U,R,\widehat A=CUR$
 
 \unitadvanced
 \key{Không gian biểu diễn} Mọi cột của $\widehat A=CW^+R$ nằm trong không gian cột của $C$. Lấy thêm hàng không thể khôi phục hướng cột bị thiếu; kiểm tra không gian này trước khi nhân để nhận ra các hàng hoặc ô chắc chắn bằng 0.
+
+\key{Chọn cột có hoàn lại} Với xác suất một lượt $p_j=\|A[:,j]\|_2^2/\|A\|_F^2$, xác suất bỏ sót cột $j$ sau $c$ lượt độc lập là $(1-p_j)^c$. Dùng $p_3=4/40$ của \qlink{Pr12}{Pr12, tr.~\pageref*{question:Pr12}}: hai lượt vẫn có xác suất $0.9^2=0.81$ không chọn cột 3, nên dễ bỏ mất hướng chỉ cột đó có.
 
 % DSA5101 Exam Practice Questions.pdf, PDF page(s) 13.
 
@@ -2006,6 +2005,8 @@ P^T=\begin{pmatrix}1&4&2\\3&2&1\end{pmatrix}.
 
 \key{Theo thời gian} Ví dụ đặt $b_i(t)=b_i+b_{i,\operatorname{bin}(t)}$ với bin 10 tuần trong lecture. Có thể thay bias theo thời gian mà vẫn giữ nguyên số chiều của nhân tử.
 
+\key{Ví dụ một bước SGD} Cho $\mu=3$ và $b_u=0.2$, $b_i=0.1$, $b_{i,\operatorname{bin}(t)}=-0.1$, $p_u^Tq_i=0.5$. Dự đoán trước cập nhật là $3.7$. Với rating 4, $\eta=\lambda_b=0.1$, lấy cùng lỗi $e=4-3.7=0.3$ để cập nhật ba bias: lần lượt thành $0.228$, $0.129$ và $-0.069$. Không sửa bias ở bin khác.
+
 \begin{algpseudo}
 khởi tạo bias bằng 0; chọn $\mu$ theo mô hình\\
 với mỗi bước SGD trên $(u,i,t,r)$: tính $e\gets r-\hat r_{ui}(t)$\\
@@ -2157,11 +2158,26 @@ trả $r$
 \qquad s_i\ge0,\quad\sum_i s_i=1.
 \]
 
-\key{Tính tay theo thứ tự} Xác định $M$ sau khi sửa dead end và chuẩn hóa $s$; tính $Mr$ từ vector cũ; nhân với $\beta$; cộng phần dead-end $\beta\delta w$ và teleport $(1-\beta)Ss$ đúng theo mô hình; cuối cùng kiểm tra tổng điểm và điều kiện dừng.
+\begin{examtable}{@{}p{.16\columnwidth}p{.21\columnwidth}p{.51\columnwidth}@{}}
+\toprule
+\multicolumn{3}{l}{\textbf{Các trường hợp của cùng công thức}}\\
+\midrule
+Mô hình & $s$ & Thao tác đặc trưng \\
+\midrule
+Global & Uniform & $s_i=1/N$ trên mọi nút. \\
+Topic & Uniform trên $C$ & $s_i=0$ ngoài $C$; cạnh vẫn truyền điểm ra ngoài. \\
+RWR & $e_v$ & Teleport về seed $v$; cạnh vẫn truyền điểm ra ngoài. \\
+Dead end & Phân phối sửa $w$ & Thay cột cụt bằng $w$, hoặc giữ cột 0 rồi cộng $\beta\delta w$. \\
+\bottomrule
+\end{examtable}
+Nếu $w=s$, có thể gộp hai phần khối lượng bị hụt; nếu khác nhau, không gộp.
+\par
+
+\key{Tính tay: chọn một trong hai cách} Nếu đã thay cột nút cụt bằng $w$, tính $\beta Mr$ rồi chỉ cộng teleport. Nếu còn dùng $M_0$ với cột cụt bằng 0, tính $\beta M_0r$ rồi cộng cả $\beta\delta w$ và teleport. Hai cách cho cùng kết quả vì $Mr=M_0r+\delta w$. Nếu đề chỉ hỏi $M_0r$, dừng trước các bước sửa và teleport.
 
 \key{Điều kiện đủ thường dùng} Ma trận Google dương (chẳng hạn $\beta<1$ và $s_i>0$ trên mọi nút) cũng bảo đảm hội tụ, nhưng mạnh hơn mức cần thiết khi đã có contraction. Với $\beta=1$, phép lặp trên ma trận stochastic có thể tuần hoàn và không hội tụ.
 
-\key{Xử lý dead end trong PPR} Dùng phân phối sửa nút cụt theo đúng đề. Chỉ gộp phần hụt vào $s$ khi phân phối sửa cũng chính là $s$; nếu khác, giữ hai hạng riêng trong cập nhật.
+\key{Ví dụ: sửa nút cụt và teleport khác đích} Cho $A\to B$, $B$ cụt, $r=(1/2,1/2)^T$, $\beta=1/2$, $w=(1/2,1/2)^T$, $s=e_A$. Từ $M_0$, ba phần là $(0,1/4)^T$, $\beta\delta w=(1/8,1/8)^T$ và $(1/2,0)^T$. Tổng cho $(5/8,3/8)^T$. Với cột cụt đã sửa, $\beta Mr=(1/8,3/8)^T$; chỉ cần cộng teleport để ra cùng kết quả.
 
 \begin{algpseudo}
 $T\gets$ mọi nút, tập chủ đề khác rỗng hoặc tập seed khác rỗng\\
@@ -2172,20 +2188,6 @@ $e\gets\|r_{\mathrm{next}}-r\|_1$; $r\gets r_{\mathrm{next}}$\\
 nếu $e<\epsilon$ thì dừng; nếu không, tiếp tục\\
 trả $r$
 \end{algpseudo}
-\begin{examtable}{@{}p{.16\columnwidth}p{.21\columnwidth}p{.51\columnwidth}@{}}
-\toprule
-\multicolumn{3}{l}{\textbf{Các trường hợp của cùng công thức}}\\
-\midrule
-Mô hình & $s$ & Thao tác đặc trưng \\
-\midrule
-Global & Uniform & $s_i=1/N$ trên mọi nút. \\
-Topic & Uniform trên $C$ & $s_i=0$ ngoài $C$; cạnh vẫn truyền điểm ra ngoài. \\
-RWR & $e_v$ & Teleport về seed $v$; cạnh vẫn truyền điểm ra ngoài. \\
-Dead end & Phân phối sửa $w$ & Thay cột cụt bằng $w$; giữ riêng $\beta\delta w$ và $(1-\beta)Ss$ nếu $w\ne s$. \\
-\bottomrule
-\end{examtable}
-Nếu $w=s$, có thể gộp hai phần khối lượng bị hụt; nếu khác nhau, không gộp.
-\par
 
 \begin{example}{A2-Q2}{A2-Q2(a,b) · PageRank: từ cạnh sang cột ma trận}
 \begin{diagram}
@@ -2368,6 +2370,15 @@ Với $0<\beta<1$, nghiệm dừng là duy nhất; trên đồ thị nhỏ, lậ
 
 \key{Diễn giải} Nếu $r_i=0.2$ và $t_i=0.05$ thì spam mass bằng $0.75$. Giá trị cao cho biết phần lớn điểm không được giải thích bởi TrustRank; dùng để gắn cờ. Trang tin cậy có thể có spam mass âm.
 
+\key{Ví dụ: giải điểm tin cậy theo nút} Cho $G\to H$, $H\to G,T$, $T\to F$, $F\to T$, seed $G$ và $\beta=1/2$. Viết phương trình theo cạnh đi vào:
+\[
+\begin{aligned}
+t_G&=1/2+t_H/4,& t_H&=t_G/2,\\
+t_T&=t_H/4+t_F/2,& t_F&=t_T/2.
+\end{aligned}
+\]
+Thế $t_H=t_G/2$ vào phương trình đầu được $t_G=4/7,\ t_H=2/7$. Sau đó $t_T=1/14+t_T/4$ cho $t_T=2/21,\ t_F=1/21$. Tổng đúng 1; hai nút ngoài seed $T,F$ vẫn có điểm dương vì đi tới được từ $G$.
+
 \begin{algpseudo}
 $r\gets\operatorname{PageRank}(G,\beta,v_{\text{đều}})$; $t\gets\operatorname{PageRank}(G,\beta,v_{\text{tin cậy}})$\\
 với $i$ có $r_i>0$: $\mathrm{SM}_i\gets(r_i-t_i)/r_i$\\
@@ -2381,6 +2392,7 @@ trả $r,t,\mathrm{SM}$; gắn cờ theo ngưỡng của đề nếu có
 
 \unitadvanced
 \key{Approximate isolation} Giả định trực giác là trang tốt hiếm khi trỏ tới trang xấu. Trust giảm theo số bước khỏi seed và bị chia theo out-degree; đây là giả định mô hình, không bảo đảm mọi trang spam có điểm thấp. Nếu có dead end, dùng đúng phân phối sửa nút cụt của đề.
+\key{Chi phí} Với danh sách cạnh, mỗi vòng lặp tốn $O(N+|E|)$ thời gian và $O(N)$ bộ nhớ phụ. Nếu đề đã cung cấp PageRank thường thì chỉ tính thêm TrustRank; phép tính spam mass cuối cùng tốn $O(N)$.
 \topic{linkfarm}{Link farm amplification}
 
 \algsummary{Tính PageRank của trang mục tiêu khi điểm có thể quay lại nó qua một nhóm trang farm.}{Một vòng target $\to$ farm $\to$ target mất hệ số $\beta$ ở mỗi bước; các vòng lặp tạo thành cấp số nhân.}{}{Giả sử $0\le\beta<1$: tổng số trang $N>1$, số farm pages $1\le M_f<N$ và điểm vào $x\ge0$ từ các trang accessible.}{PageRank $y$ của target và hệ số khuếch đại của phần điểm ngoài $x$.}{Lập phương trình điểm cho trang farm và cho target. Thế phương trình farm vào phương trình target rồi giải phương trình tuyến tính.}
@@ -2641,6 +2653,8 @@ Q_{\rm trước}&=\tfrac{3+4}{10}-\tfrac{8^2+3^2+9^2}{20^2}=0.315,\\
 \end{aligned}
 \]
 Chọn $C\to AB$: $Q(ABC\mid DE)=(5+4)/10-(11^2+9^2)/20^2=0.395$, tăng đúng $0.08$. Co cụm cho $B'=\bigl(\begin{smallmatrix}10&1\\1&8\end{smallmatrix}\bigr)$, bậc $(11,9)$ và $m'=(11+9)/2=10$. Hai siêu nút riêng vẫn có $Q=0.395$; gộp cho $\Delta Q=1/10-11\cdot9/200=-0.395$, nên dừng.
+
+\key{Đối chiếu gain bằng hai cách} Trên đường $1$--$2$--$3$--$4$, $m=3$. Phân hoạch $12\mid3\mid4$ có $Q=1/3-(3^2+2^2+1^2)/6^2=-1/18$. Chuyển nút 3 sang cụm $\{4\}$ cho $Q=2[1/3-(3/6)^2]=1/6$ và $\Delta Q=2/9$. Công thức nhanh cũng cho $1/3-[2(1-2)+2^2]/18=2/9$. Co thành hai siêu nút có $B'=\bigl(\begin{smallmatrix}2&1\\1&2\end{smallmatrix}\bigr)$, giữ $m'=3$.
 
 \unitverification
 \key{Kiểm tra} $\Sigma_{\rm in}=2e_C$, $\Sigma_{\rm tot}=\operatorname{vol}(C)$. So gain, không chỉ đếm hàng xóm; $\Delta Q=0$ thì giữ nguyên. Thứ tự quét và phá hòa có thể đổi kết quả. $Q\in[-1,1]$; $Q>0$ nghĩa là nội bộ vượt kỳ vọng. Mốc $0.3$--$0.7$ chỉ để tham khảo.
@@ -3140,7 +3154,7 @@ A stream is $A,B,A,C,D,B,E,A$. For each hash $h_j$, maintain $R_j$, the maximum 
 \guidepart{(b)}
 \begin{guidesteps}
 \item Đổi register bằng công thức $Z_j=2^{R_j}$. Với $(R_1,\ldots,R_6)=(2,3,2,2,1,6)$, được $(4,8,4,4,2,64)$; công thức trung bình cặp là $\bar Z_g=(Z_{2g-1}+Z_{2g})/2$, cho $(6,4,33)$.
-\item Lấy trung vị ba nhóm: $\operatorname{median}(6,4,33)=6$. Giá trị 64 kéo trung bình nhóm thứ ba lên 33, nhưng trung vị cuối vẫn là 6. Bài này yêu cầu trung bình trong nhóm rồi lấy trung vị giữa các nhóm; trong phần lý thuyết FM, thứ tự hai phép tính ngược lại.
+\item Lấy trung vị ba nhóm: $\operatorname{median}(6,4,33)=6$. Nếu lấy mean thẳng cả sáu giá trị thì được $86/6\approx14.33$, bị 64 kéo lên. Theo cách đề yêu cầu, 64 chỉ kéo mean của nhóm thứ ba lên 33, còn median cuối giữ 6. Quy tắc FM mặc định lấy median trong nhóm trước; ở câu này làm theo thứ tự đề cho.
 \end{guidesteps}
 \guidepart{(c)}
 \begin{guidesteps}
@@ -3369,7 +3383,7 @@ Lưu thẳng $N$ bit cho kết quả chính xác nhưng tốn $O(N)$ bit. Ước
 \widehat C_{t,k}=\begin{cases}0,&m=0,\\[2pt]\displaystyle\sum_{j=1}^{m}s_j-\frac{s_1}{2},&m>0.\end{cases}
 \]
 
-\key{Biểu diễn} Bucket $B=(s,t_{\mathrm{end}})$ đại diện $s$ bit 1; $t_{\mathrm{end}}$ là timestamp của bit 1 mới nhất. Cỡ $s$ là lũy thừa của 2. Buckets không chồng lấn, cỡ không tăng từ cũ sang mới và có tối đa hai bucket mỗi cỡ. Khi lưu timestamp modulo $N$, phải tính tuổi qua phép modulo, không so sánh trực tiếp timestamp đã cuộn vòng.
+\key{Biểu diễn} Bucket $B=(s,t_{\mathrm{end}})$ đại diện $s$ bit 1; $t_{\mathrm{end}}$ là timestamp của bit 1 mới nhất. Cỡ $s$ là lũy thừa của 2. Buckets không chồng lấn, cỡ không tăng từ cũ sang mới và có tối đa hai bucket mỗi cỡ.
 
 \begin{algpseudo}
 khi nhận $b$ tại $t$: expire $t_{\mathrm{end}}\le t-N$; nếu $b=1$, insert $(1,t)$\\
@@ -3390,10 +3404,13 @@ $t$ & Thao tác & Bucket $(\text{cỡ},\text{timestamp})$, cũ trước \\
 \bottomrule
 \end{examtable}
 Hỏi 6 vị trí cuối ($10$ đến $15$): tính nửa bucket $(2,10)$, cộng trọn hai bucket mới hơn, được $2/2+2+1=4$.
+Nếu chỉ hỏi 5 vị trí cuối, $L=11$: $(2,10)$ còn trong bảng cho $N=10$ nhưng bị bỏ khỏi truy vấn. Ước lượng dùng $(2,13),(1,15)$, cho $2/2+1=2$.
 \end{example}
 
 \unitverification
-\key{Kiểm tra} Sau cập nhật, bucket không chồng lấn, kích thước là lũy thừa của 2 và mỗi cỡ có tối đa hai bucket; query chỉ lấy nửa bucket cũ nhất bị cắt.
+\key{Kiểm tra} Sau cập nhật, bucket không chồng lấn, kích thước là lũy thừa của 2 và mỗi cỡ có tối đa hai bucket; query chỉ lấy nửa bucket cũ nhất trong số các bucket được chọn.
+
+\key{Timestamp cuộn vòng} Có thể lưu modulo $2N$; nếu xóa hết hạn ở mỗi arrival thì ngay trước bước xóa, tuổi lớn nhất của bucket còn lưu là $N$. Tính tuổi $(t-t_{\mathrm{end}})\bmod 2N$, xóa khi tuổi $\ge N$, chọn truy vấn khi tuổi $<k$. Modulo $N$ đơn thuần làm tuổi $N$ trùng tuổi 0 ở bước xóa.
 
 \unitadvanced
 \key{Độ phức tạp} Có $O(\log N)$ bucket, mỗi timestamp cần $O(\log N)$ bit nên tổng bộ nhớ là $O(\log^2N)$ bit. Cập nhật tốn $O(\log N)$ trong trường hợp xấu nhất do gộp dây chuyền; truy vấn tốn $O(\log N)$ để duyệt buckets.
@@ -3573,7 +3590,7 @@ nằm tại
 \[
 \boxed{k^*=\frac{n}{m}\ln2}.
 \]
-Trong thực tế $k$ là số nguyên, nên tính lại $f(k)$ ở các số nguyên khả thi gần $k^*$ thay vì luôn làm tròn lên. Chẳng hạn $n/m=8$ cho $k^*\approx5.55$; $f(5)\approx2.168\%$ và $f(6)\approx2.158\%$, nên chọn $k=6$.
+Trong thực tế $k$ là số nguyên, nên thử các số nguyên khả thi gần $k^*$ thay vì luôn làm tròn lên. Với $n/m=8$, $k^*=8\ln 2\approx5.55$. So sánh $f(5)\approx2.168\%$ và $f(6)\approx2.158\%$, ta chọn $k=6$. Khi tăng lên $k=10$ hoặc $20$, false positive tăng lại đến $3.42\%$ hoặc $18.03\%$ vì nhiều bit bị đặt thành 1.
 
 \key{Bẫy} Possibly present không khẳng định key thuộc $S$; false positive có thể xảy ra, false negative thì không nếu chỉ insert và không xóa/reset bit. Một bit $B[h_i(x)]=0$ đủ kết luận key vắng. Tăng số hash không luôn giảm false positive rate, $k^*$ không nhất thiết nguyên, và Bloom filter dùng một bit array chung.
 
@@ -3645,6 +3662,8 @@ Consider using a Bloom Filter to filter spam emails. We are given a list of 5000
 \operatorname{Keep}(x)\iff h(g(x))\bmod b<a.
 \]
 Giả sử hash phân bố đều, một key được chọn với xác suất $p$. Mọi bản ghi cùng key có cùng quyết định; ví dụ $a=3,b=10$ chọn bucket 0, 1, 2, tức tỷ lệ kỳ vọng $30\%$. Tỷ lệ thực tế không nhất thiết đúng bằng $p$, và bộ nhớ không có cận cố định. Dùng key trùng với đơn vị cần phân tích sẽ giữ nguyên các đếm bên trong key đó.
+
+\key{Ví dụ theo user} Với rule trên, Alice vào bucket 1, Bob vào 7, Cathy vào 2. Giữ cả $A_1,A_2,A_3,C_1,C_2$ và bỏ cả $B_1,B_2$. Trong ví dụ giữ $5/7$ số record; $30\%$ là xác suất giữ mỗi key, không phải tỷ lệ bắt buộc của một mẫu.
 
 Nếu có $x$ query phân biệt xuất hiện một lần và $d$ query phân biệt xuất hiện hai lần, tỷ lệ query lặp thật là $d/(x+d)$. Lấy mẫu độc lập từng record với xác suất $p$ cho:
 \[
@@ -4025,6 +4044,8 @@ trả lịch sử lượt chọn, $n,\hat\mu$ và tổng reward
 \unitverification
 \key{Kiểm tra} Sau reward chỉ tăng số đếm và trung bình của arm vừa chọn; khởi tạo mọi arm trước khi dùng UCB để mẫu số $n_i$ khác 0.
 
+\key{Xác suất chọn với $\varepsilon$-greedy} Nếu nhánh khám phá chọn đều trong cả $K$ arm và chỉ có một arm đang dẫn đầu, arm đó được chọn với xác suất $(1-\varepsilon)+\varepsilon/K$, các arm còn lại mỗi arm $\varepsilon/K$. Với $K=3$, $\varepsilon=0.3$ cho $(0.8,0.1,0.1)$ nếu arm đầu đang dẫn. Nếu đề loại arm dẫn đầu khỏi nhánh khám phá, mẫu số ở nhánh đó phải đổi.
+
 \unitadvanced
 \key{Cỡ mẫu} Để xác suất sai quá $\delta$ không vượt $\alpha$, cần $n\ge\ln(2/\alpha)/(2\delta^2)$; làm tròn lên.
 
@@ -4191,6 +4212,7 @@ trả $S,F(S)$
 
 \unitadvanced
 \key{Vì sao phép trì hoãn an toàn} Diminishing returns cho $S\subseteq T$ cho $\Delta(x\mid T)\le\Delta(x\mid S)$. Vì vậy marginal gain đã tính trước là cận trên hiện tại; chỉ chốt phần tử khi gain vừa tính lại vượt mọi cận còn lại.
+\key{Chi phí} Với $n$ ứng viên và tối đa $k$ lượt chọn, lazy greedy tốn $n$ lần tính gain ban đầu, rồi một lần cho mỗi ứng viên lấy khỏi heap. Nếu các cận cũ đủ chặt thì thường ít lần chấm hơn greedy; trường hợp xấu vẫn phải tính $O(kn)$ gain. Mỗi lượt lấy hoặc đưa lại vào heap tốn $O(\log n)$, ngoài chi phí tính gain.
 
 \ask{Pr30b}{Pr30(b)}{Dữ kiện chung: \shareddataref{Pr30}}
 \qpart{b} Independently, lazy greedy after choosing $A$ has cached keys $B:5,C:7/2,D:3/2$. Refreshing $B$ gives gain 1. Can $B$ be selected immediately? The next refresh gives $C:11/4$; can $C$ now be selected without refreshing $D$? Explain why old keys are valid upper bounds, and state greedy's approximation guarantee for a nonnegative monotone submodular objective with a cardinality limit.
