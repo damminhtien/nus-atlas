@@ -295,9 +295,9 @@
 
 \topic{bonferroni}{Bonferroni's Principle (multiple comparisons)}
 
-\algsummary{Nếu đề làm nhiều phép thử và hỏi bao nhiêu kết quả có thể xuất hiện do tình cờ, hãy đếm số báo nhầm kỳ vọng.}{Cộng xác suất báo nhầm của từng phép thử; không cần giả sử độc lập.}{}{$M$ phép thử với xác suất báo nhầm $p_j$ của mỗi phép.}{Số báo nhầm kỳ vọng $E$ và cận xác suất có ít nhất một báo nhầm.}{Cộng các $p_j$. Khi cần cận trên cho xác suất có ít nhất một báo nhầm, lấy giá trị nhỏ hơn giữa tổng và 1.}
+\algsummary{Đề tìm mẫu qua nhiều phép thử và hỏi có bao nhiêu kết quả trông đặc biệt có thể xuất hiện do tình cờ.}{Một mẫu hiếm trong một phép thử vẫn có thể xuất hiện nhiều lần khi ta kiểm tra đủ nhiều khả năng.}{}{$M$ phép thử với xác suất báo nhầm $p_j$ của mỗi phép.}{Số báo nhầm kỳ vọng $E$ và cận xác suất có ít nhất một báo nhầm.}{Xác định một phép thử là gì, đếm số phép thử rồi tính xác suất báo nhầm cho từng phép.}
 
-\key{Công thức} Nếu mỗi trong $M$ phép thử có xác suất báo nhầm $p$, số báo nhầm kỳ vọng là $Mp$, kể cả khi các phép thử phụ thuộc nhau. Xác suất có ít nhất một báo nhầm không vượt $\min(1,Mp)$ (union bound).
+\key{Công thức} $E=\sum_{j=1}^{M}p_j$; nếu mọi $p_j=p$ thì $E=Mp$. Cả công thức kỳ vọng và cận $\Pr(\text{ít nhất một báo nhầm})\le\min(1,E)$ không đòi hỏi các phép thử độc lập.
 
 \begin{algpseudo}
 $E\gets0$\\
@@ -305,13 +305,20 @@ với mỗi phép thử $j$: $E\gets E+p_j$\\
 trả $E,\ \min(1,E)$
 \end{algpseudo}
 
-\key{Ví dụ} $10^6$ phép thử, $p=10^{-4}$: kỳ vọng 100 báo nhầm. Với ví dụ khách sạn, một cặp người trùng khách sạn trong hai ngày xác định có xác suất $10^{-18}$. Nhân với khoảng $5\times10^{17}$ cặp người và $5\times10^5$ cặp ngày cho khoảng $2.5\times10^5$ lần trùng ngẫu nhiên.
+% Lec1_AssocRules_FrequentItemsets.pdf, pp. 10--12.
+\key{Ví dụ: cùng khách sạn ít nhất hai ngày} Theo dõi $10^9$ người trong $1\,000$ ngày. Mỗi người ở khách sạn trong $1\%$ số ngày; mỗi khách sạn chứa khoảng 100 người.
+\steps{
+\item Ước tính $(10^9\cdot0.01)/100=10^5$ khách sạn. Giả sử hai người đi độc lập và chọn đều khách sạn: xác suất trùng trong một ngày là $q=0.01^2/10^5=10^{-9}$.
+\item Một phép thử gồm một cặp người và hai ngày cụ thể. Hai lần trùng có thể ở hai khách sạn khác nhau. Giả sử các ngày độc lập thì $p=q^2=10^{-18}$.
+\item Có $M=\binom{10^9}{2}\binom{1000}{2}\approx2.5\times10^{23}$ phép thử, nên $E=Mp\approx250\,000$ báo nhầm.
+}
 
 \unitverification
-\key{Kiểm tra} Kỳ vọng số báo nhầm $E$ có thể lớn hơn 1; chỉ xác suất có ít nhất một báo nhầm mới bị chặn thêm bởi 1.
+\key{Bẫy} $p$ rất nhỏ vẫn có thể cho $E$ lớn: chẳng hạn $10^6$ phép thử với $p=10^{-4}$ cho 100 báo nhầm kỳ vọng. $E$ là số đếm, có thể lớn hơn 1; chỉ cận xác suất mới bị chặn thêm bởi 1.
 
 \unitadvanced
 \key{Vì sao đúng} Đặt $I_j$ là chỉ báo phép thử $j$ báo nhầm. Tính tuyến tính cho $\mathbb E[\sum_j I_j]=\sum_jp_j$; union bound cho $\Pr(\sum_jI_j\ge1)\le\sum_jp_j$, không cần độc lập.
+\key{Đếm đúng đơn vị} $E$ đếm số bộ (cặp người, cặp ngày) kỳ vọng. Một cặp trùng ba ngày được tính $\binom{3}{2}=3$ lần, nên $E$ chặn trên kỳ vọng số cặp người phân biệt. Trong mô hình này, trùng từ ba ngày trở lên rất hiếm, nên hai kỳ vọng gần bằng nhau.
 \topic{apriori}{Apriori}
 
 \algsummary{Tìm mọi tập item có mặt trong ít nhất $s$ giỏ.}{Nếu một tập con không đạt ngưỡng, tập lớn hơn chứa nó cũng không thể đạt.}{\key{Support count} $\operatorname{supp}(X)=\sum_{B\in D}\mathbf1[X\subseteq B]$.}{Các giỏ hàng $D$ và ngưỡng đếm $s$.}{Tập frequent $L_k$ ở từng cỡ $k$.}{Ghép $\to$ tỉa $\to$ đếm $\to$ lọc. $C_k$ là ứng viên sau tỉa; chỉ giữ vào $L_k$ những ứng viên có support $\ge s$.}
