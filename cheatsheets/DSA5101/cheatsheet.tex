@@ -948,24 +948,22 @@ M=\begin{pmatrix}5&4&3&4\\2&2&3&4\\1&4&3&4\end{pmatrix}.
 \finalanswer{(b) Ba hàng của $M$ theo thứ tự hoán vị là $(5,4,3,4)$, $(2,2,3,4)$ và $(1,4,3,4)$; các cột lần lượt là $D_1,D_2,D_3,D_4$.}
 \topic{banding}{LSH banding}
 
-\algsummary{Dùng chữ ký để tìm những cặp tài liệu đáng đem ra kiểm tra Jaccard thật.}{Cặp giống dễ trùng cả một band; nhiều band cho thêm cơ hội trùng.}{}{Chữ ký $M$ có $m=br$ hàng, $b$ band, $r$ hàng mỗi band.}{Tập cặp ứng viên; có thể lọc tiếp bằng Jaccard thật.}{Trong mỗi band, nhóm các tài liệu có cùng chữ ký con. Lấy các cặp trong từng nhóm, gộp danh sách và bỏ cặp trùng.}
+\algsummary{Dùng chữ ký để tìm những cặp tài liệu đáng đem ra kiểm tra Jaccard thật.}{AND trong band, OR giữa các band: một cặp phải khớp đủ $r$ hàng trong ít nhất một band.}{}{Ma trận chữ ký $M\in\mathbb Z^{K\times N}$ của $N$ tài liệu, với $K=br$.}{Tập cặp ứng viên phân biệt; nếu xác minh, trả các ứng viên có $J\ge s_{\min}$.}{Chia $K$ hàng thành $b$ band, mỗi band gồm $r$ hàng liên tiếp. Băm tuple của mỗi cột vào bucket riêng theo band, lấy các cặp cùng nhóm, bỏ trùng rồi mới xác minh.}
 
-\steps{
-\item Chia $m=br$ số hash thành $b$ band, mỗi band $r$ hàng.
-\item Một band khớp khi tất cả $r$ hàng khớp. Một cặp là ứng viên khi ít nhất một band khớp. So chính xác chỉ để xác nhận các ứng viên.
-}
+\key{Xác suất} Với Jaccard thật $s$, một hàng MinHash khớp với xác suất $s$. Giả sử các hàng độc lập và các tuple band khác nhau không va chạm thêm khi băm. Một band khớp với xác suất $s^r$, không khớp với xác suất $1-s^r$. Do đó:
 \[
-\Pr(\mathrm{candidate}\mid s)=1-(1-s^r)^b.
+P_{\rm miss}(s)=(1-s^r)^b,\qquad P_{\rm cand}(s)=1-(1-s^r)^b.
 \]
 
 \begin{algpseudo}
-$C\gets\varnothing$\\
-với mỗi band $j$: nhóm tài liệu theo bộ $r$ giá trị trong band $j$\\
-\quad thêm vào $C$ mọi cặp cùng nhóm\\
-trả $C$; nếu cần xác nhận, chỉ tính Jaccard thật cho các cặp trong $C$
+$C\gets\varnothing$ (tập cặp không thứ tự)\\
+với mỗi band $j$: băm tuple $r$ giá trị của mỗi cột vào bucket của band $j$\\
+\quad thêm vào $C$ các cặp cùng bucket và cùng tuple\\
+nếu cần xác minh: giữ trong $C$ các cặp có Jaccard thật $\ge s_{\min}$\\
+trả $C$
 \end{algpseudo}
 
-\begin{example}{Pr5}{Pr5(a,b) · Banding: ứng viên và kết quả xác nhận}
+\begin{example}{Pr5}{Pr5(a,b), tr.~\pageref*{question:Pr5}: ứng viên và kết quả xác nhận}
 \begin{examtable}{@{}l c c c l@{}}
 \toprule
 Cặp & Band 1 & Band 2 & Band 3 & So Jaccard với $3/5$ \\
@@ -975,19 +973,22 @@ $BD$ & -- & Có & -- & $2/5$: loại \\
 $AC$ & -- & -- & -- & $3/5$: bị bỏ sót \\
 \bottomrule
 \end{examtable}
-Gộp và bỏ trùng sau khi băm: chỉ so chính xác $AB$ và $BD$ (2 trên 6 cặp). $J(A,C)=3/5$ là kết quả kiểm tra lại; LSH không gửi cặp này sang bước xác nhận.
+Gộp và bỏ trùng: chỉ so chính xác $AB$ (dương thật) và $BD$ (dương giả), tức $2$ thay vì $\binom{4}{2}=6$ lần. $AC$ là âm giả: Jaccard thật đạt ngưỡng nhưng không có band khớp.
 \end{example}
 
-% DSA5101 Exam Practice Questions.pdf, PDF page(s) 6.
-
 \unitverification
-\key{Đọc tham số} $s$ là Jaccard, công thức giả sử các hàng độc lập. Tại $m$ cố định, tăng $b$ làm giảm $r$: thường tăng recall và giảm precision. Nếu $r$ cố định, tăng $b$ cũng tăng xác suất thành ứng viên.
+\key{Dương giả và âm giả} Với $s<s_{\min}$, xác suất sinh dương giả là $P_{\rm cand}(s)$; với $s\ge s_{\min}$, xác suất bỏ sót là $P_{\rm miss}(s)$. Hai xác suất này tính cho một cặp có $s$ cho trước. Tỷ lệ trên cả tập dữ liệu còn phụ thuộc các cặp có độ tương đồng nào. Xác minh chính xác loại được dương giả nhưng không khôi phục âm giả. Trùng chữ ký cũng không chứng minh hai tài liệu giống hệt.
 
-\key{Mốc 50\%} $s_{1/2}=(1-2^{-1/b})^{1/r}$. Đây là mốc xác suất, không phải ngưỡng cứng. Bước xác nhận lọc ứng viên sai, không phục hồi cặp chưa từng được chọn.
+\key{Chỉnh tham số} Với $0<s<1$, tăng $b$ khi giữ $r$ làm tăng $P_{\rm cand}$: nhiều dương giả hơn, ít âm giả hơn. Tăng $r$ khi giữ $b$ làm ngược lại. Khi $K$ cố định chỉ chọn các cặp $b,r$ sao cho $br=K$: nhiều band hơn đồng nghĩa ít hàng mỗi band hơn, ưu tiên tìm đủ cặp nhưng có thể tăng chi phí xác minh.
+
+\key{Vượt ngưỡng vẫn có thể bị bỏ sót} Với $s=0.9>s_{\min}=0.7$, $b=5,r=4$, xác suất bỏ sót là $(1-0.9^4)^5\approx0.004810$ ($0.481\%$).
 
 \unitadvanced
-\key{Xác suất ứng viên} Với Jaccard $s$, $b$ band và $r$ hàng mỗi band, $P(\text{candidate})=1-(1-s^r)^b$: một band khớp đủ khi cả $r$ hàng khớp, rồi lấy hợp qua $b$ band.
+\key{Mốc 50\% của đường cong} Giải $P_{\rm cand}(s)=1/2$ cho $s_{1/2}=(1-2^{-1/b})^{1/r}$. Khi $b$ đủ lớn, $1-2^{-1/b}\approx(\ln 2)/b$, nên $s_{1/2}\approx((\ln 2)/b)^{1/r}$. Đây là mức Jaccard cho xác suất được chọn bằng $1/2$; ngưỡng mục tiêu $s_{\min}$ dùng để quyết định cặp nào thật sự đạt yêu cầu.
 
+\key{Chi phí} Đọc từng giá trị để tạo tuple tốn $O(Nbr)=O(NK)$; gán bucket tốn $O(Nb)$ nếu coi mỗi lần băm band là $O(1)$. Khi nhiều cột cùng nhóm, có thể phát sinh $O(bN^2)$ lượt cặp trước khi bỏ trùng và cần tới $\binom{N}{2}$ lần so Jaccard thật. Tính riêng chi phí mỗi lần so từ dữ liệu gốc.
+
+% DSA5101 Exam Practice Questions.pdf, PDF page(s) 6.
 \ask{Pr5}{Pr5}{}
 Viewer histories are sets $A=\{1,2,3,4\}$, $B=\{1,2,3,5\}$, $C=\{1,2,4,6\}$, $D=\{3,5,7\}$. Use three bands of two consecutive rows in the following signatures. Two viewers are candidates if they agree in every row of at least one band. Assume no additional hash collisions between different band tuples.
 \begin{examtable}{@{}ccccc@{}}
@@ -1021,7 +1022,7 @@ The target exact Jaccard threshold is $3/5$.
 \end{guidesteps}
 \guidepart{(c)}
 \begin{guidesteps}
-\item Với similarity $s$, một band $r$ hàng khớp với xác suất $s^r$; ít nhất một trong $b$ band khớp với $P_{\rm cand}=1-(1-s^r)^b$. Thay $s=1/2,r=2,b=3$: $P_{\rm cand}=1-(3/4)^3=37/64$.
+\item Với similarity $s$, một band $r$ hàng khớp với xác suất $s^r$; ít nhất một trong $b$ band khớp với $P_{\rm cand}=1-(1-s^r)^b$. Thay $s=1/2,r=2,b=3$: $P_{\rm cand}=1-(3/4)^3=37/64=0.578125$.
 \item Vì xác suất nằm nghiêm giữa 0 và 1, ngưỡng Jaccard không phải ranh giới tất định cho bước sinh ứng viên.
 \end{guidesteps}
 \finalanswer{(a) Band 1, 2, 3 lần lượt khớp $AB,BD,AB$; chỉ có 2 cặp ứng viên $\{AB,BD\}$. (b) $J(AB)=3/5$, giữ $AB$; $J(BD)=2/5$, $BD$ là dương giả; $AC$ là âm giả. (c) $P_{\rm cand}=37/64$; ngưỡng tương đồng không phải ranh giới tất định.}
