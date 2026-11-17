@@ -496,27 +496,28 @@ trả bảng đếm; cặp chưa thấy có số đếm 0
 \key{Chi phí bộ nhớ} Bảng tam giác lưu $\binom n2=\Theta(n^2)$ bộ đếm; triples lưu $O(q)$ bản ghi cho $q$ cặp đã thấy. Điểm hòa vốn phụ thuộc kích thước counter, ID và overhead của cấu trúc sparse.
 \topic{pcy}{PCY}
 
-\algsummary{Tìm cặp frequent khi không đủ bộ nhớ cấp bộ đếm cho mọi cặp.}{Cặp frequent chắc chắn gồm hai item frequent và nằm trong bucket đủ ngưỡng.}{}{Các giỏ $D$, ngưỡng $s$, hàm băm cặp $h$.}{Các cặp có support $\ge s$.}{Lượt đầu đếm item và bucket rồi đổi số đếm bucket thành bitmap. Lượt hai chỉ đếm cặp có hai item frequent và bit bucket bằng 1.}
-
-\steps{
-\item Pass 1: đếm item đơn và đưa mỗi cặp quan sát được vào bucket $h(i,j)$. Lưu bitmap: bit bằng 1 nếu số đếm bucket $\ge s$.
-\item Pass 2: chỉ đếm chính xác cặp có cả hai item frequent và bit bucket bằng 1. So số đếm thật với $s$ để kết luận.
-}
+\algsummary{PCY (Park--Chen--Yu) thêm bộ lọc cặp vào Apriori.}{Dùng bộ nhớ trống ở lượt 1 để bớt đếm cặp ở lượt 2.}{}{Các giỏ $D$, ngưỡng $s$, hàm băm $h$ vào $B$ bucket.}{$L_2$: các cặp có support $\ge s$.}{Giữ cặp làm ứng viên khi $i,j\in L_1$ và $\operatorname{bitmap}[h(i,j)]=1$.}
 
 \begin{algpseudo}
-quét $D$: đếm singleton và tăng bucket $h(x,y)$ cho mỗi cặp\\
-$L_1\gets$ singleton đủ ngưỡng; $B\gets[\text{số đếm bucket}\ge s]$\\
-quét $D$: đếm $(x,y)$ nếu $x,y\in L_1$ và $B[h(x,y)]=1$\\
-trả các cặp có số đếm $\ge s$
+lượt 1: đếm singleton; với mỗi cặp $i<j$ trong mỗi giỏ, tăng $\operatorname{bucket}[h(i,j)]$\\
+lấy $L_1$ theo ngưỡng $s$; đặt $\operatorname{bitmap}[b]\gets\mathbf1[\operatorname{bucket}[b]\ge s]$\\
+lượt 2: chỉ xét cặp $i<j$ trong giỏ có $i,j\in L_1$; đếm riêng nếu bit bằng 1\\
+trả $L_2=\{(i,j)\text{ đã đếm}:\operatorname{supp}(i,j)\ge s\}$
 \end{algpseudo}
 
+\key{Ví dụ} Ba giỏ $ABC,ABD,CD$, $s=2$: cả bốn item vào $L_1$. Băm $AB,AC,AD,BC,BD,CD$ lần lượt vào $0,1,2,3,4,4$. Lượt 1 đếm bucket $(2,1,1,1,2)$, cho bitmap $(1,0,0,0,1)$. Lượt 2 chỉ đếm $AB,BD,CD$, được support $(2,1,1)$ nên $L_2=\{AB\}$. Bucket 4 đạt ngưỡng dù cả $BD$ và $CD$ đều không đạt.
+
 \unitverification
-\key{Bẫy} Nhiều cặp có thể rơi vào cùng bucket. Bucket đủ ngưỡng chỉ cho phép giữ ứng viên; kết luận frequent cần số đếm của riêng cặp đó.
+\key{Lọc an toàn} Mỗi giỏ chứa $(i,j)$ góp một lượt băm, nên $\operatorname{supp}(i,j)\le\operatorname{bucket}[h(i,j)]$. Va chạm chỉ giữ thêm ứng viên; lượt 2 đếm support thật.
+
+\key{Bẫy} Chưa biết $L_1$ ở lượt 1, nên băm mọi cặp trong mỗi giỏ. Cặp lặp ở nhiều giỏ góp nhiều lượt. Số đếm bucket bằng $s$ vẫn bật bit.
 
 % DSA5101 Exam Practice Questions.pdf, PDF page(s) 3.
 
 \unitadvanced
-\key{Chi phí} PCY dùng hai lượt quét giỏ: lượt đầu đếm singleton và bucket, lượt sau đếm riêng các cặp qua cả hai bộ lọc. Bitmap cần $O(B)$ bit cho $B$ bucket; bucket va chạm chỉ tạo ứng viên, không thay bộ đếm cặp.
+\key{Lượt quét và CPU} Vẫn hai lượt như Apriori. PCY thực hiện $\sum_{T\in D}\binom{|T|}{2}$ phép băm ở lượt 1. Nếu hầu hết bit bằng 1 thì lượt 2 tỉa được ít.
+
+\key{Bộ nhớ} Bảng $B$ bucket dùng $4B$ byte. Sang lượt 2 chỉ giữ bitmap: $\lceil B/8\rceil$ byte, xấp xỉ $1/32$ bảng. So $q$ bản ghi PCY (12 byte/cặp) với $M=\binom{|L_1|}{2}$ ô tam giác (4 byte/ô): PCY tiết kiệm khi $12q+\lceil B/8\rceil<4M$. Bỏ qua bitmap vẫn cần $q<M/3$.
 
 \ask{Pr2}{Pr2}{}
 Six reports contain fault codes 123, 123, 124, 14, 24, 15.
@@ -527,22 +528,20 @@ Use support threshold 3. Pass 1 has already found that only items 1, 2, 4 are fr
 \qpart{c} In a small implementation, Apriori stores three 4-byte counters. PCY stores two 12-byte pair records and a 1-byte bitmap. Compare these storage totals. Does pruning more pairs guarantee less memory in every implementation?
 
 \answer{\maptag{answer:Pr2}}
-\solutionprompt{Từ năm số đếm bucket $(1,2,3,4,2)$ và $s=3$, lập bitmap cho PCY. Tách hai việc: lọc ứng viên bằng bitmap và đếm support của từng cặp còn lại. Tính bộ nhớ riêng cho hai cách lưu.}
+\solutionprompt{Lập bitmap từ số đếm bucket đã cho. Tra bit để lọc ứng viên, rồi đếm support từ sáu báo cáo.}
 \guidepart{(a)}
 \begin{guidesteps}
-\item PCY đặt $B[j]=1$ khi $\operatorname{count}(j)\ge s$, ngược lại đặt 0. Thế counts $(1,2,3,4,2)$ và $s=3$: bitmap là $(0,0,1,1,0)$.
-\item Một cặp chỉ được giữ làm candidate nếu cả hai singleton frequent và bucket hash của cặp có bit 1. Singleton frequent là $\{1,2,4\}$; các cặp xét được là $12,14,24$.
-\item Thay hash bucket $(2,4,3)$: bit của bucket 4 bằng 0 nên loại $14$; bucket 2 và 3 có bit 1 nên giữ $12,24$. Bit 1 chỉ cho biết candidate có thể frequent, chưa xác nhận support cặp.
+\item $\operatorname{bitmap}[j]=\mathbf1[\operatorname{bucket}[j]\ge s]$. Thay $(1,2,3,4,2)$ và $s=3$, được $(0,0,1,1,0)$.
+\item Từ $L_1=\{1,2,4\}$, xét $12,14,24$. Chúng băm vào $(2,4,3)$: bit 4 bằng 0 nên loại $14$; bit 2 và 3 bằng 1 nên đếm $12,24$.
 \end{guidesteps}
 \guidepart{(b)}
 \begin{guidesteps}
 \item Sau PCY vẫn tính chính xác $\operatorname{supp}(X)=\sum_B\mathbf1[X\subseteq B]$ cho candidate. Cặp $12$ có trong giỏ 1, 2, 3 nên support 3; $24$ có trong giỏ 3, 5 nên support 2; chỉ $12$ đạt $s=3$.
-\item Bucket count là tổng lượt băm của nhiều cặp; vì vậy bucket đạt ngưỡng không suy ra từng cặp trong bucket đạt ngưỡng.
+\item Bucket 3 nhận 2 lượt từ $24$ và 2 từ $13$. Tổng 4 đạt ngưỡng, từng cặp thì không.
 \end{guidesteps}
 \guidepart{(c)}
 \begin{guidesteps}
-\item Tổng bộ nhớ bằng số phần tử lưu nhân kích thước mỗi phần tử. Apriori: $3\cdot4=12$ byte; PCY: $2\cdot12+1=25$ byte.
-\item Thế theo cách cài đặt đề cho, PCY dùng nhiều hơn $25-12=13$ byte do record cặp và bitmap; ít candidate hơn không bảo đảm ít byte hơn nếu đơn vị lưu khác nhau.
+\item Dùng $4M$ byte cho $M$ ô Apriori và $12q+\lceil B/8\rceil$ byte cho $q$ bản ghi PCY kèm bitmap. Thay số: $3\cdot4=12$ và $2\cdot12+1=25$ byte. PCY bớt một cặp nhưng tốn thêm $25-12=13$ byte.
 \end{guidesteps}
 \finalanswer{(a) Bitmap $(0,0,1,1,0)$; đếm riêng $12,24$, bỏ $14$. (b) Support $(3,2)$ tương ứng; chỉ $12$ frequent. Nhiều cặp có thể cùng làm một bucket đạt ngưỡng. (c) Apriori 12 byte, PCY 25 byte: ít ứng viên hơn vẫn có thể tốn nhiều bộ nhớ hơn.}
 \topic{multihash}{Multistage \& Multihash (PCY refinements)}
