@@ -350,9 +350,9 @@ $\operatorname{supp}(BCD)=1<2\ \Rightarrow\ BCD\notin L_3\ \Rightarrow$ tỉa $A
 \unitadvanced
 \key{Vì sao tỉa được} Giỏ chứa $Y$ cũng chứa $X\subseteq Y$, nên $\operatorname{supp}(X)\ge\operatorname{supp}(Y)$. Hạ ngưỡng ở tầng sau có thể làm tỉa sai: trong hai giỏ $AB$, singleton trượt ngưỡng 3 nhưng cặp đạt ngưỡng 2.
 
-\key{I/O và bộ nhớ} Tối đa $k$ lượt quét đến cỡ $k$, tức $O(kM)$ byte với dữ liệu cỡ $M$. Tầng $j$ cần $|C_j|$ bộ đếm, chưa tính ID. $|C_2|=\binom{|L_1|}{2}$; xem cách lưu cặp ở trang~\pageref*{topic:pairs}.
+\key{I/O và bộ nhớ} Tối đa $k$ lượt quét đến cỡ $k$, tức $O(kM)$ byte với dữ liệu cỡ $M$. Nếu chỉ giữ bộ đếm của tầng đang xử lý, đỉnh bộ nhớ đếm là $\max_{1\le j\le k}|C_j|$ bộ đếm, chưa tính ID và các tập frequent đã lưu. Tầng 2 dễ đầy bộ nhớ vì $|C_2|=\binom{|L_1|}{2}$, nhưng tầng tốn nhất tùy dữ liệu; xem cách lưu cặp ở trang~\pageref*{topic:pairs}.
 
-\key{Chi phí đếm} Với $N$ giỏ dạng hash set, một phép thử chứa tập cỡ $j$ tốn kỳ vọng $O(j)$, nên đếm trực tiếp tốn $O(N\sum_{j=1}^k j|C_j|)$. Chưa tính tạo hash set và sinh ứng viên. Xấu nhất, cả $2^n-1$ tập từ $n$ item đều frequent.
+\key{Chi phí đếm} Với $N$ giỏ dạng hash set, một phép thử chứa tập cỡ $j$ tốn kỳ vọng $O(j)$, nên đếm trực tiếp tốn $O(N\sum_{j=1}^k j|C_j|)$. Chưa tính tạo hash set và sinh ứng viên. Vét cạn thử đủ $2^n-1$ tập khác rỗng từ $n$ item; Apriori thường tỉa được nhiều, nhưng xấu nhất tất cả các tập đều frequent.
 
 \key{Ràng buộc phản đơn điệu} Tỉa siêu tập nếu vi phạm ở $X$ kéo theo vi phạm ở mọi $Y\supseteq X$. Khoảng giá $R(X)=\max_{i\in X}p_i-\min_{i\in X}p_i$ không giảm khi thêm item, nên loại $R(X)\ge T$ trước khi đếm. Giá có sẵn trong bộ nhớ: không thêm lượt quét; chỉ bớt lượt nếu một tầng rỗng sớm hơn.
 
@@ -505,7 +505,18 @@ lượt 2: chỉ xét cặp $i<j$ trong giỏ có $i,j\in L_1$; đếm riêng n�
 trả $L_2=\{(i,j)\text{ đã đếm}:\operatorname{supp}(i,j)\ge s\}$
 \end{algpseudo}
 
-\key{Ví dụ} Ba giỏ $ABC,ABD,CD$, $s=2$: cả bốn item vào $L_1$. Băm $AB,AC,AD,BC,BD,CD$ lần lượt vào $0,1,2,3,4,4$. Lượt 1 đếm bucket $(2,1,1,1,2)$, cho bitmap $(1,0,0,0,1)$. Lượt 2 chỉ đếm $AB,BD,CD$, được support $(2,1,1)$ nên $L_2=\{AB\}$. Bucket 4 đạt ngưỡng dù cả $BD$ và $CD$ đều không đạt.
+\blocklabel{Ví dụ: từ lượt băm đến bitmap}
+Ba giỏ $ABC,ABD,CD$ với $s=2$. Đếm singleton được $(2,2,2,2)$ theo thứ tự $A,B,C,D$, nên cả bốn item vào $L_1$. Các cặp được băm và cộng vào bucket như sau:
+\begin{examtable}{@{}lccccc@{}}
+\toprule
+Bucket & 0 & 1 & 2 & 3 & 4 \\
+\midrule
+Cặp đóng góp & $AB$ & $AC$ & $AD$ & $BC$ & $BD,CD$ \\
+Lượt băm & $2$ & $1$ & $1$ & $1$ & $1+1$ \\
+Bit ($s=2$) & 1 & 0 & 0 & 0 & 1 \\
+\bottomrule
+\end{examtable}
+Lượt 2: Apriori đếm cả sáu cặp; PCY chỉ đếm $AB,BD,CD$. Support lần lượt là $(2,1,1)$, nên $L_2=\{AB\}$. Bucket 4 đạt ngưỡng dù cả $BD$ và $CD$ đều không đạt.
 
 \unitverification
 \key{Lọc an toàn} Mỗi giỏ chứa $(i,j)$ góp một lượt băm, nên $\operatorname{supp}(i,j)\le\operatorname{bucket}[h(i,j)]$. Va chạm chỉ giữ thêm ứng viên; lượt 2 đếm support thật.
@@ -557,17 +568,26 @@ lượt cuối (3 hoặc 2): đếm support thật của cặp qua $L_1,B_1,B_2$
 
 \begin{example}{Pr2}{Pr2, tr.~\pageref*{question:Pr2} · So bốn cách lọc cặp}
 Dùng sáu giỏ và $s=3$ của Pr2, $L_1=\{1,2,4\}$, $B_1=(0,0,1,1,0)$. Giữ $h_1(i,j)=ij\bmod5$ và thêm $h_2(i,j)=(i+3j)\bmod5$, với $i<j$.
-\begin{examtable}{@{}lcll@{}}
+\begin{examtable}{@{}lrrrrrr@{}}
 \toprule
-Cách & Lượt quét & Số đếm bucket $h_2$ ($0$--$4$) & Cặp đếm thật \\
+Cặp đã thấy & $12$ & $13$ & $14$ & $15$ & $23$ & $24$ \\
 \midrule
-Apriori & 2 & --- & $12,14,24$ \\
-PCY & 2 & --- & $12,24$ \\
-Multistage & 3 & $(0,0,3,0,2)$ & $12$ \\
-Multihash & 2 & $(2,3,3,2,2)$ & $12$ \\
+Lượt xuất hiện & 3 & 2 & 2 & 1 & 2 & 2 \\
+$h_2$ & 2 & 0 & 3 & 1 & 1 & 4 \\
 \bottomrule
 \end{examtable}
-Multistage chỉ băm lại $12$ và $24$: chúng góp 3 lượt vào bucket 2 và 2 lượt vào bucket 4. Multihash băm cả các cặp khác, nên bật thêm bit 1. Cả hai giữ $12$ và loại $24$ trước khi đếm thật vì bit 4 đều bằng 0. Cả bốn cách trả $L_2=\{12\}$.
+Multistage chỉ cộng các lượt của $12,24$: được $(0,0,3,0,2)$ và $B_2^{\mathrm{MS}}=(0,0,1,0,0)$. Multihash cộng tất cả các lượt; chẳng hạn bucket 1 nhận $1+2=3$ từ $15,23$. Được $(2,3,3,2,2)$ và $B_2^{\mathrm{MH}}=(0,1,1,0,0)$.
+\begin{examtable}{@{}lcll@{}}
+\toprule
+Cách & Lượt quét & Bảng băm & Cặp đếm thật \\
+\midrule
+Apriori & 2 & 0 & $12,14,24$ \\
+PCY & 2 & 1 & $12,24$ \\
+Multistage & 3 & 2 nối tiếp & $12$ \\
+Multihash & 2 & 2 đồng thời & $12$ \\
+\bottomrule
+\end{examtable}
+Cả hai bitmap thứ hai giữ $12$ và loại $24$ (bit 4 bằng 0). Cả bốn cách trả $L_2=\{12\}$. Ví dụ dùng 5 bucket mỗi bảng để so cách lọc, không cố định tổng bộ nhớ.
 \end{example}
 
 \unitverification
@@ -576,7 +596,7 @@ Multistage chỉ băm lại $12$ và $24$: chúng góp 3 lượt vào bucket 2 v
 \unitadvanced
 \key{Cùng ngân sách} Multistage giữ $B_1$ cùng bảng đếm thứ hai; Multihash giữ hai bảng đếm cùng lúc nên thường ít bucket hơn mỗi bảng. Với cùng hàm băm và kích thước bảng, số đếm $h_2$ của Multistage không vượt số đếm của Multihash vì băm ít lượt hơn.
 
-\key{Cận lọc} Trung bình $s/10$ lượt mỗi bucket của PCY cho tối đa $1/10$ số bit bật: mỗi bit bật cần ít nhất $s$ lượt. Chia đôi số bucket mỗi bảng của Multihash thì trung bình lên $s/5$, với tối đa $1/5$ bit bật mỗi bảng. Nếu cặp kiểm tra rơi đều và độc lập trên hai bitmap đã dựng, xác suất qua cả hai không quá $(1/5)^2=0.04$. Đây là cận theo mô hình, không phải tỷ lệ đo được; hai hàm khác nhau chưa chắc độc lập.
+\key{Cận lọc} Mỗi bit bật cần ít nhất $s$ lượt. PCY trung bình $s/10$ lượt mỗi bucket nên tối đa $1/10$ số bit bật. Chia đôi số bucket mỗi bảng của Multihash thì trung bình lên $s/5$, tối đa $1/5$ bit bật mỗi bảng. Nếu cặp kiểm tra rơi đều trên các bitmap và độc lập giữa hai hash, cận lọt bộ lọc là $0.10$ cho PCY và $(1/5)^2=0.04$ cho Multihash. Hai cận chênh nhau $2.5$ lần; tỷ lệ lọt thực tế không nhất thiết như vậy.
 \topic{son}{Random Sampling \& SON}
 
 \algsummary{Giảm I/O khi Apriori phải quét dữ liệu lớn cho từng cỡ tập.}{Chạy Apriori trong RAM trên một mẫu hoặc lần lượt trên mọi phần vừa RAM.}{}{$N$ giỏ trong $D$; ngưỡng $s$; mẫu tỷ lệ $p$ hoặc các phần rời $D_j$ phủ $D$, với $p_j=|D_j|/N$.}{Random Sampling: ứng viên; SON: kết quả chính xác.}{Điều chỉnh ngưỡng theo tỷ lệ giỏ; nếu xác nhận, đếm lại theo ngưỡng $s$.}
@@ -592,16 +612,22 @@ Toivonen & Mẫu; quét 1 lượt mỗi lần thử & Chính xác nếu nhận m
 \end{examtable}
 
 \begin{algpseudo}
-Sampling: lấy mẫu đều $S$; $C\gets\operatorname{Apriori}(S,\lceil ps\rceil)$\\
-\quad nếu không xác nhận: trả $C$\\
-SON: $C\gets\varnothing$; với mọi phần $D_j$, lấy hợp $C$ với $\operatorname{Apriori}(D_j,\lceil p_js\rceil)$\\
-xác nhận: quét $D$ đếm mọi $X\in C$; trả các tập có $\operatorname{supp}_D(X)\ge s$
+Sampling: lấy mẫu đều $S$; $F\gets\operatorname{Apriori}(S,\lceil ps\rceil)$\\
+\quad nếu xác nhận: quét $D$ và loại khỏi $F$ mọi tập có $\operatorname{supp}_D(X)<s$\\
+\quad trả $F$\\
+SON: $C\gets\varnothing$\\
+\quad lượt 1: với mọi phần $D_j$, lấy hợp $C$ với $\operatorname{Apriori}(D_j,\lceil p_js\rceil)$\\
+\quad lượt 2: quét $D$ đếm mọi $X\in C$; trả các tập có $\operatorname{supp}_D(X)\ge s$
 \end{algpseudo}
 
-\key{Ví dụ} Sampling: $p=0.1,s=100$, ngưỡng 10; một tập có support thật 100 có kỳ vọng 10 trên mẫu nhưng đếm được 9 thì vẫn bị bỏ sót. SON: $N=10$, $s=5$, hai phần 5 giỏ có ngưỡng $\lceil(5/10)5\rceil=3$; nếu support chia $(2,3)$, phần 2 đưa tập vào $C$.
+\key{Ví dụ Sampling} Với $p=0.1,s=100$, ngưỡng là $\lceil ps\rceil=10$. Một tập có support thật 100 có kỳ vọng 10 trên mẫu, nhưng đếm được 9 thì bị bỏ sót. Hạ ngưỡng bằng $\alpha=0.8$ cho $\lceil0.8ps\rceil=8$; trên cùng mẫu này, tập đó được giữ để xác nhận.
+
+\key{Ví dụ SON} Với $N=10$, $s=5$, hai phần 5 giỏ có ngưỡng $\lceil(5/10)5\rceil=3$. Một tập có tổng support 5 có thể chia thành $(2,3)$, $(4,1)$ hoặc $(0,5)$; phần đưa tập vào $C$ lần lượt là 2, 1 và 2. Lượt cuối cộng support hai phần rồi so với 5.
 
 \unitverification
 \key{Kiểm tra} Sampling chưa xác nhận có thể có dương giả lẫn âm giả. Xác nhận loại dương giả, không tìm lại tập vắng trong $C$. Hạ ngưỡng mẫu xuống $\lceil\alpha ps\rceil$, $0<\alpha<1$, để bớt bỏ sót; đổi lại có thể có thêm ứng viên.
+
+\key{Bẫy SON} Frequent cục bộ chỉ đủ để đưa vào $C$. Chẳng hạn support $(3,0)$ đạt ngưỡng ở phần 1 trong ví dụ trên, nhưng tổng $3<5$ nên lượt xác nhận vẫn loại.
 
 \unitadvanced
 \key{Vì sao SON đúng} Support nguyên trượt $\lceil p_js\rceil$ cũng nhỏ hơn $p_js$. Nếu trượt ở mọi phần, tổng support sẽ $<\sum_j p_js=s$. Vì vậy hợp ứng viên không bỏ sót và lượt đếm toàn cục loại hết dương giả.
@@ -612,6 +638,8 @@ xác nhận: quét $D$ đếm mọi $X\in C$; trả các tập có $\operatornam
 \algsummary{Phát hiện tập frequent toàn cục bị bỏ sót khi đào mẫu.}{Tập con tối tiểu bị bỏ sót nằm trong negative border.}{}{Giỏ $D$, toàn bộ miền item, ngưỡng $s$ và tỷ lệ mẫu $p$.}{Toàn bộ tập frequent nếu xác nhận thành công.}{Đào $F$ trên mẫu, rồi đếm lại $F$ và negative border $\mathrm{NB}$ trên dữ liệu gốc.}
 
 \key{Sinh border} $\mathrm{NB}=\bigcup_k(C_k\setminus L_k)$ trên mẫu, với $C_1$ gồm mọi singleton trong miền item, kể cả item vắng khỏi mẫu. Ở cỡ $k>1$, $C_k$ gồm các tập có mọi tập con cỡ $k-1$ thuộc $F$; chỉ cần xét tập con trực tiếp.
+
+\key{Ví dụ singleton} Trên miền $\{A,B,C,D\}$, cho $F=\{A,B,C,AB,AC,BC\}$. $D$ vào border vì vắng khỏi $F$ và không có tập con khác rỗng để kiểm tra. $ABC$ vào vì đủ ba cặp con. $ABD$ và $ACD$ đều thiếu cặp con, nên $\mathrm{NB}=\{D,ABC\}$.
 
 \begin{algpseudo}
 lặp:\\
