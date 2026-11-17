@@ -546,29 +546,37 @@ Use support threshold 3. Pass 1 has already found that only items 1, 2, 4 are fr
 \finalanswer{(a) Bitmap $(0,0,1,1,0)$; đếm riêng $12,24$, bỏ $14$. (b) Support $(3,2)$ tương ứng; chỉ $12$ frequent. Nhiều cặp có thể cùng làm một bucket đạt ngưỡng. (c) Apriori 12 byte, PCY 25 byte: ít ứng viên hơn vẫn có thể tốn nhiều bộ nhớ hơn.}
 \topic{multihash}{Multistage \& Multihash (PCY refinements)}
 
-\algsummary{Dùng thêm bảng băm để giảm số cặp cần đếm theo cách của PCY.}{Cặp frequent không bị loại ở bất kỳ bảng băm nào.}{}{Các giỏ $D$, ngưỡng $s$, hai hàm băm $h_1,h_2$.}{Các cặp frequent.}{Multihash dựng hai bitmap trong cùng một lượt. Multistage dùng bitmap đầu để tỉa cặp trước khi đếm bucket cho bitmap thứ hai.}
-
-\key{Ý chính} Kiểm tra nhiều bitmap: cặp frequent phải qua tất cả vì số đếm bucket chứa nó luôn ít nhất bằng support của cặp.
-
-\steps{
-\item Multistage (3 pass): tạo bitmap $B_1$ như PCY. Quét lần hai, chỉ băm các cặp qua bộ lọc PCY vào hàm $h_2$ để tạo $B_2$. Quét lần ba để đếm cặp qua cả hai bitmap.
-\item Multihash (2 pass): dựng cả hai bảng băm cùng lúc ở pass 1; pass 2 đếm cặp qua cả hai bitmap. Cùng ngân sách bộ nhớ, mỗi bảng thường nhỏ hơn và dễ va chạm hơn.
-}
+\algsummary{Giảm số bộ đếm cặp so với PCY bằng một bộ lọc bucket nữa.}{Khác nhau ở lúc dựng bảng thứ hai: quét thêm một lượt hoặc chia bộ nhớ để dựng cả hai ngay.}{}{Giỏ $D$, ngưỡng $s$, hai hàm băm $h_1,h_2$.}{Các cặp có support $\ge s$.}{Cùng điều kiện ứng viên: $i,j\in L_1$ và $B_1[h_1(i,j)]=B_2[h_2(i,j)]=1$.}
 
 \begin{algpseudo}
-Multihash: quét $D$ để đếm singleton và bucket của cả $h_1,h_2$\\
-Multistage: lượt 1 đếm singleton và bucket $h_1$; đổi thành $B_1$\\
-\quad lượt 2 băm bằng $h_2$ chỉ khi hai item frequent và qua $B_1$\\
-đổi số đếm bucket còn lại thành bitmap bằng ngưỡng $s$\\
-quét $D$: đếm cặp gồm hai item frequent và qua cả hai bitmap\\
-trả các cặp có số đếm $\ge s$
+Multistage: lượt 1 làm như PCY để lấy $L_1,B_1$; giải phóng bảng đếm thứ nhất\\
+\quad lượt 2: băm cặp có $i,j\in L_1$ và qua $B_1$ vào bảng $h_2$; tạo $B_2$\\
+Multihash: lượt 1 đếm singleton và băm mọi cặp vào cả hai bảng; lấy $L_1,B_1,B_2$\\
+lượt cuối (3 hoặc 2): đếm support thật của cặp qua $L_1,B_1,B_2$; giữ support $\ge s$
 \end{algpseudo}
 
+\begin{example}{Pr2}{Pr2, tr.~\pageref*{question:Pr2} · So bốn cách lọc cặp}
+Dùng sáu giỏ và $s=3$ của Pr2, $L_1=\{1,2,4\}$, $B_1=(0,0,1,1,0)$. Giữ $h_1(i,j)=ij\bmod5$ và thêm $h_2(i,j)=(i+3j)\bmod5$, với $i<j$.
+\begin{examtable}{@{}lcll@{}}
+\toprule
+Cách & Lượt quét & Số đếm bucket $h_2$ ($0$--$4$) & Cặp đếm thật \\
+\midrule
+Apriori & 2 & --- & $12,14,24$ \\
+PCY & 2 & --- & $12,24$ \\
+Multistage & 3 & $(0,0,3,0,2)$ & $12$ \\
+Multihash & 2 & $(2,3,3,2,2)$ & $12$ \\
+\bottomrule
+\end{examtable}
+Multistage chỉ băm lại $12$ và $24$: chúng góp 3 lượt vào bucket 2 và 2 lượt vào bucket 4. Multihash băm cả các cặp khác, nên bật thêm bit 1. Cả hai giữ $12$ và loại $24$ trước khi đếm thật vì bit 4 đều bằng 0. Cả bốn cách trả $L_2=\{12\}$.
+\end{example}
+
 \unitverification
-\key{Bẫy} Thêm bảng không luôn tiết kiệm bộ nhớ. Nếu gần như mọi bit đã là 1 thì bitmap ít giúp cắt ứng viên.
+\key{Không bỏ sót} Cặp frequent có ít nhất $s$ lượt xuất hiện, đều qua $L_1$ và $B_1$ nên vẫn góp đủ vào bảng thứ hai. Multistage lượt 2 chỉ đếm bucket; lượt cuối vẫn cần cả ba bộ lọc.
 
 \unitadvanced
-\key{Chi phí} Với $p$ giai đoạn cần $p$ lượt quét. Mỗi lượt dùng bitmap để giảm tập ứng viên cho lượt kế tiếp; thêm lượt có thể giảm bộ đếm cặp nhưng tăng I/O và thời gian quét.
+\key{Cùng ngân sách} Multistage giữ $B_1$ cùng bảng đếm thứ hai; Multihash giữ hai bảng đếm cùng lúc nên thường ít bucket hơn mỗi bảng. Với cùng hàm băm và kích thước bảng, số đếm $h_2$ của Multistage không vượt số đếm của Multihash vì băm ít lượt hơn.
+
+\key{Cận lọc} Trung bình $s/10$ lượt mỗi bucket của PCY cho tối đa $1/10$ số bit bật: mỗi bit bật cần ít nhất $s$ lượt. Chia đôi số bucket mỗi bảng của Multihash thì trung bình lên $s/5$, với tối đa $1/5$ bit bật mỗi bảng. Nếu cặp kiểm tra rơi đều và độc lập trên hai bitmap đã dựng, xác suất qua cả hai không quá $(1/5)^2=0.04$. Đây là cận theo mô hình, không phải tỷ lệ đo được; hai hàm khác nhau chưa chắc độc lập.
 \topic{toivonen}{Toivonen}
 
 \algsummary{Đào frequent itemsets trên mẫu và kiểm tra xem mẫu có bỏ sót tập frequent toàn cục hay không.}{Tập frequent nhỏ nhất bị bỏ sót sẽ nằm ở negative border.}{}{Các giỏ $D$, miền item, ngưỡng thật $s$, quy tắc lấy mẫu và ngưỡng mẫu.}{Toàn bộ frequent itemsets khi lượt kiểm tra thành công.}{Tìm các tập frequent trên mẫu. Quét $D$ để đếm lại cả các tập đó và negative border. Lấy mẫu khác nếu một tập ở border đạt $s$.}
