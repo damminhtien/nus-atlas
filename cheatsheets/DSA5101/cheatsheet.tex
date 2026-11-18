@@ -251,7 +251,8 @@
 \topicoutline{cure}{CURE: clustering using representatives}
 \topicoutline{purity}{Cluster purity (evaluation with known labels)}
 \outline{4}{Dimensionality reduction}
-\topicoutline{svd}{SVD and power iteration}
+\topicoutline{svd}{SVD: rank and singular vectors}
+\topicoutline{powerdeflation}{Power iteration and deflation}
 \topicoutline{pca}{Truncated SVD / PCA projection}
 \topicoutline{cur}{CUR approximation}
 \outline{5}{Recommender systems}
@@ -1639,23 +1640,44 @@ trả $\sum_i\max_j\operatorname{count}[i,j]/N$
 \key{Giới hạn thước đo} Purity có thể đạt 1 khi tách mỗi điểm thành một cụm, nên không phạt phân mảnh. Chỉ so purity khi số cụm hoặc quy tắc phân hoạch được kiểm soát.
 
 \lecture{4}{Dimensionality reduction}
-\topic{svd}{SVD and power iteration}
+\topic{svd}{SVD: rank and singular vectors}
 
-\algsummary{Tìm các hướng kỳ dị. Nếu chỉ cần vài hướng trội, dùng power iteration để tìm lần lượt.}{Nhân lặp với $A^TA$ khuếch đại hướng có trị riêng lớn; deflation bỏ hướng đã tìm.}{\textbf{Nhận dạng từ ma trận:}\enspace Trong $A=U\Sigma V^T$, các cột của $V$ là vectơ riêng của $A^TA$.}{Ma trận $A$, số hướng $r$, vectơ khởi tạo và điều kiện dừng.}{Tối đa $r$ bộ ba $(u_i,\sigma_i,v_i)$ có $\sigma_i>0$.}{Tìm vectơ đơn vị trội của $A^TA$. Từ đó tính giá trị kỳ dị và vectơ kỳ dị trái, rồi deflate nếu cần tìm tiếp.}
+\algsummary{Tách ma trận thành các hướng độc lập và đo độ mạnh của từng hướng.}{Mỗi bộ ba $(u_i,\sigma_i,v_i)$ tạo một thành phần hạng 1. Với ma trận người dùng $\times$ phim, $U$ nối người dùng với khái niệm, $V$ nối phim với khái niệm và $\sigma_i$ đo độ mạnh của khái niệm.}{}{Ma trận $A\in\mathbb R^{m\times n}$.}{SVD gọn $A=U\Sigma V^T$ với $U:m\times r$, $\Sigma:r\times r$, $V:n\times r$, $r=\operatorname{rank}(A)$.}{Nếu đề cho các cặp riêng của $A^TA$, lấy căn trị riêng dương rồi tính vectơ trái từ vectơ phải.}
 
-\steps{
-\item Lập $M=A^TA$. Tìm cặp riêng $(\lambda_i,v_i)$ với $\|v_i\|=1$.
-\item Lấy $\sigma_i=\sqrt{\lambda_i}$ và $u_i=Av_i/\sigma_i$ nếu $\sigma_i>0$.
-\item Nếu đề yêu cầu power iteration: nhân $Mx$ rồi chuẩn hóa. Nếu cần deflation sau cặp trội, dùng $M-\lambda_1v_1v_1^T$.
-}
+% Lec4_ DimensionalityReduction.pdf, pp. 3--43.
+\key{Hạng và các thành phần} $r\le\min(m,n)$ là số hàng hoặc cột độc lập tối đa và cũng là số giá trị kỳ dị dương. Với $\sigma_1\ge\cdots\ge\sigma_r>0$, ta có $U^TU=V^TV=I_r$ và $A=\sum_{i=1}^r\sigma_i u_i v_i^T$. Vì vậy $r$ chiều ẩn đủ để tái tạo chính xác.
+
+\key{Từ trị riêng sang giá trị kỳ dị} Vectơ riêng thỏa $Mv=\lambda v$ với $v\ne0$. Thay SVD gọn vào, dùng $U^TU=V^TV=I_r$:
+\[
+A^TA=V\Sigma^2V^T,\qquad AA^T=U\Sigma^2U^T.
+\]
+Do đó $A^TA v_i=\sigma_i^2v_i$ và $AA^T u_i=\sigma_i^2u_i$; $v_i$ ở phía cột (đặc trưng), $u_i$ ở phía hàng (mẫu).
 
 \begin{algpseudo}
-$M\gets A^TA$\\
-với $i=1,\ldots,r$ khi $M$ còn trị riêng dương: chọn $x$ có thành phần theo hướng trội\\
-\quad lặp $x\gets Mx/\|Mx\|$ đến khi hội tụ (khởi tạo lại nếu $Mx=0$)\\
-\quad $v_i\gets x$; $\lambda_i\gets x^TMx$; $\sigma_i\gets\sqrt{\lambda_i}$; $u_i\gets Av_i/\sigma_i$\\
-\quad $M\gets M-\lambda_i v_i v_i^T$\\
-trả các bộ ba đã tìm
+$M\gets A^TA$; tìm các cặp riêng trực chuẩn $(\lambda_i,v_i)$ với $\lambda_i>0$\\
+sắp $\lambda_i$ giảm dần; với mỗi $i$: $\sigma_i\gets\sqrt{\lambda_i}$; $u_i\gets Av_i/\sigma_i$\\
+trả các cột $u_i$, các giá trị $\sigma_i$ và các cột $v_i$
+\end{algpseudo}
+
+\key{Ví dụ} Nếu hai cột của $A$ đều là $(1,2,3)^T$, hạng bằng 1. Khi đó $A^TA$ có mọi ô bằng 14, nên các trị riêng là $28,0$. SVD gọn chỉ có một giá trị kỳ dị: $\sqrt{28}$.
+
+\unitverification
+\key{Kiểm tra} Trị riêng của $A^TA$ là $\sigma_i^2$ (kèm các số 0 nếu thiếu hạng); trị riêng của ma trận đối xứng bất kỳ có thể âm. Chỉ dùng $Av_i/\sigma_i$ khi $\sigma_i>0$. Kiểm tra độ dài bằng 1 và tính trực giao của các cột trong mỗi cơ sở.
+
+\unitadvanced
+\key{Chi phí} SVD đầy đủ cho ma trận dày tốn $O(mn\min(m,n))$. Có thể giảm công việc nếu chỉ cần vài hướng trội hoặc tận dụng ma trận thưa. Tính $u_i,\sigma_i$ từ cặp riêng: Pr10(b), tr.~\pageref*{question:Pr10}.
+
+\topic{powerdeflation}{Power iteration and deflation}
+
+\algsummary{Tìm một hướng riêng trội của ma trận đối xứng $M$; loại hướng đã tìm nếu cần hướng tiếp theo.}{Nhân với $M$ khuếch đại tương đối các thành phần theo trị riêng có độ lớn cao.}{}{Ma trận đối xứng $M$ (thường là $A^TA$), vectơ khởi tạo $x_0\ne0$ và điều kiện dừng.}{Vectơ đơn vị $v$ và ước lượng trị riêng $\lambda$ tương ứng.}{Nhân rồi chuẩn hóa: $x_{t+1}=Mx_t/\|Mx_t\|_2$. Ước lượng trị riêng bằng thương Rayleigh $x^TMx/(x^Tx)$, rút gọn thành $x^TMx$ nếu $x$ có chuẩn 1.}
+
+\begin{algpseudo}
+$x\gets x_0/\|x_0\|_2$\\
+lặp: $y\gets Mx$; nếu $y=0$, khởi tạo lại và thử lại (dừng nếu $M=0$)\\
+\quad $x'\gets y/\|y\|_2$; so hướng của $x'$ với $x$, rồi gán $x\gets x'$\\
+\quad nếu hướng đã ổn định theo ngưỡng đề cho: dừng\\
+trả $v=x$ và $\lambda=x^TMx$\\
+để tìm cặp tiếp theo: chạy lại với $M^*=M-\lambda vv^T$
 \end{algpseudo}
 
 \begin{example}{Pr10}{Pr10(a) · Power iteration: nhân rồi chuẩn hóa}
@@ -1669,13 +1691,17 @@ x^{(1)}=\frac{1}{\sqrt{41}}\begin{pmatrix}5\\4\end{pmatrix}.
 Trong câu (a), $M=\bigl(\begin{smallmatrix}5&4\\4&5\end{smallmatrix}\bigr)$. Vì bắt đầu ở $(1,0)^T$, phép nhân lấy đúng cột 1 của $M$.
 \end{example}
 
+\key{Thêm một vòng} Với $M=\bigl(\begin{smallmatrix}1&2\\2&3\end{smallmatrix}\bigr)$ và $x_0\propto(1,1)^T$, sau một vòng được $(3,5)^T/\sqrt{34}$. Nhân tiếp cho $(13,21)^T/\sqrt{34}$; sau chuẩn hóa còn $(13,21)^T/\sqrt{610}$.
+
 % DSA5101 Exam Practice Questions.pdf, PDF page(s) 11.
 
 \unitverification
-\key{Bẫy} Cần thành phần ban đầu theo không gian riêng trội; lặp không tự tạo thành phần bị thiếu. Tách một hướng trội thường cần khoảng cách giữa trị riêng lớn nhất và trị kế tiếp.
+\key{Kiểm tra} Hướng trội theo $|\lambda|$, không phải $\lambda$ lớn nhất. Nếu $\lambda$ trội âm, $x$ có thể đổi dấu mỗi vòng; so hướng bằng $|x_{t+1}^Tx_t|$ khi cả hai có chuẩn 1. Nếu khởi tạo vuông góc với hướng trội, phép lặp không sinh ra hướng đó. Khi hai trị riêng đầu có cùng độ lớn, không bảo đảm tìm được một hướng trội duy nhất.
 
 \unitadvanced
-\key{Hội tụ} Nếu $x^{(0)}=\sum_i c_iv_i$, sau $t$ phép nhân chưa chuẩn hóa hệ số theo $v_i$ là $c_i\lambda_i^t$. Hội tụ về $v_1$ cần $c_1\ne0$ và $|\lambda_1|>|\lambda_2|$; nếu $c_1=0$, phép lặp không tự sinh hướng đó.
+\key{Tốc độ} Nếu $x_0=\sum_i a_i v_i$, sau $t$ phép nhân chưa chuẩn hóa hệ số theo $v_i$ là $a_i\lambda_i^t$. Khi $a_1\ne0$ và $|\lambda_1|>|\lambda_2|$, phần lệch hướng giảm theo tỷ số cỡ $|\lambda_2/\lambda_1|^t$. Hai trị riêng gần nhau về độ lớn làm hội tụ chậm.
+
+\key{Deflation} Với cặp riêng chính xác $(\lambda,v)$, $\|v\|_2=1$, thì $(M-\lambda vv^T)v=0$. Mọi vectơ riêng $u$ trực giao với $v$ giữ nguyên trị riêng vì $vv^Tu=0$. Chẳng hạn Pr10(c) đổi các trị riêng $(9,1)$ thành $(0,1)$. Nếu $v$ chỉ là ước lượng thì hướng cũ có thể chưa bị loại hết.
 
 \ask{Pr10}{Pr10}{}
 Consider
@@ -1713,29 +1739,33 @@ Give the two singular values of $A$ and calculate only the first left singular v
 \finalanswer{(a) $M=\bigl(\begin{smallmatrix}5&4\\4&5\end{smallmatrix}\bigr)$, $x^{(1)}=(5,4)^T/\sqrt{41}$. (b) $(\sigma_1,\sigma_2)=(3,1)$; $u_1=(4,1,1)^T/(3\sqrt2)$. (c) $M^*=\frac12\bigl(\begin{smallmatrix}1&-1\\-1&1\end{smallmatrix}\bigr)$; nếu bắt đầu tại $v_2$, phép lặp trên $M$ giữ nguyên $v_2$.}
 \topic{pca}{Truncated SVD / PCA projection}
 
-\algsummary{Giảm số tọa độ hoặc tái tạo gần đúng một ma trận bằng hạng thấp.}{Các hướng kỳ dị lớn giữ nhiều năng lượng, hoặc nhiều phương sai khi đã trừ trung bình.}{\textbf{Khi dùng:}\enspace Đề hỏi giữ bao nhiêu chiều hoặc tái tạo dữ liệu sau khi chiếu. Giữ $r$ giá trị kỳ dị lớn nhất:
+\algsummary{Giảm dữ liệu từ $m\times n$ xuống tọa độ $m\times k$, với $k\ll n$.}{Giữ các hướng kỳ dị mạnh nhất để mất ít năng lượng; với dữ liệu đã trừ trung bình, đó là các hướng giữ nhiều phương sai nhất.}{\textbf{Khi dùng:}\enspace Đề hỏi chọn $k$, tính sai số hoặc khôi phục dữ liệu. Giữ $k$ giá trị kỳ dị lớn nhất:
 \[
 \begin{aligned}
-A_r&=U_r\Sigma_rV_r^T, \\
-\text{năng lượng giữ lại}&=\frac{\sum_{i\le r}\sigma_i^2}{\sum_i\sigma_i^2},\\
-\|A-A_r\|_F^2&=\sum_{i>r}\sigma_i^2 .
+A_k&=U_k\Sigma_kV_k^T,\qquad \|A\|_F^2=\sum_i\sigma_i^2,\\
+E_k&=\frac{\sum_{i\le k}\sigma_i^2}{\sum_i\sigma_i^2},\qquad
+\|A-A_k\|_F^2=\sum_{i>k}\sigma_i^2 .
 \end{aligned}
-\]}{$A$, hạng $r$ hoặc tỷ lệ năng lượng cần giữ; chọn PCA hay SVD thuần.}{Cơ sở $V_r$, tọa độ giảm chiều $Z$ và bản tái tạo $\widehat A$.}{Nếu dùng PCA, trừ trung bình từng cột trước. Giữ các hướng kỳ dị đầu để chiếu và tái tạo. Nếu đã trừ trung bình, cộng lại khi đưa dữ liệu về thang ban đầu.}
+\]}{$A$, hạng $k$ hoặc ngưỡng năng lượng $\tau$; đề yêu cầu PCA hay SVD thuần.}{Cơ sở $V_k\in\mathbb R^{n\times k}$, tọa độ $Z$ và bản tái tạo $\widehat A$.}{Chọn $k$ nhỏ nhất sao cho $E_k\ge\tau$ nếu đề cho ngưỡng. Với PCA, tính SVD trên dữ liệu đã trừ trung bình cột.}
 
-\key{Chiếu và tái tạo} Với $x$ là vectơ hàng, $z=xV_r$ và $\hat x=zV_r^T$. Với PCA, trừ trung bình trước khi chiếu và cộng lại sau khi tái tạo về thang gốc.
+\key{Chiếu và tái tạo} Không trừ trung bình: $Z=AV_k=U_k\Sigma_k$, $A_k=ZV_k^T$. Với hàng $x$, chiếu thành $z=xV_k$ rồi tái tạo $\hat x=zV_k^T$. Nếu làm PCA, dùng $x-\mu$ khi chiếu và cộng lại $\mu$ khi tái tạo.
 
 \begin{algpseudo}
 $\mu\gets$ vectơ các trung bình cột của $A$ nếu PCA; ngược lại $\mu\gets0$\\
 $X\gets A-\mathbf 1\mu$; tìm SVD của $X$\\
-chọn $r$; $Z\gets XV_r$; $\widehat A\gets ZV_r^T+\mathbf 1\mu$\\
-trả $V_r,Z,\widehat A$
+chọn $k$; $Z\gets XV_k$; $\widehat A\gets ZV_k^T+\mathbf 1\mu$\\
+trả $V_k,Z,\widehat A$
 \end{algpseudo}
 
+\key{Ví dụ chọn hạng} Với $\sigma=(10,3,1)$, năng lượng tổng là $110$. Hạng 1 giữ $100/110\approx90.91\%$ và mất 10; hạng 2 giữ $109/110\approx99.09\%$ và mất 1. Nếu đề yêu cầu ít nhất $95\%$, chọn $k=2$. Mốc $80$--$90\%$ chỉ là quy tắc kinh nghiệm khi đề không ấn định ngưỡng.
+
+\key{Truy vấn trong không gian ẩn} Chiếu truy vấn $q$ và tài liệu $d$ bằng cùng cơ sở $V_k$ và cùng tiền xử lý; so bằng $\cos(z_q,z_d)=z_qz_d^T/(\|z_q\|_2\|z_d\|_2)$ nếu cả hai khác 0. Ví dụ $q=(5,0,0,0,0)$ và $d=(0,4,5,0,0)$ có cosine gốc bằng 0, nhưng nếu tọa độ chiếu là $(2.8,0.6)$ và $(5.2,0.4)$ thì cosine xấp xỉ $0.99$.
+
 \unitverification
-\key{Bẫy} Dùng bình phương giá trị kỳ dị. Sai số tái tạo nhỏ trên toàn bộ ma trận không bảo đảm giữ nguyên thứ hạng hàng xóm.
+\key{Kiểm tra} $U_k$ chưa phải tọa độ chiếu: còn phải nhân $\Sigma_k$. Sai số Frobenius là căn của tổng bình phương các ô lệch; với truncated SVD, lấy căn $\sum_{i>k}\sigma_i^2$ nếu đề hỏi chuẩn thay vì bình phương chuẩn. Giữ nhiều năng lượng vẫn có thể làm đổi góc, khoảng cách và thứ hạng hàng xóm.
 
 \unitadvanced
-\key{Sai số truy vấn} Với hàng truy vấn $q$ và phép chiếu trực giao $P_r=V_rV_r^T$, $\|q-qP_r\|^2=\|q\|^2-\|qV_r\|^2$. Tỷ lệ năng lượng giữ lại là đại lượng toàn ma trận, không thay cho sai số hay thứ hạng hàng xóm của một truy vấn.
+\key{Tối ưu và phương sai} Theo Eckart--Young, $A_k$ đạt sai số Frobenius nhỏ nhất trong mọi ma trận hạng không quá $k$. Với dữ liệu đã trừ trung bình $X$ và phép chiếu trực giao $P=VV^T$, $\|X-XP\|_F^2=\|X\|_F^2-\|XV\|_F^2$. Vì tổng năng lượng cố định, giảm sai số đồng nghĩa giữ nhiều phương sai hơn. Áp dụng cùng hệ thức cho một hàng đã tiền xử lý để tính lỗi của riêng truy vấn.
 
 % DSA5101 Exam Practice Questions.pdf, PDF page(s) 12.
 
@@ -1770,29 +1800,39 @@ For a row vector $x$, use reduced representation $z_x=xV_2$ and reconstruction $
 \finalanswer{(a) Rank nhỏ nhất $r=2$, giữ $45/49$ năng lượng, lỗi Frobenius bình phương $4$. (b) $z_{d_3}=(1,0)$; cosine giảm chiều của $d_1,d_3$ lần lượt là $1,1/\sqrt2$, nên tài liệu gần nhất đổi từ $d_3$ sang $d_1$. (c) $\hat q=(1/2,1/2,0,0)$, lỗi bình phương $1/2$; cận năng lượng toàn ma trận không bảo đảm từng thứ hạng cosine.}
 \topic{cur}{CUR approximation}
 
-\algsummary{Xấp xỉ ma trận bằng chính các hàng và cột lấy từ dữ liệu.}{Hàng và cột gốc dễ diễn giải; phần giao cho biết cách ghép chúng.}{}{$A$ và danh sách chỉ số hàng $I$, cột $J$ (hoặc quy tắc lấy mẫu).}{$C,U,R$ và xấp xỉ $CUR$ theo biến thể Practice.}{Lấy hàng và cột theo đúng thứ tự, kể cả chỉ số lặp. Dùng giả nghịch đảo của phần giao theo biến thể trong đề.}
+\algsummary{Xấp xỉ ma trận bằng các hàng và cột được lấy mẫu từ chính dữ liệu.}{Hàng và cột gốc thường dễ diễn giải và có thể giữ độ thưa. Vectơ kỳ dị của SVD là tổ hợp tuyến tính nên có thể dày ngay cả khi $A$ thưa.}{}{$A$, chỉ số hàng $I$ và cột $J$ (hoặc số lượt lấy mẫu), quy ước có hay không đổi tỷ lệ.}{$C,U,R$ và xấp xỉ $\hat A=CUR$; $U=W^+$ là ma trận nối, không phải $U$ của SVD.}{Giữ đúng thứ tự và số lần lặp của các chỉ số. Với Pr12 (không đổi tỷ lệ), chép trực tiếp các ô của $A$ như mã giả dưới đây.}
 
-\steps{
-\item Chọn cột $C$, hàng $R$ và lấy giao $W$. Nếu lấy có hoàn lại, một chỉ số có thể xuất hiện nhiều lần. Xác suất lấy mẫu thường tỷ lệ với bình phương chuẩn hàng hoặc cột.
-\item Với $W=X\Sigma Y^T$, tính $W^+=Y\Sigma^+X^T$: chỉ lấy nghịch đảo các giá trị kỳ dị khác 0.
-\item Với phiên bản không co giãn trong Practice, tính $\hat A=CW^+R$.
-}
+\key{Xác suất lấy mẫu} Với $A\ne0$, lấy có hoàn lại theo $p_j=\|A_{:,j}\|_2^2/\|A\|_F^2$ cho cột và $q_i=\|A_{i,:}\|_2^2/\|A\|_F^2$ cho hàng. Mỗi phân phối có tổng bằng 1. Xác suất cột $j$ xuất hiện ít nhất một lần trong $c$ lượt độc lập là $1-(1-p_j)^c$.
 
-\key{Kích thước} Nếu $A\in\mathbb R^{m\times n}$, $C$ lấy $c$ cột, $R$ lấy $r$ hàng, thì $W\in\mathbb R^{r\times c}$, $W^+\in\mathbb R^{c\times r}$ và $CW^+R\in\mathbb R^{m\times n}$.
+\key{Kích thước} $C:m\times c$, $R:r\times n$, $W:r\times c$, $W^+:c\times r$. Tích $CW^+R$ có kích thước $m\times n$.
 
 \begin{algpseudo}
+$I,J\gets$ chỉ số cho sẵn hoặc các lượt lấy mẫu có hoàn lại\\
 $C\gets A[:,J]$; $R\gets A[I,:]$; $W\gets A[I,J]$ (lấy mọi giao)\\
-$U\gets W^+$ bằng SVD, chỉ đảo giá trị kỳ dị khác 0\\
+$W=X\Sigma Y^T$; $U\gets W^+=Y\Sigma^+X^T$\\
 trả $C,U,R,\widehat A=CUR$
 \end{algpseudo}
 
+\key{Khi đề yêu cầu đổi tỷ lệ} Với lần lấy cột $t$ trúng $j$, dùng $C_{:,t}=A_{:,j}/\sqrt{cp_j}$. Với lần lấy hàng $s$ trúng $i$, dùng $R_{s,:}=A_{i,:}/\sqrt{rq_i}$. Lập phần giao $W$ theo đúng quy ước của biến thể được hỏi.
+
+\key{Ví dụ Pr12: tự tính $W^+$} Hai cột trùng cho $W=\bigl(\begin{smallmatrix}3&3\\0&0\end{smallmatrix}\bigr)$. Viết $W=\sigma xy^T$ với $\sigma=3\sqrt2$, $x=(1,0)^T$, $y=(1,1)^T/\sqrt2$. Đảo giá trị kỳ dị dương: $W^+=yx^T/\sigma=\bigl(\begin{smallmatrix}1/6&0\\1/6&0\end{smallmatrix}\bigr)$. Với $p_3=4/40$, xác suất lấy cột 3 ít nhất một lần trong hai lượt là $1-0.9^2=0.19$.
+
 \unitverification
-\key{Bẫy} $W$ suy biến vẫn có giả nghịch đảo. Chẳng hạn $\operatorname{diag}(2,0)^+=\operatorname{diag}(1/2,0)$. CUR không có bảo đảm tối ưu Frobenius như truncated SVD.
+\key{Kiểm tra} Trong $\Sigma^+$, đảo các giá trị khác 0, giữ 0 và chuyển kích thước nếu $\Sigma$ chữ nhật. Chỉ thay $W^+$ bằng $W^{-1}$ nếu $W$ vuông khả nghịch. Nếu đề lấy mẫu có hoàn lại, giữ mọi bản sao trừ khi có quy tắc gộp riêng.
 
 \unitadvanced
-\key{Không gian biểu diễn} Mọi cột của $\widehat A=CW^+R$ nằm trong không gian cột của $C$. Lấy thêm hàng không thể khôi phục hướng cột bị thiếu; kiểm tra không gian này trước khi nhân để nhận ra các hàng hoặc ô chắc chắn bằng 0.
+\key{Không gian biểu diễn} Mọi cột của $\widehat A$ nằm trong không gian cột của $C$, nên lấy thêm hàng không khôi phục được hướng cột bị thiếu. Trong Pr12, CUR có hạng 1 và lỗi bình phương 4, bằng SVD hạng 1 vì $\sigma(A)=(6,2,0)$. Đây là kết quả của mẫu cụ thể; sai số CUR tổng quát phải tính từ các ô lệch.
 
-\key{Chọn cột có hoàn lại} Với xác suất một lượt $p_j=\|A[:,j]\|_2^2/\|A\|_F^2$, xác suất bỏ sót cột $j$ sau $c$ lượt độc lập là $(1-p_j)^c$. Dùng $p_3=4/40$ của \qlink{Pr12}{Pr12, tr.~\pageref*{question:Pr12}}: hai lượt vẫn có xác suất $0.9^2=0.81$ không chọn cột 3, nên dễ bỏ mất hướng chỉ cột đó có.
+% Lec4_ DimensionalityReduction.pdf, pp. 58--62. The lecture gives an example
+% relative bound without stating full sampling assumptions; avoid extending it
+% to norm-only sampling. For such assumptions see doi:10.1137/07070471X.
+\key{Cận xác suất trong bài giảng} Ví dụ với $c,r$ cỡ $O(k\log k/\varepsilon^2)$ và quy tắc lấy mẫu phù hợp, cận được nêu ở mức xác suất $98\%$:
+\[
+\|A-CUR\|_F\le (2+\varepsilon)\|A-A_k\|_F.
+\]
+Nếu đề hỏi sai số bình phương, phải bình phương cả hệ số. Giảm $\varepsilon$ làm cận chặt hơn và tăng cỡ mẫu. $c=r=4k$ là gợi ý thực hành; số lượt lấy mẫu không phải hạng thực tế của $CUR$.
+
+\key{Phạm vi và gộp mẫu} Không suy ra cận tương đối chỉ từ lấy mẫu theo chuẩn. Với $A=\operatorname{diag}(1,\delta)$, $0<\delta\ll1$, hạng 2 cho lỗi SVD bằng 0, nhưng cột 2 rất dễ bị bỏ sót. Khi biến thể yêu cầu gộp $t$ bản sao giống nhau, nhân hàng/cột giữ lại với $\sqrt t$ và cập nhật phần giao tương ứng.
 
 % DSA5101 Exam Practice Questions.pdf, PDF page(s) 13.
 
