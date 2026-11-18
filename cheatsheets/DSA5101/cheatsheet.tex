@@ -1244,22 +1244,56 @@ Give each scheme's final collision probability.
 \finalanswer{(b) Xác suất cùng phía $1-\arccos(1/\sqrt8)/\pi\approx0.6150$.}
 \topic{euclidean}{Euclidean-distance LSH via random projection}
 
-\algsummary{Tạo nhóm ứng viên cho các vectơ có khoảng cách Euclid nhỏ.}{Sau khi chiếu, hai điểm gần nhau dễ lọt vào cùng một ô rộng $a$.}{}{Vectơ, hướng chiếu $u$, độ rộng $a>0$ và mốc ô $b$ của hàm băm.}{ID ô của từng vectơ, dùng để nhóm ứng viên.}{Dùng cùng trục chiếu và mốc ô cho mọi vectơ. Nếu đề có dịch ngẫu nhiên, chỉ bốc mốc một lần cho mỗi hash.}
+\algsummary{Tìm cặp điểm gần theo khoảng cách Euclid $D=\|x-y\|_2$.}{Chiếu lên một đường thẳng rồi chia đường thành các ô. Hai điểm gần nhau dễ rơi cùng ô.}{}{Vectơ $x\in\mathbb R^d$, hướng chiếu đơn vị $u$, độ rộng ô $a>0$ và độ dịch $b$.}{Một ID ô nguyên cho mỗi vectơ; các cặp cùng ô là ứng viên.}{Dùng cùng $u,a,b$ cho mọi vectơ của một hash. Khi dịch ngẫu nhiên, chọn $b$ đều trên $[0,a)$ một lần cho mỗi hash.}
 
-\key{Cách làm} Chiếu $x$ lên hướng $u$, chia đường chiếu thành các ô rộng $a$ và băm vào số ô. Ví dụ nếu mốc ô là 0 thì $h_u(x)=\lfloor u^Tx/a\rfloor$. Với $a=2$, các giá trị chiếu $1.3,1.8,2.1$ vào các ô $0,0,1$.
+% Lec2_FindingSimilarItems_LSH.pdf, pp. 108--113.
+\key{Hàm băm} $h_{u,b}(x)=\lfloor(u^Tx+b)/a\rfloor$. Với các ô bắt đầu từ những bội của $a$, lấy $b=0$. Dùng floor, kể cả khi tọa độ chiếu âm.
 
 \begin{algpseudo}
-chọn hoặc đọc $u,a,b$\\
-với mỗi vectơ $x$: $h(x)\gets\lfloor (u^Tx-b)/a\rfloor$\\
-nhóm vectơ theo $h(x)$; trả các nhóm
+chọn hoặc đọc $u,a,b$ một lần cho mỗi hash\\
+với mỗi vectơ $x$: $t\gets u^Tx$; $h(x)\gets\lfloor(t+b)/a\rfloor$\\
+trả ID ô; nếu cần ứng viên, nhóm các điểm cùng ID
 \end{algpseudo}
 
+\key{Ví dụ: chiếu lên trục $X$} Với $a=2,b=0$, các tọa độ chiếu $t_A=1.1$, $t_B=1.8$, $t_C=4.2$ cho $h(A)=h(B)=0$, $h(C)=2$ sau khi chia cho 2 và lấy floor. Chỉ cặp $AB$ là ứng viên.
+\begin{diagram}
+\begin{tikzpicture}[x=1.05cm,y=.65cm,>=Stealth]
+  \draw[->] (-.18,0) -- (6.34,0) node[right] {$u^Tx$};
+  \foreach \pos in {0,2,4,6} {
+    \draw[dashed] (\pos,-.19) -- (\pos,.42);
+    \node[below] at (\pos,-.19) {$\pos$};
+  }
+  \foreach \pos/\bucketid in {1/0,3/1,5/2} {\node at (\pos,-.79) {ô \bucketid};}
+  \foreach \pos/\labeltext in {1.1/A,1.8/B,4.2/C} {
+    \fill (\pos,0) circle[radius=1.35pt];
+    \node[above] at (\pos,.08) {$\labeltext$};
+  }
+\end{tikzpicture}
+\end{diagram}
+
 \unitverification
-\key{Bẫy} Hai điểm gần nhau vẫn có thể nằm hai bên biên ô. Trong mô hình của lecture, các mốc gần/xa $a/2$ và $2a$ cho cận va chạm lần lượt $\ge1/2$ và $\le1/3$.
+\key{Hai cách băm sai} Với $a=2,b=0$, hai hình chiếu $1.99$ và $2.01$ rất gần nhưng rơi hai bên biên (lượng tử hóa). Hai điểm $(1,0)$ và $(1,10)$ cách xa nhưng có cùng hình chiếu trên trục $X$ (hướng chiếu). Ghép nhiều hash độc lập: AND hạn chế va chạm giả, OR giảm bỏ sót.
+
+\key{Cận trong mô hình bài giảng} Họ $(a/2,2a,1/2,1/3)$-sensitive: $D\le a/2$ cho $\Pr(\text{cùng ô})\ge1/2$, còn $D\ge2a$ cho $\Pr(\text{cùng ô})\le1/3$ theo lập luận góc đều trong mặt phẳng. Hai giá trị là cận, không phải xác suất chính xác của từng cặp.
 
 \unitadvanced
-\key{Xác suất khi biết hình chiếu} Cố định $u$, rồi chọn mốc $b$ đều trên $[0,a)$. Với độ cách trên trục $\ell=|u^T(x-y)|<a$, biên ô cắt giữa hai hình chiếu với xác suất $\ell/a$. Vì thế xác suất cùng ô là $\max(0,1-\ell/a)$; ví dụ $a=2,\ell=0.5$ cho $3/4$. Đây là xác suất theo mốc dịch khi đã biết $u$.
-\key{Chi phí băm} Với $k$ hướng chiếu dày trong $d$ chiều, tính các giá trị chiếu tốn $O(kd)$ mỗi điểm; tra bucket tốn thêm $O(k)$. Dùng nhiều phép băm độc lập tăng chi phí nhưng cho phép khuếch đại xác suất ứng viên.
+\key{Cận gần và độ dịch} Với $u$ cố định, đặt $\ell=|u^T(x-y)|$. Khi $b$ đều trên $[0,a)$, xác suất cùng ô là $\max(0,1-\ell/a)$: nếu $\ell<a$, biên cắt giữa hai hình chiếu với xác suất $\ell/a$. Ví dụ $a=2,\ell=0.5$ cho $3/4$. Vì $\ell\le D$, khi $D\le a$ xác suất cùng ô ít nhất $1-D/a$, đặc biệt ít nhất $1/2$ khi $D\le a/2$.
+
+\key{Phạm vi cận xa} Nếu $D\ge2a$, muốn cùng ô cần $\ell=D|\cos\theta|<a$. Xét góc giữa hai đường trong $[0^\circ,90^\circ]$: góc phải trên $60^\circ$. Với góc đều trong mặt phẳng, phần từ $60^\circ$ đến $90^\circ$ chiếm $1/3$. Cận này không áp dụng chung cho hướng đơn vị đều trong mọi chiều. Khi đó $\mathbb E[\cos^2\theta]=1/d$, nên ở $D=2a$ công thức độ dịch cho cận dưới $1-2\mathbb E|\cos\theta|\ge1-2/\sqrt d$, bằng $1/2$ nếu $d=16$.
+
+\key{Chi phí băm} Một hướng chiếu dày tốn $O(d)$ cho mỗi điểm. Với $K$ hướng, tính ID tốn $O(Kd)$; tra $K$ bucket tốn thêm $O(K)$.
+
+\blocklabel{Chọn họ băm theo dữ liệu}
+\begin{examtable}{@{}p{.16\columnwidth}p{.20\columnwidth}p{.25\columnwidth}p{.25\columnwidth}@{}}
+\toprule
+ & MinHash & Random Hyperplanes & Euclidean LSH \\
+\midrule
+Độ đo & Jaccard & Góc giữa vectơ & Khoảng cách $L_2$ \\
+Giá trị băm & Hạng nhỏ nhất & Dấu tích vô hướng & ID ô của hình chiếu \\
+Đầu ra & Số nguyên & $+1$ hoặc $-1$ & Số nguyên \\
+Xác suất khớp & $J(x,y)$ & $1-\theta/\pi$ & Tùy $D,a$ và mô hình chiếu \\
+\bottomrule
+\end{examtable}
 
 \lecture{3}{Clustering}
 \topic{hierarchical}{Hierarchical agglomerative clustering}
