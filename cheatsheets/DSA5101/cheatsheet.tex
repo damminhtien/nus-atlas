@@ -1140,10 +1140,10 @@ Cần $K=2\cdot3\cdot2=12$ hash gốc. Nhân số nhánh ở mọi tầng, khôn
 \finalanswer{(e) Xác suất va chạm $[1-(1-0.9^5)^6]^7\approx0.9675$. (f) Cần $5\cdot6\cdot7\cdot3\cdot4=2520$ hash gốc.}
 \topic{hyperplanes}{Random hyperplanes (cosine LSH)}
 
-\algsummary{Tạo chữ ký cho vectơ sao cho cặp có góc nhỏ dễ khớp. Dùng random hyperplanes cho góc giữa vectơ, tương tự MinHash cho Jaccard trên tập hợp.}{Mỗi siêu phẳng qua gốc chia không gian thành hai phía; hai vectơ có góc nhỏ ít khi bị tách.}{}{Vectơ khác 0, $x\in\mathbb R^d$; $K$ pháp tuyến $v_1,\ldots,v_K$ dùng chung cho mọi vectơ.}{Chữ ký dài $K$ với các giá trị $+1,-1$.}{Tính $v_j^Tx$ rồi ghi dấu cho vị trí $j$. Khi tính xác suất, giả sử các hướng pháp tuyến được chọn đều và độc lập.}
+\algsummary{Tìm vectơ giống nhau về hướng mà không tính góc cho mọi cặp. Random hyperplanes dùng góc giữa vectơ, tương tự MinHash dùng Jaccard trên tập hợp.}{Xem mỗi vectơ là một mũi tên từ gốc. Hai mũi tên càng gần hướng nhau thì càng ít đường qua gốc tách chúng ra hai phía.}{}{Vectơ khác 0, $x\in\mathbb R^d$; $K$ pháp tuyến $v_1,\ldots,v_K$ dùng chung cho mọi vectơ.}{Chữ ký $K$ bit, viết dưới dạng $+1,-1$.}{Tính $v_j^Tx$ rồi ghi dấu cho vị trí $j$. Khi tính xác suất, giả sử các hướng pháp tuyến được chọn đều và độc lập.}
 
 % Lec2_FindingSimilarItems_LSH.pdf, pp. 101--106.
-\key{Một bit} Với pháp tuyến $v$, siêu phẳng là $\{z:v^Tz=0\}$. Nếu tích bằng 0 thì ghi $+1$, trừ khi đề quy định khác:
+\key{Một bit} Với pháp tuyến $v$, mặt phân chia là $\{z:v^Tz=0\}$. Dấu của tích $v^Tx$ cho biết $x$ nằm ở phía nào. Nếu tích bằng 0 thì ghi $+1$, trừ khi đề quy định khác:
 \[
 h_v(x)=\begin{cases}+1,&v^Tx\ge0,\\-1,&v^Tx<0.\end{cases}
 \]
@@ -1155,27 +1155,45 @@ với $j=1,\ldots,K$: $z\gets v_j^Tx$\\
 trả $\operatorname{sig}$
 \end{algpseudo}
 
-\key{Ba đại lượng} Cosine similarity thông thường là $\cos\theta=x^Ty/(\|x\|\|y\|)$. Lấy $\theta=\arccos(\cos\theta)$ theo radian. Lecture 2 gọi $\theta/\pi$ là cosine distance; đó cũng là xác suất hai dấu khác nhau. Xác suất khớp một bit là
+\begin{samepage}
+\key{Từ hình học đến xác suất} Trong mặt phẳng chứa hai vectơ, chỉ cần xét hướng đường cắt trong một khoảng dài $\pi$ radian: quay thêm $\pi$ cho cùng một đường. Các hướng tách hai mũi tên chiếm một khoảng dài $\theta$. Khi hướng được chọn đều:
 \[
+\Pr[h_v(x)\ne h_v(y)]=\frac{\theta}{\pi},\qquad
 p=\Pr[h_v(x)=h_v(y)]=1-\frac{\theta}{\pi}.
 \]
+\end{samepage}
+\key{Ba đại lượng} Cosine similarity thông thường là $\cos\theta=x^Ty/(\|x\|\|y\|)$. Lấy $\theta=\arccos(\cos\theta)$ theo radian. Lecture 2 gọi $\theta/\pi$ là cosine distance; $1-\theta/\pi$ mới là xác suất khớp.
+
+\begin{examtable}{@{}lccccc@{}}
+\toprule
+Góc $\theta$ & $0^\circ$ & $30^\circ$ & $90^\circ$ & $150^\circ$ & $180^\circ$ \\
+\midrule
+Xác suất cùng dấu & $100\%$ & $83.33\%$ & $50\%$ & $16.67\%$ & $0\%$ \\
+\bottomrule
+\end{examtable}
 
 \begin{example}{P25-Q2b}{P25-Q2(b), tr.~\pageref*{question:P25-Q2b}: góc và xác suất cùng phía}
 \begin{diagram}
-\begin{tikzpicture}[scale=.74,>=Stealth,every node/.style={font=\normalsize}]
-\draw[dashed] (215:1.55) -- (35:2.7) node[right] {Giao tuyến với siêu phẳng};
-\draw[->] (0,0) -- (125:1.9) node[above left] {$v$};
-\draw[->,thick] (0,0) -- (3.15,0) node[right] {$x_A\ (-1)$};
-\draw[->,thick] (0,0) -- (69.3:2.3) node[above] {$x_B\ (+1)$};
-\draw (0.84,0) arc[start angle=0,end angle=69.3,radius=.84];
-\node at (20:1.24) {$\theta$};
+\begin{tikzpicture}[scale=.76,>=Stealth,every node/.style={font=\normalsize}]
+\foreach \offset/\cut/\normalangle/\asign/\sidelabel in {0/35/125/-1/Khác phía,5.6/115/25/+1/Cùng phía} {
+  \begin{scope}[xshift=\offset cm]
+    \draw[dashed] ({\cut+180}:1.25) -- (\cut:2.0);
+    \draw[->,semithick] (0,0) -- (\normalangle:1.3) node[above] {$v$};
+    \draw[->,thick] (0,0) -- (1.75,0) node[right] {$x_A\ (\asign)$};
+    \draw[->,thick] (0,0) -- (69.3:2.47) node[above] {$x_B\ (+1)$};
+    \draw (0.58,0) arc[start angle=0,end angle=69.3,radius=.58];
+    \node at (51:1.03) {$\theta$};
+    \node[left] at (-.03,.12) {$O$};
+    \node at (.7,-1.4) {\sidelabel};
+  \end{scope}
+}
 \end{tikzpicture}
 \end{diagram}
-Hai vectơ có 200 vị trí cùng bằng 1, nên $\cos\theta=200/\sqrt{400\cdot800}=1/\sqrt8$ và $\theta\approx69.3^\circ$. Trong mặt phẳng chứa hai vectơ, giao tuyến đi qua gốc và tách chúng khi hướng của nó nằm trong góc $\theta$ (hướng xét theo modulo $180^\circ$). Vì vậy xác suất cùng phía là $1-\theta/180^\circ\approx0.615$.
+Hai hình giữ nguyên $x_A,x_B$, chỉ xoay đường cắt nét đứt và pháp tuyến $v$. Với 200 vị trí cùng bằng 1, $\cos\theta=200/\sqrt{400\cdot800}=1/\sqrt8$, nên $\theta\approx69.3^\circ$ và xác suất cùng phía là $1-\theta/180^\circ\approx0.615$.
 \end{example}
 
 \unitverification
-\key{Bẫy} Hai vectơ vuông góc trùng bit với xác suất $1/2$. Nhân vectơ với số dương giữ nguyên dấu. Lặp lại cùng siêu phẳng không tạo các phép thử độc lập.
+\key{Bẫy} Nhân vectơ với số dương đổi độ dài nhưng giữ hướng và dấu. Lặp lại cùng siêu phẳng không tạo các phép thử độc lập.
 
 \unitadvanced
 \key{Ước lượng từ chữ ký} Với $K$ hướng ngẫu nhiên độc lập, nếu $D_H$ là số vị trí khác dấu, $\hat p=1-D_H/K$ là ước lượng không chệch của xác suất khớp $p$, còn $D_H/K$ ước lượng $\theta/\pi$. Ta có $\mathbb E[D_H]=K\theta/\pi$. Có thể đưa chữ ký vào AND/OR để sinh ứng viên.
