@@ -1075,49 +1075,67 @@ The target exact Jaccard threshold is $3/5$.
 \finalanswer{(a)(ii) $P_{\rm cand}=1-(1-0.2^{10})^{12}\approx1.229\times10^{-6}$. (iii) Tăng $b$ để tăng xác suất trở thành ứng viên.}
 \topic{families}{LSH families, AND/OR amplification \& cascades}
 
-\algsummary{Ghép nhiều hash để điều chỉnh xác suất khớp của cặp gần và cặp xa.}{AND yêu cầu mọi nhánh khớp; OR chỉ cần một nhánh khớp.}{\textbf{Khi dùng:}\enspace Đề cho xác suất va chạm $p$ của một hash rồi ghép nhiều hash độc lập. Một họ LSH $(d_1,d_2,p_1,p_2)$ bảo đảm xác suất trùng $\ge p_1$ khi khoảng cách $\le d_1$ và $\le p_2$ khi khoảng cách $\ge d_2$.
+\algsummary{Ghép hash để xác suất khớp của cặp gần tiến về 1 và của cặp xa tiến về 0.}{Tổng quát hóa banding cho nhiều họ hash: AND cần mọi nhánh khớp; OR cần ít nhất một.}{}{Xác suất va chạm gốc $p$ của một cặp, hoặc cận $p_1,p_2$ của họ hash; thứ tự và số nhánh mỗi tầng.}{Xác suất khớp cuối hoặc hai cận mới, cùng số hash gốc cần dùng.}{Tính từ tầng trong ra ngoài. Mỗi nhánh dùng một bộ hash gốc độc lập riêng.}
 
-\begin{itemize}
-\item AND $r$ lần: tất cả trùng, xác suất $p^r$.
-\item OR $b$ lần: ít nhất một lần trùng, xác suất $1-(1-p)^b$.
-\item Cascade: áp dụng theo thứ tự từ tầng trong ra ngoài. Số hash gốc bằng tích số nhánh các tầng, nếu mỗi nhánh dùng hash độc lập.
-\end{itemize}}{Xác suất gốc $p$; các tầng AND hoặc OR với số nhánh, dùng hash độc lập.}{Xác suất va chạm cuối $p'$ và tổng số hash gốc.}{Tính xác suất từ tầng trong ra tầng ngoài. Số hash gốc bằng tích số nhánh của các tầng.}
+% Lec2_FindingSimilarItems_LSH.pdf, pp. 76--93.
+\key{Họ LSH} Với $h$ chọn ngẫu nhiên từ $H$, đặt $p(x,y)=\Pr_{h\sim H}[h(x)=h(y)]$. Họ $(d_1,d_2,p_1,p_2)$-sensitive thỏa
+\[
+d(x,y)\le d_1\ \Rightarrow\ p(x,y)\ge p_1,\qquad
+d(x,y)\ge d_2\ \Rightarrow\ p(x,y)\le p_2.
+\]
+Thường $d_1<d_2$ và $p_1>p_2$. Trong khoảng giữa hai ngưỡng khoảng cách, định nghĩa không đặt cận.
+
+\key{Hai phép biến đổi} Với các nhánh độc lập cùng xác suất khớp $p$, AND cho $A_r(p)=p^r$ vì cần tất cả khớp. OR cho $O_b(p)=1-(1-p)^b$ vì chỉ trượt nếu không nhánh nào khớp. Hai thứ tự ghép cho:
+\[
+\begin{aligned}
+\text{AND rồi OR:}\ &O_b(A_r(p))=1-(1-p^r)^b,\\
+\text{OR rồi AND:}\ &A_r(O_b(p))=[1-(1-p)^b]^r.
+\end{aligned}
+\]
+Ví dụ $p=0.8,r=2,b=3$: AND rồi OR cho $0.8^2=0.64$ ở tầng trong và $1-0.36^3=0.953344$ ở tầng ngoài. Đổi thứ tự cho $(1-0.2^3)^2=0.984064$. Trường hợp AND rồi OR với $p=J(x,y)$ chính là MinHash banding. Ví dụ dùng random hyperplane: \shareddataref{Pr6}, phần (b).
 
 \begin{algpseudo}
-$m\gets1$\\
+$K\gets1$\\
 với mỗi tầng $(\mathrm{op},k)$ từ trong ra ngoài:\\
 \quad nếu AND: $p\gets p^k$; nếu OR: $p\gets1-(1-p)^k$\\
-\quad $m\gets mk$\\
-trả $p,m$
+\quad $K\gets Kk$\\
+trả $p,K$
 \end{algpseudo}
 
-\key{Ví dụ} Với $p=1/2$, dùng 2 nhánh mỗi tầng: AND rồi OR cho $7/16$; OR rồi AND cho $9/16$. Điểm bất động $f(s)=s$ khác mốc $f(s)=1/2$.
-
-% 2425Sem1-DSA5101.pdf, PDF page(s) 8.
+\key{Ví dụ nhiều tầng} $(2,3,2)$ AND--OR--AND:
+\[
+p\ \xrightarrow{\mathrm{AND}_2}\ p^2\ \xrightarrow{\mathrm{OR}_3}\ 1-(1-p^2)^3
+\ \xrightarrow{\mathrm{AND}_2}\ [1-(1-p^2)^3]^2.
+\]
+Cần $K=2\cdot3\cdot2=12$ hash gốc. Nhân số nhánh ở mọi tầng, không cộng số nhánh.
 
 \unitverification
-\key{Kiểm tra} AND phải làm xác suất va chạm giảm còn OR phải làm xác suất tăng; mọi phép lũy thừa cần giả thiết các phép băm độc lập.
+\key{Kiểm tra} AND không làm tăng xác suất khớp; OR không làm giảm. Cả hai tác động lên cặp gần lẫn cặp xa. Dùng lại cùng hash ở nhiều nhánh có thể làm mất độc lập, nên không áp dụng trực tiếp các công thức trên.
+
+\key{Đổi cận} Mỗi phép biến đổi đều tăng theo $p$. Với phép ghép $F$, họ mới giữ nguyên $d_1,d_2$, đổi cận thành $F(p_1),F(p_2)$. Nếu đề chỉ cho cận thì kết quả vẫn là cận, không phải xác suất đúng của từng cặp.
 
 \unitadvanced
-\key{Khuếch đại} Nếu một phép băm va chạm với xác suất $p$, ghép AND trên $r$ phép cho $p^r$; ghép OR trên $b$ nhánh cho $1-(1-p)^b$. Tách tầng chỉ hợp lý khi chi phí ứng viên ở mỗi tầng được tính riêng.
+\key{Điểm bất động} Giải $F(t)=t$ để tìm nơi xác suất đầu ra bằng đầu vào. Mốc 50\% giải $F(s_{1/2})=1/2$. Chẳng hạn $F(p)=1-(1-p^2)^2$ có điểm bất động trong $(0,1)$ là $t\approx0.618$, còn $s_{1/2}\approx0.541$.
 
+\key{Gộp tầng và chi phí} Hai tầng AND liên tiếp cỡ $a,b$ gộp thành AND-$ab$; tương tự với hai tầng OR. Xen kẽ nhiều tầng có thể tạo đường cong dốc hơn nếu chọn tham số phù hợp, đổi lại phải dùng nhiều hash và khó triển khai, chỉnh tham số hơn.
+
+% 2425Sem1-DSA5101.pdf, PDF page(s) 8.
 \ask[A1-Q2ef]{P24-Q2ef}{P24-Q2(e,f) / A1-Q2(e,f)}{}
 \qpart{e} Given a hash family $H$ such that $\forall h\in H$, $h(x=y)=\operatorname{Similarity}(x,y)$. We construct a $(5,6,7)$ way AND-OR-AND hash family $G$ from $H$. If a pair of documents have similarity $s=0.9$, what is the probability that they get hashed into the same bucket for each $g\in G$?
 
 (If you have a calculator, please give your answer up to 4 significant figures. Otherwise, you may just leave exponents in your answer without calculating them.)
 \qpart{f} How many hash functions from $H$ are needed to construct a hash family composed of $(5,6,7)$ AND-OR-AND construction followed by $(3,4)$ OR-AND construction? (You may leave your answer as a product of integers.)
 
-\examnote{Tính từ trong ra: $p_1=0.9^5=0.59049$, $p_2=1-(1-p_1)^6\approx0.9953$, rồi $p_3=p_2^7\approx0.9675$. Cần $5\cdot6\cdot7=210$ hash, sau đó $210\cdot3\cdot4=2520$; chỉ nhân số lượng khi các hash độc lập.}
 \answer{\maptag{answer:P24-Q2ef}\maptag{answer:A1-Q2ef}}
-\solutionprompt{Tính xác suất từ tầng trong ra ngoài theo thứ tự AND-5, OR-6, AND-7. Khi thêm OR-3 và AND-4, đếm số lần dùng hash gốc chứ không tính lại xác suất.}
+\solutionprompt{Phần (e) tính xác suất từ trong ra; phần (f) đếm số hash gốc.}
 \guidepart{(e)}
 \begin{guidesteps}
-\item Nếu cần tất cả $q$ checks, $p_{\rm AND}=p^q$; nếu cần ít nhất một trong $q$, $p_{\rm OR}=1-(1-p)^q$. Từ trong ra, AND-5 cho $p_1=0.9^5$, rồi OR-6 cho $p_2=1-(1-p_1)^6$.
+\item Dùng $A_r(p)=p^r$ và $O_b(p)=1-(1-p)^b$. Từ trong ra, AND-5 cho $p_1=0.9^5=0.59049$, rồi OR-6 cho $p_2=1-(1-p_1)^6\approx0.9953$.
 \item Tầng ngoài là AND-7, nên $p=p_2^7=[1-(1-0.9^5)^6]^7\approx0.9675$.
 \end{guidesteps}
 \guidepart{(f)}
 \begin{guidesteps}
-\item Số hash gốc là tích fan-out của mọi tầng lồng nhau. Thay AND-5, OR-6, AND-7, OR-3, AND-4: $5\cdot6\cdot7\cdot3\cdot4=2520$ hash.
+\item Nhân số nhánh ở mọi tầng vì mỗi nhánh dùng một bộ hash gốc riêng. Ba tầng đầu cần $5\cdot6\cdot7=210$ hash; thêm OR-3 rồi AND-4, cần $210\cdot3\cdot4=2520$.
 \end{guidesteps}
 \finalanswer{(e) Xác suất va chạm $[1-(1-0.9^5)^6]^7\approx0.9675$. (f) Cần $5\cdot6\cdot7\cdot3\cdot4=2520$ hash gốc.}
 \topic{hyperplanes}{Random hyperplanes (cosine LSH)}
