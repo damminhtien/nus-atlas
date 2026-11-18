@@ -4200,33 +4200,33 @@ Three variants $A,B,C$ yield Bernoulli rewards. After one forced trial of each, 
 \lecture{10}{Submodular optimization (through slide 51)}
 \topic{greedy}{Monotone submodular greedy}
 
-\algsummary{Chọn tối đa $k$ phần tử cho hàm mục tiêu đơn điệu submodular.}{Lấy lợi ích bổ sung lớn nhất; thêm phần tử thường làm lợi ích còn lại giảm.}{\textbf{Mục tiêu:}\enspace Tối đa hóa $F(S)$. Marginal gain của $x$ là $\Delta(x\mid S)=F(S\cup\{x\})-F(S)$.}{Tập ứng viên $V$, hàm $F$, giới hạn $k$ và quy tắc phá hòa.}{Tập $S$ được chọn và giá trị $F(S)$.}{Bắt đầu với tập rỗng. Mỗi lượt thêm phần tử có lợi ích biên lớn nhất, rồi tính lại lợi ích của các ứng viên theo $S$ mới.}
+\algsummary{Chọn tối đa $k$ tài liệu để phủ nhiều chủ đề khác nhau nhất (Maximum Coverage).}{Mỗi tài liệu phủ một tập $X_d$; tối đa hóa $F(S)=|\bigcup_{d\in S}X_d|$ với $S\subseteq D$, $|S|\le k$.}{}{Tập ứng viên $D$, hàm $F$, giới hạn $k$ và quy tắc phá hòa.}{Tập $S$ được chọn và giá trị $F(S)$.}{Từ tập rỗng, mỗi lượt thêm ứng viên có lợi ích biên lớn nhất.}
 
-\key{Diminishing returns} Nếu $A\subseteq B$ và $x\notin B$, tính submodular nghĩa là $\Delta(x\mid A)\ge\Delta(x\mid B)$. Greedy bắt đầu từ rỗng và mỗi vòng lấy phần tử có marginal gain lớn nhất.
+\key{Lợi ích biên} $\Delta(d\mid S)=F(S\cup\{d\})-F(S)$ đếm số chủ đề mới với Maximum Coverage. Với $A\subseteq B$, $d\notin B$, submodular nghĩa là $\Delta(d\mid A)\ge\Delta(d\mid B)$ (lợi ích giảm dần, giống độ dốc của hàm lõm). Đơn điệu nghĩa là $\Delta(d\mid A)\ge0$ cho mọi lần thêm.
 
 \begin{algpseudo}
 $S\gets\varnothing$\\
-lặp $\min(k,|V|)$ lần: chọn $x$ tốt nhất trong $V\setminus S$ theo $F(S\cup\{x\})-F(S)$\\
-\quad $S\gets S\cup\{x\}$\\
+lặp $\min(k,|D|)$ lần: chọn $d\in D\setminus S$ có $\Delta(d\mid S)$ lớn nhất\\
+\quad $S\gets S\cup\{d\}$\\
 trả $S,F(S)$
 \end{algpseudo}
 
+\key{Ví dụ Maximum Coverage} Với $k=2$, cho $X_A=\{1,2,3,4\}$, $X_B=\{1,2,5\}$, $X_C=\{3,4,6\}$. Lượt đầu gain là $4,3,3$ nên chọn $A$. Lượt sau $B$ và $C$ mỗi bên chỉ thêm một chủ đề, nên greedy phủ $4+1=5$. Chọn $B,C$ phủ 6, do đó greedy có thể không đạt tối ưu.
+
 \unitverification
-\key{Kiểm tra} Mỗi vòng tính marginal gain trên tập $S$ hiện tại, thêm đúng một phần tử và không vượt giới hạn $k$; áp dụng nhất quán quy tắc phá hòa.
+\key{Kiểm tra} Sau mỗi lượt, tính lại lợi ích biên; điểm của từng tài liệu đứng riêng chỉ dùng ở lượt đầu. Khi hòa, dùng quy tắc đã chọn. Submodular không kéo theo đơn điệu: trên tập nền hai phần tử, $F(S)=|S|(2-|S|)$ có gain giảm từ $1$ xuống $-1$.
+
+\key{Bảo đảm} Nếu $F(\varnothing)=0$ và $F$ đơn điệu submodular, với $1\le k\le |D|$:
+\[
+F(S_k)\ \ge\ \big[1-(1-1/k)^k\big]\mathrm{OPT}
+\ \ge\ (1-1/e)\mathrm{OPT}.
+\]
+Khoảng $63.2\%$ là cận bảo đảm trong trường hợp xấu nhất; giá trị thực tế có thể cao hơn.
 
 \unitadvanced
-\key{Bảo đảm} Với $F(\varnothing)=0$, $F$ đơn điệu và submodular, sau $k$ vòng đạt ít nhất $(1-1/e)\mathrm{OPT}$ dưới giới hạn số phần tử.
-\[
-\begin{aligned}
-\mathrm{OPT}-F(S_i)
- &\le F(S_i\cup O)-F(S_i)\\
- &\le \sum_{x\in O\setminus S_i}\Delta(x\mid S_i)
- \le k\Delta(x_{i+1}\mid S_i).
-\end{aligned}
-\]
-Vì vậy mỗi vòng giảm phần còn thiếu ít nhất $1/k$; phần thiếu sau $k$ vòng không vượt $(1-1/k)^k\mathrm{OPT}\le \mathrm{OPT}/e$.
+\key{Chứng minh cận} Gọi $O$ là tập tối ưu, $R_i=F(O)-F(S_i)$ và $g_i$ là gain được chọn ở lượt tiếp theo. Đơn điệu cho $R_i\le F(S_i\cup O)-F(S_i)$. Do lợi ích biên giảm dần, hiệu này không vượt $\sum_{d\in O\setminus S_i}\Delta(d\mid S_i)\le k g_i$. Vậy $g_i\ge R_i/k$ và $R_{i+1}\le(1-1/k)R_i$. Lặp từ $R_0=\mathrm{OPT}$: $R_k\le(1-1/k)^k\mathrm{OPT}\le\mathrm{OPT}/e$.
 
-\key{Phản ví dụ tối ưu} Với $k=2$, nếu $A=\{1,2,3,4\}$, $B=\{1,2,5\}$, $C=\{3,4,6\}$ thì greedy chọn $A$ trước và phủ 5; $B,C$ phủ 6.
+\key{Mở rộng} Maximum Coverage là bài toán NP-hard. Tổng $\sum_j\lambda_jF_j(S)$ của các hàm submodular vẫn submodular nếu mọi $\lambda_j\ge0$: cộng các bất đẳng thức lợi ích biên sau khi nhân trọng số.
 \topic{coverage}{Probabilistic coverage}
 
 \algsummary{Chọn tài liệu để tăng độ bao phủ của các chủ đề có trọng số.}{Lợi ích của tài liệu mới chỉ đến từ phần mỗi chủ đề chưa được phủ.}{\textbf{Đọc đề:}\enspace $p_{dc}$ là xác suất tài liệu $d$ phủ chủ đề $c$; $w_c\ge0$ là trọng số chủ đề.
@@ -4234,7 +4234,7 @@ Vì vậy mỗi vòng giảm phần còn thiếu ít nhất $1/k$; phần thiế
 F(S)=\sum_c w_c\Big[1-\prod_{a\in S}(1-p_{ac})\Big].
 \]}{Xác suất $p_{ac}$, trọng số $w_c$, giới hạn $k$ và quy tắc phá hòa.}{Tập tài liệu greedy chọn và mức phủ kỳ vọng.}{Giữ $q_c$ là xác suất chủ đề còn chưa được phủ. Tính lợi ích biên từ các $q_c$ hiện tại, chọn bài rồi cập nhật chúng trước lượt sau.}
 
-\key{Cách chọn} Tích $\prod_{a\in S}(1-p_{ac})$ là phần chưa phủ trong mô hình của đề. Khi thêm $d$, nhân phần đó với xác suất $p_{dc}$ rồi cộng theo trọng số:
+\key{Cách chọn} Với một chủ đề $c$, nếu các tài liệu phủ độc lập theo mô hình đề, xác suất chưa phủ là $q_c=\prod_{a\in S}(1-p_{ac})$; xác suất đã phủ là $1-q_c$. Khi thêm $d$, lấy trọng số nhân xác suất phủ của $d$ và phần chưa phủ:
 \[
 \Delta(d\mid S)=\sum_c w_c p_{dc}\prod_{a\in S}(1-p_{ac}).
 \]
@@ -4247,7 +4247,7 @@ lặp tối đa $k$ lượt khi còn ứng viên:\\
 trả $S,\sum_c w_c(1-q_c)$
 \end{algpseudo}
 
-\begin{example}{Pr30}{Pr30(a,b) · Coverage: đọc lại marginal gain sau khi chọn $A$}
+\begin{example}{Pr30}{Pr30(a) · Coverage: tính lại marginal gain sau khi chọn $A$}
 \begin{examtable}{@{}l c c c c@{}}
 \toprule
 Tập đã chọn & Gain $A$ & Gain $B$ & Gain $C$ & Gain $D$ \\
@@ -4256,16 +4256,16 @@ $\varnothing$ & $\mathbf{11/2}$ & $5$ & $7/2$ & $3/2$ \\
 $\{A\}$ & -- & $1$ & $\mathbf{11/4}$ & $3/4$ \\
 \bottomrule
 \end{examtable}
-Sau $A$, chủ đề sức khỏe còn phần chưa phủ $1/2$, văn hóa còn 1. Thêm $C$ đóng góp $3\cdot(1/2)\cdot(1/2)+2=11/4$, nên chọn $C$ và được tổng $33/4$. Với lazy greedy, tính lại $B$: $5\to1$, rồi $C$: $7/2\to11/4$; chọn $C$ vì $11/4$ vượt các cận còn lại.
+Sau $A$, chủ đề sức khỏe còn phần chưa phủ $1/2$, văn hóa còn 1. Thêm $C$ đóng góp $3\cdot(1/2)\cdot(1/2)+2=11/4$, nên chọn $C$ và được tổng $33/4$.
 \end{example}
 
 % DSA5101 Exam Practice Questions.pdf, PDF page(s) 31.
 
 \unitverification
-\key{Kiểm tra} Các xác suất $p_{dc}$ phải thuộc $[0,1]$ và trọng số $w_c\ge0$; thêm tài liệu không làm giảm điểm phủ.
+\key{Kiểm tra} Với $p_{dc}\in[0,1]$ và $w_c\ge0$, thêm tài liệu không làm giảm điểm phủ. Đừng cộng trực tiếp các xác suất: hai tài liệu độc lập cùng có $p=1/2$ phủ một chủ đề với xác suất $1-(1/2)^2=3/4$, không phải 1.
 
 \unitadvanced
-\key{Vì sao submodular} Khi $S$ lớn lên, tích có thêm thừa số trong $[0,1]$ nên gain không tăng. Với phủ tất định, phần tăng là số chủ đề mới. Tổng có hệ số không âm của các hàm submodular vẫn submodular.
+\key{Vì sao greedy có bảo đảm} Khi $S$ lớn lên, mỗi $q_c$ chỉ giảm hoặc giữ nguyên nên marginal gain không tăng. Hàm phủ có $F(\varnothing)=0$, đơn điệu và submodular, nên áp dụng cận $1-1/e$. Khi mọi $p_{dc}$ là 0 hoặc 1 và mọi $w_c=1$, ta trở lại Maximum Coverage.
 
 \ask{Pr30}{Pr30(a)}{}
 A service selects two articles from $\{A,B,C,D\}$. Climate, health, and culture have weights $w=(4,3,2)$. Their coverage probabilities are
@@ -4293,14 +4293,7 @@ Use $F(S)=\sum_c w_c[1-\prod_{d\in S}(1-p_{dc})]$ and marginal gain $\Delta(d\mi
 \finalanswer{(a) Chọn $A$ trước; $\Delta(C\mid\{A\})=11/4$, lớn nhất trong các gain còn lại, nên chọn $C$. Giá trị cuối $F(\{A,C\})=33/4$.}
 \topic{lazy}{Lazy greedy}
 
-\algsummary{Giảm số lần tính lợi ích biên khi tìm cùng tập mà greedy sẽ chọn cho hàm submodular.}{Gain tính ở vòng trước là cận trên của gain sau khi tập đã lớn hơn.}{\textbf{Cách tiết kiệm:}\enspace Diminishing returns bảo đảm giá trị cũ là cận trên của gain hiện tại.}{Tập ứng viên, hàm $F$, giới hạn $k$ và cùng quy tắc phá hòa như greedy.}{Tập chọn theo greedy và giá trị của nó.}{Lưu cận trên trong max-heap. Tính lại gain của ứng viên đầu heap và so với các cận còn lại trước khi chốt.}
-
-\steps{
-\item Lưu các cận trên trong max-heap. Lấy ứng viên có cận cao nhất và tính lại gain thật theo $S$ hiện tại.
-\item Nếu gain thật vẫn không nhỏ hơn các cận khác, có thể chọn ứng viên đó. Nếu không, cập nhật cận và đưa lại vào heap.
-}
-
-\key{Tiêu chuẩn chọn} Chọn được ngay khi gain vừa tính lại thắng mọi cận trên còn lại; nếu bằng nhau, phải thắng theo cùng quy tắc phá hòa của greedy. Nếu chưa chứng nhận được, làm mới tiếp ứng viên đứng đầu.
+\algsummary{Giảm số lần tính lợi ích biên khi chạy greedy cho hàm submodular.}{Lợi ích biên tính ở một vòng trước là cận trên của giá trị hiện tại.}{}{Tập ứng viên, hàm $F$, giới hạn $k$ và cùng quy tắc phá hòa như greedy.}{Tập chọn theo greedy và giá trị của nó.}{Dùng max-heap để lấy ứng viên có cận lớn nhất. Tính lại gain rồi so với cận lớn nhất còn lại; nếu hòa, xét thứ tự ưu tiên.}
 
 \begin{algpseudo}
 $S\gets\varnothing$; đưa mọi $x$ vào heap theo gain tại $S$ và ưu tiên phá hòa\\
@@ -4310,12 +4303,14 @@ khi $|S|<k$ và heap không rỗng: lấy $x$ có khóa lớn nhất; tính lạ
 trả $S,F(S)$
 \end{algpseudo}
 
+\key{Ví dụ Pr30(b)} Sau khi chọn $A$, heap có các cận $B:5,C:7/2,D:3/2$. Tính lại $B$ được $1$, thấp hơn cận $7/2$ của $C$, nên đưa $B$ về heap. Tính lại $C$ được $11/4>\max(1,3/2)$, nên chọn $C$ mà không cần tính lại $D$.
+
 \unitverification
-\key{Bẫy} Giá trị đứng đầu heap là giá trị cũ, nên phải tính lại trước khi chọn. Cùng quy tắc phá hòa thì lazy greedy và greedy chọn cùng phần tử; bảo đảm xấp xỉ giữ nguyên.
+\key{Kiểm tra} Đứng đầu heap mới chỉ đứng đầu theo cận trên. Khi dùng cùng quy tắc phá hòa, lazy greedy chọn cùng thứ tự như greedy. Tính ít gain hơn giúp chạy nhanh hơn trong nhiều trường hợp, nhưng không cải thiện cận xấp xỉ.
 
 \unitadvanced
-\key{Vì sao phép trì hoãn an toàn} Diminishing returns cho $S\subseteq T$ cho $\Delta(x\mid T)\le\Delta(x\mid S)$. Vì vậy marginal gain đã tính trước là cận trên hiện tại; chỉ chốt phần tử khi gain vừa tính lại vượt mọi cận còn lại.
-\key{Chi phí} Với $n$ ứng viên và tối đa $k$ lượt chọn, lazy greedy tốn $n$ lần tính gain ban đầu, rồi một lần cho mỗi ứng viên lấy khỏi heap. Nếu các cận cũ đủ chặt thì thường ít lần chấm hơn greedy; trường hợp xấu vẫn phải tính $O(kn)$ gain. Mỗi lượt lấy hoặc đưa lại vào heap tốn $O(\log n)$, ngoài chi phí tính gain.
+\key{Vì sao cận đúng} Nếu $S$ là tập khi tính khóa cũ và $T$ là tập hiện tại, thì $S\subseteq T$. Tính submodular cho $\Delta(x\mid T)\le\Delta(x\mid S)$, nên một khóa chưa cập nhật vẫn dùng được để so với giá trị vừa tính.
+\key{Chi phí} Greedy thường tính $n+(n-1)+\dots+(n-k+1)=O(nk)$ gain cho $n$ ứng viên và $k\le n$. Lazy greedy tính $n$ gain ban đầu rồi chỉ tính lại các ứng viên cần kiểm tra, nhưng trường hợp xấu vẫn tốn $O(nk)$ lần đánh giá. Mỗi lần lấy hoặc đưa lại vào heap còn tốn $O(\log n)$; tính riêng chi phí đánh giá một gain.
 
 \ask{Pr30b}{Pr30(b)}{Dữ kiện chung: \shareddataref{Pr30}}
 \qpart{b} Independently, lazy greedy after choosing $A$ has cached keys $B:5,C:7/2,D:3/2$. Refreshing $B$ gives gain 1. Can $B$ be selected immediately? The next refresh gives $C:11/4$; can $C$ now be selected without refreshing $D$? Explain why old keys are valid upper bounds, and state greedy's approximation guarantee for a nonnegative monotone submodular objective with a cardinality limit.
@@ -4346,28 +4341,24 @@ trả $S,F(S)$
 \finalanswer{(c) Sai nếu dùng cùng quy tắc phá hòa: Lazy Greedy chọn như Greedy và chỉ trì hoãn tính lại marginal gain.}
 \topic{mw}{Personalization / Multiplicative Weights (MW)}
 
-\algsummary{Điều chỉnh trọng số các chủ đề khi người dùng phản hồi về một tài liệu đã xem.}{Nhân trọng số liên quan để tăng ưu tiên khi thích và giảm khi không thích.}{}{Các $w_c$, tài liệu $d$, phản hồi $r\in\{-1,1\}$ và hệ số $\beta>1$.}{Trọng số mới; xếp hạng hoặc lượt chọn mới nếu đề yêu cầu.}{Tìm các chủ đề có mặt trong tài liệu. Chỉ nhân trọng số của các chủ đề đó với $\beta^r$.}
-
-\steps{
-\item Với phản hồi $r\in\{-1,1\}$ và $\beta>1$, nhân trọng số của các chủ đề xuất hiện trong tài liệu (ví dụ $p_{dc}>0$) với $\beta^r$. Giữ các chủ đề khác như cũ.
-\item Nếu đề yêu cầu một lượt chọn mới, tính lại điểm theo các trọng số mới từ tập rỗng.
-}
+\algsummary{Cá nhân hóa gợi ý bằng bộ trọng số riêng $w_c^{(u)}$ cho mỗi người dùng $u$.}{Chỉ cập nhật các chủ đề xuất hiện trong tài liệu được phản hồi.}{}{Trọng số $w_c$ của người dùng, tài liệu $d$, phản hồi $r\in\{-1,+1\}$ và hệ số $\beta>1$.}{Trọng số mới và lựa chọn mới nếu đề yêu cầu.}{Trên $X_d$ (ví dụ các $c$ có $p_{dc}>0$), thích thì nhân $\beta$, không thích thì chia $\beta$.}
 
 \begin{algpseudo}
-với mỗi chủ đề $c$: nếu $p_{dc}>0$ thì $w_c\gets w_c\beta^r$\\
+với mỗi $c\in X_d$: $w_c\gets w_c\beta^r$\\
+nếu cần chuẩn hóa và $W=\sum_c w_c>0$: với mọi $c$, $w_c\gets w_c/W$\\
 nếu cần lượt chọn mới: chạy lại với trọng số mới, bắt đầu từ tập rỗng\\
 trả trọng số cập nhật và lựa chọn nếu đã tính
 \end{algpseudo}
 
-\key{Ví dụ} Trọng số $(4,3,2)$, phản hồi $-1$ và $\beta=4$ cho tài liệu có hai chủ đề đầu: trọng số mới $(1,3/4,2)$. Chuẩn hóa bằng cùng một hằng số dương không đổi thứ hạng trong lượt đó.
+\key{Ví dụ Pr30(c)} Với $w=(4,3,2)$ và $\beta=4$, phản hồi $-1$ cho $A$ chỉ chia trọng số khí hậu và sức khỏe cho 4. Kết quả trước chuẩn hóa là $\tilde w=(1,3/4,2)$. Chia cho tổng $15/4$ được $w'=(4/15,3/15,8/15)$.
 
 % DSA5101 Exam Practice Questions.pdf, PDF page(s) 31.
 
 \unitverification
-\key{Kiểm tra} Với $\beta>1$, phản hồi dương nhân trọng số liên quan với $\beta$, phản hồi âm chia cho $\beta$; chuẩn hóa chung không đổi thứ tự điểm.
+\key{Kiểm tra} Chủ đề ngoài tài liệu giữ nguyên trước chuẩn hóa; sau chuẩn hóa, mọi trọng số cùng được chia cho $W$. Vì $F_{\alpha w}(S)=\alpha F_w(S)$ với $\alpha>0$, điểm phủ và lợi ích biên đều đổi cùng tỷ lệ. Thứ tự xếp hạng và lựa chọn greedy giữ nguyên.
 
 \unitadvanced
-\key{Dạng log} Từ $w_c\gets w_c\beta^r$, lấy log cho $\log w_c\gets\log w_c+r\log\beta$. Cập nhật nhân trở thành cộng trên thang log, giúp kiểm tra hướng tăng/giảm và tránh nhầm dấu phản hồi.
+\key{Dạng log} Với $w_c>0$, cập nhật $w_c\gets w_c\beta^r$ tương đương $\log w_c\gets\log w_c+r\log\beta$. Vì $\log\beta>0$, dấu của $r$ cho biết trọng số tăng hay giảm.
 
 \ask{Pr30c}{Pr30(c)}{Dữ kiện chung: \shareddataref{Pr30}}
 \qpart{c} Independently, the reader sees only $A$ and gives feedback $r=-1$. Multiply each weight whose concept has $p_{Ac}>0$ by $4^r$, leaving the other weight unchanged. Give the updated unnormalised weights and compare the singleton scores of $B,C$ in a fresh selection round. Must the weights be normalised to determine which article wins?
