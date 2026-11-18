@@ -1140,41 +1140,49 @@ Cần $K=2\cdot3\cdot2=12$ hash gốc. Nhân số nhánh ở mọi tầng, khôn
 \finalanswer{(e) Xác suất va chạm $[1-(1-0.9^5)^6]^7\approx0.9675$. (f) Cần $5\cdot6\cdot7\cdot3\cdot4=2520$ hash gốc.}
 \topic{hyperplanes}{Random hyperplanes (cosine LSH)}
 
-\algsummary{Tạo chữ ký bit sao cho các vectơ có cosine cao dễ khớp nhau.}{Một siêu phẳng ngẫu nhiên ít khi tách hai vectơ có góc nhỏ.}{\textbf{Khi dùng:}\enspace So vectơ theo góc; mỗi pháp tuyến $v$ cho một bit $h_v(x)=\operatorname{sign}(v^Tx)$.}{Vectơ khác 0, số bit $t$, các pháp tuyến đẳng hướng dùng chung.}{Chữ ký bit; với một cặp có góc $\theta$, xác suất khớp một bit là $1-\theta/\pi$.}{Lấy dấu tích vô hướng với từng pháp tuyến để tạo một bit. Nếu tích bằng 0, theo quy ước đề.}
+\algsummary{Tạo chữ ký cho vectơ sao cho cặp có góc nhỏ dễ khớp. Dùng random hyperplanes cho góc giữa vectơ, tương tự MinHash cho Jaccard trên tập hợp.}{Mỗi siêu phẳng qua gốc chia không gian thành hai phía; hai vectơ có góc nhỏ ít khi bị tách.}{}{Vectơ khác 0, $x\in\mathbb R^d$; $K$ pháp tuyến $v_1,\ldots,v_K$ dùng chung cho mọi vectơ.}{Chữ ký dài $K$ với các giá trị $+1,-1$.}{Tính $v_j^Tx$ rồi ghi dấu cho vị trí $j$. Khi tính xác suất, giả sử các hướng pháp tuyến được chọn đều và độc lập.}
 
-\key{Cách làm} Nếu đề cho $v$, tính tích vô hướng rồi lấy dấu theo quy ước của đề. Nếu hỏi xác suất trên siêu phẳng ngẫu nhiên qua gốc, tính $\theta$ từ cosine:
+% Lec2_FindingSimilarItems_LSH.pdf, pp. 101--106.
+\key{Một bit} Với pháp tuyến $v$, siêu phẳng là $\{z:v^Tz=0\}$. Nếu tích bằng 0 thì ghi $+1$, trừ khi đề quy định khác:
 \[
-\cos\theta=\frac{x^Ty}{\|x\|\|y\|},\qquad
-\Pr[h_v(x)=h_v(y)]=1-\theta/\pi.
+h_v(x)=\begin{cases}+1,&v^Tx\ge0,\\-1,&v^Tx<0.\end{cases}
 \]
 
 \begin{algpseudo}
-với $j=1,\ldots,t$: lấy hoặc đọc pháp tuyến $v_j$\\
-\quad với mỗi vectơ $x$: $\operatorname{sig}[j,x]\gets [v_j^Tx\ge0]$\\
-trả $\operatorname{sig}$ (nếu đề dùng quy ước dấu khác, thay phép so tương ứng)
+$\operatorname{sig}\gets$ mảng dài $K$\\
+với $j=1,\ldots,K$: $z\gets v_j^Tx$\\
+\quad nếu $z\ge0$: $\operatorname{sig}[j]\gets+1$; nếu không: $\operatorname{sig}[j]\gets-1$\\
+trả $\operatorname{sig}$
 \end{algpseudo}
 
-\begin{example}{P25-Q2b}{P25-Q2(b) · Random hyperplanes: góc quyết định xác suất}
+\key{Ba đại lượng} Cosine similarity thông thường là $\cos\theta=x^Ty/(\|x\|\|y\|)$. Lấy $\theta=\arccos(\cos\theta)$ theo radian. Lecture 2 gọi $\theta/\pi$ là cosine distance; đó cũng là xác suất hai dấu khác nhau. Xác suất khớp một bit là
+\[
+p=\Pr[h_v(x)=h_v(y)]=1-\frac{\theta}{\pi}.
+\]
+
+\begin{example}{P25-Q2b}{P25-Q2(b), tr.~\pageref*{question:P25-Q2b}: góc và xác suất cùng phía}
 \begin{diagram}
 \begin{tikzpicture}[scale=.74,>=Stealth,every node/.style={font=\normalsize}]
-\draw[dashed] (-1.4,-.85) -- (2.45,1.49) node[right] {Giao tuyến với siêu phẳng};
-\draw[->,thick] (0,0) -- (3.15,0) node[right] {$x_A$};
-\draw[->,thick] (0,0) -- (69.3:2.3) node[above] {$x_B$};
+\draw[dashed] (215:1.55) -- (35:2.7) node[right] {Giao tuyến với siêu phẳng};
+\draw[->] (0,0) -- (125:1.9) node[above left] {$v$};
+\draw[->,thick] (0,0) -- (3.15,0) node[right] {$x_A\ (-1)$};
+\draw[->,thick] (0,0) -- (69.3:2.3) node[above] {$x_B\ (+1)$};
 \draw (0.84,0) arc[start angle=0,end angle=69.3,radius=.84];
-\node at (1.26,.93) {$\theta$};
+\node at (20:1.24) {$\theta$};
 \end{tikzpicture}
 \end{diagram}
 Hai vectơ có 200 vị trí cùng bằng 1, nên $\cos\theta=200/\sqrt{400\cdot800}=1/\sqrt8$ và $\theta\approx69.3^\circ$. Trong mặt phẳng chứa hai vectơ, giao tuyến đi qua gốc và tách chúng khi hướng của nó nằm trong góc $\theta$ (hướng xét theo modulo $180^\circ$). Vì vậy xác suất cùng phía là $1-\theta/180^\circ\approx0.615$.
 \end{example}
 
-% DSA5101 Exam Practice Questions.pdf, PDF page(s) 7.
-
 \unitverification
 \key{Bẫy} Hai vectơ vuông góc trùng bit với xác suất $1/2$. Nhân vectơ với số dương giữ nguyên dấu. Lặp lại cùng siêu phẳng không tạo các phép thử độc lập.
 
 \unitadvanced
-\key{Xác suất va chạm} Với hai vector tạo góc $\theta$, một siêu phẳng ngẫu nhiên qua gốc cho xác suất cùng dấu $1-\theta/\pi$. Với $m$ siêu phẳng độc lập, khoảng cách Hamming kỳ vọng giữa chữ ký là $m\theta/\pi$.
+\key{Ước lượng từ chữ ký} Với $K$ hướng ngẫu nhiên độc lập, nếu $D_H$ là số vị trí khác dấu, $\hat p=1-D_H/K$ là ước lượng không chệch của xác suất khớp $p$, còn $D_H/K$ ước lượng $\theta/\pi$. Ta có $\mathbb E[D_H]=K\theta/\pi$. Có thể đưa chữ ký vào AND/OR để sinh ứng viên.
 
+\key{Chi phí} Tính một chữ ký từ $K$ pháp tuyến dày tốn $O(Kd)$ thời gian và $K$ bit lưu chữ ký; so hai chữ ký tốn $O(K)$ phép so bit.
+
+% DSA5101 Exam Practice Questions.pdf, PDF page(s) 7.
 \ask{Pr6}{Pr6}{}
 Use the sign of $v\cdot x$ as a hash bit, with zero assigned $+$. The hyperplane normals are $v_1=(1,0)$, $v_2=(0,1)$, $v_3=(1,-2)$, $v_4=(2,1)$. Image descriptors include $P=(3,1)$ and $Q=(2,2)$. You are given that $P$ has sign signature $(+,+,+,+)$.
 \qpart{a} Calculate the four dot products for $Q$, its sign signature, and its observed agreement fraction with $P$.
@@ -1189,8 +1197,8 @@ Give each scheme's final collision probability.
 \solutionprompt{Với mỗi pháp tuyến, dấu của tích vô hướng cho một bit chữ ký. Dùng số bit trùng để so chữ ký; khi ghép AND/OR, kiểm tra các phép thử có còn độc lập hay không.}
 \guidepart{(a)}
 \begin{guidesteps}
-\item Random-hyperplane hash dùng bit $h_v(x)=\operatorname{sign}(v\cdot x)$. Thay query $Q$ vào bốn pháp tuyến, tích vô hướng là $(2,2,-2,6)$ nên chữ ký $(+,+,-,+)$.
-\item Hamming estimate của similarity là số bit trùng chia số bit. Chữ ký của $P$ trùng ở 3 trong 4 vị trí, nên $\widehat s=3/4$.
+\item Dùng $h_v(x)=+1$ khi $v^Tx\ge0$, ngược lại là $-1$. Thay $Q$ vào bốn tích vô hướng được $(2,2,-2,6)$, nên chữ ký là $(+,+,-,+)$.
+\item Tỷ lệ khớp là $\hat p=1-D_H/K$. Hai chữ ký chỉ khác ở vị trí 3, nên $D_H=1$, $K=4$ và $\hat p=3/4$. Đại lượng này ước lượng xác suất cùng phía.
 \end{guidesteps}
 \guidepart{(b)}
 \begin{guidesteps}
