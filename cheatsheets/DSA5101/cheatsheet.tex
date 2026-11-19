@@ -256,10 +256,12 @@
 \topicoutline{pca}{Truncated SVD / PCA projection}
 \topicoutline{cur}{CUR approximation}
 \outline{5}{Recommender systems}
+\topicoutline{tfidf}{Content-based / TF-IDF}
 \topicoutline{cf}{User-based and item-based collaborative filtering}
+\topicoutline{interpolation}{Learned interpolation weights}
 \topicoutline{factors}{Latent factor / regularized matrix factorization}
 \topicoutline{biases}{Learnable \& temporal biases (latent factors extension)}
-\topicoutline{tfidf}{Content-based / TF-IDF}
+\topicoutline{recevaluation}{Evaluation of recommendations}
 \outline{6}{Link analysis \& graph ranking}
 \topicoutline{pagerank}{PageRank}
 \topicoutline{teleport}{PageRank: teleport distributions \& convergence}
@@ -1881,47 +1883,149 @@ W=\begin{pmatrix}3&3\\0&0\end{pmatrix}.
 \finalanswer{(a) $p_3=1/10$; có thể lấy trùng cột. (b) $C=\bigl(\begin{smallmatrix}3&3\\3&3\\0&0\end{smallmatrix}\bigr)$, $R=\bigl(\begin{smallmatrix}3&3&0\\0&0&2\end{smallmatrix}\bigr)$, $W=\bigl(\begin{smallmatrix}3&3\\0&0\end{smallmatrix}\bigr)$. (c) $\widehat A=\bigl(\begin{smallmatrix}3&3&0\\3&3&0\\0&0&0\end{smallmatrix}\bigr)$; lỗi Frobenius bình phương $4$, mất hướng tọa độ thứ ba.}
 
 \lecture{5}{Recommender systems}
-\topic{cf}{User-based and item-based collaborative filtering}
 
-\algsummary{Điền rating chưa biết của người $u$ cho item $i$ từ những rating đã quan sát.}{Người dùng hoặc item tương tự cung cấp thông tin về ô bị thiếu.}{}{Ma trận rating, ô $(u,i)$, kiểu user/item, cách tính similarity và chọn hàng xóm.}{Rating ước lượng $\hat r_{ui}$.}{Tính độ tương tự theo quy ước đề. Chỉ chọn hàng xóm có rating cần dùng rồi tính dự đoán bằng trung bình có trọng số.}
+\key{Bài toán chung} Với tập user $X$ và item $S$, cần ước lượng utility $u:X\times S\to\mathbb R$ ở các cặp chưa được đánh giá. Ma trận $R$ thường thưa; $\Omega$ là tập rating quan sát. Ô thiếu là chưa biết, không phải rating 0.
 
-\key{Hai giai đoạn} Tính similarity theo đúng loại vectơ và tập giao mà đề nêu; sau đó, độc lập, chọn hàng xóm đủ điều kiện và áp dụng công thức prediction đã cho. Với user-based, hàng xóm phải chấm item đích; với item-based, người dùng đích phải chấm item hàng xóm.
+\key{Dữ liệu và phương pháp} Feedback explicit là rating trực tiếp; feedback implicit là click, mua hoặc xem, cần quy ước chuyển thành tín hiệu học. Content-based dùng đặc trưng item; CF dùng mẫu rating của các user/item tương tự; latent factors học vectơ ít chiều từ $\Omega$. Phải tách thu thập dữ liệu, dự đoán ô thiếu và đánh giá kết quả.
 
-\key{Similarity: chọn theo wording của đề}
-\begin{examtable}{@{}p{.21\columnwidth}p{.62\columnwidth}@{}}
-\toprule
-Wording & Cách tính similarity \\
-\midrule
-Centered cosine & Trừ mean của từng user hoặc item trên các rating đã biết; xử lý ô thiếu theo đề (thường điền 0 sau khi center). \\
-Pearson trên phần giao $I$ & Chỉ dùng các item cả hai cùng chấm; tính mean riêng trên $I$, center rồi tính Pearson. Không xác định nếu một vectơ centered có phương sai 0. \\
-Cosine không nói centered & Dùng vectơ rating và tập tọa độ mà đề quy định; không tự ý trừ mean. \\
-\bottomrule
-\end{examtable}
+\topic{tfidf}{Content-based / TF-IDF}
 
-\key{Prediction: chọn theo wording của đề}
-\begin{examtable}{@{}p{.35\columnwidth}p{.48\columnwidth}@{}}
-\toprule
-Wording & Dùng loại công thức \\
-\midrule
-Weighted ratings trực tiếp & Raw weighted prediction \\
-Baseline, deviations hoặc residuals & Baseline / residual prediction \\
-\bottomrule
-\end{examtable}
-Đặt $w_v=s(u,v)$. Với raw weighted prediction:
+% Lec5_ RecommenderSystems.pdf, PDF pp. 15--25.
+\algsummary{Xếp hạng item chưa được chấm bằng nội dung của những item user từng đánh giá.}{Một user có thể thích các đặc trưng xuất hiện trong những tài liệu họ chấm cao. Từ phổ biến khắp kho ít giúp phân biệt tài liệu.}{}{Kho $N$ tài liệu, tần suất term, item profiles $g_i$ và các rating của user $x$. Ở đây chỉ số $i$ là tài liệu, $j$ là term.}{TF-IDF, hồ sơ user $v_x$ và thứ hạng item chưa chấm.}{Tạo item profiles; gộp chúng bằng rating gốc hoặc rating đã center theo đề; xếp ứng viên theo cosine.}
+
+\key{TF-IDF} $n_j$ đếm số tài liệu chứa term $j$, mỗi tài liệu chỉ đóng góp một lần. Theo quy ước max-frequency:
 \[
-\hat r_{ui}=\frac{\sum_{v\in N_i(u)}w_vr_{vi}}{\sum_{v\in N_i(u)}w_v}.
+\mathrm{TF}_{ij}=\frac{f_{ij}}{\max_k f_{ik}},\qquad
+\mathrm{IDF}_j=\log\frac{N}{n_j},\qquad
+g_{ij}=\mathrm{TF}_{ij}\mathrm{IDF}_j.
 \]
-Nếu đề cho baseline, dùng residual:
-\[
-\hat r_{ui}=b_{ui}+\frac{\sum_{v\in N_i(u)}w_v(r_{vi}-b_{vi})}{\sum_{v\in N_i(u)}w_v}.
-\]
-Với item-based, thay hàng xóm $v$ bằng item $j$ mà user $u$ đã chấm. Centering trong bước similarity không tự động biến prediction thành công thức residual.
+TF lớn chỉ term xuất hiện nhiều trong tài liệu; IDF lớn chỉ term hiếm trong kho. Ví dụ stocks của Pr13: $(2/4)\log_2(4/1)=1$.
+
+\key{Hai cách tạo hồ sơ} Gọi $I_x$ là các item user đã chấm và $\bar r_x$ là mean trên $I_x$:
+\begin{align*}
+v_x^{\rm raw}&=\frac1{|I_x|}\sum_{i\in I_x}r_{xi}g_i,\\
+v_x^{\rm centered}&=\frac1{|I_x|}\sum_{i\in I_x}(r_{xi}-\bar r_x)g_i.
+\end{align*}
+Rating trên mean cho trọng số dương, bằng mean cho 0, dưới mean cho âm. Xếp ứng viên $j$ theo $\cos(v_x,g_j)=v_x^Tg_j/(\|v_x\|\|g_j\|)$. Hệ số dương $1/|I_x|$ không đổi cosine; vì vậy cách dùng tổng thay cho trung bình cho cùng thứ hạng nếu hồ sơ khác 0.
 
 \begin{algpseudo}
-\textsc{Similarity}: chọn cặp user/item, tập giao và cách center theo đề; tính $s$\\
-\textsc{Neighbor set}: giữ các hàng xóm đủ điều kiện có rating cần cho ô đích\\
-\textsc{Prediction}: chọn công thức raw hoặc baseline/residual đúng wording\\
-nếu mẫu số bằng 0: dùng quy tắc dự phòng của đề; trả $\hat r_{ui}$
+đếm $n_j$ và tính $g_{ij}$ bằng công thức TF-IDF của đề\\
+chọn $w_i=r_{xi}$ hoặc $w_i=r_{xi}-\bar r_x$ theo đề\\
+$v_x\gets |I_x|^{-1}\sum_{i\in I_x}w_i g_i$\\
+với mỗi ứng viên chưa chấm $j$: tính $\cos(v_x,g_j)$ nếu các chuẩn khác 0\\
+trả thứ hạng giảm dần của các điểm cosine
+\end{algpseudo}
+
+\key{Ví dụ (Pr13)} Ratings $(1,5)$ có mean 3. Các profiles đã cho tạo $v^{\rm raw}=(3,1/4,0,0)$ và $v^{\rm centered}=(0,-1/2,0,0)$. Hai ứng viên $g_3=(0,1,0,0)$ và $g_4=(0,0,0,1)$ đều có chuẩn 1: dot products lần lượt là $(1/4,0)$ với hồ sơ raw, $(-1/2,0)$ với hồ sơ centered. Do đó raw chọn bài 3, centered chọn bài 4.
+
+\unitverification
+\key{Kiểm tra} TF chia cho tần suất lớn nhất trong chính tài liệu, không chia tổng số từ. Term có trong mọi tài liệu có IDF 0; IDF giảm theo $\log(N/n_j)$, không tỷ lệ nghịch trực tiếp với $n_j$. Cùng một cơ số log lớn hơn 1 bảo toàn thứ tự IDF, nhưng khi tính số phải dùng đúng cơ số đề cho.
+
+\key{Diễn giải và edge cases} Sport âm ở ví dụ trên thể hiện rating dưới mean; stocks bằng 0 nên bài 4 thắng chưa chứng minh user thích stocks. Nếu hai ứng viên có cùng chuẩn khác 0 thì chỉ cần so dot products. Cosine không xác định với hồ sơ hoặc item vector bằng 0; user chưa chấm gì cũng chưa tạo được hồ sơ theo công thức này.
+
+\unitadvanced
+\key{Ưu và nhược điểm} Không cần rating của user khác; có thể phục vụ item mới hoặc niche nếu có profile và giải thích bằng features. Đổi lại, cần chọn đặc trưng phù hợp, gặp cold start với user mới, dễ chỉ gợi ý nội dung quá giống lịch sử (overspecialization), và không trực tiếp tận dụng đánh giá chất lượng từ peers.
+
+\key{Chi phí và mở rộng} Với dữ liệu thưa, dựng TF-IDF theo các term xuất hiện; so profile với toàn bộ item phụ thuộc số tọa độ cần đọc. Random hyperplanes kết hợp LSH có thể sinh ứng viên theo góc, rồi mới tính cosine để xếp hạng.
+
+% DSA5101 Exam Practice Questions.pdf, PDF page(s) 14.
+
+\ask{Pr13}{Pr13}{}
+Four articles use the features science, sport, news, and stocks, in that order. Use $\mathrm{TF}_{ij}=f_{ij}/\max_k f_{ik}$ and $\mathrm{IDF}_j=\log_2(4/n_j)$, where $n_j$ counts articles containing feature $j$. Their TF-IDF profiles are supplied:
+\[
+\begin{aligned}
+g_1&=(1,1/2,0,0), &g_2&=(1,0,0,0),\\
+g_3&=(0,1,0,0), &g_4&=(0,0,0,1).
+\end{aligned}
+\]
+A reader rates article 1 as 1 and article 2 as 5.
+\qpart{a} In article 4 the largest term frequency is 4 and the stocks frequency is 2. Stocks occurs in just one article. Verify its TF-IDF weight. Why is the news weight zero in every profile if news occurs in all four articles?
+\qpart{b} Form the raw rating-weighted profile $p=(1g_1+5g_2)/2$ and the mean-centred profile $p_c=((1-3)g_1+(5-3)g_2)/2$. For each profile, which candidate, article 3 or 4, has larger cosine similarity? Both candidate profiles have norm 1, so compare dot products without calculating the user-profile norms.
+\qpart{c} Interpret the negative sport component in $p_c$. Does the centred model's preference for article 4 show evidence that the reader likes stocks?
+
+\answer{\maptag{answer:Pr13}}
+\solutionprompt{Lập hai hồ sơ từ rating bài 1, 2: một dùng rating thô, một trừ rating trung bình. So bài 3 và 4 theo từng hồ sơ rồi giải thích thành phần âm.}
+\guidepart{(a)}
+\begin{guidesteps}
+\item Công thức là $\mathrm{TFIDF}_{ij}=[f_{ij}/\max_k f_{ik}]\log_2(N/n_j)$. Với stocks, thay $f=2,\max f=4,N=4,n_j=1$: $(2/4)\log_2(4/1)=1$.
+\item News có $n_j=N=4$, nên $\mathrm{IDF}=\log_2(4/4)=0$ và TF-IDF bằng 0 trong mọi profile.
+\end{guidesteps}
+\guidepart{(b)}
+\begin{guidesteps}
+\item Hồ sơ thô theo đề lấy trung bình các vectơ đã nhân rating: $p=m^{-1}\sum_{i=1}^m r_ig_i$. Thay $m=2$ và ratings $(1,5)$: $p=(g_1+5g_2)/2=(3,1/4,0,0)$. Vì candidate profiles có chuẩn 1, cosine cùng thứ tự với $p\cdot g_i$: bài 3 được $1/4$, bài 4 được 0, chọn bài 3.
+\item Hồ sơ centered dùng rating trừ mean 3: $p_c=[(1-3)g_1+(5-3)g_2]/2=(0,-1/2,0,0)$. Tích vô hướng với bài 3 là $-1/2$, với bài 4 là 0; chọn bài 4.
+\end{guidesteps}
+\guidepart{(c)}
+\begin{guidesteps}
+\item Điểm sport âm phản ánh bài có sport được chấm dưới trung bình. Điểm stocks bằng 0, nên chọn bài 4 chỉ cho thấy mô hình tránh sport, chưa cho thấy thích stocks.
+\end{guidesteps}
+\finalanswer{(a) Stocks có TF-IDF 1; news có IDF 0 vì có trong cả 4 bài. (b) $p=(3,1/4,0,0)$ cho tích với bài 3, 4 là $(1/4,0)$; chọn bài 3. $p_c=(0,-1/2,0,0)$ cho $(-1/2,0)$; chọn bài 4. (c) Hệ số sport âm phản ánh rating dưới trung bình; chọn bài 4 chưa chứng tỏ thích stocks.}
+
+% 2526Sem1-DSA5101.pdf, PDF page(s) 18.
+\ask{P25-Q7b}{P25-Q7(b)}{Dữ kiện chung: \shareddataref{P25-Q7}}
+\qpart{b} The TF-IDF score of a term in a document is proportional to the frequency of the term in the document and inversely proportional to the number of documents that mention the term.
+
+\answer{\maptag{answer:P25-Q7b}}
+\solutionprompt{Đối chiếu chữ “tỉ lệ nghịch” với công thức IDF. Một đại lượng giảm khi document frequency tăng chưa chắc có dạng $1/df$.}
+\guidepart{(b)}
+\begin{guidesteps}
+\item Dùng $\mathrm{TFIDF}=\mathrm{TF}\cdot\log(N/\mathrm{df})$. Giữ TF cố định, khi $\mathrm{df}$ tăng thì log giảm, nên xu hướng giảm là đúng.
+\item “Tỉ lệ nghịch” theo nghĩa trực tiếp đòi dạng $c/\mathrm{df}$; logarit không có dạng đó. Vì phát biểu dùng quan hệ tỷ lệ nghịch chặt, chọn False dù xu hướng đơn điệu giảm.
+\end{guidesteps}
+\finalanswer{(b) Sai. Với TF cố định, trọng số giảm theo $\log(N/\mathrm{df})$, không theo tỷ lệ nghịch $1/\mathrm{df}$.}
+
+\topic{cf}{User-based and item-based collaborative filtering}
+
+% Lec5_ RecommenderSystems.pdf, PDF pp. 28--41, 54--56.
+\algsummary{Dự đoán rating chưa biết từ utility matrix, không cần đặc trưng nội dung.}{User-based mượn rating của những user tương tự; item-based mượn rating của chính user đích cho những item tương tự.}{}{Ma trận rating, ô $(x,i)$, cách tính similarity, số hàng xóm và cách xử lý similarity âm.}{Rating ước lượng $\hat r_{xi}$.}{Tính similarity; chọn hàng xóm có rating cần dùng; áp dụng công thức raw hoặc residual đúng yêu cầu.}
+
+\key{Similarity: chọn theo wording} Chọn quy ước mà đề yêu cầu, trước khi tính bất kỳ trọng số nào.
+
+\key{User-centered cosine} Trừ mean của các rating đã biết của từng user; ô thiếu điền 0 sau khi center. So các vectơ user.
+
+\key{Item-centered cosine} Trừ mean của các rating đã biết của từng item; ô thiếu điền 0 sau khi center. So các vectơ item.
+
+\key{Pearson trên phần giao $I$} Chỉ dùng tọa độ cùng quan sát; tính mean riêng trên $I$. Không xác định nếu thiếu biến thiên hoặc chỉ có một cặp rating.
+
+\key{Cosine không centered} Dùng vectơ và cách xử lý missing mà đề nêu; không tự trừ mean.
+
+\[
+\text{User-centered:}\quad
+z_{xi}=
+\begin{cases}
+r_{xi}-\bar r_x,&(x,i)\in\Omega,\\
+0,&(x,i)\notin\Omega,
+\end{cases}
+\quad
+s(x,y)=\frac{z_x^Tz_y}{\|z_x\|\|z_y\|}.
+\]
+Item-centered thay $\bar r_x$ bằng $\bar r_i$ rồi so các vectơ theo item. Centered cosine và Pearson trên phần giao có thể khác nhau vì cả mean và các chuẩn có thể dùng tập tọa độ khác.
+
+\key{Prediction từ rating gốc} $N(x;i)$ là user tương tự $x$ đã chấm item $i$; $N(i;x)$ là item tương tự $i$ đã được $x$ chấm:
+\begin{align*}
+\text{User-based: }\hat r_{xi}
+&=\frac{\sum_{y\in N(x;i)}s(x,y)r_{yi}}
+{\sum_{y\in N(x;i)}s(x,y)},\\
+\text{Item-based: }\hat r_{xi}
+&=\frac{\sum_{j\in N(i;x)}s(i,j)r_{xj}}
+{\sum_{j\in N(i;x)}s(i,j)}.
+\end{align*}
+Dùng vectơ centered để tìm similarity không tự động cho phép thay rating gốc bằng rating centered trong prediction.
+
+\key{Baseline và residual} Tách mức rating nền bằng $b_{xi}=\mu+b_x+b_i$, với $\mu$ là mean chung. Trong baseline tính từ trung bình: $b_x=\bar r_x-\mu$, $b_i=\bar r_i-\mu$. Ví dụ $\mu=3.7$, $b_x=-0.2$, $b_i=0.5$ cho $b_{xi}=4$. Nếu đề cung cấp baseline đã fit, dùng đúng giá trị đó. Item-based có điều chỉnh baseline:
+\[
+\hat r_{xi}=b_{xi}+
+\frac{\sum_{j\in N(i;x)}s(i,j)(r_{xj}-b_{xj})}
+{\sum_{j\in N(i;x)}s(i,j)}.
+\]
+User-based tương tự: lấy residual của các user hàng xóm trên item đích, rồi cộng baseline của ô đích.
+
+\begin{algpseudo}
+xác định vectơ user/item, tập tọa độ và cách center theo đề\\
+tính similarity và chọn hàng xóm có rating cần cho ô $(x,i)$\\
+chọn raw: lấy trung bình có trọng số của rating gốc\\
+hoặc residual: lấy trung bình residual rồi cộng baseline đích\\
+nếu chuẩn hoặc mẫu số bằng 0: dùng quy tắc dự phòng của đề
 \end{algpseudo}
 
 \begin{example}{A2-Q1}{A2-Q1(a) · Collaborative filtering: Alice chấm phim Matrix}
@@ -1937,13 +2041,19 @@ Cathy & $(3.5,0,-3.5)$ & $8.75/17.5=0.5$ & 13 \\
 Dùng vectơ đã trừ trung bình để tính trọng số, rồi dùng rating gốc theo công thức của đề: $(9\cdot0.918+13\cdot0.5)/(0.918+0.5)\approx10.41$.
 \end{example}
 
-% DSA5101 Exam Practice Questions.pdf, PDF page(s) 15.
+\key{Ví dụ raw và residual (Pr14)} Hai hàng xóm $P,R$ có similarity $3/4,1/4$ và rating $5,3$. Raw cho $[(3/4)5+(1/4)3]/1=4.5$. Với baseline nguồn đều bằng 4, residual là $1,-1$; baseline đích 2 cho $2+(3/4)1+(1/4)(-1)=2.5$.
 
 \unitverification
-\key{Bẫy} Similarity âm vẫn là giá trị hợp lệ. Chỉ loại hàng xóm âm nếu đề yêu cầu chọn positive-similarity neighbors hoặc quy tắc đã nêu như vậy; không tự lấy trị tuyệt đối hay cắt về 0. Kiểm tra mẫu số và chuẩn bằng 0; khi mẫu số prediction bằng 0, dùng fallback của đề.
+\key{Similarity âm và trọng số} Âm biểu thị tương quan ngược, không phải thiếu dữ liệu. Chỉ bỏ hàng xóm âm nếu quy tắc đề yêu cầu; không tự lấy trị tuyệt đối hay cắt về 0. Trọng số chuẩn hóa là $s_j/\sum_\ell s_\ell$, khác phần đóng góp $s_jr_j/\sum_\ell s_\ell r_\ell$.
+
+\key{Kiểm tra kết quả} Nếu weights không âm và tổng dương, raw prediction nằm giữa min và max rating hàng xóm. Residual prediction không bị chặn bởi hai raw ratings: ví dụ trên cho $2.5<3$. Baseline thấp cũng chưa đủ kết luận user chấm khắt khe vì item bias có thể thấp. Kiểm tra norm và mẫu số bằng 0 trước khi chia.
+
+\key{Hai đề dùng hai quy ước} A2-Q1(a) nêu centered cosine; P24-Q4(a) nêu Pearson. Không chép kết quả của bài centered cosine sang bài Pearson trên phần giao.
 
 \unitadvanced
-\key{Độ phức tạp} Tính similarity cho một cặp tốn $O(|I|)$ trên phần tử được so sánh; prediction cho một ô tốn $O(|N|)$ với $|N|$ hàng xóm đã chọn, ngoài chi phí tìm ứng viên.
+\key{Chi phí và hạn chế} Similarity cho một cặp tốn $O(|I|)$ trên tọa độ so sánh; prediction tốn $O(|N|)$ sau khi chọn hàng xóm. Sparsity làm ít thông tin chung; cold start xảy ra với user hoặc item chưa có rating. CF có thể nghiêng về item phổ biến và khó phục vụ sở thích khác số đông. Item similarity thường ổn định hơn user interests; đó là nhận xét thực nghiệm, không phải bảo đảm luôn dự đoán tốt hơn.
+
+% DSA5101 Exam Practice Questions.pdf, PDF page(s) 15.
 
 \ask{Pr14}{Pr14}{}
 Podcasts $P,Q,R,T$ have these ratings; the target is user $u$'s missing rating for $T$.
@@ -2050,32 +2160,96 @@ S_{\rm Pearson}=\begin{pmatrix}1&1&\text{KXĐ}\\1&1&1\\\text{KXĐ}&1&1\end{pmatr
 \]
 \end{guidesteps}
 \finalanswer{(a)(i) Pearson: Alice--Bob và Bob--Cathy bằng 1, Alice--Cathy không xác định; ma trận đối xứng, đường chéo bằng 1. (ii) Ma trận rating hoàn chỉnh $\bigl(\begin{smallmatrix}9&10&5\\9&16&8\\13&16&6\end{smallmatrix}\bigr)$.}
-\topic{factors}{Latent factor / regularized matrix factorization}
+\topic{interpolation}{Learned interpolation weights}
 
-\algsummary{Dùng vectơ ít chiều của người dùng và item để dự đoán các ô còn thiếu trong ma trận rating.}{Tích vô hướng mô tả mức tương hợp trong ít chiều; chỉ học từ các ô đã biết.}{\textbf{Khi dùng:}\enspace Đề cho vectơ người dùng $p_u$, vectơ item $q_i$ hoặc ma trận nhân tử và yêu cầu fit hay dự đoán. Dự đoán là $\hat r_{ui}=\mu+b_u+b_i+p_u^Tq_i$; chỉ giữ các số hạng bias mà đề nêu.}{Rating huấn luyện, hạng $d$, bước học $\eta$, regularization $\lambda$, quy tắc dừng.}{Các nhân tử $p_u,q_i$ và dự đoán rating thiếu.}{Ở mỗi bước SGD, tính sai số từ một rating. Tính cả hai gradient bằng cặp vectơ cũ rồi mới cập nhật.}
+% Lec5_ RecommenderSystems.pdf, PDF pp. 56--63.
+\algsummary{Học trọng số giữa các item thay vì buộc prediction dùng similarity chuẩn hóa.}{Similarity dùng chọn hàng xóm; mức đóng góp của từng hàng xóm được học từ các rating thật.}{}
+{Rating $\Omega$, baseline $b_{xi}$, các neighborhoods $N(i;x)$ cố định và learning rate $\eta$.}{Weights $w_{ij}$ và prediction baseline cộng residual có trọng số.}{Giữ baseline và neighborhood cố định; tối thiểu hóa SSE theo $w$. Một weight $w_{ij}$ dùng chung cho mọi user có cặp item đó.}
 
-\key{Một bước SGD} Đặt $e=r_{ui}-\hat r_{ui}$ trên một rating đã biết. Với loss $\frac12 e^2+\frac\lambda2(\|p\|^2+\|q\|^2)$:
+\key{Công thức} Đặt $d_{xj}=r_{xj}-b_{xj}$:
 \[
-p'=p+\eta(eq-\lambda p),\qquad q'=q+\eta(ep-\lambda q).
+\hat r_{xi}=b_{xi}+\sum_{j\in N(i;x)}w_{ij}d_{xj},
+\qquad
+J(w)=\sum_{(x,i)\in\Omega}(\hat r_{xi}-r_{xi})^2.
+\]
+Đây là weighted sum, không chia tổng weights. Không yêu cầu $w_{ij}=s(i,j)$ hoặc $\sum_jw_{ij}=1$; $w_{ij}$ phụ thuộc cặp item $i,j$, không phải tham số riêng cho từng user.
+
+\key{Gradient và cập nhật} Chỉ cộng các observation có $j$ trong neighborhood:
+\[
+\frac{\partial J}{\partial w_{ij}}
+=2\!\!\sum_{\substack{x:(x,i)\in\Omega\\j\in N(i;x)}}
+(\hat r_{xi}-r_{xi})d_{xj},
+\qquad
+w^{(t+1)}=w^{(t)}-\eta\nabla J.
 \]
 
-\key{Giải nhân tử} Khi giải các nhân tử tuyến tính chưa biết, bắt đầu từ ô rating đã biết mà phương trình chỉ có một ẩn, thế ngược vào các phương trình còn lại, rồi kiểm tra mọi ô quan sát. Tránh bắt đầu bằng tích chứa đồng thời hai ẩn.
-
-% DSA5101 Exam Practice Questions.pdf, PDF page(s) 16.
-
 \begin{algpseudo}
-khởi tạo $p_u,q_i$; lặp qua rating huấn luyện đến khi dừng:\\
-\quad lấy $p,q$ cũ của ô $(u,i)$; $e\gets r_{ui}-\hat r_{ui}$\\
-\quad $p_u\gets p+\eta(eq-\lambda p)$; $q_i\gets q+\eta(ep-\lambda q)$\\
-\quad cập nhật bias nếu mô hình có\\
-trả tham số và các dự đoán cần tính
+khởi tạo $w$; giữ $b,N$ cố định\\
+lặp đến khi dừng: đặt mọi $G_{ij}\gets0$\\
+\quad với mỗi $(x,i)\in\Omega$: $a\gets\hat r_{xi}-r_{xi}$\\
+\qquad với $j\in N(i;x)$: $G_{ij}\gets G_{ij}+2a\,d_{xj}$\\
+\quad cập nhật đồng thời $w_{ij}\gets w_{ij}-\eta G_{ij}$\\
+trả $w$ và các prediction cần tính
 \end{algpseudo}
 
+\key{Ví dụ minh họa một bước} Một ô huấn luyện có rating 4, baseline 2, residual hàng xóm $(1,2)$ và weights $(3/4,1/4)$. Prediction $2+(3/4)1+(1/4)2=3.25$ nên lỗi $\hat r-r=-0.75$. Gradient $2(-0.75)(1,2)=(-1.5,-3)$. Với $\eta=0.1$, weights mới $(0.9,0.55)$ có tổng $1.45$, prediction mới $2+0.9+2(0.55)=4$.
+
 \unitverification
-\key{Bẫy} Cả hai vế phải dùng nhân tử cũ. Khi tìm ẩn trong ma trận, lập phương trình từ các rating có thật. Khi đo $\mathrm{RMSE}$, lấy căn trung bình bình phương lỗi trên tập kiểm tra, không dùng tập đó để fit.
+\key{Kiểm tra} Đề dùng learned weights thì không chuẩn hóa chúng lại như similarity weights. Similarity vẫn cần để chọn $N(i;x)$; chỉ cộng các residual có rating quan sát. Không lấy ô thiếu làm mục tiêu huấn luyện.
 
 \unitadvanced
-\key{Chi phí và tối ưu} Một cập nhật SGD cho một rating tốn $O(d)$ với latent dimension $d$. Mục tiêu chứa tích $p_u^Tq_i$ nên không lồi đồng thời theo cả hai nhân tử; SGD tìm nghiệm phụ thuộc khởi tạo.
+\key{Tính lồi và chi phí} Khi $b,N$ cố định, prediction là affine theo $w$ nên SSE là hàm lồi; nghiệm có thể không duy nhất nếu dữ liệu thiếu hạng. Mỗi vòng gradient quét $O(\sum_{(x,i)\in\Omega}|N(i;x)|)$ residual, lưu một weight cho mỗi cặp item sử dụng. Điều này không làm mục tiêu MF trở thành lồi đồng thời theo hai ma trận nhân tử.
+
+\topic{factors}{Latent factor / regularized matrix factorization}
+
+% Lec5_ RecommenderSystems.pdf, PDF pp. 65--79.
+\algsummary{Dùng các vectơ ít chiều để dự đoán rating chưa quan sát trong ma trận thưa.}{User và item có tương tác qua tích vô hướng. Các factors được học từ dữ liệu, không nhất thiết có tên rõ như thể loại phim.}{}{Tập huấn luyện $\Omega$, latent dimension $f$, learning rate $\eta$, regularization và điều kiện dừng.}{Các nhân tử user/item và dự đoán rating thiếu.}{Chỉ fit trên rating quan sát. Nếu đề cho nhân tử có ô chưa biết, giải phương trình; nếu yêu cầu SGD, tính cả hai gradient từ các vectơ cũ rồi cập nhật.}
+
+\key{Kiểm tra chiều trước khi nhân}
+\begin{examtable}{@{}p{.30\columnwidth}p{.55\columnwidth}@{}}
+\toprule
+Quy ước hàng của $R$ & $R\approx QP^T$ \\
+\midrule
+$m$ items, $n$ users & $R:m\times n$; $Q:m\times f$; $P^T:f\times n$. Khi đó $q_i$ là item, $p_x$ là user. \\
+$n$ users, $m$ items & $R:n\times m$; $Q:n\times f$; $P^T:f\times m$. Khi đó hàng $Q$ là user, cột $P^T$ là item, như P24-Q4(b)/A2-Q1(b). \\
+\bottomrule
+\end{examtable}
+Theo quy ước items là hàng, $\hat r_{xi}=q_i^Tp_x=\sum_{k=1}^{f}q_{ik}p_{xk}$. Thêm $\mu,b_x,b_i$ chỉ khi mô hình yêu cầu.
+
+\key{Vì sao không điền 0 rồi SVD} Truncated SVD tối ưu sai số tái dựng trên mọi ô của ma trận được cung cấp. Điền missing bằng 0 sẽ biến chúng thành mục tiêu rating 0. Supervised MF chỉ dùng $\Omega$:
+\begin{align*}
+J(P,Q)={}&\sum_{(x,i)\in\Omega}(r_{xi}-q_i^Tp_x)^2\\
+&+\lambda_p\sum_x\|p_x\|^2+\lambda_q\sum_i\|q_i\|^2.
+\end{align*}
+Không regularize khi các $\lambda$ bằng 0; tăng $\lambda$ phạt norm mạnh hơn, quá lớn có thể underfit. Chọn hyperparameters trên validation set. Có thể dùng SVD để khởi tạo, nhưng factors học được không phải giữ orthonormal.
+
+\key{Một bước SGD theo loss của đề} Đặt $e=r-\hat r$. Với $L=\frac12e^2+\frac\lambda2(\|p\|^2+\|q\|^2)$ và baseline cố định, chain rule cho $\partial e/\partial p=-q$, $\partial e/\partial q=-p$:
+\begin{align*}
+g_p&=-eq+\lambda p,&g_q&=-ep+\lambda q,\\
+p'&=p+\eta(eq-\lambda p),&
+q'&=q+\eta(ep-\lambda q).
+\end{align*}
+Nếu đề đổi hệ số $1/2$ hoặc cách viết penalty, lấy gradient theo đúng loss đó.
+
+\begin{algpseudo}
+khởi tạo factors; lặp qua các rating huấn luyện đến khi dừng:\\
+\quad lấy bản cũ $p,q$ của $(x,i)$; tính $\hat r$ và $e\gets r_{xi}-\hat r$\\
+\quad tính đồng thời $g_p,g_q$ bằng $p,q$ cũ và loss đã cho\\
+\quad $p_x\gets p-\eta g_p$; $q_i\gets q-\eta g_q$\\
+\quad cập nhật các bias nếu mô hình có; không dùng rating test
+\end{algpseudo}
+
+\key{Ví dụ SGD (Pr15)} Với $\hat r=3+p^Tq$, $p=(1,0)$, $q=(1,1)$, $r=5$ và $\lambda=\eta=1/2$: $\hat r=4$, $e=1$. Hai gradient là $g_p=(-1/2,-1)$, $g_q=(-1/2,1/2)$. Lấy $p-\eta g_p$, $q-\eta g_q$ được $p'=(5/4,1/2)$, $q'=(5/4,3/4)$.
+
+\key{Giải nhân tử chưa biết} Chọn ô rating thật mà phương trình chỉ có một ẩn; giải, thế ngược rồi kiểm tra mọi ô quan sát. Ở P24-Q4(b), Alice--Star Wars cho $4+a=5$ nên $a=1$; Alice--Inception cho $8+c=10$ nên $c=2$; Bob--Matrix cho $b+6=9$ nên $b=3$. Tích hoàn chỉnh dự đoán hai ô thiếu là $5,12$; không dùng các ước lượng CF để fit.
+
+\unitverification
+\key{Kiểm tra} Cả hai gradient phải dùng cặp nhân tử cũ. Một SGD step chỉ sửa trực tiếp user/item xuất hiện trong observation; các item khác giữ vectơ nhưng dự đoán của cùng user có thể đổi theo $p_x$. Chỉ tính loss huấn luyện trên $\Omega$; training error bằng 0 không bảo đảm test error bằng 0. CF và MF cho dự đoán khác nhau chưa đủ kết luận phương pháp nào đúng hơn nếu chưa biết rating thật.
+
+\unitadvanced
+\key{Chi phí và tối ưu} Một cập nhật SGD tốn $O(f)$; một epoch qua $\Omega$ tốn $O(|\Omega|f)$, lưu factors tốn $O((|X|+|S|)f)$. Mục tiêu không lồi đồng thời theo $P,Q$; giữ một khối cố định mới cho bài toán bình phương tuyến tính theo khối còn lại. Kết quả có thể phụ thuộc khởi tạo.
+
+% DSA5101 Exam Practice Questions.pdf, PDF page(s) 16.
 
 \ask{Pr15}{Pr15}{}
 A rating model predicts $\hat r_{ui}=3+p_u^Tq_i$. Initially $p_u=(1,0)$ and $q_A=(1,1)$, and the observed training rating is $r_{uA}=5$. Set $\lambda=1/2$ and learning rate $\eta=1/2$. For this observation use loss
@@ -2141,96 +2315,85 @@ P^T=\begin{pmatrix}1&4&2\\3&2&1\end{pmatrix}.
 \finalanswer{(b)(i) $Q=\bigl(\begin{smallmatrix}2&1\\3&2\\1&4\end{smallmatrix}\bigr)$, $P^T=\bigl(\begin{smallmatrix}1&4&2\\3&2&1\end{smallmatrix}\bigr)$; loss trên ô đã biết bằng $0$. (ii) $\widehat R=\bigl(\begin{smallmatrix}5&10&5\\9&16&8\\13&12&6\end{smallmatrix}\bigr)$; hai ô thiếu là Alice--Matrix $=5$ và Cathy--Inception $=12$.}
 \topic{biases}{Learnable \& temporal biases (latent factors extension)}
 
-\algsummary{Tách xu hướng người dùng chấm cao hoặc thấp, hay item thường nhận rating cao hoặc thấp, khỏi phần tương tác chung.}{Người dùng hoặc item có thể lệch nền ổn định hoặc thay đổi theo thời gian.}{}{Rating huấn luyện, các bias của mô hình, bin thời gian nếu có.}{Bias đã học để cộng vào dự đoán nhân tử.}{Tính lỗi bằng dự đoán trước cập nhật. Chỉ sửa những bias đã góp vào dự đoán của rating đang xét.}
+% Lec5_ RecommenderSystems.pdf, PDF pp. 80--89.
+\algsummary{Tách mức rating chung, xu hướng chấm của user và xu hướng được chấm của item khỏi tương tác latent factors.}{Bias mô tả mức nền; tích vô hướng mô tả sở thích riêng giữa user và item. Cả mức nền lẫn sở thích có thể thay đổi theo thời gian.}{}{Rating huấn luyện, factors, các hệ số regularization và bin thời gian nếu có.}{Bias và factors dùng để dự đoán rating.}{Tính dự đoán đầy đủ, lấy một residual từ trạng thái cũ, rồi cập nhật đúng những tham số tham gia rating đó.}
 
-\key{Ý nghĩa} $\mu$ là rating nền; $b_u$ là xu hướng người dùng chấm cao/thấp; $b_i$ là xu hướng item được chấm cao/thấp. Sau phần nền mới cộng tương tác $p_u^Tq_i$.
-
-\key{Cách học} Với lỗi $e=r-\hat r$, một bước SGD cho mỗi bias $b$ là $b\gets b+\eta(e-\lambda_b b)$ theo quy ước loss đã nêu. Regularization giữ bias của người có ít rating khỏi dao động quá lớn.
-
-\key{Theo thời gian} Ví dụ đặt $b_i(t)=b_i+b_{i,\operatorname{bin}(t)}$ với bin 10 tuần trong lecture. Có thể thay bias theo thời gian mà vẫn giữ nguyên số chiều của nhân tử.
-
-\key{Ví dụ một bước SGD} Cho $\mu=3$ và $b_u=0.2$, $b_i=0.1$, $b_{i,\operatorname{bin}(t)}=-0.1$, $p_u^Tq_i=0.5$. Dự đoán trước cập nhật là $3.7$. Với rating 4, $\eta=\lambda_b=0.1$, lấy cùng lỗi $e=4-3.7=0.3$ để cập nhật ba bias: lần lượt thành $0.228$, $0.129$ và $-0.069$. Không sửa bias ở bin khác.
-
-\begin{algpseudo}
-khởi tạo bias bằng 0; chọn $\mu$ theo mô hình\\
-với mỗi bước SGD trên $(u,i,t,r)$: tính $e\gets r-\hat r_{ui}(t)$\\
-\quad với mỗi bias $b$ dùng trong $\hat r_{ui}(t)$: $b\gets b+\eta(e-\lambda_b b)$\\
-trả các bias đã học
-\end{algpseudo}
-
-\unitverification
-\key{Kiểm tra} Thế từng rating quan sát vào đúng các bias người dùng, item và thời gian đang hoạt động; không cộng bias của bin thời gian khác.
-
-\unitadvanced
-\key{Nhận dạng tham số} Trong $\mu+b_u+b_i$, nhiều cách dịch hằng số giữa global mean và bias có thể cho cùng dự đoán. Regularization hoặc ràng buộc tổng bias giúp chọn nghiệm ổn định; bias theo thời gian cũng cần regularization.
-\topic{tfidf}{Content-based / TF-IDF}
-
-\algsummary{Xếp hạng tài liệu mới bằng cách so nội dung của chúng với hồ sơ người dùng.}{Từ lặp trong tài liệu giúp nhận diện chủ đề; từ phổ biến khắp kho ít phân biệt hơn.}{\textbf{Khi dùng:}\enspace Gợi ý từ đặc trưng nội dung, chẳng hạn các từ trong bài báo, thay vì dùng lịch sử của người khác.}{Kho tài liệu, tần suất từ và trọng số hoặc rating người dùng.}{Vectơ tài liệu, hồ sơ người dùng, thứ hạng gợi ý.}{Tính TF-IDF cho từng tài liệu. Gộp các vectơ đã được chấm thành hồ sơ người dùng, rồi so cosine với mỗi ứng viên.}
-
-\steps{
-\item Tính $g_{ij}=\mathrm{TF}_{ij}\mathrm{IDF}_j$ cho từ $j$ trong tài liệu $i$. Practice dùng $\mathrm{TF}_{ij}=f_{ij}/\max_k f_{ik}$ và $\mathrm{IDF}_j=\log_2(N/n_j)$, với $n_j$ tài liệu chứa từ $j$.
-\item Tạo hồ sơ người dùng $p=\sum_i w_i g_i$. Chọn $w_i$ là rating gốc hoặc rating đã trừ trung bình theo đề.
-\item Xếp hạng tài liệu bằng cosine với $p$, theo quy ước của đề.
-}
-
-\begin{algpseudo}
-tính số tài liệu $n_j$ chứa từng từ $j$\\
-với mỗi tài liệu $i$: $g_{ij}\gets(f_{ij}/\max_k f_{ik})\log_2(N/n_j)$ theo đề\\
-$p\gets\sum_i w_i g_i$ trên tài liệu đã chấm\\
-trả ứng viên xếp theo $\cos(p,g_i)$ khi các chuẩn khác 0
-\end{algpseudo}
-
-\unitverification
-\key{Bẫy} Từ có trong mọi tài liệu có IDF bằng 0. IDF giảm theo $n_j$ qua logarit, không tỷ lệ nghịch đúng dạng $1/n_j$.
-
-% DSA5101 Exam Practice Questions.pdf, PDF page(s) 14.
-
-\unitadvanced
-\key{Tính trên dữ liệu thưa} Với biểu diễn sparse, dựng TF-IDF tốn thời gian theo tổng số lần xuất hiện term; cosine giữa hai tài liệu có thể tính bằng phép merge các chỉ số term chung. Công thức IDF/smoothing cụ thể phụ thuộc định nghĩa đề.
-
-\ask{Pr13}{Pr13}{}
-Four articles use the features science, sport, news, and stocks, in that order. Use $\mathrm{TF}_{ij}=f_{ij}/\max_k f_{ik}$ and $\mathrm{IDF}_j=\log_2(4/n_j)$, where $n_j$ counts articles containing feature $j$. Their TF-IDF profiles are supplied:
+\key{Mô hình và hàm mục tiêu}
 \[
-\begin{aligned}
-g_1&=(1,1/2,0,0), &g_2&=(1,0,0,0),\\
-g_3&=(0,1,0,0), &g_4&=(0,0,0,1).
-\end{aligned}
+\hat r_{xi}=\mu+b_x+b_i+q_i^Tp_x.
 \]
-A reader rates article 1 as 1 and article 2 as 5.
-\qpart{a} In article 4 the largest term frequency is 4 and the stocks frequency is 2. Stocks occurs in just one article. Verify its TF-IDF weight. Why is the news weight zero in every profile if news occurs in all four articles?
-\qpart{b} Form the raw rating-weighted profile $p=(1g_1+5g_2)/2$ and the mean-centred profile $p_c=((1-3)g_1+(5-3)g_2)/2$. For each profile, which candidate, article 3 or 4, has larger cosine similarity? Both candidate profiles have norm 1, so compare dot products without calculating the user-profile norms.
-\qpart{c} Interpret the negative sport component in $p_c$. Does the centred model's preference for article 4 show evidence that the reader likes stocks?
+$\mu$ là mức rating chung; $b_x$ là xu hướng user, $b_i$ là xu hướng item; $q_i^Tp_x$ là tương tác riêng. Khác baseline tính trực tiếp từ trung bình, ở đây $b_x,b_i$ được học cùng factors:
+\begin{align*}
+J={}&\sum_{(x,i)\in\Omega}(r_{xi}-\mu-b_x-b_i-q_i^Tp_x)^2\\
+&+\lambda_p\sum_x\|p_x\|^2+\lambda_q\sum_i\|q_i\|^2\\
+&+\lambda_x\sum_xb_x^2+\lambda_i\sum_ib_i^2.
+\end{align*}
+Chọn các $\lambda$ trên validation set. Với quy ước loss một observation có hệ số $1/2$, bias $b$ dùng cập nhật $b\gets b+\eta(e-\lambda_b b)$, trong đó $e=r-\hat r$.
 
-\answer{\maptag{answer:Pr13}}
-\solutionprompt{Lập hai hồ sơ từ rating bài 1, 2: một dùng rating thô, một trừ rating trung bình. So bài 3 và 4 theo từng hồ sơ rồi giải thích thành phần âm.}
-\guidepart{(a)}
-\begin{guidesteps}
-\item Công thức là $\mathrm{TFIDF}_{ij}=[f_{ij}/\max_k f_{ik}]\log_2(N/n_j)$. Với stocks, thay $f=2,\max f=4,N=4,n_j=1$: $(2/4)\log_2(4/1)=1$.
-\item News có $n_j=N=4$, nên $\mathrm{IDF}=\log_2(4/4)=0$ và TF-IDF bằng 0 trong mọi profile.
-\end{guidesteps}
-\guidepart{(b)}
-\begin{guidesteps}
-\item Hồ sơ thô theo đề lấy trung bình các vectơ đã nhân rating: $p=m^{-1}\sum_{i=1}^m r_ig_i$. Thay $m=2$ và ratings $(1,5)$: $p=(g_1+5g_2)/2=(3,1/4,0,0)$. Vì candidate profiles có chuẩn 1, cosine cùng thứ tự với $p\cdot g_i$: bài 3 được $1/4$, bài 4 được 0, chọn bài 3.
-\item Hồ sơ centered dùng rating trừ mean 3: $p_c=[(1-3)g_1+(5-3)g_2]/2=(0,-1/2,0,0)$. Tích vô hướng với bài 3 là $-1/2$, với bài 4 là 0; chọn bài 4.
-\end{guidesteps}
-\guidepart{(c)}
-\begin{guidesteps}
-\item Điểm sport âm phản ánh bài có sport được chấm dưới trung bình. Điểm stocks bằng 0, nên chọn bài 4 chỉ cho thấy mô hình tránh sport, chưa cho thấy thích stocks.
-\end{guidesteps}
-\finalanswer{(a) Stocks có TF-IDF 1; news có IDF 0 vì có trong cả 4 bài. (b) $p=(3,1/4,0,0)$ cho tích với bài 3, 4 là $(1/4,0)$; chọn bài 3. $p_c=(0,-1/2,0,0)$ cho $(-1/2,0)$; chọn bài 4. (c) Hệ số sport âm phản ánh rating dưới trung bình; chọn bài 4 chưa chứng tỏ thích stocks.}
+\key{Theo thời gian}
+\[
+\hat r_{xi}(t)=\mu+b_x(t)+b_i(t)+q_i^Tp_x.
+\]
+Ví dụ $b_i(t)=b_i+b_{i,\operatorname{bin}(t)}$, mỗi bin dài 10 tuần. Có thể mở rộng sang $p_x(t),q_i(t)$ để mô tả factors thay đổi theo thời gian; đó là thay đổi mô hình, không chỉ cộng một bias bin.
 
-% 2526Sem1-DSA5101.pdf, PDF page(s) 18.
-\ask{P25-Q7b}{P25-Q7(b)}{Dữ kiện chung: \shareddataref{P25-Q7}}
-\qpart{b} The TF-IDF score of a term in a document is proportional to the frequency of the term in the document and inversely proportional to the number of documents that mention the term.
+\begin{algpseudo}
+khởi tạo bias; lấy $\mu$ từ dữ liệu huấn luyện theo mô hình\\
+với mỗi observation $(x,i,t,r)$: tính $\hat r_{xi}(t)$ và $e\gets r-\hat r$\\
+\quad dùng cùng $e$ cập nhật các bias user, item, bin đang hoạt động\\
+\quad nếu học cả factors: tính gradient bằng factors cũ rồi cập nhật\\
+trả các tham số đã học
+\end{algpseudo}
 
-\answer{\maptag{answer:P25-Q7b}}
-\solutionprompt{Đối chiếu chữ “tỉ lệ nghịch” với công thức IDF. Một đại lượng giảm khi document frequency tăng chưa chắc có dạng $1/df$.}
-\guidepart{(b)}
-\begin{guidesteps}
-\item Dùng $\mathrm{TFIDF}=\mathrm{TF}\cdot\log(N/\mathrm{df})$. Giữ TF cố định, khi $\mathrm{df}$ tăng thì log giảm, nên xu hướng giảm là đúng.
-\item “Tỉ lệ nghịch” theo nghĩa trực tiếp đòi dạng $c/\mathrm{df}$; logarit không có dạng đó. Vì phát biểu dùng quan hệ tỷ lệ nghịch chặt, chọn False dù xu hướng đơn điệu giảm.
-\end{guidesteps}
-\finalanswer{(b) Sai. Với TF cố định, trọng số giảm theo $\log(N/\mathrm{df})$, không theo tỷ lệ nghịch $1/\mathrm{df}$.}
+\key{Ví dụ một bước SGD} Cho $\mu=3$, $b_x=0.2$, $b_i=0.1$, $b_{i,\operatorname{bin}(t)}=-0.1$ và $p_x^Tq_i=0.5$. Dự đoán là $3.7$. Với rating 4, $\eta=\lambda_b=0.1$, cùng residual $0.3$ cho ba bias mới $0.228,0.129,-0.069$.
+
+\unitverification
+\key{Kiểm tra} Dùng bias đúng user, item và thời điểm. Không sửa bias của bin khác; không tính lại residual giữa các cập nhật của cùng observation. Bias nhỏ không đồng nghĩa tương tác latent yếu, và baseline thấp không chỉ do user bias.
+
+\unitadvanced
+\key{Nhận dạng tham số} Nhiều cách dịch hằng số giữa $\mu,b_x,b_i$ cho cùng dự đoán. Regularization hoặc ràng buộc tổng bias giúp chọn nghiệm ổn định; tham số theo thời gian cũng cần regularization.
+
+\key{Hybrid và ensemble} Các tín hiệu có thể bổ sung cho nhau: global effects mô tả nền; factorization học tương tác rộng; CF giữ mẫu hàng xóm cục bộ. Item profiles có thể hỗ trợ item mới; thông tin demographic có thể hỗ trợ user mới. Kết hợp nhiều mô hình cần đánh giá trên dữ liệu giữ riêng, không mặc định luôn tốt hơn từng mô hình.
+
+\topic{recevaluation}{Evaluation of recommendations}
+
+% Lec5_ RecommenderSystems.pdf, PDF pp. 43--53.
+\algsummary{Đánh giá khả năng dự đoán rating chưa thấy và chất lượng danh sách gợi ý.}{RMSE đo sai số rating; metric xếp hạng đo liệu item phù hợp có nằm gần đầu danh sách. Hai mục tiêu không đồng nhất.}{}{Tập test rating giữ riêng $\mathcal T$, prediction của mô hình đã fit, danh sách top-$k$ và nhãn relevant nếu đánh giá ranking.}{RMSE, precision hoặc metric xếp hạng theo đề, cùng diễn giải.}{Chọn tham số trên validation; chốt mô hình rồi dự đoán test. Tính từng lỗi và metric trên đúng tập được hỏi.}
+
+\key{RMSE}
+\[
+\mathrm{RMSE}
+=\sqrt{\frac1{|\mathcal T|}\sum_{(x,i)\in\mathcal T}
+(r_{xi}-\hat r_{xi})^2}.
+\]
+Ví dụ Pr15(b): prediction $(15/4,7/2)$ cho rating thật $(4,3)$ có lỗi $(1/4,-1/2)$. Do đó $\mathrm{RMSE}=\sqrt{[(1/4)^2+(-1/2)^2]/2}=\sqrt{5/32}\approx0.3953$.
+
+\begin{examtable}{@{}p{.25\columnwidth}p{.60\columnwidth}@{}}
+\toprule
+Metric & Cách đọc / tính \\
+\midrule
+Precision@10 & Số relevant items trong 10 gợi ý đầu chia 10. Có 7 relevant trong 10 thì bằng $0.7$. \\
+Spearman & Tương quan giữa thứ hạng dự đoán và thứ hạng thật; xử lý ties nhất quán. \\
+Coverage & Nêu rõ tỷ lệ user có thể nhận dự đoán hay tỷ lệ item được phủ, rồi chọn mẫu số tương ứng. \\
+Binary precision & $\mathrm{TP}/(\mathrm{TP}+\mathrm{FP})$: tỷ lệ dự đoán positive thực sự positive. \\
+ROC & Đường TPR theo FPR khi thay threshold; $\mathrm{TPR}=\mathrm{TP}/(\mathrm{TP}+\mathrm{FN})$, $\mathrm{FPR}=\mathrm{FP}/(\mathrm{FP}+\mathrm{TN})$. \\
+\bottomrule
+\end{examtable}
+
+\begin{algpseudo}
+fit trên train; chọn mô hình và hyperparameters bằng validation\\
+chốt tham số; dự đoán test mà không dùng rating test để cập nhật\\
+RMSE: cộng bình phương lỗi, chia số rating test rồi lấy căn\\
+ranking: lập top-$k$, đếm relevant hoặc so thứ hạng theo đề\\
+báo metric cùng tập đánh giá và quy tắc relevance/coverage
+\end{algpseudo}
+
+\unitverification
+\key{Kiểm tra} RMSE thấp hơn là tốt hơn về sai số rating; bình phương làm lỗi lớn bị phạt mạnh. Lấy căn sau khi tính trung bình các bình phương, không lấy trung bình trị tuyệt đối. RMSE không trực tiếp đo diversity hoặc độ phù hợp ngữ cảnh.
+
+\key{Tránh data leakage} Không dùng test ratings để fit, cập nhật SGD, early stopping, chọn hyperparameters hoặc chọn mô hình rồi coi điểm trên chính test đó là đánh giá độc lập. Các thao tác lựa chọn dùng validation; test dành cho đánh giá cuối.
+
+\unitadvanced
+\key{So sánh công bằng} Trên cùng tập test cố định, giảm SSE cũng giảm RMSE. Khác tập test, số rating hoặc tập ứng viên thì các con số không tự so sánh trực tiếp. Prediction diversity và context cần tiêu chí riêng; kiểm tra thêm coverage để biết mô hình phục vụ được bao nhiêu user/item. Tổng hợp RMSE tốn $O(|\mathcal T|)$ sau khi đã có predictions.
 
 \lecture{6}{Link analysis \& graph ranking}
 \topic{pagerank}{PageRank}
