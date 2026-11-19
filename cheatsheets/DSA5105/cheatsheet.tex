@@ -513,6 +513,7 @@ $S=QK^\top/\sqrt{d_k}\in\R^{N\times N}$,
 $a_{ij}=e^{S_{ij}}/\sum_\ell e^{S_{i\ell}}$,
 $Y=AV\in\R^{N\times d_v}$.
 Row $i$: query; col $j$: key. Softmax theo keys, từng row; $a_{ij}\ge0$, $\sum_j a_{ij}=1$.
+$Q,K\in\R^{N\times d_k}$: $QK^\top\in\R^{N\times N}$ (token-to-token); $Q^\top K\in\R^{d_k\times d_k}$ (Q/K feature-to-feature). Attention dùng tích đầu.
 Với entries độc lập, mean $0$, variance $1$: $\Var(q^\top k)=d_k$; chia $\sqrt{d_k}$ đưa variance về $1$, giảm saturation.
 \run{(1) Tính $Q,K,V$; (2) dot products $QK^\top$; (3) chia $\sqrt{d_k}$, cộng mask nếu có; (4) exponentiate, chia row sum; (5) weighted sum value rows $Y_{i,:}=\sum_j a_{ij}V_{j,:}$.}
 \ex{Sl.15--16: $q=1,d_k=1$, $k=(0,\log2,0)$; value rows $(1,0),(0,2),(1,2)$. Scores $(0,\log2,0)$; exp $(1,2,1)$, sum $4$; $a=(1/4,1/2,1/4)$. $y=(1,0)/4+(0,2)/2+(1,2)/4=(1/2,3/2)$.}
