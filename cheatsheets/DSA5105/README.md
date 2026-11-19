@@ -24,6 +24,8 @@ subjects. The supplied original remains outside the repository.
   permutation invariance/equivariance, shared message passing, and graph readout.
   No past-paper graph-kernel, spectral-clustering, LS-SVM, leave-one-out, or
   shortest-path exercises are included. Kernel PCA and SARSA remain omitted.
+- Topics 27–30: Transformers, prioritizing attention arithmetic, Q/K/V dependency,
+  additive and causal masks, and permutation equivariance with its conditions.
 
 The syllabus explicitly excludes the Tuesday Group 2 Week 8 special lecture
 from the final and quizzes. The LLM-as-optimizer special topic is omitted.
@@ -60,22 +62,24 @@ Require no overfull boxes or missing glyphs in the build log. Auxiliary files
 and previews belong in ignored `tmp/pdfs/`. The course PDF is intentionally
 tracked, following the convention of `cheatsheets/DSA5104/`.
 
-### Lecture 13 reserve
+### Transformers / Lecture 13
 
-The current content fits within the first seven columns, leaving the fourth
-column of page 2 free for Lecture 13 (approximately 48.5 mm wide by 288 mm high).
-Repeated explanatory prose is shortened; all 26 topics, 35 procedures, 42
-examples, and 856 inline formulas are retained. Append new slide-backed topics
-at the Lecture 13 comment before `\end{multicols*}` so that content continues
-in order. Keep the existing font size, margins, and column gutters.
+The reserved space now holds four slide-backed Transformer topics, continuing
+from column 3 into column 4 on page 2. The sheet retains two A4 pages, the
+6.4 pt body font, 7.3 pt baseline, and sequential column flow. Existing topics
+01–26 keep their formulas, procedures, and examples; the shared example legend
+now says hand calculations because some new examples come from the lecture.
+The complete sheet has 30 topics, 39 procedures, 48 examples, and 969 inline
+formulas. Keep the existing font size, margins, and column gutters.
 
 ## Hand-calculation coverage
 
 Every numbered topic has a `CHẠY` procedure and an `EX` example. The sheet
-contains 35 procedure blocks and 42 example boxes; procedures that share the
-same operations can cover related methods together. New numerical examples
-are authored arithmetic illustrations, not past-paper questions. Keep their
-intermediate calculations, update order, and loss normalization when editing.
+contains 39 procedure blocks and 48 example boxes; procedures that share the
+same operations can cover related methods together. Numerical examples combine
+lecture examples with authored arithmetic illustrations, as recorded in the
+source map; no past-paper questions are used. Keep intermediate calculations,
+update order, and loss normalization when editing.
 
 | Topic | Sequential procedure and example coverage |
 | --- | --- |
@@ -105,6 +109,10 @@ intermediate calculations, update order, and loss normalization when editing.
 | 24 | Epsilon-greedy sampling probabilities; nonterminal and terminal Q-learning updates. |
 | 25 | Relabel features and adjacency consistently; prove equivariance/invariance or disprove them with numerical counterexamples. |
 | 26 | Synchronous message passing on a four-node chain, two layers, relabelled outputs, and invariant sum readouts. |
+| 27 | Compute projections, scaled logits, row softmax, and weighted values; work the lecture's three-key example and compare scaled/unscaled weights. |
+| 28 | Trace changes to Q, K, V, or an input token; recompute a value perturbation, key perturbation, and zero query from the same starting data. |
+| 29 | Apply additive masks before softmax, renormalize allowed keys, and calculate all outputs of a three-token causal example. |
+| 30 | Recompute attention after a token swap, verify output equivariance, and use a fixed causal mask as a numerical counterexample. |
 
 For gradient examples, calculate every gradient using the same old weights
 before applying the update. EM explicitly uses the new weighted mean in the
@@ -129,6 +137,10 @@ into this repository. Page numbers are 1-based PDF pages.
 | 19–20 | `DSA5105/Lec10_RL_MDP_DP.pdf`, pp. 13–44 | Separate policy expectation from optimality maximization under discounted-MDP assumptions. |
 | 21–24 | `DSA5105/Lec11_RL.pdf`, pp. 8–20, 25–39 | Distinguish exact model-based backups, sampled returns, TD evaluation, and Q-learning. |
 | 25–26 | `DSA5105/DSA5105_Week12_GNN.pptx`, slides 5–18, 22, 32–33 | Relabel both feature rows and adjacency rows/columns; distinguish node equivariance from graph invariance; derive shared-layer symmetry and use the two-layer chain example with sum readout. |
+| 27 | `DSA5105/Lec13_Transformers.pdf`, pp. 8–16 | Use row softmax, projection dimensions, and scaling by the key dimension; reproduce the three-key attention example and the scaled-logit comparison. |
+| 28 | `DSA5105/Lec13_Transformers.pdf`, pp. 9–11, 16–17 | Derive separate Q/K/V dependencies from the computation graph; distinguish a tensor perturbation from an input change and calculate explicit perturbations. |
+| 29 | `DSA5105/Lec13_Transformers.pdf`, pp. 4, 17, 29–32 | Reproduce the masked-key calculation; derive a three-token causal calculation with shifted targets, diagonal access, and zero future weights. |
+| 30 | `DSA5105/Lec13_Transformers.pdf`, pp. 22–25, 32 | Derive attention equivariance without order information; calculate a token-swap example and fixed-causal-mask counterexample. Joint permutation of a general mask is a derived extension of the lecture proof. |
 | Scope | `DSA5105/syllabus.pdf`, p. 1 | Preserve the special-lecture exclusion; do not infer a second-half-only final. |
 
 Ridge primarily uses mean half-squared loss, matching the supplied notes and
@@ -151,5 +163,5 @@ Before accepting a rebuilt PDF, require no missing glyphs or overfull boxes,
 verify exactly two A4 pages, and inspect both rendered pages. Repository
 LaTeX validators cover the app's JSON content; compiling and visually
 checking this standalone document remain necessary. Also render every inline
-expression with the document's macros, check that all 26 topics retain a
+expression with the document's macros, check that all 30 topics retain a
 procedure and example, and independently recompute changed numerical examples.

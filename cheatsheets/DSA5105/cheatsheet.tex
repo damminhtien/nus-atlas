@@ -88,7 +88,7 @@
 \bodystyle
 \begin{multicols*}{4}
 \topic{01}{DSA5105 / SLIDES: ERM}
-\key{Cách dùng} CHẠY: thứ tự tính; EX: ví dụ số tự đặt. Update cùng bước dùng old parameters nếu không ghi khác. $\log$ tự nhiên; entropy dùng $\log_2$.
+\key{Cách dùng} CHẠY: thứ tự tính; EX: ví dụ tính tay. Update cùng bước dùng old parameters nếu không ghi khác. $\log$ tự nhiên; entropy dùng $\log_2$.
 \key{Risk / generalization}
 $D=\{(x_i,y_i)\}_{i=1}^n$, $x_i\in\R^d$; samples là rows của $X$.
 $\widehat R(f)=\frac1n\sum_i\ell(f(x_i),y_i),$ $ R(f)=\E\ell(f(X),Y).$
@@ -505,6 +505,46 @@ Mean/max invariant; graph MLP $\rho(r(H))$ cũng vậy.
 \ex{Order mới $(b,a,d,c)$: $X'=(2,1,3,0)^\top$, neighbor-index sets $(\{2,4\},\{1\},\{4\},\{1,3\})$. First new row: $2+.5(1+0)=2.5$; tính tiếp cho $H'^{(1)}=(2.5,2,3,2.5)^\top=PH^{(1)}$. Layer 2 reorder $(4.75,3.25,4.25,5.25)^\top$; sums vẫn $10$, $17.5$. Node outputs equivariant; graph readout invariant.}
 \trap{$\{1,1\}$ và $\{1,1,1\}$ có sum $2,3$ nhưng cùng mean/max $1$: mean/max mất multiplicity. Invariant không bảo đảm phân biệt mọi graph. CNN translation-equivariant, không với arbitrary node permutations.}
 
-% Lecture 13: append slide-backed topics here; keep sequential column flow.
+\topic{27}{TRANSFORMERS / ATTENTION}
+$X\in\R^{N\times D}$: token rows.
+$Q=XW_Q$, $K=XW_K$, $V=XW_V$;
+$W_Q,W_K\in\R^{D\times d_k}$, $W_V\in\R^{D\times d_v}$.
+$S=QK^\top/\sqrt{d_k}\in\R^{N\times N}$,
+$a_{ij}=e^{S_{ij}}/\sum_\ell e^{S_{i\ell}}$,
+$Y=AV\in\R^{N\times d_v}$.
+Row $i$: query; col $j$: key. Softmax theo keys, từng row; $a_{ij}\ge0$, $\sum_j a_{ij}=1$.
+Với entries độc lập, mean $0$, variance $1$: $\Var(q^\top k)=d_k$; chia $\sqrt{d_k}$ đưa variance về $1$, giảm saturation.
+\run{(1) Tính $Q,K,V$; (2) dot products $QK^\top$; (3) chia $\sqrt{d_k}$, cộng mask nếu có; (4) exponentiate, chia row sum; (5) weighted sum value rows $Y_{i,:}=\sum_j a_{ij}V_{j,:}$.}
+\ex{Sl.15--16: $q=1,d_k=1$, $k=(0,\log2,0)$; value rows $(1,0),(0,2),(1,2)$. Scores $(0,\log2,0)$; exp $(1,2,1)$, sum $4$; $a=(1/4,1/2,1/4)$. $y=(1,0)/4+(0,2)/2+(1,2)/4=(1/2,3/2)$.}
+\ex{$d_k=64$, raw scores $(0,8)$: chia $8$ thành $(0,1)$, weights $\approx(.269,.731)$; unscaled $\approx(.0003,.9997)$. Scale \emph{trước} softmax, dùng $d_k$, không $d_v$.}
+
+\topic{28}{Q / K / V DEPENDENCY}
+Xét một layer, giữ các tensors khác cố định.
+Đổi $Q_{r,:}$: chỉ row $r$ của $S,A,Y$ có thể đổi.
+Đổi $K_{s,:}$: col $s$ của $S$ có thể đổi; softmax renormalize \emph{mọi} weight trong từng row đọc key $s$.
+Đổi $V_{s,:}$: $A$ giữ nguyên; $\Delta Y_{i,:}=a_{is}\Delta V_{s,:}$.
+Đổi input token $x_s$ trong self-attention có thể đổi cả $q_s,k_s,v_s$: nhiều outputs có thể đổi.
+\run{(1) Xác định đổi tensor hay input; (2) trace $Q,K\to S\to A$, $A,V\to Y$; (3) giữ mask, bỏ edges bị cấm; (4) tính lại softmax nếu $Q/K$ đổi, chỉ weighted sum nếu riêng $V$ đổi.}
+\ex{Dùng mục 27, mỗi lần trở về data gốc. Chỉ $v_3:(1,2)\to(5,2)$: $a$ giữ, $\Delta y=(4,0)/4=(1,0)$, $y^+=(3/2,3/2)$. Chỉ $k_2:\log2\to0$: scores $(0,0,0)$, $a^+=(1/3,1/3,1/3)$, $y^+=(2/3,4/3)$. Chỉ $q:1\to0$ cũng cho uniform weights.}
+
+\topic{29}{MASKING / CAUSAL ACCESS}
+$L=S+M$, $A=\operatorname{softmax}_{row}(L)$.
+$M_{ij}=0$ nếu được đọc; $M_{ij}=-\infty$ nếu cấm.
+Causal: được đọc iff $j\le i$, kể cả chính nó. Shifted targets: input tại $i$ dự đoán token kế tiếp; train mọi positions song song, không đọc future input.
+\run{(1) Lập allowed keys từng query; (2) cộng mask vào scaled scores; (3) $e^{-\infty}=0$, normalize trên allowed keys; (4) nhân $V$; (5) kiểm blocked weights $0$, row sum $1$.}
+\ex{Sl.17, data mục 27, cấm key 3: $L=(0,\log2,-\infty)$, exp $(1,2,0)$; $a=(1/3,2/3,0)$; $y=(1,0)/3+2(0,2)/3=(1/3,4/3)$.}
+\ex{Ba queries đều $q_i=1$, cùng $K,V$ mục 27, causal mask: $A=\left[\begin{smallmatrix}1&0&0\\1/3&2/3&0\\1/4&1/2&1/4\end{smallmatrix}\right]$. Output rows: $(1,0)$, $(1/3,4/3)$, $(1/2,3/2)$. Future key/value không ảnh hưởng earlier outputs.}
+\trap{Mask \emph{trước} softmax; logit $0$ vẫn có exp $1$. Zero weights sau softmax phải renormalize. Row toàn $-\infty$ không có softmax hợp lệ.}
+
+\topic{30}{ATTENTION / EQUIVARIANCE}
+Không positional encoding, không fixed-order mask; shared projections. Với row permutation $P$:
+$Q'=PQ,K'=PK,V'=PV$;
+$S'=PSP^\top$;
+$A'=\operatorname{softmax}_{row}(PSP^\top)=PAP^\top$;
+$Y'=A'V'=PAV=PY$.
+Shared rowwise FFN/LayerNorm, residual và multi-head cũng giữ equivariance.
+\run{(1) Permute token rows; (2) tính lại $Q,K,V,S,A,Y$; (3) so $Y'$ với $PY$, không với $Y$; (4) kiểm position information/mask có đổi theo $P$ hay bị giữ cố định.}
+\ex{$X=(0,1)^\top$, $W_Q=W_K=W_V=1$, $d_k=1$: $Q=K=V=X$, $S=\left[\begin{smallmatrix}0&0\\0&1\end{smallmatrix}\right]$. Đặt $t=e/(1+e)\approx.731$. $A$ rows $(1/2,1/2),(1-t,t)$; $Y=(1/2,t)^\top$. Swap: $X'=(1,0)^\top$, $S'=\left[\begin{smallmatrix}1&0\\0&0\end{smallmatrix}\right]$, $Y'=(t,1/2)^\top=PY$. Giữ causal mask cố định: $Y_c=(0,t)^\top$, $Y'_c=(1,1/2)^\top\ne PY_c$.}
+\trap{Equivariant: outputs reorder; không phải invariant. Với attention $F$ có mask: cần cùng permute $M'=PMP^\top$ để có $F(PX;M')=PF(X;M)$. Fixed causal mask hoặc fixed position embeddings không bảo đảm arbitrary permutation equivariance.}
 \end{multicols*}
 \end{document}
