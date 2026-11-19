@@ -210,14 +210,17 @@
   \unitfield{2}{Thực hiện}{INPUT / GIẢ THIẾT}{#4}%
   \algfield{OUTPUT}{#5}%
   \algfield{Cách làm}{#6}\par\endgroup}
+\makeatletter
 \newenvironment{algpseudo}{%
   \par\addvspace{2pt}\noindent
   \setlength{\parskip}{0pt}%
   Mã giả:\par\nobreak
   \begin{list}{}{\setlength{\leftmargin}{1em}\setlength{\topsep}{0pt}%
-    \setlength{\partopsep}{0pt}\setlength{\parsep}{0pt}}%
+    \setlength{\partopsep}{0pt}\setlength{\parsep}{0pt}%
+    \@beginparpenalty=10000\relax}% Keep the label with the first code line.
   \item\relax
 }{\end{list}\par\addvspace{3pt}}
+\makeatother
 
 % A display that does not fit may move by itself; keep its lead-in in the column.
 \AtBeginDocument{\raggedright\predisplaypenalty=250\relax\allowdisplaybreaks[1]}
@@ -1300,27 +1303,50 @@ Xác suất khớp & $J(x,y)$ & $1-\theta/\pi$ & Tùy $D,a$ và mô hình chiế
 \end{examtable}
 
 \lecture{3}{Clustering}
+
+\key{Bài toán chung} Cho các điểm và một cách đo khoảng cách, tìm những nhóm điểm gần nhau mà không cần nhãn lớp khi phân cụm. Cách biểu diễn cụm và khoảng cách giữa các cụm quyết định kết quả.
+
+\key{Chọn phương pháp} Cần cây gộp cụm: hierarchical. Cần $K$ nhóm với mục tiêu bình phương khoảng cách Euclid: K-means. Dữ liệu vượt RAM, cụm gần Gaussian theo trục: BFR. Cần nhiều đại diện để mô tả hình dạng cụm: CURE. Có nhãn thật để đánh giá phân hoạch: purity.
+
 \topic{hierarchical}{Hierarchical agglomerative clustering}
 
-\algsummary{Dựng cây cho biết các cụm được gộp theo thứ tự nào và ở khoảng cách nào.}{Gộp cặp gần nhất; định nghĩa khoảng cách giữa hai cụm quyết định cây.}{\textbf{Đọc cây gộp cụm (dendrogram):}\enspace Bắt đầu từ các cụm một điểm; mỗi vòng gộp hai cụm có khoảng cách linkage nhỏ nhất. Ghi khoảng cách đó làm độ cao của lần gộp.
+% Lec3_Clustering.pdf, PDF pp. 15--31.
+\algsummary{Dựng cây gộp cụm hoặc dừng ở một phân hoạch có $K$ cụm.}{Agglomerative đi từ các cụm một điểm lên các cụm lớn hơn; linkage cho biết cặp nào được gộp tiếp.}{}{ $N$ điểm, dissimilarity $d$, loại linkage, quy tắc phá hòa và điều kiện dừng.}{Các phép gộp, độ cao dendrogram và các cụm ở mức dừng.}{Chọn cặp có tiêu chí nhỏ nhất; gộp; cập nhật khoảng cách tới cụm mới. Từ $N$ cụm một điểm xuống $K$ cụm cần $N-K$ phép gộp.}
 
-\begin{itemize}
-\item Single: lấy khoảng cách nhỏ nhất trong các cặp chéo hai cụm.
-\item Complete: lấy khoảng cách lớn nhất trong các cặp chéo.
-\item Average: lấy trung bình của mọi khoảng cách chéo.
-\item Clustroid: chọn một điểm thật trong cụm, thường là điểm có tổng khoảng cách đến các điểm cùng cụm nhỏ nhất. So các điểm đại diện nếu đề yêu cầu clustroid linkage.
-\item Average linkage có thể cập nhật từ hai khoảng cách đã biết: $d(A\cup B,C)=\frac{|A|d(A,C)+|B|d(B,C)}{|A|+|B|}$. Với metric tự định nghĩa, tính lại đúng theo định nghĩa; khi hòa, áp dụng đúng thứ tự phá hòa.
-\end{itemize}}{Điểm, khoảng cách, loại linkage và quy tắc phá hòa.}{Dendrogram gồm các phép gộp và độ cao.}{Bắt đầu với mỗi điểm là một cụm. Chọn cặp gần nhất, ghi khoảng cách làm độ cao, rồi tính lại khoảng cách từ cụm mới tới các cụm còn lại.}
+\key{Ba linkage từ khoảng cách chéo} Với hai cụm khác nhau $A,B$:
+\begin{align*}
+d_{\rm single}(A,B)&=\min_{a\in A,b\in B}d(a,b),\\
+d_{\rm complete}(A,B)&=\max_{a\in A,b\in B}d(a,b),\\
+d_{\rm avg}(A,B)&=\frac{\sum_{a\in A,b\in B}d(a,b)}{|A||B|}.
+\end{align*}
+Centroid linkage dùng $d(\mu_A,\mu_B)$ với $\mu_A=|A|^{-1}\sum_{a\in A}a$. Clustroid linkage dùng $d(c_A,c_B)$, trong đó $c_A$ là một điểm thật trong $A$. Chọn $c_A$ theo tiêu chí đề nêu: tổng khoảng cách, tổng bình phương khoảng cách, hoặc khoảng cách lớn nhất tới các điểm còn lại là nhỏ nhất. Chỉ centroid mới cần phép lấy trung bình tọa độ.
+
+\key{Cập nhật sau khi gộp} Đặt $U=A\cup B$. Với cụm còn lại $C$:
+\begin{align*}
+d_{\rm single}(U,C)&=\min\{d_{\rm single}(A,C),d_{\rm single}(B,C)\},\\
+d_{\rm complete}(U,C)&=\max\{d_{\rm complete}(A,C),d_{\rm complete}(B,C)\},\\
+d_{\rm avg}(U,C)&=\frac{|A|d_{\rm avg}(A,C)+|B|d_{\rm avg}(B,C)}{|A|+|B|}.
+\end{align*}
+Centroid mới là trung bình có trọng số theo cỡ cụm; clustroid phải chọn lại theo tiêu chí đã cho.
+
+\key{Nếu đề yêu cầu đường kính sau gộp} Đường kính là khoảng cách lớn nhất giữa hai điểm trong cùng cụm. Tính cả các khoảng cách nội bộ đã có:
+\[
+\operatorname{diam}(A\cup B)=\max\{\operatorname{diam}(A),\operatorname{diam}(B),d_{\rm complete}(A,B)\}.
+\]
+Nếu wording là ``minimize resulting diameter'', dùng đại lượng này để so các phép gộp; đừng bỏ qua đường kính của hai cụm cha.
 
 \begin{algpseudo}
 $\mathcal C\gets$ các cụm một điểm; $T\gets$ cây rỗng\\
-khi $|\mathcal C|>1$: chọn cặp $(A,B)$ có linkage nhỏ nhất, phá hòa theo đề\\
-\quad ghi phép gộp ở độ cao $\operatorname{linkage}(A,B)$ vào $T$\\
-\quad thay $A,B$ bằng $A\cup B$; cập nhật linkage tới cụm mới\\
-trả $T$
+khi chưa đạt điều kiện dừng:\\
+\quad tính tiêu chí gộp cho từng cặp cụm; chọn nhỏ nhất, phá hòa theo đề\\
+\quad ghi phép gộp và giá trị tiêu chí làm độ cao trong $T$\\
+\quad thay $A,B$ bằng $U=A\cup B$; cập nhật cỡ, đại diện và linkage\\
+trả $T$ cùng các cụm còn lại
 \end{algpseudo}
 
-\begin{example}{A1-Q3}{A1-Q3(b) · Dendrogram: complete linkage với khoảng cách tỉ số}
+\key{Tính nhanh (P24-Q3 / A1-Q3, tr.~\pageref*{question:P24-Q3})} Với $A=\{1,2\}$, $B=\{4\}$ và $C=\{8\}$, các khoảng cách chéo từ $A\cup B$ tới $C$ là $7,6,4$. Single bằng 4, complete bằng 7, average bằng $17/3$. Cập nhật average cũng cho $[2(13/2)+1(4)]/3=17/3$; trung bình đều $(13/2+4)/2=21/4$ là sai.
+
+\begin{example}{A1-Q3}{A1-Q3(b), tr.~\pageref*{question:A1-Q3}: dendrogram với khoảng cách tỉ số}
 \begin{diagram}
 \begin{tikzpicture}[x=.80cm,y=.46cm, every node/.style={font=\normalsize}]
 \foreach \i/\v in {0/1,1/2,2/4,3/8,4/16,5/32,6/64,7/128}
@@ -1341,10 +1367,14 @@ Chiều cao ghi theo $d(x,y)=\max(x,y)/\min(x,y)$, cách đều để dễ đọ
 % DSA5101 Exam Practice Questions.pdf, PDF page(s) 8.
 
 \unitverification
-\key{Bẫy} Độ cao gộp theo single có thể nhỏ hơn đường kính của cụm vừa gộp. Khi hòa, theo đúng quy tắc của đề.
+\key{Kiểm tra} Sau mỗi phép gộp, số cụm giảm 1 và tổng cỡ cụm vẫn là $N$. Dendrogram ghi giá trị tiêu chí ở lúc gộp, không tự thay bằng khoảng cách Euclid nếu đề đã đổi $d$. Khi hòa, áp dụng đúng rank hoặc thứ tự đã cho.
+
+\key{Bẫy} Single linkage có thể nối một chuỗi điểm dài (chaining): độ cao gộp nhỏ nhưng đường kính cụm lớn. Average linkage lấy trung bình mọi cặp chéo nên phải dùng cỡ cụm khi cập nhật. Clustroid là điểm thật; centroid có thể nằm ngoài tập dữ liệu, nên không dùng centroid để ``lấy trung bình'' các chuỗi ký tự chỉ có edit distance.
 
 \unitadvanced
-\key{Chi phí bản trực tiếp} Lưu mọi khoảng cách cặp cần $O(n^2)$ bộ nhớ. Nếu mỗi lần gộp quét lại mọi cặp cụm để tìm linkage nhỏ nhất, $n-1$ lần gộp tốn $O(n^3)$ thời gian.
+\key{Cohesion và điều kiện dừng} Có thể đo độ chặt bằng đường kính, khoảng cách trung bình nội bộ hoặc mật độ. Tiêu chí này phải được định nghĩa trước khi so hai phương án gộp. Có thể dừng khi đủ $K$ cụm, khi phép gộp kế tiếp vượt ngưỡng đường kính, hoặc khi mật độ không còn đạt yêu cầu.
+
+\key{Chi phí bản trực tiếp} Lưu mọi khoảng cách cặp cần $O(N^2)$ bộ nhớ. Với bảng linkage và cập nhật như trên, quét lại mọi cặp cụm ở mỗi lần gộp cho tổng thời gian $O(N^3)$.
 
 \ask{Pr7}{Pr7}{}
 Five text fragments have the following dissimilarities.
@@ -1432,15 +1462,25 @@ Nút $j$ & 1 & 2 & 3 & 4 & 5 & 6 & 7 \\
 \finalanswer{(a) Cả ba cây gộp lần lượt $2^j$ vào cụm đã chứa các điểm nhỏ hơn, với $j=1,\ldots,7$. Độ cao: (i) $2^{j-1}$; (ii) $2^j-1$; (iii) $2^j-(2^j-1)/j$. (b) Ghép $(1,2),(4,8),(16,32),(64,128)$ ở mức 2; ghép hai cặp đầu và hai cặp cuối ở mức 8; gộp hai cụm còn lại ở mức 128.}
 \topic{kmeans}{K-means / Lloyd's algorithm}
 
-\algsummary{Chia điểm thành $K$ cụm để giảm tổng bình phương khoảng cách từ điểm tới tâm cụm.}{Khi cố định tâm, gán gần nhất giảm SSE; khi cố định cụm, trung bình là tâm tốt nhất.}{\textbf{Khi dùng:}\enspace Đề cho $K$ tâm hoặc một cách gán điểm ban đầu. Mục tiêu là giảm SSE, tức tổng bình phương khoảng cách của mỗi điểm tới tâm cụm của nó.}{Tập điểm, $K$ tâm ban đầu và điều kiện dừng.}{Nhãn cụm, các tâm cuối và SSE.}{Lặp hai bước: gán từng điểm vào tâm gần nhất, rồi lấy trung bình từng cụm làm tâm mới.}
+% Lec3_Clustering.pdf, PDF pp. 32--52.
+\algsummary{Chia các điểm Euclid thành $K$ cụm để giảm tổng bình phương khoảng cách tới tâm.}{Khi tâm cố định, gán điểm vào tâm gần nhất; khi nhãn cố định, lấy trung bình từng cụm. Hai bước đều không tăng mục tiêu.}{}{ $N$ điểm $x_i\in\mathbb R^d$, $K$, tâm hoặc nhãn khởi tạo, quy tắc phá hòa và dừng.}{Ma trận nhãn $R$, các tâm $Z$, SSE hoặc loss chuẩn hóa theo đề.}{Xem trạng thái đầu là tâm hay nhãn. Tâm đã có thì assignment trước; nhãn đã có thì update trước. Sau đó lặp hai bước.}
 
-\steps{
-\item Assign: gán mỗi điểm vào tâm gần nhất.
-\item Update: thay tâm của mỗi cụm $C$ bằng trung bình $\mu_C=\sum_{x\in C}x/|C|$.
-\item Lặp cho đến khi không đổi hoặc mức giảm SSE đủ nhỏ. Xử lý cụm rỗng theo quy ước đề.
-}
+\key{Mục tiêu và nhãn} $R\in\{0,1\}^{N\times K}$, mỗi hàng có đúng một số 1: $\sum_k r_{ik}=1$. Đặt $n_k=\sum_i r_{ik}$:
+\[
+\mathrm{SSE}=\sum_{i=1}^N\sum_{k=1}^K r_{ik}\|x_i-z_k\|^2,
+\qquad J(R,Z)=\frac{\mathrm{SSE}}{2N}.
+\]
+Hệ số $1/(2N)$ giữ nguyên nghiệm tối ưu nhưng đổi giá trị loss. Khi tính đáp số, kiểm tra đề hỏi SSE hay $J$.
+
+\key{Hai bước tính}
+\[
+k^*(i)=\arg\min_k\|x_i-z_k\|^2,
+\qquad
+z_k=\frac{\sum_i r_{ik}x_i}{n_k}\quad(n_k>0).
+\]
 
 \begin{algpseudo}
+khởi tạo tâm; nếu đã cho nhãn, tính tâm từ nhãn trước\\
 lặp:\\
 \quad với mỗi điểm $x$: $c(x)\gets\arg\min_j\|x-\mu_j\|^2$\\
 \quad với cụm $j$ không rỗng: $\mu_j\gets\operatorname{mean}\{x:c(x)=j\}$\\
@@ -1468,13 +1508,26 @@ lặp:\\
 Chấm đen: cụm $ABDE$; vòng rỗng: cụm $CF$; dấu chéo: tâm mới. Tâm mỗi cụm là trung bình tọa độ; $B$ ở lại cụm 1 vì $3^2+1^2<3^2+2^2$.
 \end{example}
 
+\key{SSE và loss trong ví dụ} Với sáu điểm của Pr8, phân hoạch đang dừng có SSE 58 nên $J=58/(2\cdot6)=29/6$. Phân hoạch theo hai cột có SSE 16 nên $J=4/3$. Cả hai cách báo loss đều cho thấy điểm dừng đầu tiên chưa tối ưu toàn cục.
+
 % DSA5101 Exam Practice Questions.pdf, PDF page(s) 9.
 
 \unitverification
-\key{Bẫy} Mỗi bước không tăng SSE, nhưng nghiệm dừng có thể không tối ưu toàn cục. Một vòng thường tốn $O(nKd)$ với $n$ điểm, $d$ chiều.
+\key{Kiểm tra} Nhãn không đổi sau assignment và tâm không đổi sau update thì đạt điểm cố định. Loss giảm rất ít chỉ cho biết đạt điều kiện dừng đã chọn. Với cụm rỗng, $n_k=0$ nên công thức trung bình không xác định; xử lý theo đề.
+
+\key{Bẫy và dữ liệu} Các khởi tạo có thể cho nghiệm khác nhau. Chuẩn hóa feature khi thang đo chênh lệch vì squared Euclidean bị chi phối bởi tọa độ có giá trị lớn. K-means thường khó biểu diễn các cụm phi lồi trong không gian gốc, như hai vòng đồng tâm. Mỗi vòng không tăng SSE không bảo đảm tìm được nghiệm tốt nhất toàn cục.
 
 \unitadvanced
-\key{Vì sao giảm SSE} Với tâm cố định, gán mỗi điểm vào tâm gần nhất không tăng SSE; với nhãn cố định, cập nhật tâm bằng trung bình cụm tối thiểu hóa SSE. Do đó mỗi vòng không tăng mục tiêu, nhưng chỉ hội tụ tới nghiệm cục bộ.
+\key{Vì sao tâm mới là trung bình} Với nhãn cố định:
+\[
+\frac{\partial J}{\partial z_k}
+=\frac1N\sum_i r_{ik}(z_k-x_i)=0
+\quad\Longrightarrow\quad
+z_k=\frac{\sum_i r_{ik}x_i}{n_k}.
+\]
+Kết hợp với bước chọn tâm gần nhất cho $J^{(t+1)}\le J^{(t)}$. Hai phép tối ưu theo từng khối này không giải trực tiếp bài toán tối ưu đồng thời theo $R,Z$.
+
+\key{Chi phí} Một vòng assignment/update trực tiếp tốn $O(NKd)$ thời gian; lưu dữ liệu và tâm cần $O(Nd+Kd)$, ngoài nhãn. Không cần lưu ma trận $R$ dày: có thể lưu một nhãn nguyên cho mỗi điểm.
 
 \ask{Pr8}{Pr8}{}
 Six locations are $A=(0,0)$, $B=(0,2)$, $C=(0,4)$, $D=(6,0)$, $E=(6,2)$, $F=(6,4)$. For $k=2$, an initial assignment step has produced clusters $\{A,B,D,E\}$ and $\{C,F\}$.
@@ -1502,13 +1555,17 @@ Six locations are $A=(0,0)$, $B=(0,2)$, $C=(0,4)$, $D=(6,0)$, $E=(6,2)$, $F=(6,4
 \finalanswer{(a) $\mu_1=(3,1)$, $\mu_2=(3,4)$. (b) Khoảng cách bình phương của $B$ là $(10,13)$: giữ $B$ ở cụm 1; nhãn và tâm không đổi nên đã tới điểm cố định. (c) SSE $58>16$ nên điểm dừng không tối ưu toàn cục. Thử nhiều khởi tạo và lấy SSE nhỏ nhất.}
 \topic{seeding}{K-means++-style seeding, choosing K \& stopping}
 
-\algsummary{Chọn các tâm ban đầu sao cho chúng phủ được nhiều vùng của dữ liệu.}{Điểm xa mọi tâm đã chọn đại diện cho vùng chưa được phủ.}{}{Tập điểm, số tâm $K$.}{$K$ tâm khởi tạo.}{Chọn đều tâm đầu tiên. Sau đó lấy xác suất chọn từng điểm theo bình phương khoảng cách tới tâm gần nhất đã chọn.}
+% Lec3_Clustering.pdf, PDF pp. 53--58.
+\algsummary{Chọn tâm khởi tạo, số cụm và điều kiện dừng cho K-means.}{Điểm xa những tâm đã chọn cho thông tin về vùng chưa được phủ. Khởi tạo tốt giúp giảm rủi ro dừng ở phân hoạch kém.}{}{Tập điểm; $K$ nếu đã cố định; số lần chạy lại và tiêu chí dừng.}{$K$ tâm để bắt đầu Lloyd, hoặc giá trị $K$ chọn từ các lần thử.}{Dùng farthest-first hoặc lấy mẫu theo $D(x)^2$ để chọn tâm; chạy Lloyd. Khi so các khởi tạo với cùng $K$, giữ nghiệm có SSE thấp nhất.}
 
-\key{Ý chính} Tâm ban đầu khác nhau có thể cho các nghiệm khác nhau. Chọn tâm đầu ngẫu nhiên; chọn điểm tiếp theo với xác suất tỷ lệ $D(x)^2$, trong đó $D(x)$ đo tới tâm đã chọn gần nhất.
+\key{Hai cách chọn tâm tiếp theo} Với tập tâm $C$, đặt $D(x)=\min_{c\in C}\|x-c\|$. Farthest-first chọn $\arg\max_xD(x)$ nên nhạy với outlier. K-means++ chọn tâm đầu đều từ dữ liệu.
+\[
+\Pr(\text{chọn tiếp }x)=\frac{D(x)^2}{\sum_y D(y)^2}.
+\]
 
-\key{Tính nhanh} Nếu $D=(1,2,3)$, trọng số là $(1,4,9)$; chuẩn hóa bằng tổng 14. Điểm xa nhất có xác suất cao hơn chứ không được chọn chắc chắn.
+\key{Tính nhanh} Nếu ba ứng viên có $D=(1,2,3)$, trọng số là $(1,4,9)$ và xác suất là $(1/14,4/14,9/14)$. Điểm xa nhất có xác suất cao nhất nhưng không được chọn chắc chắn.
 
-\key{Quy ước} K-means++ chuẩn chọn $K$ tâm. Biến thể trong lecture lấy khoảng $K\log N$ điểm rồi gom mẫu để khởi tạo tâm. Khi chọn $K$, elbow là nơi tăng thêm cụm chỉ giảm SSE ít; có thể không có elbow rõ.
+\key{Số điểm khởi tạo} K-means++ chuẩn chọn $K$ tâm. Biến thể lấy mẫu khoảng $K\log N$ điểm rồi phân cụm mẫu để lấy $K$ tâm là một quy trình khác; dùng đúng số điểm mà đề yêu cầu.
 
 \begin{algpseudo}
 $C\gets$ một điểm chọn đều\\
@@ -1519,39 +1576,76 @@ trả $C$
 \end{algpseudo}
 
 \unitverification
-\key{Kiểm tra} Xác suất chọn điểm phải cộng thành 1 sau chuẩn hóa trọng số $D(x)^2$; nếu tổng trọng số bằng 0, mọi điểm còn lại đã có khoảng cách 0 tới tâm.
+\key{Kiểm tra} Xác suất phải cộng thành 1. Dùng bình phương khoảng cách tới tâm gần nhất, không cộng khoảng cách tới mọi tâm. Nếu tổng trọng số bằng 0, mọi điểm còn lại đã trùng vị trí với một tâm; dùng quy tắc dự phòng.
+
+\key{Chọn $K$ và dừng} Elbow là vùng mà tăng $K$ thêm chỉ cải thiện loss ít; có thể không có điểm gãy rõ. Chạy lại nhiều khởi tạo để so các giá trị $K$ công bằng hơn. Chọn $K=N$ có thể cho SSE 0 nhưng không tạo phân nhóm hữu ích. Dừng theo nhãn ổn định, độ dịch tâm, mức giảm loss hoặc số vòng tối đa đã quy định; các ngưỡng này không chứng nhận tối ưu toàn cục.
 
 \unitadvanced
+\key{Chi phí} Duy trì khoảng cách gần nhất của mỗi điểm cho phép khởi tạo trực tiếp $K$ tâm trong $O(NKd)$ thời gian và $O(N)$ bộ nhớ khoảng cách, ngoài dữ liệu và tâm.
+
 \key{Bảo đảm chuẩn} Với K-means++ chuẩn dùng D²-sampling và mục tiêu SSE Euclid, kỳ vọng chi phí khởi tạo bị chặn bởi $O(\log K)$ lần tối ưu. Không chuyển bảo đảm này sang biến thể oversampling nếu chưa có định lý tương ứng.
 \topic{bfr}{BFR (Bradley-Fayyad-Reina)}
 
-\algsummary{Gom cụm theo lô khi dữ liệu lớn tới mức không thể giữ mọi điểm cùng lúc.}{Cụm gần Gaussian theo trục được tóm tắt bằng số điểm, tổng và tổng bình phương.}{\textbf{Giả thiết:}\enspace BFR phù hợp cụm gần Gaussian theo các trục tọa độ.
-\begin{itemize}
-\item DS: các điểm đã gán vào cụm chính; chỉ giữ tóm tắt.
-\item CS: các cụm tạm chưa gán vào cụm chính; cũng giữ tóm tắt.
-\item RS: còn giữ từng điểm chưa gán để thử gom ở lô sau.
-\end{itemize}}{Các lô điểm, $K$, ngưỡng Mahalanobis và quy tắc gộp.}{Tóm tắt cụm cuối và phần chưa được gán.}{Với mỗi điểm mới, thử gán vào DS rồi CS theo ngưỡng Mahalanobis. Đưa điểm chưa gán vào RS; gom các điểm RS đủ gần thành CS.}
+% Lec3_Clustering.pdf, PDF pp. 59--75.
+\algsummary{Mở rộng cách gom cụm kiểu K-means cho dữ liệu không vừa RAM.}{Các điểm đã được gán đủ tin cậy có thể nén thành thống kê cụm rồi bỏ tọa độ khỏi RAM.}{}{Các lô điểm $d$ chiều, $K$, ngưỡng gán và gộp. Giả định cụm gần Gaussian với covariance chéo, tức các trục chính song song trục tọa độ.}{Tóm tắt các cụm chính, các minicluster tạm và điểm còn chưa gán.}{Với mỗi lô: gán điểm đủ gần vào DS; gom phần còn lại cùng RS cũ thành CS/RS; thử gộp CS rồi đọc lô tiếp.}
 
-\key{Tính} Cộng các bộ $(N,\mathrm{SUM},\mathrm{SUMSQ})$ theo tọa độ để gộp. Sau đó tính
+\key{Ba tập cần phân biệt} DS (discard set) gồm điểm đã thuộc cụm chính: chỉ giữ summary. CS (compression set) gồm các nhóm điểm gần nhau nhưng chưa thuộc cụm chính: mỗi nhóm có summary riêng. RS (retained set) gồm điểm đứng riêng lẻ: còn giữ tọa độ để thử gom ở lô sau.
+
+\key{Summary của một cụm} Trong phần này $N$ là số điểm của chính cụm đó. Giữ $2d+1$ số:
 \[
-\mu_j=\mathrm{SUM}_j/N,\quad \sigma_j^2=\mathrm{SUMSQ}_j/N-\mu_j^2,\quad
-D_M^2=\sum_j\frac{(x_j-\mu_j)^2}{\sigma_j^2}.
+(N,\mathrm{SUM},\mathrm{SUMSQ}),\qquad
+\mathrm{SUM}_j=\sum_{x\in C}x_j,\quad
+\mathrm{SUMSQ}_j=\sum_{x\in C}x_j^2.
 \]
+\[
+\mu_j=\frac{\mathrm{SUM}_j}{N},\qquad
+\sigma_j^2=\frac{\mathrm{SUMSQ}_j}{N}-\mu_j^2.
+\]
+Đây là population variance với mẫu số $N$; không thay bằng sample variance dùng $N-1$.
+
+\key{Thêm điểm hoặc gộp cụm} Thêm $x$ bằng:
+\[
+(N',\mathrm{SUM}',\mathrm{SUMSQ}')
+=(N+1,\mathrm{SUM}+x,\mathrm{SUMSQ}+x\odot x).
+\]
+Gộp hai summary bằng cách cộng lần lượt $N_1+N_2$, $\mathrm{SUM}_1+\mathrm{SUM}_2$, $\mathrm{SUMSQ}_1+\mathrm{SUMSQ}_2$. Sau đó tính mean và variance của cụm hợp nhất để kiểm tra ngưỡng; chỉ cập nhật thật nếu được phép gộp.
+
+\key{Gán điểm bằng Mahalanobis} Chuẩn hóa từng độ lệch bằng standard deviation:
+\[
+D_M(x,C)=\sqrt{\sum_{j=1}^d\frac{(x_j-\mu_j)^2}{\sigma_j^2}}.
+\]
+Tìm DS gần nhất theo khoảng cách này rồi kiểm tra có đạt ngưỡng hay không. Là cụm gần nhất chưa đủ để được nhận. Nếu đề cho $D_M\le t$, có thể so $D_M^2\le t^2$ để tránh lấy căn.
 
 \begin{algpseudo}
-phân cụm lô đầu: tạo DS, CS và RS theo kích thước cụm\\
-với mỗi điểm $x$ của lô mới:\\
-\quad nếu có DS đạt ngưỡng: thêm $x$ vào DS gần nhất\\
-\quad nếu không, thử CS gần nhất; nếu không đạt, thêm vào RS\\
-sau mỗi lô: gom RS thành CS nếu đủ điểm; thử gộp các CS\\
-cuối luồng: gộp CS đạt điều kiện vào DS; trả DS và phần còn lại
+đọc lô đầu vừa RAM; khởi tạo $K$ tâm và các summary\\
+với mỗi lô điểm:\\
+\quad gán điểm đạt ngưỡng vào DS gần nhất; cộng summary của DS đó\\
+\quad phân cụm trong RAM trên điểm chưa gán cùng RS cũ\\
+\quad nhóm nhiều điểm $\to$ CS; singleton $\to$ RS\\
+\quad thử gộp các CS bằng variance của summary hợp nhất\\
+ở lô cuối: gán CS/RS vào cụm gần nhất hoặc giữ là outlier theo đề\\
+trả các summary và phần chưa được gán
 \end{algpseudo}
 
+\key{Ví dụ gán và cập nhật (Pr9, tr.~\pageref*{question:Pr9})} Với $(4,(0,0),(4,16))$, ta có $\mu=(0,0)$, $\sigma^2=(1,4)$. Điểm $P=(1,2)$ cho $D_M^2=1^2/1+2^2/4=2$. Vì $2<85/9$ của DS còn lại và $2\le4$, nhận $P$. Summary mới là $(5,(1,2),(5,20))$. Dùng thống kê trước cập nhật để quyết định gán, rồi mới cộng điểm.
+
 \unitverification
-\key{Bẫy} So $D_M^2$ với ngưỡng bình phương nếu đề cho như vậy. Không chia trực tiếp cho phương sai bằng 0.
+\key{Kiểm tra} $D_M^2\le4$ tương đương $D_M\le2$. Không so khoảng cách bình phương với ngưỡng chưa bình phương. CS đã nén không còn là danh sách tọa độ như RS. Sau khi gộp, variance chứa cả độ phân tán giữa hai mean, nên không lấy trung bình đơn giản hai variance cũ.
+
+\key{Trường hợp biên và giới hạn} Nếu một tọa độ có variance 0, công thức chia trực tiếp không xác định; dùng quy tắc xử lý của đề. Mô hình Gaussian theo trục không mô tả covariance ngoài đường chéo hoặc các vòng đồng tâm. Ưu điểm của BFR là nén và xử lý theo lô; Mahalanobis không tự giải quyết hình dạng phi lồi.
 
 \unitadvanced
-\key{Phương sai sau gộp} Theo từng chiều, với $w_i=N_i/(N_1+N_2)$, $\sigma^2=w_1\sigma_1^2+w_2\sigma_2^2+w_1w_2(\mu_1-\mu_2)^2$. Cụm có phương sai nhỏ riêng lẻ vẫn có thể vượt ngưỡng sau khi gộp nếu hai trung bình cách xa.
+\key{Phương sai sau gộp} Xét một chiều và đặt $w_i=N_i/(N_1+N_2)$:
+\[
+\sigma^2=w_1\sigma_1^2+w_2\sigma_2^2+w_1w_2(\mu_1-\mu_2)^2.
+\]
+Trong Pr9(c), hai nhóm có cùng cỡ, variance $1/4$ và mean $6.5,8.5$. Variance mới là $1/4+(1/4)(8.5-6.5)^2=5/4>1$: không gộp dù mỗi variance riêng đều nhỏ hơn 1. Cũng có thể tính trực tiếp $230/4-(30/4)^2$ từ summary hợp nhất.
+
+% Gaussian squared-distance fact: NIST e-Handbook, Chi-Square Distribution,
+% https://www.itl.nist.gov/div898/handbook/eda/section3/eda3666.htm
+\key{Ý nghĩa ngưỡng $\sqrt d$} Nếu tọa độ độc lập Gaussian và biết đúng $\mu,\sigma$, thì $D_M^2$ là tổng bình phương của $d$ biến chuẩn tắc, nên $D_M^2\sim\chi_d^2$ và $\mathbb E[D_M^2]=d$. Vì vậy ngưỡng tỷ lệ $\sqrt d$ có cơ sở về quy mô khoảng cách; xác suất được giữ phụ thuộc $d$ và hệ số ngưỡng. Quy tắc khoảng $68\%$ của một chiều không phải bảo đảm cho mọi $d$; khi dùng tham số ước lượng, cũng không mặc định phân phối này còn chính xác.
+
+\key{Chi phí} Mỗi summary giữ $2d+1$ số; thêm điểm hoặc gộp summary tốn $O(d)$. Với $K$ DS, $C$ minicluster và $R$ điểm RS, phần summary/RS tốn $O((K+C)d+Rd)$ bộ nhớ, ngoài lô đang đọc. Gán một điểm vào DS bằng cách thử hết $K$ cụm tốn $O(Kd)$; chi phí gom phần dư phụ thuộc thuật toán trong RAM.
 
 % DSA5101 Exam Practice Questions.pdf, PDF page(s) 10.
 
@@ -1600,47 +1694,87 @@ Read the statements below and state whether they are True or False. You do not n
 \finalanswer{(a) Sai. BFR hữu ích cho dữ liệu lớn xử lý theo lô; mô hình tâm và phương sai theo trục không tách được hai vòng tròn đồng tâm.}
 \topic{cure}{CURE: clustering using representatives}
 
-\algsummary{Tìm các cụm có hình dạng khó mô tả bằng một tâm duy nhất.}{Nhiều điểm trải rộng giữ hình dạng; co chúng về tâm để bớt nhạy với ngoại lai.}{}{Dữ liệu, mẫu vừa bộ nhớ, số cụm $K$, số đại diện $c$, tỷ lệ co $\alpha$.}{Các cụm, điểm đại diện và nhãn cho dữ liệu ngoài mẫu.}{So các cụm qua khoảng cách giữa các đại diện. Sau khi gộp, chọn lại đại diện của cụm mới rồi co chúng về tâm.}
+% Lec3_Clustering.pdf, PDF pp. 76--85.
+\algsummary{Phân cụm dữ liệu Euclid khi một tâm và variance theo trục chưa mô tả được hình dạng.}{Nhiều đại diện trải rộng giữ thông tin về các phần khác nhau của cụm; co chúng vào trong để bớt ảnh hưởng của vùng biên xa.}{}{Dữ liệu, mẫu vừa RAM, số đại diện $c$, tỷ lệ co $\alpha\in[0,1]$, $K$ hoặc ngưỡng dừng.}{Các cụm với đại diện đã co và nhãn cho dữ liệu gốc.}{Pass 1: phân cụm mẫu, chọn đại diện phân tán, co và tiếp tục gộp theo đại diện. Pass 2: quét dữ liệu gốc, gán mỗi điểm vào cụm có đại diện gần nhất.}
 
-\steps{
-\item Lấy mẫu vừa bộ nhớ và gom cụm phân cấp. Chọn các điểm đại diện cách xa nhau, kéo mỗi $r$ về tâm $\mu$ thành $r'=(1-\alpha)r+\alpha\mu$.
-\item Gộp dựa trên khoảng cách giữa các đại diện. Quét toàn bộ dữ liệu và gán mỗi điểm theo đại diện gần nhất.
-}
+\key{Co đại diện về tâm} Với đại diện $p$ và centroid $\mu$:
+\[
+p'=p+\alpha(\mu-p)=(1-\alpha)p+\alpha\mu.
+\]
+``Co $20\%$ về tâm'' nghĩa là $\alpha=0.2$, nên $p'=0.8p+0.2\mu$. Nếu $\alpha=0$, giữ đại diện ban đầu; nếu $\alpha=1$, mọi đại diện cùng về centroid.
+
+\key{Khoảng cách sử dụng} Với tập đại diện đã co $R_A,R_B$:
+\[
+d(A,B)=\min_{r\in R_A,s\in R_B}\|r-s\|,
+\quad
+\operatorname{cluster}(x)=\arg\min_A\min_{r\in R_A}\|x-r\|.
+\]
+Công thức đầu chọn cặp cụm để gộp; công thức sau gán điểm ở pass 2. Cả hai dùng đại diện đã co.
 
 \begin{algpseudo}
-khởi tạo cụm một điểm trên mẫu\\
-khi còn hơn $K$ cụm: gộp cặp có hai đại diện gần nhau nhất\\
-\quad chọn tối đa $c$ điểm gốc trải rộng trong cụm mới\\
-\quad với mỗi đại diện $r$: đặt $r'\gets(1-\alpha)r+\alpha\mu$\\
-gán mỗi điểm ngoài mẫu vào cụm có đại diện gần nhất; trả các cụm
+pass 1: lấy mẫu vừa RAM; tạo các cụm ban đầu bằng hierarchical\\
+\quad chọn tối đa $c$ đại diện trải rộng của mỗi cụm; co về centroid\\
+\quad giữ đại diện và thông tin cỡ/tâm cụm\\
+\quad khi còn được phép gộp: chọn cặp có hai đại diện gần nhất\\
+\qquad gộp; cập nhật tâm bằng cỡ cụm; chọn đại diện phân tán\\
+\qquad từ các đại diện cha và co về tâm mới\\
+pass 2: quét dữ liệu gốc; gán mỗi điểm theo đại diện gần nhất\\
+trả các cụm và nhãn
 \end{algpseudo}
 
-\key{Ví dụ} Cụm có tâm 5, đại diện 0 và 10, $\alpha=0.2$: sau khi co còn 1 và 9. Chất lượng phụ thuộc mẫu và độ bao phủ của các đại diện.
+\key{Ví dụ co đại diện} Cụm có tâm 5, đại diện 0 và 10. Với $\alpha=0.2$, hai vị trí mới là $0.8(0)+0.2(5)=1$ và $0.8(10)+0.2(5)=9$:
+\begin{diagram}
+\begin{tikzpicture}[x=.64cm,y=.5cm,>=Stealth,every node/.style={font=\normalsize}]
+\draw (-.4,0)--(10.4,0);
+\foreach \x/\label in {0/0,1/1,5/5,9/9,10/10}
+  \draw (\x,-.12)--(\x,.12) node[below=3pt] {$\label$};
+\draw[->,thick] (0,.5)--(1,.5);
+\draw[->,thick] (10,.5)--(9,.5);
+\node[above] at (5,.3) {$\mu$};
+\end{tikzpicture}
+\end{diagram}
 
 \unitverification
-\key{Kiểm tra} Điểm đại diện co về tâm theo $r\gets(1-\alpha)r+\alpha\mu$; khi so hai cụm, dùng khoảng cách gần nhất giữa các đại diện đã co.
+\key{Kiểm tra} $\alpha$ là phần quãng đường đi về tâm. Đại diện đã co có thể không phải điểm gốc. Sau khi gộp phải cập nhật tâm và đại diện của cụm mới. Co giúp tránh một cặp điểm biên tình cờ quá gần chi phối phép gộp; không chứng nhận clustering đúng cho mọi dữ liệu phi lồi.
 
 \unitadvanced
-\key{Vai trò số đại diện} Nếu mỗi cụm giữ $c$ đại diện, so hai cụm bằng khoảng cách nhỏ nhất trong $c^2$ cặp đại diện. Tăng $c$ mô tả hình dạng cụm tốt hơn nhưng làm tăng chi phí so khoảng cách.
+\key{So với BFR và chi phí} CURE không cần giả thiết Gaussian theo trục của BFR, nhưng vẫn cần khoảng cách Euclid, mẫu đủ đại diện và tham số phù hợp. Với tối đa $c$ đại diện mỗi cụm, một phép so cụm trực tiếp xét $c^2$ cặp và tốn $O(c^2d)$. Nếu cuối pass 1 còn $K$ cụm, gán $N$ điểm bằng cách thử hết đại diện tốn $O(NKcd)$; phần hierarchical trên mẫu tính riêng. Tăng $c$ cải thiện độ phủ hình dạng nhưng tốn thêm bộ nhớ và phép so.
 \topic{purity}{Cluster purity (evaluation with known labels)}
 
-\algsummary{Đánh giá phân hoạch khi đã biết nhãn thật của từng điểm.}{Mỗi cụm ghi công cho nhãn chiếm đa số; cộng trên toàn bộ điểm.}{\textbf{Cách đếm:}\enspace Với $n_{ij}$ là số điểm nhãn $j$ trong cụm $i$, chọn nhãn chiếm đa số trong mỗi cụm:
-\[
-\operatorname{purity}=\frac{\sum_i\max_j n_{ij}}{N}.
-\]}{Nhãn cụm và nhãn thật của $N>0$ điểm.}{Purity trong $[0,1]$.}{Lập bảng với hàng là cụm và cột là nhãn thật. Cộng số đếm lớn nhất của từng hàng và chia cho $N$.}
+% Lec3_Clustering.pdf, PDF pp. 87--89.
+\algsummary{Đánh giá phân hoạch bằng nhãn thật được giữ riêng để kiểm tra.}{Trong mỗi cụm, nhãn chiếm đa số cho biết bao nhiêu điểm cùng thuộc lớp trội.}{}{Nhãn cụm và nhãn thật của $N>0$ điểm; $n_{ij}$ đếm điểm lớp $j$ trong cụm $C_i$.}{Purity từng cụm và purity chung trong $[0,1]$.}{Lấy số đếm lớn nhất trên từng hàng của bảng cụm/lớp; cộng rồi chia tổng số điểm. Không cần nhãn thật trong quá trình phân cụm.}
+
+\key{Công thức} Với $n_i=|C_i|=\sum_j n_{ij}>0$:
+\begin{align*}
+\operatorname{Purity}(C_i)&=\frac{\max_j n_{ij}}{n_i},\\
+\operatorname{Purity}(\mathcal C)
+&=\sum_i\frac{n_i}{N}\operatorname{Purity}(C_i)
+=\frac1N\sum_i\max_j n_{ij}.
+\end{align*}
 
 \begin{algpseudo}
 với mỗi điểm: tăng bộ đếm của cặp (cụm, nhãn thật)\\
-trả $\sum_i\max_j\operatorname{count}[i,j]/N$
+với mỗi cụm: lấy $m_i\gets\max_j\operatorname{count}[i,j]$\\
+trả purity cục bộ $m_i/n_i$ và purity chung $\sum_i m_i/N$
 \end{algpseudo}
 
-\key{Ví dụ} Hai cụm có nhãn $AAAB$ và $BB$ cho purity $(3+2)/6=5/6$. Trung bình đều hai purity cục bộ cho $(3/4+1)/2=7/8$, sai vì hai cụm có cỡ khác nhau.
+\key{Ví dụ tính tay}
+\begin{examtable}{@{}lccc@{}}
+\toprule
+Cụm & Số điểm theo ba lớp & Cỡ cụm & Purity \\
+\midrule
+I & $(5,1,0)$ & 6 & $5/6$ \\
+II & $(1,4,1)$ & 6 & $4/6$ \\
+III & $(2,0,3)$ & 5 & $3/5$ \\
+\bottomrule
+\end{examtable}
+Cộng các số đếm lớn nhất: $5+4+3=12$; tổng số điểm $6+6+5=17$. Do đó purity chung là $12/17\approx0.7059$. Trung bình đều ba tỷ lệ cho $0.7$, sai vì cỡ cụm không bằng nhau.
 
 \unitverification
-\key{Kiểm tra} Cộng số điểm đúng theo đa số của từng cụm rồi chia tổng số điểm; kết quả nằm trong $[0,1]$ và không phải trung bình đều của các cụm.
+\key{Kiểm tra} Tổng mọi ô phải bằng $N$; tử số không vượt $N$. Chọn lớp trội độc lập trong mỗi cụm: hai cụm được phép có cùng lớp trội. Nếu hai lớp hòa, số điểm đa số vẫn không đổi nên purity không phụ thuộc cách chọn nhãn giữa hai lớp đó.
 
 \unitadvanced
-\key{Giới hạn thước đo} Purity có thể đạt 1 khi tách mỗi điểm thành một cụm, nên không phạt phân mảnh. Chỉ so purity khi số cụm hoặc quy tắc phân hoạch được kiểm soát.
+\key{Giới hạn và chi phí} Tách một cụm thành các cụm con không làm giảm tổng số điểm đa số: $\sum_\ell\max_jn_{\ell j}\ge\max_j\sum_\ell n_{\ell j}$. Vì thế purity không phạt phân mảnh và đạt 1 nếu mỗi điểm là một cụm. Purity cao chưa chứng minh đã chọn số cụm hợp lý. Đếm bảng bằng một lượt qua điểm tốn $O(N)$ thời gian, ngoài việc đọc các bộ đếm đã tạo.
 
 \lecture{4}{Dimensionality reduction}
 \topic{svd}{SVD: rank and singular vectors}
