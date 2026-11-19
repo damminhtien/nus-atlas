@@ -283,8 +283,9 @@
 \topicoutline{decay}{Decaying windows}
 \outline{9}{Online matching, BALANCE \& bandits}
 \topicoutline{matching}{Online bipartite matching}
-\topicoutline{balance}{BALANCE (unit bids / budgets)}
-\topicoutline{bandits}{Multi-armed bandits: epsilon-greedy / UCB}
+\topicoutline{balance}{Web ads and BALANCE (unit bids)}
+\topicoutline{bandits}{Multi-armed bandits: epsilon-greedy}
+\topicoutline{ucb}{UCB1 and Hoeffding}
 \outline{10}{Submodular optimization}
 \topicoutline{greedy}{Monotone submodular greedy}
 \topicoutline{coverage}{Probabilistic coverage}
@@ -3984,12 +3985,7 @@ The first seven plays are $A,B,A,C,B,A,D$. The resulting pruned dictionary is su
 \lecture{9}{Online matching, BALANCE \& bandits}
 \topic{matching}{Online bipartite matching}
 
-\algsummary{Ghép các job đến lần lượt với server tương thích. Một lần gán đã chốt thì không thể đổi.}{Ghép ngay nếu còn server hợp lệ; kết quả không thể thêm cạnh nhưng có thể thua OPT.}{\textbf{Ràng buộc:}\enspace Mỗi server nhận tối đa một job.}{Thứ tự job, server tương thích và quy tắc phá hòa.}{Các cặp ghép và số job được phục vụ.}{Với mỗi job, lấy giao giữa danh sách server tương thích và tập server rảnh. Nếu có lựa chọn, theo quy tắc phá hòa; nếu giao rỗng, bỏ job.}
-
-\steps{
-\item Xét danh sách hàng xóm của job vừa đến. Ghép với một server hợp lệ còn rảnh theo quy tắc đề; nếu không có thì bỏ qua.
-\item Tính $\mathrm{ALG}/\mathrm{OPT}$, với OPT được biết cả chuỗi đến. Để tìm OPT, cho phép chọn lại từ đầu thay vì sửa lời giải greedy.
-}
+\algsummary{Ghép nhiều job nhất có thể với các server tương thích, mỗi đỉnh dùng tối đa một lần.}{Phía server biết trước. Mỗi job đến mới lộ các cạnh của nó; quyết định gán hay từ chối phải chốt ngay và không thể đổi.}{}{Đồ thị hai phía $G=(U,V,E)$: $U$ là server, $V$ là các job đến theo thứ tự; quy tắc phá hòa.}{Matching $M\subseteq E$ và số job được phục vụ $|M|$.}{Ghép ngay nếu còn server tương thích rảnh. Khi tính OPT, lập matching mới trên toàn bộ đồ thị đã biết.}
 
 \begin{algpseudo}
 $R\gets$ tất cả server rảnh; $M\gets\varnothing$\\
@@ -3998,11 +3994,16 @@ với mỗi job $j$: $A\gets R\cap N(j)$\\
 trả $M,|M|$
 \end{algpseudo}
 
-\unitverification
-\key{Kiểm tra} Mỗi job đến được ghép tối đa một lần với server còn rảnh; greedy tạo matching maximal, không đảm bảo matching maximum.
+\key{Ví dụ chặt} $J_1$ đến trước, nhận được cả $S_1,S_2$; $J_2$ chỉ nhận được $S_1$. Nếu greedy chọn $S_1$ cho $J_1$ thì phải bỏ $J_2$. Offline biết trước nên gán $J_1\to S_2$, $J_2\to S_1$. Tỷ lệ là $1/2$. Với quy tắc phá hòa khác, lấy $J_2$ chỉ tương thích với server mà quy tắc đó chọn cho $J_1$.
 
+\unitverification
+\key{Kiểm tra} Maximal: không thêm được cạnh vào matching hiện tại. Maximum: số cạnh lớn nhất trong mọi matching. Perfect: phủ hết các đỉnh hai phía. Greedy cho maximal; có thể cần đổi nhiều cạnh mới ra maximum, nên không được làm vậy khi đang chạy online.
+
+\key{Tỷ lệ cạnh tranh} Với bài toán tối đa hóa, tỷ lệ trên một đầu vào $I$ là $\mathrm{ALG}(I)/\mathrm{OPT}(I)$. Competitive ratio là $\inf_{I:\mathrm{OPT}(I)>0}\mathrm{ALG}(I)/\mathrm{OPT}(I)$. Muốn chứng minh tỷ lệ bằng $c$, cần cận dưới $c$ cho mọi $I$ và một ví dụ đạt (hoặc dãy ví dụ tiến tới) $c$. Tỷ lệ $3/4$ ở Pr27 chỉ nói về đầu vào đó.
+
+% Lec9_WebAds.pdf, pp. 3--18.
 \unitadvanced
-\key{Bảo đảm $1/2$} Matching greedy là maximal: không còn cạnh nối hai đầu mút chưa ghép. Mỗi cạnh OPT chạm ít nhất một cạnh greedy, và mỗi cạnh greedy chỉ có thể chạm tối đa hai cạnh OPT. Vì vậy $\mathrm{OPT}\le2\,\mathrm{ALG}$. Tỷ lệ của một ví dụ không phải cận cho mọi đầu vào.
+\key{Vì sao không dưới $1/2$} Gọi $G'$ là các job được OPT ghép nhưng greedy bỏ qua và $B'$ là các server kề với $G'$. Mỗi server trong $B'$ đã bận khi job tương ứng bị bỏ, nên $|B'|\le|M_G|$. OPT dùng server khác nhau cho các job này nên $|G'|\le|B'|$. Các job còn lại của OPT đều được greedy ghép. Do đó $|M_{\rm OPT}|\le |M_G|+|G'|\le 2|M_G|$. Kết hợp với ví dụ chặt, greedy có competitive ratio $1/2$.
 
 % DSA5101 Exam Practice Questions.pdf, PDF page(s) 28.
 
@@ -4036,32 +4037,45 @@ Greedy assigns each arriving job to its lowest-index free compatible server, rej
 \item Quyết định online không thể hủy, nên không dời $J_1$ để nhường chỗ. Tỉ lệ một trường hợp không chứng minh cận cho mọi thứ tự đến.
 \end{guidesteps}
 \finalanswer{(a) Greedy: $S_1,S_2,\text{bỏ},S_3$ cho $J_1$ đến $J_4$, kích thước 3. (b) Offline: $(S_2,S_3,S_1,S_4)$, đạt cận 4; tỷ lệ $3/4$. (c) Gán online không thể rút lại; $3/4$ chỉ là kết quả trên trường hợp này.}
-\topic{balance}{BALANCE (unit bids / budgets)}
+\topic{balance}{Web ads and BALANCE (unit bids)}
 
-\algsummary{Phân bổ query đến lần lượt cho advertiser có ngân sách, với mỗi bid hợp lệ bằng 1.}{Ưu tiên bên còn nhiều ngân sách để tránh cạn sớm khi query tương lai chưa biết.}{\textbf{Ràng buộc:}\enspace Quyết định không thể sửa lại. Chỉ advertiser đủ điều kiện và còn ngân sách mới được xét.}{Thứ tự query, advertiser đủ điều kiện, ngân sách nguyên và phá hòa.}{Cách phân bổ, ngân sách còn lại và doanh thu.}{Trong các advertiser hợp lệ còn tiền, chọn bên có số dư cao nhất. Phá hòa theo đề, rồi giảm số dư đi 1 và tăng doanh thu lên 1.}
+% Lec9_WebAds.pdf, pp. 19--47.
+\algsummary{Phân bổ quảng cáo cho query đến lần lượt để tối đa hóa doanh thu dưới giới hạn ngân sách.}{Giữ ngân sách cho các truy vấn về sau; trong các bên có thể nhận query hiện tại, ưu tiên bên còn nhiều tiền hơn.}{}{Chuỗi query, tập bên đặt bid $E(q)$, ngân sách nguyên và quy tắc phá hòa. Mô hình cơ bản: tối đa một ad mỗi query, cùng CTR và cùng ngân sách đầu $B$; một lượt gán dùng 1 đơn vị và cho doanh thu 1.}{Cách phân bổ, ngân sách còn lại và doanh thu.}{Lọc bidder còn tiền rồi chọn số dư lớn nhất. Chỉ giảm số dư của bên được gán; không đổi các lượt đã chốt.}
 
 \key{Cập nhật sau mỗi query}
 \begin{examtable}{@{}p{.20\columnwidth}p{.67\columnwidth}@{}}
 \toprule
 Trường hợp & Thao tác \\
 \midrule
-Không có bidder đủ điều kiện còn tiền & Bỏ qua query; ngân sách và doanh thu giữ nguyên. \\
-Có bidder hợp lệ & Chọn bidder có ngân sách còn lại lớn nhất; gán query, giảm ngân sách đi 1 và tăng doanh thu đi 1. \\
-Hòa ngân sách & Dùng đúng quy tắc phá hòa của đề; nếu hỏi bảo đảm với mọi cách phá hòa, kiểm tra mọi nhánh. \\
+Không có bidder còn tiền & Bỏ qua; ngân sách và doanh thu giữ nguyên. \\
+Có bidder còn tiền & Chọn số dư lớn nhất; gán query, trừ 1 vào số dư và cộng 1 doanh thu. \\
+Hòa ở số dư lớn nhất & Dùng quy tắc đề cho. Nếu hỏi \textit{guaranteed optimal}, xét mọi nhánh hòa hợp lệ. \\
 \bottomrule
 \end{examtable}
 
-\key{Tính trên giấy} Viết vectơ ngân sách sau từng lượt; tuân thủ cách phá hòa. Nếu đề hỏi guaranteed optimal, tất cả cách phá hòa hợp lệ đều phải đạt OPT; chỉ cần tìm một nhánh thất bại để trả lời No.
-
 \begin{algpseudo}
 doanh thu $\gets0$\\
-với mỗi query $q$: $A\gets\{i:i\text{ nhận được }q,\ B_i>0\}$\\
+với mỗi query $q$: $A\gets\{i\in E(q):b_i>0\}$, $b_i$ là số dư\\
 \quad nếu $A$ rỗng: bỏ qua\\
-\quad ngược lại: chọn $i\in\arg\max_{j\in A}B_j$; gán $q$ cho $i$; $B_i\gets B_i-1$; tăng doanh thu 1\\
+\quad ngược lại: chọn $i\in\arg\max_{j\in A}b_j$ theo phá hòa đã cho\\
+\qquad gán $q$ cho $i$; $b_i\gets b_i-1$; tăng doanh thu 1\\
 trả phân bổ, ngân sách và doanh thu
 \end{algpseudo}
 
-\key{Ví dụ} Với $B=4$, bốn query đầu cả hai đều nhận được, bốn query sau chỉ một bên nhận được: BALANCE đạt 6, OPT đạt 8. Trong mô hình nhiều advertiser của lecture, cận $1-1/e$ được suy ra từ phần ngân sách còn lại khi các bên lần lượt cạn.
+\key{Ví dụ đạt $3/4$} $A$ bid trên $x$, $B$ bid trên $x,y$, mỗi bên có 4 và ưu tiên $A$ khi hòa. Với $xxxxyyyy$:
+\begin{examtable}{@{}l l l@{}}
+\toprule
+Lượt & BALANCE & Ngân sách $(A,B)$ sau từng lượt \\
+\midrule
+$x,x$ & $A,B$ & $(3,4),(3,3)$ \\
+$x,x$ & $A,B$ & $(2,3),(2,2)$ \\
+$y,y$ & $B,B$ & $(2,1),(2,0)$ \\
+$y,y$ & bỏ, bỏ & $(2,0),(2,0)$ \\
+\bottomrule
+\end{examtable}
+BALANCE được 6. OPT gán bốn $x$ cho $A$ và bốn $y$ cho $B$, đạt cận 8; tỷ lệ $6/8=3/4$.
+
+\key{Doanh thu một lượt hiển thị} CPM tính tiền trên 1\,000 lượt hiển thị; CPC tính tiền khi có click. Với CPC, lấy CTR $\Pr(\mathrm{click}\mid a,q)$ nhân bid (giá mỗi click). Với bid $(1,0.75,0.50)$ đô và CTR $(1\%,2\%,2.5\%)$, doanh thu kỳ vọng lần lượt là $(1,1.5,1.25)$ cent. Chọn quảng cáo $B$ nếu tối đa hóa doanh thu kỳ vọng của riêng lượt này. BALANCE xét ngân sách qua nhiều lượt; bandits dùng để học CTR chưa biết.
 
 \begin{example}{A2-Q5}{A2-Q5(c) · BALANCE: hai cách phá hòa, hai kết quả}
 \begin{examtable}{@{}l c l l@{}}
@@ -4080,13 +4094,18 @@ Nhánh trên phục vụ đủ 4 query. Nếu $x$ đầu tiên sang $B$, sau $y$
 % DSA5101 Exam Practice Questions.pdf, PDF page(s) 29.
 
 \unitverification
-\key{Mọi cách phá hòa} Để chứng minh Yes, theo dõi mọi nhánh phá hòa (gộp trạng thái giống nhau) và chứng minh mỗi nhánh đạt OPT. Để chứng minh tối ưu, ghép một cận trên với một lịch khả thi đạt cận đó.
+\key{Kiểm tra} Chỉ so ngân sách trong tập bidder còn tiền của query hiện tại. Còn tiền mà không bid thì vẫn không nhận được query. Để chứng minh Yes khi hỏi luôn tối ưu, theo mọi nhánh phá hòa (gộp trạng thái giống nhau); một nhánh dưới OPT đủ để trả lời No. Chứng minh OPT bằng lịch khả thi đạt cận trên.
 
 \unitadvanced
-\key{Độ phức tạp} Với $Q$ query và $A$ advertisers, quét bidder list trực tiếp tốn $O(QA)$ thời gian; ngân sách và phân bổ đang xét cần $O(A)$ bộ nhớ ngoài dữ liệu input.
+\key{Độ phức tạp} Quét $|E(q)|$ bidder mỗi query, tổng thời gian $O(Q+\sum_q|E(q)|)$ cho $Q$ query. Với $N$ bên, giữ $O(N)$ số dư ngoài input, chưa tính nhật ký phân bổ.
 
-\advancedheading{Competitive ratio}
-Hai advertiser cùng ngân sách $B$ chẵn, OPT phục vụ $2B$: BALANCE phục vụ ít nhất $3B/2$. Nếu còn query bị bỏ, ít nhất một bên đã hết ngân sách. Gọi $A$ là bên còn tiền. Cả $B$ query OPT giao cho $A$ đều được BALANCE phục vụ vì $A$ chưa bao giờ hết tiền. Nếu $A$ nhận ít nhất $B/2$ query thì đạt cận. Nếu hơn $B/2$ query đó sang bên kia, ở lần chuyển thứ $B/2+1$, bên kia còn tối đa $B/2$ ngân sách. Quy tắc chọn bên còn nhiều tiền hơn cho thấy $A$ cũng chỉ còn tối đa $B/2$. Lập luận với $B$ lẻ cho cận $\lfloor3B/2\rfloor$.
+\key{Hai bên, OPT dùng hết $2B$} Nếu BALANCE thấp hơn OPT thì ít nhất một bên hết tiền. Gọi $y$ là số lượt bên còn tiền nhận được. Trong $B$ query OPT gán cho bên này, BALANCE phục vụ hết vì bên đó luôn còn tiền. Ít nhất $B-y$ query trong số đó sang bên kia. Nếu $y<B$, ngay trước lần cuối trong nhóm này, bên kia còn tối đa $y+1$ và được chọn thay cho bên còn ít nhất $B-y$. Do đó $B-y\le y+1$, suy ra $y\ge\lfloor B/2\rfloor$. BALANCE đạt ít nhất $B+\lfloor B/2\rfloor$, tức $3B/2$ khi $B$ chẵn. Không áp dụng $3/4$ nếu OPT không dùng hết $2B$; chẳng hạn chuỗi $xyyy$ trong P24-Q8(b) có nhánh chỉ đạt $2/3$.
+
+\key{Nhiều bên: ví dụ giới hạn $1-1/e$} Có $N$ bên cùng ngân sách lớn $B$ và $N$ vòng, mỗi vòng $B$ query. Vòng $i$ chỉ có $A_i,\ldots,A_N$ bid. OPT dồn vòng $i$ cho $A_i$, đạt $NB$. Trước khi cạn ngân sách, mỗi bên còn tham gia được chia xấp xỉ $B/(N-i+1)$ ở vòng $i$. Sau $k$ vòng, tỷ phần đã tiêu xấp xỉ $\sum_{i=1}^k 1/(N-i+1)\approx\ln(N/(N-k))$. Khi tổng này chạm 1, $k/N\approx1-1/e$. Đây là họ ví dụ cho tỷ lệ tiệm cận; không dùng để tính doanh thu từng chuỗi hữu hạn.
+
+% Kalyanasundaram and Pruhs, An Optimal Deterministic Algorithm for Online
+% b-Matching, theorem for uniform integer capacities (2000).
+\key{Phạm vi cận} Với số bên bất kỳ và ngân sách nguyên chung $B$, cận xấu nhất của BALANCE xác định là $1-(1+1/B)^{-B}$ (Kalyanasundaram--Pruhs), tiến tới $1-1/e$ khi $B$ lớn. Với $B=1$, cận là $1/2$. Bid hoặc ngân sách tùy ý là mô hình khác; không áp dụng trực tiếp cận này.
 
 \ask{Pr28}{Pr28}{}
 Four advertisers $A,B,C,D$ each start with budget 2. Each placement earns 1 and spends 1 of the advertiser's budget. At most one ad is placed per query; decisions are irrevocable. Bidders are
@@ -4165,32 +4184,90 @@ For each of the sequences of queries below, identify which ones are guaranteed t
 \end{examtable}
 \end{guidesteps}
 \finalanswer{(a) Có, mọi nhánh đạt $4/4$. (b) Không, có nhánh chỉ đạt $2/3$. (c) Không, có nhánh chỉ đạt $3/4$. (d) Có, mọi nhánh đạt $3/3$. Tỷ lệ ở đây là doanh thu của nhánh nêu trên chia cho OPT.}
-\topic{bandits}{Multi-armed bandits: epsilon-greedy / UCB}
+\topic{bandits}{Multi-armed bandits: epsilon-greedy}
 
-\algsummary{Chọn một arm mỗi vòng để tăng phần thưởng khi chưa biết trước arm nào tốt nhất.}{$\varepsilon$-greedy khám phá ngẫu nhiên; UCB ưu tiên arm còn nhiều bất định.}{\textbf{Khi dùng:}\enspace Mỗi vòng chọn một arm, chỉ quan sát reward của arm đó. Cần cân bằng thử arm chưa rõ tốt hay xấu (exploration) với dùng arm đang có điểm trung bình cao (exploitation).}{Các arm, số vòng $T$, lịch $\varepsilon_t$ hoặc quy tắc UCB, cách phá hòa.}{Lượt chọn, số lần thử, trung bình quan sát và tổng reward.}{Sau khi thử mỗi arm một lần, chọn arm có trung bình quan sát cộng bonus lớn nhất. Chỉ cập nhật thống kê của arm vừa chọn.}
+% Lec9_WebAds.pdf, pp. 53--64.
+\algsummary{Chọn một trong $k$ arm mỗi vòng để tối đa hóa tổng thưởng kỳ vọng sau $T$ vòng.}{Chỉ thấy thưởng của arm vừa chọn. Cần vừa thử các arm để học (exploration), vừa dùng arm đang có trung bình cao (exploitation). Ví dụ: thử các mẫu quảng cáo để tìm mẫu có CTR cao nhất.}{}{Các arm, $T$, lịch $\varepsilon_t\in[0,1]$ và quy tắc phá hòa. Mỗi arm $a$ cho các mẫu độc lập từ một phân phối cố định trong $[0,1]$ với trung bình $\mu_a$ chưa biết. Với thưởng Bernoulli, $\Pr(X=1\mid a)=\mu_a$.}{Chuỗi arm đã chọn và tổng thưởng quan sát.}{Nếu đề yêu cầu khởi tạo, thử mỗi arm một lần. Sau đó, với xác suất $\varepsilon_t$ chọn đều trong $k$ arm; nếu không, chọn arm có trung bình quan sát lớn nhất.}
 
-\key{Hai quy tắc} Với $\varepsilon$-greedy, chọn ngẫu nhiên với xác suất $\varepsilon_t$, nếu không thì chọn arm có trung bình quan sát cao nhất. Với UCB, thường thử mỗi arm một lần rồi chọn arm có chỉ số lớn nhất:
+\key{Cập nhật chung} $\hat\mu_a=(1/n_a)\sum_{j=1}^{n_a}X_{a,j}$ là trung bình thưởng đã thấy, khác với $\mu_a$ chưa biết. Sau khi nhận thưởng $x$, chỉ đổi thống kê của arm vừa chọn. Dùng $n_a$ trước khi tăng:
 \[
-\mathrm{UCB}_i(t)=\hat\mu_i+\sqrt{2\ln(t)/n_i}.
+\hat\mu_a\gets\frac{n_a\hat\mu_a+x}{n_a+1},
+\qquad n_a\gets n_a+1.
 \]
-
-\key{Sau khi nhận reward} Chỉ cập nhật $n_i$ và $\hat\mu_i$ của arm đã chọn. Pseudo-regret là $\sum_i n_i(\mu^*-\mu_i)$; chênh lệch reward thực tế là $T\mu^*-\sum_t X_t$. Với mẫu độc lập trong $[0,1]$, Hoeffding cho $\Pr(|\hat\mu-\mu|\ge\delta)\le 2e^{-2n\delta^2}$.
+Tương đương: tăng $n_a$ trước, rồi $\hat\mu_a\gets\hat\mu_a+(x-\hat\mu_a)/n_a$.
 
 \begin{algpseudo}
-khởi tạo $n_i,\hat\mu_i\gets0$; với $t=1,\ldots,T$:\\
-\quad UCB: thử arm chưa thử nếu có; nếu không lấy cực đại $\hat\mu_i+\sqrt{2\ln(t)/n_i}$\\
-\quad $\varepsilon$-greedy: thử đều với xác suất $\varepsilon_t$; nếu không lấy cực đại $\hat\mu_i$\\
-\quad quan sát $x$ của arm $i$; $\hat\mu_i\gets(n_i\hat\mu_i+x)/(n_i+1)$; tăng $n_i$\\
-trả lịch sử lượt chọn, $n,\hat\mu$ và tổng reward
+khởi tạo $n_a,\hat\mu_a\gets0$ cho mỗi arm $a$\\
+với mỗi vòng $t\le T$:\\
+\quad nếu còn lượt khởi tạo: chọn arm chưa thử theo thứ tự đề\\
+\quad nếu không: bốc $U$ đều trên $[0,1]$\\
+\qquad nếu $U<\varepsilon_t$: chọn $a$ đều trong $k$ arm\\
+\qquad nếu không: chọn $a$ có $\hat\mu_a$ lớn nhất, phá hòa theo đề\\
+\quad quan sát $x$; cập nhật $n_a,\hat\mu_a$ và cộng $x$ vào tổng thưởng
 \end{algpseudo}
 
-\unitverification
-\key{Kiểm tra} Sau reward chỉ tăng số đếm và trung bình của arm vừa chọn; khởi tạo mọi arm trước khi dùng UCB để mẫu số $n_i$ khác 0.
+\key{Ví dụ} Với $k=4$, $\varepsilon=0.2$ và $A$ dẫn đầu duy nhất, $\Pr(A)=1-\varepsilon+\varepsilon/k=0.85$; mỗi arm còn lại có xác suất $\varepsilon/k=0.05$. Nếu đề chỉ khám phá trong các arm khác thì nhánh khám phá có $k-1$ lựa chọn và không cộng lượt nào cho $A$.
 
-\key{Xác suất chọn với $\varepsilon$-greedy} Nếu nhánh khám phá chọn đều trong cả $K$ arm và chỉ có một arm đang dẫn đầu, arm đó được chọn với xác suất $(1-\varepsilon)+\varepsilon/K$, các arm còn lại mỗi arm $\varepsilon/K$. Với $K=3$, $\varepsilon=0.3$ cho $(0.8,0.1,0.1)$ nếu arm đầu đang dẫn. Nếu đề loại arm dẫn đầu khỏi nhánh khám phá, mẫu số ở nhánh đó phải đổi.
+\unitverification
+\key{Ảnh hưởng của $\varepsilon$} $\varepsilon=0$ là pure greedy, $\varepsilon=1$ là thử đều. Nếu lần đầu $A$ cho 1 và $B$ cho 0, pure greedy có thể bỏ $B$ mãi dù $\mu_A=0.3<\mu_B=0.7$: trung bình của $A$ vẫn dương ở mọi vòng hữu hạn. $\varepsilon>0$ cho cơ hội thử $B$, nhưng không bảo đảm đã thử đủ sau một số vòng cố định. Nhánh thử đều vẫn tốn lượt cho các arm đã có nhiều bằng chứng là kém; UCB dùng độ bất định để chọn lượt thử có mục tiêu hơn.
 
 \unitadvanced
-\key{Cỡ mẫu} Để xác suất sai quá $\delta$ không vượt $\alpha$, cần $n\ge\ln(2/\alpha)/(2\delta^2)$; làm tròn lên.
+\key{Đo regret} Đặt $\mu^*=\max_a\mu_a$, $\Delta_a=\mu^*-\mu_a$ và $n_a(T)$ là số lượt chọn $a$ sau $T$ vòng. Mỗi vòng mất kỳ vọng $r_t=\mu^*-\mu_{a_t}$, nên $R_T=\sum_t r_t$. So tổng mất kỳ vọng khi chọn các arm đó với số thưởng hụt thực tế:
+\[
+R_T=\sum_a n_a(T)\Delta_a,\qquad
+L_T=T\mu^*-\sum_{t=1}^T X_t.
+\]
+$R_T\ge0$; $L_T$ dùng thưởng đã thấy nên có thể âm và có thể khác $R_T$ trên một lần chạy. Hai đại lượng có cùng kỳ vọng trong mô hình trên. Với dữ kiện Pr29(c), $R_T=2(0.7-0.4)+2(0.7-0.5)=1$, còn $L_T=5(0.7)-2=1.5$.
+
+% Auer, Cesa-Bianchi and Fischer (2002), Theorem 3, doi:10.1023/A:1013689704352.
+\key{Lịch khám phá} No-regret nghĩa là $\mathbb E[R_T]/T\to0$; vẫn có thể chọn arm kém hơn. Với $\varepsilon>0$ cố định và có arm kém hơn, nhánh thử đều gây expected regret tuyến tính. Lịch $\varepsilon_t=\min(1,c/t)$ vẫn thử với xác suất dương ở mọi vòng; có thể đạt expected regret $O(k\ln T)$ nếu $c$ đủ lớn, chọn dựa trên cận dưới dương của gap nhỏ nhất khác 0. Giảm quá nhanh có thể bỏ lỡ arm tốt.
+
+% 2526Sem1-DSA5101.pdf, PDF page(s) 18.
+\ask{P25-Q7d}{P25-Q7(d)}{Dữ kiện chung: \shareddataref{P25-Q7}}
+\qpart{d} In the multi-armed bandits problem, the key advantage of the Epsilon-Greedy algorithm as compared to the Greedy algorithm is that it ensures sufficient exploration in the early iterations.
+
+\answer{\maptag{answer:P25-Q7d}}
+\solutionprompt{So cách pure greedy và $\varepsilon$-greedy chọn arm ở các vòng đầu. Tách việc có cơ hội khám phá khỏi việc bảo đảm đã khám phá đủ.}
+\guidepart{(d)}
+\begin{guidesteps}
+\item Pure greedy luôn chọn empirical mean cao nhất; $\varepsilon$-greedy dành xác suất $\varepsilon$ cho exploration, nên có cơ chế thử các arm ngoài arm đang dẫn đầu.
+\item Theo cách diễn đạt và mục tiêu so sánh trong bài, câu được đánh True vì $\varepsilon$-greedy khuyến khích exploration. Chính xác hơn, trong hữu hạn vòng xác suất dương không bảo đảm tất định rằng mọi arm đã được thử đủ.
+\end{guidesteps}
+\finalanswer{(d) Đúng theo ý đề: $\varepsilon$-Greedy có cơ chế khám phá từ đầu; trong hữu hạn vòng, cơ chế này không bảo đảm mọi arm đã được thử đủ.}
+
+\topic{ucb}{UCB1 and Hoeffding}
+
+% Lec9_WebAds.pdf, pp. 65--75.
+\algsummary{Chọn arm có trung bình cao hoặc chưa được thử đủ để kết luận.}{Ưu tiên arm có chỉ số lạc quan nhất: lấy điểm trung bình hiện có rồi cộng bonus cho phần chưa chắc chắn.}{}{Mô hình bandit ở trên. Số lượt $n_a$ và trung bình $\hat\mu_a$ lấy trước vòng $t$; $\alpha$ chỉnh bonus ($\alpha=1$ trong UCB1 chuẩn).}{Arm cho vòng $t$, rồi thống kê sau khi nhận thưởng.}{Thử mỗi arm một lần trước khi dùng chỉ số. Từ vòng $k+1$, tính chỉ số cho từng arm, chọn chỉ số cao nhất và cập nhật arm vừa thử.}
+
+\key{Chỉ số}
+\[
+I_a(t)=\hat\mu_a+\alpha\sqrt{\frac{2\ln t}{n_a}}.
+\]
+
+\begin{algpseudo}
+thử mỗi arm một lần (hoặc đến hết $T$); ghi $n_a,\hat\mu_a$\\
+với $t=k+1,\ldots,T$:\\
+\quad tính $I_a(t)$ cho mỗi arm; lấy cực đại và phá hòa theo đề\\
+\quad quan sát thưởng; cập nhật $n_a,\hat\mu_a$ của arm đó
+\end{algpseudo}
+
+\key{Ví dụ (Pr29)} Vòng 4 có $n=(1,1,1)$, $\hat\mu=(1,0,1)$, nên bonus bằng nhau. $A,C$ hòa; chọn $A$ theo thứ tự chữ cái. Thưởng 0 làm $n_A=2$ và $\hat\mu_A=(1+0)/2$. Ở vòng 5, cộng bonus cho $n=2$ vào $A$ và cho $n=1$ vào $B,C$, được $(1.77,1.79,2.79)$. Chọn $C$; thưởng 0 cho $n=(2,1,2)$ và $\hat\mu=(1/2,0,1/2)$.
+
+\unitverification
+\key{Kiểm tra chỉ số} Với $\alpha>0$, tăng $n_a$ ở cùng $t$ làm bonus giảm; tăng $t$ khi giữ nguyên $n_a$ làm bonus tăng. Tăng $\alpha$ ưu tiên arm chưa thử nhiều; $\alpha=0$ cho pure greedy sau khởi tạo. Chỉ số xếp hạng có thể vượt 1. Dùng $\ln$ và số lượt của từng arm, không thay $n_a$ bằng $t$. Tính trực tiếp các chỉ số tốn $O(k)$ mỗi vòng và lưu $O(k)$ thống kê.
+
+\unitadvanced
+\key{Hoeffding và cỡ mẫu} Xét trung bình $\hat\mu$ của đúng $m$ mẫu độc lập trong $[0,1]$ có cùng trung bình $\mu$. Với sai số $b>0$ và xác suất thất bại tối đa $\delta\in(0,1)$:
+\begin{align*}
+\Pr(|\hat\mu-\mu|\ge b)&\le 2e^{-2mb^2},\\
+2e^{-2mb^2}\le\delta
+\quad&\Rightarrow\quad m\ge\frac{\ln(2/\delta)}{2b^2}.
+\end{align*}
+Nếu biết $m$, lấy bán kính sai số $b=\sqrt{\ln(2/\delta)/(2m)}$. Không cần biết giá trị thật $\mu$ để tính cận. Với Pr29(d), $b=1/4$, $\delta=1/8$ nên lấy $\lceil8\ln16\rceil=23$ mẫu: 22 không đủ theo cận. Đây là số nguyên nhỏ nhất đáp ứng cận Hoeffding, không nhất thiết là cỡ mẫu tối thiểu thực tế.
+
+% Auer, Cesa-Bianchi and Fischer (2002), Theorem 1, doi:10.1023/A:1013689704352.
+\key{Vì sao có bonus} Với $m$ cố định, lấy $b=\sqrt{2\ln t/m}$ cho cận hai phía $2t^{-4}$. Trong UCB, số lượt chọn $n_a$ phụ thuộc vào thưởng đã quan sát, nên phân tích phải xét các cỡ mẫu có thể xảy ra trước vòng $t$. UCB1 với $\alpha=1$ có expected regret $O(\sum_{a:\Delta_a>0}(\ln T)/\Delta_a)$ khi các phân phối thưởng cố định.
 
 % DSA5101 Exam Practice Questions.pdf, PDF page(s) 30.
 
@@ -4223,19 +4300,6 @@ Three variants $A,B,C$ yield Bernoulli rewards. After one forced trial of each, 
 \item Giải bất đẳng thức được $m\ge8\ln16\approx22.18$. Vì số mẫu nguyên, cần ít nhất $m=23$.
 \end{guidesteps}
 \finalanswer{(a) Chọn $A$; counts $(2,1,1)$, means $(1/2,0,1)$. (b) Chỉ số khoảng $(1.77,1.79,2.79)$, chọn $C$; counts $(2,1,2)$, means $(1/2,0,1/2)$. (c) Pseudo-regret $1$, hụt thưởng thực tế $1.5$ do thưởng quan sát khác kỳ vọng. (d) $m=23$ lượt là đủ theo Hoeffding.}
-
-% 2526Sem1-DSA5101.pdf, PDF page(s) 18.
-\ask{P25-Q7d}{P25-Q7(d)}{Dữ kiện chung: \shareddataref{P25-Q7}}
-\qpart{d} In the multi-armed bandits problem, the key advantage of the Epsilon-Greedy algorithm as compared to the Greedy algorithm is that it ensures sufficient exploration in the early iterations.
-
-\answer{\maptag{answer:P25-Q7d}}
-\solutionprompt{So cách pure greedy và $\varepsilon$-greedy chọn arm ở các vòng đầu. Tách việc có cơ hội khám phá khỏi việc bảo đảm đã khám phá đủ.}
-\guidepart{(d)}
-\begin{guidesteps}
-\item Pure greedy luôn chọn empirical mean cao nhất; $\varepsilon$-greedy dành xác suất $\varepsilon$ cho exploration, nên có cơ chế thử các arm ngoài arm đang dẫn đầu.
-\item Theo cách diễn đạt và mục tiêu so sánh trong bài, câu được đánh True vì $\varepsilon$-greedy khuyến khích exploration. Chính xác hơn, trong hữu hạn vòng xác suất dương không bảo đảm tất định rằng mọi arm đã được thử đủ.
-\end{guidesteps}
-\finalanswer{(d) Đúng theo ý đề: $\varepsilon$-Greedy có cơ chế khám phá từ đầu; trong hữu hạn vòng, cơ chế này không bảo đảm mọi arm đã được thử đủ.}
 
 \lecture{10}{Submodular optimization (through slide 51)}
 \topic{greedy}{Monotone submodular greedy}
