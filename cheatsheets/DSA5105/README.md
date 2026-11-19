@@ -49,12 +49,25 @@ into inline expressions. Fixed paragraph spacing is 0.25 pt, topic spacing
 is 1.5 pt, and space below topic headers is 0.3 pt. Header padding is 0.5 pt;
 note-box padding is 0.3 pt. `ragged2e` allows normal hyphenation in body text
 and notes, using line width without stretching spaces between words.
+`microtype` improves line fitting with font expansion and protrusion. Inline
+math uses compact thin/medium/thick glue (2/3/4 mu); the fallback gap between
+tall body lines is 0.5 pt. The nominal font size and 7.3 pt baseline stay fixed.
+Wide formula separators use `\;` rather than `\quad` or `\qquad`.
 The `multicols*` environment with `raggedcolumns` fills columns sequentially
 without balancing or stretching the last page. Topics can continue into the
 next column; the complete autoencoder block stays together.
 Require no overfull boxes or missing glyphs in the build log. Auxiliary files
 and previews belong in ignored `tmp/pdfs/`. The course PDF is intentionally
 tracked, following the convention of `cheatsheets/DSA5104/`.
+
+### Lecture 13 reserve
+
+The current content fits within the first seven columns, leaving the fourth
+column of page 2 free for Lecture 13 (approximately 48.5 mm wide by 288 mm high).
+Repeated explanatory prose is shortened; all 26 topics, 35 procedures, 42
+examples, and 856 inline formulas are retained. Append new slide-backed topics
+at the Lecture 13 comment before `\end{multicols*}` so that content continues
+in order. Keep the existing font size, margins, and column gutters.
 
 ## Hand-calculation coverage
 
