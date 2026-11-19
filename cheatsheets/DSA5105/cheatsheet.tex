@@ -87,7 +87,7 @@
 \begin{document}
 \bodystyle
 \begin{multicols*}{4}
-\topic{01}{DSA5105 / SLIDES: ERM}
+\topic{01}{DSA5105 / ERM}
 \key{Cách dùng} CHẠY: thứ tự tính; EX: ví dụ tính tay. Update cùng bước dùng old parameters nếu không ghi khác. $\log$ tự nhiên; entropy dùng $\log_2$.
 \key{Risk / generalization}
 $D=\{(x_i,y_i)\}_{i=1}^n$, $x_i\in\R^d$; samples là rows của $X$.
@@ -175,8 +175,8 @@ $(1+x^\top z)^2$ có features $1$, $\sqrt2x_j$, $x_j^2$, $\sqrt2x_jx_\ell$ với
 \run{Polynomial features: (1) expand kernel; (2) đặt hệ số cross term thành square-root trong features; (3) kiểm dot product.}
 \ex{1D $k(x,z)=(1+xz)^2$: $\phi(x)=(1,\sqrt2x,x^2)^\top$. $x=2,z=3$: dot product $1+12+36=49=(1+6)^2$.}
 
-\topic{06}{SVM / KKT: SLIDE CONVENTION}
-Slide dùng $f(x)=w^\top\phi(x)$, \emph{không intercept}. $y_i\in\{\pm1\}$; geometric margin $y_if(x_i)/\norm w$. Normalize min functional margin $=1$:
+\topic{06}{SVM / KKT / NO INTERCEPT}
+Dùng $f(x)=w^\top\phi(x)$, \emph{không intercept}. $y_i\in\{\pm1\}$; geometric margin $y_if(x_i)/\norm w$. Normalize min functional margin $=1$:
 $\min_w\tfrac12\norm w^2\;\text{s.t. }y_iw^\top\phi_i\ge1.$
 Half-width $1/\norm w$; full width $2/\norm w$.
 $\mathcal L=\tfrac12\norm w^2+\sum_i\alpha_i(1-y_iw^\top\phi_i).$
@@ -331,7 +331,7 @@ Reconstruction $\hat\Phi=Z^\phi(U_m^\phi)^\top$; cộng $\bar\phi$ để về ra
 \run{Feature PCA: (1) map từng raw input; (2) mean/center mapped rows; (3) covariance trong feature space; (4) top eigenvectors; (5) scores và feature reconstruction.}
 \ex{$x=(-1,1)$, $\phi(x)=(x,x^2)^\top$: raw rows $(-1,1),(1,1)$; $\bar\phi=(0,1)^\top$; centered rows $(-1,0),(1,0)$. $S_\phi=\diag(1,0)$, $u_1^\phi=(1,0)^\top$, $Z^\phi=(-1,1)^\top$. Centered input mean $0$ vẫn không làm mapped feature thứ hai có mean $0$.}
 \par\noindent\begin{minipage}[t]{\linewidth}\bodystyle
-\key{Autoencoder / MLP (sl. 58--59)}
+\key{Autoencoder / MLP}
 Input $d$, latent bottleneck $m$, hidden $q$; elementwise $\sigma$. Encoder:
 $z_i=E_\theta(x_i)=A\sigma(W_e x_i+b).$
 $W_e\in\R^{q\times d}$, $b\in\R^q$, $A\in\R^{m\times q}$. Decoder:
@@ -472,7 +472,7 @@ $\varepsilon$-greedy: random action xác suất $\varepsilon$, còn lại $\argm
 \ex{$Q(s,a)=2$, next row $(3,5)$, $r=1$, $\gamma=.5$, $\alpha=.2$: $y=1+.5(5)=3.5$; $Q^+(s,a)=2+.2(3.5-2)=2.3$. Terminal: $y=1\Rightarrow Q^+=1.8$. $\varepsilon=.2$, 2 actions, unique greedy: greedy probability $.8+.2/2=.9$, other $.1$.}
 
 \topic{25}{GNN / INVARIANT VS EQUIVARIANT}
-\key{Relabel nodes (sl. 6--9)}
+\key{Relabel nodes}
 $X\in\R^{N\times d}$: feature rows; $A\in\R^{N\times N}$: adjacency. $P$: permutation matrix, mỗi row/column một $1$, còn lại $0$; $P^{-1}=P^\top$.
 $X'=PX$, $A'=PAP^\top$: đổi feature rows và cả rows/columns của $A$. $P_{ij}=1$: old node $j$ tới new row $i$; graph không đổi.
 \key{Node task: equivariant}
@@ -491,17 +491,17 @@ Stack equivariant layers + shared row classifier: equivariant. Invariant pooling
 \trap{Relabel đồng thời $X$ và $A$. Aggregation invariant với neighbor order; node outputs equivariant. Flatten theo node order + arbitrary MLP không bảo đảm symmetry.}
 
 \topic{26}{GNN / MESSAGE PASSING / READOUT}
-\key{Aggregate + update (sl. 13--18)}
+\key{Aggregate + update}
 Dùng row embeddings $h_i^{(0)}=x_i^\top$ trong $H^{(0)}=X$:
 $m_i^{(\ell)}=\operatorname{AGG}\{h_j^{(\ell)}:j\in\mathcal N(i)\}$;
 $h_i^{(\ell+1)}=\sigma(h_i^{(\ell)}W_s^{(\ell)}+m_i^{(\ell)}W_n^{(\ell)}+b^{(\ell)\top})$.
 AGG order-invariant trên multiset: sum, mean, elementwise max. Mean $=\sum_jh_j/|\mathcal N(i)|$; isolated node cần rule (vd. zero aggregate).
-\key{Invariant readout (sl. 22)}
+\key{Invariant readout}
 Sum $r(H)=\sum_i h_i=\ind_N^\top H$;
 $r(PH)=\ind_N^\top PH=\ind_N^\top H=r(H)$.
 Mean/max invariant; graph MLP $\rho(r(H))$ cũng vậy.
 \run{(1) Liệt kê neighbors, init $H=X$; (2) mỗi layer tính mọi aggregate từ cùng old $H$; (3) shared update + activation; (4) lặp $L$ layers; (5) node task giữ rows, graph task pooling; (6) permute và kiểm mục 25. $L$ local layers reach tối đa $L$ hops.}
-\ex{Sl. 32--33: chain $a-b-c-d$, $H^{(0)}=(1,2,0,3)^\top$; $h_i^+=\operatorname{ReLU}(h_i+\tfrac12\sum_{j\in\mathcal N(i)}h_j)$. Layer 1 neighbor sums $(2,1,5,0)$; $H^{(1)}=(2,2.5,2.5,3)^\top$, vd. $h_c^+=0+.5(2+3)=2.5$. Layer 2: $h_a^{(2)}=2+.5(2.5)=3.25$; tương tự $H^{(2)}=(3.25,4.75,5.25,4.25)^\top$. Sum readouts $10$, $17.5$.}
+\ex{Chain $a-b-c-d$, $H^{(0)}=(1,2,0,3)^\top$; $h_i^+=\operatorname{ReLU}(h_i+\tfrac12\sum_{j\in\mathcal N(i)}h_j)$. Layer 1 neighbor sums $(2,1,5,0)$; $H^{(1)}=(2,2.5,2.5,3)^\top$, vd. $h_c^+=0+.5(2+3)=2.5$. Layer 2: $h_a^{(2)}=2+.5(2.5)=3.25$; tương tự $H^{(2)}=(3.25,4.75,5.25,4.25)^\top$. Sum readouts $10$, $17.5$.}
 \ex{Order mới $(b,a,d,c)$: $X'=(2,1,3,0)^\top$, neighbor-index sets $(\{2,4\},\{1\},\{4\},\{1,3\})$. First new row: $2+.5(1+0)=2.5$; tính tiếp cho $H'^{(1)}=(2.5,2,3,2.5)^\top=PH^{(1)}$. Layer 2 reorder $(4.75,3.25,4.25,5.25)^\top$; sums vẫn $10$, $17.5$. Node outputs equivariant; graph readout invariant.}
 \trap{$\{1,1\}$ và $\{1,1,1\}$ có sum $2,3$ nhưng cùng mean/max $1$: mean/max mất multiplicity. Invariant không bảo đảm phân biệt mọi graph. CNN translation-equivariant, không với arbitrary node permutations.}
 
@@ -516,10 +516,10 @@ Row $i$: query; col $j$: key. Softmax theo keys, từng row; $a_{ij}\ge0$, $\sum
 $Q,K\in\R^{N\times d_k}$: $QK^\top\in\R^{N\times N}$ (token-to-token); $Q^\top K\in\R^{d_k\times d_k}$ (Q/K feature-to-feature). Attention dùng tích đầu.
 Với entries độc lập, mean $0$, variance $1$: $\Var(q^\top k)=d_k$; chia $\sqrt{d_k}$ đưa variance về $1$, giảm saturation.
 \run{(1) Tính $Q,K,V$; (2) dot products $QK^\top$; (3) chia $\sqrt{d_k}$, cộng mask nếu có; (4) exponentiate, chia row sum; (5) weighted sum value rows $Y_{i,:}=\sum_j a_{ij}V_{j,:}$.}
-\ex{Sl.15--16: $q=1,d_k=1$, $k=(0,\log2,0)$; value rows $(1,0),(0,2),(1,2)$. Scores $(0,\log2,0)$; exp $(1,2,1)$, sum $4$; $a=(1/4,1/2,1/4)$. $y=(1,0)/4+(0,2)/2+(1,2)/4=(1/2,3/2)$.}
+\ex{$q=1,d_k=1$, $k=(0,\log2,0)$; value rows $(1,0),(0,2),(1,2)$. Scores $(0,\log2,0)$; exp $(1,2,1)$, sum $4$; $a=(1/4,1/2,1/4)$. $y=(1,0)/4+(0,2)/2+(1,2)/4=(1/2,3/2)$.}
 \ex{$d_k=64$, raw scores $(0,8)$: chia $8$ thành $(0,1)$, weights $\approx(.269,.731)$; unscaled $\approx(.0003,.9997)$. Scale \emph{trước} softmax, dùng $d_k$, không $d_v$.}
 
-\key{Transformer block (sl.22--23)} Attention mix tokens; shared FFN: features trong từng token; residual cộng update rồi LayerNorm theo features từng token (post-norm).
+\key{Transformer block} Attention mix tokens; shared FFN: features trong từng token; residual cộng update rồi LayerNorm theo features từng token (post-norm).
 
 \topic{28}{Q / K / V DEPENDENCY}
 Xét một layer, giữ các tensors khác cố định.
@@ -535,11 +535,11 @@ $L=S+M$, $A=\operatorname{softmax}_{row}(L)$.
 $M_{ij}=0$ nếu được đọc; $M_{ij}=-\infty$ nếu cấm.
 Causal: được đọc iff $j\le i$, kể cả chính nó. Shifted targets: input tại $i$ dự đoán token kế tiếp; train mọi positions song song, không đọc future input.
 \run{(1) Lập allowed keys từng query; (2) cộng mask vào scaled scores; (3) $e^{-\infty}=0$, normalize trên allowed keys; (4) nhân $V$; (5) kiểm blocked weights $0$, row sum $1$.}
-\ex{Sl.17, data mục 27, cấm key 3: $L=(0,\log2,-\infty)$, exp $(1,2,0)$; $a=(1/3,2/3,0)$; $y=(1,0)/3+2(0,2)/3=(1/3,4/3)$.}
+\ex{Data mục 27, cấm key 3: $L=(0,\log2,-\infty)$, exp $(1,2,0)$; $a=(1/3,2/3,0)$; $y=(1,0)/3+2(0,2)/3=(1/3,4/3)$.}
 \ex{Ba queries đều $q_i=1$, cùng $K,V$ mục 27, causal mask: $A=\left[\begin{smallmatrix}1&0&0\\1/3&2/3&0\\1/4&1/2&1/4\end{smallmatrix}\right]$. Output rows: $(1,0)$, $(1/3,4/3)$, $(1/2,3/2)$. Future key/value không ảnh hưởng earlier outputs.}
 \trap{Mask \emph{trước} softmax; logit $0$ vẫn có exp $1$. Zero weights sau softmax phải renormalize. Row toàn $-\infty$ không có softmax hợp lệ.}
 
-\key{GPT (sl.28--34)} Decoder-only: token IDs $\to$ embedding + positions $\to$ masked blocks $\to$ vocab logits $\to$ softmax. Output softmax trên vocabulary; attention softmax trên keys.
+\key{GPT} Decoder-only: token IDs $\to$ embedding + positions $\to$ masked blocks $\to$ vocab logits $\to$ softmax. Output softmax trên vocabulary; attention softmax trên keys.
 $p_\theta(x_{1:T})=\prod_t p_\theta(x_t\mid x_{<t})$;
 $\mathcal L=-\sum_t\log p_\theta(x_t\mid x_{<t})$; mean CE $=\mathcal L/T$. Max likelihood = min NLL; targets từ text (self-supervised).
 \run{Train: (1) Shift input/target; (2) causal forward mọi positions; (3) cộng $-\log p_{\rm target}$; (4) backprop. Teacher forcing: ground-truth prefix.}

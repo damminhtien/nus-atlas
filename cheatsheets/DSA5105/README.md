@@ -72,6 +72,8 @@ block roles, the GPT pipeline, next-token loss, teacher forcing, and generation.
 Existing formulas, procedures, and examples are retained. The sheet has two A4
 pages, 30 topics, 41 procedures, 50 examples, and 988 inline formulas. Keep the
 6.4 pt body font, 7.3 pt baseline, margins, gutters, and sequential column flow.
+Keep slide/page references in the source map below; omit them from printed
+headings and examples.
 
 ## Hand-calculation coverage
 
