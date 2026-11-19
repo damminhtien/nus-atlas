@@ -28,7 +28,7 @@
     \IfFontExistsTF{STIXTwoMath-Regular.otf}{\setmathfont{STIXTwoMath-Regular.otf}}{\setmathfont{latinmodern-math.otf}}}
   \IfFontExistsTF{JetBrains Mono}{\setmonofont{JetBrains Mono}[Scale=MatchLowercase]}{\setmonofont{lmmono10-regular.otf}[Scale=MatchLowercase]}
 \fi
-\usepackage{xcolor,array,enumitem,multicol}
+\usepackage{xcolor,array,enumitem,multicol,ragged2e}
 \definecolor{structure}{HTML}{10243A}
 \definecolor{condition}{HTML}{704500}
 \definecolor{conditionbg}{HTML}{FFF1CC}
@@ -40,7 +40,7 @@
 \pagestyle{empty}
 \setlength{\topskip}{0pt}
 \setlength{\parindent}{0pt}
-\setlength{\parskip}{.7pt}
+\setlength{\parskip}{.25pt}
 \setlength{\tabcolsep}{2pt}
 \renewcommand{\arraystretch}{1.08}
 \setlist[itemize]{leftmargin=8pt,label=\textbullet,nosep,topsep=1pt}
@@ -50,19 +50,19 @@
 \raggedbottom
 \raggedcolumns
 \newcommand{\bodystyle}{%
-  \fontsize{6.4}{7.3}\selectfont\raggedright
+  \fontsize{6.4}{7.3}\selectfont\RaggedRight
   \setlength{\abovedisplayskip}{2pt}\setlength{\belowdisplayskip}{2pt}%
   \setlength{\abovedisplayshortskip}{1pt}\setlength{\belowdisplayshortskip}{1pt}}
-\newcommand{\topic}[2]{\par\addvspace{3pt}%
-  \begingroup\setlength{\fboxsep}{0.8pt}%
+\newcommand{\topic}[2]{\par\addvspace{1.5pt}%
+  \begingroup\setlength{\fboxsep}{0.5pt}%
   \noindent\colorbox{structure}{\parbox{\dimexpr\linewidth-2\fboxsep\relax}{%
     \color{white}\fontsize{7.1}{8}\selectfont\bfseries #1\enspace #2}}%
-  \endgroup\par\nobreak\vspace{1pt}\nobreak}
+  \endgroup\par\nobreak\vspace{.3pt}\nobreak}
 \newcommand{\run}[1]{\key{CHẠY}#1}
 \newcommand{\key}[1]{\par\textcolor{structure}{\textbf{#1}}\enspace}
-\newcommand{\note}[4]{\par\begingroup\setlength{\fboxsep}{0.5pt}%
+\newcommand{\note}[4]{\par\begingroup\setlength{\fboxsep}{0.3pt}%
   \noindent\colorbox{#1}{\parbox{\dimexpr\linewidth-2\fboxsep\relax}{%
-    \textcolor{#2}{\textbf{#3}}\enspace #4}}%
+    \RaggedRight\textcolor{#2}{\textbf{#3}}\enspace #4}}%
   \endgroup\par}
 \newcommand{\cond}[1]{\note{conditionbg}{condition}{COND}{#1}}
 \newcommand{\trap}[1]{\note{warningbg}{warning}{!}{#1}}
