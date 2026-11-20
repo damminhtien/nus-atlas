@@ -514,7 +514,7 @@ $a_{ij}=e^{S_{ij}}/\sum_\ell e^{S_{i\ell}}$,
 $Y=AV\in\R^{N\times d_v}$.
 Row $i$: query; col $j$: key. Softmax theo keys, từng row; $a_{ij}\ge0$, $\sum_j a_{ij}=1$.
 Self-attention: $N$ query/key tokens, $QK^\top:N\times N$.
-Cross-attention: $Q\in\R^{N_q\times d_k}$, $K\in\R^{N_k\times d_k}$, $QK^\top:N_q\times N_k$.
+Cross-attention: $Q\in\R^{N_q\times d_k}$, $K\in\R^{N_k\times d_k}$, $V\in\R^{N_k\times d_v}$; $QK^\top:N_q\times N_k$, $AV:N_q\times d_v$.
 $Q^\top K:d_k\times d_k$ luôn hợp lệ với self; cross chỉ khi $N_q=N_k$.
 $QK^\top$: token-to-token (attention); $Q^\top K$: Q/K feature-to-feature.
 Với entries độc lập, mean $0$, variance $1$: $\Var(q^\top k)=d_k$; chia $\sqrt{d_k}$ đưa variance về $1$, giảm saturation.
@@ -527,9 +527,12 @@ Với entries độc lập, mean $0$, variance $1$: $\Var(q^\top k)=d_k$; chia $
 \topic{28}{Q / K / V DEPENDENCY}
 Xét một layer, giữ các tensors khác cố định.
 Đổi $Q_{r,:}$: chỉ row $r$ của $S,A,Y$ có thể đổi.
-Đổi $K_{s,:}$: col $s$ của $S$ có thể đổi; softmax renormalize \emph{mọi} weight trong từng row đọc key $s$.
+Đổi $K_{s,:}$: chỉ col $s$ của $S$ có thể đổi; softmax renormalize row đọc key $s$. $q^\top\Delta k=0\Rightarrow$ score không đổi.
 Đổi $V_{s,:}$: $A$ giữ nguyên; $\Delta Y_{i,:}=a_{is}\Delta V_{s,:}$.
 Đổi input token $x_s$ trong self-attention có thể đổi cả $q_s,k_s,v_s$: nhiều outputs có thể đổi.
+Logits hữu hạn: $\operatorname{softmax}(s+c\mathbf1)=\operatorname{softmax}(s)$;
+$\operatorname{softmax}_{row}(S+\Delta S)=\operatorname{softmax}_{row}(S)\iff\Delta S=r\mathbf1^\top$, $r\in\R^{N_q}$.
+Mask cố định: chỉ cần $\Delta S_{ij}=r_i$ trên allowed keys.
 \run{(1) Xác định đổi tensor hay input; (2) trace $Q,K\to S\to A$, $A,V\to Y$; (3) giữ mask, bỏ edges bị cấm; (4) tính lại softmax nếu $Q/K$ đổi, chỉ weighted sum nếu riêng $V$ đổi.}
 \ex{Dùng mục 27, mỗi lần trở về data gốc. Chỉ $v_3:(1,2)\to(5,2)$: $a$ giữ, $\Delta y=(4,0)/4=(1,0)$, $y^+=(3/2,3/2)$. Chỉ $k_2:\log2\to0$: scores $(0,0,0)$, $a^+=(1/3,1/3,1/3)$, $y^+=(2/3,4/3)$. Chỉ $q:1\to0$ cũng cho uniform weights.}
 

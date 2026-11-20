@@ -70,7 +70,7 @@ The reserved space holds four slide-backed Transformer topics, continuing
 from column 3 into column 4 on page 2. Compact notes in topics 27 and 29 cover
 block roles, the GPT pipeline, next-token loss, teacher forcing, and generation.
 Existing formulas, procedures, and examples are retained. The sheet has two A4
-pages, 30 topics, 41 procedures, 50 examples, and 994 inline formulas. Keep the
+pages, 30 topics, 41 procedures, 50 examples, and 1001 inline formulas. Keep the
 6.4 pt body font, 7.3 pt baseline, margins, gutters, and sequential column flow.
 Keep slide/page references in the source map below; omit them from printed
 headings and examples.
@@ -112,8 +112,8 @@ update order, and loss normalization when editing.
 | 24 | Epsilon-greedy sampling probabilities; nonterminal and terminal Q-learning updates. |
 | 25 | Relabel features and adjacency consistently; prove equivariance/invariance or disprove them with numerical counterexamples. |
 | 26 | Synchronous message passing on a four-node chain, two layers, relabelled outputs, and invariant sum readouts. |
-| 27 | Compute projections, scaled logits, row softmax, and weighted values; work the lecture's three-key example and compare scaled/unscaled weights. Identify the roles of attention, shared FFN, residual updates, and tokenwise LayerNorm. |
-| 28 | Trace changes to Q, K, V, or an input token; recompute a value perturbation, key perturbation, and zero query from the same starting data. |
+| 27 | Compute projections, scaled logits, row softmax, and weighted values; check self/cross-attention Q/K/V, score, and output shapes. Work the lecture's three-key example and compare scaled/unscaled weights. Identify the roles of attention, shared FFN, residual updates, and tokenwise LayerNorm. |
+| 28 | Trace changes to Q, K, V, or an input token; check orthogonal key perturbations and row-constant softmax shifts, restricting masked conditions to allowed keys. Recompute a value perturbation, key perturbation, and zero query from the same starting data. |
 | 29 | Apply additive masks and calculate a three-token causal example; shift language-model targets, calculate sequence probability and summed/mean NLL, then greedily append tokens until eos. |
 | 30 | Recompute attention after a token swap, verify output equivariance, and use a fixed causal mask as a numerical counterexample. |
 
@@ -142,7 +142,7 @@ into this repository. Page numbers are 1-based PDF pages.
 | 25–26 | `DSA5105/DSA5105_Week12_GNN.pptx`, slides 5–18, 22, 32–33 | Relabel both feature rows and adjacency rows/columns; distinguish node equivariance from graph invariance; derive shared-layer symmetry and use the two-layer chain example with sum readout. |
 | 27 | `DSA5105/Lec13_Transformers.pdf`, pp. 8–16 | Use row softmax, projection dimensions, and scaling by the key dimension; reproduce the three-key attention example and the scaled-logit comparison. Derive the user-requested self/cross-attention token counts and token-to-token versus Q/K feature-to-feature product shapes from matrix dimensions; the transposed-query product requires equal query/key token counts. |
 | 27 (block roles) | `DSA5105/Lec13_Transformers.pdf`, pp. 22–23 | Distinguish token mixing, shared feature transforms, residual updates, and per-token feature normalization; retain the slide's post-norm convention. |
-| 28 | `DSA5105/Lec13_Transformers.pdf`, pp. 9–11, 16–17 | Derive separate Q/K/V dependencies from the computation graph; distinguish a tensor perturbation from an input change and calculate explicit perturbations. |
+| 28 | `DSA5105/Lec13_Transformers.pdf`, pp. 9–11, 16–17 | Derive separate Q/K/V dependencies from the computation graph; distinguish a tensor perturbation from an input change and calculate explicit perturbations. The user-supplied unchanged-score and softmax-shift conditions follow algebraically; the row-shift equivalence assumes finite logits and applies only on allowed keys with a fixed mask. |
 | 29 | `DSA5105/Lec13_Transformers.pdf`, pp. 4, 17, 29–32 | Reproduce the masked-key calculation; derive a three-token causal calculation with shifted targets, diagonal access, and zero future weights. |
 | 29 (GPT) | `DSA5105/Lec13_Transformers.pdf`, pp. 28–34 | Condense the decoder pipeline, self-supervised next-token NLL, teacher forcing, and greedy generation. The short probability/loss and generation examples are authored arithmetic illustrations of these procedures. |
 | 30 | `DSA5105/Lec13_Transformers.pdf`, pp. 22–25, 32 | Derive attention equivariance without order information; calculate a token-swap example and fixed-causal-mask counterexample. Joint permutation of a general mask is a derived extension of the lecture proof. |
