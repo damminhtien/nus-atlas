@@ -475,7 +475,7 @@ $\theta\gets\theta-\eta\nabla_\theta\mathcal L$ (freeze $y$); $\theta^-\gets\the
 
 \topic{25}{GNN / INVARIANT VS EQUIVARIANT}
 \key{Relabel nodes}
-$X\in\R^{N\times d}$: feature rows; $A\in\R^{N\times N}$: adjacency. $P$: permutation matrix, mỗi row/column một $1$, còn lại $0$; $P^{-1}=P^\top$.
+$X\in\R^{N\times d}$: feature rows; $A\in\R^{N\times N}$: adjacency. $P$: permutation matrix, mỗi row/column một $1$, còn lại $0$; $P^{-1}=P^\top$, $P^\top P=I$.
 $X'=PX$, $A'=PAP^\top$: đổi feature rows và cả rows/columns của $A$. $P_{ij}=1$: old node $j$ tới new row $i$; graph không đổi.
 \key{Node task: equivariant}
 $F(PX,PAP^\top)=PF(X,A)$, output $F\in\R^{N\times q}$: reorder predictions theo nodes.
@@ -484,7 +484,7 @@ $g(PX,PAP^\top)=g(X,A)$, output $g\in\R^q$: không đổi khi relabel nodes.
 \key{Shared layer / proof}
 Với undirected $A_{ij}=1$ iff $j\in\mathcal N(i)$, $H$ chứa row embeddings:
 $F(H,A)=\sigma(HW_s+AHW_n+\ind_Nb^\top)$.
-Shared weights, elementwise $\sigma$; $P\ind_N=\ind_N$, $P^\top P=I$ cho
+Shared weights, elementwise $\sigma$; $P\ind_N=\ind_N$;
 $(PAP^\top)(PH)=PAH$;
 $F(PH,PAP^\top)=P\sigma(HW_s+AHW_n+\ind_Nb^\top)=PF(H,A)$.
 Stack equivariant layers + shared row classifier: equivariant. Invariant pooling + graph MLP: invariant.
@@ -555,7 +555,7 @@ $\mathcal L=-\sum_t\log p_\theta(x_t\mid x_{<t})$; mean CE $=\mathcal L/T$. Max 
 \ex{Vocab (A,B,eos), prefix bos A: logits $(0,\log3,0)$, exp $(1,3,1)$, $p=(.2,.6,.2)$: append B. Bước sau $p=(.25,.25,.5)$: chọn eos, dừng.}
 
 \topic{30}{ATTENTION / EQUIVARIANCE}
-Không positional encoding, không fixed-order mask; shared projections. Với row permutation $P$:
+Không positional encoding/fixed-order mask; shared projections. $X'=PX$ (mục 25); $A$: attention weights.
 $Q'=PQ,K'=PK,V'=PV$;
 $S'=PSP^\top$;
 $A'=\operatorname{softmax}_{row}(PSP^\top)=PAP^\top$;
