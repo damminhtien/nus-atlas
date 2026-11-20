@@ -10,17 +10,18 @@ Print duplex at 100% / actual size.
 ## Scope
 
 Use the supplied `DSA5105_midterm_cheatsheet_vi.tex` as the first-half content
-base and add only subjects supported by the current local lecture slides.
+base and add current local lecture topics or explicit user-supplied additions.
 Do not use past papers to infer the current syllabus or add reference-only
 subjects. The supplied original remains outside the repository.
 
 - Topics 01–12: learning/linear models, optimization, kernels/SVM, trees/ensembles,
   neural networks, CNNs, and RNNs.
 - Topics 13–26: PCA/whitening/feature-space PCA/autoencoders, K-means/GMM, finite
-  discounted MDPs, value/policy iteration, MC/TD/Q-learning, and GNN permutation symmetry.
+  discounted MDPs, value/policy iteration, MC/TD/Q-learning/DQN, and GNN permutation symmetry.
   Topic 15 keeps autoencoder MLP architecture, loss, and training together.
-- Topics 25–26 replace the previous DQN and Power Method/PageRank blocks at
-  the user's request. They use the current Week 12 GNN slides, focusing on
+- Topic 24 merges the user-supplied DQN core into Q-learning: a shared terminal-aware
+  target, replay and target networks, ordered training steps, and a gradient example.
+- Topics 25–26 use the current Week 12 GNN slides, focusing on
   permutation invariance/equivariance, shared message passing, and graph readout.
   No past-paper graph-kernel, spectral-clustering, LS-SVM, leave-one-out, or
   shortest-path exercises are included. Kernel PCA and SARSA remain omitted.
@@ -70,7 +71,7 @@ The reserved space holds four slide-backed Transformer topics, continuing
 from column 3 into column 4 on page 2. Compact notes in topics 27 and 29 cover
 block roles, the GPT pipeline, next-token loss, teacher forcing, and generation.
 Existing formulas, procedures, and examples are retained. The sheet has two A4
-pages, 30 topics, 41 procedures, 50 examples, and 1001 inline formulas. Keep the
+pages, 30 topics, 42 procedures, 50 examples, and 1017 inline formulas. Keep the
 6.4 pt body font, 7.3 pt baseline, margins, gutters, and sequential column flow.
 Keep slide/page references in the source map below; omit them from printed
 headings and examples.
@@ -78,7 +79,7 @@ headings and examples.
 ## Hand-calculation coverage
 
 Every numbered topic has a `CHẠY` procedure and an `EX` example. The sheet
-contains 41 procedure blocks and 50 example boxes; procedures that share the
+contains 42 procedure blocks and 50 example boxes; procedures that share the
 same operations can cover related methods together. Numerical examples combine
 lecture examples with authored arithmetic illustrations, as recorded in the
 source map; no past-paper questions are used. Keep intermediate calculations,
@@ -109,7 +110,7 @@ update order, and loss normalization when editing.
 | 21 | Synchronous value-iteration sweeps, error-based stopping, and final greedy policy. |
 | 22 | Evaluate a policy, compare actions, improve, and repeat until stable. |
 | 23 | First-visit versus every-visit MC with repeated states; TD updates with and without terminal continuation. |
-| 24 | Epsilon-greedy sampling probabilities; nonterminal and terminal Q-learning updates. |
+| 24 | Epsilon-greedy sampling probabilities; nonterminal and terminal Q-learning updates. Run DQN replay sampling, a frozen-target gradient step, and periodic target copying; reuse the numerical target to calculate MSE, its gradient, and the new parameter. |
 | 25 | Relabel features and adjacency consistently; prove equivariance/invariance or disprove them with numerical counterexamples. |
 | 26 | Synchronous message passing on a four-node chain, two layers, relabelled outputs, and invariant sum readouts. |
 | 27 | Compute projections, scaled logits, row softmax, and weighted values; check self/cross-attention Q/K/V, score, and output shapes. Work the lecture's three-key example and compare scaled/unscaled weights. Identify the roles of attention, shared FFN, residual updates, and tokenwise LayerNorm. |
@@ -139,6 +140,7 @@ into this repository. Page numbers are 1-based PDF pages.
 | 16–18 | `DSA5105/Lec9_UL_K-means_GMM.pdf`, pp. 4–22, 23–39 | Contrast hard assignments with Gaussian posterior responsibilities and weighted parameter updates. |
 | 19–20 | `DSA5105/Lec10_RL_MDP_DP.pdf`, pp. 13–44 | Separate policy expectation from optimality maximization under discounted-MDP assumptions. |
 | 21–24 | `DSA5105/Lec11_RL.pdf`, pp. 8–20, 25–39 | Distinguish exact model-based backups, sampled returns, TD evaluation, and Q-learning. |
+| 24 (DQN) | User-supplied DQN Core formulas and mechanism summary | Use a neural Q-function, frozen target network, random replay minibatches, and periodic hard copying. The done flag extends the supplied nonterminal target to true terminal transitions; the one-transition identity-output gradient example is authored arithmetic. |
 | 25–26 | `DSA5105/DSA5105_Week12_GNN.pptx`, slides 5–18, 22, 32–33 | Relabel both feature rows and adjacency rows/columns; distinguish node equivariance from graph invariance; derive shared-layer symmetry and use the two-layer chain example with sum readout. |
 | 27 | `DSA5105/Lec13_Transformers.pdf`, pp. 8–16 | Use row softmax, projection dimensions, and scaling by the key dimension; reproduce the three-key attention example and the scaled-logit comparison. Derive the user-requested self/cross-attention token counts and token-to-token versus Q/K feature-to-feature product shapes from matrix dimensions; the transposed-query product requires equal query/key token counts. |
 | 27 (block roles) | `DSA5105/Lec13_Transformers.pdf`, pp. 22–23 | Distinguish token mixing, shared feature transforms, residual updates, and per-token feature normalization; retain the slide's post-norm convention. |

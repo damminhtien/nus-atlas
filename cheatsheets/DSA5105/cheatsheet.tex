@@ -1,5 +1,5 @@
 % DSA5105 final revision: adapted from the shared template and user-provided midterm notes.
-% Current lecture slides only; no past-paper/reference-only expansion.
+% Current lecture slides and user-supplied additions; no past-paper expansion.
 % Source IDs and page ranges: README.md. Build with LuaLaTeX.
 % Two A4 portrait pages; four flowing columns, filled left to right.
 % Compile with LuaLaTeX for Vietnamese text and OpenType math fonts.
@@ -460,16 +460,18 @@ TD: one-step sample + current estimate; update trước episode end. True termin
 \run{TD(0): (1) sample $(s,r,s')$ theo $\pi$; (2) target $y=r+\gamma V(s')$ (terminal: $y=r$); (3) $\delta=y-V(s)$; (4) update visited $V(s)$, tiếp tục episode.}
 \ex{$V(s)=2$, $V(s')=4$, $r=1$, $\gamma=.5$, $\alpha=.1$: $y=3$, $\delta=1$, $V^+(s)=2.1$. Nếu $s'$ terminal: $y=1$, $\delta=-1$, $V^+(s)=1.9$.}
 
-\topic{24}{Q-LEARNING / EXPLORATION}
-Learn $Q^*$ trực tiếp từ transition sample $(s,a,r,s')$:
-$y=r+\gamma\max_{a'}Q(s',a').$
-$Q(s,a)\gets Q(s,a)+\alpha[y-Q(s,a)].$
-Bellman optimality target; TD evaluation dùng fixed policy. Chỉ update visited state-action.
-\key{Behavior vs target}
-$\varepsilon$-greedy: random action xác suất $\varepsilon$, còn lại $\argmax_aQ(s,a)$. Exploration lấy samples; target greedy ở next state.
-\trap{Không thay $\max_{a'}Q(s',a')$ bằng $\max_{a'}Q(s,a')$. True terminal không bootstrap. Function approximation không tự kế thừa convergence của tabular updates.}
-\run{(1) Init $Q$; (2) chọn action $\varepsilon$-greedy; (3) observe $(r,s',d)$; (4) target $y=r+\gamma(1-d)\max_{a'}Q(s',a')$; (5) update \emph{chỉ} $Q(s,a)$; (6) chuyển state/reset terminal, repeat.}
-\ex{$Q(s,a)=2$, next row $(3,5)$, $r=1$, $\gamma=.5$, $\alpha=.2$: $y=1+.5(5)=3.5$; $Q^+(s,a)=2+.2(3.5-2)=2.3$. Terminal: $y=1\Rightarrow Q^+=1.8$. $\varepsilon=.2$, 2 actions, unique greedy: greedy probability $.8+.2/2=.9$, other $.1$.}
+\topic{24}{Q-LEARNING / DQN}
+Target chung: $y=r+\gamma(1-d)\max_{a'}\bar Q(s',a')$; $d=1$ terminal.
+Tabular $\bar Q=Q$: $Q(s,a)\gets Q(s,a)+\alpha[y-Q(s,a)]$, học $Q^*$.
+Bellman optimality target; TD evaluation dùng fixed policy.
+\key{Explore} $\varepsilon$-greedy: uniform action prob $\varepsilon$, còn lại $\argmax_aQ(s,a)$. Target greedy next state.
+\trap{Target lấy max tại next state $s'$. Function approximation không tự kế thừa tabular convergence.}
+\run{Tabular: (1) init $Q$; (2) $\varepsilon$-greedy, observe $(r,s',d)$; (3) tính $y$, update \emph{chỉ} $Q(s,a)$; (4) next state/reset terminal; repeat.}
+\key{DQN core} NN $Q_\theta$ xấp xỉ $Q$; target $\bar Q=Q_{\theta^-}$ ổn định targets; replay $\mathcal D$ giảm tương quan thời gian.
+$\mathcal L(\theta)=\E_{\mathcal D}[(y-Q_\theta(s,a))^2]$;
+$\theta\gets\theta-\eta\nabla_\theta\mathcal L$ (freeze $y$); $\theta^-\gets\theta$ định kỳ.
+\run{DQN: (1) init $\theta^-=\theta$, replay rỗng; (2) $\varepsilon$-greedy $Q_\theta$, lưu transition; (3) minibatch ngẫu nhiên, tính $y$, GD $\theta$; (4) định kỳ copy target; repeat.}
+\ex{$Q(s,a)=2$, next row $(3,5)$, $r=1$, $\gamma=.5$, $\alpha=.2$: $y=1+.5(5)=3.5$; $Q^+(s,a)=2+.2(3.5-2)=2.3$. Terminal: $y=1\Rightarrow Q^+=1.8$. $\varepsilon=.2$, 2 actions, unique greedy: probs $(.9,.1)$ vì $.8+.2/2=.9$. DQN cùng target, $Q_\theta(s,a)=\theta=2$: $L=(3.5-2)^2=2.25$, $g=2(2-3.5)=-3$; $\eta=.1\Rightarrow\theta^+=2.3$.}
 
 \topic{25}{GNN / INVARIANT VS EQUIVARIANT}
 \key{Relabel nodes}
@@ -506,23 +508,22 @@ Mean/max invariant; graph MLP $\rho(r(H))$ cũng vậy.
 \trap{$\{1,1\}$ và $\{1,1,1\}$ có sum $2,3$ nhưng cùng mean/max $1$: mean/max mất multiplicity. Invariant không bảo đảm phân biệt mọi graph. CNN translation-equivariant, không với arbitrary node permutations.}
 
 \topic{27}{TRANSFORMERS / ATTENTION}
-$X\in\R^{N\times D}$: token rows.
+Self: $X:N\times D$ (token rows), $N_q=N_k=N$.
 $Q=XW_Q$, $K=XW_K$, $V=XW_V$;
-$W_Q,W_K\in\R^{D\times d_k}$, $W_V\in\R^{D\times d_v}$.
-$S=QK^\top/\sqrt{d_k}\in\R^{N\times N}$,
+$W_Q,W_K:D\times d_k$, $W_V:D\times d_v$.
+Chung: $Q:N_q\times d_k$, $K:N_k\times d_k$, $V:N_k\times d_v$.
+$S=QK^\top/\sqrt{d_k}$, $QK^\top:N_q\times N_k$;
 $a_{ij}=e^{S_{ij}}/\sum_\ell e^{S_{i\ell}}$,
-$Y=AV\in\R^{N\times d_v}$.
-Row $i$: query; col $j$: key. Softmax theo keys, từng row; $a_{ij}\ge0$, $\sum_j a_{ij}=1$.
-Self-attention: $N$ query/key tokens, $QK^\top:N\times N$.
-Cross-attention: $Q\in\R^{N_q\times d_k}$, $K\in\R^{N_k\times d_k}$, $V\in\R^{N_k\times d_v}$; $QK^\top:N_q\times N_k$, $AV:N_q\times d_v$.
-$Q^\top K:d_k\times d_k$ luôn hợp lệ với self; cross chỉ khi $N_q=N_k$.
+$Y=AV:N_q\times d_v$.
+Row $i$: query; col $j$: key; softmax theo keys, $a_{ij}\ge0$, $\sum_j a_{ij}=1$.
+Cross: $N_q,N_k$ có thể khác. $Q^\top K:d_k\times d_k$ chỉ hợp lệ khi $N_q=N_k$ (self: luôn).
 $QK^\top$: token-to-token (attention); $Q^\top K$: Q/K feature-to-feature.
-Với entries độc lập, mean $0$, variance $1$: $\Var(q^\top k)=d_k$; chia $\sqrt{d_k}$ đưa variance về $1$, giảm saturation.
+Entries độc lập, mean $0$, var $1$: $\Var(q^\top k)=d_k$; chia $\sqrt{d_k}$ cho var $1$, giảm saturation.
 \run{(1) Tính $Q,K,V$; (2) dot products $QK^\top$; (3) chia $\sqrt{d_k}$, cộng mask nếu có; (4) exponentiate, chia row sum; (5) weighted sum value rows $Y_{i,:}=\sum_j a_{ij}V_{j,:}$.}
 \ex{$q=1,d_k=1$, $k=(0,\log2,0)$; value rows $(1,0),(0,2),(1,2)$. Scores $(0,\log2,0)$; exp $(1,2,1)$, sum $4$; $a=(1/4,1/2,1/4)$. $y=(1,0)/4+(0,2)/2+(1,2)/4=(1/2,3/2)$.}
 \ex{$d_k=64$, raw scores $(0,8)$: chia $8$ thành $(0,1)$, weights $\approx(.269,.731)$; unscaled $\approx(.0003,.9997)$. Scale \emph{trước} softmax, dùng $d_k$, không $d_v$.}
 
-\key{Transformer block} Attention mix tokens; shared FFN: features trong từng token; residual cộng update rồi LayerNorm theo features từng token (post-norm).
+\key{Transformer block} Attention mix tokens; shared FFN mix features/token; post-norm: cộng residual rồi LayerNorm theo features/token.
 
 \topic{28}{Q / K / V DEPENDENCY}
 Xét một layer, giữ các tensors khác cố định.
