@@ -41,7 +41,7 @@
 \pagestyle{empty}
 \setlength{\topskip}{0pt}
 \setlength{\parindent}{0pt}
-\setlength{\parskip}{.25pt}
+\setlength{\parskip}{.1pt}
 \setlength{\tabcolsep}{2pt}
 \renewcommand{\arraystretch}{1.08}
 \setlist[itemize]{leftmargin=8pt,label=\textbullet,nosep,topsep=1pt}
@@ -51,21 +51,21 @@
 \raggedbottom
 \raggedcolumns
 \newcommand{\bodystyle}{%
-  \fontsize{6.4}{7.3}\selectfont\RaggedRight
-  \setlength{\lineskip}{.5pt}%
+  \fontsize{5.8}{6.3}\selectfont\RaggedRight
+  \setlength{\lineskip}{.35pt}%
   \thinmuskip=2mu
   \medmuskip=3mu plus 1mu minus 1mu
   \thickmuskip=4mu plus 1mu minus 1mu
   \setlength{\abovedisplayskip}{2pt}\setlength{\belowdisplayskip}{2pt}%
   \setlength{\abovedisplayshortskip}{1pt}\setlength{\belowdisplayshortskip}{1pt}}
-\newcommand{\topic}[2]{\par\addvspace{1.5pt}%
+\newcommand{\topic}[2]{\par\addvspace{1.0pt}%
   \begingroup\setlength{\fboxsep}{0.5pt}%
   \noindent\colorbox{structure}{\parbox{\dimexpr\linewidth-2\fboxsep\relax}{%
-    \color{white}\fontsize{7.1}{8}\selectfont\bfseries #1\enspace #2}}%
+    \color{white}\fontsize{6.5}{7.1}\selectfont\bfseries #1\enspace #2}}%
   \endgroup\par\nobreak\vspace{.3pt}\nobreak}
 \newcommand{\run}[1]{\key{CHẠY}#1}
 \newcommand{\key}[1]{\par\textcolor{structure}{\textbf{#1}}\enspace}
-\newcommand{\note}[4]{\par\begingroup\setlength{\fboxsep}{0.3pt}%
+\newcommand{\note}[4]{\par\begingroup\setlength{\fboxsep}{0.2pt}%
   \noindent\colorbox{#1}{\parbox{\dimexpr\linewidth-2\fboxsep\relax}{%
     \RaggedRight\textcolor{#2}{\textbf{#3}}\enspace #4}}%
   \endgroup\par}
@@ -423,6 +423,7 @@ Greedy policy $\mu^*(s)\in\argmax_aQ^*(s,a)$.
 \ex{Hai states, một action: $s_1\to s_2$ reward $1$, $s_2\to s_2$ reward $2$, $\gamma=.5$. $V_2=2+.5V_2\Rightarrow V_2=4$; $V_1=1+.5(4)=3$.}
 \run{Một Bellman backup: (1) với từng action, weighted sum next-state values; (2) nhân $\gamma$ + reward; (3) fixed policy: average theo $\pi$; optimality: max.}
 \ex{Next values $(2,6)$, $\gamma=.5$. Action $a$: reward 1, transition $(.5,.5)$ cho $q_a=1+.5(.5\cdot2+.5\cdot6)=3$. Action $b$: reward 0, luôn tới state value 6, $q_b=3$. Uniform-policy backup $3$; optimal backup $3$, tie cả hai actions.}
+\ex{Cùng graph: $s\xrightarrow{a,\,r=0}t\xrightarrow{r=2}\text{terminal}$; $s\xrightarrow{b,\,r=.5}\text{terminal}$, $\gamma=.5$, $\pi(a\mid s)=.25$. $V^\pi(t)=2$; $Q^\pi(s,a)=0+.5(2)=1$, $Q^\pi(s,b)=.5$; $V^\pi(s)=.25(1)+.75(.5)=.625$. Optimal: $V^*(t)=2$, $V^*(s)=\max(1,.5)=1$, chọn $a$.}
 
 \topic{21}{VALUE ITERATION / ERROR}
 Khởi tạo $V_0$ (thường $0$). Mỗi sweep:
@@ -449,6 +450,7 @@ Policy improvement: nếu $Q^\pi(s,\pi'(s))\ge V^\pi(s)$ mọi $s$, thì $V^{\pi
 
 \topic{23}{MONTE CARLO / TD(0)}
 Model-based biết $p,r$; model-free sample transitions. MC $V^\pi(s)$: average completed returns $G_t$, không bootstrap.
+VI/PI: model-based; VI/iterative evaluation bootstrap từ current $V$. MC/TD/Q-learning: model-free; TD/Q bootstrap từ next estimate, MC dùng full return.
 \key{TD target / error}
 $\delta_t=r_{t+1}+\gamma V(s_{t+1})-V(s_t).$
 $V(s_t)\gets V(s_t)+\alpha\delta_t.$
@@ -505,6 +507,22 @@ Mean/max invariant; graph MLP $\rho(r(H))$ cũng vậy.
 \run{(1) Liệt kê neighbors, init $H=X$; (2) mỗi layer tính mọi aggregate từ cùng old $H$; (3) shared update + activation; (4) lặp $L$ layers; (5) node task giữ rows, graph task pooling; (6) permute và kiểm mục 25. $L$ local layers reach tối đa $L$ hops.}
 \ex{Chain $a-b-c-d$, $H^{(0)}=(1,2,0,3)^\top$; $h_i^+=\operatorname{ReLU}(h_i+\tfrac12\sum_{j\in\mathcal N(i)}h_j)$. Layer 1 neighbor sums $(2,1,5,0)$; $H^{(1)}=(2,2.5,2.5,3)^\top$, vd. $h_c^+=0+.5(2+3)=2.5$. Layer 2: $h_a^{(2)}=2+.5(2.5)=3.25$; tương tự $H^{(2)}=(3.25,4.75,5.25,4.25)^\top$. Sum readouts $10$, $17.5$.}
 \ex{Order mới $(b,a,d,c)$: $X'=(2,1,3,0)^\top$, neighbor-index sets $(\{2,4\},\{1\},\{4\},\{1,3\})$. First new row: $2+.5(1+0)=2.5$; tính tiếp cho $H'^{(1)}=(2.5,2,3,2.5)^\top=PH^{(1)}$. Layer 2 reorder $(4.75,3.25,4.25,5.25)^\top$; sums vẫn $10$, $17.5$. Node outputs equivariant; graph readout invariant.}
+\key{GCN / degree normalization}
+$\tilde A=A+I$, $\tilde d_i=\sum_j\tilde A_{ij}$, $\tilde D=\diag(\tilde d_i)$;
+$B=\tilde D^{-1/2}\tilde A\tilde D^{-1/2}$,
+$H^{(\ell+1)}=\sigma(BH^{(\ell)}W_\ell)$.
+$B_{ij}=\tilde A_{ij}/\sqrt{\tilde d_i\tilde d_j}$: degrees gồm self-loop; không phải chia row sum.
+\run{GCN: (1) thêm self-loops; (2) tính degrees, $B$; (3) nhân old $H$ với $W_\ell$; (4) aggregate bằng $B$, activation; (5) dùng toàn bộ new $H$ cho layer kế.}
+\ex{Chain $1-2-3$, $H^{(0)}=(1,0,1)^\top$, $W_0=W_1=1$, ReLU. $\tilde d=(2,3,2)$; $B=\left[\begin{smallmatrix}1/2&1/\sqrt6&0\\1/\sqrt6&1/3&1/\sqrt6\\0&1/\sqrt6&1/2\end{smallmatrix}\right]$. $H^{(1)}=(1/2,2/\sqrt6,1/2)^\top$. Layer 2: $h_1=1/4+2/6=7/12$, $h_2=1/\sqrt6+2/(3\sqrt6)=5/(3\sqrt6)$; $H^{(2)}=(7/12,5/(3\sqrt6),7/12)^\top$.}
+GCN relabel: $\tilde D'=P\tilde DP^\top\Rightarrow B'=PBP^\top$; $\sigma(B'PHW)=P\sigma(BHW)$.
+\key{Graph attention / neighbor softmax}
+Row convention: $q_i=h_iW_Q$, $k_j=h_jW_K$;
+$e_{ij}=q_ik_j^\top/\sqrt{d_k}=h_iWh_j^\top$, $W=W_QW_K^\top/\sqrt{d_k}$;
+$\alpha_{ij}=e^{e_{ij}}/\sum_{k\in\mathcal N(i)}e^{e_{ik}}$;
+$m_i=\sum_{j\in\mathcal N(i)}\alpha_{ij}h_j$, rồi shared update như trên. Chỉ normalize trên allowed neighbors; self-loop chỉ khi đề thêm.
+\run{Graph attention: (1) liệt kê allowed neighbors; (2) project $Q,K$ từ old $H$; (3) tính scaled scores từng edge; (4) neighbor softmax; (5) weighted sum, shared update; (6) lặp với new $H$.}
+\ex{Chain $1-2-3$, không self-loop, $H^{(0)}=(0,1,2)^\top$, $W_Q=1$, $W_K=\log2$, $d_k=1$; update $h_i^+=\operatorname{ReLU}(m_i)$. Node 2: scores tới $(1,3)$ là $(0,\log4)$; exp $(1,4)$, weights $(1/5,4/5)$; $m_2=0/5+4(2)/5=8/5$. Hai endpoints chỉ đọc node 2: $H^{(1)}=(1,8/5,1)^\top$. Layer 2: node 2 đọc hai values $1$ với weights $(1/2,1/2)$; $H^{(2)}=(8/5,1,8/5)^\top$.}
+Shared projections + relabel neighbors: $\alpha'=P\alpha P^\top$, $m'=\alpha'PH=P\alpha H$; attention aggregation equivariant.
 \trap{$\{1,1\}$ và $\{1,1,1\}$ có sum $2,3$ nhưng cùng mean/max $1$: mean/max mất multiplicity. Invariant không bảo đảm phân biệt mọi graph. CNN translation-equivariant, không với arbitrary node permutations.}
 
 \topic{27}{TRANSFORMERS / ATTENTION}
@@ -522,6 +540,12 @@ Entries độc lập, mean $0$, var $1$: $\Var(q^\top k)=d_k$; chia $\sqrt{d_k}$
 \run{(1) Tính $Q,K,V$; (2) dot products $QK^\top$; (3) chia $\sqrt{d_k}$, cộng mask nếu có; (4) exponentiate, chia row sum; (5) weighted sum value rows $Y_{i,:}=\sum_j a_{ij}V_{j,:}$.}
 \ex{$q=1,d_k=1$, $k=(0,\log2,0)$; value rows $(1,0),(0,2),(1,2)$. Scores $(0,\log2,0)$; exp $(1,2,1)$, sum $4$; $a=(1/4,1/2,1/4)$. $y=(1,0)/4+(0,2)/2+(1,2)/4=(1/2,3/2)$.}
 \ex{$d_k=64$, raw scores $(0,8)$: chia $8$ thành $(0,1)$, weights $\approx(.269,.731)$; unscaled $\approx(.0003,.9997)$. Scale \emph{trước} softmax, dùng $d_k$, không $d_v$.}
+\key{Multi-head}
+Head $r$: $H_r=\operatorname{softmax}_{row}(Q_rK_r^\top/\sqrt{d_k}+M)V_r$; mỗi head có riêng $W_{Qr},W_{Kr},W_{Vr}$.
+$C=[H_1\Vert\cdots\Vert H_h]:N\times hd_v$;
+$Y=CW_O:N\times D$, $W_O:hd_v\times D$.
+\run{Multi-head: (1) projections từng head; (2) scaled/masked attention riêng; (3) concatenate outputs theo features, giữ token rows; (4) nhân $W_O$.}
+\ex{$X=I_2$, 2 heads, $d_k=d_v=1$, không mask. Head 1: $W_Q=W_K=W_V=(1,0)^\top\Rightarrow Q_1=K_1=V_1=(1,0)^\top$. Head 2 dùng $(0,1)^\top$, cho $Q_2=K_2=V_2=(0,1)^\top$. Đặt $p=e/(1+e)\approx.731$. $S_1=\left[\begin{smallmatrix}1&0\\0&0\end{smallmatrix}\right]$, $A_1=\left[\begin{smallmatrix}p&1-p\\1/2&1/2\end{smallmatrix}\right]$, $H_1=(p,1/2)^\top$. $S_2=\left[\begin{smallmatrix}0&0\\0&1\end{smallmatrix}\right]$, $A_2=\left[\begin{smallmatrix}1/2&1/2\\1-p&p\end{smallmatrix}\right]$, $H_2=(1/2,p)^\top$. $C=\left[\begin{smallmatrix}p&1/2\\1/2&p\end{smallmatrix}\right]:2\times2$; $W_O=\left[\begin{smallmatrix}1&1\\1&-1\end{smallmatrix}\right]$ cho $Y=\left[\begin{smallmatrix}p+.5&p-.5\\p+.5&.5-p\end{smallmatrix}\right]\approx\left[\begin{smallmatrix}1.231&.231\\1.231&-.231\end{smallmatrix}\right]$.}
 
 \key{Transformer block} Attention mix tokens; shared FFN mix features/token; post-norm: cộng residual rồi LayerNorm theo features/token.
 
@@ -563,6 +587,12 @@ $Y'=A'V'=PAV=PY$.
 Shared rowwise FFN/LayerNorm, residual và multi-head cũng giữ equivariance.
 \run{(1) Permute token rows; (2) tính lại $Q,K,V,S,A,Y$; (3) so $Y'$ với $PY$, không với $Y$; (4) kiểm position information/mask có đổi theo $P$ hay bị giữ cố định.}
 \ex{$X=(0,1)^\top$, $W_Q=W_K=W_V=1$, $d_k=1$: $Q=K=V=X$, $S=\left[\begin{smallmatrix}0&0\\0&1\end{smallmatrix}\right]$. Đặt $t=e/(1+e)\approx.731$. $A$ rows $(1/2,1/2),(1-t,t)$; $Y=(1/2,t)^\top$. Swap: $X'=(1,0)^\top$, $S'=\left[\begin{smallmatrix}1&0\\0&0\end{smallmatrix}\right]$, $Y'=(t,1/2)^\top=PY$. Giữ causal mask cố định: $Y_c=(0,t)^\top$, $Y'_c=(1,1/2)^\top\ne PY_c$.}
+\key{Position encoding}
+$T=X+E_{\rm pos}$. Sinusoidal (even $D$, position $n\ge0$):
+$p_{n,2i}=\sin(n/10000^{2i/D})$,
+$p_{n,2i+1}=\cos(n/10000^{2i/D})$, $i=0,\ldots,D/2-1$; row $n$ của $E_{\rm pos}$ là $p_n^\top$.
+\run{PE: (1) tính position vectors (radians); (2) cộng vào token embeddings; (3) kiểm permutation có giữ positions cố định hay cũng permute chúng.}
+\ex{$D=2$, positions $0,1$: $p_0=(0,1)$, $p_1=(\sin1,\cos1)\approx(.841,.540)$. Hai token cùng embedding $(1,0)$: $T\approx\left[\begin{smallmatrix}1&1\\1.841&.540\end{smallmatrix}\right]$. Swap $P$ giữ $X$ vì rows giống nhau; fixed PE cho $PX+E_{\rm pos}=T\ne PT$. Nếu cũng permute PE: $PX+PE_{\rm pos}=P(X+E_{\rm pos})$.}
 \trap{Equivariant: outputs reorder; không phải invariant. Với attention $F$ có mask: cần cùng permute $M'=PMP^\top$ để có $F(PX;M')=PF(X;M)$. Fixed causal mask hoặc fixed position embeddings không bảo đảm arbitrary permutation equivariance.}
 \end{multicols*}
 \end{document}
