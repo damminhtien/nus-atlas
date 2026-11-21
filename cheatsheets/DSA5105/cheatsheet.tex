@@ -41,7 +41,7 @@
 \pagestyle{empty}
 \setlength{\topskip}{0pt}
 \setlength{\parindent}{0pt}
-\setlength{\parskip}{.1pt}
+\setlength{\parskip}{.05pt}
 \setlength{\tabcolsep}{2pt}
 \renewcommand{\arraystretch}{1.08}
 \setlist[itemize]{leftmargin=8pt,label=\textbullet,nosep,topsep=1pt}
@@ -51,21 +51,21 @@
 \raggedbottom
 \raggedcolumns
 \newcommand{\bodystyle}{%
-  \fontsize{5.8}{6.3}\selectfont\RaggedRight
-  \setlength{\lineskip}{.35pt}%
+  \fontsize{5.7}{6.1}\selectfont\RaggedRight
+  \setlength{\lineskip}{.25pt}%
   \thinmuskip=2mu
   \medmuskip=3mu plus 1mu minus 1mu
   \thickmuskip=4mu plus 1mu minus 1mu
   \setlength{\abovedisplayskip}{2pt}\setlength{\belowdisplayskip}{2pt}%
   \setlength{\abovedisplayshortskip}{1pt}\setlength{\belowdisplayshortskip}{1pt}}
-\newcommand{\topic}[2]{\par\addvspace{1.0pt}%
+\newcommand{\topic}[2]{\par\addvspace{.8pt}%
   \begingroup\setlength{\fboxsep}{0.5pt}%
   \noindent\colorbox{structure}{\parbox{\dimexpr\linewidth-2\fboxsep\relax}{%
     \color{white}\fontsize{6.5}{7.1}\selectfont\bfseries #1\enspace #2}}%
   \endgroup\par\nobreak\vspace{.3pt}\nobreak}
 \newcommand{\run}[1]{\key{CHẠY}#1}
 \newcommand{\key}[1]{\par\textcolor{structure}{\textbf{#1}}\enspace}
-\newcommand{\note}[4]{\par\begingroup\setlength{\fboxsep}{0.2pt}%
+\newcommand{\note}[4]{\par\begingroup\setlength{\fboxsep}{0.15pt}%
   \noindent\colorbox{#1}{\parbox{\dimexpr\linewidth-2\fboxsep\relax}{%
     \RaggedRight\textcolor{#2}{\textbf{#3}}\enspace #4}}%
   \endgroup\par}
@@ -98,6 +98,7 @@ Train fit parameters; validation/CV chọn hyperparameters; test đánh giá cu�
 \trap{Low train error không bảo đảm generalization; tránh leakage. Phạm vi thi theo thông báo giảng viên.}
 \run{ERM: (1) tính loss từng sample cho mỗi candidate; (2) lấy mean, cộng penalty nếu có; (3) chọn objective nhỏ nhất.}
 \ex{$y=(0,2)$, constant $c\in\{0,1\}$, loss $(c-y)^2$: $\widehat R(0)=(0+4)/2=2$, $\widehat R(1)=(1+1)/2=1$; chọn $c=1$.}
+\ex{Train giảm, risk tăng: $P(X=1)=P(X=-1)=1/2$, $Y=0$, square loss; train $D=\{(1,0)\}$. $f_0(x)=1$, $f_1(x)=1-x$. $\widehat R(f_0)=1$, $\widehat R(f_1)=0$; nhưng $R(f_0)=1$, $R(f_1)=(0^2+2^2)/2=2$. Test tại $x=-1$: losses $1,4$. $\mathcal H_1=\{f_0\}\subset\mathcal H_2=\{f_0,f_1\}$: ERM train giảm nhưng population risk tăng. Một counterexample đủ bác bỏ implication.}
 \run{CV: (1) cố định folds và candidates; (2) mỗi fold fit preprocessing + model trên phần train; (3) average validation loss; (4) chọn min rồi refit full train.}
 \ex{2-fold losses: depth 1 có $(2,4)\Rightarrow3$; depth 2 có $(1,3)\Rightarrow2$. Chọn depth 2, refit; không dùng test để chọn.}
 
@@ -105,6 +106,7 @@ Train fit parameters; validation/CV chọn hyperparameters; test đánh giá cu�
 $f_w(x)=w^\top\phi(x)$; $\Phi_{ij}=\phi_j(x_i)$. Linear theo parameters, có thể nonlinear theo input. Với samples là rows:
 $J=\tfrac1{2n}\norm{\Phi w-y}^2,\; \nabla J=\tfrac1n\Phi^\top(\Phi w-y).$
 Normal equation $\Phi^\top\Phi w=\Phi^\top y$. Unique iff full column rank; nếu không, min-norm $w=\Phi^+y$.
+\ex{$f_w(x)=w_0+w_1x^2=w^\top(1,x^2)$: linear theo $w$, nonlinear theo $x$. $w=(1,2)$, $x=2\Rightarrow f=9$. Ngược lại $g_a(x)=a^2x$ linear theo $x$ nhưng nonlinear theo parameter $a$: $g_{2a}(x)=4g_a(x)$, không phải $2g_a(x)$.}
 \key{Ridge / feature scaling}
 $J_\lambda=\tfrac1{2n}\norm{\Phi w-y}^2+\tfrac\lambda2\norm w^2.$
 $\hat w=(\Phi^\top\Phi+n\lambda I)^{-1}\Phi^\top y.$
@@ -122,6 +124,8 @@ Binary sigmoid $p=1/(1+e^{-z})$, $p'=p(1-p)$. Với $y\in\{0,1\}$, binary CE log
 \trap{Cộng cùng constant vào mọi logits không đổi softmax; square loss nhạy outliers.}
 \run{OLS/ridge: (1) lập $\Phi,y$; (2) tính $G=\Phi^\top\Phi$, $b=\Phi^\top y$; (3) giải $Gw=b$ hoặc $(G+n\lambda I)w=b$; (4) dự đoán $\phi(x)^\top w$.}
 \ex{Không intercept, $x=(1,2)$, $y=(1,3)$: $G=5$, $b=7$; OLS $w=7/5=1.4$. Ridge $n=2,\lambda=.5$: $w=7/(5+1)=7/6$. Tại $x=3$: predictions $4.2$ và $3.5$.}
+\run{Feature scaling: (1) $\Phi'=\Phi C$, $C=\diag(c_j)$, $c_j>0$; (2) giữ predictions bằng $w=Cv$; (3) penalty mới $\lambda'\norm v^2/2=\tfrac12\sum_j(\lambda'/c_j^2)w_j^2$; (4) nếu mọi $c_j=c$, $\lambda_{eff}=\lambda'/c^2$, chọn $\lambda'=c^2\lambda$ để giữ nghiệm/predictions. Scale riêng từng feature cần penalty riêng, một scalar thường không bù được.}
+\ex{Data ridge trên, scale $x'=2x$, nên $G'=20$, $b'=14$. Giữ $\lambda'=.5$: $v=14/(20+1)=2/3$, effective $w=2v=4/3$, khác $7/6$. Muốn giữ predictions: $\lambda'=4(.5)=2$; $v=14/(20+4)=7/12$, $2v=7/6$.}
 \run{Huber constant: (1) chia intervals tại $y_i\pm\delta$; (2) giải $\sum_i\operatorname{clip}(m-y_i,-\delta,\delta)=0$ trên từng interval; (3) giữ root hợp interval.}
 \ex{$y=(0,0,9)$, $\delta=1$: trên $m\in[0,1]$, equation $m+m-1=0$ cho $m=.5$; clipped residuals $(.5,.5,-1)$ tổng $0$.}
 \run{Lasso: lập $g=\Phi^\top(\Phi w-y)/n$. Optimum cần $g_j+\lambda\operatorname{sign}(w_j)=0$ nếu $w_j\ne0$; $|g_j|\le\lambda$ nếu $w_j=0$. Bài nhỏ: thử dấu/zero rồi kiểm tra.}
@@ -154,6 +158,8 @@ $w^*=\Phi^\top\alpha,\; f(x)=k_x^\top\alpha.$
 $\dim\operatorname{span}\{\phi_i\}=\operatorname{rank}\Phi\le\min(n,M)$; representer không có nghĩa sparse.
 \run{Kiểm kernel: (1) kiểm symmetry; (2) chứng minh bằng feature map/closure, hoặc tìm Gram phản ví dụ; (3) với Gram nhỏ, tính eigenvalues/quadratic form.}
 \ex{$K=\left[\begin{smallmatrix}1&2\\2&1\end{smallmatrix}\right]$, $c=(1,-1)^\top$: $Kc=(-1,1)^\top$, $c^\top Kc=-2<0$; invalid dù diagonal dương.}
+\ex{Valid kernel 1D: $k(x,z)=(1+xz)^2$, $\phi(x)=(1,\sqrt2x,x^2)^\top$. Với mọi dataset và $c$: $c^\top Kc=(\sum_i c_i)^2+2(\sum_i c_ix_i)^2+(\sum_i c_ix_i^2)^2\ge0$; kernel symmetric nên valid. Vd. $x=(0,1)$ cho $K=\left[\begin{smallmatrix}1&1\\1&4\end{smallmatrix}\right]$, $\det K=3$.}
+\ex{Representer: $\phi_1=(1,0)^\top$, $\phi_2=(2,0)^\top$, $y=(1,2)^\top$, $\lambda=1$. $w=(1,2)^\top$ và $w_\parallel=(1,0)^\top$ đều predict $(1,2)$, loss $0$; squared norms $5,1$, objectives $2.5,.5$. Bỏ orthogonal component giảm penalty, không đổi predictions; optimum phải nằm trong train-feature span.}
 
 \topic{05}{KERNEL RIDGE / GEOMETRY}
 Mean-loss ridge dùng $K=\Phi\Phi^\top$, $K_{ij}=k(x_i,x_j)$:
@@ -191,7 +197,8 @@ strictly outside margin $\Rightarrow\alpha_i=0$.
 \key{Hinge link}
 $\min_w n^{-1}\sum_i(1-y_iw^\top\phi_i)_++\lambda\norm w^2/2$. Separable + penalty đủ nhỏ: zero hinge, min-norm feasible separator. Logistic dương ở mọi finite margin.
 \run{Hard SVM bài nhỏ: (1) viết từng inequality; (2) thử từng tập active constraints, giải equalities; (3) tìm $\alpha\ge0$ từ stationarity; (4) loại candidate vi phạm inequality/complementarity; (5) tính margin/prediction của candidate hợp KKT. KKT feasible là optimal cho convex problem.}
-\ex{1D $x=(-1,1)$, $y=(-1,1)$: cả hai constraints là $w\ge1$; min $w^2/2$ cho $w=1$. Chọn $\alpha=(.5,.5)$: $\sum_i\alpha_i y_ix_i=1$, KKT đúng. Half-margin $1$, full width $2$; $x=-2\Rightarrow\hat y=-1$.}
+\run{SVM dual: (1) viết $\mathcal L$; (2) $\nabla_w\mathcal L=0\Rightarrow w(\alpha)=\sum_i\alpha_i y_i\phi_i$; (3) substitute, $w^\top\sum_i\alpha_i y_i\phi_i=\norm w^2$ nên $g(\alpha)=\sum_i\alpha_i-\norm{w(\alpha)}^2/2$; (4) expand norm bằng Gram, maximize với $\alpha\ge0$.}
+\ex{1D $x=(-1,1)$, $y=(-1,1)$: cả hai constraints là $w\ge1$; min $w^2/2$ cho $w=1$. Chọn $\alpha=(.5,.5)$: $\sum_i\alpha_i y_ix_i=1$, KKT đúng. Half-margin $1$, full width $2$; $x=-2\Rightarrow\hat y=-1$. Dual: $t=\alpha_1+\alpha_2\ge0$, $g=t-t^2/2$; $g'=1-t=0\Rightarrow t=1$. Primal $=1/2=$ dual; multipliers không unique, mọi nonnegative pair tổng $1$ hợp lệ.}
 \run{Hinge training: tính margins; mỗi sample $m_i<1$ góp $-y_i\phi_i/n$ vào subgradient; $m_i>1$ góp $0$; cộng $\lambda w$, GD update. Tại $m_i=1$ chọn valid subgradient.}
 \ex{Một point $x=2,y=1$, $w=0$, $\lambda=1$: margin $0$, gradient $-2+0=-2$; $\eta=.1\Rightarrow w^+=.2$, margin mới $.4$.}
 
@@ -201,17 +208,19 @@ $\Delta I=I_P-\sum_c\frac{n_c}{n}I_c.$
 Entropy $H=-\sum_kp_k\log_2p_k$; Gini $G=1-\sum_kp_k^2$. Regression dùng child SSE. Deeper tree: optimal train error không tăng, test chưa chắc giảm. Pruning/min-leaf/depth kiểm soát variance.
 \run{Grow tree: (1) sort từng feature, thử midpoints giữa distinct values; (2) chia left/right; (3) tính weighted child impurity/SSE; (4) chọn best split; (5) recurse đến depth/min-leaf/pure/no gain; leaf dự đoán mean/mode.}
 \ex{Classification: $x=(1,2,3,4)$, $y=(0,0,1,1)$, parent Gini $.5$. Cut $2.5$: children pure, gain $.5$. Cut $1.5$: weighted Gini $(3/4)(4/9)=1/3$, gain $1/6$; chọn $2.5$. Regression $y=(0,2,8,10)$: parent mean $5$, SSE $68$; cut $2.5$, means $(1,9)$, SSE $4$, giảm $64$.}
+\ex{Entropy với cùng labels $(0,0,1,1)$: parent $H=-2(.5\log_2.5)=1$. Cut $2.5$: children pure, $H_{child}=0$, information gain $1$. Cut $1.5$: right proportions $(1/3,2/3)$, $H_R=-\tfrac13\log_2\tfrac13-\tfrac23\log_2\tfrac23\approx.9183$; weighted impurity $0/4+3H_R/4\approx.6887$, gain $1-.6887=.3113$. Chọn $2.5$; convention $0\log_2 0=0$.}
 
 \topic{08}{BAGGING / RANDOM FOREST}
 \key{Bagging / random forest}
 Bootstrap samples $\to$ fit trees $\to$ average/vote. RF thêm random feature subset tại mỗi split.
 $\Var(\bar T_B)=\sigma^2\left[\rho_c+\frac{1-\rho_c}{B}\right].$
 Equal variances, common correlation $\rho_c$; limit $\rho_c\sigma^2$: tăng $B$ không xóa phần correlated. Bagging giảm variance.
+\run{Suy ra bagging variance: (1) $\Var(\bar T_B)=B^{-2}\sum_{b,c}\operatorname{Cov}(T_b,T_c)$; (2) có $B$ diagonal terms $\sigma^2$, $B(B-1)$ off-diagonal terms $\rho_c\sigma^2$; (3) chia $B^2$, được công thức trên.}
 \key{Bias--variance}
 Với squared prediction error ở fixed input và independent zero-mean test noise:
 $\E[(Y-\hat f)^2]=\sigma_\epsilon^2+\operatorname{Bias}(\hat f)^2+\Var(\hat f).$
 Deep tree: low bias, high variance. Bagging average unstable learners; RF giảm correlation qua feature subsets.
-\ex{$B=25$, $\rho_c=.1$: variance factor $.1+.9/25=.136$; limit khi $B\to\infty$ là $.1$.}
+\ex{$B=25$, $\rho_c=.1$: variance factor $.1+.9/25=.136$; limit khi $B\to\infty$ là $.1$. Với $\sigma^2=1$: cộng covariance trực tiếp $[25(1)+25(24)(.1)]/25^2=85/625=.136$.}
 \trap{RF: bootstrap rows + random candidate features ở mỗi split. Averaging không tự xóa bias.}
 \key{CV / capacity control}
 CV (mục 01) chọn depth/min-leaf: train $K-1$ folds, average held-out loss; refit full train, test cuối.
@@ -257,8 +266,9 @@ Shallow network $f(x)=\sum_{j=1}^M v_j\sigma(w_j^\top x+b_j)$ học features; no
 \trap{UAT không hứa finite-width exact fit, GD success hay generalization. Backprop là chain rule + reuse, không là global optimizer.}
 \run{Backprop: (1) forward, lưu $z,h$; (2) loss + output $\delta$; (3) đi layers từ cuối về đầu, tính mọi gradient bằng weights cũ; (4) average batch, thêm penalty; (5) update đồng thời.}
 \ex{Scalar ReLU net $h=\max(0,wx+b)$, $\hat y=vh+c$; $x=2,y=1,(w,b,v,c)=(1,0,1,0)$. Forward $h=2,\hat y=2,L=.5$. $\delta_{out}=1$; gradients $(g_w,g_b,g_v,g_c)=(2,1,2,1)$. $\eta=.1\Rightarrow(w,b,v,c)=(.8,-.1,.8,-.1)$.}
+\ex{Biểu diễn được nhưng GD kẹt: $f(x)=v\operatorname{ReLU}(wx)$, không biases; $x=y=1$, init $(w,v)=(-1,1)$. $h=0$, $L=(0-1)^2/2=.5$; $g_v=(f-y)h=0$, $g_w=(f-y)v\ind[wx>0]x=0$. GD không đổi, dù $(w,v)=(1,1)$ cho loss $0$. Approximation/existence không bảo đảm optimization tìm được nghiệm.}
 
-\topic{11}{CNN / WEIGHT SHARING}
+\topic{11}{CNN / RESNET / WEIGHT SHARING}
 Convolution $\sum_iw_ix_{k-i}$; ML thường dùng cross-correlation $\sum_iw_ix_{k+i}$.
 $d_{out}=\left\lfloor\frac{d+2p-m}{s}\right\rfloor+1.$
 Input length $d$, filter $m$, padding $p$, stride $s$; dilation $=1$. Valid stride 1: $d-m+1$.
@@ -271,7 +281,12 @@ $A_w=\left[\begin{smallmatrix}w_0&w_1&w_2&0&0\\0&w_0&w_1&w_2&0\\0&0&w_0&w_1&w_2\
 \key{Matrix intuition / channels}
 Sparse matrix: locality tạo zeros; sharing tie coefficients. Mỗi output channel sum filtered \emph{mọi} input channel, cộng bias rồi activation.
 \run{CNN: (1) pad input; (2) tính output size; (3) dịch window theo stride, dot với filter trên mọi channels; (4) cộng bias, activation/pool; (5) backward cộng gradient của mọi vị trí dùng chung weight.}
-\ex{1D valid cross-correlation, $x=(1,2,3,4,5)$, $w=(1,0,-1)$, bias $0$, stride 1: outputs $(1-3,2-4,3-5)=(-2,-2,-2)$. Max-pool width 2/stride 1 cho $(-2,-2)$. Upstream $(1,1,1)$ trước pooling: $\nabla_wL=(1+2+3,2+3+4,3+4+5)=(6,9,12)$; $\nabla_bL=3$.}
+\ex{1D valid cross-correlation, $x=(1,2,3,4,5)$, $w=(1,0,-1)$, bias $0$, stride 1: outputs $(1-3,2-4,3-5)=(-2,-2,-2)$. Max-pool width 2/stride 1 cho $(-2,-2)$. Upstream $(1,1,1)$ trước pooling: $\nabla_wL=(1+2+3,2+3+4,3+4+5)=(6,9,12)$; $\nabla_bL=3$. Dạng matrix: $A_w=\left[\begin{smallmatrix}1&0&-1&0&0\\0&1&0&-1&0\\0&0&1&0&-1\end{smallmatrix}\right]$, $A_wx=(-2,-2,-2)^\top$; các entries cùng $w_j$ là một parameter.}
+\key{ResNet / residual block}
+$u=h+F(h;\theta)$, cùng shape; nếu đổi width dùng skip projection $u=W_sh+F(h;\theta)$.
+Với upstream $\delta=\nabla_uL$, identity skip cho $\nabla_hL=\delta+(J_hF)^\top\delta$, $\nabla_\theta L=(J_\theta F)^\top\delta$; có đường gradient trực tiếp, không bảo đảm luôn hết vanishing.
+\run{Residual: (1) tính $F$, cộng skip; (2) tính loss/upstream; (3) backward cả skip và residual branch; (4) cộng hai input gradients, update shared parameters bằng old values.}
+\ex{Block $u=h+Wh$, $h=(1,2)^\top$, $W=\diag(1,-.5)$, $L=\norm u^2/2$. $Wh=(1,-1)^\top$, $u=(2,1)^\top$, $L=2.5$, $\delta=u$. Input gradient: skip $(2,1)^\top$ + branch $W^\top\delta=(2,-.5)^\top$ cho $(4,.5)^\top$. $\nabla_WL=\delta h^\top=\left[\begin{smallmatrix}2&4\\1&2\end{smallmatrix}\right]$; $\eta=.1\Rightarrow W^+=\left[\begin{smallmatrix}.8&-.4\\-.1&-.7\end{smallmatrix}\right]$.}
 
 \topic{12}{RNN / BPTT}
 $h_t=g(h_{t-1},x_t;\theta)$, $L=\sum_t\ell_t(h_t)$; cùng $\theta$ qua time. Đặt $\delta_t=\nabla_{h_t}L$:
@@ -284,6 +299,7 @@ $\nabla_BL=\sum_t\delta_t x_t^\top$.
 Repeated Jacobian products gây vanishing/exploding gradients; LSTM/GRU dùng gates.
 \run{BPTT: (1) unroll, forward $t=1\ldots T$; (2) tính losses; (3) backward $t=T\ldots1$, cộng local + future gradient; (4) sum shared-parameter gradients qua time; (5) update một lần.}
 \ex{$h_t=ah_{t-1}+bx_t$, $h_0=0$, $a=.5,b=1$, $x=(2,0)$, chỉ final loss $h_2^2/2$. Forward $(h_1,h_2)=(2,1)$, $L=.5$; backward $\delta_2=1$, $\delta_1=.5$. $g_a=\delta_1h_0+\delta_2h_1=2$, $g_b=\delta_1x_1+\delta_2x_2=1$. $\eta=.1\Rightarrow(a,b)=(.3,.9)$.}
+\ex{RNN ba bước, cùng cell và old $(a,b)=(.5,1)$: $x=(2,0,1)$, $h_0=0$, $L=h_3^2/2$. Forward $h_1=2$, $h_2=1$, $h_3=.5(1)+1=1.5$, $L=1.125$. Backward $\delta_3=1.5$, $\delta_2=.5(1.5)=.75$, $\delta_1=.5(.75)=.375$. $g_a=.375(0)+.75(2)+1.5(1)=3$; $g_b=.375(2)+.75(0)+1.5(1)=2.25$. $\eta=.1\Rightarrow(a,b)=(.2,.775)$.}
 
 \topic{13}{PCA: CENTER / EIGENPAIRS}
 Raw columns $x_i\in\R^d$; $\bar x=n^{-1}\sum_ix_i$, $\tilde x_i=x_i-\bar x$. $X\in\R^{n\times d}$ có rows $\tilde x_i^\top$; $S=X^\top X/n$.

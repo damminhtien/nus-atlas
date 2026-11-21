@@ -15,7 +15,8 @@ Do not use past papers to infer the current syllabus or add reference-only
 subjects. The supplied original remains outside the repository.
 
 - Topics 01–12: learning/linear models, optimization, kernels/SVM, trees/ensembles,
-  neural networks, CNNs, and RNNs.
+  neural networks, CNNs, residual blocks, and RNNs. The L1–L5 audit adds proof
+  examples, feature-scaling arithmetic, entropy splits, and three-step BPTT.
 - Topics 13–26: PCA/whitening/feature-space PCA/autoencoders, K-means/GMM, finite
   discounted MDPs, value/policy iteration, MC/TD/Q-learning/DQN, and GNN permutation symmetry.
   Topic 15 keeps autoencoder MLP architecture, loss, and training together.
@@ -50,16 +51,16 @@ cp tmp/pdfs/dsa5105/build/cheatsheet.pdf cheatsheets/DSA5105/cheatsheet.pdf
 ```
 
 The source uses the template's Source Sans 3 / STIX Two Math font choices and
-fallbacks, with 5.8 pt body text and 6.3 pt line spacing. All formulas use
+fallbacks, with 5.7 pt body text and 6.1 pt line spacing. All formulas use
 inline math, including compact matrices; former aligned displays are split
-into inline expressions. Fixed paragraph spacing is 0.1 pt, topic spacing
-is 1.0 pt, and space below topic headers is 0.3 pt. Header padding is 0.5 pt;
-note-box padding is 0.2 pt. Topic headings use 6.5 pt text on a 7.1 pt baseline.
+into inline expressions. Fixed paragraph spacing is 0.05 pt, topic spacing
+is 0.8 pt, and space below topic headers is 0.3 pt. Header padding is 0.5 pt;
+note-box padding is 0.15 pt. Topic headings use 6.5 pt text on a 7.1 pt baseline.
 `ragged2e` allows normal hyphenation in body text
 and notes, using line width without stretching spaces between words.
 `microtype` improves line fitting with font expansion and protrusion. Inline
 math uses compact thin/medium/thick glue (2/3/4 mu); the fallback gap between
-tall body lines is 0.35 pt. These reductions were explicitly requested to
+tall body lines is 0.25 pt. These reductions were explicitly requested to
 retain the existing examples, add the missing weekly calculation types,
 and leave room for further notes.
 Wide formula separators use `\;` rather than `\quad` or `\qquad`.
@@ -76,19 +77,30 @@ Four slide-backed Transformer topics include full multi-head arithmetic and
 sinusoidal position encoding. Compact notes in topics 27 and 29 cover
 block roles, the GPT pipeline, next-token loss, teacher forcing, and generation.
 Existing formulas, procedures, and examples are retained. The sheet has two A4
-pages, 30 topics, 46 procedures, 55 examples, and 1119 inline formulas. Keep the
-5.8 pt body font, 6.3 pt baseline, margins, gutters, and sequential column flow.
+pages, 30 topics, 50 procedures, 64 examples, and 1251 inline formulas. Keep the
+5.7 pt body font, 6.1 pt baseline, margins, gutters, and sequential column flow.
 Keep slide/page references in the source map below; omit them from printed
 headings and examples.
 
 ## Hand-calculation coverage
 
 Every numbered topic has a `CHẠY` procedure and an `EX` example. The sheet
-contains 46 procedure blocks and 55 example boxes; procedures that share the
+contains 50 procedure blocks and 64 example boxes; procedures that share the
 same operations can cover related methods together. Numerical examples combine
 lecture examples with authored arithmetic illustrations, as recorded in the
 source map; no past-paper questions are used. Keep intermediate calculations,
 update order, and loss normalization when editing.
+
+The L1–L5 audit retains all 55 preceding examples, extends the SVM, bagging,
+and CNN examples, and adds nine examples and four procedures:
+
+| Lecture | Existing coverage retained | Addition after audit |
+| --- | --- | --- |
+| L1 | ERM/CV calculations and logistic/softmax probabilities and gradients (01–02). | An explicit distribution and observed sample where ERM train loss falls but population risk rises; contrasting linearity in parameters and inputs (01–02). |
+| L2 | Ridge/KRR solves, polynomial features, invalid-kernel counterexample, SVM margins/KKT and hinge update (02, 04–06). | Derive the effective ridge penalty after scaling and calculate the compensating lambda; prove a valid polynomial kernel; remove an orthogonal component in a representer example; derive and solve the existing SVM example's dual. |
+| L3 | Gini/regression split selection, bagging/RF, one full AdaBoost round (07–09). | Compute entropy and information gain for both candidate splits; derive bagging variance by counting diagonal/off-diagonal covariance terms and extend its numerical example. |
+| L4 | GD/SGD and two-layer forward/backward/update calculations (03, 10). | A dead-ReLU example has zero gradient at a positive-loss initialization even though the same model can fit the target; distinguish representability from optimization success. |
+| L5 | Tied-weight convolution matrix, shared-weight gradients and RNN/BPTT (11–12). | Instantiate the convolution matrix numerically; add residual forward/branch-gradient arithmetic; unroll three RNN steps, sum shared gradients and update the old parameters. |
 
 The W6–W13 audit retained all 50 existing examples and added five missing
 worked examples, with four additional ordered procedures:
@@ -104,18 +116,18 @@ worked examples, with four additional ordered procedures:
 
 | Topic | Sequential procedure and example coverage |
 | --- | --- |
-| 01 | Compare empirical objectives; select hyperparameters with fold losses and refit. |
-| 02 | Solve OLS/ridge; solve a clipped Huber equation; check lasso signs/zero coordinates; forward probabilities and update logistic/softmax parameters. |
+| 01 | Compare empirical objectives; construct a train/population-risk counterexample on a fixed two-point distribution; select hyperparameters with fold losses and refit. |
+| 02 | Distinguish input/parameter linearity; solve OLS/ridge; calculate the effective penalty and compensating lambda under feature scaling; solve a clipped Huber equation; check lasso signs/zero coordinates; forward probabilities and update logistic/softmax parameters. |
 | 03 | Full-batch GD iterations and sample/minibatch SGD gradients. |
-| 04 | Kernel validity checks and an explicit negative quadratic form. |
+| 04 | Kernel validity checks, an explicit negative quadratic form, a positive polynomial-kernel proof for every dataset, and a numerical representer decomposition. |
 | 05 | Gram construction, KRR solve and prediction; feature distance and polynomial-map expansion. |
-| 06 | Active-constraint/KKT calculation for a small hard SVM; a hinge subgradient update. |
-| 07 | Enumerate split thresholds, compare classification Gini and regression SSE, then recurse. |
-| 08 | Bootstrap, grow trees with RF feature selection, average or vote. |
+| 06 | Active-constraint/KKT calculation for a small hard SVM; eliminate primal weights to derive its dual and check matching optimal objectives; a hinge subgradient update. |
+| 07 | Enumerate split thresholds, compare Gini, entropy/information gain and regression SSE, then recurse. |
+| 08 | Derive and numerically verify the bagging variance from covariance counts; bootstrap, grow trees with RF feature selection, average or vote. |
 | 09 | One complete AdaBoost error/weight/normalization round and a weighted final vote. |
-| 10 | Forward pass, loss, reverse-layer gradients, simultaneous parameter update. |
-| 11 | Sliding cross-correlation, pooling, and summed gradients for shared weights. |
-| 12 | Unrolled RNN forward/backward passes and shared-parameter updates. |
+| 10 | Forward pass, loss, reverse-layer gradients, simultaneous parameter update; a zero-gradient counterexample to guaranteed optimization success. |
+| 11 | Sliding cross-correlation, its numerical sparse matrix, pooling, and summed gradients for shared weights; residual forward pass, skip/branch input gradients and weight update. |
+| 12 | Two-step and three-step RNN forward/backward passes and shared-parameter updates. |
 | 13 | Center raw observations, form covariance, solve/order eigenpairs, score and reconstruct. |
 | 14 | Scale PCA scores, verify unit covariance, invert whitening and restore the mean. |
 | 15 | Map then center features and run PCA; jointly train one combined encoder/decoder block. |
@@ -149,10 +161,16 @@ into this repository. Page numbers are 1-based PDF pages.
 | --- | --- | --- |
 | 01–12 | User-supplied `DSA5105_midterm_cheatsheet_vi.tex`, sections L1–L5 | Condense lecture concepts, formulas, and derivation cues; remove past-paper-specific questions, answer claims, and examples. |
 | 01–02 | `DSA5105/Lec1_SL_LinearModels.pdf`, pp. 18–55 | Keep empirical/population risk, basis models, robust losses, regularization, and classification losses. |
+| 01–02 (proof examples) | `DSA5105/Lec1_SL_LinearModels.pdf`, pp. 23–24, 33, 39–42 | The two-point ERM/generalization counterexample and parameter-versus-input linearity examples are authored illustrations of the risk and fixed-feature definitions. |
 | 04–06 | `DSA5105/Lec2_SL_KernelMethods.pdf`, pp. 4–23, 24–46 | Use representer/KRR and the slide's no-intercept SVM convention; do not add an intercept-induced dual equality. |
+| 02, 04, 06 (derivations) | `DSA5105/Lec2_SL_KernelMethods.pdf`, pp. 13–17, 43–44 | Derive the scaling rule by changing coordinates in the ridge objective, assuming all coefficients are penalized. The valid-kernel and representer examples are authored. Expand the SVM Lagrangian after stationarity, then solve the existing one-dimensional example's dual without an intercept equality constraint. |
 | 07–09 | `DSA5105/Lec3_SL_DecisionTree.pdf`, pp. 3–34 | Greedy tree splits, bagging/random forests, bias–variance, and sequential boosting. |
+| 07–08 (entropy / variance) | `DSA5105/Lec3_SL_DecisionTree.pdf`, p. 19, pp. 25–30; retained bagging covariance assumptions | Compute entropy using the sheet's base-2 convention; derive the retained equal-variance/common-correlation formula by expanding variance as a double covariance sum. The arithmetic examples are authored. |
 | 03, 10 | `DSA5105/Lec4_SL_NN_GD.pdf`, pp. 3–25, 27–52 | Separate approximation, optimization, and efficient chain-rule differentiation. |
+| 10 (optimization example) | `DSA5105/Lec4_SL_NN_GD.pdf`, pp. 8–9, 25, 37, 45–52 | The dead-ReLU example is an authored existence-versus-optimization counterexample; it does not assert universal approximation for a fixed single-unit network. |
 | 11–12 | `DSA5105/Lec5_SL_CNN_RNN.pdf`, pp. 13–32, 35–40 | Distinguish weight sharing/locality and equivariance/invariance; sum recurrent gradient contributions. |
+| 11–12 (matrix / BPTT) | `DSA5105/Lec5_SL_CNN_RNN.pdf`, pp. 26, 37–39 | Instantiate the tied-weight matrix using the existing convolution data. The three-step recurrent example is authored, uses final-only loss, and computes all shared gradients from the same old parameters. |
+| 11 (residual block) | User-requested ResNet/residual-connections topic; chain-rule calculation | Define an additive identity-skip block and derive the sum of skip and branch gradients. The linear residual block, its gradients and update are authored examples; this row records the user-requested addition separately from the lecture slide coverage. |
 | 13–15 | `DSA5105/Lec6_UL_PCA.pdf`, pp. 15–31, 34–60 | Center before PCA; separate scores/reconstruction; use the explicitly taught feature matrix, whitening, autoencoder loss, shallow MLP dimensions, and joint minibatch SGD. |
 | 16–18 | `DSA5105/Lec9_UL_K-means_GMM.pdf`, pp. 4–22, 23–39 | Contrast hard assignments with Gaussian posterior responsibilities and weighted parameter updates. |
 | 19–20 | `DSA5105/Lec10_RL_MDP_DP.pdf`, pp. 13–44 | Separate policy expectation from optimality maximization under discounted-MDP assumptions. The joined stochastic-policy/optimal-value example is authored arithmetic on the same two-state graph used in VI/PI. |
