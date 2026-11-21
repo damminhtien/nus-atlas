@@ -32,6 +32,7 @@ subjects. The supplied original remains outside the repository.
   and permutation equivariance with its conditions.
   Short notes on block roles and GPT training/generation are merged into topics
   27 and 29.
+  Topics 27–30 share row-vector notation, token counts, and attention tensors.
 
 The syllabus explicitly excludes the Tuesday Group 2 Week 8 special lecture
 from the final and quizzes. The LLM-as-optimizer special topic is omitted.
@@ -77,7 +78,7 @@ Four slide-backed Transformer topics include full multi-head arithmetic and
 sinusoidal position encoding. Compact notes in topics 27 and 29 cover
 block roles, the GPT pipeline, next-token loss, teacher forcing, and generation.
 Existing formulas, procedures, and examples are retained. The sheet has two A4
-pages, 30 topics, 50 procedures, 64 examples, and 1251 inline formulas. Keep the
+pages, 30 topics, 50 procedures, 64 examples, and 1271 inline formulas. Keep the
 5.7 pt body font, 6.1 pt baseline, margins, gutters, and sequential column flow.
 Keep slide/page references in the source map below; omit them from printed
 headings and examples.
@@ -142,7 +143,7 @@ worked examples, with four additional ordered procedures:
 | 24 | Epsilon-greedy sampling probabilities; nonterminal and terminal Q-learning updates. Run DQN replay sampling, a frozen-target gradient step, and periodic target copying; reuse the numerical target to calculate MSE, its gradient, and the new parameter. |
 | 25 | Relabel features and adjacency consistently using the grouped permutation inverse/orthogonality identities; prove equivariance/invariance or disprove them with numerical counterexamples. |
 | 26 | Synchronous message passing on a four-node chain, two layers, relabelled outputs, and invariant sum readouts. Compute self-loop degrees and symmetric GCN normalization for two layers; compute allowed-edge dot-product scores, neighbor softmax, weighted aggregation, and a second attention layer. |
-| 27 | Compute projections, scaled logits, row softmax, and weighted values; check self/cross-attention Q/K/V, score, and output shapes. Work the lecture's three-key example and compare scaled/unscaled weights. Project two separate heads, form both attention matrices, concatenate outputs, and apply an explicit output matrix. Identify the roles of attention, shared FFN, residual updates, and tokenwise LayerNorm. |
+| 27 | Compute projections, scaled logits, row softmax, and weighted values; check self/cross-attention Q/K/V, score, and output shapes, including equal key/value counts. Work the lecture's three-key example and compare scaled/unscaled weights. Project two separate heads, form both attention matrices, concatenate outputs, and apply an explicit output matrix. Identify the roles of attention, shared FFN, residual updates, and tokenwise LayerNorm. |
 | 28 | Trace changes to Q, K, V, or an input token; check orthogonal key perturbations and row-constant softmax shifts, restricting masked conditions to allowed keys. Recompute a value perturbation, key perturbation, and zero query from the same starting data. |
 | 29 | Apply additive masks and calculate a three-token causal example; shift language-model targets, calculate sequence probability and summed/mean NLL, then greedily append tokens until eos. |
 | 30 | Recompute attention after a token swap, verify output equivariance, and use a fixed causal mask as a numerical counterexample. Calculate sinusoidal positions in radians, add token embeddings, and compare fixed versus jointly permuted positions. |
@@ -178,7 +179,7 @@ into this repository. Page numbers are 1-based PDF pages.
 | 24 (DQN) | User-supplied DQN Core formulas and mechanism summary | Use a neural Q-function, frozen target network, random replay minibatches, and periodic hard copying. The done flag extends the supplied nonterminal target to true terminal transitions; the one-transition identity-output gradient example is authored arithmetic. |
 | 25–26 | `DSA5105/Lec12_GNN.pptx`, slides 5–18, 22, 32–33 | Group the permutation inverse/orthogonality identities with feature/adjacency relabeling; distinguish node equivariance from graph invariance; derive shared-layer symmetry and use the two-layer chain example with sum readout. |
 | 26 (GCN / attention) | `DSA5105/Lec12_GNN.pptx`, slides 24–25, 34 | Translate the nodewise symmetric self-loop GCN and query/key dot-product neighbor attention into row-embedding notation. The three-node, two-layer calculations and permutation identities are authored derivations. Attention uses only listed neighbors; its example omits self-loops and chooses the shared update as ReLU of the aggregate. |
-| 27 | `DSA5105/Lec13_Transformers.pdf`, pp. 8–16 | Use row softmax, projection dimensions, and scaling by the key dimension; reproduce the three-key attention example and the scaled-logit comparison. Derive the user-requested self/cross-attention token counts and token-to-token versus Q/K feature-to-feature product shapes from matrix dimensions; the transposed-query product requires equal query/key token counts. |
+| 27 | `DSA5105/Lec13_Transformers.pdf`, pp. 8–16; user-requested Q/K/V notation | Use row softmax, projection dimensions, and scaling by the key dimension; reproduce the three-key attention example and the scaled-logit comparison. Derive the self/cross-attention token counts and token-to-token versus Q/K feature-to-feature product shapes from matrix dimensions. The transposed-query product requires equal query/key token counts; multiplying attention weights by values requires equal key/value counts. |
 | 27 (multi-head) | `DSA5105/Lec13_Transformers.pdf`, pp. 18–19 | Use separate projections per head, feature concatenation, and a learned output projection. The two-head identity-input example explicitly computes both attention matrices, head outputs, concatenation, and output multiplication. |
 | 27 (block roles) | `DSA5105/Lec13_Transformers.pdf`, pp. 22–23 | Distinguish token mixing, shared feature transforms, residual updates, and per-token feature normalization; retain the slide's post-norm convention. |
 | 28 | `DSA5105/Lec13_Transformers.pdf`, pp. 9–11, 16–17 | Derive separate Q/K/V dependencies from the computation graph; distinguish a tensor perturbation from an input change and calculate explicit perturbations. The user-supplied unchanged-score and softmax-shift conditions follow algebraically; the row-shift equivalence assumes finite logits and applies only on allowed keys with a fixed mask. |
@@ -203,6 +204,20 @@ $\Lambda_m^\phi$, and $Z^\phi$ to distinguish them from input-space PCA.
 Autoencoders use encoder $E_\theta$ and decoder $D_\psi$; the decoder's
 parameter name avoids overloading the feature map $\phi$. The MLP matrices
 $W_e$ and $V_d$ distinguish encoder/decoder weights from whitened scores $W$.
+
+Attention topics 27–30 use token rows throughout: $N_q$, $N_k$, and $N_v$
+count query, key, and value tokens; $D$ is the input/output embedding width;
+$d_k$ and $d_v$ are per-head query/key and value widths.
+Standard attention requires $N_k=N_v$; self-attention additionally sets
+$N_q=N_k=N_v=N$, while cross-attention can have different query/key counts.
+Query rows use index $i$ and key/value rows index $j$.
+$S$ is the scaled score matrix, $M$ the additive mask, $L=S+M$ the masked
+logits, $A$ the row-softmax weights, and $Y=AV$ the single-head output.
+Head $r$ uses $Q_r,K_r,V_r,A_r,H_r$ and separate projection weights;
+the concatenated output is $Y_{\rm MH}$ with $N_q$ rows. Key perturbations
+therefore use the row-vector product $q_i\Delta k_j^\top$.
+Position vectors are also rows, with $X_{\rm pos}=X+E_{\rm pos}$;
+GPT sequence length uses $N$.
 
 Before accepting a rebuilt PDF, require no missing glyphs or overfull boxes,
 verify exactly two A4 pages, and inspect both rendered pages. Repository
