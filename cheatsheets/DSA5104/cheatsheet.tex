@@ -1,5 +1,6 @@
 % DSA5104 content adapted into the shared NUS Atlas cheatsheet layout.
-% Two A4 portrait pages, four left-to-right columns per page, no global header/footer.
+% Two A4 portrait pages: compact reference first, second page reserved for additions.
+% Four left-to-right columns per page, no global header/footer. Build with pdfLaTeX.
 % Source text: user-provided DSA5104_A4_Helpsheet_v0.9_portrait_4col.tex.
 % The source is treated as content; its document-level layout is replaced here.
 \documentclass[a4paper]{article}
@@ -27,7 +28,7 @@
     \IfFontExistsTF{JetBrains Mono}{\newfontfamily\sqlfont{JetBrains Mono}[Scale=MatchLowercase]}{%
       \newfontfamily\sqlfont{lmmono10-regular.otf}[Scale=MatchLowercase]}}
 \fi
-\usepackage{xcolor,array,enumitem,listings,multicol,fontawesome5}
+\usepackage{xcolor,array,enumitem,listings,multicol,fontawesome5,ragged2e,needspace}
 \definecolor{structure}{HTML}{10243A}
 \definecolor{condition}{HTML}{704500}
 \definecolor{conditionbg}{HTML}{FFF1CC}
@@ -60,7 +61,7 @@
 }
 \lstdefinestyle{SQLbase}{
   language=SQLx,
-  basicstyle=\sqlfont\fontsize{5.9}{6.7}\selectfont\color{sqltext},
+  basicstyle=\sqlfont\fontsize{4.8}{4.9}\selectfont\color{sqltext},
   keywordstyle=[1]\color{sqlkeyword}\bfseries,
   keywordstyle=[2]\color{sqltype}\bfseries,
   keywordstyle=[3]\color{sqlfunction}\bfseries,
@@ -71,21 +72,21 @@
   showstringspaces=false,
   breakatwhitespace=false,
   frame=none,
-  xleftmargin=1pt
+  xleftmargin=.5pt
 }
 \lstdefinestyle{SQLblock}{
   style=SQLbase,
   backgroundcolor=\color{codebg},
   breaklines=true,
-  aboveskip=.3pt,
-  belowskip=.3pt
+  aboveskip=.15pt,
+  belowskip=.15pt
 }
 \lstdefinestyle{SQLinline}{
   style=SQLbase,
-  basicstyle=\sqlfont\fontsize{6.3}{7.4}\selectfont\color{sqltext}
+  basicstyle=\sqlfont\fontsize{5.1}{5.2}\selectfont\color{sqltext}
 }
 \lstdefinestyle{PHPcode}{
-  basicstyle=\ttfamily\fontsize{5.9}{6.7}\selectfont\color{sqltext},
+  basicstyle=\ttfamily\fontsize{4.8}{4.9}\selectfont\color{sqltext},
   keywordstyle=[1]\color{sqlkeyword},
   commentstyle=\color{sqlcomment},
   stringstyle=\color{sqlstring},
@@ -94,38 +95,38 @@
   keepspaces=true,
   showstringspaces=false,
   breaklines=true,
-  aboveskip=1pt,
-  belowskip=1pt
+  aboveskip=.15pt,
+  belowskip=.15pt
 }
-\lstset{style=SQLblock}
+\lstset{style=SQLblock,emptylines=0}
 \pagestyle{empty}
 \setlength{\topskip}{0pt}
 \setlength{\parindent}{0pt}
-\setlength{\parskip}{1pt}
-\setlength{\tabcolsep}{2pt}
-\renewcommand{\arraystretch}{1.08}
-\setlist[itemize]{leftmargin=8pt,label=\textbullet,nosep,topsep=1pt}
+\setlength{\parskip}{.05pt}
+\setlength{\tabcolsep}{1.5pt}
+\renewcommand{\arraystretch}{1}
+\setlist[itemize]{leftmargin=6pt,label=\textbullet,nosep,topsep=.2pt}
 \setlength{\emergencystretch}{1em}
-\newlength{\gutter}\setlength{\gutter}{2mm}
+\newlength{\gutter}\setlength{\gutter}{1.5mm}
 \setlength{\columnsep}{\gutter}\setlength{\multicolsep}{0pt}
+\raggedcolumns
 \newcommand{\bodystyle}{%
-  \fontsize{6.8}{8.6}\selectfont\raggedright
-  \setlength{\abovedisplayskip}{2pt}\setlength{\belowdisplayskip}{2pt}%
-  \setlength{\abovedisplayshortskip}{1pt}\setlength{\belowdisplayshortskip}{1pt}}
-\newif\ifcolstart
-\newcommand{\topic}[2]{\par\ifcolstart\colstartfalse\else\addvspace{4pt}\fi%
-  \begingroup\setlength{\fboxsep}{0.8pt}%
+  \fontsize{5.1}{5.2}\selectfont\RaggedRight
+  \setlength{\abovedisplayskip}{.5pt}\setlength{\belowdisplayskip}{.5pt}%
+  \setlength{\abovedisplayshortskip}{.3pt}\setlength{\belowdisplayshortskip}{.3pt}}
+\newcommand{\topic}[2]{\par\addvspace{.6pt}%
+  \begingroup\setlength{\fboxsep}{0.35pt}%
   \noindent\colorbox{structure}{\parbox{\dimexpr\linewidth-2\fboxsep\relax}{%
-    \color{white}\fontsize{8.1}{9.1}\selectfont\bfseries #1\enspace #2}}%
-  \endgroup\par\nobreak\vspace{1pt}}
+    \color{white}\fontsize{6.2}{6.6}\selectfont\bfseries #1\enspace #2}}%
+  \endgroup\par\nobreak\vspace{.25pt}\nobreak}
 % Let topic content use the remaining column space; keep each header with its first line.
 \newenvironment{topicblock}
   {\par\bodystyle}
   {\par}
 \newcommand{\key}[1]{\par\textcolor{structure}{\textbf{#1}}\enspace}
-\newcommand{\note}[4]{\par\begingroup\setlength{\fboxsep}{0.7pt}%
+\newcommand{\note}[4]{\par\begingroup\setlength{\fboxsep}{0.2pt}%
   \noindent\colorbox{#1}{\parbox{\dimexpr\linewidth-2\fboxsep\relax}{%
-    \textcolor{#2}{\textbf{#3}}\enspace #4}}%
+    \RaggedRight\textcolor{#2}{\textbf{#3}}\enspace #4}}%
   \endgroup\par}
 \newcommand{\cond}[1]{\note{conditionbg}{condition}{COND}{#1}}
 \newcommand{\trap}[1]{\note{warningbg}{warning}{!}{#1}}
@@ -135,8 +136,7 @@
 
 \begin{document}
 \bodystyle
-% PAGE 1: fill columns top-to-bottom, left-to-right; keep each topic intact.
-\colstarttrue
+% PAGE 1: flow all reference topics top-to-bottom, left-to-right.
 \begin{multicols*}{4}
 \begin{topicblock}
 \topic{01}{QUERY STRUCTURE}
@@ -221,9 +221,7 @@ DATE_FORMAT(dt,'%Y-%m-%d'); STR_TO_DATE(s,'%d/%m/%Y');
 
 \key{Example data}
 A(id,name): (1,Ana),(2,Bo); B(id,tag): (1,DB),(3,AI). Match on id; output is (name,tag).
-\columnbreak\colstarttrue
-\topic{04}{JOIN / SET / SUBQUERY (CONT.)}
-\begin{center}
+\par\noindent
 \begin{tabular}{@{}l>{\raggedright\arraybackslash}p{.65\linewidth}@{}}
 JOIN & Output (name,tag)\\\hline
 \sql{INNER JOIN} & \sql{(Ana,DB)}\\
@@ -232,7 +230,7 @@ JOIN & Output (name,tag)\\\hline
 \sql{RIGHT JOIN} & \sql{(Ana,DB), (NULL,AI)}\\
 \sql{FULL OUTER} & \sql{(Ana,DB), (Bo,NULL), (NULL,AI)}
 \end{tabular}
-\end{center}
+\par
 \cond{Bare \sql{JOIN} defaults to \sql{INNER JOIN}; MySQL has no direct \sql{FULL OUTER JOIN} syntax.}
 \key{ON vs WHERE}
 \begin{lstlisting}
@@ -283,14 +281,14 @@ SELECT ... FROM X;
 \topic{06}{RANKING / WINDOWS}
 
 For scores 100, 100, 90:
-\begin{center}
+\par\noindent
 \begin{tabular}{@{}lccc@{}}
 Function & 100 & 100 & 90\\\hline
 \sql{ROW_NUMBER} & 1 & 2 & 3\\
 RANK & 1 & 1 & 3\\
 \sql{DENSE_RANK} & 1 & 1 & 2
 \end{tabular}
-\end{center}
+\par
 \sql{ROW_NUMBER} is sequential and unique; ties need a deterministic tie-breaker. RANK leaves gaps after ties; \sql{DENSE_RANK} does not.
 \trap{NULL scores still get a rank and tie with each other. Their position varies by DBMS and sort direction; control NULL placement or filter them first.}
 \begin{lstlisting}
@@ -306,14 +304,13 @@ window_fn(expr) OVER (
   [ROWS frame])
 \end{lstlisting}
 Windows calculate per row without collapsing rows. Aggregate windows include SUM/AVG/COUNT/MIN/MAX; ranking functions are nonaggregate.
+\needspace{4\baselineskip}
 \key{Frames}
 \begin{lstlisting}
 -- Running: first row through current
 SUM(x) OVER (ORDER BY d ROWS BETWEEN
   UNBOUNDED PRECEDING AND CURRENT ROW)
 \end{lstlisting}
-\columnbreak\colstarttrue
-\topic{06}{RANKING / WINDOWS (CONT.)}
 \begin{lstlisting}
 -- Moving: previous 2 plus current
 AVG(x) OVER (ORDER BY d ROWS BETWEEN
@@ -363,45 +360,37 @@ CALL p(7,@n); SELECT @n;
 IN receives a caller value; OUT returns one. Declare locals/conditions/handlers before executable statements. SELECT ... INTO stores a scalar result. DELIMITER is a client command so internal semicolons stay in the procedure body.
 \key{Triggers}
 Fire on INSERT, UPDATE, or DELETE. BEFORE validates or changes NEW; AFTER runs after the row operation. This BEFORE UPDATE example validates a score, derives its label, and audits changes.
-\begin{lstlisting}[style=SQLblock,basicstyle=\sqlfont\fontsize{5.5}{6.4}\selectfont\color{sqltext}]
+\begin{lstlisting}
 DROP TRIGGER IF EXISTS trigger_before_update_safety_score;
 DELIMITER //
 CREATE TRIGGER trigger_before_update_safety_score
 BEFORE UPDATE ON chicago_school
 FOR EACH ROW
 BEGIN
-    IF NEW.safety_score IS NOT NULL
-       AND (NEW.safety_score < 1 OR NEW.safety_score > 99) THEN
-        SIGNAL SQLSTATE '45000'
-            SET MESSAGE_TEXT = 'safety_score must be between 1 and 99 or NULL';
-    END IF;
-
-    IF NEW.safety_score IS NULL THEN
-        SET NEW.safety_icon = NULL;
-    ELSEIF NEW.safety_score < 20 THEN
-        SET NEW.safety_icon = 'Very Weak';
-    ELSEIF NEW.safety_score < 40 THEN
-        SET NEW.safety_icon = 'Weak';
-    ELSEIF NEW.safety_score < 60 THEN
-        SET NEW.safety_icon = 'Average';
-    ELSEIF NEW.safety_score < 80 THEN
-        SET NEW.safety_icon = 'Strong';
-    ELSE
-        SET NEW.safety_icon = 'Very Strong';
-    END IF;
-
-    IF NOT (OLD.safety_score <=> NEW.safety_score) THEN
-        INSERT INTO school_safety_audit (
-            school_id,
-            old_safety_score,
-            new_safety_score
-        )
-        VALUES (
-            OLD.school_id,
-            OLD.safety_score,
-            NEW.safety_score
-        );
-    END IF;
+  IF NEW.safety_score IS NOT NULL
+     AND (NEW.safety_score < 1 OR NEW.safety_score > 99) THEN
+    SIGNAL SQLSTATE '45000'
+      SET MESSAGE_TEXT = 'safety_score must be between 1 and 99 or NULL';
+  END IF;
+  IF NEW.safety_score IS NULL THEN
+    SET NEW.safety_icon = NULL;
+  ELSEIF NEW.safety_score < 20 THEN
+    SET NEW.safety_icon = 'Very Weak';
+  ELSEIF NEW.safety_score < 40 THEN
+    SET NEW.safety_icon = 'Weak';
+  ELSEIF NEW.safety_score < 60 THEN
+    SET NEW.safety_icon = 'Average';
+  ELSEIF NEW.safety_score < 80 THEN
+    SET NEW.safety_icon = 'Strong';
+  ELSE
+    SET NEW.safety_icon = 'Very Strong';
+  END IF;
+  IF NOT (OLD.safety_score <=> NEW.safety_score) THEN
+    INSERT INTO school_safety_audit (
+      school_id, old_safety_score, new_safety_score)
+    VALUES (OLD.school_id, OLD.safety_score,
+      NEW.safety_score);
+  END IF;
 END //
 DELIMITER ;
 \end{lstlisting}
@@ -451,11 +440,6 @@ MySQL supports ROLLUP. CUBE/general grouping-set syntax is commonly shown with P
 \key{Query check}
 Verify types/NULL/keys; row grain, join keys, and ON vs WHERE; grouping and WHERE/HAVING; window partition/order/frame and outer filter; final sort, rounding, aliases, column order, and LIMIT.
 \end{topicblock}
-\end{multicols*}
-\newpage
-% PAGE 2: continue in the same top-to-bottom, left-to-right order.
-\colstarttrue
-\begin{multicols*}{4}
 \begin{topicblock}
 \topic{11}{DBMS / RELATIONAL MODEL}
 
@@ -486,6 +470,7 @@ Superkey uniquely identifies tuples; candidate key is a minimal superkey; primar
 \text{Assign result} & X\leftarrow E
 \end{array}
 \]
+\needspace{3\baselineskip}
 \key{RA to SQL}
 $\sigma$ = WHERE; $\pi$ = SELECT DISTINCT; $\bowtie$ = JOIN ... ON; $\cup$ = UNION; $-$ = EXCEPT/anti-join; $\rho$ = alias AS.
 \trap{RA projection removes duplicates. SQL SELECT preserves them unless DISTINCT is requested.}
@@ -541,8 +526,6 @@ Browser request $\to$ web server $\to$ PHP interpreter $\to$ MySQL. The result r
 Repeated facts cause update anomalies; missing facts can block inserts; deletes can erase unrelated facts.
 \key{3NF / BCNF / 4NF}
 For each nontrivial FD \sql{X -> A}: 3NF if \sql{X} is a superkey OR \sql{A} is prime (in some candidate key). BCNF requires every determinant \sql{X} to be a superkey. 4NF requires every nontrivial MVD \sql{X ->> Y} to have a superkey determinant.
-\columnbreak\colstarttrue
-\topic{15}{SCHEMA REFINEMENT (CONT.)}
 \trap{BCNF is stricter than 3NF; decomposing to BCNF can lose dependency preservation.}
 \end{topicblock}
 
@@ -607,7 +590,6 @@ REVOKE SELECT ON db.t FROM 'u'@'host';
 \end{lstlisting}
 \end{topicblock}
 
-\columnbreak\colstarttrue
 \begin{topicblock}
 \topic{20}{STORED PROGRAMS}
 
@@ -615,47 +597,43 @@ REVOKE SELECT ON db.t FROM 'u'@'host';
 Function returns one value for an expression; procedure uses \sql{CALL} and may take \sql{IN}/\sql{OUT} parameters. Declare variables, cursors, and handlers before executable SQL; \sql{DECLARE ... HANDLER FOR NOT FOUND} handles cursor exhaustion. Use \sql{IF/CASE} for branches and \sql{WHILE}, \sql{REPEAT}, or \sql{LOOP} for repetition.
 \key{Example: nearby crime records}
 This procedure uses \sql{IN} inputs and \sql{SELECT ... INTO}, then a CTE computes distance for radius filtering and ordered output.
-\begin{lstlisting}[style=SQLblock,basicstyle=\sqlfont\fontsize{5.5}{6.4}\selectfont\color{sqltext}]
+\begin{lstlisting}
 DROP PROCEDURE IF EXISTS find_nearby_crime_records;
 DELIMITER //
 CREATE PROCEDURE find_nearby_crime_records(
-    IN input_school_id INT,
-    IN input_r DOUBLE
-)
+  IN input_school_id INT, IN input_r DOUBLE)
 BEGIN
-    DECLARE school_lat_rad DOUBLE;
-    DECLARE school_lon_rad DOUBLE;
-    SELECT RADIANS(latitude),
-           RADIANS(longitude)
-    INTO school_lat_rad,
-         school_lon_rad
-    FROM chicago_school
-    WHERE school_id = input_school_id;
-    WITH crime_rad AS (
-        SELECT id, primary_description, crime_time,
-               latitude, longitude,
-               RADIANS(latitude) AS crime_lat_rad,
-               RADIANS(longitude) AS crime_lon_rad
-        FROM chicago_crime
-        WHERE latitude IS NOT NULL AND longitude IS NOT NULL
-    ),
-    haversine_a AS (
-        SELECT *,
-               POW(SIN((school_lat_rad - crime_lat_rad)/2), 2)
-             + COS(school_lat_rad) * COS(crime_lat_rad)
-             * POW(SIN((school_lon_rad - crime_lon_rad)/2), 2) AS a
-        FROM crime_rad
-    ),
-    crime_distance AS (
-        SELECT id, primary_description, crime_time,
-               latitude, longitude,
-               ROUND(2 * 6371 * ASIN(SQRT(a)), 8) AS distance
-        FROM haversine_a
-    )
-    SELECT id, primary_description, crime_time, latitude, longitude, distance
-    FROM crime_distance
-    WHERE distance <= input_r
-    ORDER BY crime_time DESC, distance ASC, id ASC;
+  DECLARE school_lat_rad DOUBLE;
+  DECLARE school_lon_rad DOUBLE;
+  SELECT RADIANS(latitude), RADIANS(longitude)
+  INTO school_lat_rad, school_lon_rad
+  FROM chicago_school
+  WHERE school_id = input_school_id;
+  WITH crime_rad AS (
+    SELECT id, primary_description, crime_time,
+      latitude, longitude,
+      RADIANS(latitude) AS crime_lat_rad,
+      RADIANS(longitude) AS crime_lon_rad
+    FROM chicago_crime
+    WHERE latitude IS NOT NULL AND longitude IS NOT NULL
+  ),
+  haversine_a AS (
+    SELECT *,
+      POW(SIN((school_lat_rad - crime_lat_rad)/2), 2)
+      + COS(school_lat_rad) * COS(crime_lat_rad)
+      * POW(SIN((school_lon_rad - crime_lon_rad)/2), 2) AS a
+    FROM crime_rad
+  ),
+  crime_distance AS (
+    SELECT id, primary_description, crime_time,
+      latitude, longitude,
+      ROUND(2 * 6371 * ASIN(SQRT(a)), 8) AS distance
+    FROM haversine_a
+  )
+  SELECT id, primary_description, crime_time, latitude, longitude, distance
+  FROM crime_distance
+  WHERE distance <= input_r
+  ORDER BY crime_time DESC, distance ASC, id ASC;
 END //
 DELIMITER ;
 \end{lstlisting}
@@ -663,4 +641,7 @@ DELIMITER ;
 \end{topicblock}
 
 \end{multicols*}
+\newpage
+% PAGE 2: reserved for new topics; replace \null with a multicols* environment.
+\null
 \end{document}
