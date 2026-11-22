@@ -1,8 +1,9 @@
 % DSA5104 content adapted into the shared NUS Atlas cheatsheet layout.
-% Two A4 portrait pages: compact reference first, second page reserved for additions.
+% Two A4 portrait pages: Part I (SQL/access) and Part II (FD/XML/Mongo/Spark).
 % Four left-to-right columns per page, no global header/footer. Build with pdfLaTeX.
 % Source text: user-provided DSA5104_A4_Helpsheet_v0.9_portrait_4col.tex.
-% The source is treated as content; its document-level layout is replaced here.
+% Upgraded against the exam recap, assignments, lectures, and the supplied gap review.
+% Source provenance and the 41-item coverage map are in COVERAGE.md.
 \documentclass[a4paper]{article}
 \usepackage[margin=4.5mm,left=5mm,right=5mm,noheadfoot]{geometry}
 \usepackage{iftex}
@@ -98,6 +99,8 @@
   aboveskip=.15pt,
   belowskip=.15pt
 }
+\lstdefinestyle{Plaincode}{style=PHPcode,language={},
+  basicstyle=\sqlfont\fontsize{4.8}{4.9}\selectfont\color{sqltext}}
 \lstset{style=SQLblock,emptylines=0}
 \pagestyle{empty}
 \setlength{\topskip}{0pt}
@@ -136,512 +139,670 @@
 
 \begin{document}
 \bodystyle
-% PAGE 1: flow all reference topics top-to-bottom, left-to-right.
+% PAGE 1: Part I. Explicit column breaks keep each reference area together.
 \begin{multicols*}{4}
 \begin{topicblock}
-\topic{01}{QUERY STRUCTURE}
-
-\key{Skeleton}
+\topic{01}{PART I: SQL QUERY LOGIC}
 \begin{lstlisting}
 SELECT [DISTINCT] expressions
-FROM R [JOIN S ON condition]
-[WHERE row_condition]
-[GROUP BY keys]
-[HAVING group_condition]
-[ORDER BY expression [ASC|DESC]]
-[LIMIT n];
+FROM R [LEFT JOIN S ON join_condition]
+WHERE row_condition
+GROUP BY keys HAVING group_condition
+ORDER BY expression DESC LIMIT n;
 \end{lstlisting}
-\key{Logical processing order}
-\begin{lstlisting}
-FROM/JOIN -> WHERE -> GROUP BY
--> HAVING -> SELECT
--> ORDER BY -> LIMIT
-\end{lstlisting}
-\trap{Window ORDER BY controls the window calculation, not the final output order. Add an outer ORDER BY when display order matters.}
+\key{Logical order}
+\sql{FROM/JOIN/ON -> WHERE -> GROUP BY -> HAVING}
+\sql{-> WINDOW -> SELECT -> DISTINCT -> ORDER BY -> LIMIT}.
+Window results need an outer query/CTE for filtering. SELECT aliases work in MySQL ORDER BY/HAVING, not WHERE. Group selected expressions unless aggregated or functionally dependent on grouped keys.
+\trap{Window ORDER BY controls calculation; only the final ORDER BY orders the result. LIMIT applies after ranking/filtering. SQL uses bags; duplicates remain unless removed.}
+\key{String / set operations}
+\sql{LIKE} \texttt{'\%abc\_'}: \% any length, \_ one character; case sensitivity follows collation. \sql{CONCAT(a,b)} concatenates; \sql{||} is normally OR. \sql{SUBSTRING(s,1,3)} starts at 1; position 0 gives empty. \sql{CHAR_LENGTH} counts characters; \sql{LENGTH} bytes. \sql{UNION} removes duplicates; \sql{UNION ALL} preserves them. Align column count and compatible types. Symmetric difference: \sql{(A EXCEPT B) UNION (B EXCEPT A)}.
 \end{topicblock}
 
 \begin{topicblock}
-\topic{02}{MYSQL SYNTAX}
-
-\key{String operations}
-\begin{lstlisting}
-LIKE '%abc%'       -- %: any length; _: one character
-CONCAT(a,b)        -- || is logical OR by default in MySQL
-UPPER(s); LOWER(s);
-CHAR_LENGTH(s); LENGTH(s); -- characters vs bytes
-SUBSTRING(s,pos,len);
-\end{lstlisting}
-\cond{\sql{LIKE} case sensitivity depends on collation; MySQL is commonly case-insensitive.}
-\trap{String positions start at 1: \sql{SUBSTRING(s,0,1)} returns empty; use \sql{SUBSTRING(s,1,1)} for the first character.}
-\key{Common MySQL data types}
-\begin{lstlisting}
-TINYINT; SMALLINT; MEDIUMINT;
-INT/INTEGER; BIGINT; [UNSIGNED]
-DECIMAL(p,s); NUMERIC(p,s);
-FLOAT; DOUBLE;
-CHAR(n); VARCHAR(n); TEXT;
-BINARY(n); VARBINARY(n); BLOB;
-DATE; TIME; DATETIME; TIMESTAMP; YEAR;
-BOOLEAN/BOOL = TINYINT(1); JSON; ENUM(...); SET(...);
-\end{lstlisting}
-\cond{\sql{DECIMAL}/\sql{NUMERIC} are exact; \sql{FLOAT}/\sql{DOUBLE} approximate. \sql{UNSIGNED} excludes negatives.}
-\cond{\sql{CHAR} is fixed-width; \sql{VARCHAR} is variable-width. \sql{TEXT} stores long text; \sql{BLOB} stores bytes.}
-\key{Date/time functions}
-\begin{lstlisting}
-CURDATE()/CURRENT_DATE(); CURTIME()/CURRENT_TIME();
-NOW()/CURRENT_TIMESTAMP(); UTC_TIMESTAMP();
-YEAR(d); QUARTER(d); MONTH(d); DAY(d); DAYOFYEAR(d);
-DAYNAME(d); MONTHNAME(d); LAST_DAY(d);
-DAYOFWEEK(d) Sun=1; WEEKDAY(d) Mon=0;
-HOUR(t); MINUTE(t); SECOND(t); EXTRACT(unit FROM dt);
-DATE(dt); TIME(dt);
-DATE_ADD(d, INTERVAL n DAY); DATE_SUB(d, INTERVAL n MONTH);
-TIMESTAMPADD(unit,n,dt); DATEDIFF(end,start);
-TIMESTAMPDIFF(unit,start,end);
-ADDTIME(t,'00:30:00'); SUBTIME(t,'00:30:00');
-TIMEDIFF(end,start); TIME_TO_SEC(t); SEC_TO_TIME(n);
-DATE_FORMAT(dt,'%Y-%m-%d'); STR_TO_DATE(s,'%d/%m/%Y');
-\end{lstlisting}
-\cond{\sql{DATEDIFF(end,start)} returns days and ignores time; \sql{TIMESTAMPDIFF} returns the chosen unit. \sql{INTERVAL} supports date/time arithmetic.}
-\trap{MySQL \sql{TIMESTAMP} converts by session time zone; \sql{DATETIME} preserves the stored date/time value.}
+\topic{02}{NULL / EMPTY AGGREGATES}
+\sql{x IS NULL}, not \sql{x = NULL}; NULL comparisons give UNKNOWN (U). WHERE/HAVING retain only TRUE. \sql{COALESCE(x,0)} replaces NULL; \sql{NULLIF(x,0)} returns NULL if zero. Arithmetic propagates NULL.
+\begin{center}\begin{tabular}{@{}ll|ll@{}}
+$T\land U$ & $U$ & $F\land U$ & $F$\\
+$T\lor U$ & $T$ & $F\lor U$ & $U$\\
+$\neg U$ & $U$ & \sql{NULL = NULL} & $U$
+\end{tabular}\end{center}
+\key{Counts and grouping}
+\sql{COUNT(*)}: rows; \sql{COUNT(x)}: non-NULL x; \sql{COUNT(DISTINCT x)}: distinct non-NULL x. SUM/AVG/MIN/MAX ignore NULL. On empty input COUNT is 0; the others are NULL. No GROUP BY: one aggregate row even on empty input; grouped empty input: no groups. NULL group keys/DISTINCT values are collected together.
+\trap{CHECK rejects FALSE, accepts UNKNOWN. NOT IN is unsafe if the subquery contains NULL; prefer correlated NOT EXISTS. For null-safe equality in MySQL use \sql{a <=> b}.}
+\ex{For x = [10,NULL,20]: COUNT(*)=3, COUNT(x)=2, SUM=30, AVG=15. LEFT JOIN with no match still has one NULL-extended row: COUNT(*)=1 but COUNT(S.id)=0.}
 \end{topicblock}
 
 \begin{topicblock}
-\topic{03}{NULL / AGGREGATION}
-
-\sql{x = NULL} is wrong; use \sql{x IS NULL}. Comparisons with NULL yield UNKNOWN; \sql{WHERE} keeps only TRUE. Arithmetic with NULL usually returns NULL.
-\key{Counts}
-\sql{COUNT(*)} counts output rows; \sql{COUNT(x)} ignores NULL; \sql{COUNT(DISTINCT x)} counts unique non-NULL values.
-\cond{Every selected nonaggregate expression must be grouped in standard SQL. \sql{WHERE} filters rows before grouping; \sql{HAVING} filters groups after aggregation.}
-\trap{After a LEFT JOIN, COUNT(*) still counts a NULL-extended row; COUNT(B.id) ignores it.}
-\end{topicblock}
-
-\begin{topicblock}
-\topic{04}{JOIN / SET / SUBQUERY}
-
-\key{Example data}
-A(id,name): (1,Ana),(2,Bo); B(id,tag): (1,DB),(3,AI). Match on id; output is (name,tag).
-\par\noindent
-\begin{tabular}{@{}l>{\raggedright\arraybackslash}p{.65\linewidth}@{}}
-JOIN & Output (name,tag)\\\hline
-\sql{INNER JOIN} & \sql{(Ana,DB)}\\
-\sql{CROSS JOIN} & \sql{(Ana,DB), (Ana,AI), (Bo,DB), (Bo,AI)}\\
-\sql{LEFT JOIN} & \sql{(Ana,DB), (Bo,NULL)}\\
-\sql{RIGHT JOIN} & \sql{(Ana,DB), (NULL,AI)}\\
-\sql{FULL OUTER} & \sql{(Ana,DB), (Bo,NULL), (NULL,AI)}
-\end{tabular}
-\par
-\cond{Bare \sql{JOIN} defaults to \sql{INNER JOIN}; MySQL has no direct \sql{FULL OUTER JOIN} syntax.}
-\key{ON vs WHERE}
+\topic{03}{JOINS / MULTIPLICATION}
+INNER: matched pairs. LEFT: all left rows plus NULLs for missing right. RIGHT: symmetric. CROSS: every pair. MySQL has no native FULL OUTER JOIN; combine LEFT with unmatched-right rows using UNION ALL. ON matches rows before outer preservation; a right-side WHERE filter may remove unmatched rows.
+\ex{R keys [1,2], S keys [2,3]: INNER [2]; LEFT [(1,NULL),(2,2)]; FULL adds (NULL,3). A key appearing twice on both sides produces 4 matched rows.}
+\trap{Joining independent one-to-many facts with m and n children produces m*n rows per parent; counts/sums multiply. Pre-aggregate each fact to the target grain first.}
 \begin{lstlisting}
-A LEFT JOIN B ON A.id=B.id AND B.tag='DB'
-\end{lstlisting}
-The ON filter keeps Bo with NULL; putting \sql{B.tag='DB'} in WHERE removes Bo.
-\key{Join traps}
-NATURAL JOIN matches every same-named column, which can join unrelated fields; \sql{USING(k)} names shared keys explicitly. Anti-join: LEFT JOIN, then WHERE the right key IS NULL.
-\key{Set operations}
-UNION / INTERSECT / EXCEPT require union-compatible columns. They remove duplicates by default; UNION ALL preserves duplicates.
-\key{Subqueries}
-\begin{lstlisting}
-WHERE x IN (SELECT ...)
-WHERE EXISTS (SELECT 1 FROM S WHERE ...)
-WHERE NOT EXISTS (...)
-\end{lstlisting}
-Correlated subqueries refer to outer-row aliases. For “for all”, test that there is no missing requirement (e.g. required set EXCEPT possessed set is empty).
-\trap{NOT IN with any NULL in its subquery can yield UNKNOWN; NOT EXISTS is safer for anti-joins.}
-\end{topicblock}
-
-\begin{topicblock}
-\topic{05}{DDL / DML}
-
-\key{CREATE / UPDATE / DELETE}
-\begin{lstlisting}
-CREATE TABLE R (
-  id INT PRIMARY KEY,
-  x VARCHAR(20) NOT NULL,
-  dept VARCHAR(20),
-  CHECK (...),
-  FOREIGN KEY (dept) REFERENCES D(dept)
-);
-INSERT INTO R(...) VALUES (...);
-UPDATE R SET x = expr [, y = expr]
-WHERE condition;
-DELETE FROM R WHERE condition;
-\end{lstlisting}
-\trap{UPDATE/DELETE without WHERE affects every row. Preview target rows with SELECT ... WHERE ... first.}
-\cond{Foreign-key actions include ON DELETE/UPDATE CASCADE, SET NULL, and RESTRICT/NO ACTION.}
-\key{CTE}
-\begin{lstlisting}
-WITH X AS (SELECT ...)
-SELECT ... FROM X;
-\end{lstlisting}
-\end{topicblock}
-
-\begin{topicblock}
-\topic{06}{RANKING / WINDOWS}
-
-For scores 100, 100, 90:
-\par\noindent
-\begin{tabular}{@{}lccc@{}}
-Function & 100 & 100 & 90\\\hline
-\sql{ROW_NUMBER} & 1 & 2 & 3\\
-RANK & 1 & 1 & 3\\
-\sql{DENSE_RANK} & 1 & 1 & 2
-\end{tabular}
-\par
-\sql{ROW_NUMBER} is sequential and unique; ties need a deterministic tie-breaker. RANK leaves gaps after ties; \sql{DENSE_RANK} does not.
-\trap{NULL scores still get a rank and tie with each other. Their position varies by DBMS and sort direction; control NULL placement or filter them first.}
-\begin{lstlisting}
-RANK() OVER (
-  PARTITION BY dept
-  ORDER BY score DESC)
-\end{lstlisting}
-PARTITION BY restarts within each group; ORDER BY sets window order. Ranking on grouped results happens after grouping/aggregation.
-\key{Window form}
-\begin{lstlisting}
-window_fn(expr) OVER (
-  [PARTITION BY p] [ORDER BY o]
-  [ROWS frame])
-\end{lstlisting}
-Windows calculate per row without collapsing rows. Aggregate windows include SUM/AVG/COUNT/MIN/MAX; ranking functions are nonaggregate.
-\needspace{4\baselineskip}
-\key{Frames}
-\begin{lstlisting}
--- Running: first row through current
-SUM(x) OVER (ORDER BY d ROWS BETWEEN
-  UNBOUNDED PRECEDING AND CURRENT ROW)
-\end{lstlisting}
-\begin{lstlisting}
--- Moving: previous 2 plus current
-AVG(x) OVER (ORDER BY d ROWS BETWEEN
-  2 PRECEDING AND CURRENT ROW)
--- Symmetric: previous, current, next
-AVG(x) OVER (ORDER BY d ROWS BETWEEN
-  1 PRECEDING AND 1 FOLLOWING)
-\end{lstlisting}
-\remember{\sql{UNBOUNDED PRECEDING/FOLLOWING} anchors the frame at the partition start/end; finite \sql{n PRECEDING/FOLLOWING} bounds move with the current row.}
-\trap{ROWS counts physical rows. RANGE groups ORDER BY peers, so ties can enlarge the frame.}
-\end{topicblock}
-
-\begin{topicblock}
-\topic{07}{RECURSIVE CTE}
-
-Use for transitive closure, hierarchies, and paths.
-\begin{lstlisting}
-WITH RECURSIVE reach(a,b) AS (
-  -- Anchor: base edges
-  SELECT a,b FROM edge
-  UNION
-  -- Recursive term extends prior rows
-  SELECT r.a,e.b FROM reach r
-  JOIN edge e ON r.b=e.a
+WITH SchoolAgg AS (
+ SELECT area, COUNT(*) AS schools,
+        AVG(score) AS avg_score
+ FROM School GROUP BY area
+), CrimeAgg AS (
+ SELECT area, COUNT(*) AS crimes
+ FROM Crime GROUP BY area
 )
-SELECT * FROM reach;
+SELECT c.area, COALESCE(s.schools,0) AS schools,
+       s.avg_score, COALESCE(k.crimes,0) AS crimes
+FROM Community c
+LEFT JOIN SchoolAgg s ON s.area=c.area
+LEFT JOIN CrimeAgg k ON k.area=c.area;
 \end{lstlisting}
-The anchor seeds rows; the recursive term refers to the CTE and repeatedly extends it.
-\cond{UNION removes duplicates and can help closure/cycle control. UNION ALL avoids deduplication and needs a safe termination strategy.}
+\ex{2 schools and 3 crimes: raw join has 6 rows, inflating each count to 6; independent aggregates return 2 and 3. Retain NULL average for communities without known scores.}
 \end{topicblock}
 
 \begin{topicblock}
-\topic{08}{PROCEDURES / TRIGGERS}
+\topic{04}{TYPES / DATES / CASTS}
+\sql{INT/BIGINT}: integers; \sql{DECIMAL(p,s)} exact decimal; FLOAT/DOUBLE approximate; CHAR fixed, VARCHAR variable; TEXT/BLOB text/binary. DATE date, TIME time/duration, DATETIME date-time, TIMESTAMP session-time-zone conversion. JSON structured data. Boolean commonly TINYINT(1).
+\begin{lstlisting}
+MIN(CAST(score AS UNSIGNED)) -- if stored as text
+STR_TO_DATE(selling_date,'%d/%m/%Y')
+WHERE dt >= '2012-02-01' AND dt < '2012-03-01'
+DATE_ADD(dt,INTERVAL 1 DAY)
+DATEDIFF(end_date,start_date) -- days, ignores time
+TIMESTAMPDIFF(HOUR,start_dt,end_dt)
+DATE_FORMAT(dt,'%Y-%m'); EXTRACT(YEAR FROM dt)
+\end{lstlisting}
+\trap{String order: \sql{'100' < '20'}; numeric order: $20<100$. Parse text dates before comparison. For DATETIME use a half-open month interval; BETWEEN dates can omit most of the final day.}
+\end{topicblock}
 
-\key{MySQL stored procedure}
+\columnbreak
+\begin{topicblock}
+\topic{05}{SUBQUERIES / DIVISION}
+Scalar subquery must return at most one row (zero gives NULL); EXISTS asks whether any row exists. Correlated subquery refers to the outer row. IN tests membership; NOT EXISTS handles anti-joins without the NOT IN/NULL trap. ANY needs one true comparison; ALL needs every comparison true. Empty input: ANY=false, ALL=true. \sql{= ANY} is IN.
+\key{For every required item: double NOT EXISTS}
+Return an A row iff no required item is missing from its R rows.
 \begin{lstlisting}
-DELIMITER //
-CREATE PROCEDURE p(IN p_id INT, OUT p_cnt INT)
-BEGIN
-  DECLARE v INT DEFAULT 0;
-  SELECT COUNT(*) INTO v FROM T WHERE id=p_id;
-  SET p_cnt=v;
-END//
-DELIMITER ;
-CALL p(7,@n); SELECT @n;
+SELECT a.id
+FROM A a
+WHERE NOT EXISTS (
+ SELECT 1 FROM Required q
+ WHERE NOT EXISTS (
+  SELECT 1 FROM R r
+  WHERE r.aid=a.id AND r.bid=q.bid
+ )
+);
 \end{lstlisting}
-IN receives a caller value; OUT returns one. Declare locals/conditions/handlers before executable statements. SELECT ... INTO stores a scalar result. DELIMITER is a client command so internal semicolons stay in the procedure body.
-\key{Triggers}
-Fire on INSERT, UPDATE, or DELETE. BEFORE validates or changes NEW; AFTER runs after the row operation. This BEFORE UPDATE example validates a score, derives its label, and audits changes.
+\ex{Required=[b1,b2]; R has (a1,b1),(a1,b2),(a2,b1): returns a1. If Required is empty, every A row qualifies (vacuous truth).}
+\key{Count alternative}
 \begin{lstlisting}
-DROP TRIGGER IF EXISTS trigger_before_update_safety_score;
-DELIMITER //
-CREATE TRIGGER trigger_before_update_safety_score
-BEFORE UPDATE ON chicago_school
-FOR EACH ROW
-BEGIN
-  IF NEW.safety_score IS NOT NULL
-     AND (NEW.safety_score < 1 OR NEW.safety_score > 99) THEN
-    SIGNAL SQLSTATE '45000'
-      SET MESSAGE_TEXT = 'safety_score must be between 1 and 99 or NULL';
-  END IF;
-  IF NEW.safety_score IS NULL THEN
-    SET NEW.safety_icon = NULL;
-  ELSEIF NEW.safety_score < 20 THEN
-    SET NEW.safety_icon = 'Very Weak';
-  ELSEIF NEW.safety_score < 40 THEN
-    SET NEW.safety_icon = 'Weak';
-  ELSEIF NEW.safety_score < 60 THEN
-    SET NEW.safety_icon = 'Average';
-  ELSEIF NEW.safety_score < 80 THEN
-    SET NEW.safety_icon = 'Strong';
-  ELSE
-    SET NEW.safety_icon = 'Very Strong';
-  END IF;
-  IF NOT (OLD.safety_score <=> NEW.safety_score) THEN
-    INSERT INTO school_safety_audit (
-      school_id, old_safety_score, new_safety_score)
-    VALUES (OLD.school_id, OLD.safety_score,
-      NEW.safety_score);
-  END IF;
-END //
-DELIMITER ;
+SELECT r.aid FROM R r
+JOIN Required q ON q.bid=r.bid
+GROUP BY r.aid
+HAVING COUNT(DISTINCT r.bid) =
+       (SELECT COUNT(*) FROM Required);
 \end{lstlisting}
-Row images: INSERT uses NEW; UPDATE uses OLD and NEW; DELETE uses OLD. SIGNAL raises a user error; a trigger error aborts the invoking statement.
-\trap{Audit only changed values: test \sql{NOT (OLD.v <=> NEW.v)} in an UPDATE trigger. NULL-safe equality avoids logging two NULLs as a change; rollback removes the audit row too.}
+\cond{Count form assumes unique, non-NULL required IDs and a nonempty Required set; it omits A rows with no R rows. DISTINCT prevents duplicate R rows inflating coverage.}
 \end{topicblock}
 
 \begin{topicblock}
-\topic{09}{PIVOT / CUBE / ROLLUP}
-
-\key{Conditional aggregation}
-Rows become grouping keys; CASE values become output columns.
-\key{General PIVOT pattern}
+\topic{06}{CTE / AGGREGATE LEVELS}
+CTE: named query result scoped to one statement; chain with commas. First derive each group statistic, then compare original rows to that statistic.
 \begin{lstlisting}
-SELECT row_dimension,
-  AGG(CASE WHEN pivot_column = 'val1'
-    THEN measure ELSE 0 END) AS val1,
-  AGG(CASE WHEN pivot_column = 'val2'
-    THEN measure ELSE 0 END) AS val2
-FROM table_name
-GROUP BY row_dimension;
+WITH DeptAvg AS (
+ SELECT dept, AVG(mark) AS mean_mark
+ FROM Student GROUP BY dept
+)
+SELECT s.* FROM Student s
+JOIN DeptAvg d ON s.dept <=> d.dept
+WHERE s.mark > d.mean_mark;
+-- Window equivalent (keeps detail rows):
+WITH T AS (
+ SELECT s.*, AVG(mark) OVER (PARTITION BY dept) AS m
+ FROM Student s
+)
+SELECT * FROM T WHERE mark > m;
 \end{lstlisting}
-\remember{PIVOT = \sql{GROUP BY} rows + \sql{CASE WHEN} columns + \sql{AGG} cells.}
-\key{Example}
+\key{Global average from subgroup averages}
+$\bar{x}=\frac{\sum_i n_i\bar{x}_i}{\sum_i n_i}$, where $n_i$ counts non-NULL values used in subgroup mean $\bar{x}_i$. Drop zero-count groups. AVG(group means) gives each group equal weight.
+\ex{Group1=[10,20], mean15, n=2; group2=[90], mean90, n=1. Global=(2*15+1*90)/3=40; unweighted means average=52.5 (wrong for individuals).}
+\key{Recursive CTE (MySQL 8+)}
+\begin{lstlisting}
+WITH RECURSIVE nums(n) AS (
+ SELECT 1
+ UNION ALL
+ SELECT n+1 FROM nums WHERE n < 5
+)
+SELECT n FROM nums; -- 1,2,3,4,5
+\end{lstlisting}
+Anchor seeds; recursive term extends; stop condition must terminate. Hierarchies need cycle protection when input may contain cycles.
+\end{topicblock}
+
+\begin{topicblock}
+\topic{07}{CONDITIONAL AGGREGATION}
 \begin{lstlisting}
 SELECT location,
- SUM(CASE WHEN type='THEFT' THEN 1 ELSE 0 END) theft,
- SUM(CASE WHEN type='BATTERY' THEN 1 ELSE 0 END) battery
-FROM crime GROUP BY location;
+ SUM(CASE WHEN type='THEFT' THEN 1 ELSE 0 END) AS theft,
+ COUNT(CASE WHEN type='BATTERY' THEN 1 END) AS battery,
+ SUM(CASE WHEN P THEN amount ELSE 0 END) AS total_p,
+ AVG(CASE WHEN P THEN amount END) AS mean_p,
+ MIN(CASE WHEN P THEN amount END) AS min_p,
+ MAX(CASE WHEN P THEN amount END) AS max_p
+FROM Crime GROUP BY location;
 \end{lstlisting}
-For amounts, replace 1 with amount. COUNT(CASE WHEN condition THEN 1 END) also counts matches because COUNT ignores NULL.
+\trap{AVG/MIN/MAX should omit ELSE 0 when nonmatches must be ignored. COUNT(CASE ... ELSE 0 END) counts nonmatches too. SUM of no non-NULL inputs can still be NULL; COALESCE if zero is required.}
+\ex{Two rows (P,amount)=(true,100),(false,50): AVG(CASE WHEN P THEN amount END)=100; adding ELSE 0 gives (100+0)/2=50. Conditional COUNT without ELSE=1; with ELSE 0=2.}
+\key{Conflict detection}
+\begin{lstlisting}
+SELECT VIN FROM Cars GROUP BY VIN
+HAVING COUNT(DISTINCT make)>1
+    OR COUNT(DISTINCT model)>1;
+\end{lstlisting}
+For make values: Ford/Toyota is conflict; Ford/NULL, NULL/NULL, Ford/Ford are not (NULL is unknown, not a second known value).
 \key{Grouping sets}
-For dimensions (a,b,c):
-\begin{itemize}
-\item CUBE(a,b,c): every subset, $2^3=8$ sets.
-\item ROLLUP(a,b,c): prefix hierarchy (abc, ab, a, empty), detail to subtotals to total.
-\item GROUPING(a)=1 when a is omitted in a subtotal/total; use it to distinguish generated NULL from data NULL.
-\end{itemize}
-MySQL supports ROLLUP. CUBE/general grouping-set syntax is commonly shown with PostgreSQL in course material.
+CUBE on d dimensions has $2^d$ grouping sets; ROLLUP(a,b,c) gives (a,b,c),(a,b),(a),(). MySQL supports \sql{GROUP BY a,b WITH ROLLUP}, not native CUBE. \sql{GROUPING(a)=1} identifies a generated subtotal NULL, distinct from stored NULL.
 \end{topicblock}
 
+\columnbreak
 \begin{topicblock}
-\topic{10}{LAST-MINUTE TRAPS}
-
-\trap{Window functions preserve rows; GROUP BY collapses them. RANK leaves gaps; DENSE\_RANK does not. ROWS counts physical rows; RANGE can include peers.}
-\trap{Recursive CTE needs an anchor and termination. Trigger images: INSERT=NEW, DELETE=OLD, UPDATE=both. GROUPING() distinguishes subtotal NULL.}
-\key{Query check}
-Verify types/NULL/keys; row grain, join keys, and ON vs WHERE; grouping and WHERE/HAVING; window partition/order/frame and outer filter; final sort, rounding, aliases, column order, and LIMIT.
-\end{topicblock}
-\begin{topicblock}
-\topic{11}{DBMS / RELATIONAL MODEL}
-
-\key{Why a DBMS?}
-Controls redundancy/inconsistency, difficult access, isolation, buried integrity rules, partial updates, concurrency, and authorization.
-\key{Abstraction}
-Physical: how data is stored. Logical: which data and relationships exist. View: a user-specific representation.
-\cond{Physical data independence means changing physical storage without changing the logical schema or applications.}
-\key{Schema / instance}
-Schema is structure; instance is a snapshot of tuples. A relation is a set of tuples (order is irrelevant); a domain is a set of allowed atomic values. NULL denotes unknown/missing.
-\key{Keys}
-Superkey uniquely identifies tuples; candidate key is a minimal superkey; primary key is the selected candidate key. A foreign key references a key in another relation; NULL is allowed only if the column permits it.
-\end{topicblock}
-
-\begin{topicblock}
-\topic{12}{RELATIONAL ALGEBRA}
-
-\[
-\begin{array}{@{}ll@{}}
-\text{Rows} & \sigma_{condition}(R)\\
-\text{Columns} & \pi_{columns}(R)\\
-\text{All pairs} & R\times S\\
-\text{Matched pairs} & R\bowtie_{condition}S\\
-\text{Either set} & R\cup S\\
-\text{Both sets} & R\cap S\\
-\text{R but not S} & R-S\\
-\text{Rename} & \rho_X(R)\\
-\text{Assign result} & X\leftarrow E
-\end{array}
-\]
-\needspace{3\baselineskip}
-\key{RA to SQL}
-$\sigma$ = WHERE; $\pi$ = SELECT DISTINCT; $\bowtie$ = JOIN ... ON; $\cup$ = UNION; $-$ = EXCEPT/anti-join; $\rho$ = alias AS.
-\trap{RA projection removes duplicates. SQL SELECT preserves them unless DISTINCT is requested.}
-\end{topicblock}
-
-\begin{topicblock}
-\topic{13}{PHP / HTML SYNTAX}
-
-\key{PHP patterns}
-\begin{lstlisting}[language=PHPx,style=PHPcode]
-$x                 // variable
-$s = $a . $b;      // concatenate strings
-foreach ($xs as $x) { ... }
-$row["column"]     // associative-array field
-$_GET["x"]; $_POST["x"];
-$conn = mysqli_connect(...);
-$r = mysqli_query($conn, $sql);
-$rows = mysqli_fetch_all($r, MYSQLI_ASSOC);
-if ($_SERVER["REQUEST_METHOD"] === "POST") { ... }
-\end{lstlisting}
-\key{HTML form / dropdown}
-\begin{lstlisting}[language=PHPx,style=PHPcode]
-<form method="post">
-  <select name="x">
-    <option value="...">...</option>
-  </select>
-</form>
-\end{lstlisting}
-\end{topicblock}
-
-\begin{topicblock}
-\topic{14}{HTTP / MYSQL RESULTS}
-
-\key{Request flow}
-Browser request $\to$ web server $\to$ PHP interpreter $\to$ MySQL. The result returns to PHP, which creates HTML/text for the browser.
-\key{Query result}
-\sql{mysqli_query()} returns a result handle/object, not a PHP row array. Fetch rows with \sql{mysqli_fetch_all($r, MYSQLI_ASSOC)}.
-\key{Associative arrays}
-\sql{key => value}; with \sql{MYSQLI_ASSOC}, database column names become keys, e.g. \sql{$row["ID"]}.
-\key{GET / POST}
-\sql{$_GET} comes from URL query parameters; \sql{$_POST} comes from the request body. \sql{$_SERVER["REQUEST_METHOD"]} identifies the method received by the page.
-\cond{Use POST for form-body submissions; reading a variable from \sql{$_GET}/\sql{$_POST} is separate from validating its value.}
-\end{topicblock}
-
-\begin{topicblock}
-\topic{15}{SCHEMA REFINEMENT}
-
-\key{Functional dependency}
-\sql{X -> Y}: rows with the same \sql{X} must have the same \sql{Y}. Compute closure \sql{X+}: start at \sql{X}; repeatedly add \sql{Y} when an FD's left side is already in \sql{X+}.
-\key{Key test}
-\sql{X} is a superkey iff \sql{X+} contains every attribute. It is a candidate key iff no proper subset is a superkey.
-\key{Why normalize?}
-Repeated facts cause update anomalies; missing facts can block inserts; deletes can erase unrelated facts.
-\key{3NF / BCNF / 4NF}
-For each nontrivial FD \sql{X -> A}: 3NF if \sql{X} is a superkey OR \sql{A} is prime (in some candidate key). BCNF requires every determinant \sql{X} to be a superkey. 4NF requires every nontrivial MVD \sql{X ->> Y} to have a superkey determinant.
-\trap{BCNF is stricter than 3NF; decomposing to BCNF can lose dependency preservation.}
-\end{topicblock}
-
-\begin{topicblock}
-\topic{16}{DECOMPOSITION / ER}
-
-\key{Lossless join}
-Decompose \sql{R} into \sql{R1,R2} without spurious rows if \sql{(R1 intersect R2) -> R1} OR \sql{(R1 intersect R2) -> R2} follows from the FDs.
-\key{Dependency preserving}
-Projected FDs on the parts must jointly imply the original FDs, so constraints can be checked without joining. 3NF synthesis usually preserves dependencies; BCNF may not.
-\key{ER to relations}
-1:1: FK on either side with UNIQUE (and NOT NULL if mandatory). 1:N: FK on the N side. M:N: bridge table with both FKs (often composite PK) plus relationship attributes. Weak entity: PK = owner's PK + partial key.
-\end{topicblock}
-
-\begin{topicblock}
-\topic{17}{VIEWS / TRANSACTIONS}
-
-\key{View}
+\topic{08}{RANKING / TOP K}
 \begin{lstlisting}
-CREATE VIEW v AS SELECT ...;
+WITH Ranked AS (
+ SELECT e.*, DENSE_RANK() OVER (
+  PARTITION BY dept ORDER BY score DESC
+ ) AS r
+ FROM Employee e WHERE score IS NOT NULL
+)
+SELECT * FROM Ranked WHERE r=2
+ORDER BY dept, score DESC, id;
 \end{lstlisting}
-Simple single-table views without grouping, aggregates, or \sql{DISTINCT} are usually updatable. \sql{WITH CHECK OPTION} rejects updates that would make a row disappear from the view. A materialized view stores results and can become stale; MySQL emulates one with a table plus refresh logic.
-\key{Transaction}
-\begin{lstlisting}
-START TRANSACTION; ... COMMIT;
-ROLLBACK;
-\end{lstlisting}
-\cond{MySQL autocommit is ON by default. Use a transactional engine such as InnoDB; rollback only undoes work not already committed.}
-\trap{Trigger writes share the caller's transaction: rolling back the data change also removes its audit row.}
+\sql{r=1}: all highest ties; \sql{r=2}: second distinct score; \sql{r<=K}: top K distinct score levels. ROW\_NUMBER<=K: at most K rows per group; add unique id as window tie-breaker for determinism.
+\begin{center}\begin{tabular}{@{}lrrr@{}}
+score DESC & ROW\_NUMBER & RANK & DENSE\_RANK\\
+90 & 1 & 1 & 1\\90 & 2 & 1 & 1\\80 & 3 & 3 & 2\\70 & 4 & 4 & 3
+\end{tabular}\end{center}
+\trap{Do not add id to DENSE\_RANK's ORDER BY when score ties must stay tied; put id in final output order. RANK leaves gaps after ties; DENSE\_RANK does not.}
+\key{More ranking functions}
+PERCENT\_RANK is $(\mathrm{rank}-1)/(N-1)$, with 0 for a one-row partition. CUME\_DIST is (rows preceding or tied with current)/N. NTILE(k) distributes ordered rows among k buckets (sizes differ by at most one).
 \end{topicblock}
 
 \begin{topicblock}
-\topic{18}{SQL EDGE PATTERNS}
-
-\key{Conditional / NULL tools}
+\topic{09}{WINDOW FRAMES}
+Windows retain individual rows; GROUP BY collapses them. PARTITION BY defines groups; window ORDER BY defines sequence/peers.
 \begin{lstlisting}
-CASE WHEN c THEN x ELSE y END
-COALESCE(a,b); NULLIF(a,b); CAST(score AS UNSIGNED)
+SUM(x) OVER (PARTITION BY k ORDER BY day
+ ROWS BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW)
+AVG(x) OVER (PARTITION BY k ORDER BY day
+ ROWS BETWEEN 2 PRECEDING AND CURRENT ROW)
+SUM(x) OVER (ORDER BY day
+ ROWS BETWEEN 1 PRECEDING AND 1 FOLLOWING)
 \end{lstlisting}
-\sql{COALESCE} returns first non-NULL; \sql{NULLIF} returns NULL when equal. Use \sql{CAST} before numeric comparison of digit strings.
-\key{Subquery cardinality}
-Scalar subquery: one column, at most one row. \lstinline[style=SQLinline]|x > ANY (subquery)| needs one match; \lstinline[style=SQLinline]|x > ALL (subquery)| needs every comparison true. \lstinline[style=SQLinline]|= ANY| is equivalent to \lstinline[style=SQLinline]|IN|. For an empty set, ANY is false and ALL is true.
-\key{Symmetric difference}
-Rows present in exactly one set:
-\begin{lstlisting}
-(A EXCEPT B) UNION (B EXCEPT A)
-\end{lstlisting}
-Both inputs need compatible columns.
+\ex{Ordered x=[10,20,30,40]; trailing 3-row SUM=[10,30,60,90], AVG=[10,15,20,30]. At boundaries use available rows; AVG divides by actual non-NULL count, not a fixed 3.}
+\trap{ROWS counts physical rows, not calendar days. With duplicate sort keys add a tie-breaker for a deterministic ROWS frame. Ordered aggregate default frame is RANGE UNBOUNDED PRECEDING through CURRENT ROW, including all peers.}
+\ex{x=[10,20] at equal day: default RANGE running SUM gives [30,30]; ROWS with deterministic id gives [10,30]. Missing dates do not create rows. LAG(x) accesses previous row; LEAD(x) next row; first/last boundary gives NULL unless a default is set.}
 \end{topicblock}
 
 \begin{topicblock}
-\topic{19}{ENGINE / INDEX / ACCESS}
-
-\key{DBMS path}
-Query processor parses, optimizes, and executes SQL; storage manager handles files, buffers, indexes, and transactions; catalog stores schema and statistics.
-\key{Index}
-B+ tree typically supports equality, ranges, and ordered scans; hash typically supports equality only. Indexes speed reads/joins/order but use space and slow writes.
-\key{Privileges}
+\topic{10}{ROUNDING / STORED PROGRAMS}
+\key{Apply the problem's required order}
+\par
+\begin{tabular}{@{}ll@{}}
+P2.Q3 & compare unrounded type averages\\
+P2.Q7 & rank unrounded crime growth\\
+P2.Q8 & filter/order rounded 8-d.p. distance\\
+A2.Q1.2 & sort rounded 1-d.p. average
+\end{tabular}\par
+\sql{100.0*(new-old)/NULLIF(old,0)} avoids division by zero. For rates choose the specified population/denominator; round display values after comparison/ranking unless instructed otherwise. P2.Q3 sorts the rounded displayed advantage.
+\ex{Growth 12.341 and 12.344 both display 12.34; DENSE\_RANK on the unrounded values must still put 12.344 first.}
+\key{Procedure skeleton}
+CALL invokes procedures (IN/OUT parameters); a function returns one scalar for an expression. DECLARE variables/cursors/handlers before executable statements. NOT FOUND handlers detect cursor exhaustion; IF/CASE and WHILE/REPEAT/LOOP provide control flow.
 \begin{lstlisting}
-GRANT SELECT ON db.t TO 'u'@'host';
-REVOKE SELECT ON db.t FROM 'u'@'host';
-\end{lstlisting}
-\end{topicblock}
-
-\begin{topicblock}
-\topic{20}{STORED PROGRAMS}
-
-\key{Function / procedure}
-Function returns one value for an expression; procedure uses \sql{CALL} and may take \sql{IN}/\sql{OUT} parameters. Declare variables, cursors, and handlers before executable SQL; \sql{DECLARE ... HANDLER FOR NOT FOUND} handles cursor exhaustion. Use \sql{IF/CASE} for branches and \sql{WHILE}, \sql{REPEAT}, or \sql{LOOP} for repetition.
-\key{Example: nearby crime records}
-This procedure uses \sql{IN} inputs and \sql{SELECT ... INTO}, then a CTE computes distance for radius filtering and ordered output.
-\begin{lstlisting}
-DROP PROCEDURE IF EXISTS find_nearby_crime_records;
+DROP PROCEDURE IF EXISTS find_nearby;
 DELIMITER //
-CREATE PROCEDURE find_nearby_crime_records(
-  IN input_school_id INT, IN input_r DOUBLE)
+CREATE PROCEDURE find_nearby(IN sid INT, IN r DOUBLE)
 BEGIN
-  DECLARE school_lat_rad DOUBLE;
-  DECLARE school_lon_rad DOUBLE;
-  SELECT RADIANS(latitude), RADIANS(longitude)
-  INTO school_lat_rad, school_lon_rad
-  FROM chicago_school
-  WHERE school_id = input_school_id;
-  WITH crime_rad AS (
-    SELECT id, primary_description, crime_time,
-      latitude, longitude,
-      RADIANS(latitude) AS crime_lat_rad,
-      RADIANS(longitude) AS crime_lon_rad
-    FROM chicago_crime
-    WHERE latitude IS NOT NULL AND longitude IS NOT NULL
-  ),
-  haversine_a AS (
-    SELECT *,
-      POW(SIN((school_lat_rad - crime_lat_rad)/2), 2)
-      + COS(school_lat_rad) * COS(crime_lat_rad)
-      * POW(SIN((school_lon_rad - crime_lon_rad)/2), 2) AS a
-    FROM crime_rad
-  ),
-  crime_distance AS (
-    SELECT id, primary_description, crime_time,
-      latitude, longitude,
-      ROUND(2 * 6371 * ASIN(SQRT(a)), 8) AS distance
-    FROM haversine_a
-  )
-  SELECT id, primary_description, crime_time, latitude, longitude, distance
-  FROM crime_distance
-  WHERE distance <= input_r
-  ORDER BY crime_time DESC, distance ASC, id ASC;
-END //
+ DECLARE lat0 DOUBLE; DECLARE lon0 DOUBLE;
+ SELECT latitude,longitude INTO lat0,lon0
+ FROM School WHERE school_id=sid;
+ -- compute Haversine distance in a CTE; round to 8 d.p.
+ -- outer SELECT ... WHERE distance<=r ORDER BY ...;
+END//
+DELIMITER ;
+CALL find_nearby(609676,0.2);
+\end{lstlisting}
+Haversine: convert degrees to radians first. For latitudes $\phi_1,\phi_2$, longitude difference $\Delta\lambda$:
+$a=\sin^2((\phi_1-\phi_2)/2)+\cos\phi_1\cos\phi_2\sin^2(\Delta\lambda/2)$;
+$d=2(6371)\arcsin\sqrt{a}$ km. Exclude unknown coordinates; P2.Q8 compares and displays ROUND(d,8).
+\ex{Equator points (0,0) and (0,1 degree): $a=\sin^2(\pi/360)\approx0.0000761524$; $d\approx111.19492664$ km. Radius 112 includes it, radius 111 excludes it.}
+\key{Trigger template / NEW vs OLD}
+\begin{lstlisting}
+DELIMITER //
+CREATE TRIGGER check_score BEFORE UPDATE ON School
+FOR EACH ROW
+BEGIN
+ IF NEW.score IS NOT NULL AND
+    (NEW.score<0 OR NEW.score>100) THEN
+  SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT='Bad score';
+ END IF;
+ IF NOT (NEW.score <=> OLD.score) THEN
+  INSERT INTO Audit(sid,old_score,new_score)
+  VALUES(OLD.id,OLD.score,NEW.score);
+ END IF;
+END//
 DELIMITER ;
 \end{lstlisting}
-\remember{6371 means distance and \sql{input_r} are in km; exclude rows with missing coordinates.}
+INSERT: NEW only; DELETE: OLD only; UPDATE: both. OLD is read-only; BEFORE may SET NEW.col to derive values; AFTER cannot modify NEW. DELIMITER is a client command, not server SQL.
 \end{topicblock}
 
+\columnbreak
+\begin{topicblock}
+\topic{11}{RELATIONAL ALGEBRA}
+Set semantics: relations contain distinct tuples. $\sigma_P(R)$ selects rows; $\pi_A(R)$ projects attributes and removes duplicates; $\rho$ renames; $\leftarrow$ assigns. $R\bowtie_\theta S=\sigma_\theta(R\times S)$; natural join matches every same-named attribute. $\cup,\cap,-$ require compatible arity/domains.
+$|R\times S|=|R||S|$; $|\sigma_P(R)|\leq|R|$; $|\pi_A(R)|\leq|R|$; $|R\bowtie S|\leq|R||S|$.
+\key{Division}
+$R(X,Y)\div S(Y)$ returns X values paired with every Y in S:
+$\pi_X(R)-\pi_X((\pi_X(R)\times S)-R)$.
+\ex{R={(a,1),(a,2),(b,1)}, S={1,2}: result {a}. S empty gives $\pi_X(R)$; a SQL double-NOT-EXISTS over A can include A rows outside $\pi_X(R)$.}
+\end{topicblock}
+
+\begin{topicblock}
+\topic{12}{DDL / CONSTRAINTS / VIEWS}
+\begin{lstlisting}
+CREATE TABLE Child(
+ id INT PRIMARY KEY, parent_id INT,
+ score DECIMAL(5,2) CHECK(score BETWEEN 0 AND 100),
+ UNIQUE(parent_id,id),
+ FOREIGN KEY(parent_id) REFERENCES Child(id)
+ ON DELETE SET NULL ON UPDATE CASCADE
+);
+CREATE VIEW Passing AS SELECT * FROM Child
+ WHERE score>=50 WITH CHECK OPTION;
+GRANT SELECT,UPDATE ON db.Child TO 'u'@'localhost';
+GRANT SELECT ON db.Child TO 'v'@'localhost'
+ WITH GRANT OPTION;
+START TRANSACTION; -- writes ...
+COMMIT; -- or ROLLBACK
+\end{lstlisting}
+PK = unique + NOT NULL (possibly composite). MySQL UNIQUE allows multiple NULLs. CHECK rejects FALSE, not UNKNOWN. A foreign key may reference the same table; SET NULL requires nullable child columns; CASCADE propagates delete/update. Restrict/no action rejects a conflicting parent change.
+\begin{lstlisting}
+INSERT INTO Child(id,score) VALUES(1,75),(2,90);
+UPDATE Child SET score=80 WHERE id=1;
+DELETE FROM Child WHERE id=2;
+ALTER TABLE Child ADD COLUMN note VARCHAR(50);
+\end{lstlisting}
+\trap{UPDATE/DELETE without WHERE affects every row. Trigger audit writes share the caller's transaction and roll back with it. Autocommit is normally on; use InnoDB for transactional writes.}
+\key{Authorization / views / transactions}
+Roles group privileges; GRANT/REVOKE assign/remove privileges or roles. WITH GRANT OPTION permits regranting the privilege. A view stores a query; simple views may be updatable, aggregate/grouped views generally are not. WITH CHECK OPTION keeps inserted/updated rows within the view predicate.
+ACID: atomicity, consistency, isolation, durability. COMMIT persists, ROLLBACK undoes uncommitted changes; MySQL DDL often causes implicit commit. A materialized view stores results and needs refresh (MySQL: table plus refresh logic).
+\key{DBMS / storage / indexes}
+Schema=structure; instance=current rows; domain=allowed atomic values. Physical level stores bytes; logical level defines relations; view level exposes user-specific data. Physical data independence permits storage changes without logical-schema/application changes. DBMS coordinates integrity, concurrency, recovery, authorization and access.
+Query processor parses/optimizes/executes; storage manager handles files/buffers/transactions; catalog holds metadata/statistics. B+ tree indexes support equality/range/order; hash supports equality. Indexes trade faster reads for storage/write cost.
+\key{ER recap}
+Entity has attributes/key; relationship has cardinality (1:1,1:N,M:N) and participation (total/partial). Map 1:N with FK on N side; M:N with a bridge carrying both FKs; weak entity key includes owner key + partial key. Composite attributes split; multivalued attributes need a child relation.
+\end{topicblock}
+
+\begin{topicblock}
+\topic{13}{PHP / PYTHON DB ACCESS}
+\key{HTTP / HTML / PHP}
+GET parameters are in URL; POST form values are in request body (neither provides encryption; HTTPS does). HTML form action chooses endpoint, method chooses request. Use \sql{$_GET['id']} / \sql{$_POST['id']}; validate input, bind SQL parameters, HTML-escape output.
+\begin{lstlisting}[style=Plaincode,language=XML]
+<form action="page.php" method="post">
+ <input name="id"/><button type="submit">Go</button>
+</form>
+\end{lstlisting}
+PHP \sql{.} concatenates strings; \sql{key => value} defines associative entries. MYSQLI\_ASSOC uses result column names as array keys.
+\begin{lstlisting}[style=PHPcode,language=PHPx]
+// $db: existing mysqli connection; $id: validated input
+$sql = 'SELECT name FROM Student WHERE id=?';
+$st = $db->prepare($sql);
+$st->bind_param('i', $id); $st->execute();
+$rows = $st->get_result()->fetch_all(MYSQLI_ASSOC);
+foreach ($rows as $r) {
+ echo htmlspecialchars($r['name'], ENT_QUOTES, 'UTF-8');
+}
+\end{lstlisting}
+\trap{mysqli\_query: SELECT/SHOW/DESCRIBE/EXPLAIN produce mysqli\_result; other successful statements return true. Failure returns false or throws mysqli\_sql\_exception under strict reporting. Call fetch\_all only on a result object.}
+Connect $\to$ prepare/bind $\to$ execute $\to$ fetch $\to$ render $\to$ close. Write transactions require commit; a successful SELECT returns a result object even when it contains zero rows.
+\key{Python DB-API / PyMySQL}
+Connection holds session/transactions; cursor executes/fetches. Bind values via parameters, not string interpolation.
+\begin{lstlisting}[style=Plaincode,language=Python]
+import pymysql
+with pymysql.connect(**db_config) as conn:
+    with conn.cursor() as cur:
+        sql = 'SELECT name FROM Student WHERE id=%s'
+        cur.execute(sql, (sid,))
+        rows = cur.fetchall()
+        sql = ('UPDATE Student SET mark=%s '
+               'WHERE id=%s')
+        cur.execute(sql, (80, sid))
+    conn.commit()  # explicit commit for writes
+\end{lstlisting}
+\key{SQLAlchemy / pandas}
+\begin{lstlisting}[style=Plaincode,language=Python]
+from sqlalchemy import create_engine
+import pandas as pd
+engine = create_engine('sqlite:///study.db')
+df = pd.read_sql_query('SELECT * FROM Student', engine)
+df.to_sql('copy', engine,
+          if_exists='replace', index=False)
+\end{lstlisting}
+\cond{Parameter placeholder syntax is driver-specific (\%s in PyMySQL, ? in sqlite3). A one-value Python tuple needs the comma: (sid,). Close connections/cursors or use their context managers.}
+\end{topicblock}
 \end{multicols*}
+
 \newpage
-% PAGE 2: reserved for new topics; replace \null with a multicols* environment.
-\null
+% PAGE 2: Part II. FD algorithms, XML, MongoDB, and Spark.
+\begin{multicols*}{4}
+\begin{topicblock}
+\topic{14}{PART II: FD / CLOSURES}
+FD $X\to Y$ holds when tuples equal on X must equal on Y. Trivial iff $Y\subseteq X$. $F^+$ = all FDs implied by F; $X_F^+$ = all attributes determined by X. $F\models X\to Y\iff Y\subseteq X_F^+$.
+\key{Armstrong's axioms (sound + complete)}
+Reflexivity: $Y\subseteq X\Rightarrow X\to Y$.
+Augmentation: $X\to Y\Rightarrow XZ\to YZ$.
+Transitivity: $X\to Y,\ Y\to Z\Rightarrow X\to Z$.
+Derived: union $X\to Y, X\to Z\Rightarrow X\to YZ$;
+decomposition $X\to YZ\Rightarrow X\to Y,X\to Z$;
+pseudotransitivity $X\to Y,WY\to Z\Rightarrow WX\to Z$.
+\key{Closure algorithm}
+1. Set result=X. 2. For each $U\to V\in F$, if $U\subseteq\mathrm{result}$, add V. 3. Repeat scans until no change. Test Y contained in result. Do not stop after only one scan.
+\trap{An FD is a constraint on every legal instance. One current table satisfying it does not prove that it belongs to F; one counterexample disproves it for that instance. Superkey: $X^+=R$; candidate key: inclusion-minimal superkey.}
+\end{topicblock}
+
+\begin{topicblock}
+\topic{15}{ALL CANDIDATE KEYS}
+\key{Complete enumeration}
+1. $M=R\setminus\bigcup_{X\to Y\in F}Y$: mandatory attributes (never on an RHS); every key contains M.
+2. Enumerate $S\subseteq R\setminus M$ in increasing size; let $K=M\cup S$.
+3. Skip K containing a known key. Compute $K_F^+$; if R, record K.
+4. Check minimality: for every $a\in K$, $(K\setminus\{a\})_F^+\ne R$.
+5. Continue through remaining subsets; one key does not prove completeness. Minimal means by inclusion, not minimum cardinality.
+\ex{A1: $R=ABCDEF$; $F=\{A\to B,BC\to D,D\to A,C\to E,E\to F\}$.
+M=C; $A^+=AB$, $B^+=B$, $C^+=CEF$, $D^+=ABD$.
+$AC^+=ABCDEF$ via A to B, BC to D, C to E to F.
+$BC^+=ABCDEF$ via BC to D to A, C to E to F.
+$CD^+=ABCDEF$ via D to A to B, C to E to F.
+Thus keys AC, BC, CD. C alone fails; CE/CF/CEF add no A/B/D. Any superset of AC/BC/CD is nonminimal, proving completeness.}
+\end{topicblock}
+
+\begin{topicblock}
+\topic{16}{BCNF / PROJECTED FDs}
+BCNF: for every nontrivial FD $X\to Y$ in the fragment's projected dependencies, X is a superkey of that fragment. 3NF: X superkey OR each RHS attribute prime (in some candidate key). Standard 3NF synthesis preserves dependencies and ensures losslessness when a key-containing relation is included. 4NF: each nontrivial multivalued dependency $X\twoheadrightarrow Y$ has a superkey X. Normalization limits update/insert/delete anomalies from repeated facts.
+\key{Recursive BCNF decomposition}
+1. Start with R. 2. In fragment $R_i$, find nontrivial projected $X\to Y$ with $X^+_{F_i}\ne R_i$.
+3. Replace by $R_1=X\cup Y$ and $R_2=R_i\setminus(Y\setminus X)$; alternatively take $R_1=X^+_{F_i}$ and $R_2=X\cup(R_i\setminus X^+_{F_i})$.
+4. Recompute projected dependencies and repeat on both fragments until BCNF. Different valid violation choices can yield different answers.
+\ex{A1 lossless BCNF splits:
+$ABCDEF\xrightarrow{E\to F}EF+ABCDE$;
+$ABCDE\xrightarrow{C\to E}CE+ABCD$;
+$ABCD\xrightarrow{A\to B}AB+ACD$;
+$ACD\xrightarrow{D\to A}AD+CD$.
+Final: EF, CE, AB, AD, CD. Determinants E,C,A,D are keys in the respective two-attribute fragments; CD has no nontrivial projected FDs.}
+\key{Projection includes implied FDs}
+$F_i=\{X\to Y\in F^+:X\cup Y\subseteq R_i\}$.
+To compute a finite basis, for each $X\subseteq R_i$, compute $X_F^+\cap R_i$ and add nontrivial implied FDs; remove redundant ones. For ACD a basis is $D\to A, AC\to D$; the second follows via $A\to B$ then $BC\to D$. This basis is not the entire projection.
+\trap{BCNF splitting guarantees lossless join, not dependency preservation. Testing only the original FDs visibly contained in a fragment misses implied projected FDs. Two-attribute schemas need the no-empty-determinant caveat before claiming automatic BCNF.}
+\end{topicblock}
+
+\begin{topicblock}
+\topic{17}{LOSSLESS / PRESERVATION}
+\key{Binary lossless test (iff, under FDs)}
+For $R=R_1\cup R_2$, lossless iff
+$(R_1\cap R_2)\to R_1$ OR $(R_1\cap R_2)\to R_2$ is in $F^+$.
+Repeated lossless binary splits compose. Covering all attributes alone is insufficient; lossy joins may introduce spurious tuples.
+\key{Dependency preservation (DP)}
+Let $G=\bigcup_i F_i$. DP iff $G^+=F^+$. It suffices to test every original $X\to Y\in F$ by $Y\subseteq X_G^+$.
+Without enumerating projections: initialize result=X; for each fragment add
+$t=((\mathrm{result}\cap R_i)^+_F)\cap R_i$ to result; repeat all fragments to a fixed point. If Y is still missing, FD is not preserved.
+\ex{For D={AB,ACD,CE,EF}, projected basis G includes $A\to B,D\to A,AC\to D,C\to E,E\to F$.
+$(BC)^+_G=BCEF$: D never appears, so $BC\to D$ is not preserved. Iterative propagation: BC to BCE (CE), to BCEF (EF); AB and ACD add nothing further.}
+\cond{Every original FD wholly contained in some fragment is sufficient for DP; failure of that shortcut is inconclusive. Lossless and DP are separate requirements.}
+\key{Multiway lossless: chase (FDs)}
+1. Row per fragment, column per attribute j. Cell=$a_j$ if present; else fresh $b_{ij}$.
+2. For rows agreeing on an FD's LHS, unify RHS symbols; replace all occurrences of unified symbols globally, preferring $a_j$ over b.
+3. Repeat to fixed point. An all-a row iff lossless; no such row at termination means lossy.
+\ex{R=ABC, fragments AB/AC, F={$A\to B$}. Rows initially $(a_A,a_B,b_{1C})$, $(a_A,b_{2B},a_C)$. Agree on A: unify $b_{2B}=a_B$. Second row becomes $(a_A,a_B,a_C)$: lossless.}
+\end{topicblock}
+
+\columnbreak
+\begin{topicblock}
+\topic{18}{XML / DTD / XSD}
+Well-formed: one root element, matching/case-sensitive nested tags, quoted attribute values, escaped reserved characters. Valid: additionally conforms to DTD/XSD. Attributes have a parent, no child nodes; CDATA text is literal (not parsed markup). Default namespace applies to unprefixed elements, not unprefixed attributes.
+\begin{lstlisting}[style=Plaincode,language=XML]
+<course xmlns="urn:uni" id="C1"><![CDATA[a < b]]></course>
+<!ELEMENT University (Course*)>
+<!ELEMENT Course (Title,Credits?)>
+<!ELEMENT Title (#PCDATA)>
+<!ELEMENT Credits (#PCDATA)>
+<!ATTLIST Course id ID #REQUIRED dept IDREF #IMPLIED>
+\end{lstlisting}
+DTD declarations go inside DOCTYPE or an external .dtd. ?=0/1, *=0+, +=1+, comma=ordered sequence, |=choice; \sql{#PCDATA} text, EMPTY no content, ANY any allowed content. Attributes: \sql{#REQUIRED}, \sql{#IMPLIED} optional, \sql{#FIXED "v"} fixed default.
+\ex{(A|B)+ accepts B,A,B; (A*,B*) rejects B,A. ID values are unique document-wide; IDREF must reference an existing ID but does not constrain the target element type. Naming an attribute id alone does not declare ID type.}
+\begin{lstlisting}[style=Plaincode,language=XML]
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema">
+ <xs:element name="course">
+  <xs:complexType><xs:sequence>
+   <xs:element name="title" type="xs:string"/>
+   <xs:element name="credits" type="xs:int"
+               minOccurs="0" maxOccurs="2"/>
+  </xs:sequence>
+  <xs:attribute name="id" type="xs:ID" use="required"/>
+  </xs:complexType>
+ </xs:element>
+</xs:schema>
+\end{lstlisting}
+XSD uses XML syntax and typed values. \sql{name} declares; \sql{type} names a type; \sql{ref} references a global element declaration. minOccurs/maxOccurs default 1; attributes optional unless required. sequence orders children, choice chooses alternatives. \sql{targetNamespace} names the schema's namespace; \sql{elementFormDefault="qualified"} qualifies local elements.
+\end{topicblock}
+
+\begin{topicblock}
+\topic{19}{XPATH / PREDICATES}
+\sql{/}: document node; \sql{/r}: root element r. \sql{x} or \sql{./x}: child x; \sql{//x}: from document root, descendant x; \sql{.//x}: descendant x of current context; \sql{..}: parent; \sql{@id}: attribute. \sql{*} element children, \sql{@*} all attributes; \sql{text()} text children; \sql{node()} any child node. \sql{string(x)} string value; \sql{count(x)} number of selected nodes.
+\ex{Tree: \sql{<r><g><x id="1"/></g><x id="2"/></r>}. Context g: .//x selects id1; //x selects id1,id2; ../x and /r/x select id2. \sql{@id/text()} is empty (attributes have no text children); \sql{string(@id)} returns the value.}
+\key{Positions and predicate order}
+\sql{x[1]} first child x; \sql{x[last()]} last; \sql{x[position()=2]} second. Positions start at 1 (Mongo array indexes start at 0).
+\sql{[credits]} tests child existence, not positive credits. \sql{[credits>0]} tests a value. \sql{x[P][1]} filters then first; \sql{x[1][P]} first then filters. \sql{(//x)[1]} first globally; \sql{//x[1]} first x child for each parent.
+\ex{Credits [0,3]: course[credits] includes the 0-credit course; course[credits>0][1] gives the second course, but course[1][credits>0] gives nothing. For a default-namespace document bind a prefix in XPath/XQuery and use it (e.g. u:course).}
+\end{topicblock}
+
+\begin{topicblock}
+\topic{20}{XQUERY / COMPARISONS}
+FLWOR: for binds each item; let binds a whole sequence; where filters; order by sorts; return emits values/nodes. Constructors evaluate expressions only inside braces; outside braces \sql{$x} is literal text.
+\begin{lstlisting}[style=Plaincode]
+for $x in (2,4) return count($x)  (: (1,1) :)
+let $x := (2,4) return count($x)  (: 2 :)
+\end{lstlisting}
+General comparisons \sql{= != < > <= >=}: existential pairs after atomization. Value \sql{eq ne lt gt le ge}: singleton operands (or empty gives empty); more than one item is an error. \sql{is}: node identity, not text equality.
+\ex{(10,1)=10 is true, (10,1)!=10 is also true, but not((10,1)=10) is false. General != is not the negation of general =. (10,1) eq 10 is an error.}
+\sql{some $x in S satisfies P}: any true; \sql{every $x in S satisfies P}: all true. Empty S: some=false, every=true, count=0, exists=false, empty=true.
+\key{A1.B1: return matching Title elements}
+\begin{lstlisting}[style=Plaincode]
+doc("museums.xml")/Museums/Museum[@City="Singapore"]
+ /Artworks/Artwork[Artist="Maya Chen"]/Title
+\end{lstlisting}
+Title gives elements; Title/text() gives text nodes, not the required elements.
+\key{A1.B2: one MName per qualifying museum}
+\begin{lstlisting}[style=Plaincode]
+for $m in doc("museums.xml")/Museums/Museum
+let $w := $m/Artworks/Artwork
+where some $a in $w, $b in $w satisfies
+ ($a/Artist eq $b/Artist and $a/Title ne $b/Title)
+return $m/MName
+\end{lstlisting}
+The outer loop is at museum grain, so multiple qualifying artwork pairs do not duplicate that museum's output. Assumes singleton Artist/Title as in the assignment.
+\key{A1.B3: construct + count, including zero}
+\begin{lstlisting}[style=Plaincode]
+for $m in doc("museums.xml")/Museums/Museum
+return <MuseumCount MID="{$m/@MID}">
+ {$m/MName}{$m/Address}
+ <TotalArtworks>{count($m/Artworks/Artwork)}</TotalArtworks>
+</MuseumCount>
+\end{lstlisting}
+Loop over museums to retain zero-artwork museums. count counts nodes, not distinct values. Braces insert evaluated nodes/values into constructed XML.
+\end{topicblock}
+
+\columnbreak
+\begin{topicblock}
+\topic{21}{MONGODB: CRUD / FILTERS}
+BSON documents in collections in databases; \sql{_id} unique identifier. Fields can vary between documents; flexible schema still permits schema validation. Mongo query documents are JSON-like BSON; quote field names with spaces/dots.
+\begin{lstlisting}[style=Plaincode]
+db.c.insertOne({a:1}); db.c.insertMany([{a:2},{a:3}]);
+db.c.find({a:{$gte:2}},{_id:0,a:1}).sort({a:-1}).limit(5);
+db.c.updateOne({a:1},{$set:{a:4},$inc:{n:1}});
+db.c.updateMany({old:true},{$unset:{old:""}});
+db.c.deleteOne({a:4}); db.c.deleteMany({a:{$lt:0}});
+\end{lstlisting}
+Comparison: \sql{$eq $ne $gt $gte $lt $lte $in $nin}. Logical: \sql{$and $or $not $nor}; field conditions are implicitly ANDed. Existence/type: \sql{$exists $type}; arrays: \sql{$all $size $elemMatch}. Updates: \sql{$set $unset $inc $push $addToSet $pull} (append; append if absent; remove matches). \sql{$not} wraps a field condition; \sql{$or/$and/$nor} take condition arrays.
+\key{Projection / sorting / missing}
+Inclusion: fields with 1; exclusion: 0. Cannot mix inclusion/exclusion except \sql{_id:0}; \sql{_id} included by default. sort 1 ascending, -1 descending; multiple fields are tie-breakers in specified order.
+\sql{{x:null}} matches null OR missing; \sql{{x:{$type:10}}} matches null (including a null array element); \sql{{x:{$exists:false}}} missing; \sql{$exists:true} includes null. \sql{{x:{$ne:null}}} excludes null/missing.
+\key{A2.Q1.1: filter then project and sort}
+\begin{lstlisting}[style=Plaincode]
+db.tours.find(
+ {usertype:"Subscriber", tripduration:{$gte:600,$lt:1800},
+  "birth year":{$gte:1985}},
+ {_id:0,tripduration:1,"birth year":1,gender:1}
+).sort({tripduration:-1,"birth year":1});
+\end{lstlisting}
+\end{topicblock}
+
+\begin{topicblock}
+\topic{22}{MONGODB: AGGREGATION}
+\begin{lstlisting}[style=Plaincode]
+db.tours.aggregate([
+ {$match:{"birth year":{$gte:1980},
+          tripduration:{$gte:300}}},
+ {$group:{_id:"$start station id", tripCount:{$sum:1},
+          avgDuration:{$avg:"$tripduration"}}},
+ {$match:{tripCount:{$gte:2}}},
+ {$project:{_id:0,stationId:"$_id",tripCount:1,
+            avgDuration:{$round:["$avgDuration",1]}}},
+ {$sort:{avgDuration:-1,stationId:1}}
+]);
+\end{lstlisting}
+SQL mapping: FROM=collection, WHERE=\sql{$match} before \sql{$group}, GROUP BY=\sql{$group}, HAVING=\sql{$match} after \sql{$group}, SELECT=\sql{$project}, ORDER BY=\sql{$sort}, LIMIT=\sql{$limit}.
+\sql{$sum:1} counts input documents; \sql{$sum:"$x"} sums x; \sql{$avg:"$x"} averages numeric x; \sql{_id:null} makes one global group. \sql{"$field"} references a field; \sql{"field"} is a string literal. \sql{$group} does not promise output order.
+\trap{Stage order changes meaning. Filter rows before grouping; aggregate thresholds after grouping. A2.Q1.2 rounds avgDuration BEFORE sorting; SQL P2.Q7 ranks unrounded growth BEFORE display rounding. After \sql{$group}, fields not grouped/accumulated no longer exist.}
+\ex{Station1 durations [300,600] gives n2, avg450; station2 [900] gives n1, removed by post-group match. \sql{$project} renames \sql{_id} to stationId; sort operates on that projected/rounded result.}
+\key{More stages}
+\sql{$addFields} computes/preserves fields; \sql{$project} selects/computes; \sql{$unwind} emits one document per array element; \sql{$sort} then \sql{$limit} obtains top results.
+\begin{lstlisting}[style=Plaincode]
+{$unwind:{path:"$items",preserveNullAndEmptyArrays:true}}
+{$group:{_id:"$items.name",n:{$sum:1},
+         revenue:{$sum:{$multiply:["$items.quantity",
+                                  "$items.price"]}}}}
+\end{lstlisting}
+\trap{Default \sql{$unwind} drops empty/null/missing arrays; preserveNullAndEmptyArrays retains them. After unwind, sum:1 counts emitted items/rows, not original sales; count distinct sale IDs if sales are required.}
+\end{topicblock}
+
+\begin{topicblock}
+\topic{23}{ARRAY MATCHING: SAME ITEM?}
+\sql{{a:[1,2]}} exact array including order; \sql{{a:2}} scalar equality or array containing 2; \sql{{a:{$all:[1,2]}}} contains both, any order; \sql{{a:{$size:2}}} exact length. \sql{"a.0"} addresses the original first element (0-based).
+\key{Counterexample: independent dot conditions}
+\begin{lstlisting}[style=Plaincode]
+// items = [{qty:5,price:20},{qty:1,price:100}]
+{"items.qty":{$gte:3},"items.price":{$gte:80}} // matches
+{items:{$elemMatch:{qty:{$gte:3},price:{$gte:80}}}} // no
+\end{lstlisting}
+The dot predicates can use different elements. \sql{$elemMatch} requires one element satisfying every enclosed condition; the sample has none. Query filtering selects documents; it does not remove nonmatching array elements from output.
+\key{Original first vs first qualifying}
+For items [(Notebook,2,20),(Headset,3,80),(Backpack,4,120)] and condition \sql{quantity>=3 AND price>=80}: document qualifies through Headset/Backpack; original item0 fails. Positional projection returns Headset; \sql{$filter} returns Headset + Backpack; dotted name projection still contains all three names.
+\ex{A2 sales.json: Q2.1 selects S01,S02,S05,S06,S08 (5 documents); Q2.2 selects S02,S05,S08 (3). S01 first qualifying item=headset, all qualifying=[headset,backpack]; original item0=notebook fails.}
+\end{topicblock}
+
+\columnbreak
+\begin{topicblock}
+\topic{24}{ARRAY PROJECTION PATTERNS}
+\key{A2.Q2.1: first qualifying element}
+\begin{lstlisting}[style=Plaincode]
+db.sales.find(
+ {items:{$elemMatch:{quantity:{$gte:3},price:{$gte:80}}}},
+ {_id:0,saleId:1,"items.$":1}
+).sort({saleId:1});
+\end{lstlisting}
+\sql{"items.$":1} projects the first array element matching the query. Use one array and one \sql{$elemMatch} condition to avoid ambiguous positional conditions. Projection \sql{$elemMatch} supplies its own condition and also returns only the first matching element:
+\begin{lstlisting}[style=Plaincode]
+db.sales.find({}, {_id:0,saleId:1,
+ items:{$elemMatch:{quantity:{$gte:3},price:{$gte:80}}}});
+\end{lstlisting}
+\key{A2.Q2.2: original item0 must qualify}
+\begin{lstlisting}[style=Plaincode]
+db.sales.find(
+ {"items.0.quantity":{$gte:3},"items.0.price":{$gte:80}},
+ {_id:0,saleId:1,"items.name":1,
+  "items.quantity":1,"items.price":1}
+).sort({saleId:1});
+\end{lstlisting}
+\trap{The filter checks original item0; dotted projection returns those fields for ALL items in each selected document. It does not return only item0. $slice:2 takes first two; $slice:-2 takes last two; slicing is positional, not conditional.}
+\key{All qualifying elements: \$filter}
+\begin{lstlisting}[style=Plaincode]
+db.sales.aggregate([
+ {$match:{items:{$elemMatch:{quantity:{$gte:3},
+                           price:{$gte:80}}}}},
+ {$project:{_id:0,saleId:1,items:{$filter:{
+  input:"$items",as:"i",cond:{$and:[
+   {$gte:["$$i.quantity",3]},{$gte:["$$i.price",80]}
+  ]}}}}},
+ {$sort:{saleId:1}}
+]);
+\end{lstlisting}
+Without the \sql{$match}, \sql{$filter} can return empty arrays for nonqualifying documents. \sql{$filter} preserves the matching elements' original order; \sql{$$i} is the current variable, \sql{$items} the input field.
+\end{topicblock}
+
+\begin{topicblock}
+\topic{25}{INDEXES / SCHEMA / SCALING}
+\begin{lstlisting}[style=Plaincode]
+db.c.createIndex({a:1,b:-1});
+db.c.createIndex({email:1},{unique:true});
+db.c.createIndex({tags:1}); // array => multikey
+db.c.createIndex({body:"text"});
+db.c.getIndexes(); db.c.dropIndex("a_1_b_-1");
+db.c.find({a:5}).explain("executionStats");
+\end{lstlisting}
+Single-field, compound, unique, multikey (arrays), text indexes. Compound \sql{{a:1,b:-1}} supports prefix a and a,b; b alone lacks that same efficient prefix access. Indexes cost storage/write maintenance; inspect executionStats rather than assuming use. Default \sql{_id} index is unique.
+Embed bounded children read/updated together: one read and single-document atomicity, but duplication/large growing arrays. Reference shared/many-to-many/unbounded entities: less duplication and independent updates, with lookup/join/read cost. Single-document writes are atomic; multi-document transactions are available.
+Vertical scaling = larger server; horizontal = more nodes. Replication copies data for availability; sharding partitions data for scale. CAP concerns choices during network partition; the lecture classifies MongoDB as CP (consistency/partition tolerance), not an unconditional promise for every configuration.
+\end{topicblock}
+
+\begin{topicblock}
+\topic{26}{SPARK / RDD}
+RDD = distributed, partitioned, immutable collection. Transformations create new RDDs; lineage records dependencies for fault recovery. Lazy: an action triggers computation. cache()/persist() marks reuse; partitions are populated only when computed by an action.
+\key{Transformations: return a new RDD}
+\par
+\begin{tabular}{@{}ll@{}}
+\textbf{Operation} & \textbf{Effect}\\
+\sql{map} & one output per input\\
+\sql{flatMap} & zero or more outputs per input\\
+\sql{filter} & retain matching inputs\\
+\sql{distinct} & deduplicate\\
+\sql{union} & concatenate, keeping duplicates\\
+\sql{groupByKey} & iterable of values per key\\
+\sql{reduceByKey} & one combined value per key\\
+\sql{sortByKey} & order keys
+\end{tabular}\par
+Shuffles redistribute by key; group/reduce output ordering is unspecified unless sorted.
+\key{Actions: compute, return or write}
+\par
+\begin{tabular}{@{}ll@{}}
+\sql{collect} & all elements to driver\\
+\sql{count} & number of elements\\
+\sql{first/take(n)} & first element / at most n\\
+\sql{reduce} & one aggregate value\\
+\sql{countByKey} & counts per key at driver\\
+\sql{saveAsTextFile} & write output files
+\end{tabular}\par
+collect can exhaust driver memory; take is bounded. Reduction requires an associative/commutative function for order-independent distributed results.
+\ex{RDD r holds [('a',1),('b',2),('a',3)]. map(lambda kv:kv[1]) gives [1,2,3]; filter(lambda kv:kv[1]>1) gives [('b',2),('a',3)]; groupByKey gives a:[1,3], b:[2] (iterables, order unspecified); reduceByKey(+) gives a:4,b:2. r.count()=3; reduced.count()=2.}
+\key{Word count / shuffle}
+\begin{lstlisting}[style=Plaincode,language=Python]
+counts = (sc.textFile('notes.txt')
+    .flatMap(lambda line: line.split())
+    .map(lambda word: (word, 1))
+    .reduceByKey(lambda a, b: a + b))
+out = counts.collect()
+\end{lstlisting}
+For ['a b','a']: flatMap gives a,b,a; map gives (a,1),(b,1),(a,1); reduce gives a:2,b:1. reduceByKey combines locally before shuffle; groupByKey sends values for grouping. For associative/commutative aggregation prefer reduceByKey over groupByKey + local sum.
+\key{MapReduce / DataFrame}
+MapReduce: input $\to$ map $\to$ shuffle/group $\to$ reduce. Spark builds a DAG, tracks lineage, and can persist intermediate RDDs across actions.
+\begin{lstlisting}[style=Plaincode,language=Python]
+df = spark.read.option('header',True).csv('x.csv')
+df.select('name').filter("name IS NOT NULL").show()
+df.createOrReplaceTempView('T')
+spark.sql('SELECT COUNT(*) FROM T').show()
+\end{lstlisting}
+\end{topicblock}
+\end{multicols*}
 \end{document}
