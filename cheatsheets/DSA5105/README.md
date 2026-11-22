@@ -22,6 +22,8 @@ subjects. The supplied original remains outside the repository.
   Topic 15 keeps autoencoder MLP architecture, loss, and training together.
 - Topic 24 merges the user-supplied DQN core into Q-learning: a shared terminal-aware
   target, replay and target networks, ordered training steps, and a gradient example.
+- Topics 19–24 share RL notation and all four Bellman equations, separating
+  fixed-policy action averages from optimal action choices and environment expectations.
 - Topics 25–26 use the current Week 12 GNN slides, focusing on
   permutation invariance/equivariance, shared message passing, graph readout,
   degree-normalized GCN, and dot-product graph attention.
@@ -78,7 +80,7 @@ Four slide-backed Transformer topics include full multi-head arithmetic and
 sinusoidal position encoding. Compact notes in topics 27 and 29 cover
 block roles, the GPT pipeline, next-token loss, teacher forcing, and generation.
 Existing formulas, procedures, and examples are retained. The sheet has two A4
-pages, 30 topics, 50 procedures, 64 examples, and 1271 inline formulas. Keep the
+pages, 30 topics, 50 procedures, 64 examples, and 1295 inline formulas. Keep the
 5.7 pt body font, 6.1 pt baseline, margins, gutters, and sequential column flow.
 Keep slide/page references in the source map below; omit them from printed
 headings and examples.
@@ -135,8 +137,8 @@ worked examples, with four additional ordered procedures:
 | 16 | Coordinate-wise squared distances, hard assignments, coordinate means, direct/shortcut SSE, mean distortion, and stopping; a full 2D distance table before and after the update. |
 | 17 | Gaussian MLE and density substitution; prior-weighted mixture density and Bayes normalization. |
 | 18 | Complete GMM E-step and M-step from explicit old means, variances, and priors. |
-| 19 | Compute returns backward and average action values under a stochastic policy. |
-| 20 | Solve exact policy-evaluation equations; compute action candidates before policy average or max. On one small graph, compare stochastic-policy values/action values with the optimal values. |
+| 19 | Distinguish joint next-state/reward probabilities, marginal transitions, expected rewards, and observed transitions; compute returns backward and average action values under a stochastic policy. |
+| 20 | Expand all four Bellman equations using the joint environment law; keep the current action fixed for action values and average or maximize over actions for state values. Solve exact policy-evaluation equations; compute action candidates before policy average or max. On one small graph, compare stochastic-policy values/action values with the optimal values. |
 | 21 | Synchronous value-iteration sweeps, error-based stopping, and final greedy policy. |
 | 22 | Evaluate a policy, compare actions, improve, and repeat until stable. |
 | 23 | First-visit versus every-visit MC with repeated states; TD updates with and without terminal continuation; classify model access and bootstrap use. |
@@ -175,6 +177,7 @@ into this repository. Page numbers are 1-based PDF pages.
 | 13–15 | `DSA5105/Lec6_UL_PCA.pdf`, pp. 15–31, 34–60 | Center before PCA; separate scores/reconstruction; use the explicitly taught feature matrix, whitening, autoencoder loss, shallow MLP dimensions, and joint minibatch SGD. |
 | 16–18 | `DSA5105/Lec9_UL_K-means_GMM.pdf`, pp. 4–22, 23–39 | Contrast hard assignments with Gaussian posterior responsibilities and weighted parameter updates. |
 | 19–20 | `DSA5105/Lec10_RL_MDP_DP.pdf`, pp. 13–44 | Separate policy expectation from optimality maximization under discounted-MDP assumptions. The joined stochastic-policy/optimal-value example is authored arithmetic on the same two-state graph used in VI/PI. |
+| 19–24 (RL notation / Bellman expansion) | User-supplied four Bellman equations and interpretation | Merge the joint-law expansions into topic 20 instead of adding another section. Use uppercase value functions, marginal transition probabilities and expected rewards consistently in exact evaluation, VI and PI. Distinguish random variables from observed transitions, deterministic policies from stochastic policies, and true values from estimates; keep terminal-aware sampled targets in TD/Q-learning/DQN. |
 | 21–24 | `DSA5105/Lec11_RL.pdf`, pp. 8–20, 25–39 | Distinguish exact model-based backups, sampled returns, TD evaluation, and Q-learning. |
 | 24 (DQN) | User-supplied DQN Core formulas and mechanism summary | Use a neural Q-function, frozen target network, random replay minibatches, and periodic hard copying. The done flag extends the supplied nonterminal target to true terminal transitions; the one-transition identity-output gradient example is authored arithmetic. |
 | 25–26 | `DSA5105/Lec12_GNN.pptx`, slides 5–18, 22, 32–33 | Group the permutation inverse/orthogonality identities with feature/adjacency relabeling; distinguish node equivariance from graph invariance; derive shared-layer symmetry and use the two-layer chain example with sum readout. |
@@ -204,6 +207,21 @@ $\Lambda_m^\phi$, and $Z^\phi$ to distinguish them from input-space PCA.
 Autoencoders use encoder $E_\theta$ and decoder $D_\psi$; the decoder's
 parameter name avoids overloading the feature map $\phi$. The MLP matrices
 $W_e$ and $V_d$ distinguish encoder/decoder weights from whitened scores $W$.
+
+RL topics 19–24 use $V^\pi,Q^\pi$ for fixed-policy values and $V^*,Q^*$
+for optimal values. Plain $V,Q$ are estimates; $V_k,Q_k$ belong to sweep $k$.
+$p(s',r\mid s,a)$ is the joint next-state/reward law, $P(s'\mid s,a)$ its
+next-state marginal, and $\bar r(s,a)$ the expected one-step reward.
+$S_t,A_t,R_{t+1}$ (or one-step $S',R$) are random variables;
+$(s,a,r,s',d)$ denotes an observed transition, with $d=1$ for a true terminal.
+$\pi(a\mid s)$ is stochastic; $\mu(s)$ selects a deterministic action and
+$\mu^+$ is its policy-improvement update. The current action is fixed in
+both action-value equations: only future actions follow $\pi$ or optimize.
+State values average over actions for $\pi$ and maximize for optimality.
+MC/TD estimate $V^\pi$; Q-learning/DQN aim at $Q^*$, with $\bar Q$ denoting
+the bootstrap function ($Q$ for tabular learning, $Q_{\theta^-}$ for DQN).
+TD uses the same terminal flag convention, and DQN's target is frozen during
+the gradient step. All existing worked examples retain their numerical data.
 
 Attention topics 27–30 use token rows throughout: $N_q$, $N_k$, and $N_v$
 count query, key, and value tokens; $D$ is the input/output embedding width;

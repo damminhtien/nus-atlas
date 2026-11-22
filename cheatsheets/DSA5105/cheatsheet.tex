@@ -412,84 +412,95 @@ K-means: one-hot theo Euclidean distance. GMM: soft theo prior/covariance/densit
 \ex{GMM 1D $x=(0,2)$; init $\pi=(.5,.5)$, $\mu=(0,2)$, cả hai variances $2/\log3$. Ở $x=0$, density ratio $\mathcal N_1/\mathcal N_2=e^{2/(2/\log3)}=3$; ở $x=2$ ratio $1/3$. E: rows $r=(.75,.25),(.25,.75)$. M: $N=(1,1)$, $\pi^+=(.5,.5)$; $\mu_1^+=.75(0)+.25(2)=.5$, $\mu_2^+=1.5$. $\sigma_1^{2+}=.75(.5)^2+.25(1.5)^2=.75$; tương tự $\sigma_2^{2+}=.75$. Lượt sau dùng parameters mới.}
 
 \topic{19}{MDP / RETURNS / POLICY}
-MDP $(\mathcal S,\mathcal A,p,r,\gamma)$; $p(s',r\mid s,a)$ là joint next-state/reward law. Markov: next outcome chỉ phụ thuộc current state/action.
+\key{Ký hiệu chung}
+MDP $(\mathcal S,\mathcal A,P,\bar r,\gamma)$; $p(s',r\mid s,a)$ là joint next-state/reward law.
+$P(s'\mid s,a)=\sum_r p(s',r\mid s,a)$,
+$\bar r(s,a)=\sum_{s',r}r\,p(s',r\mid s,a)$ (expected reward).
+Markov: next outcome chỉ phụ thuộc current state/action.
+$S_t,A_t,R_{t+1}$: random variables; viết $S',R$ cho next state/reward.
+$(s,a,r,s',d)$: observed transition, $d=1$ terminal.
 $G_t=\sum_{k\ge0}\gamma^kR_{t+k+1},\;0\le\gamma<1.$
 Stochastic policy $\pi(a\mid s)$; deterministic $\mu:\mathcal S\to\mathcal A$.
 $V^\pi(s)=\E_\pi[G_t\mid S_t=s].$
 $Q^\pi(s,a)=\E_\pi[G_t\mid S_t=s,A_t=a].$
-$V^\pi(s)=\sum_a\pi(a\mid s)Q^\pi(s,a).$
+$V,Q$ không superscript: estimates; $V_k,Q_k$: sweep $k$.
 
 \cond{Finite states/actions, bounded rewards cho discounted results. Episodic $\gamma=1$ cần thêm assumptions; không tự áp dụng contraction.}
 \run{Return hữu hạn: (1) terminal continuation $G_T=0$; (2) đi ngược $G_t=R_{t+1}+\gamma G_{t+1}$; (3) với stochastic policy lấy weighted mean các $Q$.}
-\ex{Rewards $(1,2,4)$, $\gamma=.5$: $G_2=4$, $G_1=2+.5(4)=4$, $G_0=1+.5(4)=3$. Nếu $Q(s,\cdot)=(2,6)$, $\pi=(.25,.75)$ thì $V(s)=.25(2)+.75(6)=5$.}
+\ex{Rewards $(1,2,4)$, $\gamma=.5$: $G_2=4$, $G_1=2+.5(4)=4$, $G_0=1+.5(4)=3$. Nếu $Q^\pi(s,\cdot)=(2,6)$, $\pi=(.25,.75)$ thì $V^\pi(s)=.25(2)+.75(6)=5$.}
 
 \topic{20}{BELLMAN: EXPECTATION / MAX}
-Với $r(s,a)=\E[R_{t+1}\mid s,a]$:
-Policy evaluation:
-$Q^\pi(s,a)=r(s,a)+\gamma\E[V^\pi(S')\mid s,a],$ $ V^\pi(s)=\sum_a\pi(a\mid s)Q^\pi(s,a).$
-$P^\pi_{ss'}=\sum_a\pi(a\mid s)P(s'\mid s,a)$,
-$r^\pi_s=\sum_a\pi(a\mid s)r(s,a)$:
-$V^\pi=r^\pi+\gamma P^\pi V^\pi,\; V^\pi=(I-\gamma P^\pi)^{-1}r^\pi.$
-Optimality:
-$Q^*(s,a)=r(s,a)+\gamma\E[V^*(S')\mid s,a],$ $ V^*(s)=\max_a Q^*(s,a).$
-Thay $V^*(s')=\max_{a'}Q^*(s',a')$ cho action-value optimality equation.
+\key{Fixed policy / expectation}
+$Q^\pi$: current $a$ đã cho, từ bước sau theo $\pi$; expectation chỉ theo environment $p$.
+$Q^\pi(s,a)=\E[R+\gamma V^\pi(S')\mid s,a]=\sum_{s',r}p(s',r\mid s,a)[r+\gamma V^\pi(s')].$
+$V^\pi(s)=\sum_a\pi(a\mid s)Q^\pi(s,a)=\sum_a\pi(a\mid s)\sum_{s',r}p(s',r\mid s,a)[r+\gamma V^\pi(s')].$
+Hai tổng: action theo $\pi$, rồi next-state/reward theo $p$.
+\key{Optimality}
+$V^*(s)=\max_aQ^*(s,a)=\max_a\sum_{s',r}p(s',r\mid s,a)[r+\gamma V^*(s')].$
+$Q^*(s,a)=\E[R+\gamma V^*(S')\mid s,a]=\E[R+\gamma\max_{a'}Q^*(S',a')\mid s,a].$
+$V^*$ chọn current action; $Q^*$ giữ current $a$, chỉ tối ưu từ next state. Cơ sở Q-learning/DQN.
 Greedy policy $\mu^*(s)\in\argmax_aQ^*(s,a)$.
-\trap{Fixed $\pi$: average theo $\pi$, không max. $Q^\pi$ lấy action $a$ trước rồi theo $\pi$; optimal $V,Q$ unique, optimal policy có thể không unique.}
-\run{Exact policy evaluation: (1) tính $r^\pi,P^\pi$ theo action probabilities; (2) viết mỗi state một equation $V_s=r_s^\pi+\gamma\sum_{s'}P^\pi_{ss'}V_{s'}$; (3) giải hệ tuyến tính; (4) tính $Q^\pi$ cho từng action nếu cần.}
-\ex{Hai states, một action: $s_1\to s_2$ reward $1$, $s_2\to s_2$ reward $2$, $\gamma=.5$. $V_2=2+.5V_2\Rightarrow V_2=4$; $V_1=1+.5(4)=3$.}
-\run{Một Bellman backup: (1) với từng action, weighted sum next-state values; (2) nhân $\gamma$ + reward; (3) fixed policy: average theo $\pi$; optimality: max.}
-\ex{Next values $(2,6)$, $\gamma=.5$. Action $a$: reward 1, transition $(.5,.5)$ cho $q_a=1+.5(.5\cdot2+.5\cdot6)=3$. Action $b$: reward 0, luôn tới state value 6, $q_b=3$. Uniform-policy backup $3$; optimal backup $3$, tie cả hai actions.}
-\ex{Cùng graph: $s\xrightarrow{a,\,r=0}t\xrightarrow{r=2}\text{terminal}$; $s\xrightarrow{b,\,r=.5}\text{terminal}$, $\gamma=.5$, $\pi(a\mid s)=.25$. $V^\pi(t)=2$; $Q^\pi(s,a)=0+.5(2)=1$, $Q^\pi(s,b)=.5$; $V^\pi(s)=.25(1)+.75(.5)=.625$. Optimal: $V^*(t)=2$, $V^*(s)=\max(1,.5)=1$, chọn $a$.}
+\trap{Fixed $\pi$: average theo $\pi$, không max. Trong $Q^*$, max ở next state $s'$; $V^*,Q^*$ unique, optimal policy có thể không unique.}
+\key{Exact evaluation / vector form}
+$P^\pi_{ss'}=\sum_a\pi(a\mid s)P(s'\mid s,a)$,
+$\bar r^\pi_s=\sum_a\pi(a\mid s)\bar r(s,a)$:
+$V^\pi=\bar r^\pi+\gamma P^\pi V^\pi,\; V^\pi=(I-\gamma P^\pi)^{-1}\bar r^\pi.$
+\run{Exact policy evaluation: (1) tính $\bar r^\pi,P^\pi$ theo action probabilities; (2) viết mỗi state một equation $V^\pi(s)=\bar r_s^\pi+\gamma\sum_{s'}P^\pi_{ss'}V^\pi(s')$; (3) giải hệ tuyến tính; (4) tính $Q^\pi$ cho từng action nếu cần.}
+\ex{Hai states, một action: $s_1\to s_2$ reward $1$, $s_2\to s_2$ reward $2$, $\gamma=.5$. $V^\pi(s_2)=2+.5V^\pi(s_2)\Rightarrow V^\pi(s_2)=4$; $V^\pi(s_1)=1+.5(4)=3$.}
+\run{Một Bellman backup: (1) với từng action, weighted sum next-state estimates $V_k$; (2) nhân $\gamma$ + expected reward $\bar r$ thành $Q_k$; (3) fixed policy: average theo $\pi$; optimality: max.}
+\ex{Next estimates $(2,6)$, $\gamma=.5$. Action $a$: $\bar r(s,a)=1$, transition $(.5,.5)$ cho $Q_k(s,a)=1+.5(.5\cdot2+.5\cdot6)=3$. Action $b$: $\bar r(s,b)=0$, luôn tới state value 6, $Q_k(s,b)=3$. Uniform-policy backup $3$; optimal backup $3$, tie cả hai actions.}
+\ex{Cùng graph: $s\xrightarrow{a,\,r=0}t\xrightarrow{r=2}\text{terminal}$; $s\xrightarrow{b,\,r=.5}\text{terminal}$, $\gamma=.5$, $\pi(a\mid s)=.25$. $V^\pi(t)=2$; $Q^\pi(s,a)=0+.5(2)=1$, $Q^\pi(s,b)=.5$; $V^\pi(s)=.25(1)+.75(.5)=.625$. Optimal: $Q^*(s,\cdot)=(1,.5)$, $V^*(t)=2$, $V^*(s)=\max(1,.5)=1$, chọn $a$.}
 
 \topic{21}{VALUE ITERATION / ERROR}
 Khởi tạo $V_0$ (thường $0$). Mỗi sweep:
-$q_k(s,a)=r(s,a)+\gamma\sum_{s'}P(s'\mid s,a)V_k(s'),$ $ V_{k+1}(s)=\max_a q_k(s,a).$
+$Q_k(s,a)=\bar r(s,a)+\gamma\sum_{s'}P(s'\mid s,a)V_k(s'),$ $ V_{k+1}(s)=\max_a Q_k(s,a).$
 Synchronous: cùng \emph{old} $V_k$ cho mọi state; tính candidates rồi max. Terminal continuation $=0$ nếu hết future rewards.
 \key{Contraction / stopping}
 $\norm{T^*V-T^*U}_\infty\le\gamma\norm{V-U}_\infty$;
 $\norm{V_k-V^*}_\infty\le\gamma^k\norm{V_0-V^*}_\infty$.
 Nếu $\Delta_k=\norm{V_{k+1}-V_k}_\infty$:
 $\norm{V_{k+1}-V^*}_\infty\le\frac\gamma{1-\gamma}\Delta_k.$
-\ex{One-state self-loop, reward $r(a)$: $V^*=\max_ar(a)/(1-\gamma)$. Với $r=2$, $\gamma=.5$: $V^*=4$; $V_0=0\to2\to3\to3.5\to\cdots$.}
-\trap{Convergence asymptotic không có nghĩa exact optimum trong finite sweeps. Greedy action cần $r+\gamma PV$, không chỉ largest immediate reward.}
-\run{(1) Chọn $V_0$; (2) lập bảng $q_k(s,a)$ từ \emph{cùng old} $V_k$; (3) lấy max từng row thành $V_{k+1}$; (4) tính $\Delta_k$; (5) dừng nếu $\gamma\Delta_k/(1-\gamma)\le\epsilon$ cho value-error tolerance $\epsilon$, rồi greedy extract policy từ final values.}
-\ex{Hai states $s,t$, $t\to$ terminal reward 2; tại $s$: action $a\to t$ reward 0, $b\to$ terminal reward $.5$; $\gamma=.5$, $V_0=(0,0)$. Sweep 1: $q(s)=(0,.5)$ nên $V_1=(.5,2)$. Sweep 2: $q(s)=(1,.5)$ nên $V_2=(1,2)$. Sweep 3 không đổi; chọn $a$. Không dùng $V_1(t)=2$ ngay trong sweep 1.}
+\ex{One-state self-loop, expected reward $\bar r(a)$: $V^*=\max_a\bar r(a)/(1-\gamma)$. Với $\bar r=2$, $\gamma=.5$: $V^*=4$; $V_0=0\to2\to3\to3.5\to\cdots$.}
+\trap{Convergence asymptotic không có nghĩa exact optimum trong finite sweeps. Greedy action cần $\bar r+\gamma PV$, không chỉ largest immediate reward.}
+\run{(1) Chọn $V_0$; (2) lập bảng $Q_k(s,a)$ từ \emph{cùng old} $V_k$; (3) lấy max từng row thành $V_{k+1}$; (4) tính $\Delta_k$; (5) dừng nếu $\gamma\Delta_k/(1-\gamma)\le\epsilon$ cho value-error tolerance $\epsilon$, rồi greedy extract policy từ final values.}
+\ex{Hai states $s,t$, $t\to$ terminal reward 2; tại $s$: action $a\to t$ reward 0, $b\to$ terminal reward $.5$; $\gamma=.5$, $V_0=(0,0)$. Sweep 1: $Q_0(s,\cdot)=(0,.5)$ nên $V_1=(.5,2)$. Sweep 2: $Q_1(s,\cdot)=(1,.5)$ nên $V_2=(1,2)$. Sweep 3 không đổi; chọn $a$. Không dùng $V_1(t)=2$ ngay trong sweep 1.}
 
 \topic{22}{POLICY ITERATION / IMPROVE}
 \run{(1) Chọn deterministic $\mu$;
-(2) evaluate $(I-\gamma P^\mu)V^\mu=r^\mu$;
-(3) $\mu^+(s)\in\argmax_a[r(s,a)+\gamma\sum_{s'}P(s'\mid s,a)V^\mu(s')]$;
+(2) evaluate $(I-\gamma P^\mu)V^\mu=\bar r^\mu$;
+(3) $\mu^+(s)\in\argmax_a[\bar r(s,a)+\gamma\sum_{s'}P(s'\mid s,a)V^\mu(s')]$;
 (4) repeat đến policy stable.}
-Policy improvement: nếu $Q^\pi(s,\pi'(s))\ge V^\pi(s)$ mọi $s$, thì $V^{\pi'}\ge V^\pi$.
+Policy improvement: nếu $Q^\mu(s,\mu^+(s))\ge V^\mu(s)$ mọi $s$, thì $V^{\mu^+}\ge V^\mu$.
 \cond{Finite MDP + exact evaluation + consistent ties: terminate hữu hạn (giữ old maximizer). VI backup values, không solve full policy mỗi sweep.}
-\ex{Dùng MDP hai states mục 21, init $\mu(s)=b$. Evaluate: $V^\mu(t)=2$, $V^\mu(s)=.5$. Improve: $q(s,a)=0+.5(2)=1>.5=q(s,b)$ nên đổi sang $a$. Evaluate lại: $V(s)=1$, $V(t)=2$; improve giữ nguyên, dừng.}
+\ex{Dùng MDP hai states mục 21, init $\mu(s)=b$. Evaluate: $V^\mu(t)=2$, $V^\mu(s)=.5$. Improve: $Q^\mu(s,a)=0+.5(2)=1>.5=Q^\mu(s,b)$ nên $\mu^+(s)=a$. Evaluate lại: $V^{\mu^+}(s)=1$, $V^{\mu^+}(t)=2$; improve giữ nguyên, dừng.}
 
 \topic{23}{MONTE CARLO / TD(0)}
-Model-based biết $p,r$; model-free sample transitions. MC $V^\pi(s)$: average completed returns $G_t$, không bootstrap.
+Model-based biết joint $p$ (hoặc $P,\bar r$); model-free sample transitions. MC: $V$ ước lượng $V^\pi$ bằng average completed returns $G_t$, không bootstrap.
 VI/PI: model-based; VI/iterative evaluation bootstrap từ current $V$. MC/TD/Q-learning: model-free; TD/Q bootstrap từ next estimate, MC dùng full return.
 \key{TD target / error}
-$\delta_t=r_{t+1}+\gamma V(s_{t+1})-V(s_t).$
+Observed $s_t,r_{t+1},s_{t+1}$:
+$\delta_t=r_{t+1}+\gamma(1-d_t)V(s_{t+1})-V(s_t)$, $d_t=1$ nếu transition terminal.
 $V(s_t)\gets V(s_t)+\alpha\delta_t.$
 TD: one-step sample + current estimate; update trước episode end. True terminal: bootstrap $0$.
 
 \trap{$V(s')>V(s)$ không đủ để update tăng; phải xét reward \emph{và} discount. TD bootstrap có bias từ estimate, MC thường variance cao hơn.}
-\run{MC: (1) chạy episode theo $\pi$ đến terminal; (2) backward tính returns; (3) first-visit: chỉ lấy $t$ nhỏ nhất của mỗi state trong episode; every-visit: lấy mọi visit; (4) mỗi selected visit: $N(s)\gets N(s)+1$, $V(s)\gets V(s)+(G-V(s))/N(s)$.}
+\run{MC: (1) chạy episode theo $\pi$ đến terminal; (2) backward tính returns; (3) first-visit: chỉ lấy $t$ nhỏ nhất của mỗi state trong episode; every-visit: lấy mọi visit; (4) mỗi selected visit: $N(s)\gets N(s)+1$, $V(s)\gets V(s)+(G_t-V(s))/N(s)$.}
 \ex{Episode có states $(s,s,t)$, rewards $(1,2,4)$, $\gamma=.5$; returns $(3,4,4)$ (mục 19). Init $N(s)=0$: first-visit cho $V(s)=3$; every-visit: $3\to3+(4-3)/2=3.5$. Episode sau first-visit return $5$: first-visit running mean $3+(5-3)/2=4$.}
-\run{TD(0): (1) sample $(s,r,s')$ theo $\pi$; (2) target $y=r+\gamma V(s')$ (terminal: $y=r$); (3) $\delta=y-V(s)$; (4) update visited $V(s)$, tiếp tục episode.}
+\run{TD(0): (1) sample $(s,a,r,s',d)$ theo $\pi$; (2) target $y=r+\gamma(1-d)V(s')$ (terminal: $y=r$); (3) $\delta=y-V(s)$; (4) $V(s)\gets V(s)+\alpha\delta$, tiếp tục episode.}
 \ex{$V(s)=2$, $V(s')=4$, $r=1$, $\gamma=.5$, $\alpha=.1$: $y=3$, $\delta=1$, $V^+(s)=2.1$. Nếu $s'$ terminal: $y=1$, $\delta=-1$, $V^+(s)=1.9$.}
 
 \topic{24}{Q-LEARNING / DQN}
-Target chung: $y=r+\gamma(1-d)\max_{a'}\bar Q(s',a')$; $d=1$ terminal.
+Target chung: $y=r+\gamma(1-d)\max_{a'}\bar Q(s',a')$; $\bar Q$: bootstrap function.
 Tabular $\bar Q=Q$: $Q(s,a)\gets Q(s,a)+\alpha[y-Q(s,a)]$, học $Q^*$.
 Bellman optimality target; TD evaluation dùng fixed policy.
 \key{Explore} $\varepsilon$-greedy: uniform action prob $\varepsilon$, còn lại $\argmax_aQ(s,a)$. Target greedy next state.
 \trap{Target lấy max tại next state $s'$. Function approximation không tự kế thừa tabular convergence.}
 \run{Tabular: (1) init $Q$; (2) $\varepsilon$-greedy, observe $(r,s',d)$; (3) tính $y$, update \emph{chỉ} $Q(s,a)$; (4) next state/reset terminal; repeat.}
-\key{DQN core} NN $Q_\theta$ xấp xỉ $Q$; target $\bar Q=Q_{\theta^-}$ ổn định targets; replay $\mathcal D$ giảm tương quan thời gian.
+\key{DQN core} NN $Q_\theta$ xấp xỉ $Q^*$; target $\bar Q=Q_{\theta^-}$ ổn định targets; replay $\mathcal D$ giảm tương quan thời gian.
 $\mathcal L(\theta)=\E_{\mathcal D}[(y-Q_\theta(s,a))^2]$;
 $\theta\gets\theta-\eta\nabla_\theta\mathcal L$ (freeze $y$); $\theta^-\gets\theta$ định kỳ.
 \run{DQN: (1) init $\theta^-=\theta$, replay rỗng; (2) $\varepsilon$-greedy $Q_\theta$, lưu transition; (3) minibatch ngẫu nhiên, tính $y$, GD $\theta$; (4) định kỳ copy target; repeat.}
-\ex{$Q(s,a)=2$, next row $(3,5)$, $r=1$, $\gamma=.5$, $\alpha=.2$: $y=1+.5(5)=3.5$; $Q^+(s,a)=2+.2(3.5-2)=2.3$. Terminal: $y=1\Rightarrow Q^+=1.8$. $\varepsilon=.2$, 2 actions, unique greedy: probs $(.9,.1)$ vì $.8+.2/2=.9$. DQN cùng target, $Q_\theta(s,a)=\theta=2$: $L=(3.5-2)^2=2.25$, $g=2(2-3.5)=-3$; $\eta=.1\Rightarrow\theta^+=2.3$.}
+\ex{$Q(s,a)=2$, next row $(3,5)$, $r=1$, $\gamma=.5$, $\alpha=.2$: $y=1+.5(5)=3.5$; $Q^+(s,a)=2+.2(3.5-2)=2.3$. Terminal: $y=1\Rightarrow Q^+=1.8$. $\varepsilon=.2$, 2 actions, unique greedy: probs $(.9,.1)$ vì $.8+.2/2=.9$. DQN cùng target, $Q_\theta(s,a)=\theta=2$: $\mathcal L=(3.5-2)^2=2.25$, $g=2(2-3.5)=-3$; $\eta=.1\Rightarrow\theta^+=2.3$.}
 
 \topic{25}{GNN / INVARIANT VS EQUIVARIANT}
 \key{Relabel nodes}
