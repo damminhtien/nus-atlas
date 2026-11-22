@@ -1,6 +1,7 @@
 # DSA5104 gap-review coverage
 
-All 41 change groups in the supplied review are covered below. Topic numbers
+All 41 change groups in the initial review and all 29 follow-up items are covered
+below. Topic numbers
 refer to the revised two-page cheatsheet. Part I is on page 1 and Part II is on
 page 2. Body/code sizes remain 5.1/4.8 pt; this revision does not reduce them.
 
@@ -70,6 +71,43 @@ page 2. Body/code sizes remain 5.1/4.8 pt; this revision does not reduce them.
 | 40 | Python DB access | 13 | Review: connection/cursor roles, parameter binding, explicit write commit, correctly indented PyMySQL and pandas/SQLAlchemy examples. |
 | 41 | Correct mysqli_query return types | 13 | W4: result-producing queries return mysqli_result, other successes true, failures false or exceptions depending on reporting mode. |
 
+## Follow-up PDF review: 29/29
+
+The follow-up preserves the 26 topics and the body/code sizes. XML/DTD now uses
+the end of page 2 column 1; XSD continues in column 2. No topics were removed.
+
+| Item | Priority | Topic | Implemented correction or addition |
+| --- | --- | --- | --- |
+| 1.1 | P0 | 04 | Replace the incorrect Car Sales day/month/year pattern with exact February/year substrings and a 24-character prefix parser; explicitly retain recorded local clock time without timezone conversion (P1.Q1, actual source row). |
+| 1.2 | P0 | 10 | Validate 1–99 or NULL, derive all five safety_icon bands on every UPDATE, then audit only a NULL-safe score change; actual project table/field names and error message (P2.Q9). |
+| 1.3 | P0 | 18 | Use escaped hash glyphs outside the detokenizing inline-code macro; descriptions and listings now show one hash in PCDATA/REQUIRED/IMPLIED/FIXED. |
+| 1.4 | P0 | 24 | Render all three slice projections as literal code; keep MongoDB dollar operators out of math mode. |
+| 2.1 | P0 | 08 | Complete aggregate-first/rank-second CTE, tie example and same-block COUNT shorthand. Note P1.Q13's separate all-sales large-state cutoff and make-model grouping (P1.Q13/P2.Q7). |
+| 2.2 | P1 | 07 | Complete Project 1 classification/GROUP BY query, exact price boundaries, first-branch/ELSE/NULL rules (P1.Q5). |
+| 2.3 | P1 | 05 | ANY/ALL table covers both NULL-containing sets and empty input; counterexamples to substitution by MAX. RHS lists are explicitly subquery results. |
+| 2.4 | P1 | 10 | Replace procedure comments with the executable rounded Haversine CTE, non-NULL coordinates, radius predicate and exact output/order columns (P2.Q8). |
+| 2.5 | P1 | 06 | Replace number generation with graph transitive closure, six-pair worked result, DISTINCT termination and path/depth caveat (S2/W5). |
+| 2.6 | P1 | 12 | Add ordinary/unique index DDL, role creation/privilege grant/role assignment/revoke; distinguish uniqueness and role activation. |
+| 3.1 | P1 | 17 | Seven-row losslessness/BCNF/DP comparison; retain the key step in the standard 3NF guarantee. |
+| 3.2 | P1 | 17 | Legal two-row instance satisfying its stated FD yields two spurious tuples through AB/BC, despite both fragments being BCNF; explicit four-row join. |
+| 3.3 | P1 | 15 | Concrete candidate-key example with sizes one and two; both inclusion-minimal. |
+| 4.1 | P1 | 18 | Add IDREFS and CDATA to the existing DTD, a four-type comparison and the one-ID-attribute rule (X1, pp. 43–48). |
+| 4.2 | P1 | 18 | Scoped, relative-selector key/keyref example and unique/key/keyref/selector/field table; namespace note (X1, pp. 64–67; W6). |
+| 4.3 | P1 | 19 | Typed id lookups, document-order node union and six XPath axes (X2, pp. 15–16; standard XPath axes). |
+| 4.4 | P0 | 20 | Complete three-collection XQuery join with an explicit document binding and combination/grain explanation (X2, p. 22). |
+| 4.5 | P1 | 20 | Complete distinct-department grouping/sorting constructor, aggregate/value/string functions and item-versus-distinct-title counting (X2, pp. 24–29). |
+| 4.6 | P2 | 20 | Computed element/attribute constructors and an if/then/else expression (X2, pp. 21, 33). |
+| 4.7 | P2 | 20 | Five-row DOM/SAX/publishing/shredding/storage comparison (X2, final processing/storage sections). |
+| 5.1 | P1 | 21 | Complete replaceOne/upsert call, whole-document versus field update, immutable ID and replacement/operator distinction (M1, printed slide 81; W7). |
+| 5.2 | P1 | 21 | Positional update and complete arrayFilters example; table for first/all/filtered elements, push/addToSet/pull. All/filtered positional forms are extensions beyond A2. |
+| 5.3 | P1 | 22 | Count/out/merge stage fragments, set/addFields equivalence, terminal write stages and source persistence distinction (M1, printed slides 92–95; W8). |
+| 5.4 | P1 | 22 | countDocuments(filter), distinct(field,filter), estimatedDocumentCount and metadata distinction (single-purpose aggregation in M1, printed slides 96–97; current method names in W11). |
+| 5.5 | P1 | 25 | Text-index search, a hint naming the existing compound index before dropping it, and five explain terms (M1, printed slides 108–114). |
+| 5.6 | P1 | 21 | BSON binary versus JSON text, additional BSON types and schema/type distinction. |
+| 6.1 | P0 | 26 | Numeric RDD with collect/take/takeOrdered/negative-key/count/reduce results; take is not value top-K (B1, PDF p. 59 / printed slide 64; W9). |
+| 6.2 | P1 | 26 | Add output cardinalities to the existing transformation table, including flatMap sum, union and distinct-key counts. |
+| 6.3 | P1 | 26 | Narrow/wide dependencies, map/filter versus shuffle, and compatible-partitioner caveat (extension from shuffle/lineage; W10). |
+
 ## Course-source provenance
 
 Raw PDFs, assignments, datasets and submitted work remain under the local
@@ -84,14 +122,15 @@ file pages; printed slide numbers can differ, especially in Lec11/Lec12.
 | F2 | `DSA5104/Lec8_Schema Refinement-2.pdf`, pp. 13–17, 26–28, 36–43 | Lossless splits, projected dependencies, preservation and BCNF. |
 | F3 | `DSA5104/Lec8_Note_TestingLosslessDependencyPreserving Decompositions.pdf`, pp. 1–5 | Table chase and iterative fragment closure test. |
 | A1 | `DSA5104/Assignment1.pdf`, pp. 1–2; `DSA5104/Assignment 1 Reference Answer.pdf`, pp. 1–2 | Exact six-attribute FD example and all three museum XQuery tasks. |
-| X1 | `DSA5104/Lec9_XML-1.pdf`, pp. 33–34, 37–50, 52–59 | Namespace, DTD and XSD syntax/semantics. |
-| X2 | `DSA5104/Lec10_XML-2.pdf`, pp. 1–34; `DSA5104/Lec9_Kahoot questions_note_XML.pdf`, pp. 1–4; `DSA5104/Lec10_Kahoot_XPath_XQuery .pdf`, pp. 1–2 | Navigation, predicates, FLWOR, comparisons and exam traps. |
-| M1 | `DSA5104/Lec11_Mongo.pdf`, p. 7, pp. 40–68, 83–95, 96–118 | Lecture CAP framing, CRUD/arrays, aggregation, indexes and modeling. |
+| X1 | `DSA5104/Lec9_XML-1.pdf`, pp. 33–34, 37–50, 52–59, 64–67 | Namespace, DTD/XSD syntax and scoped identity constraints. |
+| X2 | `DSA5104/Lec10_XML-2.pdf`, pp. 1–34, 39–49; `DSA5104/Lec9_Kahoot questions_note_XML.pdf`, pp. 1–4; `DSA5104/Lec10_Kahoot_XPath_XQuery .pdf`, pp. 1–2 | Navigation, FLWOR, comparisons, processing/storage and exam traps. |
+| M1 | `DSA5104/Lec11_Mongo.pdf`, p. 7, pp. 40–77, 83–95, 96–118 | Lecture CAP framing, CRUD/arrays, aggregation, indexes and modeling. |
 | A2 | `DSA5104/Assignment 2/DSA5104_Assignment2.pdf`, pp. 1–3; `DSA5104/Assignment 2/sales.json`; `DSA5104/Assignment 2/tours.json` | Four exact query patterns and original first/first matching/all matching distinction. |
-| B1 | `DSA5104/Lec12_BigData.pdf`, pp. 15–19, 32–37, 48–58 | MapReduce, RDD laziness, transformation/action distinction and reduceByKey. |
+| B1 | `DSA5104/Lec12_BigData.pdf`, pp. 15–19, 32–37, 48–59 | MapReduce, RDD laziness, transformations/actions, reduceByKey and takeOrdered. PDF p. 59 (printed slide 64) was rendered because its code is an image. |
 | P1 | `DSA5104/Project_1/proj1_questions.sql` | Car-sales SQL problems, type/date handling and inconsistent values. |
 | P2 | `DSA5104/Project_2/proj2_part1_questions.sql`, Q1–Q9 | Conditional aggregation, ranking/windows, correct grain, rounding, Haversine and trigger requirements. |
 | S1 | Existing Part I cheatsheet, retained and condensed; source course lectures `DSA5104/Lec1_IntroDBS.pdf` through `DSA5104/Lec6_ApplicationDevelopment.pdf` | DBMS/relational/SQL/application baseline; new Python examples follow the supplied review. |
+| S2 | `DSA5104/Lec5_AdvancedSQL.pdf`, p. 49 | Recursive CTE and graph transitive closure. |
 
 ## Official semantic references
 
@@ -99,13 +138,23 @@ file pages; printed slide numbers can differ, especially in Lec11/Lec12.
 - W2: MongoDB's [positional projection](https://www.mongodb.com/docs/manual/reference/operator/projection/positional/), [array filtering](https://www.mongodb.com/docs/manual/reference/operator/aggregation/filter/) and [null/missing queries](https://www.mongodb.com/docs/manual/tutorial/query-for-null-fields/) support the first-versus-all projection and missing-field distinctions in topics 21–24.
 - W3: [Apache Spark RDD programming guide](https://spark.apache.org/docs/latest/rdd-programming-guide.html#rdd-operations) distinguishes lazy transformations from actions and describes persistence and keyed aggregation.
 - W4: [PHP mysqli_query return values and exceptions](https://www.php.net/manual/en/mysqli.query.php#refsect1-mysqli.query-returnvalues) supports the correction in topic 13.
+- W5: [MySQL recursive CTEs](https://dev.mysql.com/doc/refman/8.4/en/with.html) permits UNION DISTINCT for transitive closure and duplicate elimination.
+- W6: [W3C XML Schema identity constraints](https://www.w3.org/TR/xmlschema-1/) defines relative selectors/fields, required unique keys and references to key/unique constraints.
+- W7: [MongoDB replaceOne](https://www.mongodb.com/docs/manual/reference/method/db.collection.replaceOne/) specifies replacement documents, upsert and immutable ID handling.
+- W8: MongoDB's [out](https://www.mongodb.com/docs/manual/reference/operator/aggregation/out/) and [merge](https://www.mongodb.com/docs/manual/reference/operator/aggregation/merge/) describe terminal write-output stages.
+- W9: [PySpark RDD.takeOrdered](https://spark.apache.org/docs/latest/api/python/reference/api/pyspark.RDD.takeOrdered.html) supports ordering by an optional key before selecting results.
+- W10: [Spark NarrowDependency](https://spark.apache.org/docs/latest/api/java/org/apache/spark/NarrowDependency.html) defines limited parent dependencies for each child partition.
+- W11: MongoDB's [countDocuments](https://www.mongodb.com/docs/manual/reference/method/db.collection.countDocuments/), [distinct](https://www.mongodb.com/docs/manual/reference/method/db.collection.distinct/) and [estimatedDocumentCount](https://www.mongodb.com/docs/manual/reference/method/db.collection.estimatedDocumentCount/) define filtered counts, unique field values and metadata estimates.
 
 ## Validation scope
 
 - pdfLaTeX compilation: two A4 portrait pages; no overfull/underfull boxes. Both pages rendered with Poppler and inspected by column.
-- All 114 authored math expressions render with KaTeX in strict error mode, in addition to their LaTeX PDF rendering.
+- All 144 authored math expressions render with KaTeX in strict error mode, in addition to their LaTeX PDF rendering. MongoDB operators are checked as code, not counted as math.
 - Exhaustive subset checks verify all three A1 keys, the five final BCNF fragments, the ACD projection basis and the failed BC dependency-preservation test.
 - Small SQLite fixtures verify NULL logic, empty aggregates, conditional AVG/COUNT, frame boundaries, rank ties, division (including an empty required set), weighted means and join multiplication. These check portable SQL semantics; they are not a MySQL stored-program execution claim.
-- lxml parses and validates the complete DTD/XSD examples, rejects invalid typed/missing/over-occurrence values, and checks the four XPath context results. The XQuery templates were checked against A1's reference answer; no XQuery engine was used.
+- lxml parses and validates the DTD/XSD examples, checks IDREFS/default attribute values and typed id lookup, and tests the new key/keyref constraints against valid, dangling, duplicate and missing-key cases. XPath context/union/axes are checked with small trees. XQuery templates were checked against A1's reference answer and the cited Lec10 examples; no XQuery engine was used.
 - Offline calculations on the eight source sales documents verify Q2.1's five IDs and Q2.2's three IDs, plus first/all-match examples. MongoDB query execution and a Spark cluster run are outside this check; the worked examples were checked directly against the data and arithmetic.
-- All four Python listings pass syntax parsing; the one-degree Haversine example evaluates to 111.19492664 km. Context variables and external database connections are supplied by a caller when using the access examples.
+- All five Python listings pass syntax parsing. The numeric RDD's first/ordered/negative-key results and transformation cardinalities are checked by independent list/set calculations. Context variables and external database connections are supplied by a caller when using the access examples.
+- The exact Haversine CTE runs against a small SQLite fixture with registered math functions: known distance 111.19492664 km, rounded-boundary inclusion, missing coordinates and final ordering. The procedure/trigger DDL was not executed in MySQL.
+- The trigger's actual CASE expression passes all 11 NULL/band-edge cases; its validation rejects -1/0/100. NULL-safe score transitions and the unconditional icon recomputation before conditional auditing are checked separately, including an icon-only incorrect update.
+- The classification query and aggregate-first ranking run on SQLite fixtures, including all price boundaries and ties. ANY/ALL NULL cases are checked through their OR/AND three-valued semantics; the graph query uses SQLite UNION's distinct semantics and reaches six acyclic pairs or sixteen cyclic pairs at a fixed point. The Car Sales parser/predicate positions are verified against an actual source timestamp.
