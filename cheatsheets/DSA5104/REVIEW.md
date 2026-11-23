@@ -131,7 +131,7 @@ printer test is claimed.
   aggregation example. Ten complete MongoDB JavaScript blocks pass syntax
   parsing; all five Python listings parse.
 - The RDD examples are recomputed with independent list/set calculations.
-  All 182 authored PDF math expressions, plus seven in the two study
+  All 173 authored PDF math expressions, plus seven in the two study
   companions, render with KaTeX in strict error mode.
 
 These checks do not execute MySQL procedure/trigger DDL, an XQuery engine,

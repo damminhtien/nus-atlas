@@ -504,9 +504,11 @@ DELIMITER ;
 CALL p(@target_id);
 \end{lstlisting}
 \cond{R.id=@target\_id must exist and be unique. SELECT INTO: one value per variable; zero rows warns/leaves values unchanged, multiple rows errors. NOT FOUND handles no-row/cursor exhaustion.}
-\pattern{Filter on a calculated column}
-Point(id PK,lat,lon): degrees, $-90\leq lat\leq90$, $-180\leq lon\leq180$. Set @lat0/@lon0 to valid target coordinates and @radius\_km $\geq0$. The CTE makes a calculated metric filterable/sortable.
+\pattern{Haversine distance filter}
 \begin{lstlisting}
+-- Point(id PK,lat,lon): degrees, lat [-90,90],
+-- lon [-180,180]. Set @lat0/@lon0 in these ranges.
+-- Set @radius_km >= 0. The distance is in km.
 WITH D AS (
  SELECT p.*,2*6371*ASIN(SQRT(LEAST(1,
   POW(SIN(RADIANS(@lat0-lat)/2),2)
@@ -518,12 +520,6 @@ WITH D AS (
 SELECT * FROM D WHERE distance<=@radius_km
 ORDER BY distance,id;
 \end{lstlisting}
-For rounded-value thresholds, wrap the distance expression in \sql{ROUND(...,8)} inside D; otherwise round only its display. LEAST clamps floating-point overshoot.
-\key{RULE: Haversine on a sphere}
-Convert degrees to radians. For latitudes $\phi_1,\phi_2$ and longitude difference $\Delta\lambda$:
-$a=\sin^2((\phi_1-\phi_2)/2)+\cos\phi_1\cos\phi_2\sin^2(\Delta\lambda/2)$;
-$d=2(6371)\arcsin\sqrt{a}$ km; Earth radius is approximated by 6371 km.
-\ex{Equator points (0,0) and (0,1 degree): $a=\sin^2(\pi/360)\approx0.0000761524$; $d\approx111.19492664$ km. Radius 112 includes it, radius 111 excludes it.}
 % Source: Project 2 Q9; generalized from five safety bands to two categories.
 \pattern{Trigger: Validate $\to$ Derive $\to$ Audit}
 Score(id PK,score INT NULL,category); Audit(id,old\_v,new\_v). Allowed score: 1--99 or NULL; category is derived, never independently supplied.
