@@ -162,9 +162,24 @@ R/S are input relations; replace expressions/conditions/keys; n is a nonnegative
 \sql{FROM/JOIN/ON -> WHERE -> GROUP BY -> HAVING}
 \sql{-> WINDOW -> SELECT -> DISTINCT -> ORDER BY -> LIMIT}.
 Window results need an outer query/CTE for filtering. SELECT aliases work in MySQL ORDER BY/HAVING, not WHERE. Group selected expressions unless aggregated or functionally dependent on grouped keys.
-\trap{SQL uses bags: duplicates remain unless removed. LIMIT applies after filtering/ordering. Window ordering details are in 08--09.}
-\key{String / set operations}
-\sql{LIKE} \texttt{'\%abc\_'}: \% any length, \_ one character; case sensitivity follows collation. \sql{CONCAT(a,b)} concatenates; \sql{||} is normally OR. \sql{SUBSTRING(s,1,3)} starts at 1; position 0 gives empty. \sql{CHAR_LENGTH} counts characters; \sql{LENGTH} bytes. \sql{UNION} removes duplicates; \sql{UNION ALL} preserves them. Align column count and compatible types. Symmetric difference: \sql{(A EXCEPT B) UNION (B EXCEPT A)}.
+\trap{LIMIT applies after filtering/ordering. Window ordering details are in 08--09.}
+\key{String operations}
+\sql{LIKE} \texttt{'\%abc\_'}: \% any length, \_ one character; case sensitivity follows collation. \sql{CONCAT(a,b)} concatenates; \sql{||} is normally OR. \sql{SUBSTRING(s,1,3)} starts at 1; position 0 gives empty. \sql{CHAR_LENGTH} counts characters; \sql{LENGTH} bytes.
+% Source: user-supplied set-operator table; MySQL 8.4 set operations (W16).
+\key{Set operators / duplicates}
+SQL query results are bags. Align column count and compatible types. Without ALL, each result row occurs at most once. With ALL, if a row occurs $m$ times in A and $n$ times in B: UNION gives $m+n$, INTERSECT $\min(m,n)$, EXCEPT $\max(m-n,0)$ copies.
+\ex{One-column query results: $A=[1,1,2,3]$, $B=[1,2,2,4]$. Apply each operator to A then B:}
+\par\begin{tabular}{@{}ll@{}}
+\textbf{SQL operator} & \textbf{Result}\\
+\sql{UNION} & \sql{[1,2,3,4]}\\
+\sql{UNION ALL} & \sql{[1,1,1,2,2,2,3,4]}\\
+\sql{INTERSECT} & \sql{[1,2]}\\
+\sql{INTERSECT ALL} & \sql{[1,2]}\\
+\sql{EXCEPT} & \sql{[3]}\\
+\sql{EXCEPT ALL} & \sql{[1,3]}
+\end{tabular}\par
+\trap{Results above are shown sorted for comparison; only final ORDER BY guarantees row order.}
+Symmetric difference: \sql{(A EXCEPT B) UNION (B EXCEPT A)}.
 \end{topicblock}
 
 \begin{topicblock}

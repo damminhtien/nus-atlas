@@ -13,6 +13,7 @@ retained.
 | External references | Replace printed Project/Assignment/Lecture labels with the task being solved. Preserve provenance in TeX comments and COVERAGE.md. Internal topic references remain usable on the same sheet. |
 | Question-specific rounding | A wording/order table chooses Rank then Round, Calculate then Round, Round then Filter, or Round then Sort. The 12.341/12.344 example supplies both input and rank results. |
 | SQL truth contexts | Topic 02 compares TRUE/FALSE/UNKNOWN for WHERE/HAVING and CHECK in one table; the UNKNOWN outcomes are bold. |
+| SQL set operators | Topic 01 replaces the short UNION/UNION ALL reminder with one six-operator table on complete A/B inputs. ALL multiplicity rules and the final-ORDER-BY condition accompany it. |
 | Dead dataset results | Remove the S01--S08 match counts and the unexplained school ID. A--D are newly printed, complete input documents, not references to a file. |
 | Hidden schema assumptions | Give shared museum, Trip and Sale schemas. Local SQL schemas and lookup cardinality are stated beside their patterns. Flexible collection c is explicitly separate from the present-field Trip/Sale schemas. |
 | Misleading partial code | Distinguish syntax sketches, expression fragments and pipeline fragments from complete queries. Keep an implemented procedure lookup, a complete calculated-distance CTE, and a complete Validate/Derive/Audit trigger. |
@@ -82,6 +83,10 @@ printer test is claimed.
   lookup/filter body and the full Point-distance CTE with registered math
   functions. Checks include NULL anti-joins, raw/rounded ties, price cutoffs,
   missing coordinates, radius boundaries and final distance ordering.
+- The six set-operator results are recomputed from the printed A/B bags with
+  independent set/count calculations. SQLite checks UNION, UNION ALL, INTERSECT
+  and EXCEPT; the two remaining ALL variants use multiset calculations, checked
+  against the cited MySQL semantics rather than a MySQL execution claim.
 - The trigger's actual CASE and validation predicate cover NULL, 1, 49, 50, 99
   and invalid -1/0/100. Separate transitions check category-only repair, changed
   scores and NULL-safe auditing; derivation precedes the conditional audit.
@@ -97,7 +102,7 @@ printer test is claimed.
   aggregation example. Ten complete MongoDB JavaScript blocks pass syntax
   parsing; all five Python listings parse.
 - The RDD examples are recomputed with independent list/set calculations.
-  All 165 authored PDF math expressions, plus seven in the two study
+  All 172 authored PDF math expressions, plus seven in the two study
   companions, render with KaTeX in strict error mode.
 
 These checks do not execute MySQL procedure/trigger DDL, an XQuery engine,

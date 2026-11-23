@@ -156,6 +156,7 @@ file pages; printed slide numbers can differ, especially in Lec11/Lec12.
 - W13: [MongoDB elemMatch projection](https://www.mongodb.com/docs/manual/reference/operator/projection/elemmatch/) returns the first matching array element and omits the array field when no element matches.
 - W14: [MongoDB replica-set elections](https://www.mongodb.com/docs/manual/core/replica-set-elections/) explains majority voting, step-down during a partition, and configured secondary reads.
 - W15: [W3C XQuery value comparisons](https://www.w3.org/TR/xquery-31/#id-value-comparisons) specifies operand cardinality after atomization and the empty-sequence result.
+- W16: MySQL's [set operations](https://dev.mysql.com/doc/refman/8.4/en/set-operations.html), [INTERSECT](https://dev.mysql.com/doc/refman/8.4/en/intersect.html) and [EXCEPT](https://dev.mysql.com/doc/refman/8.4/en/except.html) define DISTINCT/ALL behavior, compatible query columns and result ordering; Topic 01 uses the supplied A/B bags for the six-result table.
 
 ## Previous revision's validation record
 
