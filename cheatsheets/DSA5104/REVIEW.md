@@ -4,8 +4,7 @@ The printable artifact is an exam reference for a new question. It must supply
 its own notation, schemas, assumptions, decision rules and examples. Course
 question labels for topics 15 through 24 and historical dataset checks belong
 in COVERAGE.md.
-The existing 26 topics, two A4 portrait pages and 5.1/4.8 pt body/code sizes are
-retained.
+Both editions fit all 26 topics on two A4 portrait pages.
 
 ## Editorial changes
 
@@ -80,7 +79,7 @@ For the four printed sales, quantity at least 3 AND price at least 80 gives:
 | No dead data | No unexplained historical IDs or results requiring an absent dataset. |
 | No misleading code | The distance expression and derived attribute are implemented; generic sketches and stage fragments are identified. |
 | Information density | Avoid duplicated paragraphs while keeping short local reminders necessary to interpret syntax. |
-| Print readability | Two A4 pages; unchanged fonts; no clipped/overlapping text, broken symbols or overfull boxes in the inspected render. |
+| Print readability | Two A4 pages with legible body text, code and symbols. Check column edges, spacing and the LaTeX log for overfull boxes. |
 
 The print check is a digital preflight and visual inspection; no physical
 printer test is claimed.

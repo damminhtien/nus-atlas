@@ -1,6 +1,7 @@
+% !TeX program = xelatex
 % DSA5104 content adapted into the shared NUS Atlas cheatsheet layout.
 % Two A4 portrait pages: Part I (SQL/access) and Part II (FD/XML/Mongo/Spark).
-% Four left-to-right columns per page, no global header/footer. Build with pdfLaTeX.
+% Four left-to-right columns per page, no global header/footer. Build with XeLaTeX.
 % Source text: user-provided DSA5104_A4_Helpsheet_v0.9_portrait_4col.tex.
 % Upgraded against the exam recap, assignments, lectures, and the supplied gap review.
 % Source provenance and historical coverage are in COVERAGE.md.
@@ -8,29 +9,19 @@
 \documentclass[a4paper]{article}
 \usepackage[margin=4.5mm,left=5mm,right=5mm,noheadfoot]{geometry}
 \usepackage{iftex}
-\usepackage{amsmath,amssymb}
-\ifPDFTeX
-  \usepackage[T1]{fontenc}
-  \IfFileExists{stix2.sty}{\usepackage{stix2}}{}
-  \IfFileExists{sourcesanspro.sty}{\usepackage[default]{sourcesanspro}}{\usepackage{helvet}\renewcommand{\familydefault}{\sfdefault}}
-  \IfFileExists{inconsolata.sty}{\usepackage{inconsolata}}{}
-  \newcommand{\sqlfont}{\ttfamily}
-\else
-  \usepackage{fontspec}
-  \usepackage{unicode-math}
-  \IfFontExistsTF{Source Sans 3}{\setmainfont{Source Sans 3}}{%
-    \IfFontExistsTF{SourceSans3-Regular.otf}{\setmainfont{SourceSans3}[Extension=.otf,UprightFont=*-Regular,BoldFont=*-Bold,ItalicFont=*-RegularIt,BoldItalicFont=*-BoldIt]}{%
-      \IfFileExists{sourcesanspro.sty}{\usepackage[default]{sourcesanspro}}{\setmainfont{lmsans10-regular.otf}[BoldFont=lmsans10-bold.otf]}}}
-  \IfFontExistsTF{STIXTwoMath-Regular.otf}{\setmathfont{STIXTwoMath-Regular.otf}}{%
-    \IfFontExistsTF{STIXTwoMath-Regular.otf}{\setmathfont{STIXTwoMath-Regular.otf}}{\setmathfont{latinmodern-math.otf}}}
-  \IfFontExistsTF{JetBrains Mono}{\setmonofont{JetBrains Mono}[Scale=MatchLowercase]}{\setmonofont{lmmono10-regular.otf}[Scale=MatchLowercase]}
-  % Source Code Pro distinguishes SQL from PHP and surrounding prose.
-  \IfFontExistsTF{SourceCodePro-Regular.otf}{%
-    \newfontfamily\sqlfont{SourceCodePro}[Extension=.otf,UprightFont=*-Regular,BoldFont=*-Bold,Scale=MatchLowercase]}{%
-    \IfFontExistsTF{JetBrains Mono}{\newfontfamily\sqlfont{JetBrains Mono}[Scale=MatchLowercase]}{%
-      \newfontfamily\sqlfont{lmmono10-regular.otf}[Scale=MatchLowercase]}}
-\fi
-\usepackage{xcolor,array,enumitem,listings,multicol,fontawesome5,ragged2e,needspace}
+\RequireXeTeX
+\usepackage{amsmath}
+\usepackage{unicode-math}
+\setmainfont{SourceSans3-Regular.otf}[
+  BoldFont=SourceSans3-Bold.otf,
+  ItalicFont=SourceSans3-RegularIt.otf,
+  BoldItalicFont=SourceSans3-BoldIt.otf,
+  FakeStretch=0.87
+]
+\setmonofont{Inconsolatazi4-Regular.otf}[BoldFont=Inconsolatazi4-Bold.otf,FakeStretch=0.89]
+\setmathfont{STIXTwoMath-Regular.otf}
+\newcommand{\sqlfont}{\ttfamily}
+\usepackage{xcolor,array,enumitem,listings,fontawesome5,ragged2e}
 \definecolor{structure}{HTML}{10243A}
 \definecolor{condition}{HTML}{704500}
 \definecolor{conditionbg}{HTML}{FFF1CC}
@@ -63,7 +54,7 @@
 }
 \lstdefinestyle{SQLbase}{
   language=SQLx,
-  basicstyle=\sqlfont\fontsize{4.8}{4.9}\selectfont\color{sqltext},
+  basicstyle=\sqlfont\fontsize{5.28}{4.84}\selectfont\color{sqltext},
   keywordstyle=[1]\color{sqlkeyword}\bfseries,
   keywordstyle=[2]\color{sqltype}\bfseries,
   keywordstyle=[3]\color{sqlfunction}\bfseries,
@@ -85,10 +76,10 @@
 }
 \lstdefinestyle{SQLinline}{
   style=SQLbase,
-  basicstyle=\sqlfont\fontsize{5.1}{5.2}\selectfont\color{sqltext}
+  basicstyle=\sqlfont\fontsize{5.61}{5.2}\selectfont\color{sqltext}
 }
 \lstdefinestyle{PHPcode}{
-  basicstyle=\ttfamily\fontsize{4.8}{4.9}\selectfont\color{sqltext},
+  basicstyle=\ttfamily\fontsize{5.28}{4.84}\selectfont\color{sqltext},
   keywordstyle=[1]\color{sqlkeyword},
   commentstyle=\color{sqlcomment},
   stringstyle=\color{sqlstring},
@@ -101,34 +92,33 @@
   belowskip=.15pt
 }
 \lstdefinestyle{Plaincode}{style=PHPcode,language={},
-  basicstyle=\sqlfont\fontsize{4.8}{4.9}\selectfont\color{sqltext}}
+  basicstyle=\sqlfont\fontsize{5.28}{4.84}\selectfont\color{sqltext}}
 \lstset{style=SQLblock,emptylines=0}
 \pagestyle{empty}
 \setlength{\topskip}{0pt}
 \setlength{\parindent}{0pt}
-\setlength{\parskip}{.05pt}
+\setlength{\parskip}{0pt}
 \setlength{\tabcolsep}{1.5pt}
-\renewcommand{\arraystretch}{1}
+\renewcommand{\arraystretch}{.92}
 \setlist[itemize]{leftmargin=6pt,label=\textbullet,nosep,topsep=.2pt}
 \setlength{\emergencystretch}{1em}
 \newlength{\gutter}\setlength{\gutter}{1.5mm}
-\setlength{\columnsep}{\gutter}\setlength{\multicolsep}{0pt}
-\raggedcolumns
+\newcommand{\bodylineskiplimit}{-2pt}
 \newcommand{\bodystyle}{%
-  \fontsize{5.1}{5.2}\selectfont\RaggedRight
+  \fontsize{5.61}{5.2}\selectfont\setlength{\lineskiplimit}{\bodylineskiplimit}\RaggedRight
   \setlength{\abovedisplayskip}{.5pt}\setlength{\belowdisplayskip}{.5pt}%
   \setlength{\abovedisplayshortskip}{.3pt}\setlength{\belowdisplayshortskip}{.3pt}}
-\newcommand{\topic}[2]{\par\addvspace{.6pt}%
+\newcommand{\topic}[2]{\par\addvspace{.45pt}\nointerlineskip%
   \begingroup\setlength{\fboxsep}{0.35pt}%
   \noindent\colorbox{structure}{\parbox{\dimexpr\linewidth-2\fboxsep\relax}{%
-    \color{white}\fontsize{6.2}{6.6}\selectfont\bfseries #1\enspace #2}}%
-  \endgroup\par\nobreak\vspace{.25pt}\nobreak}
+    \color{white}\fontsize{6.82}{7.05}\selectfont\bfseries #1\enspace #2}}%
+  \endgroup\par\nobreak\vspace{.55pt}\nointerlineskip\nobreak}
 % Let topic content use the remaining column space; keep each header with its first line.
 \newenvironment{topicblock}
   {\par\bodystyle}
   {\par}
 \newcommand{\key}[1]{\par\textcolor{structure}{\textbf{#1}}\enspace}
-\newcommand{\note}[4]{\par\begingroup\setlength{\fboxsep}{0.2pt}%
+\newcommand{\note}[4]{\par\begingroup\setlength{\fboxsep}{0.1pt}%
   \noindent\colorbox{#1}{\parbox{\dimexpr\linewidth-2\fboxsep\relax}{%
     \RaggedRight\textcolor{#2}{\textbf{#3}}\enspace #4}}%
   \endgroup\par}
@@ -142,10 +132,19 @@
 % Inline DTD hash tokens use \texttt{\#...}: detokenize doubles parameter tokens.
 \newcommand{\sql}[1]{{\sqlfont\color{sqltext}\detokenize{#1}}}
 
+\newlength{\sheetwidth}
+\setlength{\sheetwidth}{\dimexpr\textwidth-3\gutter\relax}
+% Top-align columns, keeping their natural height and reading order.
+\newenvironment{sheetcolumns}[1]
+  {\noindent\begin{minipage}[t]{#1\sheetwidth}\vspace{0pt}\bodystyle\ignorespaces}
+  {\end{minipage}\par}
+\newcommand{\nextcol}[1]{\end{minipage}\hspace{\gutter}%
+  \begin{minipage}[t]{#1\sheetwidth}\vspace{0pt}\bodystyle\ignorespaces}
+
 \begin{document}
 \bodystyle
 % PAGE 1: Part I. Explicit column breaks keep each reference area together.
-\begin{multicols*}{4}
+\begin{sheetcolumns}{.25}
 \begin{topicblock}
 \topic{01}{PART I: SQL QUERY LOGIC}
 \when{Select, group or order rows. SQL syntax: MySQL 8.4; schemas are local to each pattern.}
@@ -198,11 +197,11 @@ SQL uses three-valued logic: $\boxed{\{\mathrm{TRUE},\mathrm{FALSE},\mathrm{UNKN
 \sql{5 <=> NULL} & FALSE
 \end{tabular}\par
 MySQL \sql{a <=> b} is NULL-safe equality. \sql{COALESCE(x,0)} replaces NULL; \sql{NULLIF(x,0)} returns NULL if zero. Arithmetic propagates NULL.
-\begin{center}\begin{tabular}{@{}ll|ll@{}}
+\par{\centering\begin{tabular}{@{}ll|ll@{}}
 $T\land U$ & $U$ & $F\land U$ & $F$\\
 $T\lor U$ & $T$ & $F\lor U$ & $U$\\
 $\neg U$ & $U$ & &
-\end{tabular}\end{center}
+\end{tabular}\par}
 \key{RULE: truth values by SQL context}
 \par\begingroup\setlength{\tabcolsep}{1.6pt}
 \begin{tabular}{@{}lccc@{}}
@@ -233,10 +232,8 @@ WITH SchoolAgg AS (
         AVG(score) AS avg_score
  FROM School GROUP BY area
 ), CrimeAgg AS (
- SELECT area, COUNT(*) AS crimes
- FROM Crime GROUP BY area
-)
-SELECT c.area, COALESCE(s.schools,0) AS schools,
+ SELECT area, COUNT(*) AS crimes FROM Crime GROUP BY area
+) SELECT c.area, COALESCE(s.schools,0) AS schools,
        s.avg_score, COALESCE(k.crimes,0) AS crimes
 FROM Community c
 LEFT JOIN SchoolAgg s ON s.area=c.area
@@ -275,7 +272,7 @@ STR_TO_DATE(LEFT(selling_date,24),
 \trap{String order: \sql{'100' < '20'}; numeric order: $20<100$. For DATETIME use a half-open month interval; BETWEEN dates can omit most of the final day.}
 \end{topicblock}
 
-\columnbreak
+\nextcol{.237}
 \begin{topicblock}
 \topic{05}{SUBQUERIES / DIVISION}
 \when{Scalar lookup, membership or "for every required item".}
@@ -310,25 +307,19 @@ $(\forall y:P(y))\iff\neg(\exists y:\neg P(y))$.}
 \pattern{For every: double NOT EXISTS}
 Schema: A(id PK), Required(bid), R(aid,bid); R.aid references A.id. IDs are non-NULL. Quantifiers range over Required IDs.
 \begin{lstlisting}
-SELECT a.id
-FROM A a
-WHERE NOT EXISTS (
- SELECT 1 FROM Required q
+SELECT a.id FROM A a
+WHERE NOT EXISTS (SELECT 1 FROM Required q
  WHERE NOT EXISTS (
-  SELECT 1 FROM R r
-  WHERE r.aid=a.id AND r.bid=q.bid
- )
-);
+  SELECT 1 FROM R r WHERE r.aid=a.id AND r.bid=q.bid
+ ));
 \end{lstlisting}
 \cond{For other nullable predicates P, \sql{WHERE NOT P} finds rows where P is FALSE. Use \sql{WHERE P IS NOT TRUE} if UNKNOWN must also count as a violation.}
 \ex{A=[a1,a2], Required=[b1,b2]; R={(a1,b1),(a1,b2),(a2,b1)}: returns a1. If Required is empty, both A rows qualify (vacuous truth).}
 \key{Count alternative}
 \begin{lstlisting}
-SELECT r.aid FROM R r
-JOIN Required q ON q.bid=r.bid
-GROUP BY r.aid
-HAVING COUNT(DISTINCT r.bid) =
-       (SELECT COUNT(*) FROM Required);
+SELECT r.aid FROM R r JOIN Required q ON q.bid=r.bid
+GROUP BY r.aid HAVING COUNT(DISTINCT r.bid) =
+ (SELECT COUNT(*) FROM Required);
 \end{lstlisting}
 \cond{Count form assumes unique, non-NULL required IDs and a nonempty Required set; it omits A rows with no R rows. DISTINCT prevents duplicate R rows inflating coverage.}
 \end{topicblock}
@@ -343,29 +334,23 @@ Student(dept,mark); mark numeric/NULL. NULL departments form one group; \sql{<=>
 WITH DeptAvg AS (
  SELECT dept, AVG(mark) AS mean_mark
  FROM Student GROUP BY dept
-)
-SELECT s.* FROM Student s
+) SELECT s.* FROM Student s
 JOIN DeptAvg d ON s.dept <=> d.dept
 WHERE s.mark > d.mean_mark;
 -- Window equivalent (keeps detail rows):
 WITH T AS (
  SELECT s.*, AVG(mark) OVER (PARTITION BY dept) AS m
- FROM Student s
-)
-SELECT * FROM T WHERE mark > m;
+ FROM Student s) SELECT * FROM T WHERE mark > m;
 \end{lstlisting}
 \key{Global average from subgroup averages}
 $\bar{x}=\frac{\sum_i n_i\bar{x}_i}{\sum_i n_i}$, where $n_i$ counts non-NULL inputs to subgroup mean $\bar{x}_i$. Drop zero-count groups; if all counts are 0, the mean is undefined/NULL. AVG(group means) weights groups equally.
 \ex{Group1=[10,20], mean15, n=2; group2=[90], mean90, n=1. Global=(2*15+1*90)/3=40; unweighted means average=52.5 (wrong for individuals).}
 \key{Recursive graph closure (MySQL 8+)}
 \begin{lstlisting}
-WITH RECURSIVE Reach(a,b) AS (
- SELECT a,b FROM Edge
- UNION DISTINCT
- SELECT r.a,e.b FROM Reach r
+WITH RECURSIVE Reach(a,b) AS (SELECT a,b FROM Edge
+ UNION DISTINCT SELECT r.a,e.b FROM Reach r
  JOIN Edge e ON r.b=e.a
-)
-SELECT * FROM Reach;
+) SELECT * FROM Reach;
 \end{lstlisting}
 \ex{Edges $\{(A,B),(B,C),(C,D)\}$: anchor gives AB,BC,CD; next rounds add AC,BD, then AD; fixed point $\{AB,BC,CD,AC,BD,AD\}$.}
 \trap{UNION DISTINCT removes repeated reachability pairs and stops when no new pair exists. Adding path/depth to the tuple can keep producing distinct rows on cycles; deduplication alone then does not ensure termination.}
@@ -378,13 +363,11 @@ SELECT * FROM Reach;
 \pattern{Classify with CASE, then GROUP BY}
 Sales(price): non-NULL numeric prices.
 \begin{lstlisting}
-SELECT CASE
- WHEN price<10000 THEN 'Budget'
+SELECT CASE WHEN price<10000 THEN 'Budget'
  WHEN price<40000 THEN 'Common'
  WHEN price<60000 THEN 'Luxury'
  ELSE 'Super' END AS car_category,
- COUNT(*) AS number_of_sales
-FROM Sales
+ COUNT(*) AS number_of_sales FROM Sales
 GROUP BY car_category ORDER BY car_category;
 \end{lstlisting}
 \trap{CASE uses the first matching branch; without ELSE, unmatched rows give NULL. Boundaries: 9999=Budget, 10000=Common, 40000=Luxury, 60000=Super. For nullable prices add an explicit NULL branch.}
@@ -406,14 +389,14 @@ FROM Crime GROUP BY location;
 \begin{lstlisting}
 SELECT VIN FROM Cars GROUP BY VIN
 HAVING COUNT(DISTINCT make)>1
-    OR COUNT(DISTINCT model)>1;
+ OR COUNT(DISTINCT model)>1;
 \end{lstlisting}
 For make values: Ford/Toyota is conflict; Ford/NULL, NULL/NULL, Ford/Ford are not (NULL is unknown, not a second known value).
 \key{Grouping sets}
 CUBE on d dimensions has $2^d$ grouping sets; ROLLUP(a,b,c) gives (a,b,c),(a,b),(a),(). MySQL supports \sql{GROUP BY a,b WITH ROLLUP}, not native CUBE. \sql{GROUPING(a)=1} identifies a generated subtotal NULL, distinct from stored NULL.
 \end{topicblock}
 
-\columnbreak
+\nextcol{.23}
 \begin{topicblock}
 \topic{08}{RANKING / TOP K}
 \when{Highest, second distinct, or top K values within each group.}
@@ -421,18 +404,16 @@ CUBE on d dimensions has $2^d$ grouping sets; ROLLUP(a,b,c) gives (a,b,c),(a,b),
 \begin{lstlisting}
 WITH Ranked AS (
  SELECT e.*, DENSE_RANK() OVER (
-  PARTITION BY dept ORDER BY score DESC
- ) AS r
+  PARTITION BY dept ORDER BY score DESC) AS r
  FROM Employee e WHERE score IS NOT NULL
-)
-SELECT * FROM Ranked WHERE r=2
+) SELECT * FROM Ranked WHERE r=2
 ORDER BY dept, score DESC, id;
 \end{lstlisting}
 \sql{r=1}: all highest ties; \sql{r=2}: second distinct score; \sql{r<=K}: top K distinct score levels. ROW\_NUMBER<=K: at most K rows per group; add unique id as window tie-breaker for determinism.
-\begin{center}\begin{tabular}{@{}lrrr@{}}
+\par{\centering\begin{tabular}{@{}lrrr@{}}
 score DESC & ROW\_NUMBER & RANK & DENSE\_RANK\\
 90 & 1 & 1 & 1\\90 & 2 & 1 & 1\\80 & 3 & 3 & 2\\70 & 4 & 4 & 3
-\end{tabular}\end{center}
+\end{tabular}\par}
 \trap{Do not add a unique id to the ranking order when ties must stay tied. Only final ORDER BY orders output; window ORDER BY controls calculation. RANK leaves gaps after ties.}
 \pattern{Aggregate, rank, then filter}
 Sales(state,make): one row per sale.
@@ -443,8 +424,7 @@ WITH G AS (
 ), Ranked AS (
  SELECT G.*,DENSE_RANK() OVER (
   PARTITION BY state ORDER BY n DESC) AS rk FROM G
-)
-SELECT state,make,n FROM Ranked WHERE rk=1
+) SELECT state,make,n FROM Ranked WHERE rk=1
 ORDER BY state,n DESC,make;
 \end{lstlisting}
 Aggregate $\to$ window rank $\to$ outer filter $\to$ final ORDER BY/LIMIT.
@@ -495,8 +475,7 @@ Sort displayed value & Round $\to$ Sort
 R(id PK,x), S(y): x/y numeric. CALL invokes a procedure (IN/OUT parameters); a function returns a scalar. DECLARE variables/cursors/handlers before statements.
 \begin{lstlisting}
 DELIMITER //
-CREATE PROCEDURE p(IN arg INT)
-BEGIN
+CREATE PROCEDURE p(IN arg INT) BEGIN
  DECLARE v DOUBLE;
  SELECT x INTO v FROM R WHERE id=arg;
  SELECT * FROM S WHERE y>v;
@@ -525,18 +504,17 @@ ORDER BY distance,id;
 Score(id PK,score INT NULL,category); Audit(id,old\_v,new\_v). Allowed score: 1--99 or NULL. Derive category (e.g., a safety icon) from score.
 \begin{lstlisting}
 DELIMITER //
-CREATE TRIGGER tr BEFORE UPDATE ON Score FOR EACH ROW
-BEGIN
+CREATE TRIGGER tr BEFORE UPDATE ON Score
+FOR EACH ROW BEGIN
  IF NEW.score IS NOT NULL AND
     NEW.score NOT BETWEEN 1 AND 99 THEN
   SIGNAL SQLSTATE '45000'
-   SET MESSAGE_TEXT='Invalid score';
+  SET MESSAGE_TEXT='Invalid score';
  END IF;
  SET NEW.category = CASE
   WHEN NEW.score IS NULL THEN NULL
   WHEN NEW.score<50 THEN 'Low'
-  ELSE 'High'
- END;
+  ELSE 'High' END;
  IF NOT (OLD.score <=> NEW.score) THEN
   INSERT INTO Audit(id,old_v,new_v)
   VALUES(OLD.id,OLD.score,NEW.score);
@@ -548,7 +526,7 @@ DELIMITER ;
 INSERT: NEW; DELETE: OLD; UPDATE: both. OLD read-only; BEFORE may SET NEW, AFTER cannot. DELIMITER is client syntax. IF/CASE; loops WHILE/REPEAT/LOOP.
 \end{topicblock}
 
-\columnbreak
+\nextcol{.283}
 \begin{topicblock}
 \topic{11}{RELATIONAL ALGEBRA}
 \when{Translate queries using set semantics.}
@@ -567,15 +545,13 @@ $\pi_X(R)-\pi_X((\pi_X(R)\times S)-R)$.
 \pattern{DDL and privilege statements}
 \begin{lstlisting}
 CREATE TABLE Parent(id INT PRIMARY KEY) ENGINE=InnoDB;
-CREATE TABLE Child(
- id INT PRIMARY KEY, parent_id INT,
+CREATE TABLE Child(id INT PRIMARY KEY, parent_id INT,
  score DECIMAL(5,2) CHECK(score BETWEEN 0 AND 100),
  UNIQUE(parent_id,id),
  FOREIGN KEY(parent_id) REFERENCES Parent(id)
- ON DELETE SET NULL ON UPDATE CASCADE
-) ENGINE=InnoDB;
-CREATE VIEW Passing AS SELECT * FROM Child
- WHERE score>=50 WITH CHECK OPTION;
+ ON DELETE SET NULL ON UPDATE CASCADE) ENGINE=InnoDB;
+CREATE VIEW Passing AS
+ SELECT * FROM Child WHERE score>=50 WITH CHECK OPTION;
 GRANT SELECT,UPDATE ON db.Child TO 'u'@'localhost';
 GRANT SELECT ON db.Child TO 'v'@'localhost'
  WITH GRANT OPTION;
@@ -596,8 +572,7 @@ On parent DELETE or referenced-key UPDATE; FK=child foreign key.
 Self-references are allowed; InnoDB treats self-referential \sql{ON UPDATE CASCADE} / \sql{ON UPDATE SET NULL} as RESTRICT.
 \begin{lstlisting}
 INSERT INTO Child(id,score) VALUES(1,75),(2,90);
-START TRANSACTION;
-UPDATE Child SET score=80 WHERE id=1;
+START TRANSACTION; UPDATE Child SET score=80 WHERE id=1;
 COMMIT; -- choose ROLLBACK instead to abort
 DELETE FROM Child WHERE id=2;
 ALTER TABLE Child ADD COLUMN note VARCHAR(50);
@@ -653,8 +628,7 @@ Schema: Student(id PK,name,mark). Connection settings and the target student ID 
 GET parameters are in URL; POST form values are in request body (neither provides encryption; HTTPS does). HTML form action chooses endpoint, method chooses request. Use \sql{$_GET['id']} / \sql{$_POST['id']}; validate input, bind SQL parameters, HTML-escape output.
 \begin{lstlisting}[style=Plaincode,language=XML]
 <form action="page.php" method="post">
- <input name="id"/><button type="submit">Go</button>
-</form>
+ <input name="id"/><button type="submit">Go</button> </form>
 \end{lstlisting}
 PHP \sql{.} concatenates strings; \sql{key => value} defines associative entries. MYSQLI\_ASSOC uses result column names as array keys.
 \begin{lstlisting}[style=PHPcode,language=PHPx]
@@ -696,11 +670,12 @@ df.to_sql('copy', engine,
 \end{lstlisting}
 \cond{Parameter placeholder syntax is driver-specific (\%s in PyMySQL, ? in sqlite3). A one-value Python tuple needs the comma: (sid,). Close connections/cursors or use their context managers.}
 \end{topicblock}
-\end{multicols*}
+\end{sheetcolumns}
 
 \newpage
 % PAGE 2: Part II. FD algorithms, XML, MongoDB, and Spark.
-\begin{multicols*}{4}
+\begin{sheetcolumns}{.257}
+\renewcommand{\bodylineskiplimit}{-1.5pt}
 \begin{topicblock}
 \topic{14}{PART II: FD / CLOSURES}
 R=set of attributes; F=set of FDs; X/Y/U/V are attribute subsets; juxtaposition denotes set union.
@@ -809,13 +784,14 @@ IDREF & one existing ID\\
 IDREFS & space-separated existing IDs
 \end{tabular}\par
 At most one ID-typed attribute may be declared per element type; its name does not determine its type.
+\end{topicblock}
+\nextcol{.243}
+\begin{topicblock}
 \key{RULE: processing / storage}
 DOM=memory tree; SAX=events. Publishing: relational $\to$ XML; shredding: XML $\to$ relational. Storage: text/tree, relational mapping, native XML.
-\columnbreak
 \key{XSD (XML continued)}
 \begin{lstlisting}[style=Plaincode,language=XML]
-<xs:schema
- xmlns:xs="http://www.w3.org/2001/XMLSchema">
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema">
  <xs:element name="course">
   <xs:complexType><xs:sequence>
    <xs:element name="title" type="xs:string"/>
@@ -823,21 +799,17 @@ DOM=memory tree; SAX=events. Publishing: relational $\to$ XML; shredding: XML $\
                minOccurs="0" maxOccurs="2"/>
   </xs:sequence>
   <xs:attribute name="id" type="xs:ID" use="required"/>
-  </xs:complexType></xs:element>
-</xs:schema>
+  </xs:complexType></xs:element></xs:schema>
 \end{lstlisting}
 XSD is XML with types. \sql{name} declares; \sql{type} names a type; \sql{ref} names a global element. min/maxOccurs default 1; attributes default optional. sequence orders children; choice selects an alternative. \sql{targetNamespace} names the namespace; \sql{elementFormDefault="qualified"} qualifies local elements.
 \pattern{XSD identity-constraint fragments}
 Assume university has department*(@id) and course*(@dept). Insert inside its \sql{xs:element}, after complexType; selectors/fields are relative to that scope. No target namespace here.
 \begin{lstlisting}[style=Plaincode,language=XML]
-<xs:key name="deptKey">
- <xs:selector xpath="department"/>
- <xs:field xpath="@id"/>
-</xs:key>
+<xs:key name="deptKey"> <xs:selector xpath="department"/>
+ <xs:field xpath="@id"/> </xs:key>
 <xs:keyref name="deptRef" refer="deptKey">
  <xs:selector xpath="course"/>
- <xs:field xpath="@dept"/>
-</xs:keyref>
+ <xs:field xpath="@dept"/> </xs:keyref>
 \end{lstlisting}
 \par\begin{tabular}{@{}ll@{}}
 \sql{xs:unique} & only complete tuples must be unique\\
@@ -860,9 +832,7 @@ Assume university has department*(@id) and course*(@dept). Insert inside its \sq
 \ex{Credits [0,3]: course[credits] includes the 0-credit course; course[credits>0][1] gives the second course, but course[1][credits>0] gives nothing. For a default-namespace document bind a prefix in XPath/XQuery and use it (e.g. u:course).}
 \key{ID lookup / union / axes}
 \begin{lstlisting}[style=Plaincode]
-id("C1")
-id(@dept)
-id(@instructors)
+id("C1")  id(@dept)  id(@instructors)
 /university/course[@dept="CS"]
  | /university/course[@dept="Math"]
 \end{lstlisting}
@@ -926,10 +896,8 @@ Independent schema: university contains course*, instructor*, teaches*; query fi
 \begin{lstlisting}[style=Plaincode]
 let $u := doc("university.xml")/university
 for $c in $u/course,
-    $i in $u/instructor,
-    $t in $u/teaches
-where $c/course_id = $t/course_id
-  and $i/ID = $t/ID
+    $i in $u/instructor, $t in $u/teaches
+where $c/course_id = $t/course_id and $i/ID = $t/ID
 return <result>{$c, $i}</result>
 \end{lstlisting}
 Multiple for bindings form combinations. where filters them. Each matching combination emits one result.
@@ -960,7 +928,7 @@ return if ($x/price > 100)
 This returns an expensive element containing the input item.
 \end{topicblock}
 
-\columnbreak
+\nextcol{.25}
 \begin{topicblock}
 \topic{21}{MONGODB: CRUD / FILTERS}
 \when{Read/write documents, filter fields or update arrays.}
@@ -1023,8 +991,7 @@ db.trips.aggregate([
  {$match:{tripCount:{$gte:2}}},
  {$project:{_id:0,stationId:"$_id",tripCount:1,
             avgDuration:{$round:["$avgDuration",1]}}},
- {$sort:{avgDuration:-1,stationId:1}}
-]);
+ {$sort:{avgDuration:-1,stationId:1}} ]);
 \end{lstlisting}
 SQL mapping: FROM=collection, WHERE=\sql{$match} before \sql{$group}, GROUP BY=\sql{$group}, HAVING=\sql{$match} after \sql{$group}, SELECT=\sql{$project}, ORDER BY=\sql{$sort}, LIMIT=\sql{$limit}.
 \sql{$sum:1} counts input documents; \sql{$sum:"$x"} sums x; \sql{$avg:"$x"} averages numeric x; \sql{_id:null} makes one global group. \sql{"$field"} references a field; \sql{"field"} is a string literal. \sql{$group} does not promise output order.
@@ -1095,7 +1062,7 @@ Empty array (\sql{items:{$size:0}}) & D
 \trap{B satisfies the dot conditions on different items; no single item satisfies P. Filtering selects whole documents and leaves arrays intact. Projection choices are in 24.}
 \end{topicblock}
 
-\columnbreak
+\nextcol{.25}
 \begin{topicblock}
 \topic{24}{ARRAY PROJECTION PATTERNS}
 \when{Choose first matching, original first or all qualifying items.}
@@ -1103,8 +1070,7 @@ Empty array (\sql{items:{$size:0}}) & D
 \begin{lstlisting}[style=Plaincode]
 db.sales.find(
  {items:{$elemMatch:{quantity:{$gte:3},price:{$gte:80}}}},
- {_id:0,saleId:1,"items.$":1}
-).sort({saleId:1});
+ {_id:0,saleId:1,"items.$":1}).sort({saleId:1});
 \end{lstlisting}
 \sql{"items.$":1} returns the first query-matching element. Use one array and a single \sql{$elemMatch} condition for unambiguous matching. On input 23: A returns [a1], C returns [c0].
 Projection \sql{$elemMatch} supplies its own predicate:
@@ -1118,8 +1084,7 @@ This projection keeps all documents: B/D have no items field in the result becau
 db.sales.find(
  {"items.0.quantity":{$gte:3},"items.0.price":{$gte:80}},
  {_id:0,saleId:1,"items.name":1,
-  "items.quantity":1,"items.price":1}
-).sort({saleId:1});
+  "items.quantity":1,"items.price":1}).sort({saleId:1});
 \end{lstlisting}
 \trap{The filter checks original index 0; dotted projection returns fields for ALL items. Input 23 selects C and keeps c0,c1. Slicing is positional, not conditional.}
 \begin{lstlisting}[style=Plaincode]
@@ -1135,9 +1100,7 @@ db.sales.aggregate([
  {$project:{_id:0,saleId:1,items:{$filter:{
   input:"$items",as:"i",cond:{$and:[
    {$gte:["$$i.quantity",3]},{$gte:["$$i.price",80]}
-  ]}}}}},
- {$sort:{saleId:1}}
-]);
+  ]}}}}}, {$sort:{saleId:1}} ]);
 \end{lstlisting}
 Input 23 returns A:[a1,a2], C:[c0]. Without \sql{$match}, B/D remain with empty arrays. \sql{$filter} preserves item order; \sql{$$i}=current item variable, \sql{$items}=input array field.
 \end{topicblock}
@@ -1235,5 +1198,5 @@ df.createOrReplaceTempView('T')
 spark.sql('SELECT COUNT(*) FROM T').show()
 \end{lstlisting}
 \end{topicblock}
-\end{multicols*}
+\end{sheetcolumns}
 \end{document}

@@ -10,7 +10,7 @@ For example, its trigger now uses generic Score/Audit tables and two categories;
 its MongoDB matching example supplies all four A--D documents. Printed labels,
 old dataset IDs and question-dependent instructions have been removed.
 [REVIEW.md](REVIEW.md) records this editorial pass and its acceptance checks.
-Part I remains on page 1, Part II on page 2; body/code sizes remain 5.1/4.8 pt.
+Part I is on page 1 and Part II is on page 2 in both current editions.
 
 ## Schema refinement: 7/7
 
@@ -81,7 +81,7 @@ Part I remains on page 1, Part II on page 2; body/code sizes remain 5.1/4.8 pt.
 ## Historical follow-up PDF review: 29/29
 
 That revision preserved the 26 topics and body/code sizes. XML/DTD used the end
-of page 2 column 1; XSD continued in column 2. These positions remain unchanged.
+of page 2 column 1, and XSD continued in column 2.
 
 | Item | Priority | Topic | Implemented correction or addition |
 | --- | --- | --- | --- |

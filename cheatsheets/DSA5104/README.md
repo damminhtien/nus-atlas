@@ -15,12 +15,11 @@ beside it.
 | Page | Column 1 | Column 2 | Column 3 | Column 4 |
 | --- | --- | --- | --- | --- |
 | 1: Part I | SQL logic, NULL/anti-joins, joins, types | Division, CTEs, aggregation | Ranking, windows, rounding, stored programs | Relational algebra, constraints, PHP/Python |
-| 2: Part II | FDs, keys, BCNF, decomposition tests, XML/DTD | XSD, XPath, XQuery | MongoDB schemas, CRUD, aggregation, matching | Array projection, indexes/schema, Spark |
+| 2: Part II | FDs, keys, BCNF, decomposition tests, XML/DTD | XML processing, XSD, XPath, XQuery | MongoDB schemas, CRUD, aggregation, matching | Array projection, indexes/schema, Spark |
 
-Body text is 5.1 pt with 5.2 pt leading; code is 4.8 pt with 4.9 pt leading.
-Topic headers use 6.2 pt. Explicit column breaks preserve the topic order without
-stretching text to fill a page. XML/DTD uses the end of page 2 column 1; XSD
-continues at the top of column 2.
+Body text is 5.61 pt with 5.2 pt leading. Code is 5.28 pt with 4.84 pt leading.
+Topic headings use 6.82 pt. Narrower glyphs, shorter code blocks and column
+widths matched to the content keep both editions at two A4 portrait pages.
 
 | English label | Nhãn tiếng Việt | Purpose |
 | --- | --- | --- |
@@ -31,19 +30,16 @@ continues at the top of column 2.
 | EXAMPLE | VÍ DỤ | Trace inputs and results. |
 | COND | ĐIỀU KIỆN | Check preconditions. |
 
-Build the English edition with pdfLaTeX from this directory:
-
-    latexmk -pdf -interaction=nonstopmode -halt-on-error -file-line-error \
-      -outdir=../../tmp/pdfs/DSA5104 cheatsheet.tex
-    cp ../../tmp/pdfs/DSA5104/cheatsheet.pdf cheatsheet.pdf
-
-Build the Vietnamese edition with XeLaTeX. It uses the TeX Live fonts Source
-Sans 3, Inconsolata and STIX Two Math. When editing the content, apply substantive
-updates to both editions so their examples and rules stay in sync.
+Build both editions with XeLaTeX and the TeX Live fonts Source Sans 3,
+Inconsolata and STIX Two Math. Run from this directory:
 
     latexmk -xelatex -interaction=nonstopmode -halt-on-error -file-line-error \
-      -outdir=../../tmp/pdfs/DSA5104 cheatsheet-vi.tex
+      -outdir=../../tmp/pdfs/DSA5104 cheatsheet.tex cheatsheet-vi.tex
+    cp ../../tmp/pdfs/DSA5104/cheatsheet.pdf cheatsheet.pdf
     cp ../../tmp/pdfs/DSA5104/cheatsheet-vi.pdf cheatsheet-vi.pdf
+
+Apply substantive content edits to both editions so their examples and rules
+stay in sync.
 
 Before replacing the compiled copy, check two A4 pages with pdfinfo, render both
 with pdftoppm and inspect every column, especially the last lines. Extract text

@@ -16,12 +16,12 @@
   BoldFont=SourceSans3-Bold.otf,
   ItalicFont=SourceSans3-RegularIt.otf,
   BoldItalicFont=SourceSans3-BoldIt.otf,
-  FakeStretch=0.92
+  FakeStretch=0.82
 ]
-\setmonofont{Inconsolatazi4-Regular.otf}[BoldFont=Inconsolatazi4-Bold.otf,FakeStretch=0.97]
+\setmonofont{Inconsolatazi4-Regular.otf}[BoldFont=Inconsolatazi4-Bold.otf,FakeStretch=0.89]
 \setmathfont{STIXTwoMath-Regular.otf}
 \newcommand{\sqlfont}{\ttfamily}
-\usepackage{xcolor,array,enumitem,listings,multicol,fontawesome5,ragged2e,needspace}
+\usepackage{xcolor,array,enumitem,listings,fontawesome5,ragged2e}
 \definecolor{structure}{HTML}{10243A}
 \definecolor{condition}{HTML}{704500}
 \definecolor{conditionbg}{HTML}{FFF1CC}
@@ -54,7 +54,7 @@
 }
 \lstdefinestyle{SQLbase}{
   language=SQLx,
-  basicstyle=\sqlfont\fontsize{4.8}{4.9}\selectfont\color{sqltext},
+  basicstyle=\sqlfont\fontsize{5.28}{4.84}\selectfont\color{sqltext},
   keywordstyle=[1]\color{sqlkeyword}\bfseries,
   keywordstyle=[2]\color{sqltype}\bfseries,
   keywordstyle=[3]\color{sqlfunction}\bfseries,
@@ -76,10 +76,10 @@
 }
 \lstdefinestyle{SQLinline}{
   style=SQLbase,
-  basicstyle=\sqlfont\fontsize{5.1}{5.2}\selectfont\color{sqltext}
+  basicstyle=\sqlfont\fontsize{5.61}{5.2}\selectfont\color{sqltext}
 }
 \lstdefinestyle{PHPcode}{
-  basicstyle=\ttfamily\fontsize{4.8}{4.9}\selectfont\color{sqltext},
+  basicstyle=\ttfamily\fontsize{5.28}{4.84}\selectfont\color{sqltext},
   keywordstyle=[1]\color{sqlkeyword},
   commentstyle=\color{sqlcomment},
   stringstyle=\color{sqlstring},
@@ -92,34 +92,33 @@
   belowskip=.15pt
 }
 \lstdefinestyle{Plaincode}{style=PHPcode,language={},
-  basicstyle=\sqlfont\fontsize{4.8}{4.9}\selectfont\color{sqltext}}
+  basicstyle=\sqlfont\fontsize{5.28}{4.84}\selectfont\color{sqltext}}
 \lstset{style=SQLblock,emptylines=0}
 \pagestyle{empty}
 \setlength{\topskip}{0pt}
 \setlength{\parindent}{0pt}
-\setlength{\parskip}{.05pt}
+\setlength{\parskip}{0pt}
 \setlength{\tabcolsep}{1.5pt}
-\renewcommand{\arraystretch}{1}
+\renewcommand{\arraystretch}{.92}
 \setlist[itemize]{leftmargin=6pt,label=\textbullet,nosep,topsep=.2pt}
 \setlength{\emergencystretch}{1em}
 \newlength{\gutter}\setlength{\gutter}{1.5mm}
-\setlength{\columnsep}{\gutter}\setlength{\multicolsep}{0pt}
-\raggedcolumns
+\newcommand{\bodylineskiplimit}{-2pt}
 \newcommand{\bodystyle}{%
-  \fontsize{5.1}{5.2}\selectfont\RaggedRight
+  \fontsize{5.61}{5.2}\selectfont\setlength{\lineskiplimit}{\bodylineskiplimit}\RaggedRight
   \setlength{\abovedisplayskip}{.5pt}\setlength{\belowdisplayskip}{.5pt}%
   \setlength{\abovedisplayshortskip}{.3pt}\setlength{\belowdisplayshortskip}{.3pt}}
-\newcommand{\topic}[2]{\par\addvspace{.6pt}%
+\newcommand{\topic}[2]{\par\addvspace{.45pt}\nointerlineskip%
   \begingroup\setlength{\fboxsep}{0.35pt}%
   \noindent\colorbox{structure}{\parbox{\dimexpr\linewidth-2\fboxsep\relax}{%
-    \color{white}\fontsize{6.2}{6.6}\selectfont\bfseries #1\enspace #2}}%
-  \endgroup\par\nobreak\vspace{.25pt}\nobreak}
+    \color{white}\fontsize{6.82}{7.05}\selectfont\bfseries #1\enspace #2}}%
+  \endgroup\par\nobreak\vspace{.55pt}\nointerlineskip\nobreak}
 % Let topic content use the remaining column space; keep each header with its first line.
 \newenvironment{topicblock}
   {\par\bodystyle}
   {\par}
 \newcommand{\key}[1]{\par\textcolor{structure}{\textbf{#1}}\enspace}
-\newcommand{\note}[4]{\par\begingroup\setlength{\fboxsep}{0.2pt}%
+\newcommand{\note}[4]{\par\begingroup\setlength{\fboxsep}{0.1pt}%
   \noindent\colorbox{#1}{\parbox{\dimexpr\linewidth-2\fboxsep\relax}{%
     \RaggedRight\textcolor{#2}{\textbf{#3}}\enspace #4}}%
   \endgroup\par}
@@ -133,10 +132,19 @@
 % Inline DTD hash tokens use \texttt{\#...}: detokenize doubles parameter tokens.
 \newcommand{\sql}[1]{{\sqlfont\color{sqltext}\detokenize{#1}}}
 
+\newlength{\sheetwidth}
+\setlength{\sheetwidth}{\dimexpr\textwidth-3\gutter\relax}
+% Top-align columns, keeping their natural height and reading order.
+\newenvironment{sheetcolumns}[1]
+  {\noindent\begin{minipage}[t]{#1\sheetwidth}\vspace{0pt}\bodystyle\ignorespaces}
+  {\end{minipage}\par}
+\newcommand{\nextcol}[1]{\end{minipage}\hspace{\gutter}%
+  \begin{minipage}[t]{#1\sheetwidth}\vspace{0pt}\bodystyle\ignorespaces}
+
 \begin{document}
 \bodystyle
 % PAGE 1: Part I. Explicit column breaks keep each reference area together.
-\begin{multicols*}{4}
+\begin{sheetcolumns}{.25}
 \begin{topicblock}
 \topic{01}{PHẦN I: TRUY VẤN SQL}
 \when{Chọn, gom hoặc sắp xếp dòng. Cú pháp MySQL 8.4, schema theo từng mẫu.}
@@ -224,10 +232,8 @@ WITH SchoolAgg AS (
         AVG(score) AS avg_score
  FROM School GROUP BY area
 ), CrimeAgg AS (
- SELECT area, COUNT(*) AS crimes
- FROM Crime GROUP BY area
-)
-SELECT c.area, COALESCE(s.schools,0) AS schools,
+ SELECT area, COUNT(*) AS crimes FROM Crime GROUP BY area
+) SELECT c.area, COALESCE(s.schools,0) AS schools,
        s.avg_score, COALESCE(k.crimes,0) AS crimes
 FROM Community c
 LEFT JOIN SchoolAgg s ON s.area=c.area
@@ -266,7 +272,7 @@ STR_TO_DATE(LEFT(selling_date,24),
 \trap{So chuỗi: \sql{'100' < '20'}. So số: $20<100$. Lọc DATETIME từ đầu tháng đến trước tháng kế. BETWEEN theo ngày dễ bỏ giờ của ngày cuối.}
 \end{topicblock}
 
-\columnbreak
+\nextcol{.237}
 \begin{topicblock}
 \topic{05}{SUBQUERY VÀ DIVISION}
 \when{Tra một giá trị, kiểm tra thuộc tập hoặc thỏa mọi yêu cầu.}
@@ -301,25 +307,19 @@ $(\forall y:P(y))\iff\neg(\exists y:\neg P(y))$.}
 \pattern{Thỏa mọi mục bằng double NOT EXISTS}
 Schema gồm A(id PK), Required(bid), R(aid,bid). R.aid tham chiếu A.id. Các ID khác NULL. Duyệt y trong các ID của Required.
 \begin{lstlisting}
-SELECT a.id
-FROM A a
-WHERE NOT EXISTS (
- SELECT 1 FROM Required q
+SELECT a.id FROM A a
+WHERE NOT EXISTS (SELECT 1 FROM Required q
  WHERE NOT EXISTS (
-  SELECT 1 FROM R r
-  WHERE r.aid=a.id AND r.bid=q.bid
- )
-);
+  SELECT 1 FROM R r WHERE r.aid=a.id AND r.bid=q.bid
+ ));
 \end{lstlisting}
 \cond{Nếu predicate P có thể là UNKNOWN, \sql{WHERE NOT P} chỉ giữ FALSE. Dùng \sql{WHERE P IS NOT TRUE} nếu UNKNOWN cũng là vi phạm.}
 \ex{A=[a1,a2], Required=[b1,b2], R={(a1,b1),(a1,b2),(a2,b1)} cho a1. Required rỗng thì cả hai dòng A đều đạt (vacuous truth).}
 \key{Cách dùng COUNT}
 \begin{lstlisting}
-SELECT r.aid FROM R r
-JOIN Required q ON q.bid=r.bid
-GROUP BY r.aid
-HAVING COUNT(DISTINCT r.bid) =
-       (SELECT COUNT(*) FROM Required);
+SELECT r.aid FROM R r JOIN Required q ON q.bid=r.bid
+GROUP BY r.aid HAVING COUNT(DISTINCT r.bid) =
+ (SELECT COUNT(*) FROM Required);
 \end{lstlisting}
 \cond{Cách dùng COUNT cần Required không rỗng và các ID bắt buộc duy nhất, khác NULL. Query bỏ dòng A chưa có dòng R. DISTINCT tránh đếm trùng liên kết.}
 \end{topicblock}
@@ -334,29 +334,23 @@ Student(dept,mark), mark là số hoặc NULL. dept NULL thuộc cùng nhóm. D�
 WITH DeptAvg AS (
  SELECT dept, AVG(mark) AS mean_mark
  FROM Student GROUP BY dept
-)
-SELECT s.* FROM Student s
+) SELECT s.* FROM Student s
 JOIN DeptAvg d ON s.dept <=> d.dept
 WHERE s.mark > d.mean_mark;
 -- Window equivalent (keeps detail rows):
 WITH T AS (
  SELECT s.*, AVG(mark) OVER (PARTITION BY dept) AS m
- FROM Student s
-)
-SELECT * FROM T WHERE mark > m;
+ FROM Student s) SELECT * FROM T WHERE mark > m;
 \end{lstlisting}
 \key{Trung bình chung từ các nhóm}
 $\bar{x}=\frac{\sum_i n_i\bar{x}_i}{\sum_i n_i}$, với $n_i$ là số giá trị khác NULL dùng để tính trung bình nhóm $\bar{x}_i$. Bỏ nhóm có count=0. Nếu mọi count=0, trung bình là NULL. AVG của các trung bình nhóm cho mọi nhóm cùng trọng số.
 \ex{Group1=[10,20] có mean15, n=2. Group2=[90] có mean90, n=1. Trung bình chung (2*15+1*90)/3=40. Lấy trung bình hai mean cho 52.5, sai nếu tính theo từng phần tử.}
 \key{Recursive CTE tính graph closure (MySQL 8+)}
 \begin{lstlisting}
-WITH RECURSIVE Reach(a,b) AS (
- SELECT a,b FROM Edge
- UNION DISTINCT
- SELECT r.a,e.b FROM Reach r
+WITH RECURSIVE Reach(a,b) AS (SELECT a,b FROM Edge
+ UNION DISTINCT SELECT r.a,e.b FROM Reach r
  JOIN Edge e ON r.b=e.a
-)
-SELECT * FROM Reach;
+) SELECT * FROM Reach;
 \end{lstlisting}
 \ex{Cạnh $\{(A,B),(B,C),(C,D)\}$. Anchor cho AB,BC,CD. Vòng sau thêm AC,BD rồi AD. Fixed point $\{AB,BC,CD,AC,BD,AD\}$.}
 \trap{UNION DISTINCT bỏ cặp reachability trùng và dừng khi hết cặp mới. Nếu thêm path/depth vào tuple, cycle có thể sinh dòng mới mãi dù dùng DISTINCT.}
@@ -369,13 +363,11 @@ SELECT * FROM Reach;
 \pattern{Phân loại bằng CASE rồi GROUP BY}
 Sales(price) có price là số khác NULL.
 \begin{lstlisting}
-SELECT CASE
- WHEN price<10000 THEN 'Budget'
+SELECT CASE WHEN price<10000 THEN 'Budget'
  WHEN price<40000 THEN 'Common'
  WHEN price<60000 THEN 'Luxury'
  ELSE 'Super' END AS car_category,
- COUNT(*) AS number_of_sales
-FROM Sales
+ COUNT(*) AS number_of_sales FROM Sales
 GROUP BY car_category ORDER BY car_category;
 \end{lstlisting}
 \trap{CASE lấy nhánh khớp đầu tiên. Thiếu ELSE thì dòng không khớp cho NULL. Tại các ngưỡng: 9999=Budget, 10000=Common, 40000=Luxury, 60000=Super. Nếu price có thể là NULL, thêm nhánh riêng.}
@@ -397,14 +389,14 @@ FROM Crime GROUP BY location;
 \begin{lstlisting}
 SELECT VIN FROM Cars GROUP BY VIN
 HAVING COUNT(DISTINCT make)>1
-    OR COUNT(DISTINCT model)>1;
+ OR COUNT(DISTINCT model)>1;
 \end{lstlisting}
 Với make, Ford/Toyota là mâu thuẫn. Ford/NULL, NULL/NULL và Ford/Ford thì không. NULL chưa xác định nên không phải giá trị đã biết thứ hai.
 \key{Grouping sets}
 CUBE trên d chiều có $2^d$ grouping sets. ROLLUP(a,b,c) cho (a,b,c),(a,b),(a),(). MySQL có \sql{GROUP BY a,b WITH ROLLUP}, không có CUBE trực tiếp. \sql{GROUPING(a)=1} nhận diện NULL do subtotal sinh ra, phân biệt với NULL trong dữ liệu.
 \end{topicblock}
 
-\columnbreak
+\nextcol{.24}
 \begin{topicblock}
 \topic{08}{RANKING / TOP K}
 \when{Tìm điểm cao nhất, hạng nhì phân biệt hoặc top K trong nhóm.}
@@ -412,18 +404,16 @@ CUBE trên d chiều có $2^d$ grouping sets. ROLLUP(a,b,c) cho (a,b,c),(a,b),(a
 \begin{lstlisting}
 WITH Ranked AS (
  SELECT e.*, DENSE_RANK() OVER (
-  PARTITION BY dept ORDER BY score DESC
- ) AS r
+  PARTITION BY dept ORDER BY score DESC) AS r
  FROM Employee e WHERE score IS NOT NULL
-)
-SELECT * FROM Ranked WHERE r=2
+) SELECT * FROM Ranked WHERE r=2
 ORDER BY dept, score DESC, id;
 \end{lstlisting}
 \sql{r=1} lấy mọi dòng cao nhất, \sql{r=2} lấy mức điểm cao thứ hai, \sql{r<=K} lấy K mức điểm cao nhất. ROW\_NUMBER<=K lấy tối đa K dòng mỗi nhóm. Thêm id duy nhất làm tie-breaker để thứ tự trong window ổn định.
-\begin{center}\begin{tabular}{@{}lrrr@{}}
+\par{\centering\begin{tabular}{@{}lrrr@{}}
 score DESC & ROW\_NUMBER & RANK & DENSE\_RANK\\
 90 & 1 & 1 & 1\\90 & 2 & 1 & 1\\80 & 3 & 3 & 2\\70 & 4 & 4 & 3
-\end{tabular}\end{center}
+\end{tabular}\par}
 \trap{Nếu cần giữ đồng hạng, đừng thêm id duy nhất vào thứ tự rank. ORDER BY trong window dùng để tính, còn ORDER BY cuối query sắp kết quả. RANK nhảy hạng sau các dòng đồng hạng.}
 \pattern{Aggregate, rank rồi lọc}
 Sales(state,make) có một dòng cho mỗi giao dịch.
@@ -434,8 +424,7 @@ WITH G AS (
 ), Ranked AS (
  SELECT G.*,DENSE_RANK() OVER (
   PARTITION BY state ORDER BY n DESC) AS rk FROM G
-)
-SELECT state,make,n FROM Ranked WHERE rk=1
+) SELECT state,make,n FROM Ranked WHERE rk=1
 ORDER BY state,n DESC,make;
 \end{lstlisting}
 Aggregate $\to$ window rank $\to$ lọc ngoài $\to$ ORDER BY/LIMIT cuối.
@@ -486,8 +475,7 @@ Xếp theo số hiển thị & Làm tròn $\to$ sort
 R(id PK,x), S(y) với x/y là số. CALL gọi procedure (tham số IN/OUT). Function trả một scalar. DECLARE biến, cursor và handler trước các lệnh xử lý.
 \begin{lstlisting}
 DELIMITER //
-CREATE PROCEDURE p(IN arg INT)
-BEGIN
+CREATE PROCEDURE p(IN arg INT) BEGIN
  DECLARE v DOUBLE;
  SELECT x INTO v FROM R WHERE id=arg;
  SELECT * FROM S WHERE y>v;
@@ -516,18 +504,17 @@ ORDER BY distance,id;
 Score(id PK,score INT NULL,category), Audit(id,old\_v,new\_v). score nhận 1--99 hoặc NULL. category là giá trị dẫn xuất từ score, ví dụ safety icon.
 \begin{lstlisting}
 DELIMITER //
-CREATE TRIGGER tr BEFORE UPDATE ON Score FOR EACH ROW
-BEGIN
+CREATE TRIGGER tr BEFORE UPDATE ON Score
+FOR EACH ROW BEGIN
  IF NEW.score IS NOT NULL AND
     NEW.score NOT BETWEEN 1 AND 99 THEN
   SIGNAL SQLSTATE '45000'
-   SET MESSAGE_TEXT='Invalid score';
+  SET MESSAGE_TEXT='Invalid score';
  END IF;
  SET NEW.category = CASE
   WHEN NEW.score IS NULL THEN NULL
   WHEN NEW.score<50 THEN 'Low'
-  ELSE 'High'
- END;
+  ELSE 'High' END;
  IF NOT (OLD.score <=> NEW.score) THEN
   INSERT INTO Audit(id,old_v,new_v)
   VALUES(OLD.id,OLD.score,NEW.score);
@@ -539,7 +526,7 @@ DELIMITER ;
 INSERT có NEW, DELETE có OLD, UPDATE có cả hai. OLD chỉ đọc. BEFORE có thể SET NEW, AFTER thì không. DELIMITER thuộc client. Điều kiện dùng IF/CASE, vòng lặp dùng WHILE/REPEAT/LOOP.
 \end{topicblock}
 
-\columnbreak
+\nextcol{.273}
 \begin{topicblock}
 \topic{11}{RELATIONAL ALGEBRA}
 \when{Viết truy vấn theo set semantics.}
@@ -558,15 +545,13 @@ $\pi_X(R)-\pi_X((\pi_X(R)\times S)-R)$.
 \pattern{Lệnh DDL và cấp quyền}
 \begin{lstlisting}
 CREATE TABLE Parent(id INT PRIMARY KEY) ENGINE=InnoDB;
-CREATE TABLE Child(
- id INT PRIMARY KEY, parent_id INT,
+CREATE TABLE Child(id INT PRIMARY KEY, parent_id INT,
  score DECIMAL(5,2) CHECK(score BETWEEN 0 AND 100),
  UNIQUE(parent_id,id),
  FOREIGN KEY(parent_id) REFERENCES Parent(id)
- ON DELETE SET NULL ON UPDATE CASCADE
-) ENGINE=InnoDB;
-CREATE VIEW Passing AS SELECT * FROM Child
- WHERE score>=50 WITH CHECK OPTION;
+ ON DELETE SET NULL ON UPDATE CASCADE) ENGINE=InnoDB;
+CREATE VIEW Passing AS
+ SELECT * FROM Child WHERE score>=50 WITH CHECK OPTION;
 GRANT SELECT,UPDATE ON db.Child TO 'u'@'localhost';
 GRANT SELECT ON db.Child TO 'v'@'localhost'
  WITH GRANT OPTION;
@@ -587,8 +572,7 @@ Xét DELETE parent hoặc UPDATE key được tham chiếu. FK là foreign key c
 FK có thể tự tham chiếu. Khi đó InnoDB xử lý \sql{ON UPDATE CASCADE} hoặc \sql{ON UPDATE SET NULL} như RESTRICT.
 \begin{lstlisting}
 INSERT INTO Child(id,score) VALUES(1,75),(2,90);
-START TRANSACTION;
-UPDATE Child SET score=80 WHERE id=1;
+START TRANSACTION; UPDATE Child SET score=80 WHERE id=1;
 COMMIT; -- choose ROLLBACK instead to abort
 DELETE FROM Child WHERE id=2;
 ALTER TABLE Child ADD COLUMN note VARCHAR(50);
@@ -644,8 +628,7 @@ Student(id PK,name,mark). Bên gọi cung cấp cấu hình kết nối và ID.
 GET gửi tham số qua URL, POST gửi form qua request body. HTTPS mã hóa đường truyền. action chọn endpoint, method chọn kiểu request. Dùng \sql{$_GET['id']} / \sql{$_POST['id']}. Kiểm tra đầu vào, bind tham số SQL và escape HTML đầu ra.
 \begin{lstlisting}[style=Plaincode,language=XML]
 <form action="page.php" method="post">
- <input name="id"/><button type="submit">Go</button>
-</form>
+ <input name="id"/><button type="submit">Go</button> </form>
 \end{lstlisting}
 PHP dùng \sql{.} để nối chuỗi và \sql{key => value} cho phần tử mảng kết hợp. MYSQLI\_ASSOC dùng tên cột kết quả làm key.
 \begin{lstlisting}[style=PHPcode,language=PHPx]
@@ -687,11 +670,12 @@ df.to_sql('copy', engine,
 \end{lstlisting}
 \cond{Placeholder tùy driver (\%s trong PyMySQL, ? trong sqlite3). Python tuple một phần tử cần dấu phẩy: (sid,). Đóng connection/cursor hoặc dùng context manager.}
 \end{topicblock}
-\end{multicols*}
+\end{sheetcolumns}
 
 \newpage
 % PAGE 2: Part II. FD algorithms, XML, MongoDB, and Spark.
-\begin{multicols*}{4}
+\begin{sheetcolumns}{.257}
+\renewcommand{\bodylineskiplimit}{-1.5pt}
 \begin{topicblock}
 \topic{14}{PHẦN II: FD VÀ CLOSURE}
 R là tập attribute, F là tập FD. X/Y/U/V là các tập con. Viết liền tên tập nghĩa là lấy hợp.
@@ -800,13 +784,14 @@ IDREF & một ID có thật\\
 IDREFS & các ID có thật, cách nhau bằng dấu cách
 \end{tabular}\par
 Mỗi loại element khai báo tối đa một attribute kiểu ID. Tên attribute không quyết định kiểu.
+\end{topicblock}
+\nextcol{.243}
+\begin{topicblock}
 \key{Xử lý và lưu XML}
 DOM là cây trong bộ nhớ, SAX dùng event. Publishing từ relational $\to$ XML, shredding từ XML $\to$ relational. Lưu dạng text/tree, relational mapping hoặc native XML.
-\columnbreak
 \key{XSD (tiếp phần XML)}
 \begin{lstlisting}[style=Plaincode,language=XML]
-<xs:schema
- xmlns:xs="http://www.w3.org/2001/XMLSchema">
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema">
  <xs:element name="course">
   <xs:complexType><xs:sequence>
    <xs:element name="title" type="xs:string"/>
@@ -814,21 +799,17 @@ DOM là cây trong bộ nhớ, SAX dùng event. Publishing từ relational $\to$
                minOccurs="0" maxOccurs="2"/>
   </xs:sequence>
   <xs:attribute name="id" type="xs:ID" use="required"/>
-  </xs:complexType></xs:element>
-</xs:schema>
+  </xs:complexType></xs:element></xs:schema>
 \end{lstlisting}
 XSD là XML có kiểu. \sql{name} đặt tên, \sql{type} chỉ kiểu, \sql{ref} trỏ tới global element. min/maxOccurs mặc định 1. Attribute mặc định tùy chọn. sequence giữ thứ tự child, choice chọn một nhánh. \sql{targetNamespace} đặt namespace. \sql{elementFormDefault="qualified"} áp namespace cho local element.
 \pattern{Khai báo identity constraint trong XSD}
 university có department*(@id) và course*(@dept). Đặt phần sau trong \sql{xs:element} tương ứng, sau complexType. selector/field dùng đường dẫn tương đối. Mẫu không có target namespace.
 \begin{lstlisting}[style=Plaincode,language=XML]
-<xs:key name="deptKey">
- <xs:selector xpath="department"/>
- <xs:field xpath="@id"/>
-</xs:key>
+<xs:key name="deptKey"> <xs:selector xpath="department"/>
+ <xs:field xpath="@id"/> </xs:key>
 <xs:keyref name="deptRef" refer="deptKey">
  <xs:selector xpath="course"/>
- <xs:field xpath="@dept"/>
-</xs:keyref>
+ <xs:field xpath="@dept"/> </xs:keyref>
 \end{lstlisting}
 \par\begin{tabular}{@{}ll@{}}
 \sql{xs:unique} & tuple đủ field phải duy nhất\\
@@ -851,9 +832,7 @@ university có department*(@id) và course*(@dept). Đặt phần sau trong \sql
 \ex{Credits [0,3]. course[credits] vẫn lấy khóa 0 credit. course[credits>0][1] lấy khóa thứ hai, course[1][credits>0] rỗng. Với default namespace, bind và dùng prefix trong XPath/XQuery, ví dụ u:course.}
 \key{Tra ID, union và axes}
 \begin{lstlisting}[style=Plaincode]
-id("C1")
-id(@dept)
-id(@instructors)
+id("C1")  id(@dept)  id(@instructors)
 /university/course[@dept="CS"]
  | /university/course[@dept="Math"]
 \end{lstlisting}
@@ -917,10 +896,8 @@ Schema riêng có university chứa course*, instructor*, teaches*. Các field �
 \begin{lstlisting}[style=Plaincode]
 let $u := doc("university.xml")/university
 for $c in $u/course,
-    $i in $u/instructor,
-    $t in $u/teaches
-where $c/course_id = $t/course_id
-  and $i/ID = $t/ID
+    $i in $u/instructor, $t in $u/teaches
+where $c/course_id = $t/course_id and $i/ID = $t/ID
 return <result>{$c, $i}</result>
 \end{lstlisting}
 Nhiều biến for tạo tổ hợp. where lọc tổ hợp. Mỗi tổ hợp khớp cho một kết quả.
@@ -951,7 +928,7 @@ return if ($x/price > 100)
 Kết quả là element expensive chứa item đầu vào.
 \end{topicblock}
 
-\columnbreak
+\nextcol{.25}
 \begin{topicblock}
 \topic{21}{MONGODB: CRUD / FILTER}
 \when{Đọc, ghi document, lọc theo field hoặc cập nhật array.}
@@ -1014,8 +991,7 @@ db.trips.aggregate([
  {$match:{tripCount:{$gte:2}}},
  {$project:{_id:0,stationId:"$_id",tripCount:1,
             avgDuration:{$round:["$avgDuration",1]}}},
- {$sort:{avgDuration:-1,stationId:1}}
-]);
+ {$sort:{avgDuration:-1,stationId:1}} ]);
 \end{lstlisting}
 Đối chiếu SQL: FROM=collection, WHERE=\sql{$match} trước \sql{$group}, GROUP BY=\sql{$group}, HAVING=\sql{$match} sau \sql{$group}, SELECT=\sql{$project}, ORDER BY=\sql{$sort}, LIMIT=\sql{$limit}.
 \sql{$sum:1} đếm document đầu vào. \sql{$sum:"$x"} tính tổng x. \sql{$avg:"$x"} tính trung bình các x dạng số. \sql{_id:null} gom thành một nhóm. \sql{"$field"} trỏ đến field, \sql{"field"} là chuỗi. \sql{$group} không bảo đảm thứ tự.
@@ -1086,7 +1062,7 @@ Array rỗng (\sql{items:{$size:0}}) & D
 \trap{Ở B, mỗi điều kiện khớp một item khác nhau. Filter giữ nguyên array của document được chọn. Xem projection ở mục 24.}
 \end{topicblock}
 
-\columnbreak
+\nextcol{.25}
 \begin{topicblock}
 \topic{24}{ARRAY PROJECTION}
 \when{Lấy phần tử đầu tiên khớp, phần tử đầu gốc hoặc mọi phần tử khớp.}
@@ -1094,8 +1070,7 @@ Array rỗng (\sql{items:{$size:0}}) & D
 \begin{lstlisting}[style=Plaincode]
 db.sales.find(
  {items:{$elemMatch:{quantity:{$gte:3},price:{$gte:80}}}},
- {_id:0,saleId:1,"items.$":1}
-).sort({saleId:1});
+ {_id:0,saleId:1,"items.$":1}).sort({saleId:1});
 \end{lstlisting}
 \sql{"items.$":1} trả phần tử đầu tiên khớp query. Dùng một array và một điều kiện \sql{$elemMatch} để xác định rõ phần tử. Với dữ liệu mục 23: A trả [a1], C trả [c0].
 \sql{$elemMatch} trong projection có điều kiện riêng:
@@ -1109,8 +1084,7 @@ Projection này giữ mọi document. Kết quả B/D thiếu field items vì kh
 db.sales.find(
  {"items.0.quantity":{$gte:3},"items.0.price":{$gte:80}},
  {_id:0,saleId:1,"items.name":1,
-  "items.quantity":1,"items.price":1}
-).sort({saleId:1});
+  "items.quantity":1,"items.price":1}).sort({saleId:1});
 \end{lstlisting}
 \trap{Filter xét index 0 gốc. Projection dùng dấu chấm trả field của mọi phần tử. Ở mục 23, C được chọn và giữ c0,c1. Slicing cắt theo vị trí.}
 \begin{lstlisting}[style=Plaincode]
@@ -1126,9 +1100,7 @@ db.sales.aggregate([
  {$project:{_id:0,saleId:1,items:{$filter:{
   input:"$items",as:"i",cond:{$and:[
    {$gte:["$$i.quantity",3]},{$gte:["$$i.price",80]}
-  ]}}}}},
- {$sort:{saleId:1}}
-]);
+  ]}}}}}, {$sort:{saleId:1}} ]);
 \end{lstlisting}
 Với mục 23: A:[a1,a2], C:[c0]. Bỏ \sql{$match} thì giữ B/D với array rỗng. \sql{$filter} giữ thứ tự item. \sql{$$i}=biến item hiện tại, \sql{$items}=field array đầu vào.
 \end{topicblock}
@@ -1226,5 +1198,5 @@ df.createOrReplaceTempView('T')
 spark.sql('SELECT COUNT(*) FROM T').show()
 \end{lstlisting}
 \end{topicblock}
-\end{multicols*}
+\end{sheetcolumns}
 \end{document}
