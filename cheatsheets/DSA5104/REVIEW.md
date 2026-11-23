@@ -12,7 +12,7 @@ retained.
 | --- | --- |
 | External references | Replace printed Project/Assignment/Lecture labels with the task being solved. Preserve provenance in TeX comments and COVERAGE.md. Internal topic references remain usable on the same sheet. |
 | Question-specific rounding | A wording/order table chooses Rank then Round, Calculate then Round, Round then Filter, or Round then Sort. The 12.341/12.344 example supplies both input and rank results. |
-| SQL truth contexts | Topic 02 compares TRUE/FALSE/UNKNOWN for WHERE/HAVING and CHECK in one table; the UNKNOWN outcomes are bold. |
+| SQL truth contexts | Topic 02 defines TRUE/FALSE/UNKNOWN, groups six NULL comparison results in one table, and compares WHERE/HAVING with CHECK in another. NULL-safe equality is identified as MySQL syntax; the context table's UNKNOWN outcomes are bold. |
 | SQL set operators | Topic 01 replaces the short UNION/UNION ALL reminder with one six-operator table on complete A/B inputs. ALL multiplicity rules and the final-ORDER-BY condition accompany it. |
 | Dead dataset results | Remove the S01--S08 match counts and the unexplained school ID. A--D are newly printed, complete input documents, not references to a file. |
 | Hidden schema assumptions | Give shared museum, Trip and Sale schemas. Local SQL schemas and lookup cardinality are stated beside their patterns. Flexible collection c is explicitly separate from the present-field Trip/Sale schemas. |
@@ -83,6 +83,10 @@ printer test is claimed.
   lookup/filter body and the full Point-distance CTE with registered math
   functions. Checks include NULL anti-joins, raw/rounded ties, price cutoffs,
   missing coordinates, radius boundaries and final distance ordering.
+- Six scalar NULL comparison results are checked with SQLite: four as printed,
+  and the two MySQL null-safe examples through SQLite's equivalent IS operator.
+  The MySQL syntax/semantics are checked against W17; WHERE fixtures retain only
+  TRUE and discard FALSE/NULL.
 - The six set-operator results are recomputed from the printed A/B bags with
   independent set/count calculations. SQLite checks UNION, UNION ALL, INTERSECT
   and EXCEPT; the two remaining ALL variants use multiset calculations, checked

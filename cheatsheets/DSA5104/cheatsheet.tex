@@ -185,11 +185,23 @@ Symmetric difference: \sql{(A EXCEPT B) UNION (B EXCEPT A)}.
 \begin{topicblock}
 \topic{02}{NULL / EMPTY AGGREGATES}
 \when{Missing values, empty inputs or anti-joins.}
-\sql{x IS NULL}, not \sql{x = NULL}; NULL comparisons give UNKNOWN (U). \sql{COALESCE(x,0)} replaces NULL; \sql{NULLIF(x,0)} returns NULL if zero. Arithmetic propagates NULL.
+SQL uses three-valued logic: $\boxed{\{\mathrm{TRUE},\mathrm{FALSE},\mathrm{UNKNOWN}\}}$ (T/F/U). Ordinary scalar comparisons with NULL give U; test missing values with \sql{IS NULL}.
+% Source: user-supplied NULL comparison table; MySQL comparisons/NULL (W17).
+\key{NULL comparison results}
+\par\begin{tabular}{@{}ll@{}}
+\textbf{Expression} & \textbf{Result}\\
+\sql{NULL = NULL} & UNKNOWN\\
+\sql{NULL <> NULL} & UNKNOWN\\
+\sql{NULL = 5} & UNKNOWN\\
+\sql{NULL IS NULL} & TRUE\\
+\sql{NULL <=> NULL} & TRUE\\
+\sql{5 <=> NULL} & FALSE
+\end{tabular}\par
+MySQL \sql{a <=> b} is NULL-safe equality. \sql{COALESCE(x,0)} replaces NULL; \sql{NULLIF(x,0)} returns NULL if zero. Arithmetic propagates NULL.
 \begin{center}\begin{tabular}{@{}ll|ll@{}}
 $T\land U$ & $U$ & $F\land U$ & $F$\\
 $T\lor U$ & $T$ & $F\lor U$ & $U$\\
-$\neg U$ & $U$ & \sql{NULL = NULL} & $U$
+$\neg U$ & $U$ & &
 \end{tabular}\end{center}
 \key{RULE: truth values by SQL context}
 \par\begingroup\setlength{\tabcolsep}{1.6pt}
@@ -200,7 +212,6 @@ $\neg U$ & $U$ & \sql{NULL = NULL} & $U$
 \end{tabular}\endgroup\par
 \key{Counts and grouping}
 \sql{COUNT(*)}: rows; \sql{COUNT(x)}: non-NULL x; \sql{COUNT(DISTINCT x)}: distinct non-NULL x. SUM/AVG/MIN/MAX ignore NULL. On empty input COUNT is 0; the others are NULL. No GROUP BY: one aggregate row even on empty input; grouped empty input: no groups. NULL group keys/DISTINCT values are collected together.
-MySQL \sql{a <=> b} is NULL-safe equality.
 \pattern{Anti-join and NULL}
 \sql{x NOT IN (SELECT y FROM S)} compares x with every y using three-valued logic. \sql{NOT EXISTS (SELECT 1 FROM S WHERE S.y=R.x)} asks whether any equality match exists.
 \ex{For x=5: NOT IN values [1,NULL] gives U; [1,2] gives TRUE. If R.x=NULL and S=[1], NOT IN is U but correlated NOT EXISTS is TRUE.}
