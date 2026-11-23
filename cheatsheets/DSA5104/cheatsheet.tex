@@ -303,8 +303,12 @@ ANY is OR, ALL is AND across comparisons. For \sql{5 > ANY/ALL (SELECT y FROM T)
 \end{tabular}\par
 ANY: TRUE dominates U; ALL: FALSE dominates U.
 \trap{\sql{x > ALL (SELECT y FROM T)} is not generally equivalent to \sql{x > (SELECT MAX(y) FROM T)}. For [3,NULL], 5>ALL is U but 5>MAX is TRUE; for empty input ALL is TRUE, while MAX is NULL.}
+% Source: user-supplied NOT EXISTS recognition and universal negation; W17/W18.
+\when{No/none/has never: single NOT EXISTS for no matching row. Every/all: no violation; double NOT EXISTS for required-item coverage.}
+\ruleline{For Boolean $P(y)$ (current A row has a link to required y):
+$(\forall y:P(y))\iff\neg(\exists y:\neg P(y))$.}
 \pattern{For every: double NOT EXISTS}
-Schema: A(id PK), Required(bid), R(aid,bid); R.aid references A.id. Assume non-NULL IDs. Return an A row iff no required bid is missing from its R rows.
+Schema: A(id PK), Required(bid), R(aid,bid); R.aid references A.id. IDs are non-NULL. Quantifiers range over Required IDs.
 \begin{lstlisting}
 SELECT a.id
 FROM A a
@@ -316,6 +320,7 @@ WHERE NOT EXISTS (
  )
 );
 \end{lstlisting}
+\cond{For other nullable predicates P, \sql{WHERE NOT P} finds rows where P is FALSE. Use \sql{WHERE P IS NOT TRUE} if UNKNOWN must also count as a violation.}
 \ex{A=[a1,a2], Required=[b1,b2]; R={(a1,b1),(a1,b2),(a2,b1)}: returns a1. If Required is empty, both A rows qualify (vacuous truth).}
 \key{Count alternative}
 \begin{lstlisting}

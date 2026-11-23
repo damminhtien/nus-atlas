@@ -15,6 +15,7 @@ retained.
 | SQL truth contexts | Topic 02 defines TRUE/FALSE/UNKNOWN, groups six NULL comparison results in one table, and compares WHERE/HAVING with CHECK in another. NULL-safe equality is identified as MySQL syntax; the context table's UNKNOWN outcomes are bold. |
 | SQL set operators | Topic 01 replaces the short UNION/UNION ALL reminder with one six-operator table on complete A/B inputs. ALL multiplicity rules and the final-ORDER-BY condition accompany it. |
 | SQL quantified predicates | Topic 05 consolidates EXISTS/NOT EXISTS/ANY/ALL into one table with TRUE conditions and empty-input results. Quantifier equations define vacuous truth; the NULL table retains only its nonempty cases. |
+| NOT EXISTS recognition | Topic 05 maps no/none/has never to one anti-join and every/all to absence of violations, using its existing double-NOT-EXISTS template for required-item coverage. The universal-negation rule names a Boolean existence predicate; nullable comparison predicates have an explicit UNKNOWN policy. |
 | Dead dataset results | Remove the S01--S08 match counts and the unexplained school ID. A--D are newly printed, complete input documents, not references to a file. |
 | Hidden schema assumptions | Give shared museum, Trip and Sale schemas. Local SQL schemas and lookup cardinality are stated beside their patterns. Flexible collection c is explicitly separate from the present-field Trip/Sale schemas. |
 | Misleading partial code | Distinguish syntax sketches, expression fragments and pipeline fragments from complete queries. Keep an implemented procedure lookup, a complete calculated-distance CTE, and a complete Validate/Derive/Audit trigger. |
@@ -91,6 +92,9 @@ printer test is claimed.
 - EXISTS/NOT EXISTS are checked on empty input and NULL-valued rows in SQLite.
   ANY/ALL results are recomputed from SQLite scalar comparisons under
   three-valued OR/AND, including empty input and NULLs, and checked against W18.
+- The existing double-NOT-EXISTS query is checked on full, partial and absent
+  coverage, duplicate links/requirements and empty requirements. Nullable
+  predicates verify the difference between NOT P and P IS NOT TRUE.
 - The six set-operator results are recomputed from the printed A/B bags with
   independent set/count calculations. SQLite checks UNION, UNION ALL, INTERSECT
   and EXCEPT; the two remaining ALL variants use multiset calculations, checked
@@ -110,7 +114,7 @@ printer test is claimed.
   aggregation example. Ten complete MongoDB JavaScript blocks pass syntax
   parsing; all five Python listings parse.
 - The RDD examples are recomputed with independent list/set calculations.
-  All 178 authored PDF math expressions, plus seven in the two study
+  All 180 authored PDF math expressions, plus seven in the two study
   companions, render with KaTeX in strict error mode.
 
 These checks do not execute MySQL procedure/trigger DDL, an XQuery engine,
