@@ -723,8 +723,7 @@ pseudotransitivity $X\to Y,WY\to Z\Rightarrow WX\to Z$.
 3. Skip K containing a known key. Compute $K_F^+$; if R, record K.
 4. Check minimality: for every $a\in K$, $(K\setminus\{a\})_F^+\ne R$.
 5. Continue through remaining subsets; one key does not prove completeness. Minimal means by inclusion, not minimum cardinality.
-% Source: Assignment 1 A1; R0/F0 are the shared inputs for topics 15--17.
-\ex{Shared inputs: $R_0=ABCDEF$; $F_0=\{A\to B,BC\to D,D\to A,C\to E,E\to F\}$.
+\ex{Find all candidate keys. Given $R_0=ABCDEF$ and $F_0=\{A\to B,BC\to D,D\to A,C\to E,E\to F\}$.
 M=C; $A^+=AB$, $B^+=B$, $C^+=CEF$, $D^+=ABD$.
 $AC^+=ABCDEF$ via A to B, BC to D, C to E to F.
 $BC^+=ABCDEF$ via BC to D to A, C to E to F.
@@ -762,8 +761,7 @@ Repeated lossless binary splits compose. Covering all attributes alone is insuff
 Let $G=\bigcup_i F_i$. DP iff $G^+=F^+$. It suffices to test every original $X\to Y\in F$ by $Y\subseteq X_G^+$.
 Without enumerating projections: initialize result=X; for each fragment add
 $t=((\mathrm{result}\cap R_i)^+_F)\cap R_i$ to result; repeat all fragments to a fixed point. If Y is still missing, FD is not preserved.
-% Source: Assignment 1 A2; this GIVEN decomposition differs from D_BCNF above.
-\ex{On $R_0,F_0$, test the given $D_{\rm test}=\{AB,ACD,CE,EF\}$. Its projected basis G includes $A\to B,D\to A,AC\to D,C\to E,E\to F$.
+\ex{Check dependency preservation on $R_0,F_0$ for the given $D_{\rm test}=\{AB,ACD,CE,EF\}$. Projected basis G includes $A\to B,D\to A,AC\to D,C\to E,E\to F$.
 $(BC)^+_G=BCEF$: D never appears, so $BC\to D$ is not preserved. Iterative propagation: BC to BCE (CE), to BCEF (EF); AB and ACD add nothing further.}
 \key{Multiway lossless: chase (FDs)}
 1. Row per fragment, column per attribute j. Cell=$a_j$ if present; else fresh $b_{ij}$.
@@ -896,14 +894,12 @@ Museums/Museum* (@MID, @City)
   Artworks/Artwork*
     Artist, Title (string leaves)
 \end{lstlisting}
-% Source: Assignment 1 B1; return matching elements, not text nodes.
-\pattern{Nested filter: elements}
+\pattern{Filter nested XML elements}
 \begin{lstlisting}[style=Plaincode]
 doc("museums.xml")/Museums/Museum[@City="Singapore"]
  /Artworks/Artwork[Artist="Maya Chen"]/Title
 \end{lstlisting}
 Title returns elements; Title/text() returns text nodes.
-% Source: Assignment 1 B2; existential self-join, one output per parent.
 \pattern{Existential self-join}
 \begin{lstlisting}[style=Plaincode]
 for $m in doc("museums.xml")/Museums/Museum
@@ -913,8 +909,7 @@ where some $a in $w, $b in $w satisfies
 return $m/MName
 \end{lstlisting}
 One outer iteration per museum: multiple qualifying pairs do not duplicate its MName.
-% Source: Assignment 1 B3; preserve parents with empty child groups.
-\pattern{Construct: keep empty groups}
+\pattern{Construct counts including empty groups}
 \begin{lstlisting}[style=Plaincode]
 for $m in doc("museums.xml")/Museums/Museum
 return <MuseumCount MID="{$m/@MID}">
@@ -1004,7 +999,6 @@ Comparison: \sql{$eq $ne $gt $gte $lt $lte $in $nin}. Logical: \sql{$and $or $no
 \key{Projection / sorting / missing}
 Inclusion: fields with 1; exclusion: 0. Cannot mix inclusion/exclusion except \sql{_id:0}; \sql{_id} included by default. sort 1 ascending, -1 descending; multiple fields are tie-breakers in specified order.
 For scalar/missing x in flexible db.c: \sql{{x:null}} matches null OR missing; \sql{{x:{$type:10}}} matches null (also a null array element in array-valued fields); \sql{{x:{$exists:false}}} missing; \sql{$exists:true} includes null. \sql{{x:{$ne:null}}} excludes null/missing.
-% Source: Assignment 2 Q1.1; use a consistent reusable Trip schema.
 \pattern{Multi-condition find, project, sort}
 \begin{lstlisting}[style=Plaincode]
 db.trips.find(
@@ -1032,7 +1026,6 @@ db.trips.aggregate([
 \end{lstlisting}
 SQL mapping: FROM=collection, WHERE=\sql{$match} before \sql{$group}, GROUP BY=\sql{$group}, HAVING=\sql{$match} after \sql{$group}, SELECT=\sql{$project}, ORDER BY=\sql{$sort}, LIMIT=\sql{$limit}.
 \sql{$sum:1} counts input documents; \sql{$sum:"$x"} sums x; \sql{$avg:"$x"} averages numeric x; \sql{_id:null} makes one global group. \sql{"$field"} references a field; \sql{"field"} is a string literal. \sql{$group} does not promise output order.
-% Sources: A2.Q1.2 and P2.Q7; separate the reusable stage-order decisions.
 \key{RULE: stage-order guide (schematic)}
 \sql{$project(round) -> $sort}: sort rounded values.
 \sql{$sort -> $project(round)}: sort original values.
@@ -1071,9 +1064,8 @@ countDocuments(filter) counts matches; distinct returns unique field values; est
 \topic{23}{ARRAY MATCHING: SAME ITEM?}
 \when{Decide whether conditions must hold on the same array element.}
 \sql{{a:[1,2]}} exact array including order; \sql{{a:2}} scalar equality or array containing 2; \sql{{a:{$all:[1,2]}}} contains both, any order; \sql{{a:{$size:2}}} exact length. \sql{"a.0"} addresses the original first element (0-based).
-% Source: Assignment 2 Q2.1/Q2.2; old dataset IDs replaced by complete inputs.
-\key{Shared input for matching/projection (23--24)}
-saleId labels A--D; each tuple is (name,quantity,price). Item predicate P: quantity $\geq3$ AND price $\geq80$.
+\key{Worked example: array matching and projection}
+Sample documents use saleId labels A--D. Each tuple is (name,quantity,price). Item predicate P: quantity $\geq3$ AND price $\geq80$.
 \begin{lstlisting}[style=Plaincode]
 A: [(a0,2,20),(a1,3,80),(a2,4,120)]
 B: [(b0,5,20),(b1,1,100)]

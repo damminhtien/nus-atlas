@@ -2,7 +2,8 @@
 
 The printable artifact is an exam reference for a new question. It must supply
 its own notation, schemas, assumptions, decision rules and examples. Course
-question labels and dataset evidence belong in COVERAGE.md or source comments.
+question labels for topics 15 through 24 and historical dataset checks belong
+in COVERAGE.md.
 The existing 26 topics, two A4 portrait pages and 5.1/4.8 pt body/code sizes are
 retained.
 
@@ -10,7 +11,7 @@ retained.
 
 | Concern | Current treatment |
 | --- | --- |
-| External references | Replace printed Project/Assignment/Lecture labels with the task being solved. Preserve provenance in TeX comments and COVERAGE.md. Internal topic references remain usable on the same sheet. |
+| Task names | Use descriptive task names for printed examples. Topics 15 through 24 also use these names in the source. Internal topic references point to material on the same sheet. |
 | Question-specific rounding | A wording/order table chooses Rank then Round, Calculate then Round, Round then Filter, or Round then Sort. The 12.341/12.344 example supplies both input and rank results. |
 | SQL truth contexts | Topic 02 defines TRUE/FALSE/UNKNOWN, groups six NULL comparison results in one table, and compares WHERE/HAVING with CHECK in another. NULL-safe equality is identified as MySQL syntax; the context table's UNKNOWN outcomes are bold. |
 | SQL set operators | Topic 01 replaces the short UNION/UNION ALL reminder with one six-operator table on complete A/B inputs. ALL multiplicity rules and the final-ORDER-BY condition accompany it. |
@@ -19,7 +20,7 @@ retained.
 | Foreign key actions | Topic 12 replaces the short action prose with an ON DELETE/ON UPDATE table scoped to InnoDB. SET NULL requires nullable FK columns; NO ACTION/RESTRICT are immediate. Separate Parent/Child DDL illustrates update cascading without the self-reference restriction, which is stated beside the table. |
 | View storage and refresh | Topic 12 replaces the two storage/refresh sentences with an ordinary/materialized view table. It distinguishes query evaluation from stored results, notes possible staleness until maintenance, and identifies MySQL 8.4's table-plus-refresh simulation rather than a native materialized view. |
 | Transactions and ACID | Topic 12 defines a transaction as an ordered sequence of SQL statements, expands the four ACID properties, and specifies current-transaction COMMIT/ROLLBACK behavior. Isolation and durability retain the DBMS guarantees qualification. Nearby prose is shortened to retain the two-page layout and existing fonts. |
-| Dead dataset results | Remove the S01--S08 match counts and the unexplained school ID. A--D are newly printed, complete input documents, not references to a file. |
+| Dataset-independent examples | Topic 23 shows all four sample documents, A through D, alongside their matching results. Topic 10 uses a generic lookup parameter. |
 | Hidden schema assumptions | Give shared museum, Trip and Sale schemas. Local SQL schemas and lookup cardinality are stated beside their patterns. Flexible collection c is explicitly separate from the present-field Trip/Sale schemas. |
 | Misleading partial code | Distinguish syntax sketches, expression fragments and pipeline fragments from complete queries. Keep an implemented procedure lookup, a complete calculated-distance CTE, and a complete Validate/Derive/Audit trigger. |
 | Transferability | Use generic Score/Audit and Point schemas, defined parameters, consistent quantity/duration/birthYear fields and explicit NULL/empty/tie/boundary rules. |

@@ -128,7 +128,7 @@ file pages; printed slide numbers can differ, especially in Lec11/Lec12.
 | F1 | `DSA5104/Lec7_Schema Refinement-1.pdf`, pp. 20–26, 30–32 | Inference, closure and candidate-key tests. |
 | F2 | `DSA5104/Lec8_Schema Refinement-2.pdf`, pp. 13–17, 26–28, 36–43 | Lossless splits, projected dependencies, preservation and BCNF. |
 | F3 | `DSA5104/Lec8_Note_TestingLosslessDependencyPreserving Decompositions.pdf`, pp. 1–5 | Table chase and iterative fragment closure test. |
-| A1 | `DSA5104/Assignment1.pdf`, pp. 1–2; `DSA5104/Assignment 1 Reference Answer.pdf`, pp. 1–2 | Exact six-attribute FD example and all three museum XQuery tasks. |
+| A1 | `DSA5104/Assignment1.pdf`, pp. 1–2; `DSA5104/Assignment 1 Reference Answer.pdf`, pp. 1–2 | Six-attribute example: candidate keys (A1), dependency preservation (A2). XQuery: nested element filter (B1), existential self-join (B2), counts including empty groups (B3). |
 | X1 | `DSA5104/Lec9_XML-1.pdf`, pp. 33–34, 37–50, 52–59, 64–67 | Namespace, DTD/XSD syntax and scoped identity constraints. |
 | X2 | `DSA5104/Lec10_XML-2.pdf`, pp. 1–34, 39–49; `DSA5104/Lec9_Kahoot questions_note_XML.pdf`, pp. 1–4; `DSA5104/Lec10_Kahoot_XPath_XQuery .pdf`, pp. 1–2 | Navigation, FLWOR, comparisons, processing/storage and exam traps. |
 | M1 | `DSA5104/Lec11_Mongo.pdf`, p. 7, pp. 40–77, 83–95, 96–118 | Lecture CAP framing, CRUD/arrays, aggregation, indexes and modeling. |
