@@ -375,7 +375,7 @@ SELECT * FROM Reach;
 \topic{07}{CONDITIONAL AGGREGATION}
 % Source: Project 1 Q5; thresholds are explicit example inputs.
 \when{Classify rows or aggregate only rows satisfying a condition.}
-\pattern{Classify, then group}
+\pattern{Classify with CASE, then GROUP BY}
 Sales(price): non-NULL numeric prices.
 \begin{lstlisting}
 SELECT CASE
@@ -434,7 +434,7 @@ score DESC & ROW\_NUMBER & RANK & DENSE\_RANK\\
 90 & 1 & 1 & 1\\90 & 2 & 1 & 1\\80 & 3 & 3 & 2\\70 & 4 & 4 & 3
 \end{tabular}\end{center}
 \trap{Do not add a unique id to the ranking order when ties must stay tied. Only final ORDER BY orders output; window ORDER BY controls calculation. RANK leaves gaps after ties.}
-\pattern{Aggregate first, rank second}
+\pattern{Aggregate, rank, then filter}
 Sales(state,make): one row per sale.
 \begin{lstlisting}
 WITH G AS (
@@ -444,8 +444,10 @@ WITH G AS (
  SELECT G.*,DENSE_RANK() OVER (
   PARTITION BY state ORDER BY n DESC) AS rk FROM G
 )
-SELECT state,make,n FROM Ranked WHERE rk=1;
+SELECT state,make,n FROM Ranked WHERE rk=1
+ORDER BY state,n DESC,make;
 \end{lstlisting}
+Aggregate $\to$ window rank $\to$ outer filter $\to$ final ORDER BY/LIMIT.
 \ex{CA counts Ford=2,Toyota=2,Honda=1: both Ford/Toyota rank 1. Rank grouped counts, not individual sales.}
 Same-block shorthand inside a grouped SELECT:
 \begin{lstlisting}
@@ -838,9 +840,9 @@ Assume university has department*(@id) and course*(@dept). Insert inside its \sq
 </xs:keyref>
 \end{lstlisting}
 \par\begin{tabular}{@{}ll@{}}
-\sql{xs:unique} & unique; missing fields allowed\\
-\sql{xs:key} & unique and required values\\
-\sql{xs:keyref} & refers to declared key/unique\\
+\sql{xs:unique} & only complete tuples must be unique\\
+\sql{xs:key} & require all fields and unique tuples\\
+\sql{xs:keyref} & complete tuples must match key/unique\\
 \sql{xs:selector} & selects constrained elements\\
 \sql{xs:field} & selects each element's key fields
 \end{tabular}\par
@@ -919,7 +921,7 @@ return <MuseumCount MID="{$m/@MID}">
 </MuseumCount>
 \end{lstlisting}
 Loop over museums to retain zero-artwork groups; their count is 0.
-\pattern{Join collections}
+\pattern{Join entity collections}
 Independent schema: university contains course*, instructor*, teaches*; query fields below are singleton children, no namespaces.
 \begin{lstlisting}[style=Plaincode]
 let $u := doc("university.xml")/university
@@ -930,8 +932,8 @@ where $c/course_id = $t/course_id
   and $i/ID = $t/ID
 return <result>{$c, $i}</result>
 \end{lstlisting}
-Multiple for bindings form combinations; where applies join conditions. Preserve the required output multiplicity.
-\pattern{Group values, then sort}
+Multiple for bindings form combinations. where filters them. Each matching combination emits one result.
+\pattern{Group by distinct values, then sort}
 \begin{lstlisting}[style=Plaincode]
 let $u := doc("university.xml")/university
 for $d in distinct-values($u/course/dept)
@@ -979,14 +981,14 @@ db.c.deleteOne({a:4}); db.c.deleteMany({a:{$lt:0}});
 \end{lstlisting}
 \key{Replacement / upsert / array updates}
 \begin{lstlisting}[style=Plaincode]
-db.c.replaceOne({name:"Alice"},
+db.c.replaceOne({_id:1},
  {name:"Alice",age:30},{upsert:true});
 db.sales.updateOne({"items.quantity":15},
  {$set:{"items.$.quantity":55}});
 db.sales.updateMany({},{$set:{"items.$[i].flag":true}},
  {arrayFilters:[{"i.quantity":{$gte:3}}]});
 \end{lstlisting}
-updateOne modifies matching fields through update operators; replaceOne replaces the document except immutable \sql{_id} (retained if omitted). upsert:true inserts if no document matches. Replacement documents do not use \sql{$set/$inc}.
+\sql{$set} updates specified fields. \sql{replaceOne()} replaces the document and keeps its immutable \sql{_id}. Omitted fields are removed except \sql{_id}. \sql{upsert:true} inserts on no match. Use a plain replacement document without update operators.
 \par\begin{tabular}{@{}ll@{}}
 \sql{$} & first query-matching array element\\
 \sql{$[]} & all array elements\\
@@ -1049,7 +1051,13 @@ SQL mapping: FROM=collection, WHERE=\sql{$match} before \sql{$group}, GROUP BY=\
 {$merge:{into:"result",on:"_id",
  whenMatched:"merge",whenNotMatched:"insert"}}
 \end{lstlisting}
-\sql{$count} counts pipeline documents (empty input gives no result document); \sql{$out} writes/replaces the target collection; \sql{$merge} incorporates results into the target. Pipeline \sql{$set} adds/modifies fields (alias of \sql{$addFields}).
+\par\begin{tabular}{@{}ll@{}}
+\textbf{Stage} & \textbf{Effect}\\
+\sql{$count} & Count pipeline docs (empty: no doc)\\
+\sql{$out} & Create or replace target collection\\
+\sql{$merge} & Merge into target by matching key
+\end{tabular}\par
+Pipeline \sql{$set} adds/modifies fields (alias of \sql{$addFields}).
 \trap{\sql{$out} or \sql{$merge} must be the last stage; choose the required output action. Ordinary aggregation transforms its result without changing source documents unless a write-output stage is used.}
 \key{Single-purpose aggregation}
 \begin{lstlisting}[style=Plaincode]
@@ -1189,10 +1197,11 @@ $n$=input count; $m$=other RDD count; $k_i$=flatMap outputs from input $i$; $K$=
 \sql{first()/take(k)} & first element / at most k\\
 \sql{takeOrdered(k)} & smallest k by optional key\\
 \sql{reduce} & one aggregate value\\
+\sql{fold(zero,op)} & aggregate from a neutral zero\\
 \sql{countByKey} & counts per key at driver\\
 \sql{saveAsTextFile} & write output files
 \end{tabular}\par
-k=nonnegative integer limit. collect can exhaust driver memory. first/reduce error on empty input; take/takeOrdered return up to k elements. Distributed reduce needs an associative, commutative operation for order-independent results.
+k=nonnegative integer limit. collect can exhaust driver memory. take/takeOrdered return up to k elements. first/reduce fail on empty input. fold uses a neutral zero per partition and returns zero on empty input. Use an associative, commutative op for order-independent reduce/fold.
 \pattern{take versus takeOrdered}
 \begin{lstlisting}[style=Plaincode,language=Python]
 r = sc.parallelize([5,1,3,2])
@@ -1202,6 +1211,7 @@ r.takeOrdered(2)            # [1,2]
 r.takeOrdered(2, key=lambda x:-x)  # [5,3]
 r.count()                   # 4
 r.reduce(lambda a,b:a+b)     # 11
+sc.emptyRDD().fold(0, lambda a,b:a+b) # 0
 \end{lstlisting}
 \trap{take(k) reads the first k elements; it is not top-K by value. takeOrdered(k) selects the smallest by its key; a negative numeric key gives largest values first.}
 \ex{RDD r holds [('a',1),('b',2),('a',3)]. map(lambda kv:kv[1]) gives [1,2,3]; filter(lambda kv:kv[1]>1) gives [('b',2),('a',3)]; groupByKey gives a:[1,3], b:[2] (iterables, order unspecified); reduceByKey(+) gives a:4,b:2. r.count()=3; reduced.count()=2.}
@@ -1215,7 +1225,7 @@ out = counts.collect()
 \end{lstlisting}
 If notes.txt has lines ['a b','a']: flatMap gives a,b,a; map gives (a,1),(b,1),(a,1); reduceByKey gives a:2,b:1.
 \key{RULE: dependencies / shuffle}
-Narrow: each child partition depends on limited parent partitions (map/filter need no shuffle). Wide: redistributes data, typically by shuffle. reduceByKey combines locally before shuffle; groupByKey groups values. Prefer reduceByKey for associative/commutative aggregation. A compatible existing partitioner may avoid a new shuffle.
+Narrow: map/filter stay within input partitions. Wide: groupByKey/reduceByKey typically shuffle by key. A compatible partitioner can avoid a new shuffle. For associative, commutative aggregation, prefer reduceByKey for its local combine before shuffle.
 \key{MapReduce / DataFrame}
 MapReduce: input $\to$ map $\to$ shuffle/group $\to$ reduce. DataFrame example: x.csv has a header with a name column.
 \begin{lstlisting}[style=Plaincode,language=Python]
