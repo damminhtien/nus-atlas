@@ -594,7 +594,7 @@ On parent DELETE or referenced-key UPDATE; FK=child foreign key.
 \sql{RESTRICT} & Reject if referenced & Reject if referenced\\
 \sql{NO ACTION} & Same as RESTRICT & Same as RESTRICT
 \end{tabular}\endgroup\par
-\cond{SET NULL needs nullable FK columns. InnoDB checks RESTRICT/NO ACTION immediately; omitted actions default to NO ACTION.}
+\cond{SET NULL: all FK columns nullable. InnoDB: RESTRICT/NO ACTION immediate; default NO ACTION.}
 Self-references are allowed; InnoDB treats self-referential \sql{ON UPDATE CASCADE} / \sql{ON UPDATE SET NULL} as RESTRICT.
 \begin{lstlisting}
 INSERT INTO Child(id,score) VALUES(1,75),(2,90);
@@ -606,7 +606,7 @@ ALTER TABLE Child ADD COLUMN note VARCHAR(50);
 \end{lstlisting}
 \trap{UPDATE/DELETE without WHERE affects every row. Autocommit is normally on; use InnoDB for transactional writes. Trigger transaction behavior is in 10.}
 \key{Authorization}
-Roles group privileges; GRANT/REVOKE assign/remove privileges or roles. WITH GRANT OPTION permits regranting the privilege.
+Roles group privileges; GRANT assigns, REVOKE removes. WITH GRANT OPTION allows regranting privileges.
 % Source: user-supplied ordinary/materialized view comparison; W20.
 \key{Views: ordinary vs materialized}
 \par\begingroup\setlength{\tabcolsep}{1.4pt}
@@ -617,12 +617,22 @@ Evaluates query on read & Reads stored result\\
 No separate refresh & May need refresh/maintenance
 \end{tabular}\endgroup\par
 Simple ordinary views may be updatable; aggregate/grouped views generally are not. WITH CHECK OPTION keeps inserted/updated rows within the view predicate.
-\cond{Stored results may be stale until refreshed/maintained. MySQL 8.4 has no native materialized views; simulate with a table plus refresh logic.}
-\key{Transactions}
-ACID: atomicity, consistency, isolation, durability. COMMIT persists, ROLLBACK undoes uncommitted changes; MySQL DDL often causes implicit commit.
+\cond{Materialized results may be stale. MySQL 8.4: emulate with table + refresh (no native support).}
+% Source: user-supplied transaction/ACID summary; ordered statements matter (W21).
+\key{Transactions / ACID}
+Unit of work: ordered $T=(S_1,\ldots,S_n)$, with $S_i$ a SQL statement.
+\par\begingroup\setlength{\tabcolsep}{1.4pt}
+\begin{tabular}{@{}ll@{}}
+\textbf{Property} & \textbf{Meaning}\\
+Atomicity & All or nothing\\
+Consistency & Preserve database constraints\\
+Isolation & Concurrency follows isolation level\\
+Durability & Committed data persists per DBMS guarantees
+\end{tabular}\endgroup\par
+\sql{COMMIT} confirms the current transaction; \sql{ROLLBACK} undoes its uncommitted changes. MySQL DDL often causes implicit commit.
 \key{DBMS / storage / indexes}
-Schema=structure; instance=current rows; domain=allowed atomic values. Physical level stores bytes; logical level defines relations; view level exposes user-specific data. Physical data independence permits storage changes without logical-schema/application changes. DBMS coordinates integrity, concurrency, recovery, authorization and access.
-Query processor parses/optimizes/executes; storage manager handles files/buffers/transactions; catalog holds metadata/statistics. B+ tree indexes support equality/range/order; hash supports equality. Indexes trade faster reads for storage/write cost.
+Schema: structure; instance: current rows; domain: allowed atomic values. Levels: physical (storage), logical (relations), view (user perspectives). Physical data independence: change storage without changing logical schema/apps. DBMS handles integrity, concurrency, recovery, authorization/access.
+Query processor: parse/optimize/execute; storage manager: files/buffers/transactions; catalog: metadata/statistics. B+ tree indexes: equality/range/order; hash: equality. Indexes speed reads at storage/write cost.
 \begin{lstlisting}
 -- Employee has dept/email; db is the database name.
 CREATE INDEX idx_dept ON Employee(dept);

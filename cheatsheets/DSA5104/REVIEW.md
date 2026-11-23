@@ -18,6 +18,7 @@ retained.
 | NOT EXISTS recognition | Topic 05 maps no/none/has never to one anti-join and every/all to absence of violations, using its existing double-NOT-EXISTS template for required-item coverage. The universal-negation rule names a Boolean existence predicate; nullable comparison predicates have an explicit UNKNOWN policy. |
 | Foreign key actions | Topic 12 replaces the short action prose with an ON DELETE/ON UPDATE table scoped to InnoDB. SET NULL requires nullable FK columns; NO ACTION/RESTRICT are immediate. Separate Parent/Child DDL illustrates update cascading without the self-reference restriction, which is stated beside the table. |
 | View storage and refresh | Topic 12 replaces the two storage/refresh sentences with an ordinary/materialized view table. It distinguishes query evaluation from stored results, notes possible staleness until maintenance, and identifies MySQL 8.4's table-plus-refresh simulation rather than a native materialized view. |
+| Transactions and ACID | Topic 12 defines a transaction as an ordered sequence of SQL statements, expands the four ACID properties, and specifies current-transaction COMMIT/ROLLBACK behavior. Isolation and durability retain the DBMS guarantees qualification. Nearby prose is shortened to retain the two-page layout and existing fonts. |
 | Dead dataset results | Remove the S01--S08 match counts and the unexplained school ID. A--D are newly printed, complete input documents, not references to a file. |
 | Hidden schema assumptions | Give shared museum, Trip and Sale schemas. Local SQL schemas and lookup cardinality are stated beside their patterns. Flexible collection c is explicitly separate from the present-field Trip/Sale schemas. |
 | Misleading partial code | Distinguish syntax sketches, expression fragments and pipeline fragments from complete queries. Keep an implemented procedure lookup, a complete calculated-distance CTE, and a complete Validate/Derive/Audit trigger. |
@@ -106,6 +107,11 @@ printer test is claimed.
   changes, contrasts it with a stored result table, and refreshes that table.
   ENGINE and WITH CHECK OPTION are omitted for this portable read check; this
   is a table/refresh simulation, not a native materialized-view engine test.
+- SQLite fixtures check rollback to the pre-transaction state, committed values
+  after reopening a connection, rollback without undoing an earlier commit, and
+  explicit rollback after a constraint failure. Statement order is checked with
+  noncommuting updates. These are portable transaction checks, not InnoDB crash
+  recovery or isolation-level tests; W21 supplies the MySQL-specific semantics.
 - The six set-operator results are recomputed from the printed A/B bags with
   independent set/count calculations. SQLite checks UNION, UNION ALL, INTERSECT
   and EXCEPT; the two remaining ALL variants use multiset calculations, checked
@@ -125,7 +131,7 @@ printer test is claimed.
   aggregation example. Ten complete MongoDB JavaScript blocks pass syntax
   parsing; all five Python listings parse.
 - The RDD examples are recomputed with independent list/set calculations.
-  All 180 authored PDF math expressions, plus seven in the two study
+  All 182 authored PDF math expressions, plus seven in the two study
   companions, render with KaTeX in strict error mode.
 
 These checks do not execute MySQL procedure/trigger DDL, an XQuery engine,
