@@ -1,0 +1,105 @@
+# DSA5104 standalone-reference review
+
+The printable artifact is an exam reference for a new question. It must supply
+its own notation, schemas, assumptions, decision rules and examples. Course
+question labels and dataset evidence belong in COVERAGE.md or source comments.
+The existing 26 topics, two A4 portrait pages and 5.1/4.8 pt body/code sizes are
+retained.
+
+## Editorial changes
+
+| Concern | Current treatment |
+| --- | --- |
+| External references | Replace printed Project/Assignment/Lecture labels with the task being solved. Preserve provenance in TeX comments and COVERAGE.md. Internal topic references remain usable on the same sheet. |
+| Question-specific rounding | A wording/order table chooses Rank then Round, Calculate then Round, Round then Filter, or Round then Sort. The 12.341/12.344 example supplies both input and rank results. |
+| SQL truth contexts | Topic 02 compares TRUE/FALSE/UNKNOWN for WHERE/HAVING and CHECK in one table; the UNKNOWN outcomes are bold. |
+| Dead dataset results | Remove the S01--S08 match counts and the unexplained school ID. A--D are newly printed, complete input documents, not references to a file. |
+| Hidden schema assumptions | Give shared museum, Trip and Sale schemas. Local SQL schemas and lookup cardinality are stated beside their patterns. Flexible collection c is explicitly separate from the present-field Trip/Sale schemas. |
+| Misleading partial code | Distinguish syntax sketches, expression fragments and pipeline fragments from complete queries. Keep an implemented procedure lookup, a complete calculated-distance CTE, and a complete Validate/Derive/Audit trigger. |
+| Transferability | Use generic Score/Audit and Point schemas, defined parameters, consistent quantity/duration/birthYear fields and explicit NULL/empty/tie/boundary rules. |
+| Retrieval and duplication | Use WHEN, RULE, PATTERN, TRAP, EXAMPLE and COND where useful. Keep full rounding decisions in 10 and pipeline-specific order in 22; full array matching in 23 and projections in 24. |
+
+The procedure and derived-field trigger were already implemented in the input
+revision. This pass generalizes their schemas and separates the lookup procedure
+from filtering a calculated column; it does not reintroduce a comment in place
+of the distance calculation.
+
+## Shared example contracts
+
+Topics 15--17 use the printed $R_0=ABCDEF$ and
+$F_0=\{A\to B,BC\to D,D\to A,C\to E,E\to F\}$. The constructed BCNF result is
+$D_{\mathrm{BCNF}}=\{AB,AD,CD,CE,EF\}$.
+$D_{\mathrm{test}}=\{AB,ACD,CE,EF\}$ is a separately given decomposition used to test
+dependency preservation. The two names prevent an accidental substitution.
+
+The museum tree specifies Museum*, Artwork*, required singleton children and
+attributes, and string-valued Artist/Title leaves. The three patterns therefore
+need no external DTD. The university join/group patterns state their separate,
+namespace-free schema and singleton child-field assumption.
+
+Trip uses userType, duration, birthYear and stationId. Sale uses saleId and an
+ordered, possibly empty items array of name/quantity/price objects. All those
+fields are present; the numeric fields and unique saleId are stated explicitly.
+The null/missing examples use scalar or absent x in the independent flexible
+collection c, with the array-element extension of the type check stated locally.
+
+For the four printed sales, quantity at least 3 AND price at least 80 gives:
+
+| Operation | Result |
+| --- | --- |
+| Independent dot conditions | A,B,C |
+| Same-item elemMatch | A,C |
+| Original item 0 qualifies | C |
+| Empty items | D |
+| Positional first match | A:[a1], C:[c0] |
+| Projection elemMatch with an empty document filter | A:[a1], C:[c0]; B/D remain without an items field |
+| All matches with filter, after document match | A:[a1,a2], C:[c0] |
+| Dotted projection after testing item 0 | C retains c0,c1 |
+
+## Acceptance criteria
+
+| Gate | Evidence required |
+| --- | --- |
+| Standalone | Rules and examples need only the printed sheet and the new problem's inputs. |
+| Source independence | Extracted PDF text contains no external question labels, Assignment/Project references, quiz names or slide citations. |
+| Defined notation | Bind important symbols, query schemas, predicates, parameters and initialized application contexts locally or by an explicit internal reference. |
+| Complete examples | Worked examples supply input, operation and result; snippets without full statements are labeled as templates/fragments. |
+| Transferability | SQL/XML/MongoDB patterns name their input shapes and allow names/literal filters to be replaced. |
+| Correctness | Recompute changed SQL, FD, XML, MongoDB and RDD examples; validate authored math. |
+| Edge cases | Check NULL, empty input, duplicates, ties and numeric boundaries relevant to each pattern. |
+| Retrievability | Task-oriented headings and role labels identify when to use the pattern. |
+| No dead data | No unexplained historical IDs or results requiring an absent dataset. |
+| No misleading code | The distance expression and derived attribute are implemented; generic sketches and stage fragments are identified. |
+| Information density | Avoid duplicated paragraphs while keeping short local reminders necessary to interpret syntax. |
+| Print readability | Two A4 pages; unchanged fonts; no clipped/overlapping text, broken symbols or overfull boxes in the inspected render. |
+
+The print check is a digital preflight and visual inspection; no physical
+printer test is claimed.
+
+## Current fixture checks
+
+- SQLite executes the current aggregate/rank and classification queries, the
+  lookup/filter body and the full Point-distance CTE with registered math
+  functions. Checks include NULL anti-joins, raw/rounded ties, price cutoffs,
+  missing coordinates, radius boundaries and final distance ordering.
+- The trigger's actual CASE and validation predicate cover NULL, 1, 49, 50, 99
+  and invalid -1/0/100. Separate transitions check category-only repair, changed
+  scores and NULL-safe auditing; derivation precedes the conditional audit.
+- Exhaustive subsets recover the three shared candidate keys; projected
+  closures verify all five BCNF fragments and the failed BC-to-D preservation
+  check for the separately given decomposition. The legal lossy instance
+  produces exactly two spurious tuples.
+- Local XML fixtures check museum Title filtering, one output per qualifying
+  parent and zero-artwork groups. lxml validates the DTD/XSD and checks typed ID
+  resolution, IDREFS and the default CDATA attribute.
+- Direct calculations on the four printed sales reproduce every matching and
+  projection result above. A three-trip fixture supplies all inputs for the
+  aggregation example. Ten complete MongoDB JavaScript blocks pass syntax
+  parsing; all five Python listings parse.
+- The RDD examples are recomputed with independent list/set calculations.
+  All 165 authored PDF math expressions, plus seven in the two study
+  companions, render with KaTeX in strict error mode.
+
+These checks do not execute MySQL procedure/trigger DDL, an XQuery engine,
+MongoDB or a Spark cluster. SQLite checks portable SQL behavior; the other
+worked results are independently recomputed from the displayed inputs.

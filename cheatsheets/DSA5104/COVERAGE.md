@@ -1,9 +1,16 @@
-# DSA5104 gap-review coverage
+# DSA5104 study-reference coverage
 
-All 41 change groups in the initial review and all 29 follow-up items are covered
-below. Topic numbers
-refer to the revised two-page cheatsheet. Part I is on page 1 and Part II is on
-page 2. Body/code sizes remain 5.1/4.8 pt; this revision does not reduce them.
+This is the maintenance/source companion, kept outside the printable reference.
+The historical tables record the 41 initial requests and 29 follow-up requests
+that introduced the concepts. They describe those earlier revisions, including
+original question labels, field names and dataset checks.
+
+The current PDF expresses those concepts as standalone rules and templates.
+For example, its trigger now uses generic Score/Audit tables and two categories;
+its MongoDB matching example supplies all four A--D documents. Printed labels,
+old dataset IDs and question-dependent instructions have been removed.
+[REVIEW.md](REVIEW.md) records this editorial pass and its acceptance checks.
+Part I remains on page 1, Part II on page 2; body/code sizes remain 5.1/4.8 pt.
 
 ## Schema refinement: 7/7
 
@@ -71,10 +78,10 @@ page 2. Body/code sizes remain 5.1/4.8 pt; this revision does not reduce them.
 | 40 | Python DB access | 13 | Review: connection/cursor roles, parameter binding, explicit write commit, correctly indented PyMySQL and pandas/SQLAlchemy examples. |
 | 41 | Correct mysqli_query return types | 13 | W4: result-producing queries return mysqli_result, other successes true, failures false or exceptions depending on reporting mode. |
 
-## Follow-up PDF review: 29/29
+## Historical follow-up PDF review: 29/29
 
-The follow-up preserves the 26 topics and the body/code sizes. XML/DTD now uses
-the end of page 2 column 1; XSD continues in column 2. No topics were removed.
+That revision preserved the 26 topics and body/code sizes. XML/DTD used the end
+of page 2 column 1; XSD continued in column 2. These positions remain unchanged.
 
 | Item | Priority | Topic | Implemented correction or addition |
 | --- | --- | --- | --- |
@@ -145,8 +152,12 @@ file pages; printed slide numbers can differ, especially in Lec11/Lec12.
 - W9: [PySpark RDD.takeOrdered](https://spark.apache.org/docs/latest/api/python/reference/api/pyspark.RDD.takeOrdered.html) supports ordering by an optional key before selecting results.
 - W10: [Spark NarrowDependency](https://spark.apache.org/docs/latest/api/java/org/apache/spark/NarrowDependency.html) defines limited parent dependencies for each child partition.
 - W11: MongoDB's [countDocuments](https://www.mongodb.com/docs/manual/reference/method/db.collection.countDocuments/), [distinct](https://www.mongodb.com/docs/manual/reference/method/db.collection.distinct/) and [estimatedDocumentCount](https://www.mongodb.com/docs/manual/reference/method/db.collection.estimatedDocumentCount/) define filtered counts, unique field values and metadata estimates.
+- W12: [MySQL SELECT INTO](https://dev.mysql.com/doc/refman/8.4/en/select-into.html) defines the one-row lookup, unchanged variables on no row, and the multiple-row error.
+- W13: [MongoDB elemMatch projection](https://www.mongodb.com/docs/manual/reference/operator/projection/elemmatch/) returns the first matching array element and omits the array field when no element matches.
+- W14: [MongoDB replica-set elections](https://www.mongodb.com/docs/manual/core/replica-set-elections/) explains majority voting, step-down during a partition, and configured secondary reads.
+- W15: [W3C XQuery value comparisons](https://www.w3.org/TR/xquery-31/#id-value-comparisons) specifies operand cardinality after atomization and the empty-sequence result.
 
-## Validation scope
+## Previous revision's validation record
 
 - pdfLaTeX compilation: two A4 portrait pages; no overfull/underfull boxes. Both pages rendered with Poppler and inspected by column.
 - All 144 authored math expressions render with KaTeX in strict error mode, in addition to their LaTeX PDF rendering. MongoDB operators are checked as code, not counted as math.
