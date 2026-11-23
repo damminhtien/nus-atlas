@@ -263,15 +263,15 @@ DATE_FORMAT(dt,'%Y-%m'); EXTRACT(YEAR FROM dt)
 \pattern{Parse a known text format (fragments)}
 \begin{lstlisting}
 -- Tue Dec 16 2014 12:30:00 GMT-0800 (PST)
--- For strings of this shape, select February 2015:
-WHERE SUBSTRING(selling_date,5,3)='Feb'
-  AND SUBSTRING(selling_date,12,4)='2015'
--- Parse recorded local clock time; timezone not applied:
+-- Match the sample month and year (December 2014).
+WHERE SUBSTRING(selling_date,5,3)='Dec'
+  AND SUBSTRING(selling_date,12,4)='2014'
+-- Parse the local date/time. Ignore the zone suffix.
 STR_TO_DATE(LEFT(selling_date,24),
             '%a %b %d %Y %H:%i:%s')
 -- Sample above parses to 2014-12-16 12:30:00 (local).
 \end{lstlisting}
-\cond{UNSIGNED cast assumes valid nonnegative integer text. STR\_TO\_DATE's format must match the input; a mismatched/invalid value is not a valid parsed date.}
+\cond{UNSIGNED cast assumes valid nonnegative integer text. Match the STR\_TO\_DATE pattern to the input, including separators.}
 \trap{String order: \sql{'100' < '20'}; numeric order: $20<100$. For DATETIME use a half-open month interval; BETWEEN dates can omit most of the final day.}
 \end{topicblock}
 
@@ -481,7 +481,6 @@ SUM(x) OVER (ORDER BY day,id
 
 \begin{topicblock}
 \topic{10}{ROUNDING / STORED PROGRAMS}
-% Sources: P2.Q3/Q7/Q8 and A2.Q1.2. Printed rules are question-independent.
 \ruleline{Compare/rank at full precision, then round for display unless the question explicitly changes that order.}
 \par\begin{tabular}{@{}ll@{}}
 \textbf{Question wording} & \textbf{Order}\\
@@ -492,7 +491,7 @@ Sort displayed value & Round $\to$ Sort
 \end{tabular}\par
 \sql{100.0*(new-old)/NULLIF(old,0)}: percentage change of numeric new/old; old=0 gives NULL (undefined). Use the specified denominator/population.
 \ex{12.341 and 12.344 both round to 12.34 at 2 d.p. Raw DESC dense ranks are [2,1]; ranking rounded values gives [1,1].}
-\pattern{Procedure with a lookup parameter}
+\pattern{Procedure with lookup and filter}
 R(id PK,x), S(y): x/y numeric. CALL invokes a procedure (IN/OUT parameters); a function returns a scalar. DECLARE variables/cursors/handlers before statements.
 \begin{lstlisting}
 DELIMITER //
@@ -522,9 +521,8 @@ WITH D AS (
 SELECT * FROM D WHERE distance<=@radius_km
 ORDER BY distance,id;
 \end{lstlisting}
-% Source: Project 2 Q9; generalized from five safety bands to two categories.
 \pattern{Trigger: Validate $\to$ Derive $\to$ Audit}
-Score(id PK,score INT NULL,category); Audit(id,old\_v,new\_v). Allowed score: 1--99 or NULL; category is derived, never independently supplied.
+Score(id PK,score INT NULL,category); Audit(id,old\_v,new\_v). Allowed score: 1--99 or NULL. Derive category (e.g., a safety icon) from score.
 \begin{lstlisting}
 DELIMITER //
 CREATE TRIGGER tr BEFORE UPDATE ON Score FOR EACH ROW
@@ -536,7 +534,9 @@ BEGIN
  END IF;
  SET NEW.category = CASE
   WHEN NEW.score IS NULL THEN NULL
-  WHEN NEW.score<50 THEN 'Low' ELSE 'High' END;
+  WHEN NEW.score<50 THEN 'Low'
+  ELSE 'High'
+ END;
  IF NOT (OLD.score <=> NEW.score) THEN
   INSERT INTO Audit(id,old_v,new_v)
   VALUES(OLD.id,OLD.score,NEW.score);

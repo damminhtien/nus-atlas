@@ -13,6 +13,7 @@ retained.
 | --- | --- |
 | Task names | Use descriptive task names for printed examples. Topics 15 through 24 also use these names in the source. Internal topic references point to material on the same sheet. |
 | Exam templates | The supplied priorities are covered in Topics 07, 08, 17, 18, 20, 21, 22 and 26. Topic 08 names the query stages in order. Topic 22 compares the count and write stages. Topic 26 contrasts reduce with fold on empty input. |
+| Preprint checks | Topic 04 filters and parses the same December 2014 sample. Topic 10 shows its lookup and filter statements and assigns the derived field before the audit. DTD tokens and MongoDB slice fragments use literal syntax. |
 | Question-specific rounding | A wording/order table chooses Rank then Round, Calculate then Round, Round then Filter, or Round then Sort. The 12.341/12.344 example supplies both input and rank results. |
 | SQL truth contexts | Topic 02 defines TRUE/FALSE/UNKNOWN, groups six NULL comparison results in one table, and compares WHERE/HAVING with CHECK in another. NULL-safe equality is identified as MySQL syntax; the context table's UNKNOWN outcomes are bold. |
 | SQL set operators | Topic 01 replaces the short UNION/UNION ALL reminder with one six-operator table on complete A/B inputs. ALL multiplicity rules and the final-ORDER-BY condition accompany it. |
