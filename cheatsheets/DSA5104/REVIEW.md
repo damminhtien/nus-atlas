@@ -14,6 +14,7 @@ retained.
 | Question-specific rounding | A wording/order table chooses Rank then Round, Calculate then Round, Round then Filter, or Round then Sort. The 12.341/12.344 example supplies both input and rank results. |
 | SQL truth contexts | Topic 02 defines TRUE/FALSE/UNKNOWN, groups six NULL comparison results in one table, and compares WHERE/HAVING with CHECK in another. NULL-safe equality is identified as MySQL syntax; the context table's UNKNOWN outcomes are bold. |
 | SQL set operators | Topic 01 replaces the short UNION/UNION ALL reminder with one six-operator table on complete A/B inputs. ALL multiplicity rules and the final-ORDER-BY condition accompany it. |
+| SQL quantified predicates | Topic 05 consolidates EXISTS/NOT EXISTS/ANY/ALL into one table with TRUE conditions and empty-input results. Quantifier equations define vacuous truth; the NULL table retains only its nonempty cases. |
 | Dead dataset results | Remove the S01--S08 match counts and the unexplained school ID. A--D are newly printed, complete input documents, not references to a file. |
 | Hidden schema assumptions | Give shared museum, Trip and Sale schemas. Local SQL schemas and lookup cardinality are stated beside their patterns. Flexible collection c is explicitly separate from the present-field Trip/Sale schemas. |
 | Misleading partial code | Distinguish syntax sketches, expression fragments and pipeline fragments from complete queries. Keep an implemented procedure lookup, a complete calculated-distance CTE, and a complete Validate/Derive/Audit trigger. |
@@ -87,6 +88,9 @@ printer test is claimed.
   and the two MySQL null-safe examples through SQLite's equivalent IS operator.
   The MySQL syntax/semantics are checked against W17; WHERE fixtures retain only
   TRUE and discard FALSE/NULL.
+- EXISTS/NOT EXISTS are checked on empty input and NULL-valued rows in SQLite.
+  ANY/ALL results are recomputed from SQLite scalar comparisons under
+  three-valued OR/AND, including empty input and NULLs, and checked against W18.
 - The six set-operator results are recomputed from the printed A/B bags with
   independent set/count calculations. SQLite checks UNION, UNION ALL, INTERSECT
   and EXCEPT; the two remaining ALL variants use multiset calculations, checked
@@ -106,7 +110,7 @@ printer test is claimed.
   aggregation example. Ten complete MongoDB JavaScript blocks pass syntax
   parsing; all five Python listings parse.
 - The RDD examples are recomputed with independent list/set calculations.
-  All 172 authored PDF math expressions, plus seven in the two study
+  All 178 authored PDF math expressions, plus seven in the two study
   companions, render with KaTeX in strict error mode.
 
 These checks do not execute MySQL procedure/trigger DDL, an XQuery engine,

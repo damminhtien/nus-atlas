@@ -279,14 +279,27 @@ STR_TO_DATE(LEFT(selling_date,24),
 \begin{topicblock}
 \topic{05}{SUBQUERIES / DIVISION}
 \when{Scalar lookup, membership or "for every required item".}
-Scalar subquery: one column, at most one row; zero rows gives NULL, multiple rows is an error. EXISTS asks whether any row exists. A correlated subquery refers to an outer row. IN tests membership; \sql{= ANY} is IN.
-\key{RULE: ANY/ALL (U = UNKNOWN)}
+Scalar subquery: one column, at most one row; zero rows gives NULL, multiple rows is an error. A correlated subquery refers to an outer row. IN tests membership; \sql{= ANY} is IN.
+% Source: user-supplied predicate table and empty quantifiers; MySQL subqueries (W18).
+\pattern{Predicate shorthand}
+S is a subquery result; ANY/ALL use one column y comparable with x. EXISTS counts rows, even all-NULL rows.
+\par\begin{tabular}{@{}lll@{}}
+\textbf{Predicate} & \textbf{TRUE when} & \textbf{Empty S}\\
+\sql{EXISTS(S)} & S has a row & FALSE\\
+\sql{NOT EXISTS(S)} & S has no rows & TRUE\\
+\sql{x > ANY(S)} & some $y<x$ & FALSE\\
+\sql{x > ALL(S)} & every $y<x$ & TRUE
+\end{tabular}\par
+\key{Empty input / vacuous truth}
+For $S=\varnothing$ and any predicate $P$:
+$(\exists y\in S:P(y))=\mathrm{FALSE}$;
+$(\forall y\in S:P(y))=\mathrm{TRUE}$ (vacuous truth).
+\key{RULE: ANY/ALL with NULL (U = UNKNOWN)}
 ANY is OR, ALL is AND across comparisons. For \sql{5 > ANY/ALL (SELECT y FROM T)}, RHS lists the subquery's y values.
 \par\begin{tabular}{@{}lll@{}}
 \textbf{RHS values} & \textbf{ANY} & \textbf{ALL}\\
 3,NULL & TRUE & U\\
-8,NULL & U & FALSE\\
-empty & FALSE & TRUE
+8,NULL & U & FALSE
 \end{tabular}\par
 ANY: TRUE dominates U; ALL: FALSE dominates U.
 \trap{\sql{x > ALL (SELECT y FROM T)} is not generally equivalent to \sql{x > (SELECT MAX(y) FROM T)}. For [3,NULL], 5>ALL is U but 5>MAX is TRUE; for empty input ALL is TRUE, while MAX is NULL.}

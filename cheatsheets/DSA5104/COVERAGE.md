@@ -158,6 +158,7 @@ file pages; printed slide numbers can differ, especially in Lec11/Lec12.
 - W15: [W3C XQuery value comparisons](https://www.w3.org/TR/xquery-31/#id-value-comparisons) specifies operand cardinality after atomization and the empty-sequence result.
 - W16: MySQL's [set operations](https://dev.mysql.com/doc/refman/8.4/en/set-operations.html), [INTERSECT](https://dev.mysql.com/doc/refman/8.4/en/intersect.html) and [EXCEPT](https://dev.mysql.com/doc/refman/8.4/en/except.html) define DISTINCT/ALL behavior, compatible query columns and result ordering; Topic 01 uses the supplied A/B bags for the six-result table.
 - W17: MySQL's [comparison operators](https://dev.mysql.com/doc/refman/8.4/en/comparison-operators.html) and [working with NULL](https://dev.mysql.com/doc/refman/8.4/en/working-with-null.html) distinguish ordinary scalar comparisons, IS NULL tests and NULL-safe equality; Topic 02 consolidates the supplied six-case NULL table beside the existing truth-context table.
+- W18: MySQL's [EXISTS/NOT EXISTS](https://dev.mysql.com/doc/refman/8.4/en/exists-and-not-exists-subqueries.html), [ANY](https://dev.mysql.com/doc/refman/8.4/en/any-in-some-subqueries.html) and [ALL](https://dev.mysql.com/doc/refman/8.4/en/all-subqueries.html) define row existence, quantified comparisons and empty/NULL results; Topic 05 consolidates the supplied predicate table and empty-quantifier rules.
 
 ## Previous revision's validation record
 
