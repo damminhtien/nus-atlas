@@ -16,6 +16,7 @@ retained.
 | SQL set operators | Topic 01 replaces the short UNION/UNION ALL reminder with one six-operator table on complete A/B inputs. ALL multiplicity rules and the final-ORDER-BY condition accompany it. |
 | SQL quantified predicates | Topic 05 consolidates EXISTS/NOT EXISTS/ANY/ALL into one table with TRUE conditions and empty-input results. Quantifier equations define vacuous truth; the NULL table retains only its nonempty cases. |
 | NOT EXISTS recognition | Topic 05 maps no/none/has never to one anti-join and every/all to absence of violations, using its existing double-NOT-EXISTS template for required-item coverage. The universal-negation rule names a Boolean existence predicate; nullable comparison predicates have an explicit UNKNOWN policy. |
+| Foreign key actions | Topic 12 replaces the short action prose with an ON DELETE/ON UPDATE table scoped to InnoDB. SET NULL requires nullable FK columns; NO ACTION/RESTRICT are immediate. Separate Parent/Child DDL illustrates update cascading without the self-reference restriction, which is stated beside the table. |
 | Dead dataset results | Remove the S01--S08 match counts and the unexplained school ID. A--D are newly printed, complete input documents, not references to a file. |
 | Hidden schema assumptions | Give shared museum, Trip and Sale schemas. Local SQL schemas and lookup cardinality are stated beside their patterns. Flexible collection c is explicitly separate from the present-field Trip/Sale schemas. |
 | Misleading partial code | Distinguish syntax sketches, expression fragments and pipeline fragments from complete queries. Keep an implemented procedure lookup, a complete calculated-distance CTE, and a complete Validate/Derive/Audit trigger. |
@@ -95,6 +96,11 @@ printer test is claimed.
 - The existing double-NOT-EXISTS query is checked on full, partial and absent
   coverage, duplicate links/requirements and empty requirements. Nullable
   predicates verify the difference between NOT P and P IS NOT TRUE.
+- Parent/Child DDL is checked in SQLite after removing the MySQL ENGINE clause.
+  Isolated fixtures check DELETE and key UPDATE for all four listed actions,
+  including multiple matching children, an unrelated child and rejection while
+  referenced. InnoDB timing and self-reference restrictions are checked against
+  W19; these are not MySQL engine execution checks.
 - The six set-operator results are recomputed from the printed A/B bags with
   independent set/count calculations. SQLite checks UNION, UNION ALL, INTERSECT
   and EXCEPT; the two remaining ALL variants use multiset calculations, checked

@@ -568,20 +568,34 @@ $\pi_X(R)-\pi_X((\pi_X(R)\times S)-R)$.
 \when{Define integrity, permissions, transactions or relational storage.}
 \pattern{DDL and privilege statements}
 \begin{lstlisting}
+CREATE TABLE Parent(id INT PRIMARY KEY) ENGINE=InnoDB;
 CREATE TABLE Child(
  id INT PRIMARY KEY, parent_id INT,
  score DECIMAL(5,2) CHECK(score BETWEEN 0 AND 100),
  UNIQUE(parent_id,id),
- FOREIGN KEY(parent_id) REFERENCES Child(id)
+ FOREIGN KEY(parent_id) REFERENCES Parent(id)
  ON DELETE SET NULL ON UPDATE CASCADE
-);
+) ENGINE=InnoDB;
 CREATE VIEW Passing AS SELECT * FROM Child
  WHERE score>=50 WITH CHECK OPTION;
 GRANT SELECT,UPDATE ON db.Child TO 'u'@'localhost';
 GRANT SELECT ON db.Child TO 'v'@'localhost'
  WITH GRANT OPTION;
 \end{lstlisting}
-PK = unique + NOT NULL (possibly composite). MySQL UNIQUE allows multiple NULLs. The CHECK above allows NULL score (rule in 02). A foreign key may reference the same table; SET NULL requires nullable child columns; CASCADE propagates delete/update. Restrict/no action rejects a conflicting parent change.
+PK = unique + NOT NULL (possibly composite). MySQL UNIQUE allows multiple NULLs. The CHECK above allows NULL score (rule in 02).
+% Source: user-supplied referential-action table; MySQL/InnoDB rules (W19).
+\key{Foreign key actions (MySQL/InnoDB)}
+On parent DELETE or referenced-key UPDATE; FK=child foreign key.
+\par\begingroup\setlength{\tabcolsep}{1.4pt}
+\begin{tabular}{@{}lll@{}}
+\textbf{Action} & \textbf{ON DELETE} & \textbf{ON UPDATE}\\
+\sql{CASCADE} & Delete matching rows & Copy new key to FK\\
+\sql{SET NULL} & Set FK to NULL & Set FK to NULL\\
+\sql{RESTRICT} & Reject if referenced & Reject if referenced\\
+\sql{NO ACTION} & Same as RESTRICT & Same as RESTRICT
+\end{tabular}\endgroup\par
+\cond{SET NULL needs nullable FK columns. InnoDB checks RESTRICT/NO ACTION immediately; omitted actions default to NO ACTION.}
+Self-references are allowed; InnoDB treats self-referential \sql{ON UPDATE CASCADE} / \sql{ON UPDATE SET NULL} as RESTRICT.
 \begin{lstlisting}
 INSERT INTO Child(id,score) VALUES(1,75),(2,90);
 START TRANSACTION;
