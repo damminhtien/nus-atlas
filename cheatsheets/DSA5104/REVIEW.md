@@ -17,6 +17,7 @@ retained.
 | SQL quantified predicates | Topic 05 consolidates EXISTS/NOT EXISTS/ANY/ALL into one table with TRUE conditions and empty-input results. Quantifier equations define vacuous truth; the NULL table retains only its nonempty cases. |
 | NOT EXISTS recognition | Topic 05 maps no/none/has never to one anti-join and every/all to absence of violations, using its existing double-NOT-EXISTS template for required-item coverage. The universal-negation rule names a Boolean existence predicate; nullable comparison predicates have an explicit UNKNOWN policy. |
 | Foreign key actions | Topic 12 replaces the short action prose with an ON DELETE/ON UPDATE table scoped to InnoDB. SET NULL requires nullable FK columns; NO ACTION/RESTRICT are immediate. Separate Parent/Child DDL illustrates update cascading without the self-reference restriction, which is stated beside the table. |
+| View storage and refresh | Topic 12 replaces the two storage/refresh sentences with an ordinary/materialized view table. It distinguishes query evaluation from stored results, notes possible staleness until maintenance, and identifies MySQL 8.4's table-plus-refresh simulation rather than a native materialized view. |
 | Dead dataset results | Remove the S01--S08 match counts and the unexplained school ID. A--D are newly printed, complete input documents, not references to a file. |
 | Hidden schema assumptions | Give shared museum, Trip and Sale schemas. Local SQL schemas and lookup cardinality are stated beside their patterns. Flexible collection c is explicitly separate from the present-field Trip/Sale schemas. |
 | Misleading partial code | Distinguish syntax sketches, expression fragments and pipeline fragments from complete queries. Keep an implemented procedure lookup, a complete calculated-distance CTE, and a complete Validate/Derive/Audit trigger. |
@@ -101,6 +102,10 @@ printer test is claimed.
   including multiple matching children, an unrelated child and rejection while
   referenced. InnoDB timing and self-reference restrictions are checked against
   W19; these are not MySQL engine execution checks.
+- A SQLite fixture checks reads through the displayed Passing view after base-table
+  changes, contrasts it with a stored result table, and refreshes that table.
+  ENGINE and WITH CHECK OPTION are omitted for this portable read check; this
+  is a table/refresh simulation, not a native materialized-view engine test.
 - The six set-operator results are recomputed from the printed A/B bags with
   independent set/count calculations. SQLite checks UNION, UNION ALL, INTERSECT
   and EXCEPT; the two remaining ALL variants use multiset calculations, checked

@@ -605,9 +605,21 @@ DELETE FROM Child WHERE id=2;
 ALTER TABLE Child ADD COLUMN note VARCHAR(50);
 \end{lstlisting}
 \trap{UPDATE/DELETE without WHERE affects every row. Autocommit is normally on; use InnoDB for transactional writes. Trigger transaction behavior is in 10.}
-\key{Authorization / views / transactions}
-Roles group privileges; GRANT/REVOKE assign/remove privileges or roles. WITH GRANT OPTION permits regranting the privilege. A view stores a query; simple views may be updatable, aggregate/grouped views generally are not. WITH CHECK OPTION keeps inserted/updated rows within the view predicate.
-ACID: atomicity, consistency, isolation, durability. COMMIT persists, ROLLBACK undoes uncommitted changes; MySQL DDL often causes implicit commit. A materialized view stores results and needs refresh (MySQL: table plus refresh logic).
+\key{Authorization}
+Roles group privileges; GRANT/REVOKE assign/remove privileges or roles. WITH GRANT OPTION permits regranting the privilege.
+% Source: user-supplied ordinary/materialized view comparison; W20.
+\key{Views: ordinary vs materialized}
+\par\begingroup\setlength{\tabcolsep}{1.4pt}
+\begin{tabular}{@{}ll@{}}
+\textbf{Ordinary view} & \textbf{Materialized view}\\
+Stores query definition & Stores physical results\\
+Evaluates query on read & Reads stored result\\
+No separate refresh & May need refresh/maintenance
+\end{tabular}\endgroup\par
+Simple ordinary views may be updatable; aggregate/grouped views generally are not. WITH CHECK OPTION keeps inserted/updated rows within the view predicate.
+\cond{Stored results may be stale until refreshed/maintained. MySQL 8.4 has no native materialized views; simulate with a table plus refresh logic.}
+\key{Transactions}
+ACID: atomicity, consistency, isolation, durability. COMMIT persists, ROLLBACK undoes uncommitted changes; MySQL DDL often causes implicit commit.
 \key{DBMS / storage / indexes}
 Schema=structure; instance=current rows; domain=allowed atomic values. Physical level stores bytes; logical level defines relations; view level exposes user-specific data. Physical data independence permits storage changes without logical-schema/application changes. DBMS coordinates integrity, concurrency, recovery, authorization and access.
 Query processor parses/optimizes/executes; storage manager handles files/buffers/transactions; catalog holds metadata/statistics. B+ tree indexes support equality/range/order; hash supports equality. Indexes trade faster reads for storage/write cost.
