@@ -7,8 +7,8 @@ beside it.
 
 | File | Purpose |
 | --- | --- |
-| [cheatsheet.pdf](cheatsheet.pdf) | Print/use in an exam. |
-| [cheatsheet.tex](cheatsheet.tex) | Editable source; provenance comments do not print. |
+| [English PDF](cheatsheet.pdf) · [LaTeX source](cheatsheet.tex) | English exam reference. |
+| [PDF tiếng Việt](cheatsheet-vi.pdf) · [Mã nguồn LaTeX](cheatsheet-vi.tex) | Tra cứu bằng tiếng Việt. Giữ thuật ngữ chuyên ngành, code và công thức của bản tiếng Anh. |
 | [COVERAGE.md](COVERAGE.md) | Study/maintenance source map and historical gap-review evidence. |
 | [REVIEW.md](REVIEW.md) | Standalone-reference decisions, shared-example contracts and acceptance checks. |
 
@@ -22,15 +22,28 @@ Topic headers use 6.2 pt. Explicit column breaks preserve the topic order withou
 stretching text to fill a page. XML/DTD uses the end of page 2 column 1; XSD
 continues at the top of column 2.
 
-WHEN identifies the task; RULE gives the decision/algorithm; PATTERN labels
-queries, templates or fragments; TRAP marks exceptions; EXAMPLE supplies worked
-input/results; COND states a precondition. A topic uses only the roles it needs.
+| English label | Nhãn tiếng Việt | Purpose |
+| --- | --- | --- |
+| WHEN | DÙNG KHI | Identify the task. |
+| RULE | QUY TẮC | Find the decision rule or algorithm. |
+| PATTERN | MẪU | Find the query, template or code fragment. |
+| TRAP | LƯU Ý | Check exceptions and common mistakes. |
+| EXAMPLE | VÍ DỤ | Trace inputs and results. |
+| COND | ĐIỀU KIỆN | Check preconditions. |
 
-Build with pdfLaTeX from this directory:
+Build the English edition with pdfLaTeX from this directory:
 
     latexmk -pdf -interaction=nonstopmode -halt-on-error -file-line-error \
       -outdir=../../tmp/pdfs/DSA5104 cheatsheet.tex
     cp ../../tmp/pdfs/DSA5104/cheatsheet.pdf cheatsheet.pdf
+
+Build the Vietnamese edition with XeLaTeX. It uses the TeX Live fonts Source
+Sans 3, Inconsolata and STIX Two Math. When editing the content, apply substantive
+updates to both editions so their examples and rules stay in sync.
+
+    latexmk -xelatex -interaction=nonstopmode -halt-on-error -file-line-error \
+      -outdir=../../tmp/pdfs/DSA5104 cheatsheet-vi.tex
+    cp ../../tmp/pdfs/DSA5104/cheatsheet-vi.pdf cheatsheet-vi.pdf
 
 Before replacing the compiled copy, check two A4 pages with pdfinfo, render both
 with pdftoppm and inspect every column, especially the last lines. Extract text
