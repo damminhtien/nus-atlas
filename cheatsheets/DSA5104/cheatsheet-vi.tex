@@ -770,6 +770,7 @@ Phản ví dụ cho dòng cuối. $F=\{A\to B,B\to C,A\to C\}$, tách AB/BC. Suy
 \begin{topicblock}
 \topic{18}{XML / DTD / XSD}
 Well-formed cần một root element, tag lồng đúng và phân biệt hoa thường, attribute có dấu nháy, ký tự dành riêng được escape. Valid còn phải thỏa DTD/XSD. Attribute có parent và không có child. CDATA giữ nguyên văn bản. Default namespace áp dụng cho element không prefix, bỏ qua attribute không prefix.
+Schema linh hoạt vẫn validate element tùy chọn hoặc lặp. Lặp dữ liệu có thể gây update anomaly.
 \pattern{Đoạn XML và khai báo DTD}
 \begin{lstlisting}[style=Plaincode,language=XML]
 <course xmlns="urn:uni" id="C1">
@@ -808,7 +809,7 @@ DOM là cây trong bộ nhớ, SAX dùng event. Publishing từ relational $\to$
   <xs:attribute name="id" type="xs:ID" use="required"/>
   </xs:complexType></xs:element></xs:schema>
 \end{lstlisting}
-XSD là XML có kiểu. \sql{name} đặt tên, \sql{type} chỉ kiểu, \sql{ref} trỏ tới global element. min/maxOccurs mặc định 1. Attribute mặc định tùy chọn. sequence giữ thứ tự child, choice chọn một nhánh. \sql{targetNamespace} đặt namespace. \sql{elementFormDefault="qualified"} áp namespace cho local element.
+XSD định kiểu XML. \sql{name} đặt tên, \sql{type} chỉ kiểu, \sql{ref} trỏ global element. Mặc định min/maxOccurs=1, attribute tùy chọn. sequence xếp thứ tự child, choice chọn một nhánh. \sql{targetNamespace} đặt namespace. \sql{elementFormDefault="qualified"} áp namespace cho local element.
 \pattern{Khai báo identity constraint trong XSD}
 university có department*(@id) và course*(@dept). Đặt phần sau trong \sql{xs:element} tương ứng, sau complexType. selector/field dùng đường dẫn tương đối. Mẫu không có target namespace.
 \begin{lstlisting}[style=Plaincode,language=XML]
@@ -823,7 +824,7 @@ university có department*(@id) và course*(@dept). Đặt phần sau trong \sql
 \sql{xs:key} & đủ mọi field và tuple duy nhất\\
 \sql{xs:keyref} & tuple đủ field phải khớp key/unique\\
 \sql{xs:selector} & chọn element chịu constraint\\
-\sql{xs:field} & chọn field làm key trong mỗi element
+\sql{xs:field} & chọn node cung cấp giá trị key
 \end{tabular}\par
 \trap{IDREF dò ID có thật. keyref trỏ tới key/unique đã khai báo. Nếu có target namespace, bind prefix cho selector/refer. Selector không prefix lấy element không namespace.}
 \end{topicblock}
@@ -834,8 +835,8 @@ university có department*(@id) và course*(@dept). Đặt phần sau trong \sql
 \sql{/} là document node, \sql{/r} là root element r. \sql{x} hoặc \sql{./x} lấy child x. \sql{//x} tìm descendant x từ gốc tài liệu, \sql{.//x} tìm từ context hiện tại. \sql{..} lên parent, \sql{@id} lấy attribute. \sql{*} lấy child element, \sql{@*} lấy mọi attribute. \sql{text()} lấy child dạng text, \sql{node()} lấy mọi child node. \sql{string(x)} lấy chuỗi, \sql{count(x)} đếm node đã chọn.
 \ex{Cây \sql{<r><g><x id="1"/></g><x id="2"/></r>}. Tại g, .//x lấy id1, //x lấy id1,id2, ../x và /r/x lấy id2. \sql{@id/text()} rỗng vì attribute không có child text. \sql{string(@id)} lấy giá trị.}
 \key{Vị trí trong XPath (P là predicate)}
-\sql{x[1]} lấy child x đầu, \sql{x[last()]} lấy cuối, \sql{x[position()=2]} lấy thứ hai. XPath đếm từ 1, Mongo array index đếm từ 0.
-\sql{[credits]} kiểm tra có child, \sql{[credits>0]} kiểm tra giá trị. \sql{x[P][1]} lọc rồi lấy đầu, \sql{x[1][P]} lấy đầu rồi lọc. \sql{(//x)[1]} lấy x đầu toàn bộ, \sql{//x[1]} lấy child x đầu của mỗi parent.
+\sql{[n]} = \sql{[position()=n]} nếu n là số. \sql{x[1]} lấy child x đầu, \sql{x[last()]} lấy cuối. XPath đếm từ 1, Mongo array index từ 0.
+Predicate kiểu node đúng khi có node. \sql{[credits]} xét sự tồn tại, \sql{[credits>0]} xét giá trị. \sql{x[P][1]} lọc rồi lấy đầu, \sql{x[1][P]} lấy đầu rồi lọc. \sql{(//x)[1]} lấy x đầu toàn bộ, \sql{//x[1]} lấy x đầu theo từng parent.
 \ex{Credits [0,3]. course[credits] vẫn lấy khóa 0 credit. course[credits>0][1] lấy khóa thứ hai, course[1][credits>0] rỗng. Với default namespace, bind và dùng prefix trong XPath/XQuery, ví dụ u:course.}
 \key{Tra ID, union và axes}
 \begin{lstlisting}[style=Plaincode]
@@ -857,14 +858,18 @@ id() tìm element theo ID/IDREF(S) khi parser biết kiểu ID. Union bỏ node 
 \begin{topicblock}
 \topic{20}{XQUERY VÀ PHÉP SO SÁNH}
 \when{Lọc hoặc join XML, gom nhóm và dựng cây kết quả.}
-\ruleline{FLWOR dùng for cho từng item, let cho cả sequence, where để lọc, order by để sắp, return để trả value/node. Trong direct constructor, ngoặc nhọn tính biểu thức, ngoài ngoặc \sql{$x} là text nguyên văn.}
+\ruleline{FLWOR: for duyệt item, let gán sequence, where lọc, order by sắp xếp, return trả value/node. Trong direct constructor, ngoặc nhọn tính biểu thức. Ngoài ngoặc, \sql{$x} là text.}
 \begin{lstlisting}[style=Plaincode]
 for $x in (2,4) return count($x)  (: (1,1) :)
 let $x := (2,4) return count($x)  (: 2 :)
+for $x in () return count($x)    (: () :)
+let $x := () return count($x)    (: 0 :)
 \end{lstlisting}
 General comparison \sql{= != < > <= >=} tìm cặp khớp sau atomization. Value comparison \sql{eq ne lt gt le ge} nhận tối đa một item mỗi vế sau atomization. Một vế rỗng trả rỗng, nhiều item báo lỗi. \sql{is} so node identity, không so text.
 \ex{(10,1)=10 và (10,1)!=10 đều true, còn not((10,1)=10) là false. General != không phủ định general =. (10,1) eq 10 báo lỗi.}
-\sql{some $x in S satisfies P} cần ít nhất một true, \sql{every $x in S satisfies P} cần mọi item true. S là sequence, P là Boolean theo x. S rỗng thì some=false, every=true, count=0, exists=false, empty=true.
+\sql{some $x in S satisfies P} cần ít nhất một item thỏa, \sql{every $x in S satisfies P} cần mọi item thỏa. S là sequence, P là Boolean theo x. S rỗng: some/exists=false, every/empty=true, count=0.
+\key{ALL và ít nhất một item}\par
+\mbox{\sql{exists(S) and (every $x in S satisfies P)}}.
 \key{Schema chung cho ba mẫu museum}
 Không dùng namespace. * nghĩa là 0 trở lên. Các field còn lại có đúng một bản mỗi parent.
 \begin{lstlisting}[style=Plaincode]
@@ -897,7 +902,7 @@ return <MuseumCount MID="{$m/@MID}">
   $m/Artworks/Artwork)}</TotalArtworks>
 </MuseumCount>
 \end{lstlisting}
-Duyệt theo museum để giữ museum không có artwork, với count bằng 0.
+Duyệt theo parent (museum) để giữ nhóm rỗng với count bằng 0.
 \pattern{Join các entity collection}
 Schema riêng có university chứa course*, instructor*, teaches*. Các field được truy vấn là singleton child, không có namespace.
 \begin{lstlisting}[style=Plaincode]
@@ -907,7 +912,7 @@ for $c in $u/course,
 where $c/course_id = $t/course_id and $i/ID = $t/ID
 return <result>{$c, $i}</result>
 \end{lstlisting}
-Nhiều biến for tạo tổ hợp. where lọc tổ hợp. Mỗi tổ hợp khớp cho một kết quả.
+Nhiều for tạo tổ hợp. Mỗi tổ hợp khớp cho một kết quả nên parent có thể lặp.
 \pattern{Gom theo giá trị distinct rồi sort}
 \begin{lstlisting}[style=Plaincode]
 let $u := doc("university.xml")/university
@@ -918,8 +923,8 @@ return <department name="{$d}">
  <total>{count($courses)}</total>{$courses}
 </department>
 \end{lstlisting}
-count/sum/avg/min/max là aggregate. distinct-values bỏ giá trị atomic trùng, data atomize, string lấy chuỗi. exists/empty kiểm tra sequence, contains kiểm tra chuỗi con.
-Với element sequence \sql{$items}, \sql{count($items)} đếm item, \sql{count(distinct-values($items/Title))} đếm Title phân biệt.
+count/sum/avg/min/max là aggregate. distinct-values bỏ giá trị atomic trùng. data atomize, string lấy chuỗi, exists/empty xét sequence, contains xét chuỗi con.
+Với \sql{$items} là sequence element, \sql{count($items)} đếm item, \sql{count(distinct-values($items/Title))} đếm Title phân biệt.
 \pattern{Ví dụ computed constructor}
 \begin{lstlisting}[style=Plaincode]
 element course { attribute id {"C1"},

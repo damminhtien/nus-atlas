@@ -769,6 +769,7 @@ The last shortcut can fail even when DP holds: $F=\{A\to B,B\to C,A\to C\}$, fra
 \begin{topicblock}
 \topic{18}{XML / DTD / XSD}
 Well-formed: one root element, matching/case-sensitive nested tags, quoted attribute values, escaped reserved characters. Valid: additionally conforms to DTD/XSD. Attributes have a parent, no child nodes; CDATA text is literal (not parsed markup). Default namespace applies to unprefixed elements, not unprefixed attributes.
+Flexible schemas can validate optional/repeated elements. Duplicated facts risk update anomalies.
 \pattern{XML fragment, then DTD declarations}
 \begin{lstlisting}[style=Plaincode,language=XML]
 <course xmlns="urn:uni" id="C1">
@@ -822,7 +823,7 @@ Assume university has department*(@id) and course*(@dept). Insert inside its \sq
 \sql{xs:key} & require all fields and unique tuples\\
 \sql{xs:keyref} & complete tuples must match key/unique\\
 \sql{xs:selector} & selects constrained elements\\
-\sql{xs:field} & selects each element's key fields
+\sql{xs:field} & selects nodes supplying key values
 \end{tabular}\par
 \trap{IDREF checks ID existence; keyref targets a declared key/unique. With a target namespace, bind prefixes in selectors/refer; unprefixed selectors select unqualified elements.}
 \end{topicblock}
@@ -833,8 +834,8 @@ Assume university has department*(@id) and course*(@dept). Insert inside its \sq
 \sql{/}: document node; \sql{/r}: root element r. \sql{x} or \sql{./x}: child x; \sql{//x}: from document root, descendant x; \sql{.//x}: descendant x of current context; \sql{..}: parent; \sql{@id}: attribute. \sql{*} element children, \sql{@*} all attributes; \sql{text()} text children; \sql{node()} any child node. \sql{string(x)} string value; \sql{count(x)} number of selected nodes.
 \ex{Tree: \sql{<r><g><x id="1"/></g><x id="2"/></r>}. Context g: .//x selects id1; //x selects id1,id2; ../x and /r/x select id2. \sql{@id/text()} is empty (attributes have no text children); \sql{string(@id)} returns the value.}
 \key{Positions (P = XPath predicate)}
-\sql{x[1]} first child x; \sql{x[last()]} last; \sql{x[position()=2]} second. Positions start at 1 (Mongo array indexes start at 0).
-\sql{[credits]} tests child existence, not positive credits. \sql{[credits>0]} tests a value. \sql{x[P][1]} filters then first; \sql{x[1][P]} first then filters. \sql{(//x)[1]} first globally; \sql{//x[1]} first x child for each parent.
+\sql{[n]} = \sql{[position()=n]} for numeric n. \sql{x[1]} first child x; \sql{x[last()]} last. Positions start at 1 (Mongo array indexes at 0).
+A node-valued predicate passes iff nonempty: \sql{[credits]} tests existence, \sql{[credits>0]} tests a value. \sql{x[P][1]} filters then first; \sql{x[1][P]} first then filters. \sql{(//x)[1]} first globally; \sql{//x[1]} first x child per parent.
 \ex{Credits [0,3]: course[credits] includes the 0-credit course; course[credits>0][1] gives the second course, but course[1][credits>0] gives nothing. For a default-namespace document bind a prefix in XPath/XQuery and use it (e.g. u:course).}
 \key{ID lookup / union / axes}
 \begin{lstlisting}[style=Plaincode]
@@ -860,10 +861,14 @@ id() resolves ID strings/IDREF(S) to elements only when ID information is availa
 \begin{lstlisting}[style=Plaincode]
 for $x in (2,4) return count($x)  (: (1,1) :)
 let $x := (2,4) return count($x)  (: 2 :)
+for $x in () return count($x)    (: () :)
+let $x := () return count($x)    (: 0 :)
 \end{lstlisting}
 General \sql{= != < > <= >=}: existential pairs after atomization. Value \sql{eq ne lt gt le ge}: each atomized operand has at most one item; empty gives empty, multiple items errors. \sql{is}: node identity, not text equality.
 \ex{(10,1)=10 is true, (10,1)!=10 is also true, but not((10,1)=10) is false. General != is not the negation of general =. (10,1) eq 10 is an error.}
-\sql{some $x in S satisfies P}: any true; \sql{every $x in S satisfies P}: all true. S=sequence; P=Boolean expression in x. Empty S: some=false, every=true, count=0, exists=false, empty=true.
+\sql{some $x in S satisfies P}: any true; \sql{every $x in S satisfies P}: all true. S=sequence; P=Boolean expression in x. Empty S: some/exists=false, every/empty=true, count=0.
+\key{Nonempty ALL}\par
+\mbox{\sql{exists(S) and (every $x in S satisfies P)}}.
 \key{Shared schema for three museum patterns}
 No namespaces; * means zero or more; other shown fields occur exactly once per parent.
 \begin{lstlisting}[style=Plaincode]
@@ -896,7 +901,7 @@ return <MuseumCount MID="{$m/@MID}">
   $m/Artworks/Artwork)}</TotalArtworks>
 </MuseumCount>
 \end{lstlisting}
-Loop over museums to retain zero-artwork groups; their count is 0.
+Loop over parents (museums) to keep empty groups with count=0.
 \pattern{Join entity collections}
 Independent schema: university contains course*, instructor*, teaches*; query fields below are singleton children, no namespaces.
 \begin{lstlisting}[style=Plaincode]
@@ -906,7 +911,7 @@ for $c in $u/course,
 where $c/course_id = $t/course_id and $i/ID = $t/ID
 return <result>{$c, $i}</result>
 \end{lstlisting}
-Multiple for bindings form combinations. where filters them. Each matching combination emits one result.
+Multiple for bindings form combinations. Each match emits one result, so the same parent may appear more than once.
 \pattern{Group by distinct values, then sort}
 \begin{lstlisting}[style=Plaincode]
 let $u := doc("university.xml")/university

@@ -128,6 +128,9 @@ printer test is claimed.
 - Local XML fixtures check museum Title filtering, one output per qualifying
   parent and zero-artwork groups. lxml validates the DTD/XSD and checks typed ID
   resolution, IDREFS and the default CDATA attribute.
+- SaxonC checks XPath position and existence predicates, the empty-sequence
+  FLWOR examples, the nonempty universal guard and repeated parent matches in
+  the XQuery join.
 - Direct calculations on the four printed sales reproduce every matching and
   projection result above. A three-trip fixture supplies all inputs for the
   aggregation example. Ten complete MongoDB JavaScript blocks pass syntax
@@ -136,6 +139,6 @@ printer test is claimed.
   All 176 authored PDF math expressions, plus seven in the two study
   companions, render with KaTeX in strict error mode.
 
-These checks do not execute MySQL procedure/trigger DDL, an XQuery engine,
-MongoDB or a Spark cluster. SQLite checks portable SQL behavior; the other
-worked results are independently recomputed from the displayed inputs.
+SQLite covers portable SQL behavior. MySQL procedure/trigger DDL, MongoDB and
+Spark examples are checked with the fixtures, syntax checks or direct
+calculations described above.
