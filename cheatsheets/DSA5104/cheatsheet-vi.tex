@@ -689,6 +689,9 @@ decomposition $X\to YZ\Rightarrow X\to Y,X\to Z$;
 pseudotransitivity $X\to Y,WY\to Z\Rightarrow WX\to Z$.
 \key{Cách tính closure}
 1. Gán result=X. 2. Với mỗi $U\to V\in F$, nếu $U\subseteq\mathrm{result}$ thì thêm V. 3. Lặp đến khi result đứng yên. Kiểm tra Y có nằm trong result. Cần xét lại các FD sau khi thêm attribute.
+\key{Equivalence của hai tập FD}
+\mbox{$F^+=G^+\iff (F\models G)\land(G\models F)$.}
+Với mỗi $X\to Y\in G$, kiểm tra $Y\subseteq X_F^+$. Với mỗi $X\to Y\in F$, kiểm tra $Y\subseteq X_G^+$.
 \trap{FD là constraint trên mọi instance hợp lệ. Một bảng thỏa FD chưa đủ để kết luận FD thuộc F. Một phản ví dụ cho thấy FD sai trên instance đó. Superkey có $X^+=R$. Candidate key là superkey tối thiểu theo bao hàm.}
 \end{topicblock}
 

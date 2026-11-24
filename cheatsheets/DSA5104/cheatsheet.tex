@@ -674,7 +674,7 @@ df.to_sql('copy', engine,
 
 \newpage
 % PAGE 2: Part II. FD algorithms, XML, MongoDB, and Spark.
-\begin{sheetcolumns}{.257}
+\begin{sheetcolumns}{.263}
 \renewcommand{\bodylineskiplimit}{-1.5pt}
 \begin{topicblock}
 \topic{14}{PART II: FD / CLOSURES}
@@ -689,6 +689,9 @@ decomposition $X\to YZ\Rightarrow X\to Y,X\to Z$;
 pseudotransitivity $X\to Y,WY\to Z\Rightarrow WX\to Z$.
 \key{RULE: closure algorithm}
 1. Set result=X. 2. For each $U\to V\in F$, if $U\subseteq\mathrm{result}$, add V. 3. Repeat scans until no change. Test Y contained in result. Do not stop after only one scan.
+\key{FD set equivalence}
+\mbox{$F^+=G^+\iff (F\models G)\land(G\models F)$.}
+For each $X\to Y\in G$, check $Y\subseteq X_F^+$. For each $X\to Y\in F$, check $Y\subseteq X_G^+$.
 \trap{An FD is a constraint on every legal instance. One current table satisfying it does not prove that it belongs to F; one counterexample disproves it for that instance. Superkey: $X^+=R$; candidate key: inclusion-minimal superkey.}
 \end{topicblock}
 
@@ -928,7 +931,7 @@ return if ($x/price > 100)
 This returns an expensive element containing the input item.
 \end{topicblock}
 
-\nextcol{.25}
+\nextcol{.247}
 \begin{topicblock}
 \topic{21}{MONGODB: CRUD / FILTERS}
 \when{Read/write documents, filter fields or update arrays.}
@@ -1062,7 +1065,7 @@ Empty array (\sql{items:{$size:0}}) & D
 \trap{B satisfies the dot conditions on different items; no single item satisfies P. Filtering selects whole documents and leaves arrays intact. Projection choices are in 24.}
 \end{topicblock}
 
-\nextcol{.25}
+\nextcol{.247}
 \begin{topicblock}
 \topic{24}{ARRAY PROJECTION PATTERNS}
 \when{Choose first matching, original first or all qualifying items.}
