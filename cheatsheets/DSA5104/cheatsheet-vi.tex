@@ -15,10 +15,9 @@
 \setmainfont{SourceSans3-Regular.otf}[
   BoldFont=SourceSans3-Bold.otf,
   ItalicFont=SourceSans3-RegularIt.otf,
-  BoldItalicFont=SourceSans3-BoldIt.otf,
-  FakeStretch=0.82
+  BoldItalicFont=SourceSans3-BoldIt.otf
 ]
-\setmonofont{Inconsolatazi4-Regular.otf}[BoldFont=Inconsolatazi4-Bold.otf,FakeStretch=0.89]
+\setmonofont{Inconsolatazi4-Regular.otf}[BoldFont=Inconsolatazi4-Bold.otf]
 \setmathfont{STIXTwoMath-Regular.otf}
 \newcommand{\sqlfont}{\ttfamily}
 \usepackage{xcolor,array,enumitem,listings,fontawesome5,ragged2e}
@@ -54,7 +53,7 @@
 }
 \lstdefinestyle{SQLbase}{
   language=SQLx,
-  basicstyle=\sqlfont\fontsize{5.28}{4.84}\selectfont\color{sqltext},
+  basicstyle=\sqlfont\fontsize{4.9}{5.0}\selectfont\color{sqltext},
   keywordstyle=[1]\color{sqlkeyword}\bfseries,
   keywordstyle=[2]\color{sqltype}\bfseries,
   keywordstyle=[3]\color{sqlfunction}\bfseries,
@@ -76,10 +75,10 @@
 }
 \lstdefinestyle{SQLinline}{
   style=SQLbase,
-  basicstyle=\sqlfont\fontsize{5.61}{5.2}\selectfont\color{sqltext}
+  basicstyle=\sqlfont\fontsize{5.35}{5.3}\selectfont\color{sqltext}
 }
 \lstdefinestyle{PHPcode}{
-  basicstyle=\ttfamily\fontsize{5.28}{4.84}\selectfont\color{sqltext},
+  basicstyle=\ttfamily\fontsize{4.9}{5.0}\selectfont\color{sqltext},
   keywordstyle=[1]\color{sqlkeyword},
   commentstyle=\color{sqlcomment},
   stringstyle=\color{sqlstring},
@@ -92,7 +91,7 @@
   belowskip=.15pt
 }
 \lstdefinestyle{Plaincode}{style=PHPcode,language={},
-  basicstyle=\sqlfont\fontsize{5.28}{4.84}\selectfont\color{sqltext}}
+  basicstyle=\sqlfont\fontsize{4.9}{5.0}\selectfont\color{sqltext}}
 \lstset{style=SQLblock,emptylines=0}
 \pagestyle{empty}
 \setlength{\topskip}{0pt}
@@ -105,23 +104,23 @@
 \newlength{\gutter}\setlength{\gutter}{1.5mm}
 \newcommand{\bodylineskiplimit}{-2pt}
 \newcommand{\bodystyle}{%
-  \fontsize{5.61}{5.2}\selectfont\setlength{\lineskiplimit}{\bodylineskiplimit}\RaggedRight
+  \fontsize{5.35}{5.3}\selectfont\setlength{\lineskiplimit}{\bodylineskiplimit}\RaggedRight
   \setlength{\abovedisplayskip}{.5pt}\setlength{\belowdisplayskip}{.5pt}%
   \setlength{\abovedisplayshortskip}{.3pt}\setlength{\belowdisplayshortskip}{.3pt}}
 \newcommand{\topic}[2]{\par\addvspace{.45pt}\nointerlineskip%
   \begingroup\setlength{\fboxsep}{0.35pt}%
   \noindent\colorbox{structure}{\parbox{\dimexpr\linewidth-2\fboxsep\relax}{%
-    \color{white}\fontsize{6.82}{7.05}\selectfont\bfseries #1\enspace #2}}%
+    \color{white}\fontsize{6.45}{6.8}\selectfont\bfseries #1\enspace #2}}%
   \endgroup\par\nobreak\vspace{.55pt}\nointerlineskip\nobreak}
 % Let topic content use the remaining column space; keep each header with its first line.
 \newenvironment{topicblock}
   {\par\bodystyle}
   {\par}
 \newcommand{\key}[1]{\par\textcolor{structure}{\textbf{#1}}\enspace}
-\newcommand{\note}[4]{\par\begingroup\setlength{\fboxsep}{0.1pt}%
+\newcommand{\note}[4]{\par\nointerlineskip\vspace{.25pt}\begingroup\setlength{\fboxsep}{0.1pt}%
   \noindent\colorbox{#1}{\parbox{\dimexpr\linewidth-2\fboxsep\relax}{%
     \RaggedRight\textcolor{#2}{\textbf{#3}}\enspace #4}}%
-  \endgroup\par}
+  \endgroup\par\nointerlineskip\vspace{.25pt}}
 \newcommand{\cond}[1]{\note{conditionbg}{condition}{ĐIỀU KIỆN}{#1}}
 \newcommand{\trap}[1]{\note{warningbg}{warning}{LƯU Ý}{#1}}
 \newcommand{\ex}[1]{\note{examplebg}{example}{VÍ DỤ}{#1}}
@@ -144,7 +143,7 @@
 \begin{document}
 \bodystyle
 % PAGE 1: Part I. Explicit column breaks keep each reference area together.
-\begin{sheetcolumns}{.25}
+\begin{sheetcolumns}{.262}
 \begin{topicblock}
 \topic{01}{PHẦN I: TRUY VẤN SQL}
 \when{Chọn, gom hoặc sắp xếp dòng. Cú pháp MySQL 8.4, schema theo từng mẫu.}
@@ -272,7 +271,7 @@ STR_TO_DATE(LEFT(selling_date,24),
 \trap{So chuỗi: \sql{'100' < '20'}. So số: $20<100$. Lọc DATETIME từ đầu tháng đến trước tháng kế. BETWEEN theo ngày dễ bỏ giờ của ngày cuối.}
 \end{topicblock}
 
-\nextcol{.237}
+\nextcol{.235}
 \begin{topicblock}
 \topic{05}{SUBQUERY VÀ DIVISION}
 \when{Tra một giá trị, kiểm tra thuộc tập hoặc thỏa mọi yêu cầu.}
@@ -526,7 +525,7 @@ DELIMITER ;
 INSERT có NEW, DELETE có OLD, UPDATE có cả hai. OLD chỉ đọc. BEFORE có thể SET NEW, AFTER thì không. DELIMITER thuộc client. Điều kiện dùng IF/CASE, vòng lặp dùng WHILE/REPEAT/LOOP.
 \end{topicblock}
 
-\nextcol{.273}
+\nextcol{.263}
 \begin{topicblock}
 \topic{11}{RELATIONAL ALGEBRA}
 \when{Viết truy vấn theo set semantics.}
@@ -674,7 +673,7 @@ df.to_sql('copy', engine,
 
 \newpage
 % PAGE 2: Part II. FD algorithms, XML, MongoDB, and Spark.
-\begin{sheetcolumns}{.257}
+\begin{sheetcolumns}{.263}
 \renewcommand{\bodylineskiplimit}{-1.5pt}
 \begin{topicblock}
 \topic{14}{PHẦN II: FD VÀ CLOSURE}
@@ -733,7 +732,7 @@ $F_i=\{X\to Y\in F^+:X\cup Y\subseteq R_i\}$.
 \end{topicblock}
 
 \begin{topicblock}
-\topic{17}{LOSSLESS JOIN VÀ DEPENDENCY PRESERVATION}
+\topic{17}{LOSSLESS JOIN VÀ\newline DEPENDENCY PRESERVATION}
 \key{Điều kiện lossless khi tách đôi}
 Với $R=R_1\cup R_2$, lossless khi và chỉ khi
 $(R_1\cap R_2)\to R_1$ hoặc $(R_1\cap R_2)\to R_2$ nằm trong $F^+$.
@@ -789,7 +788,7 @@ IDREFS & các ID có thật, cách nhau bằng dấu cách
 \end{tabular}\par
 Mỗi loại element khai báo tối đa một attribute kiểu ID. Tên attribute không quyết định kiểu.
 \end{topicblock}
-\nextcol{.243}
+\nextcol{.246}
 \begin{topicblock}
 \key{Xử lý và lưu XML}
 DOM là cây trong bộ nhớ, SAX dùng event. Publishing từ relational $\to$ XML, shredding từ XML $\to$ relational. Lưu dạng text/tree, relational mapping hoặc native XML.
@@ -932,7 +931,7 @@ return if ($x/price > 100)
 Kết quả là element expensive chứa item đầu vào.
 \end{topicblock}
 
-\nextcol{.25}
+\nextcol{.241}
 \begin{topicblock}
 \topic{21}{MONGODB: CRUD / FILTER}
 \when{Đọc, ghi document, lọc theo field hoặc cập nhật array.}

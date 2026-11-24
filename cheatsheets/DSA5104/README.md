@@ -17,9 +17,9 @@ beside it.
 | 1: Part I | SQL logic, NULL/anti-joins, joins, types | Division, CTEs, aggregation | Ranking, windows, rounding, stored programs | Relational algebra, constraints, PHP/Python |
 | 2: Part II | FDs, keys, BCNF, decomposition tests, XML/DTD | XML processing, XSD, XPath, XQuery | MongoDB schemas, CRUD, aggregation, matching | Array projection, indexes/schema, Spark |
 
-Body text is 5.61 pt with 5.2 pt leading. Code is 5.28 pt with 4.84 pt leading.
-Topic headings use 6.82 pt. Narrower glyphs, shorter code blocks and column
-widths matched to the content keep both editions at two A4 portrait pages.
+Body text is 5.35 pt with 5.3 pt leading. Code is 4.9 pt with 5 pt leading.
+Topic headings use 6.45 pt. Both editions use the fonts' natural proportions
+and fit on two A4 portrait pages with column widths matched to the content.
 
 | English label | Nhãn tiếng Việt | Purpose |
 | --- | --- | --- |

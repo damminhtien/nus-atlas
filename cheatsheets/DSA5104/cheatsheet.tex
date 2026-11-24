@@ -15,10 +15,9 @@
 \setmainfont{SourceSans3-Regular.otf}[
   BoldFont=SourceSans3-Bold.otf,
   ItalicFont=SourceSans3-RegularIt.otf,
-  BoldItalicFont=SourceSans3-BoldIt.otf,
-  FakeStretch=0.87
+  BoldItalicFont=SourceSans3-BoldIt.otf
 ]
-\setmonofont{Inconsolatazi4-Regular.otf}[BoldFont=Inconsolatazi4-Bold.otf,FakeStretch=0.89]
+\setmonofont{Inconsolatazi4-Regular.otf}[BoldFont=Inconsolatazi4-Bold.otf]
 \setmathfont{STIXTwoMath-Regular.otf}
 \newcommand{\sqlfont}{\ttfamily}
 \usepackage{xcolor,array,enumitem,listings,fontawesome5,ragged2e}
@@ -54,7 +53,7 @@
 }
 \lstdefinestyle{SQLbase}{
   language=SQLx,
-  basicstyle=\sqlfont\fontsize{5.28}{4.84}\selectfont\color{sqltext},
+  basicstyle=\sqlfont\fontsize{4.9}{5.0}\selectfont\color{sqltext},
   keywordstyle=[1]\color{sqlkeyword}\bfseries,
   keywordstyle=[2]\color{sqltype}\bfseries,
   keywordstyle=[3]\color{sqlfunction}\bfseries,
@@ -76,10 +75,10 @@
 }
 \lstdefinestyle{SQLinline}{
   style=SQLbase,
-  basicstyle=\sqlfont\fontsize{5.61}{5.2}\selectfont\color{sqltext}
+  basicstyle=\sqlfont\fontsize{5.35}{5.3}\selectfont\color{sqltext}
 }
 \lstdefinestyle{PHPcode}{
-  basicstyle=\ttfamily\fontsize{5.28}{4.84}\selectfont\color{sqltext},
+  basicstyle=\ttfamily\fontsize{4.9}{5.0}\selectfont\color{sqltext},
   keywordstyle=[1]\color{sqlkeyword},
   commentstyle=\color{sqlcomment},
   stringstyle=\color{sqlstring},
@@ -92,7 +91,7 @@
   belowskip=.15pt
 }
 \lstdefinestyle{Plaincode}{style=PHPcode,language={},
-  basicstyle=\sqlfont\fontsize{5.28}{4.84}\selectfont\color{sqltext}}
+  basicstyle=\sqlfont\fontsize{4.9}{5.0}\selectfont\color{sqltext}}
 \lstset{style=SQLblock,emptylines=0}
 \pagestyle{empty}
 \setlength{\topskip}{0pt}
@@ -105,23 +104,23 @@
 \newlength{\gutter}\setlength{\gutter}{1.5mm}
 \newcommand{\bodylineskiplimit}{-2pt}
 \newcommand{\bodystyle}{%
-  \fontsize{5.61}{5.2}\selectfont\setlength{\lineskiplimit}{\bodylineskiplimit}\RaggedRight
+  \fontsize{5.35}{5.3}\selectfont\setlength{\lineskiplimit}{\bodylineskiplimit}\RaggedRight
   \setlength{\abovedisplayskip}{.5pt}\setlength{\belowdisplayskip}{.5pt}%
   \setlength{\abovedisplayshortskip}{.3pt}\setlength{\belowdisplayshortskip}{.3pt}}
 \newcommand{\topic}[2]{\par\addvspace{.45pt}\nointerlineskip%
   \begingroup\setlength{\fboxsep}{0.35pt}%
   \noindent\colorbox{structure}{\parbox{\dimexpr\linewidth-2\fboxsep\relax}{%
-    \color{white}\fontsize{6.82}{7.05}\selectfont\bfseries #1\enspace #2}}%
+    \color{white}\fontsize{6.45}{6.8}\selectfont\bfseries #1\enspace #2}}%
   \endgroup\par\nobreak\vspace{.55pt}\nointerlineskip\nobreak}
 % Let topic content use the remaining column space; keep each header with its first line.
 \newenvironment{topicblock}
   {\par\bodystyle}
   {\par}
 \newcommand{\key}[1]{\par\textcolor{structure}{\textbf{#1}}\enspace}
-\newcommand{\note}[4]{\par\begingroup\setlength{\fboxsep}{0.1pt}%
+\newcommand{\note}[4]{\par\nointerlineskip\vspace{.25pt}\begingroup\setlength{\fboxsep}{0.1pt}%
   \noindent\colorbox{#1}{\parbox{\dimexpr\linewidth-2\fboxsep\relax}{%
     \RaggedRight\textcolor{#2}{\textbf{#3}}\enspace #4}}%
-  \endgroup\par}
+  \endgroup\par\nointerlineskip\vspace{.25pt}}
 \newcommand{\cond}[1]{\note{conditionbg}{condition}{COND}{#1}}
 \newcommand{\trap}[1]{\note{warningbg}{warning}{TRAP}{#1}}
 \newcommand{\ex}[1]{\note{examplebg}{example}{EXAMPLE}{#1}}
@@ -789,7 +788,7 @@ IDREFS & space-separated existing IDs
 \end{tabular}\par
 At most one ID-typed attribute may be declared per element type; its name does not determine its type.
 \end{topicblock}
-\nextcol{.243}
+\nextcol{.25}
 \begin{topicblock}
 \key{RULE: processing / storage}
 DOM=memory tree; SAX=events. Publishing: relational $\to$ XML; shredding: XML $\to$ relational. Storage: text/tree, relational mapping, native XML.
@@ -932,7 +931,7 @@ return if ($x/price > 100)
 This returns an expensive element containing the input item.
 \end{topicblock}
 
-\nextcol{.247}
+\nextcol{.245}
 \begin{topicblock}
 \topic{21}{MONGODB: CRUD / FILTERS}
 \when{Read/write documents, filter fields or update arrays.}
@@ -1066,7 +1065,7 @@ Empty array (\sql{items:{$size:0}}) & D
 \trap{B satisfies the dot conditions on different items; no single item satisfies P. Filtering selects whole documents and leaves arrays intact. Projection choices are in 24.}
 \end{topicblock}
 
-\nextcol{.247}
+\nextcol{.242}
 \begin{topicblock}
 \topic{24}{ARRAY PROJECTION PATTERNS}
 \when{Choose first matching, original first or all qualifying items.}
