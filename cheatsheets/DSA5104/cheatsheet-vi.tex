@@ -697,18 +697,19 @@ Với mỗi $X\to Y\in G$, kiểm tra $Y\subseteq X_F^+$. Với mỗi $X\to Y\in
 
 \begin{topicblock}
 \topic{15}{TÌM TẤT CẢ CANDIDATE KEYS}
+\key{Attribute bắt buộc và RHS-only}
+Với mỗi $X\to Y$, thay RHS bằng $Y\setminus X$ rồi bỏ FD có RHS rỗng. LHS và RHS dưới đây là hợp các attribute ở mỗi vế.
+$M=R\setminus\mathrm{RHS}$ phải có trong mọi key. Loại $O=\mathrm{RHS}\setminus\mathrm{LHS}$: suy ra các attribute còn lại mà không cần O, rồi từ đó suy ra O.
 \key{Liệt kê đầy đủ}
-1. $M=R\setminus\bigcup_{X\to Y\in F}Y$ gồm các attribute không có ở RHS. Mọi key đều chứa M.
-2. Liệt kê $S\subseteq R\setminus M$ từ nhỏ đến lớn. Đặt $K=M\cup S$.
-3. Bỏ K nếu đã chứa key tìm được. Tính $K_F^+$, ghi K nếu closure bằng R.
-4. Kiểm tra tối thiểu. Với mọi $a\in K$, phải có $(K\setminus\{a\})_F^+\ne R$.
-5. Xét hết tập con còn lại. Tối thiểu theo bao hàm, không nhất thiết ít attribute nhất.
+1. Thử $K=M\cup S$ với $S\subseteq R\setminus(M\cup O)$ từ nhỏ đến lớn. Bỏ tập chứa key đã tìm được.
+2. Superkey: chứng minh $K_F^+=R$. Minimality: với mọi $a\in K$, kiểm tra $(K\setminus\{a\})_F^+\ne R$.
+3. Completeness: xét hết các tập con chưa loại, kể cả khi đã tìm được key ngắn nhất.
 \ex{Tìm mọi candidate key với $R_0=ABCDEF$ và $F_0=\{A\to B,BC\to D,D\to A,C\to E,E\to F\}$.
-M=C; $A^+=AB$, $B^+=B$, $C^+=CEF$, $D^+=ABD$.
+M=C, O=F. $A^+=AB$, $B^+=B$, $C^+=CEF$, $D^+=ABD$.
 $AC^+=ABCDEF$ nhờ A suy B, BC suy D, C suy E rồi F.
 $BC^+=ABCDEF$ nhờ BC suy D rồi A, C suy E rồi F.
 $CD^+=ABCDEF$ nhờ D suy A rồi B, C suy E rồi F.
-Tính closure theo $F_0$. Mọi key là AC, BC, CD. C riêng không đủ. CE/CF/CEF không thêm A/B/D. Tập chứa thêm attribute ngoài AC/BC/CD đã không còn tối thiểu.}
+Tính closure theo $F_0$. Các key là AC, BC, CD. C và CE thiếu A/B/D. Mỗi tập còn lại chưa loại đều chứa AC, BC hoặc CD.}
 \ex{Key có thể khác kích thước. Với $F=\{A\to BC,BC\to A\}$ trên ABC, candidate keys là $\{A,BC\}$. Cả hai tối thiểu theo bao hàm dù có 1 và 2 attribute.}
 \end{topicblock}
 

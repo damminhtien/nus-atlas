@@ -697,18 +697,19 @@ For each $X\to Y\in G$, check $Y\subseteq X_F^+$. For each $X\to Y\in F$, check 
 
 \begin{topicblock}
 \topic{15}{ALL CANDIDATE KEYS}
+\key{Mandatory and RHS-only attributes}
+Replace each $X\to Y$ by $X\to Y\setminus X$ and drop empty RHSs. LHS and RHS below are the unions of attributes on each side.
+$M=R\setminus\mathrm{RHS}$ must be in every key. Exclude $O=\mathrm{RHS}\setminus\mathrm{LHS}$: the other attributes can be derived without O and then determine O.
 \key{Complete enumeration}
-1. $M=R\setminus\bigcup_{X\to Y\in F}Y$: mandatory attributes (never on an RHS); every key contains M.
-2. Enumerate $S\subseteq R\setminus M$ in increasing size; let $K=M\cup S$.
-3. Skip K containing a known key. Compute $K_F^+$; if R, record K.
-4. Check minimality: for every $a\in K$, $(K\setminus\{a\})_F^+\ne R$.
-5. Continue through remaining subsets; one key does not prove completeness. Minimal means by inclusion, not minimum cardinality.
+1. Test $K=M\cup S$ for $S\subseteq R\setminus(M\cup O)$ in size order. Skip supersets of known keys.
+2. Superkey: show $K_F^+=R$. Minimality: show $(K\setminus\{a\})_F^+\ne R$ for every $a\in K$.
+3. Completeness: account for every unpruned subset, even after finding the shortest keys.
 \ex{Find all candidate keys. Given $R_0=ABCDEF$ and $F_0=\{A\to B,BC\to D,D\to A,C\to E,E\to F\}$.
-M=C; $A^+=AB$, $B^+=B$, $C^+=CEF$, $D^+=ABD$.
+M=C, O=F. $A^+=AB$, $B^+=B$, $C^+=CEF$, $D^+=ABD$.
 $AC^+=ABCDEF$ via A to B, BC to D, C to E to F.
 $BC^+=ABCDEF$ via BC to D to A, C to E to F.
 $CD^+=ABCDEF$ via D to A to B, C to E to F.
-Closures here use $F_0$. All keys: AC, BC, CD. C alone fails; CE/CF/CEF add no A/B/D. Supersets of AC/BC/CD are nonminimal, proving completeness.}
+Closures use $F_0$. All keys: AC, BC, CD. C and CE lack A/B/D. Every other unpruned set contains AC, BC or CD.}
 \ex{Different key sizes: $F=\{A\to BC,BC\to A\}$ on ABC gives candidate keys $\{A,BC\}$. Both are inclusion-minimal; sizes 1 and 2 are valid.}
 \end{topicblock}
 
