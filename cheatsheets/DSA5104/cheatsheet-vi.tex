@@ -673,7 +673,7 @@ df.to_sql('copy', engine,
 
 \newpage
 % PAGE 2: Part II. FD algorithms, XML, MongoDB, and Spark.
-\begin{sheetcolumns}{.263}
+\begin{sheetcolumns}{.272}
 \renewcommand{\bodylineskiplimit}{-1.5pt}
 \begin{topicblock}
 \topic{14}{PHẦN II: FD VÀ CLOSURE}
@@ -703,51 +703,55 @@ $M=R\setminus\mathrm{RHS}$ phải có trong mọi key. Loại $O=\mathrm{RHS}\se
 1. Thử $K=M\cup S$ với $S\subseteq R\setminus(M\cup O)$ từ nhỏ đến lớn. Bỏ tập chứa key đã tìm được.
 2. Superkey: chứng minh $K_F^+=R$. Minimality: với mọi $a\in K$, kiểm tra $(K\setminus\{a\})_F^+\ne R$.
 3. Completeness: xét hết các tập con chưa loại, kể cả khi đã tìm được key ngắn nhất.
-\ex{Tìm mọi candidate key với $R_0=ABCDEF$ và $F_0=\{A\to B,BC\to D,D\to A,C\to E,E\to F\}$.
-M=C, O=F. $A^+=AB$, $B^+=B$, $C^+=CEF$, $D^+=ABD$.
-$AC^+=ABCDEF$ nhờ A suy B, BC suy D, C suy E rồi F.
-$BC^+=ABCDEF$ nhờ BC suy D rồi A, C suy E rồi F.
-$CD^+=ABCDEF$ nhờ D suy A rồi B, C suy E rồi F.
-Tính closure theo $F_0$. Các key là AC, BC, CD. C và CE thiếu A/B/D. Mỗi tập còn lại chưa loại đều chứa AC, BC hoặc CD.}
-\ex{Key có thể khác kích thước. Với $F=\{A\to BC,BC\to A\}$ trên ABC, candidate keys là $\{A,BC\}$. Cả hai tối thiểu theo bao hàm dù có 1 và 2 attribute.}
+\ex{Cho $R_0=ABCDEF$, $F_0=\{A\to B,BC\to D,D\to A,C\to E,E\to F\}$. Suy ra $M=\{C\}$, $O=\{F\}$.
+\textbf{Superkey.} Các bước tính closure:
+$AC\to ABC\to ABCD$,
+$BC\to BCD\to ABCD$,
+$CD\to ACD\to ABCD$. Cả ba thêm E rồi F nhờ $C\to E$, $E\to F$, nên đạt $R_0$.
+\textbf{Minimality.} Bỏ một thuộc tính còn A, B, C hoặc D. Các closure AB, B, CEF, ABD đều thiếu thuộc tính.
+\textbf{Completeness.} C và CE cho CEF. Các tập còn lại chứa C, bỏ F đều chứa AC, BC hoặc CD. Vậy đây là ba candidate key.}
+\ex{Key khác kích thước trên ABC với $F=\{A\to BC,BC\to A\}$. $A^+=(BC)^+=ABC$, còn $B^+=B$, $C^+=C$, $\varnothing^+=\varnothing$. Hai key là A và BC.}
 \end{topicblock}
 
 \begin{topicblock}
 \topic{16}{BCNF / PROJECTED FDs}
-BCNF yêu cầu X là superkey của fragment cho mỗi projected FD $X\to Y$ nontrivial. 3NF cho phép X là superkey hoặc từng attribute ở RHS là prime (nằm trong candidate key nào đó). 3NF synthesis giữ FD và cho lossless nếu có relation chứa key. 4NF yêu cầu X là superkey với mỗi multivalued dependency $X\twoheadrightarrow Y$ nontrivial. Normalization giảm anomaly khi thêm, sửa, xóa dữ liệu lặp.
+Với projected FD $X\to Y$ nontrivial, BCNF yêu cầu X là superkey. 3NF còn cho phép mọi attribute trong $Y\setminus X$ là prime (thuộc một candidate key). 3NF synthesis có fragment chứa key cho lossless + DP. 4NF yêu cầu X là superkey với mỗi multivalued dependency $X\twoheadrightarrow Y$ nontrivial. Normalization giảm anomaly khi thêm, sửa, xóa.
+\key{Tính projection trước khi kiểm tra}
+$F_i=\{X\to Y\in F^+:X\cup Y\subseteq R_i\}$. Với $X\subseteq R_i$, tính $C_i(X)=X_F^+\cap R_i$ rồi thêm $X\to C_i(X)\setminus X$ nếu RHS khác rỗng. Bỏ FD thừa để lấy basis.
+\ex{Trên ACD, AC thêm B rồi D theo $F_0$. Chiếu về ACD cho $C_i(AC)=ACD$. Basis: $D\to A,\ AC\to D$.}
 \key{Cách tách BCNF đệ quy}
-1. Bắt đầu từ R. 2. Trong fragment $R_i$, tìm projected FD $X\to Y$ nontrivial có $X^+_{F_i}\ne R_i$.
-3. Tách thành $R_1=X\cup Y$ và $R_2=R_i\setminus(Y\setminus X)$. Cũng có thể lấy $R_1=X^+_{F_i}$ và $R_2=X\cup(R_i\setminus X^+_{F_i})$.
-4. Tính lại projected FD và lặp trên cả hai fragment đến khi đạt BCNF. Chọn FD vi phạm theo cách khác có thể cho kết quả khác.
-\ex{Tách BCNF trên $R_0,F_0$ ở mục 15.
-$ABCDEF\xrightarrow{E\to F}EF+ABCDE$;
-$ABCDE\xrightarrow{C\to E}CE+ABCD$;
-$ABCD\xrightarrow{A\to B}AB+ACD$;
-$ACD\xrightarrow{D\to A}AD+CD$.
-Kết quả $D_{\rm BCNF}=\{AB,AD,CD,CE,EF\}$. Key lần lượt là A cho AB, D cho AD, C cho CE và E cho EF. CD không có projected FD nontrivial.}
-\key{Projection gồm cả FD suy ra}
-$F_i=\{X\to Y\in F^+:X\cup Y\subseteq R_i\}$.
-Để tìm basis hữu hạn, với mỗi $X\subseteq R_i$, tính $X_F^+\cap R_i$ rồi thêm FD nontrivial suy ra. Bỏ FD thừa. Với ACD theo $F_0$, một basis là $D\to A, AC\to D$. FD sau suy từ $A\to B$ rồi $BC\to D$. Basis chỉ sinh ra projection, không liệt kê hết.
-\trap{Kiểm tra cả projected FD suy ra. Tách BCNF chuẩn bảo đảm lossless, có thể mất dependency preservation. Schema hai attribute tự đạt BCNF nếu loại FD nontrivial có LHS rỗng.}
+1. Bắt đầu ở R. Trong $R_i$, chọn FD vi phạm $X\to Y$ có $Y\not\subseteq X$ và $C_i(X)\ne R_i$.
+2. Tách thành $X\cup Y$ và $R_i\setminus(Y\setminus X)$. Phần chung X xác định fragment đầu, nên lần tách này lossless. Có thể lấy $Y=C_i(X)$.
+3. Tính lại projection trên hai fragment. Dừng nếu mọi FD nontrivial có LHS là superkey. Chọn FD khác có thể cho kết quả khác.
+\key{Các bước tách trên $R_0,F_0$}
+\par\begin{tabular}{@{}llll@{}}
+\textbf{Fragment} & \textbf{FD vi phạm} & $C_i(X)$ & \textbf{Kết quả tách}\\
+ABCDEF & $E\to F$ & EF & EF + ABCDE\\
+ABCDE & $C\to E$ & CE & CE + ABCD\\
+ABCD & $A\to B$ & AB & AB + ACD\\
+ACD & $D\to A$ & AD & AD + CD
+\end{tabular}\par
+$D_{\rm BCNF}=\{AB,AD,CD,CE,EF\}$. AB, AD, CE, EF có key lần lượt là A, D, C, E. Trên CD, closure của C và D chỉ có chính nó, còn $\varnothing^+=\varnothing$, nên không có projected FD nontrivial.
+\trap{Tách BCNF có thể mất DP. Với schema hai thuộc tính, LHS rỗng có thể vi phạm BCNF nếu closure của nó chỉ có một thuộc tính.}
 \end{topicblock}
 
 \begin{topicblock}
 \topic{17}{LOSSLESS JOIN VÀ\newline DEPENDENCY PRESERVATION}
 \key{Điều kiện lossless khi tách đôi}
-Với $R=R_1\cup R_2$, lossless khi và chỉ khi
-$(R_1\cap R_2)\to R_1$ hoặc $(R_1\cap R_2)\to R_2$ nằm trong $F^+$.
-Tách đôi lossless nhiều lần vẫn lossless. Chứa đủ attribute chưa đủ. Lossy join có thể sinh tuple thừa.
+1. Với $R=R_1\cup R_2$, lấy $I=R_1\cap R_2$. 2. Tính $I_F^+$.
+3. Lossless khi và chỉ khi $R_1\subseteq I_F^+$ hoặc $R_2\subseteq I_F^+$. Tách AB/AC dưới $A\to B$ có $I=A$ và $I^+=AB$, nên lossless. Các lần tách đôi lossless ghép lại vẫn lossless.
 \key{Dependency preservation (DP)}
-Đặt $G=\bigcup_i F_i$. Có DP khi và chỉ khi $G^+=F^+$. Với từng FD gốc $X\to Y\in F$, chỉ cần kiểm tra $Y\subseteq X_G^+$.
-Cách tránh liệt kê projection. Gán result=X. Qua từng fragment, thêm
-$t=((\mathrm{result}\cap R_i)^+_F)\cap R_i$ vào result. Lặp đến fixed point. Nếu vẫn thiếu Y, FD không được bảo toàn.
-\ex{Kiểm tra DP trên $R_0,F_0$ cho $D_{\rm test}=\{AB,ACD,CE,EF\}$. Projected basis G gồm $A\to B,D\to A,AC\to D,C\to E,E\to F$.
-$(BC)^+_G=BCEF$. Thiếu D nên không giữ $BC\to D$. BC thành BCE qua CE, rồi BCEF qua EF. AB và ACD không thêm gì.}
+Đặt $G=\bigcup_i F_i$. Mọi FD trong G đều suy ra từ F. Để chứng minh $G^+=F^+$, kiểm tra $Y\subseteq X_G^+$ với từng FD gốc $X\to Y$.
+\key{Kiểm tra DP bằng closure trên từng fragment}
+1. Đặt $T=X$. 2. Với mỗi $R_i$, lấy $U=T\cap R_i$ rồi thêm $U_F^+\cap R_i$ vào T. Giao với $R_i$ ở cả hai bước.
+3. Lặp qua mọi fragment đến khi T đứng yên. Thiếu một thuộc tính ở RHS thì mất DP.
+\ex{Kiểm tra DP trên $R_0,F_0$ cho $D_{\rm test}=\{AB,ACD,CE,EF\}$. Một basis của G là $A\to B,D\to A,AC\to D,C\to E,E\to F$.
+Thử $BC\to D$. AB chỉ thấy B. ACD thấy C và $C^+\cap ACD=C$. CE thêm E rồi EF thêm F. Lượt kế tiếp không thêm gì: $(BC)^+_G=BCEF$ thiếu D.}
 \key{Chase kiểm tra lossless khi tách nhiều fragment}
-1. Mỗi fragment một dòng, mỗi attribute j một cột. Ghi $a_j$ nếu có attribute, nếu thiếu dùng $b_{ij}$ mới.
-2. Nếu các dòng giống nhau ở LHS của FD, hợp nhất ký hiệu RHS trên toàn bảng. Ưu tiên $a_j$ hơn b.
-3. Lặp đến fixed point. Có dòng toàn a thì lossless, không có thì lossy.
-\ex{R=ABC, tách AB/AC, F={$A\to B$}. Hai dòng đầu là $(a_A,a_B,b_{1C})$, $(a_A,b_{2B},a_C)$. Trùng A nên gán $b_{2B}=a_B$. Dòng sau thành $(a_A,a_B,a_C)$, vậy lossless.}
+1. Mỗi fragment một dòng, mỗi attribute j một cột. Ở dòng i, ghi $a_j$ nếu $j\in R_i$, nếu thiếu dùng $b_{ij}$ mới.
+2. Với mỗi $X\to Y\in F$, tìm các dòng trùng nhau ở mọi cột X. Hợp nhất ký hiệu ở từng cột Y trên toàn bảng, giữ $a_j$ nếu có.
+3. Có dòng toàn a thì lossless. Nếu hết một lượt mà bảng đứng yên và chưa có dòng toàn a, phép tách lossy.
+\ex{Trên ABC, tách AB/AC với $A\to B$ cho hai dòng $(a_A,a_B,b_{1C})$ và $(a_A,b_{2B},a_C)$. A bằng nhau buộc B bằng nhau. Thay $b_{2B}$ bằng $a_B$, dòng thứ hai trở thành toàn a.}
 \key{MCQ về lossless và DP}
 \par\begin{tabular}{@{}lr@{}}
 \textbf{Mệnh đề} & \textbf{Đúng?}\\
@@ -931,7 +935,7 @@ return if ($x/price > 100)
 Kết quả là element expensive chứa item đầu vào.
 \end{topicblock}
 
-\nextcol{.241}
+\nextcol{.237}
 \begin{topicblock}
 \topic{21}{MONGODB: CRUD / FILTER}
 \when{Đọc, ghi document, lọc theo field hoặc cập nhật array.}
@@ -1065,7 +1069,7 @@ Array rỗng (\sql{items:{$size:0}}) & D
 \trap{Ở B, mỗi điều kiện khớp một item khác nhau. Filter giữ nguyên array của document được chọn. Xem projection ở mục 24.}
 \end{topicblock}
 
-\nextcol{.25}
+\nextcol{.245}
 \begin{topicblock}
 \topic{24}{ARRAY PROJECTION}
 \when{Lấy phần tử đầu tiên khớp, phần tử đầu gốc hoặc mọi phần tử khớp.}

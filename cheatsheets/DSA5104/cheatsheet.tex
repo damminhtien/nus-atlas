@@ -673,7 +673,7 @@ df.to_sql('copy', engine,
 
 \newpage
 % PAGE 2: Part II. FD algorithms, XML, MongoDB, and Spark.
-\begin{sheetcolumns}{.263}
+\begin{sheetcolumns}{.268}
 \renewcommand{\bodylineskiplimit}{-1.5pt}
 \begin{topicblock}
 \topic{14}{PART II: FD / CLOSURES}
@@ -703,51 +703,54 @@ $M=R\setminus\mathrm{RHS}$ must be in every key. Exclude $O=\mathrm{RHS}\setminu
 1. Test $K=M\cup S$ for $S\subseteq R\setminus(M\cup O)$ in size order. Skip supersets of known keys.
 2. Superkey: show $K_F^+=R$. Minimality: show $(K\setminus\{a\})_F^+\ne R$ for every $a\in K$.
 3. Completeness: account for every unpruned subset, even after finding the shortest keys.
-\ex{Find all candidate keys. Given $R_0=ABCDEF$ and $F_0=\{A\to B,BC\to D,D\to A,C\to E,E\to F\}$.
-M=C, O=F. $A^+=AB$, $B^+=B$, $C^+=CEF$, $D^+=ABD$.
-$AC^+=ABCDEF$ via A to B, BC to D, C to E to F.
-$BC^+=ABCDEF$ via BC to D to A, C to E to F.
-$CD^+=ABCDEF$ via D to A to B, C to E to F.
-Closures use $F_0$. All keys: AC, BC, CD. C and CE lack A/B/D. Every other unpruned set contains AC, BC or CD.}
-\ex{Different key sizes: $F=\{A\to BC,BC\to A\}$ on ABC gives candidate keys $\{A,BC\}$. Both are inclusion-minimal; sizes 1 and 2 are valid.}
+\ex{Given $R_0=ABCDEF$, $F_0=\{A\to B,BC\to D,D\to A,C\to E,E\to F\}$, get $M=\{C\}$ and $O=\{F\}$.
+\textbf{Superkeys.} $AC\to ABC\to ABCD$,
+$BC\to BCD\to ABCD$,
+$CD\to ACD\to ABCD$ (closure steps). In each case $C\to E$ then $E\to F$ gives $R_0$.
+\textbf{Minimality.} Dropping one attribute leaves A, B, C or D. Their closures AB, B, CEF and ABD all miss attributes.
+\textbf{Completeness.} C and CE close to CEF. Every other set with C and without F contains AC, BC or CD. These are all the keys.}
+\ex{Different sizes on ABC with $F=\{A\to BC,BC\to A\}$. $A^+=(BC)^+=ABC$ but $B^+=B$, $C^+=C$, $\varnothing^+=\varnothing$. Keys are A and BC.}
 \end{topicblock}
 
 \begin{topicblock}
 \topic{16}{BCNF / PROJECTED FDs}
-BCNF: for every nontrivial FD $X\to Y$ in the fragment's projected dependencies, X is a superkey of that fragment. 3NF: X superkey OR each RHS attribute prime (in some candidate key). Standard 3NF synthesis preserves dependencies and ensures losslessness when a key-containing relation is included. 4NF: each nontrivial multivalued dependency $X\twoheadrightarrow Y$ has a superkey X. Normalization limits update/insert/delete anomalies from repeated facts.
+For each projected FD $X\to Y$, BCNF requires X to be a superkey if $Y\setminus X\ne\varnothing$. 3NF also permits every attribute in $Y\setminus X$ to be prime (in some candidate key). 3NF synthesis with a key-containing fragment gives lossless + DP. 4NF requires a superkey X for each nontrivial multivalued dependency $X\twoheadrightarrow Y$. Normalization limits insert/update/delete anomalies.
+\key{Project before checking}
+$F_i=\{X\to Y\in F^+:X\cup Y\subseteq R_i\}$. For each $X\subseteq R_i$, let $C_i(X)=X_F^+\cap R_i$. Add $X\to C_i(X)\setminus X$ if the RHS is nonempty. Drop redundant FDs for a basis.
+\ex{On ACD under $F_0$, AC adds B then D. The projection keeps D, so $C_i(AC)=ACD$ even though $AC\to D$ is absent from $F_0$. A basis is $D\to A,\ AC\to D$.}
 \key{RULE: recursive BCNF decomposition}
-1. Start with R. 2. In fragment $R_i$, find nontrivial projected $X\to Y$ with $X^+_{F_i}\ne R_i$.
-3. Replace by $R_1=X\cup Y$ and $R_2=R_i\setminus(Y\setminus X)$; alternatively take $R_1=X^+_{F_i}$ and $R_2=X\cup(R_i\setminus X^+_{F_i})$.
-4. Recompute projected dependencies and repeat on both fragments until BCNF. Different valid violation choices can yield different answers.
-\ex{BCNF decomposition on $R_0,F_0$ from 15:
-$ABCDEF\xrightarrow{E\to F}EF+ABCDE$;
-$ABCDE\xrightarrow{C\to E}CE+ABCD$;
-$ABCD\xrightarrow{A\to B}AB+ACD$;
-$ACD\xrightarrow{D\to A}AD+CD$.
-Result $D_{\rm BCNF}=\{AB,AD,CD,CE,EF\}$. Keys: A for AB, D for AD, C for CE, E for EF; CD has no nontrivial projected FDs.}
-\key{Projection includes implied FDs}
-$F_i=\{X\to Y\in F^+:X\cup Y\subseteq R_i\}$.
-To compute a finite basis, for each $X\subseteq R_i$, compute $X_F^+\cap R_i$ and add nontrivial implied FDs; remove redundant ones. For ACD under $F_0$, a basis is $D\to A, AC\to D$; the second follows via $A\to B$ then $BC\to D$. This basis is not the entire projection.
-\trap{Check projected FDs, including implied ones. Standard BCNF splitting is lossless but may lose dependency preservation. Two-attribute schemas are automatically BCNF only when nontrivial empty-LHS FDs are excluded.}
+1. Start at R. In $R_i$, pick a violation $X\to Y$ with $Y\not\subseteq X$ and $C_i(X)\ne R_i$.
+2. Split into $X\cup Y$ and $R_i\setminus(Y\setminus X)$. Their overlap X determines the first, so the split is lossless. You may use $Y=C_i(X)$.
+3. Reproject on both fragments. Stop on a fragment when every nontrivial FD has a superkey LHS. Choice of violation can change the result.
+\key{Worked splits on $R_0,F_0$}
+\par\begin{tabular}{@{}llll@{}}
+\textbf{Fragment} & \textbf{Violation} & $C_i(X)$ & \textbf{Split}\\
+ABCDEF & $E\to F$ & EF & EF + ABCDE\\
+ABCDE & $C\to E$ & CE & CE + ABCD\\
+ABCD & $A\to B$ & AB & AB + ACD\\
+ACD & $D\to A$ & AD & AD + CD
+\end{tabular}\par
+$D_{\rm BCNF}=\{AB,AD,CD,CE,EF\}$. AB, AD, CE, EF have keys A, D, C, E, respectively. On CD, C and D close to themselves and $\varnothing^+=\varnothing$, so there is no nontrivial projected FD.
+\trap{BCNF splits can lose DP. On a two-attribute schema an empty LHS can violate BCNF if its closure contains just one attribute.}
 \end{topicblock}
 
 \begin{topicblock}
 \topic{17}{LOSSLESS / PRESERVATION}
-\key{Binary lossless test (iff, under FDs)}
-For $R=R_1\cup R_2$, lossless iff
-$(R_1\cap R_2)\to R_1$ OR $(R_1\cap R_2)\to R_2$ is in $F^+$.
-Repeated lossless binary splits compose. Covering all attributes alone is insufficient; lossy joins may introduce spurious tuples.
+\key{Binary lossless test}
+1. For $R=R_1\cup R_2$, take $I=R_1\cap R_2$. 2. Compute $I_F^+$.
+3. Lossless iff $R_1\subseteq I_F^+$ or $R_2\subseteq I_F^+$. AB/AC under $A\to B$: $I=A$, $I^+=AB$ (lossless). Lossless binary splits compose.
 \key{Dependency preservation (DP)}
-Let $G=\bigcup_i F_i$. DP iff $G^+=F^+$. It suffices to test every original $X\to Y\in F$ by $Y\subseteq X_G^+$.
-Without enumerating projections: initialize result=X; for each fragment add
-$t=((\mathrm{result}\cap R_i)^+_F)\cap R_i$ to result; repeat all fragments to a fixed point. If Y is still missing, FD is not preserved.
-\ex{Check dependency preservation on $R_0,F_0$ for the given $D_{\rm test}=\{AB,ACD,CE,EF\}$. Projected basis G includes $A\to B,D\to A,AC\to D,C\to E,E\to F$.
-$(BC)^+_G=BCEF$: D never appears, so $BC\to D$ is not preserved. Iterative propagation: BC to BCE (CE), to BCEF (EF); AB and ACD add nothing further.}
+Let $G=\bigcup_i F_i$. All FDs in G follow from F. To prove $G^+=F^+$, check $Y\subseteq X_G^+$ for each original $X\to Y$.
+\key{DP without listing projections}
+1. Start $T=X$. 2. For each $R_i$, set $U=T\cap R_i$ and add $U_F^+\cap R_i$ to T. Restrict both the seed and the closure to $R_i$.
+3. Repeat full passes until T stops growing. Any missing RHS attribute means DP fails.
+\ex{Check DP on $R_0,F_0$ for the given $D_{\rm test}=\{AB,ACD,CE,EF\}$. A basis for G is $A\to B,D\to A,AC\to D,C\to E,E\to F$.
+Test $BC\to D$. AB sees B. ACD sees C and $C^+\cap ACD=C$. CE adds E, then EF adds F. The next full pass adds nothing: $(BC)^+_G=BCEF$ lacks D.}
 \key{Multiway lossless: chase (FDs)}
-1. Row per fragment, column per attribute j. Cell=$a_j$ if present; else fresh $b_{ij}$.
-2. For rows agreeing on an FD's LHS, unify RHS symbols; replace all occurrences of unified symbols globally, preferring $a_j$ over b.
-3. Repeat to fixed point. An all-a row iff lossless; no such row at termination means lossy.
-\ex{R=ABC, fragments AB/AC, F={$A\to B$}. Rows initially $(a_A,a_B,b_{1C})$, $(a_A,b_{2B},a_C)$. Agree on A: unify $b_{2B}=a_B$. Second row becomes $(a_A,a_B,a_C)$: lossless.}
+1. Make a row per fragment and a column per attribute j. In row i, use $a_j$ if $j\in R_i$ and fresh $b_{ij}$ otherwise.
+2. For each $X\to Y\in F$, find rows agreeing in every X column. Unify their symbols in each Y column globally, keeping $a_j$ if present.
+3. An all-a row certifies lossless. If a full pass changes nothing and no row is all-a, the split is lossy.
+\ex{On ABC, AB/AC with $A\to B$ give $(a_A,a_B,b_{1C})$ and $(a_A,b_{2B},a_C)$. Equal A forces equal B, so replace $b_{2B}$ by $a_B$. The second row is now all-a.}
 \key{MCQ: separate the guarantees}
 \par\begin{tabular}{@{}lr@{}}
 \textbf{Claim} & \textbf{True?}\\
@@ -931,7 +934,7 @@ return if ($x/price > 100)
 This returns an expensive element containing the input item.
 \end{topicblock}
 
-\nextcol{.245}
+\nextcol{.24}
 \begin{topicblock}
 \topic{21}{MONGODB: CRUD / FILTERS}
 \when{Read/write documents, filter fields or update arrays.}
