@@ -962,21 +962,22 @@ db.c.deleteOne({a:4}); db.c.deleteMany({a:{$lt:0}});
 \begin{lstlisting}[style=Plaincode]
 db.c.replaceOne({_id:1},
  {name:"Alice",age:30},{upsert:true});
+db.c.updateOne({_id:1},{$set:{x:1}},{upsert:true});
 db.sales.updateOne({"items.quantity":15},
  {$set:{"items.$.quantity":55}});
 db.sales.updateMany({},{$set:{"items.$[i].flag":true}},
  {arrayFilters:[{"i.quantity":{$gte:3}}]});
 \end{lstlisting}
-\sql{$set} updates specified fields. \sql{replaceOne()} replaces the document and keeps its immutable \sql{_id}. Omitted fields are removed except \sql{_id}. \sql{upsert:true} inserts on no match. Use a plain replacement document without update operators.
+\sql{upsert:true} inserts on no match. \sql{replaceOne()} takes a plain document, keeps immutable \sql{_id} and drops other omitted fields. \sql{$set} edits only named fields.
 \par\begin{tabular}{@{}ll@{}}
 \sql{$} & first query-matching array element\\
 \sql{$[]} & all array elements\\
 \sql{$[i]} & elements passing arrayFilters\\
 \sql{$push} & append element\\
-\sql{$addToSet} & append if absent\\
+\sql{$addToSet} & add if absent, keep old duplicates\\
 \sql{$pull} & remove matching elements
 \end{tabular}\par
-Comparison: \sql{$eq $ne $gt $gte $lt $lte $in $nin}. Logical: \sql{$and $or $not $nor}; field conditions implicitly AND. Existence/type: \sql{$exists $type}; arrays: \sql{$all $size $elemMatch}. \sql{$set} assigns, \sql{$unset} removes a field, \sql{$inc} adds a number. \sql{$not} wraps a field condition; \sql{$or/$and/$nor} take condition arrays.
+Comparison: \sql{$eq $ne $gt $gte $lt $lte $in $nin}. Logical: \sql{$and $or $not $nor}; implicit AND across fields. Existence/type: \sql{$exists $type}; arrays: \sql{$all $size $elemMatch}. \sql{$unset} removes a field, \sql{$inc} adds a number. \sql{$not} wraps a field condition; \sql{$or/$and/$nor} take condition arrays.
 \key{Projection / sorting / missing}
 Inclusion: fields with 1; exclusion: 0. Cannot mix inclusion/exclusion except \sql{_id:0}; \sql{_id} included by default. sort 1 ascending, -1 descending; multiple fields are tie-breakers in specified order.
 For scalar/missing x in flexible db.c: \sql{{x:null}} matches null OR missing; \sql{{x:{$type:10}}} matches null (also a null array element in array-valued fields); \sql{{x:{$exists:false}}} missing; \sql{$exists:true} includes null. \sql{{x:{$ne:null}}} excludes null/missing.
@@ -1005,13 +1006,11 @@ db.trips.aggregate([
  {$sort:{avgDuration:-1,stationId:1}} ]);
 \end{lstlisting}
 SQL mapping: FROM=collection, WHERE=\sql{$match} before \sql{$group}, GROUP BY=\sql{$group}, HAVING=\sql{$match} after \sql{$group}, SELECT=\sql{$project}, ORDER BY=\sql{$sort}, LIMIT=\sql{$limit}.
-\sql{$sum:1} counts input documents; \sql{$sum:"$x"} sums x; \sql{$avg:"$x"} averages numeric x; \sql{_id:null} makes one global group. \sql{"$field"} references a field; \sql{"field"} is a string literal. \sql{$group} does not promise output order.
+\sql{$sum:1} counts documents. In each group, \sql{$sum:"$x"} and \sql{$avg:"$x"} skip nonnumeric/missing x. With no numbers, sum=0 and avg=null. \sql{_id:null} groups all input. \sql{"$field"} reads a field, \sql{"field"} is literal. Group output is unordered.
 \key{RULE: stage-order guide (schematic)}
-\sql{$project(round) -> $sort}: sort rounded values.
-\sql{$sort -> $project(round)}: sort original values.
-\sql{$match -> $group}: filter documents.
-\sql{$group -> $match}: filter aggregate groups.
-\trap{After \sql{$group}, fields not grouped/accumulated no longer exist. "round" above stands for the explicit rounding expression in a projection.}
+\sql{$project(round) -> $sort} sorts rounded values. Reverse to sort raw values.
+\sql{$match -> $group} filters documents. Reverse to filter groups.
+\trap{After \sql{$group}, only group keys and accumulator outputs remain.}
 \ex{Input trips (stationId,duration,birthYear): (1,300,1990), (1,600,1990), (2,900,1990). All pass the first match. Group 1: count2, mean450; group 2: count1, mean900. Output: stationId1, tripCount2, avgDuration450.0; group 2 fails the aggregate threshold.}
 \key{Pipeline-stage fragments (inside aggregate)}
 \sql{$addFields} computes/preserves fields; \sql{$project} selects/computes; \sql{$unwind} emits one document per array element; \sql{$sort} then \sql{$limit} obtains top results.
@@ -1022,21 +1021,16 @@ SQL mapping: FROM=collection, WHERE=\sql{$match} before \sql{$group}, GROUP BY=\
                                   "$items.price"]}}}}
 \end{lstlisting}
 \trap{Default \sql{$unwind} drops empty/null/missing arrays; preserveNullAndEmptyArrays retains them. After unwind, sum:1 counts emitted items/rows, not original sales; count distinct sale IDs if sales are required.}
-\key{Write/count stages (stage fragments)}
+\key{Stage fragments: group key / count / writes}
 \begin{lstlisting}[style=Plaincode]
+{$group:{_id:{a:"$a",b:"$b"},n:{$sum:1}}}
 {$count:"total"}
 {$out:"result"}
 {$merge:{into:"result",on:"_id",
  whenMatched:"merge",whenNotMatched:"insert"}}
 \end{lstlisting}
-\par\begin{tabular}{@{}ll@{}}
-\textbf{Stage} & \textbf{Effect}\\
-\sql{$count} & Count pipeline docs (empty: no doc)\\
-\sql{$out} & Create or replace target collection\\
-\sql{$merge} & Merge into target by matching key
-\end{tabular}\par
-Pipeline \sql{$set} adds/modifies fields (alias of \sql{$addFields}).
-\trap{\sql{$out} or \sql{$merge} must be the last stage; choose the required output action. Ordinary aggregation transforms its result without changing source documents unless a write-output stage is used.}
+\sql{$count} counts input documents. With zero documents, \sql{$group} and \sql{$count} emit nothing. In \sql{aggregate()}, \sql{$set} (\sql{$addFields}) reshapes pipeline output only.
+\trap{\sql{$out} creates/replaces a collection. \sql{$merge} writes by matching key. Either must come last.}
 \key{Single-purpose aggregation}
 \begin{lstlisting}[style=Plaincode]
 db.c.countDocuments({score:{$gte:50}});
@@ -1070,7 +1064,12 @@ One item satisfies P (\sql{$elemMatch}) & A,C\\
 Original index 0 satisfies P & C\\
 Empty array (\sql{items:{$size:0}}) & D
 \end{tabular}\par
-\trap{B satisfies the dot conditions on different items; no single item satisfies P. Filtering selects whole documents and leaves arrays intact. Projection choices are in 24.}
+\trap{B satisfies the dot conditions on separate items. Query \sql{$elemMatch} requires one matching item and returns whole documents. See 24 for projection.}
+\begin{lstlisting}[style=Plaincode]
+// scores: [10,100]
+{scores:{$gt:20,$lt:80}}             // matches
+{scores:{$elemMatch:{$gt:20,$lt:80}}} // no match
+\end{lstlisting}
 \end{topicblock}
 
 \nextcol{.242}
@@ -1084,7 +1083,7 @@ db.sales.find(
  {_id:0,saleId:1,"items.$":1}).sort({saleId:1});
 \end{lstlisting}
 \sql{"items.$":1} returns the first query-matching element. Use one array and a single \sql{$elemMatch} condition for unambiguous matching. On input 23: A returns [a1], C returns [c0].
-Projection \sql{$elemMatch} supplies its own predicate:
+Projection \sql{$elemMatch} returns the first item matching its own predicate:
 \begin{lstlisting}[style=Plaincode]
 db.sales.find({}, {_id:0,saleId:1,
  items:{$elemMatch:{quantity:{$gte:3},price:{$gte:80}}}});
@@ -1131,7 +1130,7 @@ db.c.find({a:5}).hint({a:1,b:-1})
  .explain("executionStats");
 db.c.dropIndex("a_1_b_-1");
 \end{lstlisting}
-Single-field, compound, unique, multikey (arrays), text indexes. Compound \sql{{a:1,b:-1}} supports prefix a and a,b; b alone lacks that same efficient prefix access. Indexes cost storage/write maintenance; inspect executionStats rather than assuming use. Default \sql{_id} index is unique.
+Single-field, compound, unique, multikey (arrays), text indexes. Index (a,b,c) supports prefixes a, ab, abc. A b-only query lacks prefix access. Indexes cost storage and write maintenance. Check executionStats. Default \sql{_id} index is unique.
 Unique-index creation requires existing keys to satisfy uniqueness. hint selects an existing index (above); use before dropping it. Text search uses the text index.
 \par\begin{tabular}{@{}ll@{}}
 \sql{COLLSCAN} & full collection scan\\
@@ -1140,7 +1139,7 @@ Unique-index creation requires existing keys to satisfy uniqueness. hint selects
 \sql{totalKeysExamined} & index entries examined\\
 \sql{totalDocsExamined} & documents examined
 \end{tabular}\par
-Embed bounded children read/updated together: one read and single-document atomicity, but duplication/large growing arrays. Reference shared/many-to-many/unbounded entities: less duplication and independent updates, with lookup/join/read cost. Single-document writes are atomic; multi-document transactions are available.
+Embed bounded children read/updated together for one read. Costs: duplication and growing arrays. Reference shared, many-to-many or unbounded entities for fewer copies and independent writes, at lookup/join/read cost. A single-document write is atomic. \sql{updateMany()} is atomic only per document. Use a transaction for all-or-nothing across documents.
 Vertical scaling=larger server; horizontal=more nodes. Replication copies data; sharding partitions it. CAP: during a partition, a primary detecting a minority of voting nodes steps down; a majority can elect a new primary. Secondary reads may be stale; guarantees depend on read/write concern and read preference.
 \end{topicblock}
 

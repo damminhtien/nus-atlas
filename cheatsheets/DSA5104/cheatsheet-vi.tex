@@ -950,7 +950,7 @@ BSON là dạng mã hóa nhị phân, hỗ trợ ObjectId, Date, int32/int64, De
 Trip(userType,duration,birthYear,stationId)
 Sale(saleId,items[{name,quantity,price}])
 \end{lstlisting}
-db.trips và db.sales có đủ các field trên. duration tính bằng giây. duration, birthYear, quantity và price là số. items có thứ tự, có thể rỗng. saleId là duy nhất. Các ví dụ db.c dùng schema riêng, cho phép thiếu field.
+db.trips và db.sales có đủ field trên. duration (giây), birthYear, quantity, price là số. items có thứ tự, có thể rỗng. saleId duy nhất. db.c là ví dụ riêng, cho phép thiếu field.
 \pattern{CRUD trên collection c}
 \begin{lstlisting}[style=Plaincode]
 db.c.insertOne({a:1}); db.c.insertMany([{a:2},{a:3}]);
@@ -963,21 +963,22 @@ db.c.deleteOne({a:4}); db.c.deleteMany({a:{$lt:0}});
 \begin{lstlisting}[style=Plaincode]
 db.c.replaceOne({_id:1},
  {name:"Alice",age:30},{upsert:true});
+db.c.updateOne({_id:1},{$set:{x:1}},{upsert:true});
 db.sales.updateOne({"items.quantity":15},
  {$set:{"items.$.quantity":55}});
 db.sales.updateMany({},{$set:{"items.$[i].flag":true}},
  {arrayFilters:[{"i.quantity":{$gte:3}}]});
 \end{lstlisting}
-\sql{$set} chỉ sửa field được chỉ định. \sql{replaceOne()} thay document, giữ \sql{_id} bất biến. Field bị bỏ qua sẽ mất, trừ \sql{_id}. \sql{upsert:true} chèn nếu không có kết quả khớp. Truyền document thay thế trực tiếp, không dùng update operator.
+\sql{upsert:true} chèn nếu không khớp. \sql{replaceOne()} nhận document thay thế, giữ \sql{_id} bất biến và xóa field bị bỏ qua. \sql{$set} chỉ sửa field chỉ định.
 \par\begin{tabular}{@{}ll@{}}
 \sql{$} & phần tử đầu tiên khớp query\\
 \sql{$[]} & mọi phần tử trong array\\
 \sql{$[i]} & phần tử thỏa arrayFilters\\
 \sql{$push} & thêm vào cuối\\
-\sql{$addToSet} & thêm nếu chưa có\\
+\sql{$addToSet} & thêm nếu chưa có, giữ giá trị trùng cũ\\
 \sql{$pull} & xóa phần tử khớp
 \end{tabular}\par
-So sánh: \sql{$eq $ne $gt $gte $lt $lte $in $nin}. Logic: \sql{$and $or $not $nor}. Các điều kiện theo field mặc định nối bằng AND. Tồn tại/kiểu: \sql{$exists $type}. Array: \sql{$all $size $elemMatch}. \sql{$set} gán, \sql{$unset} xóa field, \sql{$inc} cộng thêm. \sql{$not} bọc điều kiện trên một field. \sql{$or/$and/$nor} nhận array điều kiện.
+So sánh: \sql{$eq $ne $gt $gte $lt $lte $in $nin}. Logic: \sql{$and $or $not $nor}, mặc định AND giữa field. Tồn tại/kiểu: \sql{$exists $type}. Array: \sql{$all $size $elemMatch}. \sql{$unset} xóa field, \sql{$inc} cộng thêm. \sql{$not} bọc điều kiện field. \sql{$or/$and/$nor} nhận array điều kiện.
 \key{Projection / sắp xếp / field bị thiếu}
 Chọn field bằng 1, bỏ field bằng 0. Chỉ được trộn hai cách với ngoại lệ \sql{_id:0}. Mặc định có \sql{_id}. Sort 1 tăng, -1 giảm. Khi bằng nhau, xét lần lượt các field sort tiếp theo.
 Với x là scalar hoặc bị thiếu trong db.c: \sql{{x:null}} khớp null hoặc thiếu. \sql{{x:{$type:10}}} khớp null, kể cả phần tử null nếu x là array. \sql{{x:{$exists:false}}} khớp field bị thiếu. \sql{$exists:true} gồm cả null. \sql{{x:{$ne:null}}} loại cả null và field bị thiếu.
@@ -1006,14 +1007,12 @@ db.trips.aggregate([
  {$sort:{avgDuration:-1,stationId:1}} ]);
 \end{lstlisting}
 Đối chiếu SQL: FROM=collection, WHERE=\sql{$match} trước \sql{$group}, GROUP BY=\sql{$group}, HAVING=\sql{$match} sau \sql{$group}, SELECT=\sql{$project}, ORDER BY=\sql{$sort}, LIMIT=\sql{$limit}.
-\sql{$sum:1} đếm document đầu vào. \sql{$sum:"$x"} tính tổng x. \sql{$avg:"$x"} tính trung bình các x dạng số. \sql{_id:null} gom thành một nhóm. \sql{"$field"} trỏ đến field, \sql{"field"} là chuỗi. \sql{$group} không bảo đảm thứ tự.
+\sql{$sum:1} đếm document. Trong nhóm, \sql{$sum:"$x"} và \sql{$avg:"$x"} bỏ x thiếu hoặc khác kiểu số. Nhóm không có số cho sum=0, avg=null. \sql{_id:null} gom toàn bộ đầu vào. \sql{"$field"} đọc field, \sql{"field"} là chuỗi. Nhóm không có thứ tự bảo đảm.
 \key{Thứ tự các stage (sơ đồ)}
-\sql{$project(round) -> $sort}: sort giá trị đã làm tròn.
-\sql{$sort -> $project(round)}: sort giá trị gốc.
-\sql{$match -> $group}: lọc document.
-\sql{$group -> $match}: lọc nhóm sau khi tính.
-\trap{Sau \sql{$group}, chỉ còn khóa nhóm và các field do accumulator tạo. round là biểu thức làm tròn trong projection.}
-\ex{Trip (stationId,duration,birthYear): (1,300,1990), (1,600,1990), (2,900,1990). Cả ba qua bộ lọc đầu. Nhóm 1 có 2 trip, trung bình 450. Nhóm 2 có 1 trip, trung bình 900, bị loại. Kết quả: stationId=1, tripCount=2, avgDuration=450.0.}
+\sql{$project(round) -> $sort} xếp giá trị làm tròn. Đảo thứ tự hai stage để xếp giá trị gốc.
+\sql{$match -> $group} lọc document. Đảo hai stage để lọc nhóm.
+\trap{Sau \sql{$group}, chỉ còn khóa nhóm và các field do accumulator tạo.}
+\ex{Trip (stationId,duration,birthYear): (1,300,1990), (1,600,1990), (2,900,1990). Cả ba qua bộ lọc đầu. Trạm 2 có 1 trip, trung bình 900, bị loại. Kết quả: stationId=1, tripCount=2, avgDuration=450.0.}
 \key{Các stage dùng trong aggregate}
 \sql{$addFields} thêm/sửa field và giữ field khác. \sql{$project} chọn/tính field. \sql{$unwind} tạo một document cho mỗi phần tử array. \sql{$sort} rồi \sql{$limit} để lấy top K.
 \begin{lstlisting}[style=Plaincode]
@@ -1023,21 +1022,16 @@ db.trips.aggregate([
                                   "$items.price"]}}}}
 \end{lstlisting}
 \trap{\sql{$unwind} mặc định bỏ array rỗng, null hoặc thiếu. preserveNullAndEmptyArrays giữ các trường hợp đó. Sau unwind, sum:1 đếm từng item. Muốn đếm sale, đếm saleId khác nhau.}
-\key{Stage ghi kết quả / đếm}
+\key{Mẫu stage: khóa nhóm / đếm / ghi}
 \begin{lstlisting}[style=Plaincode]
+{$group:{_id:{a:"$a",b:"$b"},n:{$sum:1}}}
 {$count:"total"}
 {$out:"result"}
 {$merge:{into:"result",on:"_id",
  whenMatched:"merge",whenNotMatched:"insert"}}
 \end{lstlisting}
-\par\begin{tabular}{@{}ll@{}}
-\textbf{Stage} & \textbf{Tác dụng}\\
-\sql{$count} & đếm document (rỗng: không trả document)\\
-\sql{$out} & tạo/thay thế collection đích\\
-\sql{$merge} & hợp nhất vào đích theo khóa
-\end{tabular}\par
-\sql{$set} trong pipeline thêm/sửa field (alias của \sql{$addFields}).
-\trap{\sql{$out} hoặc \sql{$merge} phải đứng cuối. Pipeline chỉ ghi dữ liệu khi dùng stage ghi kết quả.}
+\sql{$count} đếm document đầu vào. Nếu không có đầu vào, \sql{$group} và \sql{$count} không trả document. Trong \sql{aggregate()}, \sql{$set} (\sql{$addFields}) chỉ sửa kết quả pipeline.
+\trap{\sql{$out} tạo/thay collection. \sql{$merge} ghi vào đích theo khóa. Cả hai phải ở stage cuối.}
 \key{Các lệnh đếm và lấy giá trị riêng biệt}
 \begin{lstlisting}[style=Plaincode]
 db.c.countDocuments({score:{$gte:50}});
@@ -1071,7 +1065,12 @@ Một item thỏa P (\sql{$elemMatch}) & A,C\\
 Item gốc ở index 0 thỏa P & C\\
 Array rỗng (\sql{items:{$size:0}}) & D
 \end{tabular}\par
-\trap{Ở B, mỗi điều kiện khớp một item khác nhau. Filter giữ nguyên array của document được chọn. Xem projection ở mục 24.}
+\trap{Ở B, các điều kiện khớp item khác nhau. Query \sql{$elemMatch} cần một item thỏa mọi điều kiện và trả cả document. Xem projection ở mục 24.}
+\begin{lstlisting}[style=Plaincode]
+// scores: [10,100]
+{scores:{$gt:20,$lt:80}}             // matches
+{scores:{$elemMatch:{$gt:20,$lt:80}}} // no match
+\end{lstlisting}
 \end{topicblock}
 
 \nextcol{.245}
@@ -1085,7 +1084,7 @@ db.sales.find(
  {_id:0,saleId:1,"items.$":1}).sort({saleId:1});
 \end{lstlisting}
 \sql{"items.$":1} trả phần tử đầu tiên khớp query. Dùng một array và một điều kiện \sql{$elemMatch} để xác định rõ phần tử. Với dữ liệu mục 23: A trả [a1], C trả [c0].
-\sql{$elemMatch} trong projection có điều kiện riêng:
+\sql{$elemMatch} trong projection lấy item đầu tiên khớp điều kiện riêng:
 \begin{lstlisting}[style=Plaincode]
 db.sales.find({}, {_id:0,saleId:1,
  items:{$elemMatch:{quantity:{$gte:3},price:{$gte:80}}}});
@@ -1132,7 +1131,7 @@ db.c.find({a:5}).hint({a:1,b:-1})
  .explain("executionStats");
 db.c.dropIndex("a_1_b_-1");
 \end{lstlisting}
-Index gồm single-field, compound, unique, multikey (array) và text. Compound \sql{{a:1,b:-1}} hỗ trợ prefix a và a,b. Chỉ lọc b thì thiếu lợi thế prefix. Index tốn bộ nhớ lưu trữ và công cập nhật. Xem executionStats để biết index có được dùng. Index mặc định trên \sql{_id} là unique.
+Index gồm single-field, compound, unique, multikey (array) và text. Index (a,b,c) hỗ trợ prefix a, ab, abc. Query chỉ lọc b thiếu lợi thế prefix. Index tốn chỗ và công cập nhật. Dùng executionStats để kiểm tra. Index mặc định trên \sql{_id} là unique.
 Chỉ tạo unique index được khi các khóa hiện có là duy nhất. hint chọn index đang tồn tại. Dùng hint trước khi xóa index trong ví dụ trên. Text search dùng text index.
 \par\begin{tabular}{@{}ll@{}}
 \sql{COLLSCAN} & quét toàn bộ collection\\
@@ -1141,7 +1140,7 @@ Chỉ tạo unique index được khi các khóa hiện có là duy nhất. hint
 \sql{totalKeysExamined} & số mục index đã xét\\
 \sql{totalDocsExamined} & số document đã xét
 \end{tabular}\par
-Embed khi số child có giới hạn và thường đọc/sửa cùng nhau. Đọc một lần, ghi atomic trong một document. Đổi lại, dữ liệu có thể lặp và array có thể phình. Dùng reference cho entity dùng chung, quan hệ nhiều-nhiều hoặc số lượng không giới hạn. Ít lặp, dễ sửa riêng, nhưng tốn lookup/join. Có transaction qua nhiều document.
+Embed child có giới hạn, hay đọc/sửa cùng nhau. Đọc một lần, đổi lại có thể lặp dữ liệu hoặc phình array. Reference cho entity dùng chung, nhiều-nhiều hoặc không giới hạn, giảm lặp và dễ sửa riêng, tốn lookup/join. Ghi một document là atomic. \sql{updateMany()} chỉ atomic từng document. Dùng transaction để cùng commit hoặc rollback.
 Vertical scaling: nâng cấu hình máy. Horizontal: thêm node. Replication sao chép dữ liệu, sharding chia dữ liệu. CAP khi mạng bị chia cắt: primary tự hạ vai trò nếu thấy mình thuộc nhóm thiểu số. Đa số có thể bầu primary mới. Đọc từ secondary có thể gặp dữ liệu cũ. Bảo đảm phụ thuộc read/write concern và read preference.
 \end{topicblock}
 
