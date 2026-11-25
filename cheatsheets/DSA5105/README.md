@@ -17,8 +17,10 @@ subjects. The supplied original remains outside the repository.
 - Topics 01–12: learning/linear models, optimization, kernels/SVM, trees/ensembles,
   neural networks, CNNs, residual blocks, and RNNs. The L1–L5 audit adds proof
   examples, feature-scaling arithmetic, entropy splits, and three-step BPTT.
+- Topics 04–06 add parameterized kernel validity, kernel distances to centroids,
+  and a general KKT procedure for eliminating primal variables.
 - Topics 13–26: PCA/whitening/feature-space PCA/autoencoders, K-means/GMM, finite
-  discounted MDPs, value/policy iteration, MC/TD/Q-learning/DQN, and GNN permutation symmetry.
+  MDPs, finite-horizon DP, value/policy iteration, MC/TD/Q-learning/DQN, and GNN permutation symmetry.
   Topic 15 keeps autoencoder MLP architecture, loss, and training together.
 - Topic 24 merges the user-supplied DQN core into Q-learning: a shared terminal-aware
   target, replay and target networks, ordered training steps, and a gradient example.
@@ -26,14 +28,14 @@ subjects. The supplied original remains outside the repository.
   fixed-policy action averages from optimal action choices and environment expectations.
 - Topics 25–26 use the current Week 12 GNN slides, focusing on
   permutation invariance/equivariance, shared message passing, graph readout,
-  degree-normalized GCN, and dot-product graph attention.
+  degree-normalized GCN, graph attention, edge prediction, edge/node/global
+  updates, and over-smoothing.
   No past-paper graph-kernel, spectral-clustering, LS-SVM, leave-one-out, or
   shortest-path exercises are included. Kernel PCA and SARSA remain omitted.
 - Topics 27–30: Transformers, prioritizing attention arithmetic, Q/K/V dependency,
-  additive and causal masks, multi-head calculations, sinusoidal position encoding,
-  and permutation equivariance with its conditions.
-  Short notes on block roles and GPT training/generation are merged into topics
-  27 and 29.
+  additive and causal masks, multi-head calculations, LayerNorm and the post-norm
+  block, sinusoidal position encoding, and permutation equivariance.
+  Topic 29 covers GPT training and generation.
   Topics 27–30 share row-vector notation, token counts, and attention tensors.
 
 The syllabus explicitly excludes the Tuesday Group 2 Week 8 special lecture
@@ -54,9 +56,8 @@ cp tmp/pdfs/dsa5105/build/cheatsheet.pdf cheatsheets/DSA5105/cheatsheet.pdf
 ```
 
 The source uses the template's Source Sans 3 / STIX Two Math font choices and
-fallbacks, with 5.7 pt body text and 6.1 pt line spacing. All formulas use
-inline math, including compact matrices; former aligned displays are split
-into inline expressions. Fixed paragraph spacing is 0.05 pt, topic spacing
+fallbacks, with 5.4 pt body text and a 5.75 pt baseline. All formulas use
+inline math, including compact matrices. Fixed paragraph spacing is 0.05 pt, topic spacing
 is 0.8 pt, and space below topic headers is 0.3 pt. Header padding is 0.5 pt;
 note-box padding is 0.15 pt. Topic headings use 6.5 pt text on a 7.1 pt baseline.
 `ragged2e` allows normal hyphenation in body text
@@ -76,23 +77,20 @@ tracked, following the convention of `cheatsheets/DSA5104/`.
 
 ### Transformers / Lecture 13
 
-Four slide-backed Transformer topics include full multi-head arithmetic and
-sinusoidal position encoding. Compact notes in topics 27 and 29 cover
-block roles, the GPT pipeline, next-token loss, teacher forcing, and generation.
-Existing formulas, procedures, and examples are retained. The sheet has two A4
-pages, 30 topics, 50 procedures, 64 examples, and 1295 inline formulas. Keep the
-5.7 pt body font, 6.1 pt baseline, margins, gutters, and sequential column flow.
+Four slide-backed Transformer topics cover the attention calculation, the
+two post-norm residual sublayers, sinusoidal positions, and GPT next-token
+loss, teacher forcing, and generation.
 Keep slide/page references in the source map below; omit them from printed
 headings and examples.
 
 ## Hand-calculation coverage
 
 Every numbered topic has a `CHẠY` procedure and an `EX` example. The sheet
-contains 50 procedure blocks and 64 example boxes; procedures that share the
-same operations can cover related methods together. Numerical examples combine
-lecture examples with authored arithmetic illustrations, as recorded in the
-source map; no past-paper questions are used. Keep intermediate calculations,
-update order, and loss normalization when editing.
+has two A4 pages with 30 topics, 58 procedures, 72 worked examples, and 1471
+inline formulas. Related methods can share a procedure when the steps overlap.
+The source map identifies examples from lectures and original arithmetic
+illustrations. Keep intermediate calculations, update order, and loss
+normalization when editing.
 
 The L1–L5 audit retains all 55 preceding examples, extends the SVM, bagging,
 and CNN examples, and adds nine examples and four procedures:
@@ -122,9 +120,9 @@ worked examples, with four additional ordered procedures:
 | 01 | Compare empirical objectives; construct a train/population-risk counterexample on a fixed two-point distribution; select hyperparameters with fold losses and refit. |
 | 02 | Distinguish input/parameter linearity; solve OLS/ridge; calculate the effective penalty and compensating lambda under feature scaling; solve a clipped Huber equation; check lasso signs/zero coordinates; forward probabilities and update logistic/softmax parameters. |
 | 03 | Full-batch GD iterations and sample/minibatch SGD gradients. |
-| 04 | Kernel validity checks, an explicit negative quadratic form, a positive polynomial-kernel proof for every dataset, and a numerical representer decomposition. |
-| 05 | Gram construction, KRR solve and prediction; feature distance and polynomial-map expansion. |
-| 06 | Active-constraint/KKT calculation for a small hard SVM; eliminate primal weights to derive its dual and check matching optimal objectives; a hinge subgradient update. |
+| 04 | Derive a necessary parameter range from a two-point Gram matrix and prove sufficiency with a feature map. Retain the negative quadratic form, polynomial proof, and numerical representer decomposition. |
+| 05 | Construct the Gram matrix, solve KRR, and predict. Compare nearest-sample and nearest-centroid labels via kernel distances, and expand polynomial features. |
+| 06 | Write the general Lagrangian and KKT conditions. Eliminate primal variables and identify a stationary point of an unbounded objective. Use the hard SVM example to solve the dual, verify both objective values, and calculate a hinge subgradient update. |
 | 07 | Enumerate split thresholds, compare Gini, entropy/information gain and regression SSE, then recurse. |
 | 08 | Derive and numerically verify the bagging variance from covariance counts; bootstrap, grow trees with RF feature selection, average or vote. |
 | 09 | One complete AdaBoost error/weight/normalization round and a weighted final vote. |
@@ -138,14 +136,14 @@ worked examples, with four additional ordered procedures:
 | 17 | Gaussian MLE and density substitution; prior-weighted mixture density and Bayes normalization. |
 | 18 | Complete GMM E-step and M-step from explicit old means, variances, and priors. |
 | 19 | Distinguish joint next-state/reward probabilities, marginal transitions, expected rewards, and observed transitions; compute returns backward and average action values under a stochastic policy. |
-| 20 | Expand all four Bellman equations using the joint environment law; keep the current action fixed for action values and average or maximize over actions for state values. Solve exact policy-evaluation equations; compute action candidates before policy average or max. On one small graph, compare stochastic-policy values/action values with the optimal values. |
+| 20 | Expand all four Bellman equations using the joint environment law and solve exact policy evaluation. Fill a grid by forward cost and backward reward, trace tied optimal paths, and compute a stochastic finite-horizon policy by backward induction. |
 | 21 | Synchronous value-iteration sweeps, error-based stopping, and final greedy policy. |
 | 22 | Evaluate a policy, compare actions, improve, and repeat until stable. |
 | 23 | First-visit versus every-visit MC with repeated states; TD updates with and without terminal continuation; classify model access and bootstrap use. |
 | 24 | Epsilon-greedy sampling probabilities; nonterminal and terminal Q-learning updates. Run DQN replay sampling, a frozen-target gradient step, and periodic target copying; reuse the numerical target to calculate MSE, its gradient, and the new parameter. |
 | 25 | Relabel features and adjacency consistently using the grouped permutation inverse/orthogonality identities; prove equivariance/invariance or disprove them with numerical counterexamples. |
-| 26 | Synchronous message passing on a four-node chain, two layers, relabelled outputs, and invariant sum readouts. Compute self-loop degrees and symmetric GCN normalization for two layers; compute allowed-edge dot-product scores, neighbor softmax, weighted aggregation, and a second attention layer. |
-| 27 | Compute projections, scaled logits, row softmax, and weighted values; check self/cross-attention Q/K/V, score, and output shapes, including equal key/value counts. Work the lecture's three-key example and compare scaled/unscaled weights. Project two separate heads, form both attention matrices, concatenate outputs, and apply an explicit output matrix. Identify the roles of attention, shared FFN, residual updates, and tokenwise LayerNorm. |
+| 26 | Compute two layers of local message passing, normalized GCN, and graph attention. Apply a symmetric sigmoid decoder, trace edge/node/global dependencies across two blocks, and calculate the degree-weighted limit of repeated averaging. |
+| 27 | Compute single- and multi-head attention and verify self/cross-attention shapes. Count projection parameters and evaluate both residual updates, the shared FFN, and both LayerNorm operations. |
 | 28 | Trace changes to Q, K, V, or an input token; check orthogonal key perturbations and row-constant softmax shifts, restricting masked conditions to allowed keys. Recompute a value perturbation, key perturbation, and zero query from the same starting data. |
 | 29 | Apply additive masks and calculate a three-token causal example; shift language-model targets, calculate sequence probability and summed/mean NLL, then greedily append tokens until eos. |
 | 30 | Recompute attention after a token swap, verify output equivariance, and use a fixed causal mask as a numerical counterexample. Calculate sinusoidal positions in radians, add token embeddings, and compare fixed versus jointly permuted positions. |
@@ -166,6 +164,8 @@ into this repository. Page numbers are 1-based PDF pages.
 | 01–02 | `DSA5105/Lec1_SL_LinearModels.pdf`, pp. 18–55 | Keep empirical/population risk, basis models, robust losses, regularization, and classification losses. |
 | 01–02 (proof examples) | `DSA5105/Lec1_SL_LinearModels.pdf`, pp. 23–24, 33, 39–42 | The two-point ERM/generalization counterexample and parameter-versus-input linearity examples are authored illustrations of the risk and fixed-feature definitions. |
 | 04–06 | `DSA5105/Lec2_SL_KernelMethods.pdf`, pp. 4–23, 24–46 | Use representer/KRR and the slide's no-intercept SVM convention; do not add an intercept-induced dual equality. |
+| 04–05 (parameter kernels / centroid) | `DSA5105/Lec2_SL_KernelMethods.pdf`, pp. 16–18, and user-supplied kernel templates | Use the supplied two-point Gram matrix to constrain the parameter, then construct a feature map on the two-symbol domain. Expand the feature-centroid distance and compare it with nearest neighbor in an original example. |
+| 06 (general KKT / elimination) | `DSA5105/Lec2_SL_KernelMethods.pdf`, pp. 38–40, `DSA5105/Lec6_UL_PCA.pdf`, p. 19, and user-supplied constrained quadratic | Generalize the inequality and equality treatments, then eliminate variables in the supplied stationary system. An original diagonal-matrix example distinguishes stationarity from a finite maximum. |
 | 02, 04, 06 (derivations) | `DSA5105/Lec2_SL_KernelMethods.pdf`, pp. 13–17, 43–44 | Derive the scaling rule by changing coordinates in the ridge objective, assuming all coefficients are penalized. The valid-kernel and representer examples are authored. Expand the SVM Lagrangian after stationarity, then solve the existing one-dimensional example's dual without an intercept equality constraint. |
 | 07–09 | `DSA5105/Lec3_SL_DecisionTree.pdf`, pp. 3–34 | Greedy tree splits, bagging/random forests, bias–variance, and sequential boosting. |
 | 07–08 (entropy / variance) | `DSA5105/Lec3_SL_DecisionTree.pdf`, p. 19, pp. 25–30; retained bagging covariance assumptions | Compute entropy using the sheet's base-2 convention; derive the retained equal-variance/common-correlation formula by expanding variance as a double covariance sum. The arithmetic examples are authored. |
@@ -177,14 +177,16 @@ into this repository. Page numbers are 1-based PDF pages.
 | 13–15 | `DSA5105/Lec6_UL_PCA.pdf`, pp. 15–31, 34–60 | Center before PCA; separate scores/reconstruction; use the explicitly taught feature matrix, whitening, autoencoder loss, shallow MLP dimensions, and joint minibatch SGD. |
 | 16–18 | `DSA5105/Lec9_UL_K-means_GMM.pdf`, pp. 4–22, 23–39 | Contrast hard assignments with Gaussian posterior responsibilities and weighted parameter updates. |
 | 19–20 | `DSA5105/Lec10_RL_MDP_DP.pdf`, pp. 13–44 | Separate policy expectation from optimality maximization under discounted-MDP assumptions. The joined stochastic-policy/optimal-value example is authored arithmetic on the same two-state graph used in VI/PI. |
+| 20 (finite-horizon DP) | `DSA5105/Lec10_RL_MDP_DP.pdf`, pp. 27–31, and user-supplied recurrences | Apply the DP principle in topological order for forward cost, reverse order for remaining reward, and backward in time for a stochastic horizon. Use an original right/down grid with tied optimal paths and an original two-step MDP. |
 | 19–24 (RL notation / Bellman expansion) | User-supplied four Bellman equations and interpretation | Merge the joint-law expansions into topic 20 instead of adding another section. Use uppercase value functions, marginal transition probabilities and expected rewards consistently in exact evaluation, VI and PI. Distinguish random variables from observed transitions, deterministic policies from stochastic policies, and true values from estimates; keep terminal-aware sampled targets in TD/Q-learning/DQN. |
 | 21–24 | `DSA5105/Lec11_RL.pdf`, pp. 8–20, 25–39 | Distinguish exact model-based backups, sampled returns, TD evaluation, and Q-learning. |
 | 24 (DQN) | User-supplied DQN Core formulas and mechanism summary | Use a neural Q-function, frozen target network, random replay minibatches, and periodic hard copying. The done flag extends the supplied nonterminal target to true terminal transitions; the one-transition identity-output gradient example is authored arithmetic. |
-| 25–26 | `DSA5105/Lec12_GNN.pptx`, slides 5–18, 22, 32–33 | Group the permutation inverse/orthogonality identities with feature/adjacency relabeling; distinguish node equivariance from graph invariance; derive shared-layer symmetry and use the two-layer chain example with sum readout. |
-| 26 (GCN / attention) | `DSA5105/Lec12_GNN.pptx`, slides 24–25, 34 | Translate the nodewise symmetric self-loop GCN and query/key dot-product neighbor attention into row-embedding notation. The three-node, two-layer calculations and permutation identities are authored derivations. Attention uses only listed neighbors; its example omits self-loops and chooses the shared update as ReLU of the aggregate. |
+| 25–26 | `DSA5105/Lec12_GNN.pptx`, slides 5–20, 22–25 | Group the permutation inverse/orthogonality identities with feature/adjacency relabeling; distinguish node equivariance from graph invariance; derive shared-layer symmetry and use the two-layer chain example with sum readout. |
+| 26 (GCN / attention) | `DSA5105/Lec12_GNN.pptx`, slides 21, 27–28 | Translate the nodewise symmetric self-loop GCN and query/key dot-product neighbor attention into row-embedding notation. The three-node, two-layer calculations and permutation identities are authored derivations. Attention uses only listed neighbors; its example omits self-loops and chooses the shared update as ReLU of the aggregate. |
+| 26 (edge / global / over-smoothing) | `DSA5105/Lec12_GNN.pptx`, slides 24, 26, 29–33 | Use the symmetric dot-product decoder and track edge, node, and graph updates in an original two-block example. Retain the four-node averaging calculation from slide 33 and derive its degree-weighted limit. |
 | 27 | `DSA5105/Lec13_Transformers.pdf`, pp. 8–16; user-requested Q/K/V notation | Use row softmax, projection dimensions, and scaling by the key dimension; reproduce the three-key attention example and the scaled-logit comparison. Derive the self/cross-attention token counts and token-to-token versus Q/K feature-to-feature product shapes from matrix dimensions. The transposed-query product requires equal query/key token counts; multiplying attention weights by values requires equal key/value counts. |
 | 27 (multi-head) | `DSA5105/Lec13_Transformers.pdf`, pp. 18–19 | Use separate projections per head, feature concatenation, and a learned output projection. The two-head identity-input example explicitly computes both attention matrices, head outputs, concatenation, and output multiplication. |
-| 27 (block roles) | `DSA5105/Lec13_Transformers.pdf`, pp. 22–23 | Distinguish token mixing, shared feature transforms, residual updates, and per-token feature normalization; retain the slide's post-norm convention. |
+| 27 (post-norm block) | `DSA5105/Lec13_Transformers.pdf`, pp. 18–23 | Count the query, key, value, and output projection parameters. Use the lecture's per-token normalization and post-norm order in an original example that evaluates both residual updates and both LayerNorm operations. |
 | 28 | `DSA5105/Lec13_Transformers.pdf`, pp. 9–11, 16–17 | Derive separate Q/K/V dependencies from the computation graph; distinguish a tensor perturbation from an input change and calculate explicit perturbations. The user-supplied unchanged-score and softmax-shift conditions follow algebraically; the row-shift equivalence assumes finite logits and applies only on allowed keys with a fixed mask. |
 | 29 | `DSA5105/Lec13_Transformers.pdf`, pp. 4, 17, 29–32 | Reproduce the masked-key calculation; derive a three-token causal calculation with shifted targets, diagonal access, and zero future weights. |
 | 29 (GPT) | `DSA5105/Lec13_Transformers.pdf`, pp. 28–34 | Condense the decoder pipeline, self-supervised next-token NLL, teacher forcing, and greedy generation. The short probability/loss and generation examples are authored arithmetic illustrations of these procedures. |
@@ -234,8 +236,10 @@ logits, $A$ the row-softmax weights, and $Y=AV$ the single-head output.
 Head $r$ uses $Q_r,K_r,V_r,A_r,H_r$ and separate projection weights;
 the concatenated output is $Y_{\rm MH}$ with $N_q$ rows. Key perturbations
 therefore use the row-vector product $q_i\Delta k_j^\top$.
-Position vectors are also rows, with $X_{\rm pos}=X+E_{\rm pos}$;
-GPT sequence length uses $N$.
+Position vectors are also rows, with $X_{\rm pos}=X+E_{\rm pos}$.
+The post-norm block uses $Z$ after the attention residual and first LayerNorm,
+then $X_{\rm out}$ after the FFN residual and second LayerNorm. GPT sequence
+length uses $N$.
 
 Before accepting a rebuilt PDF, require no missing glyphs or overfull boxes,
 verify exactly two A4 pages, and inspect both rendered pages. Repository

@@ -51,7 +51,7 @@
 \raggedbottom
 \raggedcolumns
 \newcommand{\bodystyle}{%
-  \fontsize{5.7}{6.1}\selectfont\RaggedRight
+  \fontsize{5.4}{5.75}\selectfont\RaggedRight
   \setlength{\lineskip}{.25pt}%
   \thinmuskip=2mu
   \medmuskip=3mu plus 1mu minus 1mu
@@ -156,8 +156,8 @@ Closure: nonnegative sums, products, $g(x)g(z)k(x,z)$, composition $k(Tx,Tz)$, p
 $w=w_\parallel+w_\perp$ với $w_\perp\perp\phi_i$: predictions không đổi, norm tăng bởi $\norm{w_\perp}^2$. Strict $L_2$ penalty cho $w_\perp^*=0$:
 $w^*=\Phi^\top\alpha,\; f(x)=k_x^\top\alpha.$
 $\dim\operatorname{span}\{\phi_i\}=\operatorname{rank}\Phi\le\min(n,M)$; representer không có nghĩa sparse.
-\run{Kiểm kernel: (1) kiểm symmetry; (2) chứng minh bằng feature map/closure, hoặc tìm Gram phản ví dụ; (3) với Gram nhỏ, tính eigenvalues/quadratic form.}
-\ex{$K=\left[\begin{smallmatrix}1&2\\2&1\end{smallmatrix}\right]$, $c=(1,-1)^\top$: $Kc=(-1,1)^\top$, $c^\top Kc=-2<0$; invalid dù diagonal dương.}
+\run{Kernel có tham số: (1) kiểm symmetry. (2) Điều kiện cần: Gram nhỏ phải PSD, dùng eigenvalues/quadratic form. (3) Điều kiện đủ: dùng feature map hoặc closure cho \emph{mọi} dataset. Một Gram PSD chỉ cho điều kiện cần.}
+\ex{Domain $\{0,1\}$, $k_q(x,x)=1$, $k_q(0,1)=k_q(1,0)=q$. Gram $K_q=\left[\begin{smallmatrix}1&q\\q&1\end{smallmatrix}\right]$ có eigenvalues $1\pm q$ nên $K_q\succeq0\iff |q|\le1$. Đủ: $\phi(0)=(1,0)^\top$, $\phi(1)=(q,\sqrt{1-q^2})^\top$ cho đúng mọi inner products. Với $q=2$, $c=(1,-1)^\top$ cho $K_qc=(-1,1)^\top$, $c^\top K_qc=-2$ dù diagonal dương.}
 \ex{Valid kernel 1D: $k(x,z)=(1+xz)^2$, $\phi(x)=(1,\sqrt2x,x^2)^\top$. Với mọi dataset và $c$: $c^\top Kc=(\sum_i c_i)^2+2(\sum_i c_ix_i)^2+(\sum_i c_ix_i^2)^2\ge0$; kernel symmetric nên valid. Vd. $x=(0,1)$ cho $K=\left[\begin{smallmatrix}1&1\\1&4\end{smallmatrix}\right]$, $\det K=3$.}
 \ex{Representer: $\phi_1=(1,0)^\top$, $\phi_2=(2,0)^\top$, $y=(1,2)^\top$, $\lambda=1$. $w=(1,2)^\top$ và $w_\parallel=(1,0)^\top$ đều predict $(1,2)$, loss $0$; squared norms $5,1$, objectives $2.5,.5$. Bỏ orthogonal component giảm penalty, không đổi predictions; optimum phải nằm trong train-feature span.}
 
@@ -171,22 +171,33 @@ $(\Phi^\top\Phi+cI)^{-1}\Phi^\top=\Phi^\top(K+cI)^{-1}$.
 \key{Cost / dimensions}
 $\Phi\in\R^{n\times M}$: primal giải $M\times M$, kernel giải $n\times n$. Prediction dùng kernels tới train samples; chọn theo $M,n$ và kernel cost.
 \key{Distance in feature space}
-$\norm{\phi(x)-\phi(z)}^2=k(x,x)+k(z,z)-2k(x,z).$
+$d_\phi^2(x,z)=\norm{\phi(x)-\phi(z)}^2=k(x,x)+k(z,z)-2k(x,z).$
 Kernelize: viết bằng inner products rồi thay $k$; không thay tùy ý nonlinear operations.
+\key{Kernel nearest centroid}
+Với index set $C$, $n_C=|C|>0$, $\mu_C=n_C^{-1}\sum_{i\in C}\phi(x_i)$:
+$\norm{\phi(x)-\mu_C}^2=k(x,x)-\tfrac{2}{n_C}\sum_{i\in C}k(x,x_i)+\tfrac{1}{n_C^2}\sum_{i,j\in C}k(x_i,x_j)$.
+\run{(1) NN: tính từng $d_\phi^2(x,x_i)$. Centroid: tính hai kernel sums của từng $C$ (kể cả $i=j$). (2) Chọn min và trả label tương ứng.}
+\ex{$k(x,z)=xz$, $x=4$, lớp 1 $(-1,3)$, lớp 2 $(6,7)$. NN: squared distances $(25,1,4,9)$, chọn sample $3$. Centroid: sums lớp 1 $(8,4)$ cho $16-8+4/4=9$. Lớp 2 $(52,169)$ cho $16-52+169/4=25/4$, chọn lớp 2.}
 \key{Polynomial map}
 $(1+x^\top z)^2$ có features $1$, $\sqrt2x_j$, $x_j^2$, $\sqrt2x_jx_\ell$ với $j<\ell$. Cross-term coefficients phải khớp expansion.
-\trap{PSD phải đúng cho mọi finite dataset; một negative Gram bác bỏ. Nonnegative diagonal chưa đủ.}
 \run{KRR: (1) tính toàn bộ $K_{ij}$; (2) giải $(K+n\lambda I)\alpha=y$; (3) lập $k_x=(k(x_i,x))_i$; (4) dot product $f(x)=k_x^\top\alpha$.}
 \ex{$n=2$, $K=I_2$, $\lambda=.5$, $y=(2,4)^\top$: $(2I)\alpha=y\Rightarrow\alpha=(1,2)^\top$; $k_x=(.5,1)^\top\Rightarrow f(x)=.5+2=2.5$. Feature distance: $k(x,x)=4$, $k(z,z)=9$, $k(x,z)=3\Rightarrow d_\phi^2=4+9-6=7$.}
 \run{Polynomial features: (1) expand kernel; (2) đặt hệ số cross term thành square-root trong features; (3) kiểm dot product.}
 \ex{1D $k(x,z)=(1+xz)^2$: $\phi(x)=(1,\sqrt2x,x^2)^\top$. $x=2,z=3$: dot product $1+12+36=49=(1+6)^2$.}
 
 \topic{06}{SVM / KKT / NO INTERCEPT}
+\key{Lagrangian / KKT}
+Min $f(x)$ với $g_i(x)\le0,\ h_j(x)=0$.
+$\mathcal L(x,\alpha,\beta)=f(x)+\sum_i\alpha_i g_i(x)+\sum_j\beta_j h_j(x)$.
+KKT gồm $\nabla_x\mathcal L=0$, $g_i(x)\le0$, $h_j(x)=0$, $\alpha_i\ge0$, $\alpha_i g_i(x)=0$. $\beta_j$ tự do dấu. KKT cần khi có constraint qualification. Đủ nếu $f,g_i$ convex và $h_j$ affine.
+\run{(1) Lập $\mathcal L$. (2) Lấy đạo hàm từng biến primal. (3) Biểu diễn biến qua multipliers. (4) Thế vào constraints để ra hệ tuyến tính/eigenvalue. (5) Kiểm feasibility và điều kiện optimum.}
+\ex{Max $\tfrac12(\lambda\norm e^2-\norm w^2)$ với $e=Xw,\lambda>0$. Thêm $\beta^\top(Xw-e)$ vào objective. Stationarity cho $w=X^\top\beta$, $\lambda e=\beta$. Thế $e=Xw$ ra $XX^\top\beta=\beta/\lambda$. Với $X=\diag(2,1)$, $\lambda=1$, $\beta=(0,1)^\top$ cho $w=e=\beta$. Đây là stationary point. Dọc $w=(t,0)^\top$, $e=(2t,0)^\top$, objective $3t^2/2\to\infty$.}
+\key{Hard-margin SVM}
 Dùng $f(x)=w^\top\phi(x)$, \emph{không intercept}. $y_i\in\{\pm1\}$; geometric margin $y_if(x_i)/\norm w$. Normalize min functional margin $=1$:
 $\min_w\tfrac12\norm w^2\;\text{s.t. }y_iw^\top\phi_i\ge1.$
 Half-width $1/\norm w$; full width $2/\norm w$.
 $\mathcal L=\tfrac12\norm w^2+\sum_i\alpha_i(1-y_iw^\top\phi_i).$
-KKT: primal feasible; $\alpha_i\ge0$; stationarity; complementary slackness:
+Stationarity và slackness:
 $w=\sum_i\alpha_i y_i\phi_i,\; \alpha_i(1-y_iw^\top\phi_i)=0.$
 Substitute $w$ vào Lagrangian, dùng Gram:
 $\max_{\alpha\ge0}\;\sum_i\alpha_i-\tfrac12\sum_{ij}\alpha_i\alpha_jy_iy_jk_{ij}.$
@@ -451,6 +462,20 @@ $V^\pi=\bar r^\pi+\gamma P^\pi V^\pi,\; V^\pi=(I-\gamma P^\pi)^{-1}\bar r^\pi.$
 \ex{Next estimates $(2,6)$, $\gamma=.5$. Action $a$: $\bar r(s,a)=1$, transition $(.5,.5)$ cho $Q_k(s,a)=1+.5(.5\cdot2+.5\cdot6)=3$. Action $b$: $\bar r(s,b)=0$, luôn tới state value 6, $Q_k(s,b)=3$. Uniform-policy backup $3$; optimal backup $3$, tie cả hai actions.}
 \ex{Cùng graph: $s\xrightarrow{a,\,r=0}t\xrightarrow{r=2}\text{terminal}$; $s\xrightarrow{b,\,r=.5}\text{terminal}$, $\gamma=.5$, $\pi(a\mid s)=.25$. $V^\pi(t)=2$; $Q^\pi(s,a)=0+.5(2)=1$, $Q^\pi(s,b)=.5$; $V^\pi(s)=.25(1)+.75(.5)=.625$. Optimal: $Q^*(s,\cdot)=(1,.5)$, $V^*(t)=2$, $V^*(s)=\max(1,.5)=1$, chọn $a$.}
 
+\key{Finite-horizon DP / DAG}
+Forward min cost từ start: $D(s_{\rm start})=0$, unreachable $D=+\infty$.
+$D(v)=\min_{u\in\operatorname{Pred}(v)}[D(u)+c(u,v)]$.
+Backward max reward đến goal $g$: $V(g)=0$ nếu không có payoff thêm.
+$V(v)=\max_{u\in\operatorname{Succ}(v)}[r(v,u)+\gamma V(u)]$.
+Chỉ xét successors tới được $g$. Không tới được $g$ thì $V=-\infty$.
+\run{(1) Chọn state/boundary. (2) Viết recurrence. (3) Duyệt topo cho forward, ngược topo cho backward. (4) Lưu argmin/argmax, trace từ goal (min) hoặc start (max). Giữ mọi ties để liệt kê optimal paths. Tính bảng $O(|\mathcal V|+|\mathcal E|)$ cho DAG, $O(nm)$ cho grid. Liệt kê tốn thêm theo tổng độ dài paths.}
+\ex{RIGHT/DOWN, thưởng cả ô đầu và cuối, $\gamma=1$. Rewards $\left[\begin{smallmatrix}1&3&1\\2&1&4\end{smallmatrix}\right]$. $V_{23}=4$, $V_{ij}=r_{ij}+\max(V_{i+1,j},V_{i,j+1})$ chỉ dùng ô hợp lệ. Tính ngược được $V=\left[\begin{smallmatrix}9&8&5\\7&5&4\end{smallmatrix}\right]$. $V_{12}=3+\max(5,5)=8$, paths RRD/RDR đều $9$. Forward với $c(u,v)=-r(v)$ cho $D=\left[\begin{smallmatrix}0&-3&-4\\-2&-4&-8\end{smallmatrix}\right]$, max reward $r_{11}-D_{23}=9$.}
+\key{Stochastic horizon}
+$V_T^*(s)=g_T(s)$ (terminal payoff, mặc định $0$).
+$V_t^*(s)=\max_a\sum_{s',r}p_t(s',r\mid s,a)[r+\gamma V_{t+1}^*(s')]$.
+\run{(1) Ghi $V_T^*$. (2) Với $t=T-1,\ldots,0$, tính kỳ vọng cho từng action. (3) Lấy max và lưu action $\mu_t^*(s)$ ở mỗi $(t,s)$.}
+\ex{$T=2$, $\gamma=.5$, $V_2^*=0$. Ở $t=1$ rewards cuối tại $h,\ell$ là $4,0$, nên $V_1^*(h)=4$, $V_1^*(\ell)=0$. Ở $t=0$, $a$ trả $0$ rồi tới $h,\ell$ với probs $(.75,.25)$, backup $.5(.75\cdot4)=1.5$. $b$ trả $1$ rồi tới $\ell$, backup $1$. Chọn $a$, $V_0^*(s)=1.5$.}
+
 \topic{21}{VALUE ITERATION / ERROR}
 Khởi tạo $V_0$ (thường $0$). Mỗi sweep:
 $Q_k(s,a)=\bar r(s,a)+\gamma\sum_{s'}P(s'\mid s,a)V_k(s'),$ $ V_{k+1}(s)=\max_a Q_k(s,a).$
@@ -544,13 +569,32 @@ $B_{ij}=\tilde A_{ij}/\sqrt{\tilde d_i\tilde d_j}$: degrees gồm self-loop; kh�
 GCN relabel: $\tilde D'=P\tilde DP^\top\Rightarrow B'=PBP^\top$; $\sigma(B'PHW)=P\sigma(BHW)$.
 \key{Graph attention / neighbor softmax}
 Row convention: $q_i=h_iW_Q$, $k_j=h_jW_K$;
-$e_{ij}=q_ik_j^\top/\sqrt{d_k}=h_iWh_j^\top$, $W=W_QW_K^\top/\sqrt{d_k}$;
-$\alpha_{ij}=e^{e_{ij}}/\sum_{k\in\mathcal N(i)}e^{e_{ik}}$;
+$s_{ij}=q_ik_j^\top/\sqrt{d_k}=h_iWh_j^\top$, $W=W_QW_K^\top/\sqrt{d_k}$;
+$\alpha_{ij}=e^{s_{ij}}/\sum_{k\in\mathcal N(i)}e^{s_{ik}}$;
 $m_i=\sum_{j\in\mathcal N(i)}\alpha_{ij}h_j$, rồi shared update như trên. Chỉ normalize trên allowed neighbors; self-loop chỉ khi đề thêm.
 \run{Graph attention: (1) liệt kê allowed neighbors; (2) project $Q,K$ từ old $H$; (3) tính scaled scores từng edge; (4) neighbor softmax; (5) weighted sum, shared update; (6) lặp với new $H$.}
 \ex{Chain $1-2-3$, không self-loop, $H^{(0)}=(0,1,2)^\top$, $W_Q=1$, $W_K=\log2$, $d_k=1$; update $h_i^+=\operatorname{ReLU}(m_i)$. Node 2: scores tới $(1,3)$ là $(0,\log4)$; exp $(1,4)$, weights $(1/5,4/5)$; $m_2=0/5+4(2)/5=8/5$. Hai endpoints chỉ đọc node 2: $H^{(1)}=(1,8/5,1)^\top$. Layer 2: node 2 đọc hai values $1$ với weights $(1/2,1/2)$; $H^{(2)}=(8/5,1,8/5)^\top$.}
 Shared projections + relabel neighbors: $\alpha'=P\alpha P^\top$, $m'=\alpha'PH=P\alpha H$; attention aggregation equivariant.
 \trap{$\{1,1\}$ và $\{1,1,1\}$ có sum $2,3$ nhưng cùng mean/max $1$: mean/max mất multiplicity. Invariant không bảo đảm phân biệt mọi graph. CNN translation-equivariant, không với arbitrary node permutations.}
+
+\key{Edge prediction}
+$p_{ij}=\operatorname{sigmoid}(h_i h_j^\top)=p_{ji}$, cho undirected links.
+$P_{\rm edge}=\operatorname{sigmoid}(HH^\top)$ từng phần tử. $H'=PH$ cho $P'_{\rm edge}=P P_{\rm edge}P^\top$.
+\run{(1) Dot product hai node rows. (2) Sigmoid ra probability. (3) So threshold nếu đề hỏi class.}
+\ex{$h_i=(1,2)$, $h_j=(1,0)$ cho logit $1$, $p_{ij}=p_{ji}=1/(1+e^{-1})\approx.731$. Ngưỡng $.5$ cho dự đoán có cạnh cả hai chiều.}
+\key{General graph network}
+$e_{ij}$ là edge embedding của $i\to j$, $u$ là global embedding.
+$e_{ij}^+=f_e(e_{ij},h_i,h_j,u)$,
+$h_i^+=f_v(h_i,\operatorname{AGG}_{j\to i}e_{ji}^+,u)$,
+$u^+=f_g(u,\operatorname{AGG}_i h_i^+,\operatorname{AGG}_{ij}e_{ij}^+)$ (pool trên các cạnh).
+Shared updates + invariant AGG $\Rightarrow$ equivariant theo node/edge indices, invariant cho $u^+$.
+\run{(1) Đọc thứ tự và đối số theo đề. (2) Tính mọi $e^+$ từ old embeddings, rồi $h^+$, rồi $u^+$. (3) Trace dependencies. Nếu có $h_j\to u^+\to h_i^{++}$, node xa ảnh hưởng sau hai blocks.}
+\ex{Directed chain $1\to2\to3\to4$, $H=(1,0,0,0)^\top$, $e=0,u=0$. Dùng $e_{ij}^+=e_{ij}+h_i$, $h_i^+=h_i+\sum_{j\to i}e_{ji}^++u$, $u^+=\sum_i h_i^++\sum_{ij}e_{ij}^+$. Block 1 cho edges $(1,0,0)$, $H^+=(1,1,0,0)^\top$, $u^+=2+1=3$. Block 2 có $e_{34}^{++}=0$ nhưng $h_4^{++}=0+0+3=3$ qua global.}
+\key{Over-smoothing}
+$H^{(\ell+1)}=\tilde D^{-1}\tilde A H^{(\ell)}$ (mean gồm self, khác $B$ của GCN).
+Undirected + connected + self-loops: mọi row tiến tới $\sum_i\tilde d_i h_i^{(0)}/\sum_i\tilde d_i$. Residual hoặc dùng outputs nhiều layers có thể giảm mất phân biệt.
+\run{(1) Dùng $\tilde A,\tilde d$ như trên. (2) Mỗi row lấy mean các old rows của self + neighbors. (3) Lặp và so với degree-weighted average.}
+\ex{Chain $a-b-c-d$, $H^{(0)}=(1,2,0,3)^\top$, $\tilde d=(2,3,3,2)$. $h_a^{(1)}=(1+2)/2=1.5$, $H^{(1)}=(1.5,1,5/3,1.5)^\top$. $H^{(5)}\approx(1.351,1.377,1.423,1.449)^\top$. Limit mọi node $(2+6+0+6)/10=1.4$.}
 
 \topic{27}{TRANSFORMERS / ATTENTION}
 \key{Ký hiệu / row convention}
@@ -583,7 +627,15 @@ $Y_{\rm MH}=CW_O:N_q\times D$, $W_O:hd_v\times D$.
 \run{Multi-head: (1) projections từng head; (2) scaled/masked attention riêng; (3) concatenate outputs theo features, giữ token rows; (4) nhân $W_O$.}
 \ex{$X=I_2$, 2 heads, $d_k=d_v=1$, không mask. Head 1: $W_{Q,1}=W_{K,1}=W_{V,1}=(1,0)^\top\Rightarrow Q_1=K_1=V_1=(1,0)^\top$. Head 2 dùng $(0,1)^\top$, cho $Q_2=K_2=V_2=(0,1)^\top$. Đặt $p=e/(1+e)\approx.731$. $S_1=\left[\begin{smallmatrix}1&0\\0&0\end{smallmatrix}\right]$, $A_1=\left[\begin{smallmatrix}p&1-p\\1/2&1/2\end{smallmatrix}\right]$, $H_1=(p,1/2)^\top$. $S_2=\left[\begin{smallmatrix}0&0\\0&1\end{smallmatrix}\right]$, $A_2=\left[\begin{smallmatrix}1/2&1/2\\1-p&p\end{smallmatrix}\right]$, $H_2=(1/2,p)^\top$. $C=\left[\begin{smallmatrix}p&1/2\\1/2&p\end{smallmatrix}\right]:2\times2$; $W_O=\left[\begin{smallmatrix}1&1\\1&-1\end{smallmatrix}\right]$ cho $Y_{\rm MH}=\left[\begin{smallmatrix}p+.5&p-.5\\p+.5&.5-p\end{smallmatrix}\right]\approx\left[\begin{smallmatrix}1.231&.231\\1.231&-.231\end{smallmatrix}\right]$.}
 
-\key{Transformer block} Attention mix tokens; shared FFN mix features/token; post-norm: cộng residual rồi LayerNorm theo features/token.
+\key{LayerNorm / Transformer block}
+Từng token row $x_i$ có $\mu_i=D^{-1}\sum_{j=1}^D x_{ij}$, $s_i^2=D^{-1}\sum_{j=1}^D(x_{ij}-\mu_i)^2$.
+$\operatorname{LN}(X)_{ij}=\gamma_j\frac{x_{ij}-\mu_i}{\sqrt{s_i^2+\epsilon}}+\beta_j$.
+Mean/variance tính theo features của từng token. Affine học theo feature có thể đổi mean/variance của output.
+Post-norm: $Z=\operatorname{LN}(X+Y_{\rm MH})$ với self-attention, $X_{\rm out}=\operatorname{LN}(Z+\operatorname{FFN}(Z))$.
+Attention mix tokens. FFN dùng chung theo row: $\operatorname{FFN}(z)=\phi(z W_1+b_1)W_2+b_2$.
+MHA bỏ bias có $hD(2d_k+d_v)+hd_vD$ weights. Nếu $hd_k=hd_v=D$ thì $4D^2$.
+\run{(1) Tính $Y_{\rm MH}$. (2) Cộng residual $X$, rồi mean, variance, chuẩn hóa và affine từng row. (3) Tính FFN trên từng row của $Z$. (4) Cộng residual $Z$ và LN lại.}
+\ex{$X=(1,1)$, $N=h=d_k=d_v=1$, $D=2$. $W_Q=W_K=W_V=(0,1)^\top$ cho $Q=K=V=(1)$, $A=(1)$. $W_O=(0,2)$ cho $Y_{\rm MH}=(0,2)$, tổng $8$ weights. Hai LN dùng $\gamma=(1,1)$, $\beta=(0,0)$, đặt $\epsilon=0$ để tính tay. $X+Y_{\rm MH}=(1,3)$ có $\mu=2$, $s^2=1$, nên $Z=(-1,1)$. FFN ReLU với $W_1=W_2=I_2$, biases $0$, cho $Z+\operatorname{FFN}(Z)=(-1,2)$. LN với $\mu=.5,s^2=9/4$ cho $X_{\rm out}=(-1,1)$.}
 
 \topic{28}{Q / K / V DEPENDENCY}
 Xét một layer, giữ các tensors khác cố định.
