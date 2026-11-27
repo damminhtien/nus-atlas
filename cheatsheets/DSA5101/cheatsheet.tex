@@ -875,24 +875,30 @@ Consider two documents $A$ and $B$, containing 400 and 800 unique $k$-shingles r
 \finalanswer{(a)(i) $J(S_A,S_B)=200/1000=0.2$.}
 \topic{minhash}{MinHash}
 
-\algsummary{Ước lượng Jaccard khi các tập shingle quá lớn để so trực tiếp.}{Hàng đầu tiên trong hợp nằm trong giao đúng khi hai giá trị MinHash trùng.}{\textbf{Khi dùng:}\enspace Đề cho ma trận hàng là shingle, cột là tài liệu, hoặc cho sẵn các tập ID và hoán vị.}{Tập shingle khác rỗng của mỗi tài liệu; $t$ hoán vị hàng dùng chung.}{Ma trận chữ ký và ước lượng Jaccard cho từng cặp cần so.}{Với từng hoán vị, ghi ID của hàng có mặt đầu tiên trong mỗi tài liệu. So từng hàng chữ ký và lấy tỷ lệ trùng.}
+% Lec2_FindingSimilarItems_LSH.pdf, PDF pp. 35--36;
+% DSA5101_Assignment_1_Solutions.pdf, PDF p. 3.
+\algsummary{Ước lượng Jaccard khi các tập shingle quá lớn để so trực tiếp.}{Hai tài liệu trùng MinHash khi hàng xuất hiện đầu tiên trong hợp cũng thuộc giao.}{}{Ma trận Boolean với hàng là shingle, cột là tài liệu khác rỗng; $t$ hoán vị dùng chung.}{Ma trận chữ ký và ước lượng Jaccard cho từng cặp cần so.}{Theo quy ước bài giảng, ghi vị trí có số 1 đầu tiên sau hoán vị. Nếu đề yêu cầu ghi ID hàng gốc, dùng đúng quy ước riêng đó. So từng hàng chữ ký và lấy tỷ lệ trùng.}
 
-\steps{
-\item Duyệt các hàng theo thứ tự $\pi$, dùng cùng $\pi$ cho tất cả tài liệu.
-\item Với mỗi tài liệu, ghi ID của hàng có mặt đầu tiên để tạo một hàng chữ ký. Lặp với $t$ hoán vị; ước lượng $\widehat J$ bằng số hàng trùng chia $t$.
-}
+\key{Chỉ số sau hoán vị} Gọi $h_j(r)$ là vị trí mới của hàng gốc $r$, đánh số từ 1. Chữ ký theo bài giảng là
+\[
+M[j,D]=\min_{r:A_{r,D}=1}h_j(r).
+\]
+Nếu đề liệt kê thứ tự thăm $\pi_j(k)$, thì $h_j(\pi_j(k))=k$: ghi vị trí $k$ đầu tiên có 1. Nếu bảng cho trực tiếp $h_j(r)$ theo hàng gốc $r$, lấy giá trị hash nhỏ nhất trên các hàng có 1.
 
 \begin{algpseudo}
-với mỗi hoán vị $\pi_j$ và tài liệu $D$:\\
-\quad $M[j,D]\gets$ ID đầu tiên gặp trong $S_D$ khi duyệt $\pi_j$\\
+đọc hoán vị thành $h_j(r)$: vị trí mới của từng hàng gốc $r$\\
+với mỗi $j$ và tài liệu $D$: tìm $r^*\gets\arg\min_{r:A_{r,D}=1}h_j(r)$\\
+\quad $M[j,D]\gets h_j(r^*)$; nếu đề yêu cầu ID gốc, ghi $r^*$\\
 trả $M$ và $\widehat J(A,B)=|\{j:M[j,A]=M[j,B]\}|/t$
 \end{algpseudo}
 
 \unitverification
-\key{Kiểm tra} Ghi ID của hàng gặp đầu tiên theo hoán vị, không ghi vị trí của nó trong thứ tự thăm. Xác suất khớp của một hàng là Jaccard thật $J$; tỷ lệ hàng khớp quan sát được trên $t$ hàng chỉ là ước lượng $\widehat J$ và có thể khác $J$.
+\key{Đọc đúng đề} Bài giảng và A1-Q2(b) dùng chỉ số sau hoán vị. Pr4(b) yêu cầu ghi hàng gốc được thăm đầu tiên, nên dùng ID. Giữ cùng quy ước cho mọi tài liệu trong mỗi hoán vị.
+
+\key{Kiểm tra ước lượng} Xác suất khớp của một hàng là Jaccard thật $J$; tỷ lệ hàng khớp quan sát được trên $t$ hàng chỉ là ước lượng $\widehat J$ và có thể khác $J$.
 
 \unitadvanced
-\key{Vì sao được} Hàng đầu tiên trong hợp rơi vào giao với xác suất $J(A,B)$; đúng lúc đó MinHash trùng. Ví dụ thứ tự $(1,4,3,2)$ trên tập $\{2,4\}$ trả ID 4, không phải vị trí 2. Chữ ký của $n$ tài liệu lưu $O(tn)$ giá trị.
+\key{Vì sao được} Hàng đầu tiên trong hợp thuộc giao với xác suất $J(A,B)$; lúc đó MinHash trùng. Đổi rank sang ID bằng cùng một song ánh bảo toàn các phép so bằng, nhưng làm đổi số ghi trong ma trận. Chữ ký của $n$ tài liệu lưu $O(tn)$ giá trị.
 
 % DSA5101 Exam Practice Questions.pdf, PDF page(s) 5.
 
@@ -904,7 +910,7 @@ trả $M$ và $\widehat J(A,B)=|\{j:M[j,A]=M[j,B]\}|/t$
 \solutionprompt{Dùng $S_1=\{1,2,3,4\}$, $S_2=\{1,2,5,6\}$, $S_3=\{3,4,7,8\}$. Áp dụng $\pi_1=(5,3,1,8,2,6,4,7)$ và $\pi_2=(2,7,6,4,8,1,3,5)$; mỗi hoán vị cho một hàng chữ ký.}
 \guidepart{(b)}
 \begin{guidesteps}
-\item Chữ ký MinHash là $M_{j,i}=\min_{\pi_j}\{x:x\in S_i\}$, tức phần tử của $S_i$ xuất hiện sớm nhất theo hoán vị. Với $\pi_1$, phần tử đầu lần lượt là $3,5,3$, nên hàng chữ ký $(3,5,3)$.
+\item Phần này yêu cầu ghi ID hàng gốc: $M_{j,i}=\min_{\pi_j}\{x:x\in S_i\}$ là phần tử của $S_i$ xuất hiện sớm nhất theo hoán vị. Với $\pi_1$, phần tử đầu lần lượt là $3,5,3$, nên hàng chữ ký $(3,5,3)$.
 \item Áp dụng cùng quy tắc cho $\pi_2$ được $(2,2,7)$. Tỉ lệ hàng trùng ước lượng Jaccard: $\widehat J=1/t\sum_j\mathbf1[M_{j,1}=M_{j,3}]=1/2$.
 \end{guidesteps}
 \guidepart{(c)}
@@ -914,17 +920,8 @@ trả $M$ và $\widehat J(A,B)=|\{j:M[j,A]=M[j,B]\}|/t$
 \end{guidesteps}
 \finalanswer{(b) Hai hàng chữ ký là $(3,5,3)$ và $(2,2,7)$ theo thứ tự $D_1,D_2,D_3$; $\widehat J(D_1,D_3)=1/2$. (c) Hoán vị chung cho phép sự kiện trùng chữ ký tương ứng với phần tử đầu trong hợp thuộc giao. $\widehat J=1/2$ từ hai hàng không mâu thuẫn với $J=1/3$.}
 
-\begin{example}{A1-Q2b}{A1-Q2(b) · MinHash: lấy ID hàng đầu tiên}
-Với thứ tự thăm $3,5,1,4,2,6$, hàng có số 1 đầu tiên của $D_1$ là 5, dù nó đứng thứ hai trong thứ tự thăm.
-\begin{examtable}{@{}l c c c c@{}}
-\toprule
-Cột & $D_1$ & $D_2$ & $D_3$ & $D_4$ \\
-\midrule
-Các hàng có số 1 & $\{1,2,5\}$ & $\{2,4\}$ & $\{3,6\}$ & $\{4\}$ \\
-Thứ tự thăm đến khi gặp 1 & $3,\mathbf5$ & $3,5,1,\mathbf4$ & $\mathbf3$ & $3,5,1,\mathbf4$ \\
-Hàng chữ ký & 5 & 4 & 3 & 4 \\
-\bottomrule
-\end{examtable}
+\begin{example}{A1-Q2b}{A1-Q2(b) · MinHash: ghi vị trí sau hoán vị}
+Thứ tự thăm là $(3,5,1,4,2,6)$. Với $D_1=\{1,2,5\}$, gặp hàng gốc 5 ở vị trí 2 nên ghi $M_{1,1}=2$. Các hàng gốc đầu tiên của bốn tài liệu là $(5,4,3,4)$; đổi sang vị trí cho hàng chữ ký $(2,4,1,4)$.
 \end{example}
 
 % 2425Sem1-DSA5101.pdf, PDF page(s) 6.
@@ -942,17 +939,18 @@ We generate 3 permutations of the shingles via the following permutation matrix:
 Each column corresponds to a permutation of shingles, specifying the order in which to iterate through the rows of the input matrix $A$ (i.e., defined in the same way as in lectures). Fill out all the entries of the signature matrix $M$ that we should obtain after running Min-Hashing using $A$ and $\pi$.
 
 \answer{\maptag{answer:A1-Q2b}\maptag{answer:P24-Q2b}}
-\solutionprompt{Với mỗi thứ tự trong ma trận hoán vị, đọc các hàng theo đúng thứ tự đó. Trong từng cột tài liệu $D_1$ đến $D_4$, ghi ID của hàng có 1 đầu tiên.}
+\solutionprompt{Với mỗi thứ tự trong ma trận hoán vị, đánh số vị trí từ 1 đến 6. Trong từng cột tài liệu $D_1$ đến $D_4$, ghi vị trí có số 1 đầu tiên sau hoán vị, theo quy ước của bài giảng và lời giải Assignment.}
 \guidepart{(b)}
 \begin{guidesteps}
-\item Với permutation $\pi_j$, chữ ký tài liệu $D_i$ là $M_{j,i}=\min_{\pi_j}\{r:A_{r,i}=1\}$, hàng có 1 xuất hiện sớm nhất theo thứ tự đó. Cột đầu thăm $3,5,1,4,2,6$.
-\item Giữ nguyên thứ tự hàng khi chuyển sang tài liệu khác. $D_1$ gặp hàng 5 trước mọi hàng còn lại chứa 1, nên ghi 5; với $D_2,D_3,D_4$ ghi $4,3,4$.
-\item Làm tương tự với hai hoán vị còn lại. Mỗi hoán vị cho một hàng của ma trận chữ ký:
+\item Công thức là $M_{j,i}=\min\{k:A_{\pi_j(k),i}=1\}$, với $k$ là vị trí từ 1 đến 6 sau hoán vị. Các tập hàng có số 1 của $D_1,D_2,D_3,D_4$ lần lượt là $\{1,2,5\},\{2,4\},\{3,6\},\{4\}$.
+\item Hoán vị đầu thăm $3,5,1,4,2,6$. Các hàng gốc gặp đầu tiên là $5,4,3,4$, ở các vị trí $2,4,1,4$; vì vậy hàng đầu của chữ ký là $(2,4,1,4)$.
+\item Hoán vị thứ hai thăm $2,1,4,3,6,5$. Các hàng gốc gặp đầu tiên là $2,2,3,4$, ở các vị trí $1,1,4,3$, nên hàng thứ hai là $(1,1,4,3)$.
+\item Hoán vị thứ ba thăm $1,4,3,2,5,6$. Các hàng gốc gặp đầu tiên là $1,4,3,4$, ở các vị trí $1,2,3,2$. Ghép ba hàng:
 \[
-M=\begin{pmatrix}5&4&3&4\\2&2&3&4\\1&4&3&4\end{pmatrix}.
+M=\begin{pmatrix}2&4&1&4\\1&1&4&3\\1&2&3&2\end{pmatrix}.
 \]
 \end{guidesteps}
-\finalanswer{(b) Ba hàng của $M$ theo thứ tự hoán vị là $(5,4,3,4)$, $(2,2,3,4)$ và $(1,4,3,4)$; các cột lần lượt là $D_1,D_2,D_3,D_4$.}
+\finalanswer{(b) Ba hàng của $M$ theo thứ tự hoán vị là $(2,4,1,4)$, $(1,1,4,3)$ và $(1,2,3,2)$; các cột lần lượt là $D_1,D_2,D_3,D_4$. Ghi vị trí sau hoán vị theo lời giải Assignment.}
 \topic{banding}{LSH banding}
 
 \algsummary{Dùng chữ ký để tìm những cặp tài liệu đáng đem ra kiểm tra Jaccard thật.}{AND trong band, OR giữa các band: một cặp phải khớp đủ $r$ hàng trong ít nhất một band.}{}{Ma trận chữ ký $M\in\mathbb Z^{K\times N}$ của $N$ tài liệu, với $K=br$.}{Tập cặp ứng viên phân biệt; nếu xác minh, trả các ứng viên có $J\ge s_{\min}$.}{Chia $K$ hàng thành $b$ band, mỗi band gồm $r$ hàng liên tiếp. Băm tuple của mỗi cột vào bucket riêng theo band, lấy các cặp cùng nhóm, bỏ trùng rồi mới xác minh.}
