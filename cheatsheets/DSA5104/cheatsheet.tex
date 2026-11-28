@@ -1015,7 +1015,7 @@ db.tours.aggregate([
 First \sql{$match} filters trips (WHERE). \sql{$group} counts and averages per station (GROUP BY). Second \sql{$match} keeps counts $\geq2$ (HAVING). \sql{$project} copies \sql{$_id} to stationId, hides \sql{_id} and rounds to 1 decimal. \sql{$sort} uses the rounded value, then stationId. FROM=collection, SELECT=\sql{$project}, ORDER BY=\sql{$sort}, LIMIT=\sql{$limit}.
 \sql{$sum:1} counts documents. \sql{$sum} and \sql{$avg} skip missing/nonnumeric values; with no numbers, sum=0 and avg=null. \sql{_id:null} groups all input. \sql{"$field"} reads a field; \sql{"field"} is literal. Groups are unordered.
 \trap{After \sql{$group}, only the key and accumulators remain. Move \sql{$sort} before rounding to sort raw values.}
-\ex{Input (start station, seconds, birth year): (1,300,1990), (1,600,1990), (2,900,1990). All pass. Group 1: count 2, mean 450. Group 2: count 1, mean 900, dropped. Output (stationId, tripCount, avgDuration)=(1,2,450.0).}
+\ex{(\mbox{\sql{"start station id"}}, \mbox{\sql{tripduration}}, \mbox{\sql{"birth year"}}): (1,300,1990), (1,600,1990), (2,900,1990). All pass. Station 1: 2 trips, mean 450. Station 2: 1 trip, mean 900, dropped. Output \mbox{\sql{(stationId,tripCount,avgDuration)=(1,2,450.0)}}.}
 \key{Pipeline-stage fragments (inside aggregate)}
 \sql{$addFields} computes/preserves fields; \sql{$project} selects/computes; \sql{$unwind} emits one document per array element; \sql{$sort} then \sql{$limit} obtains top results.
 \begin{lstlisting}[style=Plaincode]

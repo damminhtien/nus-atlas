@@ -1016,7 +1016,7 @@ db.tours.aggregate([
 \sql{$match} đầu lọc trip (WHERE). \sql{$group} đếm và tính TB theo trạm. \sql{$match} sau giữ nhóm $\geq2$ trip (HAVING). \sql{$project} đổi \sql{$_id} thành stationId, làm tròn TB 1 chữ số thập phân. \sql{$sort} xếp theo TB đã làm tròn, rồi mã trạm. FROM=collection, GROUP BY=\sql{$group}, SELECT=\sql{$project}, ORDER BY=\sql{$sort}, LIMIT=\sql{$limit}.
 \sql{$sum:1} đếm document. \sql{$sum} và \sql{$avg} bỏ giá trị thiếu hoặc khác kiểu số. Nhóm không có số cho sum=0, avg=null. \sql{_id:null} gom toàn bộ đầu vào. \sql{"$field"} đọc field, \sql{"field"} là chuỗi. Nhóm không có thứ tự bảo đảm.
 \trap{Sau \sql{$group}, chỉ còn khóa nhóm và kết quả accumulator. Đặt \sql{$sort} trước khi làm tròn để xếp giá trị gốc.}
-\ex{(Trạm đầu, giây, năm sinh): (1,300,1990), (1,600,1990), (2,900,1990). Cả ba qua lọc đầu. Theo trạm: 1 có 2 trip, TB 450. Trạm 2 chỉ có 1 trip (900 s), bị loại. Trả (stationId,tripCount,avgDuration)=(1,2,450.0).}
+\ex{(\mbox{\sql{"start station id"}}, \mbox{\sql{tripduration}}, \mbox{\sql{"birth year"}}): (1,300,1990), (1,600,1990), (2,900,1990). Cả ba qua lọc đầu. Trạm 1 có 2 trip, TB 450. Trạm 2 chỉ có 1 trip (900 s), bị loại. Trả \mbox{\sql{(stationId,tripCount,avgDuration)=(1,2,450.0)}}.}
 \key{Các stage dùng trong aggregate}
 \sql{$addFields} thêm/sửa field, giữ field khác. \sql{$project} chọn/tính field. \sql{$unwind} sinh một document mỗi item. Top K: \sql{$sort} rồi \sql{$limit}.
 \begin{lstlisting}[style=Plaincode]
