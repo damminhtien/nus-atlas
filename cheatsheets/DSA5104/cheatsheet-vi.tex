@@ -51,10 +51,10 @@
   morestring=[b]',
   morestring=[b]"
 }
-\newcommand{\bodyfontsize}{5.35}
+\newcommand{\bodyfontsize}{5.55}
 \newcommand{\bodyleading}{5.2}
-\newcommand{\codefontsize}{4.9}
-\newcommand{\codeleading}{4.95}
+\newcommand{\codefontsize}{5.05}
+\newcommand{\codeleading}{5.0}
 \lstdefinestyle{SQLbase}{
   language=SQLx,
   basicstyle=\sqlfont\fontsize{\codefontsize}{\codeleading}\selectfont\color{sqltext},
@@ -146,8 +146,8 @@
 
 \begin{document}
 \bodystyle
-% PAGE 1: Part I. SQL/access columns followed by MongoDB index commands.
-\begin{sheetcolumns}{.256}
+% PAGE 1: Part I. SQL/access. MongoDB index commands are in column 4.
+\begin{sheetcolumns}{.258}
 \begin{topicblock}
 \topic{01}{PHẦN I: TRUY VẤN SQL}
 Cú pháp MySQL 8.4. Schema ghi cạnh từng mẫu.
@@ -272,28 +272,15 @@ STR_TO_DATE(LEFT(selling_date,24),
 \trap{So chuỗi: \sql{'100' < '20'}. So số: $20<100$. Lọc DATETIME từ đầu tháng đến trước tháng kế. BETWEEN theo ngày dễ bỏ giờ của ngày cuối.}
 \end{topicblock}
 
-\nextcol{.244}
-% User-supplied keywords, plus category counts and ranking grouped totals.
-\par\begin{tabular}{@{}ll@{}}
-\textbf{Exam keywords} & \textbf{SQL pattern}\\
-At least one & \sql{EXISTS}\\
-None / Never & \sql{NOT EXISTS}\\
-Every / All & Double \sql{NOT EXISTS}\\
-Exactly K matches & \sql{HAVING COUNT(...) = K}\\
-Second distinct highest & \sql{DENSE_RANK() = 2}\\
-Highest including ties & \sql{RANK() = 1}\\
-At most K rows per group & \sql{ROW_NUMBER() <= K}\\
-Above own group average & CTE / correlated subquery\\
-Include zero-count groups & \sql{LEFT JOIN + COUNT(r.id)}\\
-Inconsistent known values & \sql{COUNT(DISTINCT x) > 1}\\
-Compare consecutive rows & \sql{LAG()} / \sql{LEAD()}\\
-Count by derived category & \sql{CASE}, then \sql{GROUP BY}\\
-Best aggregate per group & Aggregate, rank, filter
-\end{tabular}\par
 \begin{topicblock}
 \topic{05}{SUBQUERY VÀ DIVISION}
 Scalar subquery có một cột. 0 dòng cho NULL, nhiều dòng báo lỗi. Correlated subquery đọc dòng ngoài. IN kiểm tra thuộc tập (\sql{= ANY}).
 % Source: user-supplied predicate table and empty quantifiers; MySQL subqueries (W18).
+\end{topicblock}
+
+\nextcol{.242}
+\begin{topicblock}
+\key{Subquery (mục 05 tiếp)}
 \pattern{Predicate viết tắt}
 S=kết quả subquery. ANY/ALL dùng một cột y so được với x. EXISTS tính cả dòng toàn NULL.
 \par\begin{tabular}{@{}lll@{}}
@@ -406,7 +393,6 @@ Với make, Ford/Toyota là mâu thuẫn. Ford/NULL, NULL/NULL và Ford/Ford th�
 CUBE trên d chiều có $2^d$ grouping sets. ROLLUP(a,b,c) cho (a,b,c),(a,b),(a),(). MySQL có \sql{GROUP BY a,b WITH ROLLUP}, không có CUBE trực tiếp. \sql{GROUPING(a)=1} nhận diện NULL do subtotal sinh ra, phân biệt với NULL trong dữ liệu.
 \end{topicblock}
 
-\nextcol{.24}
 \begin{topicblock}
 \topic{08}{RANKING / TOP K}
 \pattern{Rank rồi lọc} Employee(id PK,dept,score). score là số hoặc NULL, K nguyên dương.
@@ -423,8 +409,13 @@ ORDER BY dept, score DESC, id;
 score DESC & ROW\_NUMBER & RANK & DENSE\_RANK\\
 90 & 1 & 1 & 1\\90 & 2 & 1 & 1\\80 & 3 & 3 & 2\\70 & 4 & 4 & 3
 \end{tabular}\par}
-\trap{Nếu cần giữ đồng hạng, đừng thêm id duy nhất vào thứ tự rank. ORDER BY trong window dùng để tính, còn ORDER BY cuối query sắp kết quả. RANK nhảy hạng sau các dòng đồng hạng.}
-\pattern{Aggregate, rank rồi lọc}
+\trap{Giữ đồng hạng bằng cách bỏ id duy nhất khỏi thứ tự rank. Window ORDER BY dùng để tính, ORDER BY cuối xếp kết quả. RANK nhảy hạng sau đồng hạng.}
+\end{topicblock}
+
+
+\nextcol{.232}
+\begin{topicblock}
+\pattern{Aggregate, rank, lọc (08 tiếp)}
 Sales(state,make) có một dòng cho mỗi giao dịch.
 \begin{lstlisting}
 WITH G AS (
@@ -444,9 +435,9 @@ DENSE_RANK() OVER (
  PARTITION BY state ORDER BY COUNT(*) DESC)
 \end{lstlisting}
 % Source: Project 1 Q13 / Project 2 Q7; retain the transferable population rule.
-\cond{Xét điều kiện đủ chuẩn trên đúng tập dữ liệu đề yêu cầu trước khi lọc nhóm con. Sau đó mới rank các nhóm đủ chuẩn.}
+\cond{Xét điều kiện trên đúng tập dữ liệu trước khi lọc nhóm con, rồi rank các nhóm đủ chuẩn.}
 \key{Các hàm ranking khác}
-$N$ là số dòng trong partition. PERCENT\_RANK là $(\mathrm{rank}-1)/(N-1)$ (bằng 0 nếu $N=1$). CUME\_DIST là tỷ lệ dòng đứng trước hoặc đồng hạng. NTILE(k), k nguyên dương, chia bucket lệch nhau tối đa một dòng.
+$N$ là số dòng của partition. PERCENT\_RANK là $(\mathrm{rank}-1)/(N-1)$ (0 nếu $N=1$). CUME\_DIST là tỷ lệ dòng đứng trước hoặc đồng hạng. NTILE(k) chia bucket lệch tối đa một dòng, k nguyên dương.
 \end{topicblock}
 
 \begin{topicblock}
@@ -469,7 +460,7 @@ SUM(x) OVER (ORDER BY day,id
 
 \begin{topicblock}
 \topic{10}{LÀM TRÒN VÀ STORED PROGRAMS}
-\ruleline{So sánh hoặc rank trên giá trị gốc, rồi làm tròn để hiển thị. Nếu đề yêu cầu thứ tự khác, làm theo đề.}
+\ruleline{Mặc định so sánh/rank số gốc rồi làm tròn để hiển thị.}
 \par\begin{tabular}{@{}ll@{}}
 \textbf{Yêu cầu} & \textbf{Thứ tự}\\
 Rank theo giá trị gốc & Rank $\to$ làm tròn\\
@@ -534,7 +525,6 @@ DELIMITER ;
 INSERT có NEW, DELETE có OLD, UPDATE có cả hai. OLD chỉ đọc. BEFORE có thể SET NEW, AFTER thì không. DELIMITER thuộc client. Điều kiện dùng IF/CASE, vòng lặp dùng WHILE/REPEAT/LOOP.
 \end{topicblock}
 
-\nextcol{.260}
 \begin{topicblock}
 \topic{11}{RELATIONAL ALGEBRA}
 R/S là relation, $P,\theta$ là predicate lọc/join, A là danh sách attribute, X/Y là hai tập attribute rời nhau.
@@ -546,6 +536,25 @@ $\pi_X(R)-\pi_X((\pi_X(R)\times S)-R)$.
 \ex{R={(a,1),(a,2),(b,1)}, S={1,2} cho {a}. S rỗng cho $\pi_X(R)$. SQL double-NOT-EXISTS trên A có thể lấy thêm dòng A ngoài $\pi_X(R)$.}
 \end{topicblock}
 
+% User-supplied keywords, plus category counts and ranking grouped totals.
+\par\begin{tabular}{@{}ll@{}}
+\textbf{Exam keywords} & \textbf{SQL pattern}\\
+At least one & \sql{EXISTS}\\
+None / Never & \sql{NOT EXISTS}\\
+Every / All & Double \sql{NOT EXISTS}\\
+Exactly K matches & \sql{HAVING COUNT(...) = K}\\
+Second distinct highest & \sql{DENSE_RANK() = 2}\\
+Highest including ties & \sql{RANK() = 1}\\
+At most K rows per group & \sql{ROW_NUMBER() <= K}\\
+Above own group average & CTE / correlated subquery\\
+Include zero-count groups & \sql{LEFT JOIN + COUNT(r.id)}\\
+Inconsistent known values & \sql{COUNT(DISTINCT x) > 1}\\
+Compare consecutive rows & \sql{LAG()} / \sql{LEAD()}\\
+Count by derived category & \sql{CASE}, then \sql{GROUP BY}\\
+Best aggregate per group & Aggregate, rank, filter
+\end{tabular}\par
+
+\nextcol{.268}
 \begin{topicblock}
 \topic{12}{DDL / CONSTRAINTS / VIEWS}
 \pattern{Lệnh DDL và cấp quyền}
@@ -628,7 +637,7 @@ Entity có attribute và key. Relationship có cardinality (1:1,1:N,M:N) và par
 
 \begin{topicblock}
 \topic{13}{TRUY CẬP DATABASE TỪ PHP VÀ PYTHON}
-Student(id PK,name,mark). Bên gọi cung cấp cấu hình kết nối và ID.
+Student(id PK,name,mark). Bên gọi cấp cấu hình và ID.
 \key{HTTP / HTML / PHP}
 GET gửi tham số qua URL, POST gửi form qua request body. HTTPS mã hóa đường truyền. action chọn endpoint, method chọn kiểu request. Dùng \sql{$_GET['id']} / \sql{$_POST['id']}. Kiểm tra đầu vào, bind tham số SQL và escape HTML đầu ra.
 \begin{lstlisting}[style=Plaincode,language=XML]
@@ -648,7 +657,7 @@ foreach ($rows as $r) {
 $st->close();
 \end{lstlisting}
 \trap{mysqli\_query trả mysqli\_result cho SELECT/SHOW/DESCRIBE/EXPLAIN, true cho lệnh khác chạy thành công. Khi lỗi, trả false hoặc ném mysqli\_sql\_exception nếu bật strict reporting. Chỉ gọi fetch\_all trên result object.}
-Kết nối $\to$ prepare/bind $\to$ execute $\to$ fetch $\to$ render $\to$ đóng. Transaction ghi cần commit. SELECT thành công vẫn trả result object khi có 0 dòng.
+Kết nối $\to$ prepare/bind $\to$ chạy $\to$ fetch $\to$ render $\to$ đóng. Commit lệnh ghi. SELECT thành công có result object kể cả 0 dòng.
 \key{Python DB-API / PyMySQL}
 Connection giữ session và transaction. Cursor chạy lệnh và lấy kết quả. db\_config là mapping cấu hình kết nối, sid là ID dạng số nguyên. Bind giá trị, tránh ghép vào chuỗi SQL.
 \begin{lstlisting}[style=Plaincode,language=Python]
@@ -658,8 +667,7 @@ with pymysql.connect(**db_config) as conn:
         sql = 'SELECT name FROM Student WHERE id=%s'
         cur.execute(sql, (sid,))
         rows = cur.fetchall()
-        sql = ('UPDATE Student SET mark=%s '
-               'WHERE id=%s')
+        sql = 'UPDATE Student SET mark=%s WHERE id=%s'
         cur.execute(sql, (80, sid))
     conn.commit()  # explicit commit for writes
 \end{lstlisting}
@@ -670,31 +678,26 @@ from sqlalchemy import create_engine
 import pandas as pd
 engine = create_engine('sqlite:///study.db')
 df = pd.read_sql_query('SELECT * FROM Student', engine)
-df.to_sql('copy', engine,
-          if_exists='replace', index=False)
+df.to_sql('copy', engine, if_exists='replace', index=False)
 \end{lstlisting}
 \cond{Placeholder tùy driver (\%s trong PyMySQL, ? trong sqlite3). Python tuple một phần tử cần dấu phẩy: (sid,). Đóng connection/cursor hoặc dùng context manager.}
 \end{topicblock}
-\end{sheetcolumns}
 
+\begin{topicblock}
 \topic{}{MONGODB INDEX / EXPLAIN}
-\begin{sheetcolumns}{.27}
 \begin{lstlisting}[style=Plaincode]
 db.tours.createIndex({usertype:1,tripduration:-1});
-db.tours.createIndex({tripCode:1},{unique:true,sparse:true});
+db.tours.createIndex({tripCode:1},
+ {unique:true,sparse:true});
 db.tours.createIndex({"stops.name":1}); // multikey
 db.tours.createIndex({note:"text"});
 db.tours.find({$text:{$search:"campus"}});
-\end{lstlisting}
-\nextcol{.22}
-\begin{lstlisting}[style=Plaincode]
 db.tours.getIndexes();
 db.tours.find({usertype:"Subscriber"})
  .hint({usertype:1,tripduration:-1})
  .explain("executionStats");
 db.tours.dropIndex("usertype_1_tripduration_-1");
 \end{lstlisting}
-\nextcol{.22}
 \par\begin{tabular}{@{}ll@{}}
 \sql{COLLSCAN} & quét toàn bộ collection\\
 \sql{IXSCAN} & quét index\\
@@ -702,15 +705,15 @@ db.tours.dropIndex("usertype_1_tripduration_-1");
 \sql{totalKeysExamined} & số mục index đã xét\\
 \sql{totalDocsExamined} & số document đã xét
 \end{tabular}\par
-\nextcol{.29}
-Single-field, compound, unique, multikey (array), text. Index mẫu dùng prefix \sql{usertype} hoặc cả cặp. \sql{tripduration} riêng lẻ thiếu prefix. Index tốn chỗ và công ghi. \sql{_id} unique mặc định. Sparse unique kiểm tra \sql{tripCode} khi có field, kể cả lúc tạo. Dùng hint trước drop. Text search dùng index \sql{note}.
+Single-field, compound, unique, multikey (array), text. Prefix là \sql{usertype} hoặc cả cặp. Riêng \sql{tripduration} thiếu prefix. Index tốn chỗ/công ghi. \sql{_id} mặc định unique. Sparse unique xét \sql{tripCode} có mặt khi tạo/ghi. Hint trước drop. Text search dùng \sql{note}.
+\end{topicblock}
 \end{sheetcolumns}
 
 \newpage
 % PAGE 2: Part II. FD algorithms, XML, MongoDB, and Spark.
-\renewcommand{\bodyfontsize}{5.65}
+\renewcommand{\bodyfontsize}{5.80}
 \renewcommand{\bodyleading}{5.3}
-\renewcommand{\codefontsize}{5.05}
+\renewcommand{\codefontsize}{5.15}
 \renewcommand{\codeleading}{5.0}
 \renewcommand{\bodylineskiplimit}{-1.5pt}
 \begin{sheetcolumns}{.272}
@@ -808,8 +811,8 @@ Phản ví dụ cho dòng cuối. $F=\{A\to B,B\to C,A\to C\}$, tách AB/BC. Suy
 
 \begin{topicblock}
 \topic{18}{XML / DTD / XSD}
-XML well-formed có một root, tag lồng đúng và phân biệt hoa thường, attribute có nháy, escape ký tự dành riêng. Valid còn thỏa DTD/XSD. Attribute có parent, không có child. CDATA giữ nguyên text. Default namespace chỉ áp cho element không prefix.
-Schema linh hoạt vẫn validate element tùy chọn hoặc lặp. Lặp dữ liệu có thể gây update anomaly.
+XML well-formed có một root, tag lồng đúng, phân biệt hoa thường, attribute có nháy, escape ký tự dành riêng. Valid còn thỏa DTD/XSD. Attribute có parent, không có child. CDATA giữ nguyên text. Default namespace chỉ áp cho element không prefix.
+Schema linh hoạt vẫn validate element tùy chọn/lặp. Dữ liệu lặp dễ gây update anomaly.
 \pattern{Đoạn XML và khai báo DTD}
 \begin{lstlisting}[style=Plaincode,language=XML]
 <course xmlns="urn:uni" id="C1">
@@ -821,7 +824,7 @@ Schema linh hoạt vẫn validate element tùy chọn hoặc lặp. Lặp dữ l
 <!ATTLIST Course id ID #REQUIRED dept IDREF #IMPLIED
  instructors IDREFS #IMPLIED category CDATA "general">
 \end{lstlisting}
-Khai báo DTD trong DOCTYPE hoặc file .dtd. ?=0/1, *=0+, +=1+, dấu phẩy là sequence, |=choice. \texttt{\#PCDATA} là text, EMPTY không có nội dung, ANY nhận nội dung hợp lệ. Attribute dùng \texttt{\#REQUIRED} bắt buộc, \texttt{\#IMPLIED} tùy chọn, \texttt{\#FIXED "v"} mặc định cố định.
+DTD nằm trong DOCTYPE hoặc file .dtd. ?=0/1, *=0+, +=1+, dấu phẩy là sequence, |=choice. \texttt{\#PCDATA} là text, EMPTY rỗng, ANY cho nội dung hợp lệ. \texttt{\#REQUIRED} bắt buộc, \texttt{\#IMPLIED} tùy chọn, \texttt{\#FIXED "v"} mặc định cố định.
 \ex{(A|B)+ nhận B,A,B. (A*,B*) loại B,A.}
 \end{topicblock}
 \nextcol{.246}
@@ -859,7 +862,7 @@ university có department*(@id), course*(@dept), không có target namespace. Ch
 \sql{xs:selector} & chọn element chịu constraint\\
 \sql{xs:field} & chọn node cung cấp giá trị key
 \end{tabular}\par
-\trap{IDREF dò ID có thật. keyref trỏ tới key/unique đã khai báo. Nếu có target namespace, bind prefix cho selector/refer. Selector không prefix lấy element không namespace.}
+\trap{IDREF dò ID có thật. keyref trỏ tới key/unique. Với target namespace, bind prefix cho selector/refer. Selector không prefix tìm element không namespace.}
 \end{topicblock}
 
 \begin{topicblock}
@@ -1162,19 +1165,18 @@ db.tours.aggregate([
    {$gte:["$$s.mins",3]},{$gte:["$$s.rate",80]}
   ]}}}}}, {$sort:{_id:1}} ]);
 \end{lstlisting}
-Mục 23 cho A:[a1,a2], C:[c0]. Bỏ \sql{$match} thì B/D vẫn có mặt với array rỗng. \sql{$filter} giữ thứ tự. \sql{$$s} là điểm dừng đang xét, \sql{$stops} là array đầu vào.
+Mục 23 cho A:[a1,a2], C:[c0]. Bỏ \sql{$match}, B/D có array rỗng. \sql{$filter} giữ thứ tự. \sql{$$s} là stop đang xét, \sql{$stops} là array đầu vào.
 \end{topicblock}
 
 \begin{topicblock}
 \topic{25}{SCHEMA / SCALING}
-Xem MongoDB index và explain ở trang 1.
+Xem MongoDB index và explain ở cột 4 trang 1.
 Embed child có giới hạn, hay đọc/sửa cùng nhau. Đọc một lần, đổi lại có thể lặp dữ liệu hoặc phình array. Reference cho entity dùng chung, nhiều-nhiều hoặc không giới hạn, giảm lặp và dễ sửa riêng, tốn lookup/join. Ghi một document là atomic. \sql{updateMany()} chỉ atomic từng document. Dùng transaction để cùng commit hoặc rollback.
 Vertical scaling: nâng cấu hình máy. Horizontal: thêm node. Replication sao chép dữ liệu, sharding chia dữ liệu. CAP khi mạng bị chia cắt: primary tự hạ vai trò nếu thấy mình thuộc nhóm thiểu số. Đa số có thể bầu primary mới. Đọc từ secondary có thể gặp dữ liệu cũ. Bảo đảm phụ thuộc read/write concern và read preference.
 \end{topicblock}
 
 \begin{topicblock}
 \topic{26}{SPARK / RDD}
-\when{Lần theo transformations/actions hoặc đếm phần tử trả về.}
 sc=SparkContext, spark=SparkSession. Khởi tạo cả hai trước khi dùng.
 RDD là collection phân tán, chia partition và bất biến. Transformations tạo RDD mới. Lineage lưu quan hệ phụ thuộc để khôi phục khi lỗi. Lazy: action mới kích hoạt tính toán. cache()/persist() đánh dấu giữ partition để dùng lại sau khi partition được tính.
 \key{Transformations trả RDD mới}

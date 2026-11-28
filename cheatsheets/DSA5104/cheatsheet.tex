@@ -51,9 +51,9 @@
   morestring=[b]',
   morestring=[b]"
 }
-\newcommand{\bodyfontsize}{5.35}
+\newcommand{\bodyfontsize}{5.55}
 \newcommand{\bodyleading}{5.3}
-\newcommand{\codefontsize}{4.9}
+\newcommand{\codefontsize}{5.05}
 \newcommand{\codeleading}{5.0}
 \lstdefinestyle{SQLbase}{
   language=SQLx,
@@ -146,8 +146,8 @@
 
 \begin{document}
 \bodystyle
-% PAGE 1: Part I. SQL/access columns followed by MongoDB index commands.
-\begin{sheetcolumns}{.25}
+% PAGE 1: Part I. SQL/access. MongoDB index commands are in column 4.
+\begin{sheetcolumns}{.254}
 \begin{topicblock}
 \topic{01}{PART I: SQL QUERY LOGIC}
 SQL syntax: MySQL 8.4. Schemas are local to each pattern.
@@ -272,28 +272,15 @@ STR_TO_DATE(LEFT(selling_date,24),
 \trap{String order: \sql{'100' < '20'}; numeric order: $20<100$. For DATETIME use a half-open month interval; BETWEEN dates can omit most of the final day.}
 \end{topicblock}
 
-\nextcol{.237}
-% User-supplied keywords, plus category counts and ranking grouped totals.
-\par\begin{tabular}{@{}ll@{}}
-\textbf{Exam keywords} & \textbf{SQL pattern}\\
-At least one & \sql{EXISTS}\\
-None / Never & \sql{NOT EXISTS}\\
-Every / All & Double \sql{NOT EXISTS}\\
-Exactly K matches & \sql{HAVING COUNT(...) = K}\\
-Second distinct highest & \sql{DENSE_RANK() = 2}\\
-Highest including ties & \sql{RANK() = 1}\\
-At most K rows per group & \sql{ROW_NUMBER() <= K}\\
-Above own group average & CTE / correlated subquery\\
-Include zero-count groups & \sql{LEFT JOIN + COUNT(r.id)}\\
-Inconsistent known values & \sql{COUNT(DISTINCT x) > 1}\\
-Compare consecutive rows & \sql{LAG()} / \sql{LEAD()}\\
-Count by derived category & \sql{CASE}, then \sql{GROUP BY}\\
-Best aggregate per group & Aggregate, rank, filter
-\end{tabular}\par
 \begin{topicblock}
 \topic{05}{SUBQUERIES / DIVISION}
 Scalar subqueries have one column. Zero rows gives NULL, multiple rows error. Correlated subqueries read an outer row. IN tests membership (\sql{= ANY}).
 % Source: user-supplied predicate table and empty quantifiers; MySQL subqueries (W18).
+\end{topicblock}
+
+\nextcol{.239}
+\begin{topicblock}
+\key{Subqueries (Topic 05 continued)}
 \pattern{Predicate shorthand}
 S=subquery result. ANY/ALL use one column y comparable with x. EXISTS counts even all-NULL rows.
 \par\begin{tabular}{@{}lll@{}}
@@ -406,7 +393,6 @@ For make values: Ford/Toyota is conflict; Ford/NULL, NULL/NULL, Ford/Ford are no
 CUBE on d dimensions has $2^d$ grouping sets; ROLLUP(a,b,c) gives (a,b,c),(a,b),(a),(). MySQL supports \sql{GROUP BY a,b WITH ROLLUP}, not native CUBE. \sql{GROUPING(a)=1} identifies a generated subtotal NULL, distinct from stored NULL.
 \end{topicblock}
 
-\nextcol{.23}
 \begin{topicblock}
 \topic{08}{RANKING / TOP K}
 \pattern{Rank, then filter} Employee(id PK,dept,score); score numeric/NULL, K a positive integer.
@@ -424,7 +410,12 @@ score DESC & ROW\_NUMBER & RANK & DENSE\_RANK\\
 90 & 1 & 1 & 1\\90 & 2 & 1 & 1\\80 & 3 & 3 & 2\\70 & 4 & 4 & 3
 \end{tabular}\par}
 \trap{Do not add a unique id to the ranking order when ties must stay tied. Only final ORDER BY orders output; window ORDER BY controls calculation. RANK leaves gaps after ties.}
-\pattern{Aggregate, rank, then filter}
+\end{topicblock}
+
+
+\nextcol{.235}
+\begin{topicblock}
+\pattern{Aggregate, rank, filter (Topic 08 continued)}
 Sales(state,make): one row per sale.
 \begin{lstlisting}
 WITH G AS (
@@ -534,7 +525,6 @@ DELIMITER ;
 INSERT: NEW; DELETE: OLD; UPDATE: both. OLD read-only; BEFORE may SET NEW, AFTER cannot. DELIMITER is client syntax. IF/CASE; loops WHILE/REPEAT/LOOP.
 \end{topicblock}
 
-\nextcol{.283}
 \begin{topicblock}
 \topic{11}{RELATIONAL ALGEBRA}
 R/S=relations; $P,\theta$=row/join predicates; A=attribute list; X/Y=disjoint attribute sets below.
@@ -546,6 +536,25 @@ $\pi_X(R)-\pi_X((\pi_X(R)\times S)-R)$.
 \ex{R={(a,1),(a,2),(b,1)}, S={1,2}: result {a}. S empty gives $\pi_X(R)$; a SQL double-NOT-EXISTS over A can include A rows outside $\pi_X(R)$.}
 \end{topicblock}
 
+% User-supplied keywords, plus category counts and ranking grouped totals.
+\par\begin{tabular}{@{}ll@{}}
+\textbf{Exam keywords} & \textbf{SQL pattern}\\
+At least one & \sql{EXISTS}\\
+None / Never & \sql{NOT EXISTS}\\
+Every / All & Double \sql{NOT EXISTS}\\
+Exactly K matches & \sql{HAVING COUNT(...) = K}\\
+Second distinct highest & \sql{DENSE_RANK() = 2}\\
+Highest including ties & \sql{RANK() = 1}\\
+At most K rows per group & \sql{ROW_NUMBER() <= K}\\
+Above own group average & CTE / correlated subquery\\
+Include zero-count groups & \sql{LEFT JOIN + COUNT(r.id)}\\
+Inconsistent known values & \sql{COUNT(DISTINCT x) > 1}\\
+Compare consecutive rows & \sql{LAG()} / \sql{LEAD()}\\
+Count by derived category & \sql{CASE}, then \sql{GROUP BY}\\
+Best aggregate per group & Aggregate, rank, filter
+\end{tabular}\par
+
+\nextcol{.272}
 \begin{topicblock}
 \topic{12}{DDL / CONSTRAINTS / VIEWS}
 \pattern{DDL and privilege statements}
@@ -648,7 +657,7 @@ foreach ($rows as $r) {
 $st->close();
 \end{lstlisting}
 \trap{mysqli\_query: SELECT/SHOW/DESCRIBE/EXPLAIN produce mysqli\_result; other successful statements return true. Failure returns false or throws mysqli\_sql\_exception under strict reporting. Call fetch\_all only on a result object.}
-Connect $\to$ prepare/bind $\to$ execute $\to$ fetch $\to$ render $\to$ close. Write transactions require commit; a successful SELECT returns a result object even when it contains zero rows.
+Connect $\to$ prepare/bind $\to$ execute $\to$ fetch $\to$ render $\to$ close. Commit writes. Successful SELECT returns a result object even with zero rows.
 \key{Python DB-API / PyMySQL}
 Connection holds session/transactions; cursor executes/fetches. db\_config is the connection-options mapping; sid is the integer target ID. Bind values, not string interpolation.
 \begin{lstlisting}[style=Plaincode,language=Python]
@@ -658,8 +667,7 @@ with pymysql.connect(**db_config) as conn:
         sql = 'SELECT name FROM Student WHERE id=%s'
         cur.execute(sql, (sid,))
         rows = cur.fetchall()
-        sql = ('UPDATE Student SET mark=%s '
-               'WHERE id=%s')
+        sql = 'UPDATE Student SET mark=%s WHERE id=%s'
         cur.execute(sql, (80, sid))
     conn.commit()  # explicit commit for writes
 \end{lstlisting}
@@ -670,31 +678,25 @@ from sqlalchemy import create_engine
 import pandas as pd
 engine = create_engine('sqlite:///study.db')
 df = pd.read_sql_query('SELECT * FROM Student', engine)
-df.to_sql('copy', engine,
-          if_exists='replace', index=False)
+df.to_sql('copy', engine, if_exists='replace', index=False)
 \end{lstlisting}
 \cond{Parameter placeholder syntax is driver-specific (\%s in PyMySQL, ? in sqlite3). A one-value Python tuple needs the comma: (sid,). Close connections/cursors or use their context managers.}
 \end{topicblock}
-\end{sheetcolumns}
 
+\begin{topicblock}
 \topic{}{MONGODB INDEXES / EXPLAIN}
-\begin{sheetcolumns}{.27}
 \begin{lstlisting}[style=Plaincode]
 db.tours.createIndex({usertype:1,tripduration:-1});
 db.tours.createIndex({tripCode:1},{unique:true,sparse:true});
 db.tours.createIndex({"stops.name":1}); // multikey
 db.tours.createIndex({note:"text"});
 db.tours.find({$text:{$search:"campus"}});
-\end{lstlisting}
-\nextcol{.22}
-\begin{lstlisting}[style=Plaincode]
 db.tours.getIndexes();
 db.tours.find({usertype:"Subscriber"})
  .hint({usertype:1,tripduration:-1})
  .explain("executionStats");
 db.tours.dropIndex("usertype_1_tripduration_-1");
 \end{lstlisting}
-\nextcol{.22}
 \par\begin{tabular}{@{}ll@{}}
 \sql{COLLSCAN} & full collection scan\\
 \sql{IXSCAN} & index scan\\
@@ -702,15 +704,15 @@ db.tours.dropIndex("usertype_1_tripduration_-1");
 \sql{totalKeysExamined} & index entries examined\\
 \sql{totalDocsExamined} & documents examined
 \end{tabular}\par
-\nextcol{.29}
-Single-field, compound, unique, multikey (array), text. The sample index supports prefix \sql{usertype} or both fields. Duration alone lacks prefix access. Indexes cost writes/storage. Default \sql{_id} is unique. Sparse unique checks present \sql{tripCode} on create/write. Hint before drop. Text search uses the \sql{note} index.
+Single-field, compound, unique, multikey (array), text. Sample prefix \sql{usertype} or both fields. Duration alone lacks prefix access. Indexes cost writes/storage. Default \sql{_id} is unique. Sparse unique checks present \sql{tripCode} on create/write. Hint before drop. Text search uses the \sql{note} index.
+\end{topicblock}
 \end{sheetcolumns}
 
 \newpage
 % PAGE 2: Part II. FD algorithms, XML, MongoDB, and Spark.
-\renewcommand{\bodyfontsize}{5.65}
+\renewcommand{\bodyfontsize}{5.80}
 \renewcommand{\bodyleading}{5.3}
-\renewcommand{\codefontsize}{5.05}
+\renewcommand{\codefontsize}{5.15}
 \renewcommand{\codeleading}{5.0}
 \renewcommand{\bodylineskiplimit}{-1.5pt}
 \begin{sheetcolumns}{.267}
@@ -1166,7 +1168,7 @@ Input 23 yields A:[a1,a2], C:[c0]. Without \sql{$match}, B/D remain with empty a
 
 \begin{topicblock}
 \topic{25}{SCHEMA / SCALING}
-MongoDB index commands and explain are on page 1.
+MongoDB indexes and explain are in column 4 of page 1.
 Embed bounded children read/updated together for one read. Costs: duplication and growing arrays. Reference shared, many-to-many or unbounded entities for fewer copies and independent writes, at lookup/join/read cost. A single-document write is atomic. \sql{updateMany()} is atomic only per document. Use a transaction for all-or-nothing across documents.
 Vertical scaling=larger server; horizontal=more nodes. Replication copies data; sharding partitions it. CAP: during a partition, a primary detecting a minority of voting nodes steps down; a majority can elect a new primary. Secondary reads may be stale; guarantees depend on read/write concern and read preference.
 \end{topicblock}

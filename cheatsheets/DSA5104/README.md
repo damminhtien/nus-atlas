@@ -14,16 +14,16 @@ beside it.
 
 | Page | Column 1 | Column 2 | Column 3 | Column 4 |
 | --- | --- | --- | --- | --- |
-| 1: Part I | SQL logic, NULL/anti-joins, joins, types | Division, CTEs, aggregation | Ranking, windows, rounding, stored programs | Relational algebra, constraints, PHP/Python |
+| 1: Part I | SQL logic, NULL/anti-joins, joins, types, scalar subqueries | Division, CTEs, aggregation, ranking | Aggregate ranking, windows, stored programs, relational algebra, SQL keyword table | Constraints, PHP/Python, MongoDB indexes |
 | 2: Part II | FDs, keys, BCNF, decomposition tests, XML/DTD | DTD attribute types, XML processing, XSD, XPath, XQuery | XQuery examples, MongoDB schemas, CRUD, aggregation, matching | Array matching and projection, document design, scaling, Spark |
 
-MongoDB index commands and explain statistics are in a strip at the bottom of
-page 1. Topic 25 on page 2 points to that strip.
+MongoDB index commands and explain statistics are together in column 4 of
+page 1. Topic 25 on page 2 points to that column.
 
 | Page | Body text | Code |
 | --- | --- | --- |
-| 1 | 5.35 pt | 4.9 pt |
-| 2 | 5.65 pt | 5.05 pt |
+| 1 | 5.55 pt | 5.05 pt |
+| 2 | 5.8 pt | 5.15 pt |
 
 Topic headings use 6.45 pt. Both editions use the fonts' natural proportions
 and fit on two A4 portrait pages with column widths matched to the content.
