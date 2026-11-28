@@ -272,9 +272,25 @@ STR_TO_DATE(LEFT(selling_date,24),
 \end{topicblock}
 
 \nextcol{.237}
+% User-supplied keywords, plus category counts and ranking grouped totals.
+\par\begin{tabular}{@{}ll@{}}
+\textbf{Exam keywords} & \textbf{SQL pattern}\\
+At least one & \sql{EXISTS}\\
+None / Never & \sql{NOT EXISTS}\\
+Every / All & Double \sql{NOT EXISTS}\\
+Exactly K matches & \sql{HAVING COUNT(...) = K}\\
+Second distinct highest & \sql{DENSE_RANK() = 2}\\
+Highest including ties & \sql{RANK() = 1}\\
+At most K rows per group & \sql{ROW_NUMBER() <= K}\\
+Above own group average & CTE / correlated subquery\\
+Include zero-count groups & \sql{LEFT JOIN + COUNT(r.id)}\\
+Inconsistent known values & \sql{COUNT(DISTINCT x) > 1}\\
+Compare consecutive rows & \sql{LAG()} / \sql{LEAD()}\\
+Count by derived category & \sql{CASE}, then \sql{GROUP BY}\\
+Best aggregate per group & Aggregate, rank, filter
+\end{tabular}\par
 \begin{topicblock}
 \topic{05}{SUBQUERIES / DIVISION}
-\when{Scalar lookup, membership or "for every required item".}
 Scalar subquery: one column, at most one row; zero rows gives NULL, multiple rows is an error. A correlated subquery refers to an outer row. IN tests membership; \sql{= ANY} is IN.
 % Source: user-supplied predicate table and empty quantifiers; MySQL subqueries (W18).
 \pattern{Predicate shorthand}
@@ -286,10 +302,7 @@ S is a subquery result; ANY/ALL use one column y comparable with x. EXISTS count
 \sql{x > ANY(S)} & some $y<x$ & FALSE\\
 \sql{x > ALL(S)} & every $y<x$ & TRUE
 \end{tabular}\par
-\key{Empty input / vacuous truth}
-For $S=\varnothing$ and any predicate $P$:
-$(\exists y\in S:P(y))=\mathrm{FALSE}$;
-$(\forall y\in S:P(y))=\mathrm{TRUE}$ (vacuous truth).
+\key{Vacuous truth} For $S=\varnothing$: $(\exists y\in S:P(y))=\mathrm{FALSE}$; $(\forall y\in S:P(y))=\mathrm{TRUE}$.
 \key{RULE: ANY/ALL with NULL (U = UNKNOWN)}
 ANY is OR, ALL is AND across comparisons. For \sql{5 > ANY/ALL (SELECT y FROM T)}, RHS lists the subquery's y values.
 \par\begin{tabular}{@{}lll@{}}
@@ -300,7 +313,6 @@ ANY is OR, ALL is AND across comparisons. For \sql{5 > ANY/ALL (SELECT y FROM T)
 ANY: TRUE dominates U; ALL: FALSE dominates U.
 \trap{\sql{x > ALL (SELECT y FROM T)} is not generally equivalent to \sql{x > (SELECT MAX(y) FROM T)}. For [3,NULL], 5>ALL is U but 5>MAX is TRUE; for empty input ALL is TRUE, while MAX is NULL.}
 % Source: user-supplied NOT EXISTS recognition and universal negation; W17/W18.
-\when{No/none/has never: single NOT EXISTS for no matching row. Every/all: no violation; double NOT EXISTS for required-item coverage.}
 \ruleline{For Boolean $P(y)$ (current A row has a link to required y):
 $(\forall y:P(y))\iff\neg(\exists y:\neg P(y))$.}
 \pattern{For every: double NOT EXISTS}
@@ -325,8 +337,7 @@ GROUP BY r.aid HAVING COUNT(DISTINCT r.bid) =
 
 \begin{topicblock}
 \topic{06}{CTE / AGGREGATE LEVELS}
-\when{Compare rows to group statistics, or traverse a graph.}
-CTE: named query result scoped to one statement; chain with commas. First derive each group statistic, then compare original rows to that statistic.
+CTE: named query result scoped to one statement. Chain multiple CTEs with commas.
 \pattern{Rows above their group's mean}
 Student(dept,mark); mark numeric/NULL. NULL departments form one group; \sql{<=>} matches that group.
 \begin{lstlisting}
@@ -358,7 +369,6 @@ WITH RECURSIVE Reach(a,b) AS (SELECT a,b FROM Edge
 \begin{topicblock}
 \topic{07}{CONDITIONAL AGGREGATION}
 % Source: Project 1 Q5; thresholds are explicit example inputs.
-\when{Classify rows or aggregate only rows satisfying a condition.}
 \pattern{Classify with CASE, then GROUP BY}
 Sales(price): non-NULL numeric prices.
 \begin{lstlisting}
@@ -942,7 +952,24 @@ This returns an expensive element containing the input item.
 \nextcol{.24}
 \begin{topicblock}
 \topic{21}{MONGODB: CRUD / FILTERS}
-\when{Read/write documents, filter fields or update arrays.}
+% Source: Assignment 2 Q1.1--Q2.2; array examples use the practice fields of tours.
+\par\begin{tabular}{@{}ll@{}}
+\textbf{Exam keywords} & \textbf{MongoDB pattern}\\
+Filter and return fields & \sql{find(filter, fields)}\\
+Sort with a tie-breaker & \sql{.sort({a:-1,b:1})}\\
+Filter documents first & \sql{$match} before \sql{$group}\\
+Count and mean per group & \sql{$group}, \sql{$sum:1}, \sql{$avg}\\
+At least K per group & \sql{$group}, then \sql{$match} with \sql{$gte}\\
+Exactly K per group & \sql{$match} on \sql{{tripCount:K}}\\
+Sort by rounded value & \sql{$round} before \sql{$sort}\\
+One item meets both tests & Query \sql{$elemMatch}\\
+Return first matching item & \sql{$elemMatch} + \sql{"stops.$":1}\\
+Original first item qualifies & Filter on \sql{"stops.0.mins"}\\
+Return all matching items & \sql{$filter} in \sql{$project}\\
+Contains all listed values & \sql{$all}\\
+Exactly K array items & \sql{$size:K}\\
+Top K by value & \sql{$sort}, then \sql{$limit}
+\end{tabular}\par
 BSON is binary and supports ObjectId, Date, int32/int64, Decimal128 and binary. JSON is text. Documents have unique \sql{_id}. Flexible schemas retain types and can enforce validation.
 \key{Shared \sql{db.tours} schema (21--25)}
 \begin{lstlisting}[style=Plaincode]
@@ -994,13 +1021,11 @@ db.tours.find({usertype:"Subscriber",
  {_id:0,tripduration:1,"birth year":1,gender:1}
 ).sort({tripduration:-1,"birth year":1});
 \end{lstlisting}
-First object filters Subscriber trips in $[600,1800)$ s, born 1985+. Second selects duration, year, gender and hides \sql{_id}. Sort duration DESC, year ASC on ties.
 \end{topicblock}
 
 \begin{topicblock}
 \topic{22}{MONGODB: AGGREGATION}
-\when{Group documents, compute metrics or reshape pipeline output.}
-\pattern{Document filter, aggregate filter, rounded sort}
+\pattern{Group, filter, round, sort}
 \begin{lstlisting}[style=Plaincode]
 db.tours.aggregate([
  {$match:{"birth year":{$gte:1980},
@@ -1012,12 +1037,12 @@ db.tours.aggregate([
   avgDuration:{$round:["$avgDuration",1]}}},
  {$sort:{avgDuration:-1,stationId:1}} ]);
 \end{lstlisting}
-First \sql{$match} filters trips (WHERE). \sql{$group} counts and averages per station (GROUP BY). Second \sql{$match} keeps counts $\geq2$ (HAVING). \sql{$project} copies \sql{$_id} to stationId, hides \sql{_id} and rounds to 1 decimal. \sql{$sort} uses the rounded value, then stationId. FROM=collection, SELECT=\sql{$project}, ORDER BY=\sql{$sort}, LIMIT=\sql{$limit}.
-\sql{$sum:1} counts documents. \sql{$sum} and \sql{$avg} skip missing/nonnumeric values; with no numbers, sum=0 and avg=null. \sql{_id:null} groups all input. \sql{"$field"} reads a field; \sql{"field"} is literal. Groups are unordered.
+\sql{$match} before/after grouping acts as WHERE/HAVING. \sql{$project} aliases \sql{$_id} as stationId, hides \sql{_id} and rounds the mean to 1 decimal.
+\sql{$sum} and \sql{$avg} skip missing/nonnumeric values; with no numbers, sum=0 and avg=null. \sql{_id:null} groups all input. \sql{"$field"} reads a field; \sql{"field"} is literal. Groups are unordered.
 \trap{After \sql{$group}, only the key and accumulators remain. Move \sql{$sort} before rounding to sort raw values.}
 \ex{(\mbox{\sql{"start station id"}}, \mbox{\sql{tripduration}}, \mbox{\sql{"birth year"}}): (1,300,1990), (1,600,1990), (2,900,1990). All pass. Station 1: 2 trips, mean 450. Station 2: 1 trip, mean 900, dropped. Output \mbox{\sql{(stationId,tripCount,avgDuration)=(1,2,450.0)}}.}
 \key{Pipeline-stage fragments (inside aggregate)}
-\sql{$addFields} computes/preserves fields; \sql{$project} selects/computes; \sql{$unwind} emits one document per array element; \sql{$sort} then \sql{$limit} obtains top results.
+\sql{$addFields} computes/preserves fields; \sql{$project} selects/computes; \sql{$unwind} emits one document per array element.
 \begin{lstlisting}[style=Plaincode]
 {$unwind:"$stops"}
 {$group:{_id:"$stops.name",n:{$sum:1},fee:{$sum:{
@@ -1046,7 +1071,6 @@ countDocuments uses the first match to count trips before grouping. distinct ret
 
 \begin{topicblock}
 \topic{23}{ARRAY MATCHING: SAME ITEM?}
-\when{Decide whether conditions must hold on the same array element.}
 \sql{{scores:[1,2]}} exact array including order; \sql{{scores:2}} scalar equality or array containing 2; \sql{{scores:{$all:[1,2]}}} contains both, any order; \sql{{scores:{$size:2}}} exact length. \sql{"scores.0"} addresses the original first element (0-based).
 \key{Worked example on stops}
 Trips A--D are labeled by \sql{_id}. Each stop is (name,mins,rate). Predicate P requires mins $\geq3$ and rate $\geq80$.
@@ -1061,14 +1085,8 @@ D: []
 {"stops.mins":{$gte:3},"stops.rate":{$gte:80}}
 {stops:{$elemMatch:{mins:{$gte:3},rate:{$gte:80}}}}
 \end{lstlisting}
-\par\begin{tabular}{@{}ll@{}}
-\textbf{Document predicate} & \textbf{Matches}\\
-Independent dot conditions & A,B,C\\
-One item satisfies P (\sql{$elemMatch}) & A,C\\
-Original index 0 satisfies P & C\\
-Empty array (\sql{stops:{$size:0}}) & D
-\end{tabular}\par
-\trap{B satisfies the dot conditions on separate stops. Query \sql{$elemMatch} requires one matching stop and selects whole documents. See 24 for projection.}
+\ex{Dot filters: A,B,C. Query \sql{$elemMatch}: A,C. Original index 0: C. Empty \sql{stops} (\sql{$size:0}): D.}
+\trap{B meets the dot conditions on separate stops. Query \sql{$elemMatch} selects whole documents. See 24 for projection.}
 \begin{lstlisting}[style=Plaincode]
 // scores: [10,100]
 {scores:{$gt:20,$lt:80}}             // matches

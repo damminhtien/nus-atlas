@@ -272,9 +272,25 @@ STR_TO_DATE(LEFT(selling_date,24),
 \end{topicblock}
 
 \nextcol{.235}
+% User-supplied keywords, plus category counts and ranking grouped totals.
+\par\begin{tabular}{@{}ll@{}}
+\textbf{Exam keywords} & \textbf{SQL pattern}\\
+At least one & \sql{EXISTS}\\
+None / Never & \sql{NOT EXISTS}\\
+Every / All & Double \sql{NOT EXISTS}\\
+Exactly K matches & \sql{HAVING COUNT(...) = K}\\
+Second distinct highest & \sql{DENSE_RANK() = 2}\\
+Highest including ties & \sql{RANK() = 1}\\
+At most K rows per group & \sql{ROW_NUMBER() <= K}\\
+Above own group average & CTE / correlated subquery\\
+Include zero-count groups & \sql{LEFT JOIN + COUNT(r.id)}\\
+Inconsistent known values & \sql{COUNT(DISTINCT x) > 1}\\
+Compare consecutive rows & \sql{LAG()} / \sql{LEAD()}\\
+Count by derived category & \sql{CASE}, then \sql{GROUP BY}\\
+Best aggregate per group & Aggregate, rank, filter
+\end{tabular}\par
 \begin{topicblock}
 \topic{05}{SUBQUERY VÀ DIVISION}
-\when{Tra một giá trị, kiểm tra thuộc tập hoặc thỏa mọi yêu cầu.}
 Scalar subquery trả một cột, tối đa một dòng. 0 dòng cho NULL, nhiều dòng báo lỗi. Correlated subquery dùng giá trị từ dòng ngoài. IN kiểm tra thuộc tập, tương đương \sql{= ANY} với subquery.
 % Source: user-supplied predicate table and empty quantifiers; MySQL subqueries (W18).
 \pattern{Predicate viết tắt}
@@ -286,10 +302,7 @@ S là kết quả subquery. ANY/ALL dùng một cột y so được với x. EXI
 \sql{x > ANY(S)} & có $y<x$ & FALSE\\
 \sql{x > ALL(S)} & mọi $y<x$ & TRUE
 \end{tabular}\par
-\key{Tập rỗng và vacuous truth}
-Với $S=\varnothing$ và predicate $P$ bất kỳ,
-$(\exists y\in S:P(y))=\mathrm{FALSE}$ còn
-$(\forall y\in S:P(y))=\mathrm{TRUE}$ (vacuous truth).
+\key{Vacuous truth} Nếu $S=\varnothing$: $(\exists y\in S:P(y))=\mathrm{FALSE}$; $(\forall y\in S:P(y))=\mathrm{TRUE}$.
 \key{ANY/ALL gặp NULL (U = UNKNOWN)}
 ANY nối kết quả so sánh bằng OR, ALL bằng AND. Bảng ghi các giá trị y trong subquery của \sql{5 > ANY/ALL (SELECT y FROM T)}.
 \par\begin{tabular}{@{}lll@{}}
@@ -300,7 +313,6 @@ ANY nối kết quả so sánh bằng OR, ALL bằng AND. Bảng ghi các giá t
 ANY cho TRUE nếu có TRUE dù gặp U. ALL cho FALSE nếu có FALSE dù gặp U.
 \trap{\sql{x > ALL (SELECT y FROM T)} có thể khác \sql{x > (SELECT MAX(y) FROM T)}. Với [3,NULL], 5>ALL cho U còn 5>MAX cho TRUE. Nếu rỗng, ALL cho TRUE còn MAX là NULL.}
 % Source: user-supplied NOT EXISTS recognition and universal negation; W17/W18.
-\when{Đề ghi no/none/has never thì dùng một NOT EXISTS để loại bản ghi khớp. Với every/all, dùng double NOT EXISTS để bảo đảm không thiếu mục bắt buộc.}
 \ruleline{Với Boolean $P(y)$ là dòng A hiện tại có liên kết tới y,
 $(\forall y:P(y))\iff\neg(\exists y:\neg P(y))$.}
 \pattern{Thỏa mọi mục bằng double NOT EXISTS}
@@ -325,8 +337,7 @@ GROUP BY r.aid HAVING COUNT(DISTINCT r.bid) =
 
 \begin{topicblock}
 \topic{06}{CTE VÀ CẤP AGGREGATE}
-\when{So từng dòng với số liệu của nhóm hoặc duyệt graph.}
-CTE đặt tên cho kết quả dùng trong một câu lệnh. Nối nhiều CTE bằng dấu phẩy. Tính số liệu theo nhóm rồi so từng dòng gốc với số liệu đó.
+CTE đặt tên cho kết quả trong một câu lệnh. Nối nhiều CTE bằng dấu phẩy.
 \pattern{Dòng cao hơn trung bình nhóm}
 Student(dept,mark), mark là số hoặc NULL. dept NULL thuộc cùng nhóm. Dùng \sql{<=>} để ghép nhóm này.
 \begin{lstlisting}
@@ -358,7 +369,6 @@ WITH RECURSIVE Reach(a,b) AS (SELECT a,b FROM Edge
 \begin{topicblock}
 \topic{07}{AGGREGATION CÓ ĐIỀU KIỆN}
 % Source: Project 1 Q5; thresholds are explicit example inputs.
-\when{Phân loại dòng hoặc chỉ tính các dòng thỏa điều kiện.}
 \pattern{Phân loại bằng CASE rồi GROUP BY}
 Sales(price) có price là số khác NULL.
 \begin{lstlisting}
@@ -943,7 +953,24 @@ Kết quả là element expensive chứa item đầu vào.
 \nextcol{.237}
 \begin{topicblock}
 \topic{21}{MONGODB: CRUD / FILTER}
-\when{Đọc, ghi document, lọc theo field hoặc cập nhật array.}
+% Source: Assignment 2 Q1.1--Q2.2; array examples use the practice fields of tours.
+\par\begin{tabular}{@{}ll@{}}
+\textbf{Exam keywords} & \textbf{MongoDB pattern}\\
+Filter and return fields & \sql{find(filter, fields)}\\
+Sort with a tie-breaker & \sql{.sort({a:-1,b:1})}\\
+Filter documents first & \sql{$match} before \sql{$group}\\
+Count and mean per group & \sql{$group}, \sql{$sum:1}, \sql{$avg}\\
+At least K per group & \sql{$group}, then \sql{$match} with \sql{$gte}\\
+Exactly K per group & \sql{$match} on \sql{{tripCount:K}}\\
+Sort by rounded value & \sql{$round} before \sql{$sort}\\
+One item meets both tests & Query \sql{$elemMatch}\\
+Return first matching item & \sql{$elemMatch} + \sql{"stops.$":1}\\
+Original first item qualifies & Filter on \sql{"stops.0.mins"}\\
+Return all matching items & \sql{$filter} in \sql{$project}\\
+Contains all listed values & \sql{$all}\\
+Exactly K array items & \sql{$size:K}\\
+Top K by value & \sql{$sort}, then \sql{$limit}
+\end{tabular}\par
 BSON mã hóa nhị phân, hỗ trợ ObjectId, Date, int32/int64, Decimal128 và binary. JSON là text. Mỗi document có \sql{_id} duy nhất. Schema linh hoạt vẫn có kiểu và có thể áp dụng validation.
 \key{Schema của \sql{db.tours} (mục 21--25)}
 \begin{lstlisting}[style=Plaincode]
@@ -995,13 +1022,11 @@ db.tours.find({usertype:"Subscriber",
  {_id:0,tripduration:1,"birth year":1,gender:1}
 ).sort({tripduration:-1,"birth year":1});
 \end{lstlisting}
-Đối số 1 lọc Subscriber, $[600,1800)$ giây, sinh từ 1985. Đối số 2 chọn field, ẩn \sql{_id}. Sort thời lượng giảm rồi năm sinh tăng.
 \end{topicblock}
 
 \begin{topicblock}
 \topic{22}{MONGODB: AGGREGATION}
-\when{Gom document, tính metric hoặc đổi cấu trúc kết quả.}
-\pattern{Lọc document, lọc nhóm, sort giá trị đã làm tròn}
+\pattern{Gom nhóm, lọc, làm tròn, sort}
 \begin{lstlisting}[style=Plaincode]
 db.tours.aggregate([
  {$match:{"birth year":{$gte:1980},
@@ -1013,12 +1038,12 @@ db.tours.aggregate([
   avgDuration:{$round:["$avgDuration",1]}}},
  {$sort:{avgDuration:-1,stationId:1}} ]);
 \end{lstlisting}
-\sql{$match} đầu lọc trip (WHERE). \sql{$group} đếm và tính TB theo trạm. \sql{$match} sau giữ nhóm $\geq2$ trip (HAVING). \sql{$project} đổi \sql{$_id} thành stationId, làm tròn TB 1 chữ số thập phân. \sql{$sort} xếp theo TB đã làm tròn, rồi mã trạm. FROM=collection, GROUP BY=\sql{$group}, SELECT=\sql{$project}, ORDER BY=\sql{$sort}, LIMIT=\sql{$limit}.
-\sql{$sum:1} đếm document. \sql{$sum} và \sql{$avg} bỏ giá trị thiếu hoặc khác kiểu số. Nhóm không có số cho sum=0, avg=null. \sql{_id:null} gom toàn bộ đầu vào. \sql{"$field"} đọc field, \sql{"field"} là chuỗi. Nhóm không có thứ tự bảo đảm.
+\sql{$match} trước/sau khi gom nhóm tương ứng WHERE/HAVING. \sql{$project} lấy \sql{$_id} làm stationId, ẩn \sql{_id} và làm tròn TB 1 chữ số.
+\sql{$sum} và \sql{$avg} bỏ giá trị thiếu hoặc khác kiểu số. Nhóm không có số cho sum=0, avg=null. \sql{_id:null} gom toàn bộ đầu vào. \sql{"$field"} đọc field, \sql{"field"} là chuỗi. Nhóm không có thứ tự bảo đảm.
 \trap{Sau \sql{$group}, chỉ còn khóa nhóm và kết quả accumulator. Đặt \sql{$sort} trước khi làm tròn để xếp giá trị gốc.}
 \ex{(\mbox{\sql{"start station id"}}, \mbox{\sql{tripduration}}, \mbox{\sql{"birth year"}}): (1,300,1990), (1,600,1990), (2,900,1990). Cả ba qua lọc đầu. Trạm 1 có 2 trip, TB 450. Trạm 2 chỉ có 1 trip (900 s), bị loại. Trả \mbox{\sql{(stationId,tripCount,avgDuration)=(1,2,450.0)}}.}
 \key{Các stage dùng trong aggregate}
-\sql{$addFields} thêm/sửa field, giữ field khác. \sql{$project} chọn/tính field. \sql{$unwind} sinh một document mỗi item. Top K: \sql{$sort} rồi \sql{$limit}.
+\sql{$addFields} thêm/sửa field, giữ field khác. \sql{$project} chọn/tính field. \sql{$unwind} sinh một document mỗi item.
 \begin{lstlisting}[style=Plaincode]
 {$unwind:"$stops"}
 {$group:{_id:"$stops.name",n:{$sum:1},fee:{$sum:{
@@ -1047,7 +1072,6 @@ countDocuments đếm trip khớp. distinct lấy giá trị khác nhau. estimat
 
 \begin{topicblock}
 \topic{23}{ARRAY FILTER: KHỚP CÙNG PHẦN TỬ?}
-\when{Xác định các điều kiện có cần đúng trên cùng một phần tử.}
 \sql{{scores:[1,2]}} khớp array đúng thứ tự. \sql{{scores:2}} khớp scalar 2 hoặc array chứa 2. \sql{{scores:{$all:[1,2]}}} chứa cả hai, bất kể thứ tự. \sql{{scores:{$size:2}}} khớp độ dài 2. \sql{"scores.0"} trỏ đến phần tử đầu gốc (index tính từ 0).
 \key{Ví dụ trên stops}
 A--D là \sql{_id} của các trip mẫu. Mỗi điểm dừng có dạng (name,mins,rate). Điều kiện P: mins $\geq3$ và rate $\geq80$.
@@ -1062,14 +1086,8 @@ D: []
 {"stops.mins":{$gte:3},"stops.rate":{$gte:80}}
 {stops:{$elemMatch:{mins:{$gte:3},rate:{$gte:80}}}}
 \end{lstlisting}
-\par\begin{tabular}{@{}ll@{}}
-\textbf{Điều kiện trên document} & \textbf{Khớp}\\
-Điều kiện riêng qua dấu chấm & A,B,C\\
-Một item thỏa P (\sql{$elemMatch}) & A,C\\
-Item gốc ở index 0 thỏa P & C\\
-Array rỗng (\sql{stops:{$size:0}}) & D
-\end{tabular}\par
-\trap{Ở B, hai điều kiện khớp hai điểm dừng khác nhau. Query \sql{$elemMatch} cần một điểm dừng thỏa cả hai và chọn cả document. Xem projection ở mục 24.}
+\ex{Dot filter: A,B,C. Query \sql{$elemMatch}: A,C. Index 0 gốc: C. \sql{stops} rỗng (\sql{$size:0}): D.}
+\trap{Ở B, hai điều kiện khớp hai điểm dừng khác nhau. Query \sql{$elemMatch} chọn cả document. Xem projection ở mục 24.}
 \begin{lstlisting}[style=Plaincode]
 // scores: [10,100]
 {scores:{$gt:20,$lt:80}}             // matches
