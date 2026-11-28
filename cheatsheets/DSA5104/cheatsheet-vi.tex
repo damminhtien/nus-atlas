@@ -944,31 +944,35 @@ Kết quả là element expensive chứa item đầu vào.
 \begin{topicblock}
 \topic{21}{MONGODB: CRUD / FILTER}
 \when{Đọc, ghi document, lọc theo field hoặc cập nhật array.}
-BSON là dạng mã hóa nhị phân, hỗ trợ ObjectId, Date, int32/int64, Decimal128 và binary. JSON là dạng văn bản. Mỗi document trong collection có \sql{_id} duy nhất. Schema linh hoạt vẫn có kiểu dữ liệu và có thể áp dụng validation.
-\key{Schema dùng chung (21--24)}
+BSON mã hóa nhị phân, hỗ trợ ObjectId, Date, int32/int64, Decimal128 và binary. JSON là text. Mỗi document có \sql{_id} duy nhất. Schema linh hoạt vẫn có kiểu và có thể áp dụng validation.
+\key{Schema của \sql{db.tours} (mục 21--25)}
 \begin{lstlisting}[style=Plaincode]
-tours(usertype,tripduration,"birth year",
+tours(_id,usertype,tripduration,"birth year",
       gender,"start station id")
-sales(saleId,items[{name,quantity,price,...}])
+stops[{name,mins,rate,...}], scores[], note, tripCode
 \end{lstlisting}
-Các field trên có đủ, khác null. Thời lượng (giây), năm sinh, gender, mã trạm, quantity, price là số. Tên có dấu cách cần nháy. items có thứ tự, có thể rỗng. saleId duy nhất. db.c cho phép thiếu field.
-\pattern{CRUD trên collection c}
+Ví dụ đọc dùng field chính khác null. Thời lượng (giây), năm sinh, gender, mã trạm là số. Tên có dấu cách cần nháy. Field luyện tập tùy chọn: \sql{stops} có thứ tự, có thể rỗng; \sql{scores} là mảng số, \sql{note} là text/null, \sql{tripCode} là chuỗi duy nhất. \sql{mins} là phút, \sql{rate} là cent/phút.
+\pattern{Các mẫu CRUD độc lập}
 \begin{lstlisting}[style=Plaincode]
-db.c.insertOne({a:1}); db.c.insertMany([{a:2},{a:3}]);
-db.c.find({a:{$gte:2}},{_id:0,a:1}).sort({a:-1}).limit(5);
-db.c.updateOne({a:1},{$set:{a:4},$inc:{n:1}});
-db.c.updateMany({old:true},{$unset:{old:""}});
-db.c.deleteOne({a:4}); db.c.deleteMany({a:{$lt:0}});
+db.tours.insertOne({_id:1,tripduration:600});
+db.tours.insertMany([{gender:1},{gender:2}]);
+db.tours.find({gender:1}).limit(5);
+db.tours.updateOne({_id:1},{$inc:{tripduration:60}});
+db.tours.updateMany({note:"old"},{$unset:{note:""}});
+db.tours.deleteOne({_id:1});
+db.tours.deleteMany({tripduration:{$lt:0}});
 \end{lstlisting}
 \key{Replacement / upsert / cập nhật array}
 \begin{lstlisting}[style=Plaincode]
-db.c.replaceOne({_id:1},
- {name:"Alice",age:30},{upsert:true});
-db.c.updateOne({_id:1},{$set:{x:1}},{upsert:true});
-db.sales.updateOne({"items.quantity":15},
- {$set:{"items.$.quantity":55}});
-db.sales.updateMany({},{$set:{"items.$[i].flag":true}},
- {arrayFilters:[{"i.quantity":{$gte:3}}]});
+db.tours.replaceOne({_id:1},{tripduration:900},
+ {upsert:true});
+db.tours.updateOne({_id:1},{$set:{note:"campus"}},
+ {upsert:true});
+db.tours.updateOne({"stops.mins":15},
+ {$set:{"stops.$.mins":55}});
+db.tours.updateMany({"stops.mins":{$gte:3}},
+ {$set:{"stops.$[i].flag":true}},
+ {arrayFilters:[{"i.mins":{$gte:3}}]});
 \end{lstlisting}
 \sql{upsert:true} chèn nếu không khớp. \sql{replaceOne()} nhận document thay thế, giữ \sql{_id} bất biến và xóa field bị bỏ qua. \sql{$set} chỉ sửa field chỉ định.
 \par\begin{tabular}{@{}ll@{}}
@@ -981,8 +985,8 @@ db.sales.updateMany({},{$set:{"items.$[i].flag":true}},
 \end{tabular}\par
 So sánh: \sql{$eq $ne $gt $gte $lt $lte $in $nin}. Logic: \sql{$and $or $not $nor}, mặc định AND giữa field. Tồn tại/kiểu: \sql{$exists $type}. Array: \sql{$all $size $elemMatch}. \sql{$unset} xóa field, \sql{$inc} cộng thêm. \sql{$not} bọc điều kiện field. \sql{$or/$and/$nor} nhận array điều kiện.
 \key{Projection / sắp xếp / field bị thiếu}
-Chọn field=1, bỏ field=0. Chỉ trộn với ngoại lệ \sql{_id:0}. Mặc định có \sql{_id}. Sort 1 tăng, -1 giảm. Nếu hòa, xét field sort tiếp theo.
-Với x là scalar hoặc bị thiếu trong db.c: \sql{{x:null}} khớp null hoặc thiếu. \sql{{x:{$type:10}}} khớp null, kể cả phần tử null nếu x là array. \sql{{x:{$exists:false}}} khớp field bị thiếu. \sql{$exists:true} gồm cả null. \sql{{x:{$ne:null}}} loại cả null và field bị thiếu.
+Projection: 1 chọn, 0 bỏ. Chỉ trộn với \sql{_id:0}; mặc định có \sql{_id}. Sort 1 tăng, -1 giảm; nếu hòa, xét field kế.
+Với \sql{note} dạng scalar: \sql{{note:null}} khớp null hoặc thiếu. \sql{{note:{$type:10}}} khớp null; với array, khớp cả phần tử null. \sql{$exists:false} khớp khi thiếu, \sql{$exists:true} khi có (kể cả null). \sql{{note:{$ne:null}}} khớp khi có và khác null.
 \pattern{Find nhiều điều kiện, projection và sort}
 \begin{lstlisting}[style=Plaincode]
 db.tours.find({usertype:"Subscriber",
@@ -1009,25 +1013,24 @@ db.tours.aggregate([
   avgDuration:{$round:["$avgDuration",1]}}},
  {$sort:{avgDuration:-1,stationId:1}} ]);
 \end{lstlisting}
-\sql{$match} đầu lọc trip (WHERE). \sql{$group} đếm và tính TB theo trạm (GROUP BY). \sql{$match} sau giữ nhóm $\geq2$ trip (HAVING). \sql{$project} đổi \sql{$_id} thành stationId, làm tròn TB 1 chữ số thập phân. \sql{$sort} xếp theo TB đã làm tròn, rồi mã trạm. FROM=collection, SELECT=\sql{$project}, ORDER BY=\sql{$sort}, LIMIT=\sql{$limit}.
-\sql{$sum:1} đếm document. Trong nhóm, \sql{$sum:"$x"} và \sql{$avg:"$x"} bỏ x thiếu hoặc khác kiểu số. Nhóm không có số cho sum=0, avg=null. \sql{_id:null} gom toàn bộ đầu vào. \sql{"$field"} đọc field, \sql{"field"} là chuỗi. Nhóm không có thứ tự bảo đảm.
+\sql{$match} đầu lọc trip (WHERE). \sql{$group} đếm và tính TB theo trạm. \sql{$match} sau giữ nhóm $\geq2$ trip (HAVING). \sql{$project} đổi \sql{$_id} thành stationId, làm tròn TB 1 chữ số thập phân. \sql{$sort} xếp theo TB đã làm tròn, rồi mã trạm. FROM=collection, GROUP BY=\sql{$group}, SELECT=\sql{$project}, ORDER BY=\sql{$sort}, LIMIT=\sql{$limit}.
+\sql{$sum:1} đếm document. \sql{$sum} và \sql{$avg} bỏ giá trị thiếu hoặc khác kiểu số. Nhóm không có số cho sum=0, avg=null. \sql{_id:null} gom toàn bộ đầu vào. \sql{"$field"} đọc field, \sql{"field"} là chuỗi. Nhóm không có thứ tự bảo đảm.
 \trap{Sau \sql{$group}, chỉ còn khóa nhóm và kết quả accumulator. Đặt \sql{$sort} trước khi làm tròn để xếp giá trị gốc.}
 \ex{(Trạm đầu, giây, năm sinh): (1,300,1990), (1,600,1990), (2,900,1990). Cả ba qua lọc đầu. Theo trạm: 1 có 2 trip, TB 450. Trạm 2 chỉ có 1 trip (900 s), bị loại. Trả (stationId,tripCount,avgDuration)=(1,2,450.0).}
 \key{Các stage dùng trong aggregate}
 \sql{$addFields} thêm/sửa field, giữ field khác. \sql{$project} chọn/tính field. \sql{$unwind} sinh một document mỗi item. Top K: \sql{$sort} rồi \sql{$limit}.
 \begin{lstlisting}[style=Plaincode]
-{$unwind:{path:"$items",preserveNullAndEmptyArrays:true}}
-{$group:{_id:"$items.name",n:{$sum:1},
-         revenue:{$sum:{$multiply:["$items.quantity",
-                                  "$items.price"]}}}}
+{$unwind:"$stops"}
+{$group:{_id:"$stops.name",n:{$sum:1},fee:{$sum:{
+ $multiply:["$stops.mins","$stops.rate"]}}}}
 \end{lstlisting}
-\trap{\sql{$unwind} mặc định bỏ array rỗng, null hoặc thiếu. preserveNullAndEmptyArrays giữ các trường hợp đó. Sau unwind, sum:1 đếm từng item. Muốn đếm sale, đếm saleId khác nhau.}
+Tổng phí theo tên điểm dừng (phút $\times$ đơn giá). \trap{\sql{$unwind} làm sum:1 đếm điểm dừng. Muốn đếm trip, đếm \sql{_id} khác nhau. Để giữ array rỗng, null hoặc thiếu, dùng \sql{preserveNullAndEmptyArrays:true} ở dạng object.}
 \key{Mẫu stage: khóa nhóm / đếm / ghi}
 \begin{lstlisting}[style=Plaincode]
-{$group:{_id:{a:"$a",b:"$b"},n:{$sum:1}}}
+{$group:{_id:{u:"$usertype",g:"$gender"},n:{$sum:1}}}
 {$count:"total"}
-{$out:"result"}
-{$merge:{into:"result",on:"_id",
+{$out:"tourResults"}
+{$merge:{into:"tourResults",on:"_id",
  whenMatched:"merge",whenNotMatched:"insert"}}
 \end{lstlisting}
 \sql{$count} đếm document đầu vào. Nếu không có đầu vào, \sql{$group} và \sql{$count} không trả document. Trong \sql{aggregate()}, \sql{$set} (\sql{$addFields}) chỉ sửa kết quả pipeline.
@@ -1036,37 +1039,37 @@ db.tours.aggregate([
 \begin{lstlisting}[style=Plaincode]
 db.tours.countDocuments({"birth year":{$gte:1980},
  tripduration:{$gte:300}});
-db.c.distinct("department",{active:true});
-db.c.estimatedDocumentCount();
+db.tours.distinct("usertype",{gender:1});
+db.tours.estimatedDocumentCount();
 \end{lstlisting}
-countDocuments đếm trip qua lọc đầu. distinct lấy giá trị khác nhau. estimatedDocumentCount ước lượng tổng số từ metadata.
+countDocuments đếm trip khớp. distinct lấy giá trị khác nhau. estimatedDocumentCount ước lượng từ metadata.
 \end{topicblock}
 
 \begin{topicblock}
 \topic{23}{ARRAY FILTER: KHỚP CÙNG PHẦN TỬ?}
 \when{Xác định các điều kiện có cần đúng trên cùng một phần tử.}
-\sql{{a:[1,2]}} khớp array đúng thứ tự. \sql{{a:2}} khớp scalar 2 hoặc array chứa 2. \sql{{a:{$all:[1,2]}}} chứa cả hai, bất kể thứ tự. \sql{{a:{$size:2}}} khớp độ dài 2. \sql{"a.0"} trỏ đến phần tử đầu gốc (index tính từ 0).
-\key{Ví dụ lọc và projection trên array}
-saleId mẫu là A--D. Mỗi tuple có dạng (name,quantity,price). Điều kiện P: quantity $\geq3$ AND price $\geq80$.
+\sql{{scores:[1,2]}} khớp array đúng thứ tự. \sql{{scores:2}} khớp scalar 2 hoặc array chứa 2. \sql{{scores:{$all:[1,2]}}} chứa cả hai, bất kể thứ tự. \sql{{scores:{$size:2}}} khớp độ dài 2. \sql{"scores.0"} trỏ đến phần tử đầu gốc (index tính từ 0).
+\key{Ví dụ trên stops}
+A--D là \sql{_id} của các trip mẫu. Mỗi điểm dừng có dạng (name,mins,rate). Điều kiện P: mins $\geq3$ và rate $\geq80$.
 \begin{lstlisting}[style=Plaincode]
 A: [(a0,2,20),(a1,3,80),(a2,4,120)]
 B: [(b0,5,20),(b1,1,100)]
 C: [(c0,3,80),(c1,1,10)]
 D: []
 \end{lstlisting}
-\pattern{Điều kiện riêng lẻ và điều kiện cùng phần tử}
+\pattern{Find filter: khác hay cùng điểm dừng}
 \begin{lstlisting}[style=Plaincode]
-{"items.quantity":{$gte:3},"items.price":{$gte:80}}
-{items:{$elemMatch:{quantity:{$gte:3},price:{$gte:80}}}}
+{"stops.mins":{$gte:3},"stops.rate":{$gte:80}}
+{stops:{$elemMatch:{mins:{$gte:3},rate:{$gte:80}}}}
 \end{lstlisting}
 \par\begin{tabular}{@{}ll@{}}
 \textbf{Điều kiện trên document} & \textbf{Khớp}\\
 Điều kiện riêng qua dấu chấm & A,B,C\\
 Một item thỏa P (\sql{$elemMatch}) & A,C\\
 Item gốc ở index 0 thỏa P & C\\
-Array rỗng (\sql{items:{$size:0}}) & D
+Array rỗng (\sql{stops:{$size:0}}) & D
 \end{tabular}\par
-\trap{Ở B, các điều kiện khớp item khác nhau. Query \sql{$elemMatch} cần một item thỏa mọi điều kiện và trả cả document. Xem projection ở mục 24.}
+\trap{Ở B, hai điều kiện khớp hai điểm dừng khác nhau. Query \sql{$elemMatch} cần một điểm dừng thỏa cả hai và chọn cả document. Xem projection ở mục 24.}
 \begin{lstlisting}[style=Plaincode]
 // scores: [10,100]
 {scores:{$gt:20,$lt:80}}             // matches
@@ -1080,45 +1083,42 @@ Array rỗng (\sql{items:{$size:0}}) & D
 \when{Lấy phần tử đầu tiên khớp, phần tử đầu gốc hoặc mọi phần tử khớp.}
 \pattern{Phần tử đầu tiên thỏa điều kiện}
 \begin{lstlisting}[style=Plaincode]
-db.sales.find(
- {items:{$elemMatch:{quantity:{$gte:3},
-                    price:{$gte:80}}}},
- {_id:0,saleId:1,"items.$":1}).sort({saleId:1});
+db.tours.find(
+ {stops:{$elemMatch:{mins:{$gte:3},rate:{$gte:80}}}},
+ {_id:1,"stops.$":1}).sort({_id:1});
 \end{lstlisting}
-Query \sql{$elemMatch} chọn sale có item thỏa cả hai. \sql{"items.$":1} giữ đủ field của item khớp đầu. Dùng một array, một \sql{$elemMatch}. Sort saleId tăng. Mục 23: A:[a1], C:[c0].
+Query \sql{$elemMatch} chọn trip có điểm dừng thỏa cả hai điều kiện. \sql{"stops.$":1} giữ đủ field của điểm dừng khớp đầu. Dùng một array với một điều kiện trên array đó. Sort theo \sql{_id}. Mục 23 cho A:[a1], C:[c0].
 \pattern{Cùng điều kiện, hai vai trò}
 \begin{lstlisting}[style=Plaincode]
-const p={quantity:{$gte:3},price:{$gte:80}};
-db.sales.find({items:{$elemMatch:p}},
- {_id:0,saleId:1,items:{$elemMatch:p}})
- .sort({saleId:1});
+const p={mins:{$gte:3},rate:{$gte:80}};
+db.tours.find({stops:{$elemMatch:p}},
+ {_id:1,stops:{$elemMatch:p}}).sort({_id:1});
 \end{lstlisting}
-Filter chọn sale. Projection lấy item khớp đầu theo điều kiện riêng. Filter \sql{{}} giữ cả B/D, thiếu items.
+Filter chọn trip. Projection xét riêng để lấy điểm dừng khớp đầu. Filter \sql{{}} giữ B/D và bỏ field \sql{stops} ở B/D.
 \pattern{Phần tử đầu gốc thỏa điều kiện}
 \begin{lstlisting}[style=Plaincode]
-db.sales.find(
- {"items.0.quantity":{$gte:3},
-  "items.0.price":{$gte:80}},
- {_id:0,saleId:1,"items.name":1,
-  "items.quantity":1,"items.price":1}).sort({saleId:1});
+db.tours.find(
+ {"stops.0.mins":{$gte:3},"stops.0.rate":{$gte:80}},
+ {_id:1,"stops.name":1,"stops.mins":1,
+  "stops.rate":1}).sort({_id:1});
 \end{lstlisting}
-\trap{Hai path trong filter xét index 0 gốc. Dotted projection giữ name, quantity, price của mọi item theo thứ tự. C giữ c0,c1. Slicing xét vị trí.}
+\trap{Hai path trong filter xét index 0 gốc. Dotted projection giữ name, mins, rate của mọi điểm dừng theo thứ tự. C giữ c0,c1. Slicing xét vị trí.}
 \begin{lstlisting}[style=Plaincode]
-{items:{$slice:2}}      // first 2
-{items:{$slice:-2}}     // last 2
-{items:{$slice:[3,2]}}  // skip 3, take 2
+{stops:{$slice:2}}      // first 2
+{stops:{$slice:-2}}     // last 2
+{stops:{$slice:[3,2]}}  // skip 3, take 2
 \end{lstlisting}
 \pattern{Mọi phần tử thỏa điều kiện: \$filter}
 \begin{lstlisting}[style=Plaincode]
-db.sales.aggregate([
- {$match:{items:{$elemMatch:{quantity:{$gte:3},
-                           price:{$gte:80}}}}},
- {$project:{_id:0,saleId:1,items:{$filter:{
-  input:"$items",as:"i",cond:{$and:[
-   {$gte:["$$i.quantity",3]},{$gte:["$$i.price",80]}
-  ]}}}}}, {$sort:{saleId:1}} ]);
+db.tours.aggregate([
+ {$match:{stops:{$elemMatch:{mins:{$gte:3},
+                           rate:{$gte:80}}}}},
+ {$project:{_id:1,stops:{$filter:{
+  input:"$stops",as:"s",cond:{$and:[
+   {$gte:["$$s.mins",3]},{$gte:["$$s.rate",80]}
+  ]}}}}}, {$sort:{_id:1}} ]);
 \end{lstlisting}
-Với mục 23: A:[a1,a2], C:[c0]. Bỏ \sql{$match} thì giữ B/D với array rỗng. \sql{$filter} giữ thứ tự item. \sql{$$i}=biến item hiện tại, \sql{$items}=field array đầu vào.
+Mục 23 cho A:[a1,a2], C:[c0]. Bỏ \sql{$match} thì B/D vẫn có mặt với array rỗng. \sql{$filter} giữ thứ tự. \sql{$$s} là điểm dừng đang xét, \sql{$stops} là array đầu vào.
 \end{topicblock}
 
 \begin{topicblock}
@@ -1126,18 +1126,20 @@ Với mục 23: A:[a1,a2], C:[c0]. Bỏ \sql{$match} thì giữ B/D với array 
 \when{Tăng tốc filter/sort hoặc chọn embedding, reference hay replication.}
 \pattern{Tạo, kiểm tra, dùng và xóa index}
 \begin{lstlisting}[style=Plaincode]
-db.c.createIndex({a:1,b:-1});
-db.c.createIndex({email:1},{unique:true});
-db.c.createIndex({tags:1}); // array => multikey
-db.c.createIndex({body:"text"});
-db.c.find({$text:{$search:"database management"}});
-db.c.getIndexes();
-db.c.find({a:5}).hint({a:1,b:-1})
+db.tours.createIndex({usertype:1,tripduration:-1});
+db.tours.createIndex({tripCode:1},
+ {unique:true,sparse:true});
+db.tours.createIndex({"stops.name":1}); // multikey
+db.tours.createIndex({note:"text"});
+db.tours.find({$text:{$search:"campus"}});
+db.tours.getIndexes();
+db.tours.find({usertype:"Subscriber"})
+ .hint({usertype:1,tripduration:-1})
  .explain("executionStats");
-db.c.dropIndex("a_1_b_-1");
+db.tours.dropIndex("usertype_1_tripduration_-1");
 \end{lstlisting}
-Index gồm single-field, compound, unique, multikey (array) và text. Index (a,b,c) hỗ trợ prefix a, ab, abc. Query chỉ lọc b thiếu lợi thế prefix. Index tốn chỗ và công cập nhật. Dùng executionStats để kiểm tra. Index mặc định trên \sql{_id} là unique.
-Chỉ tạo unique index được khi các khóa hiện có là duy nhất. hint chọn index đang tồn tại. Dùng hint trước khi xóa index trong ví dụ trên. Text search dùng text index.
+Các loại: single-field, compound, unique, multikey (array), text. Compound index trên hỗ trợ prefix \sql{usertype} và cả cặp; riêng tripduration thiếu prefix. Index tốn chỗ và công cập nhật. Kiểm tra bằng executionStats. \sql{_id} có unique index mặc định.
+Sparse unique kiểm tra tính duy nhất của \sql{tripCode} nếu có field này, kể cả lúc tạo index. Gọi hint trước khi xóa index. Text search dùng index trên \sql{note}.
 \par\begin{tabular}{@{}ll@{}}
 \sql{COLLSCAN} & quét toàn bộ collection\\
 \sql{IXSCAN} & quét index\\

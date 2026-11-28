@@ -943,31 +943,35 @@ This returns an expensive element containing the input item.
 \begin{topicblock}
 \topic{21}{MONGODB: CRUD / FILTERS}
 \when{Read/write documents, filter fields or update arrays.}
-BSON is binary serialization with ObjectId, Date, int32/int64, Decimal128 and binary types; JSON is text. Collections hold documents with a unique \sql{_id}. Flexible schema still has data types and may enforce validation.
-\key{Shared query schemas (21--24)}
+BSON is binary and supports ObjectId, Date, int32/int64, Decimal128 and binary. JSON is text. Documents have unique \sql{_id}. Flexible schemas retain types and can enforce validation.
+\key{Shared \sql{db.tours} schema (21--25)}
 \begin{lstlisting}[style=Plaincode]
-tours(usertype,tripduration,"birth year",
+tours(_id,usertype,tripduration,"birth year",
       gender,"start station id")
-sales(saleId,items[{name,quantity,price,...}])
+stops[{name,mins,rate,...}], scores[], note, tripCode
 \end{lstlisting}
-Fields shown are present/non-null. Duration (seconds), year, gender, station IDs, quantity and price are numeric. Quote keys with spaces. items is ordered, possibly empty, and saleId is unique. Separate db.c examples allow missing fields.
-\pattern{CRUD on the independent collection c}
+Core fields are non-null in read examples. Duration (seconds), year, gender and station ID are numeric. Quote keys with spaces. Optional practice fields: ordered \sql{stops} (may be empty), numeric \sql{scores}, text/null \sql{note}, unique string \sql{tripCode}. \sql{mins} is minutes, \sql{rate} is cents per minute.
+\pattern{CRUD with independent practice snippets}
 \begin{lstlisting}[style=Plaincode]
-db.c.insertOne({a:1}); db.c.insertMany([{a:2},{a:3}]);
-db.c.find({a:{$gte:2}},{_id:0,a:1}).sort({a:-1}).limit(5);
-db.c.updateOne({a:1},{$set:{a:4},$inc:{n:1}});
-db.c.updateMany({old:true},{$unset:{old:""}});
-db.c.deleteOne({a:4}); db.c.deleteMany({a:{$lt:0}});
+db.tours.insertOne({_id:1,tripduration:600});
+db.tours.insertMany([{gender:1},{gender:2}]);
+db.tours.find({gender:1}).limit(5);
+db.tours.updateOne({_id:1},{$inc:{tripduration:60}});
+db.tours.updateMany({note:"old"},{$unset:{note:""}});
+db.tours.deleteOne({_id:1});
+db.tours.deleteMany({tripduration:{$lt:0}});
 \end{lstlisting}
 \key{Replacement / upsert / array updates}
 \begin{lstlisting}[style=Plaincode]
-db.c.replaceOne({_id:1},
- {name:"Alice",age:30},{upsert:true});
-db.c.updateOne({_id:1},{$set:{x:1}},{upsert:true});
-db.sales.updateOne({"items.quantity":15},
- {$set:{"items.$.quantity":55}});
-db.sales.updateMany({},{$set:{"items.$[i].flag":true}},
- {arrayFilters:[{"i.quantity":{$gte:3}}]});
+db.tours.replaceOne({_id:1},{tripduration:900},
+ {upsert:true});
+db.tours.updateOne({_id:1},{$set:{note:"campus"}},
+ {upsert:true});
+db.tours.updateOne({"stops.mins":15},
+ {$set:{"stops.$.mins":55}});
+db.tours.updateMany({"stops.mins":{$gte:3}},
+ {$set:{"stops.$[i].flag":true}},
+ {arrayFilters:[{"i.mins":{$gte:3}}]});
 \end{lstlisting}
 \sql{upsert:true} inserts on no match. \sql{replaceOne()} takes a plain document, keeps immutable \sql{_id} and drops other omitted fields. \sql{$set} edits only named fields.
 \par\begin{tabular}{@{}ll@{}}
@@ -980,8 +984,8 @@ db.sales.updateMany({},{$set:{"items.$[i].flag":true}},
 \end{tabular}\par
 Comparison: \sql{$eq $ne $gt $gte $lt $lte $in $nin}. Logical: \sql{$and $or $not $nor}; implicit AND across fields. Existence/type: \sql{$exists $type}; arrays: \sql{$all $size $elemMatch}. \sql{$unset} removes a field, \sql{$inc} adds a number. \sql{$not} wraps a field condition; \sql{$or/$and/$nor} take condition arrays.
 \key{Projection / sorting / missing}
-Inclusion: fields with 1; exclusion: 0. Cannot mix inclusion/exclusion except \sql{_id:0}; \sql{_id} included by default. sort 1 ascending, -1 descending; multiple fields are tie-breakers in specified order.
-For scalar/missing x in flexible db.c: \sql{{x:null}} matches null OR missing; \sql{{x:{$type:10}}} matches null (also a null array element in array-valued fields); \sql{{x:{$exists:false}}} missing; \sql{$exists:true} includes null. \sql{{x:{$ne:null}}} excludes null/missing.
+Projection: 1 includes, 0 excludes. Mix only for \sql{_id:0}; \sql{_id} is included by default. Sort: 1 ascending, -1 descending. Apply tie-breakers in field order.
+Optional scalar \sql{note}: \sql{{note:null}} matches null or missing, \sql{{note:{$type:10}}} matches null, \sql{{note:{$exists:false}}} matches missing. \sql{$exists:true} includes null. \sql{{note:{$ne:null}}} requires present and non-null. On an array, type 10 can also match a null element.
 \pattern{Multi-condition find, project, sort}
 \begin{lstlisting}[style=Plaincode]
 db.tours.find({usertype:"Subscriber",
@@ -1009,24 +1013,23 @@ db.tours.aggregate([
  {$sort:{avgDuration:-1,stationId:1}} ]);
 \end{lstlisting}
 First \sql{$match} filters trips (WHERE). \sql{$group} counts and averages per station (GROUP BY). Second \sql{$match} keeps counts $\geq2$ (HAVING). \sql{$project} copies \sql{$_id} to stationId, hides \sql{_id} and rounds to 1 decimal. \sql{$sort} uses the rounded value, then stationId. FROM=collection, SELECT=\sql{$project}, ORDER BY=\sql{$sort}, LIMIT=\sql{$limit}.
-\sql{$sum:1} counts documents. In each group, \sql{$sum:"$x"} and \sql{$avg:"$x"} skip nonnumeric/missing x. With no numbers, sum=0 and avg=null. \sql{_id:null} groups all input. \sql{"$field"} reads a field, \sql{"field"} is literal. Group output is unordered.
+\sql{$sum:1} counts documents. \sql{$sum} and \sql{$avg} skip missing/nonnumeric values; with no numbers, sum=0 and avg=null. \sql{_id:null} groups all input. \sql{"$field"} reads a field; \sql{"field"} is literal. Groups are unordered.
 \trap{After \sql{$group}, only the key and accumulators remain. Move \sql{$sort} before rounding to sort raw values.}
 \ex{Input (start station, seconds, birth year): (1,300,1990), (1,600,1990), (2,900,1990). All pass. Group 1: count 2, mean 450. Group 2: count 1, mean 900, dropped. Output (stationId, tripCount, avgDuration)=(1,2,450.0).}
 \key{Pipeline-stage fragments (inside aggregate)}
 \sql{$addFields} computes/preserves fields; \sql{$project} selects/computes; \sql{$unwind} emits one document per array element; \sql{$sort} then \sql{$limit} obtains top results.
 \begin{lstlisting}[style=Plaincode]
-{$unwind:{path:"$items",preserveNullAndEmptyArrays:true}}
-{$group:{_id:"$items.name",n:{$sum:1},
-         revenue:{$sum:{$multiply:["$items.quantity",
-                                  "$items.price"]}}}}
+{$unwind:"$stops"}
+{$group:{_id:"$stops.name",n:{$sum:1},fee:{$sum:{
+ $multiply:["$stops.mins","$stops.rate"]}}}}
 \end{lstlisting}
-\trap{Default \sql{$unwind} drops empty/null/missing arrays; preserveNullAndEmptyArrays retains them. After unwind, sum:1 counts emitted items/rows, not original sales; count distinct sale IDs if sales are required.}
+Each group totals stop fees (minutes $\times$ rate). \trap{After \sql{$unwind}, sum:1 counts stops. Count distinct trip \sql{_id} values for trips. To keep input with empty/null/missing arrays, use \sql{preserveNullAndEmptyArrays:true} in the object form.}
 \key{Stage fragments: group key / count / writes}
 \begin{lstlisting}[style=Plaincode]
-{$group:{_id:{a:"$a",b:"$b"},n:{$sum:1}}}
+{$group:{_id:{u:"$usertype",g:"$gender"},n:{$sum:1}}}
 {$count:"total"}
-{$out:"result"}
-{$merge:{into:"result",on:"_id",
+{$out:"tourResults"}
+{$merge:{into:"tourResults",on:"_id",
  whenMatched:"merge",whenNotMatched:"insert"}}
 \end{lstlisting}
 \sql{$count} counts input documents. With zero documents, \sql{$group} and \sql{$count} emit nothing. In \sql{aggregate()}, \sql{$set} (\sql{$addFields}) reshapes pipeline output only.
@@ -1035,8 +1038,8 @@ First \sql{$match} filters trips (WHERE). \sql{$group} counts and averages per s
 \begin{lstlisting}[style=Plaincode]
 db.tours.countDocuments({"birth year":{$gte:1980},
  tripduration:{$gte:300}});
-db.c.distinct("department",{active:true});
-db.c.estimatedDocumentCount();
+db.tours.distinct("usertype",{gender:1});
+db.tours.estimatedDocumentCount();
 \end{lstlisting}
 countDocuments uses the first match to count trips before grouping. distinct returns unique values. estimatedDocumentCount estimates total size from metadata.
 \end{topicblock}
@@ -1044,28 +1047,28 @@ countDocuments uses the first match to count trips before grouping. distinct ret
 \begin{topicblock}
 \topic{23}{ARRAY MATCHING: SAME ITEM?}
 \when{Decide whether conditions must hold on the same array element.}
-\sql{{a:[1,2]}} exact array including order; \sql{{a:2}} scalar equality or array containing 2; \sql{{a:{$all:[1,2]}}} contains both, any order; \sql{{a:{$size:2}}} exact length. \sql{"a.0"} addresses the original first element (0-based).
-\key{Worked example: array matching and projection}
-Sample documents use saleId labels A--D. Each tuple is (name,quantity,price). Item predicate P: quantity $\geq3$ AND price $\geq80$.
+\sql{{scores:[1,2]}} exact array including order; \sql{{scores:2}} scalar equality or array containing 2; \sql{{scores:{$all:[1,2]}}} contains both, any order; \sql{{scores:{$size:2}}} exact length. \sql{"scores.0"} addresses the original first element (0-based).
+\key{Worked example on stops}
+Trips A--D are labeled by \sql{_id}. Each stop is (name,mins,rate). Predicate P requires mins $\geq3$ and rate $\geq80$.
 \begin{lstlisting}[style=Plaincode]
 A: [(a0,2,20),(a1,3,80),(a2,4,120)]
 B: [(b0,5,20),(b1,1,100)]
 C: [(c0,3,80),(c1,1,10)]
 D: []
 \end{lstlisting}
-\pattern{Independent vs same-item conditions}
+\pattern{Find filters: separate vs same stop}
 \begin{lstlisting}[style=Plaincode]
-{"items.quantity":{$gte:3},"items.price":{$gte:80}}
-{items:{$elemMatch:{quantity:{$gte:3},price:{$gte:80}}}}
+{"stops.mins":{$gte:3},"stops.rate":{$gte:80}}
+{stops:{$elemMatch:{mins:{$gte:3},rate:{$gte:80}}}}
 \end{lstlisting}
 \par\begin{tabular}{@{}ll@{}}
 \textbf{Document predicate} & \textbf{Matches}\\
 Independent dot conditions & A,B,C\\
 One item satisfies P (\sql{$elemMatch}) & A,C\\
 Original index 0 satisfies P & C\\
-Empty array (\sql{items:{$size:0}}) & D
+Empty array (\sql{stops:{$size:0}}) & D
 \end{tabular}\par
-\trap{B satisfies the dot conditions on separate items. Query \sql{$elemMatch} requires one matching item and returns whole documents. See 24 for projection.}
+\trap{B satisfies the dot conditions on separate stops. Query \sql{$elemMatch} requires one matching stop and selects whole documents. See 24 for projection.}
 \begin{lstlisting}[style=Plaincode]
 // scores: [10,100]
 {scores:{$gt:20,$lt:80}}             // matches
@@ -1079,45 +1082,42 @@ Empty array (\sql{items:{$size:0}}) & D
 \when{Choose first matching, original first or all qualifying items.}
 \pattern{First qualifying array element}
 \begin{lstlisting}[style=Plaincode]
-db.sales.find(
- {items:{$elemMatch:{quantity:{$gte:3},
-                    price:{$gte:80}}}},
- {_id:0,saleId:1,"items.$":1}).sort({saleId:1});
+db.tours.find(
+ {stops:{$elemMatch:{mins:{$gte:3},rate:{$gte:80}}}},
+ {_id:1,"stops.$":1}).sort({_id:1});
 \end{lstlisting}
-Query \sql{$elemMatch} selects sales with one item meeting both tests. \sql{"items.$":1} copies that first item in array order, with all its fields. Use one array and one matching condition. Sort by saleId. Input 23: A:[a1], C:[c0].
+Query \sql{$elemMatch} requires a stop meeting both tests. \sql{"stops.$":1} copies the first matching stop with all its fields. Use one array in the query with one condition on it. Sort by \sql{_id}. Input 23 yields A:[a1], C:[c0].
 \pattern{Reuse the predicate in query and projection}
 \begin{lstlisting}[style=Plaincode]
-const p={quantity:{$gte:3},price:{$gte:80}};
-db.sales.find({items:{$elemMatch:p}},
- {_id:0,saleId:1,items:{$elemMatch:p}})
- .sort({saleId:1});
+const p={mins:{$gte:3},rate:{$gte:80}};
+db.tours.find({stops:{$elemMatch:p}},
+ {_id:1,stops:{$elemMatch:p}}).sort({_id:1});
 \end{lstlisting}
-First \sql{$elemMatch} selects sales. The projection's own \sql{$elemMatch} takes the first match. Use \sql{{}} as filter to keep B/D too, without items.
+Filter \sql{$elemMatch} selects trips. Projection \sql{$elemMatch} takes the first match. Filter \sql{{}} keeps B/D too, omitting their \sql{stops} field.
 \pattern{Original first item qualifies}
 \begin{lstlisting}[style=Plaincode]
-db.sales.find(
- {"items.0.quantity":{$gte:3},
-  "items.0.price":{$gte:80}},
- {_id:0,saleId:1,"items.name":1,
-  "items.quantity":1,"items.price":1}).sort({saleId:1});
+db.tours.find(
+ {"stops.0.mins":{$gte:3},"stops.0.rate":{$gte:80}},
+ {_id:1,"stops.name":1,"stops.mins":1,
+  "stops.rate":1}).sort({_id:1});
 \end{lstlisting}
-\trap{Both filter paths test original index 0. Dotted projection keeps name, quantity and price of ALL items in order. Input 23 selects C with c0,c1. Slicing is positional.}
+\trap{The filter tests original index 0. Dotted projection keeps name, mins and rate of all stops in order. Input 23 yields C with c0,c1. Slicing uses positions.}
 \begin{lstlisting}[style=Plaincode]
-{items:{$slice:2}}      // first 2
-{items:{$slice:-2}}     // last 2
-{items:{$slice:[3,2]}}  // skip 3, take 2
+{stops:{$slice:2}}      // first 2
+{stops:{$slice:-2}}     // last 2
+{stops:{$slice:[3,2]}}  // skip 3, take 2
 \end{lstlisting}
 \pattern{All qualifying elements: \$filter}
 \begin{lstlisting}[style=Plaincode]
-db.sales.aggregate([
- {$match:{items:{$elemMatch:{quantity:{$gte:3},
-                           price:{$gte:80}}}}},
- {$project:{_id:0,saleId:1,items:{$filter:{
-  input:"$items",as:"i",cond:{$and:[
-   {$gte:["$$i.quantity",3]},{$gte:["$$i.price",80]}
-  ]}}}}}, {$sort:{saleId:1}} ]);
+db.tours.aggregate([
+ {$match:{stops:{$elemMatch:{mins:{$gte:3},
+                           rate:{$gte:80}}}}},
+ {$project:{_id:1,stops:{$filter:{
+  input:"$stops",as:"s",cond:{$and:[
+   {$gte:["$$s.mins",3]},{$gte:["$$s.rate",80]}
+  ]}}}}}, {$sort:{_id:1}} ]);
 \end{lstlisting}
-Input 23 returns A:[a1,a2], C:[c0]. Without \sql{$match}, B/D remain with empty arrays. \sql{$filter} preserves item order; \sql{$$i}=current item variable, \sql{$items}=input array field.
+Input 23 yields A:[a1,a2], C:[c0]. Without \sql{$match}, B/D remain with empty arrays. \sql{$filter} keeps array order. \sql{$$s} is the current stop and \sql{$stops} is the input array.
 \end{topicblock}
 
 \begin{topicblock}
@@ -1125,18 +1125,20 @@ Input 23 returns A:[a1,a2], C:[c0]. Without \sql{$match}, B/D remain with empty 
 \when{Speed filters/sorts; choose embedding, references or replication.}
 \pattern{Create, inspect, use and remove indexes}
 \begin{lstlisting}[style=Plaincode]
-db.c.createIndex({a:1,b:-1});
-db.c.createIndex({email:1},{unique:true});
-db.c.createIndex({tags:1}); // array => multikey
-db.c.createIndex({body:"text"});
-db.c.find({$text:{$search:"database management"}});
-db.c.getIndexes();
-db.c.find({a:5}).hint({a:1,b:-1})
+db.tours.createIndex({usertype:1,tripduration:-1});
+db.tours.createIndex({tripCode:1},
+ {unique:true,sparse:true});
+db.tours.createIndex({"stops.name":1}); // multikey
+db.tours.createIndex({note:"text"});
+db.tours.find({$text:{$search:"campus"}});
+db.tours.getIndexes();
+db.tours.find({usertype:"Subscriber"})
+ .hint({usertype:1,tripduration:-1})
  .explain("executionStats");
-db.c.dropIndex("a_1_b_-1");
+db.tours.dropIndex("usertype_1_tripduration_-1");
 \end{lstlisting}
-Single-field, compound, unique, multikey (arrays), text indexes. Index (a,b,c) supports prefixes a, ab, abc. A b-only query lacks prefix access. Indexes cost storage and write maintenance. Check executionStats. Default \sql{_id} index is unique.
-Unique-index creation requires existing keys to satisfy uniqueness. hint selects an existing index (above); use before dropping it. Text search uses the text index.
+Index types: single-field, compound, unique, multikey (arrays), text. The compound index supports the prefix \sql{usertype} and the full pair. Duration alone lacks prefix access. Indexes cost storage and write maintenance. Check executionStats. The default \sql{_id} index is unique.
+Sparse unique enforces unique \sql{tripCode} values among documents with the field, including on index creation. Use hint before dropping the index. Text search uses the index on \sql{note}.
 \par\begin{tabular}{@{}ll@{}}
 \sql{COLLSCAN} & full collection scan\\
 \sql{IXSCAN} & index scan\\

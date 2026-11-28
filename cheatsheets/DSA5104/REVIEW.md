@@ -45,25 +45,26 @@ attributes, and string-valued Artist/Title leaves. The three patterns therefore
 need no external DTD. The university join/group patterns state their separate,
 namespace-free schema and singleton child-field assumption.
 
-The tours examples use usertype, tripduration, "birth year", gender and
-"start station id". The aggregation uses stationId as an output alias. Sales
-use saleId and an ordered, possibly empty items array with name, quantity and
-price. Item objects can carry additional fields. The shown fields are present
-and non-null. The schema notes specify numeric fields and unique saleId.
-The null/missing examples use scalar or absent x in the independent flexible
-collection c, with the array-element extension of the type check stated locally.
+Topics 21--25 use db.tours. The core trip examples use non-null usertype,
+tripduration, "birth year", gender and "start station id". The aggregation
+uses stationId as an output alias. Practice documents extend the schema with
+ordered stops (possibly empty), numeric scores, scalar or missing note, and
+optional unique tripCode. Each stop has name, mins and rate (cents per minute)
+and can carry extra fields. The array update selects trips with a qualifying
+stop before applying its array filter. tourResults is the destination for the
+write-output stage examples.
 
-For the four printed sales, quantity at least 3 AND price at least 80 gives:
+For the four printed trips, mins at least 3 AND rate at least 80 gives:
 
 | Operation | Result |
 | --- | --- |
 | Independent dot conditions | A,B,C |
 | Same-item elemMatch | A,C |
 | Original item 0 qualifies | C |
-| Empty items | D |
+| Empty stops | D |
 | Positional first match | A:[a1], C:[c0] |
 | Reuse elemMatch in query and projection | A:[a1], C:[c0] |
-| Projection elemMatch with an empty document filter | A:[a1], C:[c0]; B/D remain without an items field |
+| Projection elemMatch with an empty document filter | A:[a1], C:[c0]; B/D remain without a stops field |
 | All matches with filter, after document match | A:[a1,a2], C:[c0] |
 | Dotted projection after testing item 0 | C retains c0,c1 |
 
@@ -134,13 +135,15 @@ printer test is claimed.
 - SaxonC checks XPath position and existence predicates, the empty-sequence
   FLWOR examples, the nonempty universal guard and repeated parent matches in
   the XQuery join.
-- Direct calculations on the four printed sales reproduce every matching and
+- Direct calculations on the four printed trips reproduce every matching and
   projection result above. A three-trip fixture supplies all inputs for the
-  aggregation example. Ten complete MongoDB JavaScript blocks pass syntax
-  parsing; all five Python listings parse.
+  aggregation example. Both editions contain identical MongoDB listings.
+  The JavaScript blocks pass syntax parsing, all collection calls use
+  db.tours, and the compound index keys match the hint and dropIndex examples.
+  All five Python listings parse.
 - The RDD examples are recomputed with independent list/set calculations.
-  All 176 authored PDF math expressions, plus seven in the two study
-  companions, render with KaTeX in strict error mode.
+  The authored math in both TeX sources renders with KaTeX in strict error
+  mode. The seven expressions in the two study companions also pass.
 
 SQLite covers portable SQL behavior. MySQL procedure/trigger DDL, MongoDB and
 Spark examples are checked with the fixtures, syntax checks or direct
