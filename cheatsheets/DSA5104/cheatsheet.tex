@@ -946,10 +946,11 @@ This returns an expensive element containing the input item.
 BSON is binary serialization with ObjectId, Date, int32/int64, Decimal128 and binary types; JSON is text. Collections hold documents with a unique \sql{_id}. Flexible schema still has data types and may enforce validation.
 \key{Shared query schemas (21--24)}
 \begin{lstlisting}[style=Plaincode]
-Trip(userType,duration,birthYear,stationId)
-Sale(saleId,items[{name,quantity,price}])
+tours(usertype,tripduration,"birth year",
+      gender,"start station id")
+sales(saleId,items[{name,quantity,price,...}])
 \end{lstlisting}
-db.trips/db.sales use these fields, all present. duration (seconds), birthYear, quantity and price are numeric. items is ordered, possibly empty; saleId is unique. db.c examples are independent flexible documents, with missing fields allowed.
+Fields shown are present/non-null. Duration (seconds), year, gender, station IDs, quantity and price are numeric. Quote keys with spaces. items is ordered, possibly empty, and saleId is unique. Separate db.c examples allow missing fields.
 \pattern{CRUD on the independent collection c}
 \begin{lstlisting}[style=Plaincode]
 db.c.insertOne({a:1}); db.c.insertMany([{a:2},{a:3}]);
@@ -983,12 +984,13 @@ Inclusion: fields with 1; exclusion: 0. Cannot mix inclusion/exclusion except \s
 For scalar/missing x in flexible db.c: \sql{{x:null}} matches null OR missing; \sql{{x:{$type:10}}} matches null (also a null array element in array-valued fields); \sql{{x:{$exists:false}}} missing; \sql{$exists:true} includes null. \sql{{x:{$ne:null}}} excludes null/missing.
 \pattern{Multi-condition find, project, sort}
 \begin{lstlisting}[style=Plaincode]
-db.trips.find(
- {userType:"Subscriber",duration:{$gte:600,$lt:1800},
-  birthYear:{$gte:1985}},
- {_id:0,duration:1,birthYear:1,stationId:1}
-).sort({duration:-1,birthYear:1});
+db.tours.find({usertype:"Subscriber",
+ tripduration:{$gte:600,$lt:1800},
+ "birth year":{$gte:1985}},
+ {_id:0,tripduration:1,"birth year":1,gender:1}
+).sort({tripduration:-1,"birth year":1});
 \end{lstlisting}
+First object filters Subscriber trips in $[600,1800)$ s, born 1985+. Second selects duration, year, gender and hides \sql{_id}. Sort duration DESC, year ASC on ties.
 \end{topicblock}
 
 \begin{topicblock}
@@ -996,22 +998,20 @@ db.trips.find(
 \when{Group documents, compute metrics or reshape pipeline output.}
 \pattern{Document filter, aggregate filter, rounded sort}
 \begin{lstlisting}[style=Plaincode]
-db.trips.aggregate([
- {$match:{birthYear:{$gte:1980},duration:{$gte:300}}},
- {$group:{_id:"$stationId",tripCount:{$sum:1},
-          avgDuration:{$avg:"$duration"}}},
+db.tours.aggregate([
+ {$match:{"birth year":{$gte:1980},
+          tripduration:{$gte:300}}},
+ {$group:{_id:"$start station id",tripCount:{$sum:1},
+          avgDuration:{$avg:"$tripduration"}}},
  {$match:{tripCount:{$gte:2}}},
  {$project:{_id:0,stationId:"$_id",tripCount:1,
-            avgDuration:{$round:["$avgDuration",1]}}},
+  avgDuration:{$round:["$avgDuration",1]}}},
  {$sort:{avgDuration:-1,stationId:1}} ]);
 \end{lstlisting}
-SQL mapping: FROM=collection, WHERE=\sql{$match} before \sql{$group}, GROUP BY=\sql{$group}, HAVING=\sql{$match} after \sql{$group}, SELECT=\sql{$project}, ORDER BY=\sql{$sort}, LIMIT=\sql{$limit}.
+First \sql{$match} filters trips (WHERE). \sql{$group} counts and averages per station (GROUP BY). Second \sql{$match} keeps counts $\geq2$ (HAVING). \sql{$project} copies \sql{$_id} to stationId, hides \sql{_id} and rounds to 1 decimal. \sql{$sort} uses the rounded value, then stationId. FROM=collection, SELECT=\sql{$project}, ORDER BY=\sql{$sort}, LIMIT=\sql{$limit}.
 \sql{$sum:1} counts documents. In each group, \sql{$sum:"$x"} and \sql{$avg:"$x"} skip nonnumeric/missing x. With no numbers, sum=0 and avg=null. \sql{_id:null} groups all input. \sql{"$field"} reads a field, \sql{"field"} is literal. Group output is unordered.
-\key{RULE: stage-order guide (schematic)}
-\sql{$project(round) -> $sort} sorts rounded values. Reverse to sort raw values.
-\sql{$match -> $group} filters documents. Reverse to filter groups.
-\trap{After \sql{$group}, only group keys and accumulator outputs remain.}
-\ex{Input trips (stationId,duration,birthYear): (1,300,1990), (1,600,1990), (2,900,1990). All pass the first match. Group 1: count2, mean450; group 2: count1, mean900. Output: stationId1, tripCount2, avgDuration450.0; group 2 fails the aggregate threshold.}
+\trap{After \sql{$group}, only the key and accumulators remain. Move \sql{$sort} before rounding to sort raw values.}
+\ex{Input (start station, seconds, birth year): (1,300,1990), (1,600,1990), (2,900,1990). All pass. Group 1: count 2, mean 450. Group 2: count 1, mean 900, dropped. Output (stationId, tripCount, avgDuration)=(1,2,450.0).}
 \key{Pipeline-stage fragments (inside aggregate)}
 \sql{$addFields} computes/preserves fields; \sql{$project} selects/computes; \sql{$unwind} emits one document per array element; \sql{$sort} then \sql{$limit} obtains top results.
 \begin{lstlisting}[style=Plaincode]
@@ -1033,11 +1033,12 @@ SQL mapping: FROM=collection, WHERE=\sql{$match} before \sql{$group}, GROUP BY=\
 \trap{\sql{$out} creates/replaces a collection. \sql{$merge} writes by matching key. Either must come last.}
 \key{Single-purpose aggregation}
 \begin{lstlisting}[style=Plaincode]
-db.c.countDocuments({score:{$gte:50}});
+db.tours.countDocuments({"birth year":{$gte:1980},
+ tripduration:{$gte:300}});
 db.c.distinct("department",{active:true});
 db.c.estimatedDocumentCount();
 \end{lstlisting}
-countDocuments(filter) counts matches; distinct returns unique field values; estimatedDocumentCount uses metadata to estimate the total collection count.
+countDocuments uses the first match to count trips before grouping. distinct returns unique values. estimatedDocumentCount estimates total size from metadata.
 \end{topicblock}
 
 \begin{topicblock}
@@ -1079,24 +1080,28 @@ Empty array (\sql{items:{$size:0}}) & D
 \pattern{First qualifying array element}
 \begin{lstlisting}[style=Plaincode]
 db.sales.find(
- {items:{$elemMatch:{quantity:{$gte:3},price:{$gte:80}}}},
+ {items:{$elemMatch:{quantity:{$gte:3},
+                    price:{$gte:80}}}},
  {_id:0,saleId:1,"items.$":1}).sort({saleId:1});
 \end{lstlisting}
-\sql{"items.$":1} returns the first query-matching element. Use one array and a single \sql{$elemMatch} condition for unambiguous matching. On input 23: A returns [a1], C returns [c0].
-Projection \sql{$elemMatch} returns the first item matching its own predicate:
+Query \sql{$elemMatch} selects sales with one item meeting both tests. \sql{"items.$":1} copies that first item in array order, with all its fields. Use one array and one matching condition. Sort by saleId. Input 23: A:[a1], C:[c0].
+\pattern{Reuse the predicate in query and projection}
 \begin{lstlisting}[style=Plaincode]
-db.sales.find({}, {_id:0,saleId:1,
- items:{$elemMatch:{quantity:{$gte:3},price:{$gte:80}}}});
+const p={quantity:{$gte:3},price:{$gte:80}};
+db.sales.find({items:{$elemMatch:p}},
+ {_id:0,saleId:1,items:{$elemMatch:p}})
+ .sort({saleId:1});
 \end{lstlisting}
-This projection keeps all documents: B/D have no items field in the result because no element matches.
+First \sql{$elemMatch} selects sales. The projection's own \sql{$elemMatch} takes the first match. Use \sql{{}} as filter to keep B/D too, without items.
 \pattern{Original first item qualifies}
 \begin{lstlisting}[style=Plaincode]
 db.sales.find(
- {"items.0.quantity":{$gte:3},"items.0.price":{$gte:80}},
+ {"items.0.quantity":{$gte:3},
+  "items.0.price":{$gte:80}},
  {_id:0,saleId:1,"items.name":1,
   "items.quantity":1,"items.price":1}).sort({saleId:1});
 \end{lstlisting}
-\trap{The filter checks original index 0; dotted projection returns fields for ALL items. Input 23 selects C and keeps c0,c1. Slicing is positional, not conditional.}
+\trap{Both filter paths test original index 0. Dotted projection keeps name, quantity and price of ALL items in order. Input 23 selects C with c0,c1. Slicing is positional.}
 \begin{lstlisting}[style=Plaincode]
 {items:{$slice:2}}      // first 2
 {items:{$slice:-2}}     // last 2

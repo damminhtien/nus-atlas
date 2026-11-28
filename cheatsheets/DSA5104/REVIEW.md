@@ -24,7 +24,7 @@ Both editions fit all 26 topics on two A4 portrait pages.
 | Dataset-independent examples | Topic 23 shows all four sample documents, A through D, alongside their matching results. Topic 10 uses a generic lookup parameter. |
 | Hidden schema assumptions | Give shared museum, Trip and Sale schemas. Local SQL schemas and lookup cardinality are stated beside their patterns. Flexible collection c is explicitly separate from the present-field Trip/Sale schemas. |
 | Misleading partial code | Distinguish syntax sketches, expression fragments and pipeline fragments from complete queries. Keep an implemented procedure lookup, a complete calculated-distance CTE, and a complete Validate/Derive/Audit trigger. |
-| Transferability | Use generic Score/Audit and Point schemas, defined parameters, consistent quantity/duration/birthYear fields and explicit NULL/empty/tie/boundary rules. |
+| Transferability | Use generic Score/Audit and Point schemas, defined parameters, and locally defined MongoDB fields with explicit NULL/empty/tie/boundary rules. |
 | Retrieval and duplication | Use WHEN, RULE, PATTERN, TRAP, EXAMPLE and COND where useful. Keep full rounding decisions in 10 and pipeline-specific order in 22; full array matching in 23 and projections in 24. |
 
 The procedure and derived-field trigger were already implemented in the input
@@ -45,9 +45,11 @@ attributes, and string-valued Artist/Title leaves. The three patterns therefore
 need no external DTD. The university join/group patterns state their separate,
 namespace-free schema and singleton child-field assumption.
 
-Trip uses userType, duration, birthYear and stationId. Sale uses saleId and an
-ordered, possibly empty items array of name/quantity/price objects. All those
-fields are present; the numeric fields and unique saleId are stated explicitly.
+The tours examples use usertype, tripduration, "birth year", gender and
+"start station id". The aggregation uses stationId as an output alias. Sales
+use saleId and an ordered, possibly empty items array with name, quantity and
+price. Item objects can carry additional fields. The shown fields are present
+and non-null. The schema notes specify numeric fields and unique saleId.
 The null/missing examples use scalar or absent x in the independent flexible
 collection c, with the array-element extension of the type check stated locally.
 
@@ -60,6 +62,7 @@ For the four printed sales, quantity at least 3 AND price at least 80 gives:
 | Original item 0 qualifies | C |
 | Empty items | D |
 | Positional first match | A:[a1], C:[c0] |
+| Reuse elemMatch in query and projection | A:[a1], C:[c0] |
 | Projection elemMatch with an empty document filter | A:[a1], C:[c0]; B/D remain without an items field |
 | All matches with filter, after document match | A:[a1,a2], C:[c0] |
 | Dotted projection after testing item 0 | C retains c0,c1 |
