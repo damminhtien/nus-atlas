@@ -1,6 +1,6 @@
 % !TeX program = xelatex
 % DSA5104 content adapted into the shared NUS Atlas cheatsheet layout.
-% Two A4 portrait pages: Part I (SQL/access) and Part II (FD/XML/Mongo/Spark).
+% Two A4 portrait pages: Part I (SQL/access/MongoDB indexes), Part II (FD/XML/MongoDB/Spark).
 % Four left-to-right columns per page, no global header/footer. Vietnamese edition. Build with XeLaTeX.
 % Source text: user-provided DSA5104_A4_Helpsheet_v0.9_portrait_4col.tex.
 % Upgraded against the exam recap, assignments, lectures, and the supplied gap review.
@@ -51,9 +51,13 @@
   morestring=[b]',
   morestring=[b]"
 }
+\newcommand{\bodyfontsize}{5.35}
+\newcommand{\bodyleading}{5.2}
+\newcommand{\codefontsize}{4.9}
+\newcommand{\codeleading}{4.95}
 \lstdefinestyle{SQLbase}{
   language=SQLx,
-  basicstyle=\sqlfont\fontsize{4.9}{5.0}\selectfont\color{sqltext},
+  basicstyle=\sqlfont\fontsize{\codefontsize}{\codeleading}\selectfont\color{sqltext},
   keywordstyle=[1]\color{sqlkeyword}\bfseries,
   keywordstyle=[2]\color{sqltype}\bfseries,
   keywordstyle=[3]\color{sqlfunction}\bfseries,
@@ -75,10 +79,10 @@
 }
 \lstdefinestyle{SQLinline}{
   style=SQLbase,
-  basicstyle=\sqlfont\fontsize{5.35}{5.3}\selectfont\color{sqltext}
+  basicstyle=\sqlfont\fontsize{\bodyfontsize}{\bodyleading}\selectfont\color{sqltext}
 }
 \lstdefinestyle{PHPcode}{
-  basicstyle=\ttfamily\fontsize{4.9}{5.0}\selectfont\color{sqltext},
+  basicstyle=\ttfamily\fontsize{\codefontsize}{\codeleading}\selectfont\color{sqltext},
   keywordstyle=[1]\color{sqlkeyword},
   commentstyle=\color{sqlcomment},
   stringstyle=\color{sqlstring},
@@ -91,7 +95,7 @@
   belowskip=.15pt
 }
 \lstdefinestyle{Plaincode}{style=PHPcode,language={},
-  basicstyle=\sqlfont\fontsize{4.9}{5.0}\selectfont\color{sqltext}}
+  basicstyle=\sqlfont\fontsize{\codefontsize}{\codeleading}\selectfont\color{sqltext}}
 \lstset{style=SQLblock,emptylines=0}
 \pagestyle{empty}
 \setlength{\topskip}{0pt}
@@ -104,7 +108,7 @@
 \newlength{\gutter}\setlength{\gutter}{1.5mm}
 \newcommand{\bodylineskiplimit}{-2pt}
 \newcommand{\bodystyle}{%
-  \fontsize{5.35}{5.3}\selectfont\setlength{\lineskiplimit}{\bodylineskiplimit}\RaggedRight
+  \fontsize{\bodyfontsize}{\bodyleading}\selectfont\setlength{\lineskiplimit}{\bodylineskiplimit}\RaggedRight
   \setlength{\abovedisplayskip}{.5pt}\setlength{\belowdisplayskip}{.5pt}%
   \setlength{\abovedisplayshortskip}{.3pt}\setlength{\belowdisplayshortskip}{.3pt}}
 \newcommand{\topic}[2]{\par\addvspace{.45pt}\nointerlineskip%
@@ -142,11 +146,11 @@
 
 \begin{document}
 \bodystyle
-% PAGE 1: Part I. Explicit column breaks keep each reference area together.
-\begin{sheetcolumns}{.262}
+% PAGE 1: Part I. SQL/access columns followed by MongoDB index commands.
+\begin{sheetcolumns}{.256}
 \begin{topicblock}
 \topic{01}{PHẦN I: TRUY VẤN SQL}
-\when{Chọn, gom hoặc sắp xếp dòng. Cú pháp MySQL 8.4, schema theo từng mẫu.}
+Cú pháp MySQL 8.4. Schema ghi cạnh từng mẫu.
 \pattern{Khung truy vấn}
 \begin{lstlisting}
 SELECT [DISTINCT] expressions
@@ -182,7 +186,6 @@ Symmetric difference là \sql{(A EXCEPT B) UNION (B EXCEPT A)}.
 
 \begin{topicblock}
 \topic{02}{NULL VÀ AGGREGATE TRÊN TẬP RỖNG}
-\when{Dữ liệu thiếu, đầu vào rỗng hoặc anti-join.}
 SQL dùng three-valued logic $\boxed{\{\mathrm{TRUE},\mathrm{FALSE},\mathrm{UNKNOWN}\}}$ (T/F/U). So sánh scalar thông thường với NULL cho U. Dùng \sql{IS NULL} để kiểm tra NULL.
 % Source: user-supplied NULL comparison table; MySQL comparisons/NULL (W17).
 \key{Kết quả so sánh với NULL}
@@ -219,7 +222,6 @@ $\neg U$ & $U$ & &
 
 \begin{topicblock}
 \topic{03}{JOIN VÀ HIỆN TƯỢNG NHÂN DÒNG}
-\when{Ghép relation, giữ dòng không khớp hoặc đếm theo parent.}
 INNER lấy cặp khớp. LEFT giữ hết dòng trái và điền NULL nếu thiếu dòng phải. RIGHT đối xứng. CROSS ghép mọi cặp. MySQL mô phỏng FULL OUTER JOIN bằng LEFT JOIN cộng các dòng phải không khớp qua UNION ALL. ON xét khớp trước khi thêm dòng NULL. WHERE lọc cột phải có thể loại dòng không khớp.
 \ex{Key của R là [1,2], của S là [2,3]. INNER cho [2], LEFT cho [(1,NULL),(2,2)], FULL thêm (NULL,3). Một key lặp hai lần ở mỗi vế cho 4 cặp.}
 \trap{Join hai bảng 1:N độc lập có m và n dòng con sẽ sinh m*n dòng mỗi parent, làm COUNT/SUM tăng sai. Aggregate riêng mỗi bảng theo cấp cần tính trước khi join.}
@@ -243,7 +245,6 @@ LEFT JOIN CrimeAgg k ON k.area=c.area;
 
 \begin{topicblock}
 \topic{04}{KIỂU DỮ LIỆU, NGÀY GIỜ VÀ CAST}
-\when{Chọn kiểu, chuyển chuỗi hoặc lọc ngày giờ.}
 \sql{INT/BIGINT} lưu số nguyên. \sql{DECIMAL(p,s)} lưu thập phân chính xác, FLOAT/DOUBLE lưu gần đúng. CHAR dài cố định, VARCHAR dài biến đổi. TEXT/BLOB lưu văn bản/nhị phân. DATE lưu ngày, TIME lưu giờ hoặc khoảng thời gian, DATETIME lưu ngày giờ. TIMESTAMP đổi theo múi giờ phiên. JSON lưu dữ liệu có cấu trúc. Boolean thường dùng TINYINT(1).
 \pattern{Mẫu biểu thức và predicate}
 \begin{lstlisting}
@@ -271,7 +272,7 @@ STR_TO_DATE(LEFT(selling_date,24),
 \trap{So chuỗi: \sql{'100' < '20'}. So số: $20<100$. Lọc DATETIME từ đầu tháng đến trước tháng kế. BETWEEN theo ngày dễ bỏ giờ của ngày cuối.}
 \end{topicblock}
 
-\nextcol{.235}
+\nextcol{.244}
 % User-supplied keywords, plus category counts and ranking grouped totals.
 \par\begin{tabular}{@{}ll@{}}
 \textbf{Exam keywords} & \textbf{SQL pattern}\\
@@ -291,10 +292,10 @@ Best aggregate per group & Aggregate, rank, filter
 \end{tabular}\par
 \begin{topicblock}
 \topic{05}{SUBQUERY VÀ DIVISION}
-Scalar subquery trả một cột, tối đa một dòng. 0 dòng cho NULL, nhiều dòng báo lỗi. Correlated subquery dùng giá trị từ dòng ngoài. IN kiểm tra thuộc tập, tương đương \sql{= ANY} với subquery.
+Scalar subquery có một cột. 0 dòng cho NULL, nhiều dòng báo lỗi. Correlated subquery đọc dòng ngoài. IN kiểm tra thuộc tập (\sql{= ANY}).
 % Source: user-supplied predicate table and empty quantifiers; MySQL subqueries (W18).
 \pattern{Predicate viết tắt}
-S là kết quả subquery. ANY/ALL dùng một cột y so được với x. EXISTS chỉ xét có dòng hay không, kể cả dòng toàn NULL.
+S=kết quả subquery. ANY/ALL dùng một cột y so được với x. EXISTS tính cả dòng toàn NULL.
 \par\begin{tabular}{@{}lll@{}}
 \textbf{Predicate} & \textbf{TRUE khi} & \textbf{S rỗng}\\
 \sql{EXISTS(S)} & S có dòng & FALSE\\
@@ -304,7 +305,7 @@ S là kết quả subquery. ANY/ALL dùng một cột y so được với x. EXI
 \end{tabular}\par
 \key{Vacuous truth} Nếu $S=\varnothing$: $(\exists y\in S:P(y))=\mathrm{FALSE}$; $(\forall y\in S:P(y))=\mathrm{TRUE}$.
 \key{ANY/ALL gặp NULL (U = UNKNOWN)}
-ANY nối kết quả so sánh bằng OR, ALL bằng AND. Bảng ghi các giá trị y trong subquery của \sql{5 > ANY/ALL (SELECT y FROM T)}.
+ANY nối so sánh bằng OR, ALL bằng AND. Xét \sql{5 > ANY/ALL (SELECT y FROM T)}:
 \par\begin{tabular}{@{}lll@{}}
 \textbf{Giá trị y} & \textbf{ANY} & \textbf{ALL}\\
 3,NULL & TRUE & U\\
@@ -316,7 +317,7 @@ ANY cho TRUE nếu có TRUE dù gặp U. ALL cho FALSE nếu có FALSE dù gặp
 \ruleline{Với Boolean $P(y)$ là dòng A hiện tại có liên kết tới y,
 $(\forall y:P(y))\iff\neg(\exists y:\neg P(y))$.}
 \pattern{Thỏa mọi mục bằng double NOT EXISTS}
-Schema gồm A(id PK), Required(bid), R(aid,bid). R.aid tham chiếu A.id. Các ID khác NULL. Duyệt y trong các ID của Required.
+A(id PK), Required(bid), R(aid,bid). ID khác NULL, R.aid tham chiếu A.id. Duyệt ID của Required.
 \begin{lstlisting}
 SELECT a.id FROM A a
 WHERE NOT EXISTS (SELECT 1 FROM Required q
@@ -332,7 +333,7 @@ SELECT r.aid FROM R r JOIN Required q ON q.bid=r.bid
 GROUP BY r.aid HAVING COUNT(DISTINCT r.bid) =
  (SELECT COUNT(*) FROM Required);
 \end{lstlisting}
-\cond{Cách dùng COUNT cần Required không rỗng và các ID bắt buộc duy nhất, khác NULL. Query bỏ dòng A chưa có dòng R. DISTINCT tránh đếm trùng liên kết.}
+\cond{Required không rỗng, ID duy nhất và khác NULL. Query bỏ dòng A thiếu dòng R. DISTINCT tránh đếm trùng liên kết.}
 \end{topicblock}
 
 \begin{topicblock}
@@ -353,8 +354,8 @@ WITH T AS (
  FROM Student s) SELECT * FROM T WHERE mark > m;
 \end{lstlisting}
 \key{Trung bình chung từ các nhóm}
-$\bar{x}=\frac{\sum_i n_i\bar{x}_i}{\sum_i n_i}$, với $n_i$ là số giá trị khác NULL dùng để tính trung bình nhóm $\bar{x}_i$. Bỏ nhóm có count=0. Nếu mọi count=0, trung bình là NULL. AVG của các trung bình nhóm cho mọi nhóm cùng trọng số.
-\ex{Group1=[10,20] có mean15, n=2. Group2=[90] có mean90, n=1. Trung bình chung (2*15+1*90)/3=40. Lấy trung bình hai mean cho 52.5, sai nếu tính theo từng phần tử.}
+$\bar{x}=\frac{\sum_i n_i\bar{x}_i}{\sum_i n_i}$, $n_i$ đếm giá trị khác NULL của nhóm có mean $\bar{x}_i$. Bỏ nhóm có $n_i=0$. Mọi $n_i=0$ cho NULL. AVG các mean cho trọng số nhóm bằng nhau.
+\ex{[10,20] có mean 15, n=2. [90] có mean 90, n=1. Trung bình chung (2*15+1*90)/3=40. Trọng số hai nhóm bằng nhau cho 52.5.}
 \key{Recursive CTE tính graph closure (MySQL 8+)}
 \begin{lstlisting}
 WITH RECURSIVE Reach(a,b) AS (SELECT a,b FROM Edge
@@ -363,7 +364,7 @@ WITH RECURSIVE Reach(a,b) AS (SELECT a,b FROM Edge
 ) SELECT * FROM Reach;
 \end{lstlisting}
 \ex{Cạnh $\{(A,B),(B,C),(C,D)\}$. Anchor cho AB,BC,CD. Vòng sau thêm AC,BD rồi AD. Fixed point $\{AB,BC,CD,AC,BD,AD\}$.}
-\trap{UNION DISTINCT bỏ cặp reachability trùng và dừng khi hết cặp mới. Nếu thêm path/depth vào tuple, cycle có thể sinh dòng mới mãi dù dùng DISTINCT.}
+\trap{UNION DISTINCT dừng khi hết cặp mới. Thêm path/depth thì cycle có thể sinh dòng mới mãi.}
 \end{topicblock}
 
 \begin{topicblock}
@@ -408,7 +409,6 @@ CUBE trên d chiều có $2^d$ grouping sets. ROLLUP(a,b,c) cho (a,b,c),(a,b),(a
 \nextcol{.24}
 \begin{topicblock}
 \topic{08}{RANKING / TOP K}
-\when{Tìm điểm cao nhất, hạng nhì phân biệt hoặc top K trong nhóm.}
 \pattern{Rank rồi lọc} Employee(id PK,dept,score). score là số hoặc NULL, K nguyên dương.
 \begin{lstlisting}
 WITH Ranked AS (
@@ -451,7 +451,6 @@ $N$ là số dòng trong partition. PERCENT\_RANK là $(\mathrm{rank}-1)/(N-1)$ 
 
 \begin{topicblock}
 \topic{09}{WINDOW FRAMES}
-\when{Tính tổng lũy kế, trung bình trượt hoặc lấy dòng liền trước/sau.}
 Window giữ từng dòng. PARTITION BY chia nhóm, ORDER BY trong window xác định thứ tự và peers.
 \pattern{Mẫu window expression}
 k là partition key, day là sort key, id là tie-breaker duy nhất, x là đại lượng số.
@@ -535,10 +534,9 @@ DELIMITER ;
 INSERT có NEW, DELETE có OLD, UPDATE có cả hai. OLD chỉ đọc. BEFORE có thể SET NEW, AFTER thì không. DELIMITER thuộc client. Điều kiện dùng IF/CASE, vòng lặp dùng WHILE/REPEAT/LOOP.
 \end{topicblock}
 
-\nextcol{.263}
+\nextcol{.260}
 \begin{topicblock}
 \topic{11}{RELATIONAL ALGEBRA}
-\when{Viết truy vấn theo set semantics.}
 R/S là relation, $P,\theta$ là predicate lọc/join, A là danh sách attribute, X/Y là hai tập attribute rời nhau.
 Set semantics giữ các tuple phân biệt. $\sigma_P(R)$ lọc dòng, $\pi_A(R)$ lấy attribute và bỏ trùng, $\rho$ đổi tên, $\leftarrow$ gán. $R\bowtie_\theta S=\sigma_\theta(R\times S)$. Natural join so mọi attribute cùng tên. $\cup,\cap,-$ cần cùng số cột và domain tương thích.
 $|R\times S|=|R||S|$; $|\sigma_P(R)|\leq|R|$; $|\pi_A(R)|\leq|R|$; $|R\bowtie S|\leq|R||S|$.
@@ -550,7 +548,6 @@ $\pi_X(R)-\pi_X((\pi_X(R)\times S)-R)$.
 
 \begin{topicblock}
 \topic{12}{DDL / CONSTRAINTS / VIEWS}
-\when{Đặt constraint, cấp quyền, dùng transaction hoặc view.}
 \pattern{Lệnh DDL và cấp quyền}
 \begin{lstlisting}
 CREATE TABLE Parent(id INT PRIMARY KEY) ENGINE=InnoDB;
@@ -631,7 +628,6 @@ Entity có attribute và key. Relationship có cardinality (1:1,1:N,M:N) và par
 
 \begin{topicblock}
 \topic{13}{TRUY CẬP DATABASE TỪ PHP VÀ PYTHON}
-\when{Bind đầu vào, chạy SQL và lấy dòng từ mã ứng dụng.}
 Student(id PK,name,mark). Bên gọi cung cấp cấu hình kết nối và ID.
 \key{HTTP / HTML / PHP}
 GET gửi tham số qua URL, POST gửi form qua request body. HTTPS mã hóa đường truyền. action chọn endpoint, method chọn kiểu request. Dùng \sql{$_GET['id']} / \sql{$_POST['id']}. Kiểm tra đầu vào, bind tham số SQL và escape HTML đầu ra.
@@ -681,10 +677,43 @@ df.to_sql('copy', engine,
 \end{topicblock}
 \end{sheetcolumns}
 
+\topic{}{MONGODB INDEX / EXPLAIN}
+\begin{sheetcolumns}{.27}
+\begin{lstlisting}[style=Plaincode]
+db.tours.createIndex({usertype:1,tripduration:-1});
+db.tours.createIndex({tripCode:1},{unique:true,sparse:true});
+db.tours.createIndex({"stops.name":1}); // multikey
+db.tours.createIndex({note:"text"});
+db.tours.find({$text:{$search:"campus"}});
+\end{lstlisting}
+\nextcol{.22}
+\begin{lstlisting}[style=Plaincode]
+db.tours.getIndexes();
+db.tours.find({usertype:"Subscriber"})
+ .hint({usertype:1,tripduration:-1})
+ .explain("executionStats");
+db.tours.dropIndex("usertype_1_tripduration_-1");
+\end{lstlisting}
+\nextcol{.22}
+\par\begin{tabular}{@{}ll@{}}
+\sql{COLLSCAN} & quét toàn bộ collection\\
+\sql{IXSCAN} & quét index\\
+\sql{nReturned} & số document trả về\\
+\sql{totalKeysExamined} & số mục index đã xét\\
+\sql{totalDocsExamined} & số document đã xét
+\end{tabular}\par
+\nextcol{.29}
+Single-field, compound, unique, multikey (array), text. Index mẫu dùng prefix \sql{usertype} hoặc cả cặp. \sql{tripduration} riêng lẻ thiếu prefix. Index tốn chỗ và công ghi. \sql{_id} unique mặc định. Sparse unique kiểm tra \sql{tripCode} khi có field, kể cả lúc tạo. Dùng hint trước drop. Text search dùng index \sql{note}.
+\end{sheetcolumns}
+
 \newpage
 % PAGE 2: Part II. FD algorithms, XML, MongoDB, and Spark.
-\begin{sheetcolumns}{.272}
+\renewcommand{\bodyfontsize}{5.65}
+\renewcommand{\bodyleading}{5.3}
+\renewcommand{\codefontsize}{5.05}
+\renewcommand{\codeleading}{5.0}
 \renewcommand{\bodylineskiplimit}{-1.5pt}
+\begin{sheetcolumns}{.272}
 \begin{topicblock}
 \topic{14}{PHẦN II: FD VÀ CLOSURE}
 R là tập attribute, F là tập FD. X/Y/U/V là các tập con. Viết liền tên tập nghĩa là lấy hợp.
@@ -779,7 +808,7 @@ Phản ví dụ cho dòng cuối. $F=\{A\to B,B\to C,A\to C\}$, tách AB/BC. Suy
 
 \begin{topicblock}
 \topic{18}{XML / DTD / XSD}
-Well-formed cần một root element, tag lồng đúng và phân biệt hoa thường, attribute có dấu nháy, ký tự dành riêng được escape. Valid còn phải thỏa DTD/XSD. Attribute có parent và không có child. CDATA giữ nguyên văn bản. Default namespace áp dụng cho element không prefix, bỏ qua attribute không prefix.
+XML well-formed có một root, tag lồng đúng và phân biệt hoa thường, attribute có nháy, escape ký tự dành riêng. Valid còn thỏa DTD/XSD. Attribute có parent, không có child. CDATA giữ nguyên text. Default namespace chỉ áp cho element không prefix.
 Schema linh hoạt vẫn validate element tùy chọn hoặc lặp. Lặp dữ liệu có thể gây update anomaly.
 \pattern{Đoạn XML và khai báo DTD}
 \begin{lstlisting}[style=Plaincode,language=XML]
@@ -793,18 +822,12 @@ Schema linh hoạt vẫn validate element tùy chọn hoặc lặp. Lặp dữ l
  instructors IDREFS #IMPLIED category CDATA "general">
 \end{lstlisting}
 Khai báo DTD trong DOCTYPE hoặc file .dtd. ?=0/1, *=0+, +=1+, dấu phẩy là sequence, |=choice. \texttt{\#PCDATA} là text, EMPTY không có nội dung, ANY nhận nội dung hợp lệ. Attribute dùng \texttt{\#REQUIRED} bắt buộc, \texttt{\#IMPLIED} tùy chọn, \texttt{\#FIXED "v"} mặc định cố định.
-\ex{(A|B)+ nhận B,A,B, còn (A*,B*) loại B,A. ID duy nhất trong tài liệu. IDREF phải trỏ tới ID có thật, bất kể loại element. Tên id không tự đặt kiểu ID.}
-\par\begin{tabular}{@{}ll@{}}
-\textbf{Kiểu attribute DTD} & \textbf{Ý nghĩa}\\
-CDATA & chuỗi, khác CDATA section\\
-ID & ID duy nhất trong tài liệu\\
-IDREF & một ID có thật\\
-IDREFS & các ID có thật, cách nhau bằng dấu cách
-\end{tabular}\par
-Mỗi loại element khai báo tối đa một attribute kiểu ID. Tên attribute không quyết định kiểu.
+\ex{(A|B)+ nhận B,A,B. (A*,B*) loại B,A.}
 \end{topicblock}
 \nextcol{.246}
 \begin{topicblock}
+\key{Kiểu attribute DTD}
+CDATA ở đây là chuỗi. ID duy nhất trong tài liệu, tối đa một attribute ID mỗi loại element. Tên attribute không quyết định kiểu. IDREF trỏ đến bất kỳ ID có thật. IDREFS liệt kê các ID có thật, ngăn cách bằng dấu cách.
 \key{Xử lý và lưu XML}
 DOM là cây trong bộ nhớ, SAX dùng event. Publishing từ relational $\to$ XML, shredding từ XML $\to$ relational. Lưu dạng text/tree, relational mapping hoặc native XML.
 \key{XSD (tiếp phần XML)}
@@ -819,9 +842,9 @@ DOM là cây trong bộ nhớ, SAX dùng event. Publishing từ relational $\to$
   <xs:attribute name="id" type="xs:ID" use="required"/>
   </xs:complexType></xs:element></xs:schema>
 \end{lstlisting}
-XSD định kiểu XML. \sql{name} đặt tên, \sql{type} chỉ kiểu, \sql{ref} trỏ global element. Mặc định min/maxOccurs=1, attribute tùy chọn. sequence xếp thứ tự child, choice chọn một nhánh. \sql{targetNamespace} đặt namespace. \sql{elementFormDefault="qualified"} áp namespace cho local element.
+XSD định kiểu XML. \sql{name} đặt tên, \sql{type} chỉ kiểu, \sql{ref} trỏ global element. Mặc định min/maxOccurs=1, attribute tùy chọn. sequence xếp thứ tự child, choice chọn nhánh. \sql{targetNamespace} đặt namespace. \sql{elementFormDefault="qualified"} áp cho local element.
 \pattern{Khai báo identity constraint trong XSD}
-university có department*(@id) và course*(@dept). Đặt phần sau trong \sql{xs:element} tương ứng, sau complexType. selector/field dùng đường dẫn tương đối. Mẫu không có target namespace.
+university có department*(@id), course*(@dept), không có target namespace. Chèn sau complexType trong \sql{xs:element}. Selector/field dùng path tương đối.
 \begin{lstlisting}[style=Plaincode,language=XML]
 <xs:key name="deptKey"> <xs:selector xpath="department"/>
  <xs:field xpath="@id"/> </xs:key>
@@ -841,8 +864,7 @@ university có department*(@id) và course*(@dept). Đặt phần sau trong \sql
 
 \begin{topicblock}
 \topic{19}{XPATH VÀ PREDICATE}
-\when{Duyệt cây hoặc lọc node theo context và vị trí.}
-\sql{/} là document node, \sql{/r} là root element r. \sql{x} hoặc \sql{./x} lấy child x. \sql{//x} tìm descendant x từ gốc tài liệu, \sql{.//x} tìm từ context hiện tại. \sql{..} lên parent, \sql{@id} lấy attribute. \sql{*} lấy child element, \sql{@*} lấy mọi attribute. \sql{text()} lấy child dạng text, \sql{node()} lấy mọi child node. \sql{string(x)} lấy chuỗi, \sql{count(x)} đếm node đã chọn.
+\sql{/} = document node, \sql{/r} = root element r. \sql{x}, \sql{./x} = child x. \sql{//x}, \sql{.//x} = descendant x từ gốc/context. \sql{..} = parent, \sql{@id} = attribute. \sql{*} = child element, \sql{@*} = mọi attribute. \sql{text()}, \sql{node()} = text/mọi child node. \sql{string(x)} = chuỗi, \sql{count(x)} = số node.
 \ex{Cây \sql{<r><g><x id="1"/></g><x id="2"/></r>}. Tại g, .//x lấy id1, //x lấy id1,id2, ../x và /r/x lấy id2. \sql{@id/text()} rỗng vì attribute không có child text. \sql{string(@id)} lấy giá trị.}
 \key{Vị trí trong XPath (P là predicate)}
 \sql{[n]} = \sql{[position()=n]} nếu n là số. \sql{x[1]} lấy child x đầu, \sql{x[last()]} lấy cuối. XPath đếm từ 1, Mongo array index từ 0.
@@ -856,10 +878,8 @@ id("C1")  id(@dept)  id(@instructors)
 \end{lstlisting}
 id() tìm element theo ID/IDREF(S) khi parser biết kiểu ID. Union bỏ node trùng theo identity và giữ document order.
 \par\begin{tabular}{@{}ll@{}}
-\sql{child::} & node con trực tiếp\\
-\sql{parent::} & node cha\\
-\sql{descendant::} & mọi node hậu duệ\\
-\sql{ancestor::} & các node tổ tiên\\
+\sql{child::}/\sql{parent::} & node con/cha\\
+\sql{descendant::}/\sql{ancestor::} & hậu duệ/tổ tiên\\
 \sql{following-sibling::} & node cùng cha phía sau\\
 \sql{preceding-sibling::} & node cùng cha phía trước
 \end{tabular}\par
@@ -867,8 +887,7 @@ id() tìm element theo ID/IDREF(S) khi parser biết kiểu ID. Union bỏ node 
 
 \begin{topicblock}
 \topic{20}{XQUERY VÀ PHÉP SO SÁNH}
-\when{Lọc hoặc join XML, gom nhóm và dựng cây kết quả.}
-\ruleline{FLWOR: for duyệt item, let gán sequence, where lọc, order by sắp xếp, return trả value/node. Trong direct constructor, ngoặc nhọn tính biểu thức. Ngoài ngoặc, \sql{$x} là text.}
+\ruleline{FLWOR dùng for để duyệt item, let gán sequence, where lọc, order by sắp xếp và return trả value/node. Direct constructor tính biểu thức trong ngoặc nhọn. Bên ngoài, \sql{$x} là text.}
 \begin{lstlisting}[style=Plaincode]
 for $x in (2,4) return count($x)  (: (1,1) :)
 let $x := (2,4) return count($x)  (: 2 :)
@@ -935,6 +954,11 @@ return <department name="{$d}">
 \end{lstlisting}
 count/sum/avg/min/max là aggregate. distinct-values bỏ giá trị atomic trùng. data atomize, string lấy chuỗi, exists/empty xét sequence, contains xét chuỗi con.
 Với \sql{$items} là sequence element, \sql{count($items)} đếm item, \sql{count(distinct-values($items/Title))} đếm Title phân biệt.
+\end{topicblock}
+
+\nextcol{.239}
+\begin{topicblock}
+\key{XQuery (mục 20 tiếp)}
 \pattern{Ví dụ computed constructor}
 \begin{lstlisting}[style=Plaincode]
 element course { attribute id {"C1"},
@@ -949,8 +973,6 @@ return if ($x/price > 100)
 \end{lstlisting}
 Kết quả là element expensive chứa item đầu vào.
 \end{topicblock}
-
-\nextcol{.237}
 \begin{topicblock}
 \topic{21}{MONGODB: CRUD / FILTER}
 % Source: Assignment 2 Q1.1--Q2.2; array examples use the practice fields of tours.
@@ -960,25 +982,25 @@ Filter and return fields & \sql{find(filter, fields)}\\
 Sort with a tie-breaker & \sql{.sort({a:-1,b:1})}\\
 Filter documents first & \sql{$match} before \sql{$group}\\
 Count and mean per group & \sql{$group}, \sql{$sum:1}, \sql{$avg}\\
-At least K per group & \sql{$group}, then \sql{$match} with \sql{$gte}\\
+At least K per group & Post-group \sql{$match} (\sql{$gte})\\
 Exactly K per group & \sql{$match} on \sql{{tripCount:K}}\\
 Sort by rounded value & \sql{$round} before \sql{$sort}\\
 One item meets both tests & Query \sql{$elemMatch}\\
 Return first matching item & \sql{$elemMatch} + \sql{"stops.$":1}\\
-Original first item qualifies & Filter on \sql{"stops.0.mins"}\\
+Original first qualifies & Filter on \sql{"stops.0.mins"}\\
 Return all matching items & \sql{$filter} in \sql{$project}\\
 Contains all listed values & \sql{$all}\\
 Exactly K array items & \sql{$size:K}\\
 Top K by value & \sql{$sort}, then \sql{$limit}
 \end{tabular}\par
-BSON mã hóa nhị phân, hỗ trợ ObjectId, Date, int32/int64, Decimal128 và binary. JSON là text. Mỗi document có \sql{_id} duy nhất. Schema linh hoạt vẫn có kiểu và có thể áp dụng validation.
+BSON (nhị phân) có ObjectId, Date, int32/int64, Decimal128, binary. JSON là text. \sql{_id} duy nhất. Schema linh hoạt vẫn có kiểu và hỗ trợ validation.
 \key{Schema của \sql{db.tours} (mục 21--25)}
 \begin{lstlisting}[style=Plaincode]
 tours(_id,usertype,tripduration,"birth year",
       gender,"start station id")
 stops[{name,mins,rate,...}], scores[], note, tripCode
 \end{lstlisting}
-Ví dụ đọc dùng field chính khác null. Thời lượng (giây), năm sinh, gender, mã trạm là số. Tên có dấu cách cần nháy. Field luyện tập tùy chọn: \sql{stops} có thứ tự, có thể rỗng; \sql{scores} là mảng số, \sql{note} là text/null, \sql{tripCode} là chuỗi duy nhất. \sql{mins} là phút, \sql{rate} là cent/phút.
+Field chính khác null trong ví dụ. Thời lượng (giây), năm sinh, gender, mã trạm là số. Nháy tên có dấu cách. Field tùy chọn gồm \sql{stops} có thứ tự (có thể rỗng), mảng số \sql{scores}, text/null \sql{note}, chuỗi duy nhất \sql{tripCode}. \sql{mins} tính bằng phút, \sql{rate} tính bằng cent/phút.
 \pattern{Các mẫu CRUD độc lập}
 \begin{lstlisting}[style=Plaincode]
 db.tours.insertOne({_id:1,tripduration:600});
@@ -1038,9 +1060,9 @@ db.tours.aggregate([
   avgDuration:{$round:["$avgDuration",1]}}},
  {$sort:{avgDuration:-1,stationId:1}} ]);
 \end{lstlisting}
-\sql{$match} trước/sau khi gom nhóm tương ứng WHERE/HAVING. \sql{$project} lấy \sql{$_id} làm stationId, ẩn \sql{_id} và làm tròn TB 1 chữ số.
+\sql{$match} trước/sau khi gom nhóm = WHERE/HAVING. \sql{$project} đổi \sql{$_id} thành stationId và làm tròn TB 1 chữ số.
 \sql{$sum} và \sql{$avg} bỏ giá trị thiếu hoặc khác kiểu số. Nhóm không có số cho sum=0, avg=null. \sql{_id:null} gom toàn bộ đầu vào. \sql{"$field"} đọc field, \sql{"field"} là chuỗi. Nhóm không có thứ tự bảo đảm.
-\trap{Sau \sql{$group}, chỉ còn khóa nhóm và kết quả accumulator. Đặt \sql{$sort} trước khi làm tròn để xếp giá trị gốc.}
+\trap{Sau \sql{$group}, chỉ còn khóa và accumulator. Sort số gốc: \sql{$sort} trước \sql{$round}.}
 \ex{(\mbox{\sql{"start station id"}}, \mbox{\sql{tripduration}}, \mbox{\sql{"birth year"}}): (1,300,1990), (1,600,1990), (2,900,1990). Cả ba qua lọc đầu. Trạm 1 có 2 trip, TB 450. Trạm 2 chỉ có 1 trip (900 s), bị loại. Trả \mbox{\sql{(stationId,tripCount,avgDuration)=(1,2,450.0)}}.}
 \key{Các stage dùng trong aggregate}
 \sql{$addFields} thêm/sửa field, giữ field khác. \sql{$project} chọn/tính field. \sql{$unwind} sinh một document mỗi item.
@@ -1049,7 +1071,7 @@ db.tours.aggregate([
 {$group:{_id:"$stops.name",n:{$sum:1},fee:{$sum:{
  $multiply:["$stops.mins","$stops.rate"]}}}}
 \end{lstlisting}
-Tổng phí theo tên điểm dừng (phút $\times$ đơn giá). \trap{\sql{$unwind} làm sum:1 đếm điểm dừng. Muốn đếm trip, đếm \sql{_id} khác nhau. Để giữ array rỗng, null hoặc thiếu, dùng \sql{preserveNullAndEmptyArrays:true} ở dạng object.}
+Tổng phí theo tên điểm dừng (phút $\times$ đơn giá). \trap{\sql{$unwind} làm sum:1 đếm điểm dừng. Muốn đếm trip, đếm \sql{_id} khác nhau. Để giữ array rỗng, null hoặc thiếu, dùng \mbox{\sql{preserveNullAndEmptyArrays:true}} ở dạng object.}
 \key{Mẫu stage: khóa nhóm / đếm / ghi}
 \begin{lstlisting}[style=Plaincode]
 {$group:{_id:{u:"$usertype",g:"$gender"},n:{$sum:1}}}
@@ -1073,6 +1095,11 @@ countDocuments đếm trip khớp. distinct lấy giá trị khác nhau. estimat
 \begin{topicblock}
 \topic{23}{ARRAY FILTER: KHỚP CÙNG PHẦN TỬ?}
 \sql{{scores:[1,2]}} khớp array đúng thứ tự. \sql{{scores:2}} khớp scalar 2 hoặc array chứa 2. \sql{{scores:{$all:[1,2]}}} chứa cả hai, bất kể thứ tự. \sql{{scores:{$size:2}}} khớp độ dài 2. \sql{"scores.0"} trỏ đến phần tử đầu gốc (index tính từ 0).
+\end{topicblock}
+
+\nextcol{.243}
+\begin{topicblock}
+\key{Array filter (mục 23 tiếp)}
 \key{Ví dụ trên stops}
 A--D là \sql{_id} của các trip mẫu. Mỗi điểm dừng có dạng (name,mins,rate). Điều kiện P: mins $\geq3$ và rate $\geq80$.
 \begin{lstlisting}[style=Plaincode]
@@ -1094,8 +1121,6 @@ D: []
 {scores:{$elemMatch:{$gt:20,$lt:80}}} // no match
 \end{lstlisting}
 \end{topicblock}
-
-\nextcol{.245}
 \begin{topicblock}
 \topic{24}{ARRAY PROJECTION}
 Một document có \sql{stops=[A,B,C]}. Predicate P khớp B và C.
@@ -1141,31 +1166,8 @@ Mục 23 cho A:[a1,a2], C:[c0]. Bỏ \sql{$match} thì B/D vẫn có mặt với
 \end{topicblock}
 
 \begin{topicblock}
-\topic{25}{INDEX / SCHEMA / SCALING}
-\when{Tăng tốc filter/sort hoặc chọn embedding, reference hay replication.}
-\pattern{Tạo, kiểm tra, dùng và xóa index}
-\begin{lstlisting}[style=Plaincode]
-db.tours.createIndex({usertype:1,tripduration:-1});
-db.tours.createIndex({tripCode:1},
- {unique:true,sparse:true});
-db.tours.createIndex({"stops.name":1}); // multikey
-db.tours.createIndex({note:"text"});
-db.tours.find({$text:{$search:"campus"}});
-db.tours.getIndexes();
-db.tours.find({usertype:"Subscriber"})
- .hint({usertype:1,tripduration:-1})
- .explain("executionStats");
-db.tours.dropIndex("usertype_1_tripduration_-1");
-\end{lstlisting}
-Các loại: single-field, compound, unique, multikey (array), text. Compound index trên hỗ trợ prefix \sql{usertype} và cả cặp; riêng tripduration thiếu prefix. Index tốn chỗ và công cập nhật. Kiểm tra bằng executionStats. \sql{_id} có unique index mặc định.
-Sparse unique kiểm tra tính duy nhất của \sql{tripCode} nếu có field này, kể cả lúc tạo index. Gọi hint trước khi xóa index. Text search dùng index trên \sql{note}.
-\par\begin{tabular}{@{}ll@{}}
-\sql{COLLSCAN} & quét toàn bộ collection\\
-\sql{IXSCAN} & quét index\\
-\sql{nReturned} & số document trả về\\
-\sql{totalKeysExamined} & số mục index đã xét\\
-\sql{totalDocsExamined} & số document đã xét
-\end{tabular}\par
+\topic{25}{SCHEMA / SCALING}
+Xem MongoDB index và explain ở trang 1.
 Embed child có giới hạn, hay đọc/sửa cùng nhau. Đọc một lần, đổi lại có thể lặp dữ liệu hoặc phình array. Reference cho entity dùng chung, nhiều-nhiều hoặc không giới hạn, giảm lặp và dễ sửa riêng, tốn lookup/join. Ghi một document là atomic. \sql{updateMany()} chỉ atomic từng document. Dùng transaction để cùng commit hoặc rollback.
 Vertical scaling: nâng cấu hình máy. Horizontal: thêm node. Replication sao chép dữ liệu, sharding chia dữ liệu. CAP khi mạng bị chia cắt: primary tự hạ vai trò nếu thấy mình thuộc nhóm thiểu số. Đa số có thể bầu primary mới. Đọc từ secondary có thể gặp dữ liệu cũ. Bảo đảm phụ thuộc read/write concern và read preference.
 \end{topicblock}
@@ -1194,8 +1196,8 @@ $n$=số phần tử đầu vào. $m$=số phần tử RDD còn lại. $k_i$=s�
 \begin{tabular}{@{}ll@{}}
 \sql{collect} & đưa mọi phần tử về driver\\
 \sql{count} & đếm phần tử\\
-\sql{first()/take(k)} & lấy phần tử đầu / tối đa k phần tử đầu\\
-\sql{takeOrdered(k)} & lấy k phần tử nhỏ nhất theo key tùy chọn\\
+\sql{first()/take(k)} & phần tử đầu / tối đa k phần tử đầu\\
+\sql{takeOrdered(k)} & k phần tử nhỏ nhất theo key tùy chọn\\
 \sql{reduce} & gộp thành một giá trị\\
 \sql{fold(zero,op)} & gộp từ phần tử trung hòa zero\\
 \sql{countByKey} & đếm theo key, trả về driver\\

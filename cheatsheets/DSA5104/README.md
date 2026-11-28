@@ -15,9 +15,16 @@ beside it.
 | Page | Column 1 | Column 2 | Column 3 | Column 4 |
 | --- | --- | --- | --- | --- |
 | 1: Part I | SQL logic, NULL/anti-joins, joins, types | Division, CTEs, aggregation | Ranking, windows, rounding, stored programs | Relational algebra, constraints, PHP/Python |
-| 2: Part II | FDs, keys, BCNF, decomposition tests, XML/DTD | XML processing, XSD, XPath, XQuery | MongoDB schemas, CRUD, aggregation, matching | Array projection, indexes/schema, Spark |
+| 2: Part II | FDs, keys, BCNF, decomposition tests, XML/DTD | DTD attribute types, XML processing, XSD, XPath, XQuery | XQuery examples, MongoDB schemas, CRUD, aggregation, matching | Array matching and projection, document design, scaling, Spark |
 
-Body text is 5.35 pt with 5.3 pt leading. Code is 4.9 pt with 5 pt leading.
+MongoDB index commands and explain statistics are in a strip at the bottom of
+page 1. Topic 25 on page 2 points to that strip.
+
+| Page | Body text | Code |
+| --- | --- | --- |
+| 1 | 5.35 pt | 4.9 pt |
+| 2 | 5.65 pt | 5.05 pt |
+
 Topic headings use 6.45 pt. Both editions use the fonts' natural proportions
 and fit on two A4 portrait pages with column widths matched to the content.
 

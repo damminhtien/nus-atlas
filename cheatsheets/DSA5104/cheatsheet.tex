@@ -1,6 +1,6 @@
 % !TeX program = xelatex
 % DSA5104 content adapted into the shared NUS Atlas cheatsheet layout.
-% Two A4 portrait pages: Part I (SQL/access) and Part II (FD/XML/Mongo/Spark).
+% Two A4 portrait pages: Part I (SQL/access/MongoDB indexes), Part II (FD/XML/MongoDB/Spark).
 % Four left-to-right columns per page, no global header/footer. Build with XeLaTeX.
 % Source text: user-provided DSA5104_A4_Helpsheet_v0.9_portrait_4col.tex.
 % Upgraded against the exam recap, assignments, lectures, and the supplied gap review.
@@ -51,9 +51,13 @@
   morestring=[b]',
   morestring=[b]"
 }
+\newcommand{\bodyfontsize}{5.35}
+\newcommand{\bodyleading}{5.3}
+\newcommand{\codefontsize}{4.9}
+\newcommand{\codeleading}{5.0}
 \lstdefinestyle{SQLbase}{
   language=SQLx,
-  basicstyle=\sqlfont\fontsize{4.9}{5.0}\selectfont\color{sqltext},
+  basicstyle=\sqlfont\fontsize{\codefontsize}{\codeleading}\selectfont\color{sqltext},
   keywordstyle=[1]\color{sqlkeyword}\bfseries,
   keywordstyle=[2]\color{sqltype}\bfseries,
   keywordstyle=[3]\color{sqlfunction}\bfseries,
@@ -75,10 +79,10 @@
 }
 \lstdefinestyle{SQLinline}{
   style=SQLbase,
-  basicstyle=\sqlfont\fontsize{5.35}{5.3}\selectfont\color{sqltext}
+  basicstyle=\sqlfont\fontsize{\bodyfontsize}{\bodyleading}\selectfont\color{sqltext}
 }
 \lstdefinestyle{PHPcode}{
-  basicstyle=\ttfamily\fontsize{4.9}{5.0}\selectfont\color{sqltext},
+  basicstyle=\ttfamily\fontsize{\codefontsize}{\codeleading}\selectfont\color{sqltext},
   keywordstyle=[1]\color{sqlkeyword},
   commentstyle=\color{sqlcomment},
   stringstyle=\color{sqlstring},
@@ -91,7 +95,7 @@
   belowskip=.15pt
 }
 \lstdefinestyle{Plaincode}{style=PHPcode,language={},
-  basicstyle=\sqlfont\fontsize{4.9}{5.0}\selectfont\color{sqltext}}
+  basicstyle=\sqlfont\fontsize{\codefontsize}{\codeleading}\selectfont\color{sqltext}}
 \lstset{style=SQLblock,emptylines=0}
 \pagestyle{empty}
 \setlength{\topskip}{0pt}
@@ -104,7 +108,7 @@
 \newlength{\gutter}\setlength{\gutter}{1.5mm}
 \newcommand{\bodylineskiplimit}{-2pt}
 \newcommand{\bodystyle}{%
-  \fontsize{5.35}{5.3}\selectfont\setlength{\lineskiplimit}{\bodylineskiplimit}\RaggedRight
+  \fontsize{\bodyfontsize}{\bodyleading}\selectfont\setlength{\lineskiplimit}{\bodylineskiplimit}\RaggedRight
   \setlength{\abovedisplayskip}{.5pt}\setlength{\belowdisplayskip}{.5pt}%
   \setlength{\abovedisplayshortskip}{.3pt}\setlength{\belowdisplayshortskip}{.3pt}}
 \newcommand{\topic}[2]{\par\addvspace{.45pt}\nointerlineskip%
@@ -142,11 +146,11 @@
 
 \begin{document}
 \bodystyle
-% PAGE 1: Part I. Explicit column breaks keep each reference area together.
+% PAGE 1: Part I. SQL/access columns followed by MongoDB index commands.
 \begin{sheetcolumns}{.25}
 \begin{topicblock}
 \topic{01}{PART I: SQL QUERY LOGIC}
-\when{Select, group or order rows. SQL syntax: MySQL 8.4; schemas are local to each pattern.}
+SQL syntax: MySQL 8.4. Schemas are local to each pattern.
 \pattern{Query syntax sketch}
 \begin{lstlisting}
 SELECT [DISTINCT] expressions
@@ -182,7 +186,6 @@ Symmetric difference: \sql{(A EXCEPT B) UNION (B EXCEPT A)}.
 
 \begin{topicblock}
 \topic{02}{NULL / EMPTY AGGREGATES}
-\when{Missing values, empty inputs or anti-joins.}
 SQL uses three-valued logic: $\boxed{\{\mathrm{TRUE},\mathrm{FALSE},\mathrm{UNKNOWN}\}}$ (T/F/U). Ordinary scalar comparisons with NULL give U; test missing values with \sql{IS NULL}.
 % Source: user-supplied NULL comparison table; MySQL comparisons/NULL (W17).
 \key{NULL comparison results}
@@ -219,7 +222,6 @@ $\neg U$ & $U$ & &
 
 \begin{topicblock}
 \topic{03}{JOINS / MULTIPLICATION}
-\when{Combine relations; preserve unmatched rows; count facts per parent.}
 INNER: matched pairs. LEFT: all left rows plus NULLs for missing right. RIGHT: symmetric. CROSS: every pair. MySQL has no native FULL OUTER JOIN; combine LEFT with unmatched-right rows using UNION ALL. ON matches rows before outer preservation; a right-side WHERE filter may remove unmatched rows.
 \ex{R keys [1,2], S keys [2,3]: INNER [2]; LEFT [(1,NULL),(2,2)]; FULL adds (NULL,3). A key appearing twice on both sides produces 4 matched rows.}
 \trap{Joining independent one-to-many facts with m and n children produces m*n rows per parent; counts/sums multiply. Pre-aggregate each fact to the target grain first.}
@@ -243,7 +245,6 @@ LEFT JOIN CrimeAgg k ON k.area=c.area;
 
 \begin{topicblock}
 \topic{04}{TYPES / DATES / CASTS}
-\when{Choose types, convert text or select a time interval.}
 \sql{INT/BIGINT}: integers; \sql{DECIMAL(p,s)} exact decimal; FLOAT/DOUBLE approximate; CHAR fixed, VARCHAR variable; TEXT/BLOB text/binary. DATE date, TIME time/duration, DATETIME date-time, TIMESTAMP session-time-zone conversion. JSON structured data. Boolean commonly TINYINT(1).
 \pattern{Expression / predicate fragments}
 \begin{lstlisting}
@@ -291,10 +292,10 @@ Best aggregate per group & Aggregate, rank, filter
 \end{tabular}\par
 \begin{topicblock}
 \topic{05}{SUBQUERIES / DIVISION}
-Scalar subquery: one column, at most one row; zero rows gives NULL, multiple rows is an error. A correlated subquery refers to an outer row. IN tests membership; \sql{= ANY} is IN.
+Scalar subqueries have one column. Zero rows gives NULL, multiple rows error. Correlated subqueries read an outer row. IN tests membership (\sql{= ANY}).
 % Source: user-supplied predicate table and empty quantifiers; MySQL subqueries (W18).
 \pattern{Predicate shorthand}
-S is a subquery result; ANY/ALL use one column y comparable with x. EXISTS counts rows, even all-NULL rows.
+S=subquery result. ANY/ALL use one column y comparable with x. EXISTS counts even all-NULL rows.
 \par\begin{tabular}{@{}lll@{}}
 \textbf{Predicate} & \textbf{TRUE when} & \textbf{Empty S}\\
 \sql{EXISTS(S)} & S has a row & FALSE\\
@@ -304,7 +305,7 @@ S is a subquery result; ANY/ALL use one column y comparable with x. EXISTS count
 \end{tabular}\par
 \key{Vacuous truth} For $S=\varnothing$: $(\exists y\in S:P(y))=\mathrm{FALSE}$; $(\forall y\in S:P(y))=\mathrm{TRUE}$.
 \key{RULE: ANY/ALL with NULL (U = UNKNOWN)}
-ANY is OR, ALL is AND across comparisons. For \sql{5 > ANY/ALL (SELECT y FROM T)}, RHS lists the subquery's y values.
+ANY=OR, ALL=AND across comparisons. Test \sql{5 > ANY/ALL (SELECT y FROM T)}:
 \par\begin{tabular}{@{}lll@{}}
 \textbf{RHS values} & \textbf{ANY} & \textbf{ALL}\\
 3,NULL & TRUE & U\\
@@ -316,7 +317,7 @@ ANY: TRUE dominates U; ALL: FALSE dominates U.
 \ruleline{For Boolean $P(y)$ (current A row has a link to required y):
 $(\forall y:P(y))\iff\neg(\exists y:\neg P(y))$.}
 \pattern{For every: double NOT EXISTS}
-Schema: A(id PK), Required(bid), R(aid,bid); R.aid references A.id. IDs are non-NULL. Quantifiers range over Required IDs.
+A(id PK), Required(bid), R(aid,bid). IDs are non-NULL. R.aid references A.id. Quantify over Required.
 \begin{lstlisting}
 SELECT a.id FROM A a
 WHERE NOT EXISTS (SELECT 1 FROM Required q
@@ -332,7 +333,7 @@ SELECT r.aid FROM R r JOIN Required q ON q.bid=r.bid
 GROUP BY r.aid HAVING COUNT(DISTINCT r.bid) =
  (SELECT COUNT(*) FROM Required);
 \end{lstlisting}
-\cond{Count form assumes unique, non-NULL required IDs and a nonempty Required set; it omits A rows with no R rows. DISTINCT prevents duplicate R rows inflating coverage.}
+\cond{Required is nonempty with unique non-NULL IDs. This omits A rows with no R rows. DISTINCT prevents duplicate links inflating counts.}
 \end{topicblock}
 
 \begin{topicblock}
@@ -354,7 +355,7 @@ WITH T AS (
 \end{lstlisting}
 \key{Global average from subgroup averages}
 $\bar{x}=\frac{\sum_i n_i\bar{x}_i}{\sum_i n_i}$, where $n_i$ counts non-NULL inputs to subgroup mean $\bar{x}_i$. Drop zero-count groups; if all counts are 0, the mean is undefined/NULL. AVG(group means) weights groups equally.
-\ex{Group1=[10,20], mean15, n=2; group2=[90], mean90, n=1. Global=(2*15+1*90)/3=40; unweighted means average=52.5 (wrong for individuals).}
+\ex{[10,20] gives mean 15, n=2. [90] gives mean 90, n=1. Global=(2*15+1*90)/3=40. Equal group weights give 52.5.}
 \key{Recursive graph closure (MySQL 8+)}
 \begin{lstlisting}
 WITH RECURSIVE Reach(a,b) AS (SELECT a,b FROM Edge
@@ -363,7 +364,7 @@ WITH RECURSIVE Reach(a,b) AS (SELECT a,b FROM Edge
 ) SELECT * FROM Reach;
 \end{lstlisting}
 \ex{Edges $\{(A,B),(B,C),(C,D)\}$: anchor gives AB,BC,CD; next rounds add AC,BD, then AD; fixed point $\{AB,BC,CD,AC,BD,AD\}$.}
-\trap{UNION DISTINCT removes repeated reachability pairs and stops when no new pair exists. Adding path/depth to the tuple can keep producing distinct rows on cycles; deduplication alone then does not ensure termination.}
+\trap{UNION DISTINCT stops at the fixed point. With path/depth in the tuple, cycles can keep generating new rows.}
 \end{topicblock}
 
 \begin{topicblock}
@@ -408,7 +409,6 @@ CUBE on d dimensions has $2^d$ grouping sets; ROLLUP(a,b,c) gives (a,b,c),(a,b),
 \nextcol{.23}
 \begin{topicblock}
 \topic{08}{RANKING / TOP K}
-\when{Highest, second distinct, or top K values within each group.}
 \pattern{Rank, then filter} Employee(id PK,dept,score); score numeric/NULL, K a positive integer.
 \begin{lstlisting}
 WITH Ranked AS (
@@ -451,7 +451,6 @@ $N$=partition size. PERCENT\_RANK is $(\mathrm{rank}-1)/(N-1)$ (0 for $N=1$). CU
 
 \begin{topicblock}
 \topic{09}{WINDOW FRAMES}
-\when{Running totals, moving averages, previous/next rows.}
 Windows keep detail rows. PARTITION BY defines groups; window ORDER BY defines sequence/peers.
 \pattern{Window-expression fragments}
 k=partition key; day=sort key; id=unique tie-breaker; x=numeric measure.
@@ -538,7 +537,6 @@ INSERT: NEW; DELETE: OLD; UPDATE: both. OLD read-only; BEFORE may SET NEW, AFTER
 \nextcol{.283}
 \begin{topicblock}
 \topic{11}{RELATIONAL ALGEBRA}
-\when{Translate queries using set semantics.}
 R/S=relations; $P,\theta$=row/join predicates; A=attribute list; X/Y=disjoint attribute sets below.
 Set semantics: relations contain distinct tuples. $\sigma_P(R)$ selects rows; $\pi_A(R)$ projects attributes and removes duplicates; $\rho$ renames; $\leftarrow$ assigns. $R\bowtie_\theta S=\sigma_\theta(R\times S)$; natural join matches every same-named attribute. $\cup,\cap,-$ require compatible arity/domains.
 $|R\times S|=|R||S|$; $|\sigma_P(R)|\leq|R|$; $|\pi_A(R)|\leq|R|$; $|R\bowtie S|\leq|R||S|$.
@@ -550,7 +548,6 @@ $\pi_X(R)-\pi_X((\pi_X(R)\times S)-R)$.
 
 \begin{topicblock}
 \topic{12}{DDL / CONSTRAINTS / VIEWS}
-\when{Define integrity, permissions, transactions or relational storage.}
 \pattern{DDL and privilege statements}
 \begin{lstlisting}
 CREATE TABLE Parent(id INT PRIMARY KEY) ENGINE=InnoDB;
@@ -631,7 +628,6 @@ Entity has attributes/key; relationship has cardinality (1:1,1:N,M:N) and partic
 
 \begin{topicblock}
 \topic{13}{PHP / PYTHON DB ACCESS}
-\when{Bind input values, execute SQL and retrieve rows from application code.}
 Schema: Student(id PK,name,mark). Connection settings and the target student ID are supplied by the caller.
 \key{HTTP / HTML / PHP}
 GET parameters are in URL; POST form values are in request body (neither provides encryption; HTTPS does). HTML form action chooses endpoint, method chooses request. Use \sql{$_GET['id']} / \sql{$_POST['id']}; validate input, bind SQL parameters, HTML-escape output.
@@ -681,10 +677,43 @@ df.to_sql('copy', engine,
 \end{topicblock}
 \end{sheetcolumns}
 
+\topic{}{MONGODB INDEXES / EXPLAIN}
+\begin{sheetcolumns}{.27}
+\begin{lstlisting}[style=Plaincode]
+db.tours.createIndex({usertype:1,tripduration:-1});
+db.tours.createIndex({tripCode:1},{unique:true,sparse:true});
+db.tours.createIndex({"stops.name":1}); // multikey
+db.tours.createIndex({note:"text"});
+db.tours.find({$text:{$search:"campus"}});
+\end{lstlisting}
+\nextcol{.22}
+\begin{lstlisting}[style=Plaincode]
+db.tours.getIndexes();
+db.tours.find({usertype:"Subscriber"})
+ .hint({usertype:1,tripduration:-1})
+ .explain("executionStats");
+db.tours.dropIndex("usertype_1_tripduration_-1");
+\end{lstlisting}
+\nextcol{.22}
+\par\begin{tabular}{@{}ll@{}}
+\sql{COLLSCAN} & full collection scan\\
+\sql{IXSCAN} & index scan\\
+\sql{nReturned} & returned documents\\
+\sql{totalKeysExamined} & index entries examined\\
+\sql{totalDocsExamined} & documents examined
+\end{tabular}\par
+\nextcol{.29}
+Single-field, compound, unique, multikey (array), text. The sample index supports prefix \sql{usertype} or both fields. Duration alone lacks prefix access. Indexes cost writes/storage. Default \sql{_id} is unique. Sparse unique checks present \sql{tripCode} on create/write. Hint before drop. Text search uses the \sql{note} index.
+\end{sheetcolumns}
+
 \newpage
 % PAGE 2: Part II. FD algorithms, XML, MongoDB, and Spark.
-\begin{sheetcolumns}{.268}
+\renewcommand{\bodyfontsize}{5.65}
+\renewcommand{\bodyleading}{5.3}
+\renewcommand{\codefontsize}{5.05}
+\renewcommand{\codeleading}{5.0}
 \renewcommand{\bodylineskiplimit}{-1.5pt}
+\begin{sheetcolumns}{.267}
 \begin{topicblock}
 \topic{14}{PART II: FD / CLOSURES}
 R=set of attributes; F=set of FDs; X/Y/U/V are attribute subsets; juxtaposition denotes set union.
@@ -778,7 +807,7 @@ The last shortcut can fail even when DP holds: $F=\{A\to B,B\to C,A\to C\}$, fra
 
 \begin{topicblock}
 \topic{18}{XML / DTD / XSD}
-Well-formed: one root element, matching/case-sensitive nested tags, quoted attribute values, escaped reserved characters. Valid: additionally conforms to DTD/XSD. Attributes have a parent, no child nodes; CDATA text is literal (not parsed markup). Default namespace applies to unprefixed elements, not unprefixed attributes.
+Well-formed XML has one root, matching case-sensitive nested tags, quoted attributes, escaped reserved characters. Valid also satisfies DTD/XSD. Attributes have a parent, no children. CDATA is literal. The default namespace covers unprefixed elements only.
 Flexible schemas can validate optional/repeated elements. Duplicated facts risk update anomalies.
 \pattern{XML fragment, then DTD declarations}
 \begin{lstlisting}[style=Plaincode,language=XML]
@@ -792,18 +821,12 @@ Flexible schemas can validate optional/repeated elements. Duplicated facts risk 
  instructors IDREFS #IMPLIED category CDATA "general">
 \end{lstlisting}
 DTD declarations go inside DOCTYPE or an external .dtd. ?=0/1, *=0+, +=1+, comma=ordered sequence, |=choice; \texttt{\#PCDATA} text, EMPTY no content, ANY any allowed content. Attributes: \texttt{\#REQUIRED}, \texttt{\#IMPLIED} optional, \texttt{\#FIXED "v"} fixed default.
-\ex{(A|B)+ accepts B,A,B; (A*,B*) rejects B,A. ID values are unique document-wide; IDREF must reference an existing ID but does not constrain the target element type. Naming an attribute id alone does not declare ID type.}
-\par\begin{tabular}{@{}ll@{}}
-\textbf{DTD attribute type} & \textbf{Meaning}\\
-CDATA & string (not a CDATA section)\\
-ID & document-wide unique ID\\
-IDREF & one existing ID\\
-IDREFS & space-separated existing IDs
-\end{tabular}\par
-At most one ID-typed attribute may be declared per element type; its name does not determine its type.
+\ex{(A|B)+ accepts B,A,B. (A*,B*) rejects B,A.}
 \end{topicblock}
-\nextcol{.25}
+\nextcol{.252}
 \begin{topicblock}
+\key{DTD attribute types}
+CDATA means string here. ID values are unique per document, with one ID attribute at most per element type. A name alone does not declare ID type. IDREF links to any existing ID. IDREFS lists existing IDs separated by spaces.
 \key{RULE: processing / storage}
 DOM=memory tree; SAX=events. Publishing: relational $\to$ XML; shredding: XML $\to$ relational. Storage: text/tree, relational mapping, native XML.
 \key{XSD (XML continued)}
@@ -818,9 +841,9 @@ DOM=memory tree; SAX=events. Publishing: relational $\to$ XML; shredding: XML $\
   <xs:attribute name="id" type="xs:ID" use="required"/>
   </xs:complexType></xs:element></xs:schema>
 \end{lstlisting}
-XSD is XML with types. \sql{name} declares; \sql{type} names a type; \sql{ref} names a global element. min/maxOccurs default 1; attributes default optional. sequence orders children; choice selects an alternative. \sql{targetNamespace} names the namespace; \sql{elementFormDefault="qualified"} qualifies local elements.
+XSD types XML. \sql{name} declares, \sql{type} sets type, \sql{ref} points to a global element. Defaults are min/maxOccurs=1 and optional attributes. sequence orders children. choice picks an alternative. \sql{targetNamespace} sets the namespace. \sql{elementFormDefault="qualified"} qualifies local elements.
 \pattern{XSD identity-constraint fragments}
-Assume university has department*(@id) and course*(@dept). Insert inside its \sql{xs:element}, after complexType; selectors/fields are relative to that scope. No target namespace here.
+No target namespace. university has department*(@id), course*(@dept). Insert after complexType inside its \sql{xs:element}. Selectors/fields are relative.
 \begin{lstlisting}[style=Plaincode,language=XML]
 <xs:key name="deptKey"> <xs:selector xpath="department"/>
  <xs:field xpath="@id"/> </xs:key>
@@ -840,8 +863,7 @@ Assume university has department*(@id) and course*(@dept). Insert inside its \sq
 
 \begin{topicblock}
 \topic{19}{XPATH / PREDICATES}
-\when{Navigate a tree; filter nodes by context or position.}
-\sql{/}: document node; \sql{/r}: root element r. \sql{x} or \sql{./x}: child x; \sql{//x}: from document root, descendant x; \sql{.//x}: descendant x of current context; \sql{..}: parent; \sql{@id}: attribute. \sql{*} element children, \sql{@*} all attributes; \sql{text()} text children; \sql{node()} any child node. \sql{string(x)} string value; \sql{count(x)} number of selected nodes.
+\sql{/} = document node, \sql{/r} = root element r. \sql{x}, \sql{./x} = child x. \sql{//x}, \sql{.//x} = descendant x from document/context. \sql{..} = parent, \sql{@id} = attribute. \sql{*} = element children, \sql{@*} = all attributes. \sql{text()}, \sql{node()} = text/all child nodes. \sql{string(x)} = value, \sql{count(x)} = node count.
 \ex{Tree: \sql{<r><g><x id="1"/></g><x id="2"/></r>}. Context g: .//x selects id1; //x selects id1,id2; ../x and /r/x select id2. \sql{@id/text()} is empty (attributes have no text children); \sql{string(@id)} returns the value.}
 \key{Positions (P = XPath predicate)}
 \sql{[n]} = \sql{[position()=n]} for numeric n. \sql{x[1]} first child x; \sql{x[last()]} last. Positions start at 1 (Mongo array indexes at 0).
@@ -855,10 +877,8 @@ id("C1")  id(@dept)  id(@instructors)
 \end{lstlisting}
 id() resolves ID strings/IDREF(S) to elements only when ID information is available in the parsed document. Union removes duplicate nodes by identity and returns document order.
 \par\begin{tabular}{@{}ll@{}}
-\sql{child::} & direct children\\
-\sql{parent::} & parent\\
-\sql{descendant::} & descendants\\
-\sql{ancestor::} & ancestors\\
+\sql{child::}/\sql{parent::} & children/parent\\
+\sql{descendant::}/\sql{ancestor::} & descendants/ancestors\\
 \sql{following-sibling::} & later siblings\\
 \sql{preceding-sibling::} & earlier siblings
 \end{tabular}\par
@@ -866,8 +886,7 @@ id() resolves ID strings/IDREF(S) to elements only when ID information is availa
 
 \begin{topicblock}
 \topic{20}{XQUERY / COMPARISONS}
-\when{Filter/join XML, group values or construct output trees.}
-\ruleline{FLWOR: for binds each item; let binds a sequence; where filters; order by sorts; return emits values/nodes. In direct constructors braces evaluate expressions; outside braces \sql{$x} is literal text.}
+\ruleline{FLWOR uses for to bind items, let to bind sequences, where to filter, order by to sort and return to emit values/nodes. Direct constructors evaluate braces. Outside braces \sql{$x} is text.}
 \begin{lstlisting}[style=Plaincode]
 for $x in (2,4) return count($x)  (: (1,1) :)
 let $x := (2,4) return count($x)  (: 2 :)
@@ -934,6 +953,11 @@ return <department name="{$d}">
 \end{lstlisting}
 count/sum/avg/min/max aggregate; distinct-values deduplicates atomic values; data atomizes; string gives a string value; exists/empty test sequences; contains tests substrings.
 For element sequence \sql{$items}, \sql{count($items)} counts items; \sql{count(distinct-values($items/Title))} counts distinct Title values.
+\end{topicblock}
+
+\nextcol{.239}
+\begin{topicblock}
+\key{XQuery (Topic 20 continued)}
 \pattern{Computed constructor (independent)}
 \begin{lstlisting}[style=Plaincode]
 element course { attribute id {"C1"},
@@ -948,8 +972,6 @@ return if ($x/price > 100)
 \end{lstlisting}
 This returns an expensive element containing the input item.
 \end{topicblock}
-
-\nextcol{.24}
 \begin{topicblock}
 \topic{21}{MONGODB: CRUD / FILTERS}
 % Source: Assignment 2 Q1.1--Q2.2; array examples use the practice fields of tours.
@@ -959,25 +981,25 @@ Filter and return fields & \sql{find(filter, fields)}\\
 Sort with a tie-breaker & \sql{.sort({a:-1,b:1})}\\
 Filter documents first & \sql{$match} before \sql{$group}\\
 Count and mean per group & \sql{$group}, \sql{$sum:1}, \sql{$avg}\\
-At least K per group & \sql{$group}, then \sql{$match} with \sql{$gte}\\
+At least K per group & Post-group \sql{$match} (\sql{$gte})\\
 Exactly K per group & \sql{$match} on \sql{{tripCount:K}}\\
 Sort by rounded value & \sql{$round} before \sql{$sort}\\
 One item meets both tests & Query \sql{$elemMatch}\\
 Return first matching item & \sql{$elemMatch} + \sql{"stops.$":1}\\
-Original first item qualifies & Filter on \sql{"stops.0.mins"}\\
+Original first qualifies & Filter on \sql{"stops.0.mins"}\\
 Return all matching items & \sql{$filter} in \sql{$project}\\
 Contains all listed values & \sql{$all}\\
 Exactly K array items & \sql{$size:K}\\
 Top K by value & \sql{$sort}, then \sql{$limit}
 \end{tabular}\par
-BSON is binary and supports ObjectId, Date, int32/int64, Decimal128 and binary. JSON is text. Documents have unique \sql{_id}. Flexible schemas retain types and can enforce validation.
+BSON (binary) types: ObjectId, Date, int32/int64, Decimal128, binary. JSON is text. \sql{_id} is unique. Flexible schemas still support types and validation.
 \key{Shared \sql{db.tours} schema (21--25)}
 \begin{lstlisting}[style=Plaincode]
 tours(_id,usertype,tripduration,"birth year",
       gender,"start station id")
 stops[{name,mins,rate,...}], scores[], note, tripCode
 \end{lstlisting}
-Core fields are non-null in read examples. Duration (seconds), year, gender and station ID are numeric. Quote keys with spaces. Optional practice fields: ordered \sql{stops} (may be empty), numeric \sql{scores}, text/null \sql{note}, unique string \sql{tripCode}. \sql{mins} is minutes, \sql{rate} is cents per minute.
+Core fields are non-null here. Duration (seconds), year, gender, station ID are numeric. Quote keys with spaces. Optional fields are ordered \sql{stops} (may be empty), numeric \sql{scores}, text/null \sql{note} and unique text \sql{tripCode}. \sql{mins} is minutes, \sql{rate} cents/minute.
 \pattern{CRUD with independent practice snippets}
 \begin{lstlisting}[style=Plaincode]
 db.tours.insertOne({_id:1,tripduration:600});
@@ -1037,9 +1059,9 @@ db.tours.aggregate([
   avgDuration:{$round:["$avgDuration",1]}}},
  {$sort:{avgDuration:-1,stationId:1}} ]);
 \end{lstlisting}
-\sql{$match} before/after grouping acts as WHERE/HAVING. \sql{$project} aliases \sql{$_id} as stationId, hides \sql{_id} and rounds the mean to 1 decimal.
+\sql{$match} before/after grouping = WHERE/HAVING. \sql{$project} renames \sql{$_id} to stationId and rounds the mean to 1 decimal.
 \sql{$sum} and \sql{$avg} skip missing/nonnumeric values; with no numbers, sum=0 and avg=null. \sql{_id:null} groups all input. \sql{"$field"} reads a field; \sql{"field"} is literal. Groups are unordered.
-\trap{After \sql{$group}, only the key and accumulators remain. Move \sql{$sort} before rounding to sort raw values.}
+\trap{After \sql{$group}, only keys and accumulators remain. Raw sort: \sql{$sort} before \sql{$round}.}
 \ex{(\mbox{\sql{"start station id"}}, \mbox{\sql{tripduration}}, \mbox{\sql{"birth year"}}): (1,300,1990), (1,600,1990), (2,900,1990). All pass. Station 1: 2 trips, mean 450. Station 2: 1 trip, mean 900, dropped. Output \mbox{\sql{(stationId,tripCount,avgDuration)=(1,2,450.0)}}.}
 \key{Pipeline-stage fragments (inside aggregate)}
 \sql{$addFields} computes/preserves fields; \sql{$project} selects/computes; \sql{$unwind} emits one document per array element.
@@ -1048,7 +1070,7 @@ db.tours.aggregate([
 {$group:{_id:"$stops.name",n:{$sum:1},fee:{$sum:{
  $multiply:["$stops.mins","$stops.rate"]}}}}
 \end{lstlisting}
-Each group totals stop fees (minutes $\times$ rate). \trap{After \sql{$unwind}, sum:1 counts stops. Count distinct trip \sql{_id} values for trips. To keep input with empty/null/missing arrays, use \sql{preserveNullAndEmptyArrays:true} in the object form.}
+Each group totals stop fees (minutes $\times$ rate). \trap{After \sql{$unwind}, sum:1 counts stops. Count distinct trip \sql{_id} values for trips. To keep input with empty/null/missing arrays, use \mbox{\sql{preserveNullAndEmptyArrays:true}} in the object form.}
 \key{Stage fragments: group key / count / writes}
 \begin{lstlisting}[style=Plaincode]
 {$group:{_id:{u:"$usertype",g:"$gender"},n:{$sum:1}}}
@@ -1072,6 +1094,11 @@ countDocuments uses the first match to count trips before grouping. distinct ret
 \begin{topicblock}
 \topic{23}{ARRAY MATCHING: SAME ITEM?}
 \sql{{scores:[1,2]}} exact array including order; \sql{{scores:2}} scalar equality or array containing 2; \sql{{scores:{$all:[1,2]}}} contains both, any order; \sql{{scores:{$size:2}}} exact length. \sql{"scores.0"} addresses the original first element (0-based).
+\end{topicblock}
+
+\nextcol{.242}
+\begin{topicblock}
+\key{Array matching (Topic 23 continued)}
 \key{Worked example on stops}
 Trips A--D are labeled by \sql{_id}. Each stop is (name,mins,rate). Predicate P requires mins $\geq3$ and rate $\geq80$.
 \begin{lstlisting}[style=Plaincode]
@@ -1093,8 +1120,6 @@ D: []
 {scores:{$elemMatch:{$gt:20,$lt:80}}} // no match
 \end{lstlisting}
 \end{topicblock}
-
-\nextcol{.242}
 \begin{topicblock}
 \topic{24}{ARRAY PROJECTION PATTERNS}
 One document has \sql{stops=[A,B,C]}. Predicate P matches B and C.
@@ -1140,31 +1165,8 @@ Input 23 yields A:[a1,a2], C:[c0]. Without \sql{$match}, B/D remain with empty a
 \end{topicblock}
 
 \begin{topicblock}
-\topic{25}{INDEXES / SCHEMA / SCALING}
-\when{Speed filters/sorts; choose embedding, references or replication.}
-\pattern{Create, inspect, use and remove indexes}
-\begin{lstlisting}[style=Plaincode]
-db.tours.createIndex({usertype:1,tripduration:-1});
-db.tours.createIndex({tripCode:1},
- {unique:true,sparse:true});
-db.tours.createIndex({"stops.name":1}); // multikey
-db.tours.createIndex({note:"text"});
-db.tours.find({$text:{$search:"campus"}});
-db.tours.getIndexes();
-db.tours.find({usertype:"Subscriber"})
- .hint({usertype:1,tripduration:-1})
- .explain("executionStats");
-db.tours.dropIndex("usertype_1_tripduration_-1");
-\end{lstlisting}
-Index types: single-field, compound, unique, multikey (arrays), text. The compound index supports the prefix \sql{usertype} and the full pair. Duration alone lacks prefix access. Indexes cost storage and write maintenance. Check executionStats. The default \sql{_id} index is unique.
-Sparse unique enforces unique \sql{tripCode} values among documents with the field, including on index creation. Use hint before dropping the index. Text search uses the index on \sql{note}.
-\par\begin{tabular}{@{}ll@{}}
-\sql{COLLSCAN} & full collection scan\\
-\sql{IXSCAN} & index scan\\
-\sql{nReturned} & returned documents\\
-\sql{totalKeysExamined} & index entries examined\\
-\sql{totalDocsExamined} & documents examined
-\end{tabular}\par
+\topic{25}{SCHEMA / SCALING}
+MongoDB index commands and explain are on page 1.
 Embed bounded children read/updated together for one read. Costs: duplication and growing arrays. Reference shared, many-to-many or unbounded entities for fewer copies and independent writes, at lookup/join/read cost. A single-document write is atomic. \sql{updateMany()} is atomic only per document. Use a transaction for all-or-nothing across documents.
 Vertical scaling=larger server; horizontal=more nodes. Replication copies data; sharding partitions it. CAP: during a partition, a primary detecting a minority of voting nodes steps down; a majority can elect a new primary. Secondary reads may be stale; guarantees depend on read/write concern and read preference.
 \end{topicblock}
