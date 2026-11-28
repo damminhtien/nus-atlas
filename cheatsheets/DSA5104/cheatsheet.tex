@@ -1097,34 +1097,35 @@ D: []
 \nextcol{.242}
 \begin{topicblock}
 \topic{24}{ARRAY PROJECTION PATTERNS}
-\when{Choose first matching, original first or all qualifying items.}
-\pattern{First qualifying array element}
-\begin{lstlisting}[style=Plaincode]
-db.tours.find(
- {stops:{$elemMatch:{mins:{$gte:3},rate:{$gte:80}}}},
- {_id:1,"stops.$":1}).sort({_id:1});
-\end{lstlisting}
-Query \sql{$elemMatch} requires a stop meeting both tests. \sql{"stops.$":1} copies the first matching stop with all its fields. Use one array in the query with one condition on it. Sort by \sql{_id}. Input 23 yields A:[a1], C:[c0].
-\pattern{Reuse the predicate in query and projection}
+One document has \sql{stops=[A,B,C]}. Predicate P matches B and C.
+\par\begin{tabular}{@{}lcl@{}}
+\textbf{Projection} & \textbf{Array} & \textbf{Selects}\\
+\sql{stops:1} & \sql{[A,B,C]} & Whole array\\
+\sql{"stops.$":1} & \sql{[B]} & First query match (P)\\
+\sql{stops:{$elemMatch:P}} & \sql{[B]} & First match of P\\
+\sql{stops:{$slice:1}} & \sql{[A]} & First original\\
+\sql{stops:{$slice:2}} & \sql{[A,B]} & First two\\
+\sql{stops:{$slice:-1}} & \sql{[C]} & Last original\\
+\sql{stops:{$slice:-2}} & \sql{[B,C]} & Last two\\
+\sql{stops:{$slice:[3,2]}} & \sql{[]} & Skip 3, take 2\\
+\sql{$filter} in \sql{$project} & \sql{[B,C]} & All matches of P
+\end{tabular}\par
+\pattern{First match: query vs projection predicate}
 \begin{lstlisting}[style=Plaincode]
 const p={mins:{$gte:3},rate:{$gte:80}};
 db.tours.find({stops:{$elemMatch:p}},
+ {_id:1,"stops.$":1}).sort({_id:1});
+db.tours.find({stops:{$elemMatch:p}},
  {_id:1,stops:{$elemMatch:p}}).sort({_id:1});
 \end{lstlisting}
-Filter \sql{$elemMatch} selects trips. Projection \sql{$elemMatch} takes the first match. Filter \sql{{}} keeps B/D too, omitting their \sql{stops} field.
+For positional \sql{$}, use one array with one query condition. Both queries keep the full first match: A:[a1], C:[c0] in Topic 23. With filter \sql{{}} in the second query, B/D also return, without \sql{stops}.
 \pattern{Original first item qualifies}
 \begin{lstlisting}[style=Plaincode]
-db.tours.find(
- {"stops.0.mins":{$gte:3},"stops.0.rate":{$gte:80}},
- {_id:1,"stops.name":1,"stops.mins":1,
-  "stops.rate":1}).sort({_id:1});
+db.tours.find({"stops.0.mins":{$gte:3},
+ "stops.0.rate":{$gte:80}}, {_id:1,"stops.name":1,
+ "stops.mins":1,"stops.rate":1}).sort({_id:1});
 \end{lstlisting}
-\trap{The filter tests original index 0. Dotted projection keeps name, mins and rate of all stops in order. Input 23 yields C with c0,c1. Slicing uses positions.}
-\begin{lstlisting}[style=Plaincode]
-{stops:{$slice:2}}      // first 2
-{stops:{$slice:-2}}     // last 2
-{stops:{$slice:[3,2]}}  // skip 3, take 2
-\end{lstlisting}
+\trap{The filter tests original index 0. Dotted projection keeps the listed fields of all stops in order. Topic 23 yields C with c0,c1.}
 \pattern{All qualifying elements: \$filter}
 \begin{lstlisting}[style=Plaincode]
 db.tours.aggregate([

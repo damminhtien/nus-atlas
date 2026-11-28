@@ -1098,34 +1098,35 @@ D: []
 \nextcol{.245}
 \begin{topicblock}
 \topic{24}{ARRAY PROJECTION}
-\when{Lấy phần tử đầu tiên khớp, phần tử đầu gốc hoặc mọi phần tử khớp.}
-\pattern{Phần tử đầu tiên thỏa điều kiện}
-\begin{lstlisting}[style=Plaincode]
-db.tours.find(
- {stops:{$elemMatch:{mins:{$gte:3},rate:{$gte:80}}}},
- {_id:1,"stops.$":1}).sort({_id:1});
-\end{lstlisting}
-Query \sql{$elemMatch} chọn trip có điểm dừng thỏa cả hai điều kiện. \sql{"stops.$":1} giữ đủ field của điểm dừng khớp đầu. Dùng một array với một điều kiện trên array đó. Sort theo \sql{_id}. Mục 23 cho A:[a1], C:[c0].
-\pattern{Cùng điều kiện, hai vai trò}
+Một document có \sql{stops=[A,B,C]}. Predicate P khớp B và C.
+\par\begin{tabular}{@{}lcl@{}}
+\textbf{Projection} & \textbf{Array} & \textbf{Lấy phần tử}\\
+\sql{stops:1} & \sql{[A,B,C]} & Toàn bộ array\\
+\sql{"stops.$":1} & \sql{[B]} & Đầu tiên khớp query P\\
+\sql{stops:{$elemMatch:P}} & \sql{[B]} & Đầu tiên khớp P\\
+\sql{stops:{$slice:1}} & \sql{[A]} & Đầu array gốc\\
+\sql{stops:{$slice:2}} & \sql{[A,B]} & Hai phần tử đầu\\
+\sql{stops:{$slice:-1}} & \sql{[C]} & Cuối array gốc\\
+\sql{stops:{$slice:-2}} & \sql{[B,C]} & Hai phần tử cuối\\
+\sql{stops:{$slice:[3,2]}} & \sql{[]} & Bỏ 3, lấy 2\\
+\sql{$filter} trong \sql{$project} & \sql{[B,C]} & Tất cả khớp P
+\end{tabular}\par
+\pattern{Khớp đầu tiên theo query hoặc projection}
 \begin{lstlisting}[style=Plaincode]
 const p={mins:{$gte:3},rate:{$gte:80}};
 db.tours.find({stops:{$elemMatch:p}},
+ {_id:1,"stops.$":1}).sort({_id:1});
+db.tours.find({stops:{$elemMatch:p}},
  {_id:1,stops:{$elemMatch:p}}).sort({_id:1});
 \end{lstlisting}
-Filter chọn trip. Projection xét riêng để lấy điểm dừng khớp đầu. Filter \sql{{}} giữ B/D và bỏ field \sql{stops} ở B/D.
+Positional \sql{$}: một điều kiện query trên một array. Cả hai giữ đủ field của stop khớp đầu. Mục 23: A:[a1], C:[c0]. Filter \sql{{}} ở query 2 giữ B/D, bỏ field \sql{stops}.
 \pattern{Phần tử đầu gốc thỏa điều kiện}
 \begin{lstlisting}[style=Plaincode]
-db.tours.find(
- {"stops.0.mins":{$gte:3},"stops.0.rate":{$gte:80}},
- {_id:1,"stops.name":1,"stops.mins":1,
-  "stops.rate":1}).sort({_id:1});
+db.tours.find({"stops.0.mins":{$gte:3},
+ "stops.0.rate":{$gte:80}}, {_id:1,"stops.name":1,
+ "stops.mins":1,"stops.rate":1}).sort({_id:1});
 \end{lstlisting}
-\trap{Hai path trong filter xét index 0 gốc. Dotted projection giữ name, mins, rate của mọi điểm dừng theo thứ tự. C giữ c0,c1. Slicing xét vị trí.}
-\begin{lstlisting}[style=Plaincode]
-{stops:{$slice:2}}      // first 2
-{stops:{$slice:-2}}     // last 2
-{stops:{$slice:[3,2]}}  // skip 3, take 2
-\end{lstlisting}
+\trap{Filter xét index 0 gốc. Dotted projection giữ các field đã chọn của mọi stop theo thứ tự. Mục 23: C giữ c0,c1.}
 \pattern{Mọi phần tử thỏa điều kiện: \$filter}
 \begin{lstlisting}[style=Plaincode]
 db.tours.aggregate([
